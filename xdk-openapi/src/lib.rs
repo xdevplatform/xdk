@@ -1,3 +1,44 @@
+//! # XDK OpenAPI
+//! 
+//! A Rust library for parsing and working with OpenAPI 3.0.0 specifications.
+//! 
+//! This crate provides functionality to parse OpenAPI specifications from YAML or JSON formats,
+//! and provides strongly-typed structures for working with the parsed data.
+//! 
+//! ## Features
+//! 
+//! - Parse OpenAPI 3.0.0 specifications from YAML or JSON
+//! - Strongly-typed representation of OpenAPI elements
+//! - Support for references and components
+//! - Comprehensive error handling
+//! 
+//! ## Example
+//! 
+//! ```rust
+//! use xdk_openapi::parse_yaml;
+//! 
+//! let yaml = r#"
+//! openapi: 3.0.0
+//! info:
+//!   title: Test API
+//!   version: 1.0.0
+//! paths:
+//!   /test:
+//!     get:
+//!       summary: Test endpoint
+//!       responses:
+//!         '200':
+//!           description: Successful response
+//! "#;
+//! 
+//! let result = parse_yaml(yaml);
+//! assert!(result.is_ok());
+//! let openapi = result.unwrap();
+//! assert_eq!(openapi.openapi, "3.0.0");
+//! assert_eq!(openapi.info.title, "Test API");
+//! assert_eq!(openapi.info.version, "1.0.0");
+//! ```
+
 mod core;
 mod reference;
 mod components;
