@@ -1,0 +1,255 @@
+openapi: 3.0.0
+info:
+  title: Twitter API v2
+  version: 2.134
+  description: A simplified API for interacting with Twitter's features like tweets, communities, and direct messages.
+  contact:
+    name: Twitter Developers
+    url: https://developer.twitter.com/
+  license:
+    name: Twitter Developer Agreement
+    url: https://developer.twitter.com/en/developer-terms/agreement-and-policy.html
+
+paths:
+  /2/communities/search:
+    get:
+      summary: Search Communities
+      description: Returns communities matching a search query.
+      tags: [Communities]
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+            example: "Love"
+        - name: max_results
+          in: query
+          schema:
+            type: integer
+            default: 10
+            minimum: 10
+            maximum: 100
+      responses:
+        200:
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Get2CommunitiesSearchResponse'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /2/dm_conversations/with/{participant_id}/messages:
+    post:
+      summary: Send a Direct Message
+      description: Sends a new message to a user in a DM conversation.
+      tags: [Direct Messages]
+      parameters:
+        - name: participant_id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: "123456"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMessageRequest'
+      responses:
+        201:
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateDmEventResponse'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  /2/tweets:
+    post:
+      summary: Create a Tweet
+      description: Posts a new tweet for the authenticated user.
+      tags: [Tweets]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TweetCreateRequest'
+      responses:
+        201:
+          description: Tweet created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TweetCreateResponse'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              message:
+                type: string
+                example: "Invalid request"
+      description: Generic error response.
+
+    User:
+      type: object
+      required: [id, name, username]
+      properties:
+        id:
+          type: string
+          example: "2244994945"
+        name:
+          type: string
+          example: "Twitter Dev"
+        username:
+          type: string
+          example: "TwitterDev"
+        created_at:
+          type: string
+          format: date-time
+          example: "2013-12-14T04:35:55Z"
+      description: Represents a Twitter user.
+
+    Tweet:
+      type: object
+      required: [id, text]
+      properties:
+        id:
+          type: string
+          example: "1349129669258448897"
+        text:
+          type: string
+          example: "Hello, world!"
+        created_at:
+          type: string
+          format: date-time
+          example: "2021-01-12T10:23:00Z"
+      description: Represents a tweet.
+
+    Get2CommunitiesSearchResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                example: "987654"
+              name:
+                type: string
+                example: "Love Enthusiasts"
+        meta:
+          type: object
+          properties:
+            result_count:
+              type: integer
+              example: 10
+      description: Response for community search.
+
+    CreateMessageRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          example: "Hey, how's it going?"
+      description: Request to create a DM.
+
+    CreateDmEventResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            dm_conversation_id:
+              type: string
+              example: "123456789"
+            dm_event_id:
+              type: string
+              example: "987654321"
+      description: Response for creating a DM event.
+
+    TweetCreateRequest:
+      type: object
+      properties:
+        text:
+          type: string
+          example: "Posting a new tweet!"
+      description: Request to create a tweet.
+
+    TweetCreateResponse:
+      type: object
+      properties:
+        data:
+          $ref: '#/components/schemas/Tweet'
+      description: Response for creating a tweet.
+
+  parameters:
+    UserFieldsParameter:
+      name: user.fields
+      in: query
+      description: Fields to return for a User object.
+      schema:
+        type: array
+        items:
+          type: string
+          enum: [id, name, username, created_at, description]
+        example: [id, name, username]
+      style: form
+      explode: false
+
+    TweetFieldsParameter:
+      name: tweet.fields
+      in: query
+      description: Fields to return for a Tweet object.
+      schema:
+        type: array
+        items:
+          type: string
+          enum: [id, text, created_at, author_id]
+        example: [id, text, created_at]
+      style: form
+      explode: false
+
+  securitySchemes:
+    OAuth2UserToken:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://twitter.com/i/oauth2/authorize
+          tokenUrl: https://api.twitter.com/2/oauth2/token
+          scopes:
+            tweet.read: Read tweets
+            users.read: Read user info
+            dm.write: Send DMs
+    BearerToken:
+      type: http
+      scheme: bearer
+
+security:
+  - OAuth2UserToken: [tweet.read, users.read]
+  - BearerToken: []
