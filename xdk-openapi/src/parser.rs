@@ -58,7 +58,7 @@ pub fn parse_yaml(yaml: &str) -> Result<OpenApi, OpenApiError> {
 /// ```
 /// use xdk_openapi::parse_yaml_file;
 /// 
-/// let result = parse_yaml_file("path/to/openapi.yaml");
+/// let result = parse_yaml_file("../assets/oapi_short.yaml");
 /// assert!(result.is_ok());
 /// ```
 pub fn parse_yaml_file(path: &str) -> Result<OpenApi, OpenApiError> {
@@ -124,7 +124,7 @@ pub fn parse_json(json: &str) -> Result<OpenApi, OpenApiError> {
 /// ```
 /// use xdk_openapi::parse_json_file;
 /// 
-/// let result = parse_json_file("path/to/openapi.json");
+/// let result = parse_json_file("../assets/oapi_short.json");
 /// assert!(result.is_ok());
 /// ```
 pub fn parse_json_file(path: &str) -> Result<OpenApi, OpenApiError> {

@@ -82,7 +82,7 @@ paths:
 
     #[test]
     fn test_parse_twitter_api_spec() {
-        let result = parse_json_file("assets/oapi.json");
+        let result = parse_json_file("../assets/oapi.json");
         if let Err(e) = &result {
             println!("Error parsing OpenAPI spec: {:?}", e);
         }

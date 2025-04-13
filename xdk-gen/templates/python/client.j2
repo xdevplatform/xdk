@@ -1,0 +1,36 @@
+from typing import Dict, List, Optional, Any, Union
+import requests
+import requests_oauthlib
+from .clients import {% for tag in tags %}{{ tag }}Client{% if not loop.last %}, {% endif %}{% endfor %}
+
+class Client:
+    """Client for interacting with the X API"""
+    
+    def __init__(self, base_url: str, auth: Optional[Dict[str, str]] = None):
+        """Initialize the X API client.
+        
+        Args:
+            base_url: The base URL for the X API.
+            auth: Optional authentication credentials.
+        """
+        self.base_url = base_url.rstrip("/")
+        self.session = requests.Session()
+        
+        if auth:
+            if "oauth2" in auth:
+                self.session.auth = requests_oauthlib.OAuth2(
+                    client_id=auth["client_id"],
+                    client_secret=auth["client_secret"],
+                    token_url=auth["token_url"],
+                )
+            elif "api_key" in auth:
+                self.session.headers["Authorization"] = f"Bearer {auth['api_key']}"
+        
+        # Initialize clients for each tag
+        {% for tag in tags %}
+        self.{{ tag | snake_case }} = {{ tag }}Client(self)
+        {% endfor %}
+    
+    def close(self):
+        """Close the client session."""
+        self.session.close() 

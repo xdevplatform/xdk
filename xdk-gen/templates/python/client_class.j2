@@ -1,0 +1,120 @@
+"""
+{{ tag }} client for the X API.
+
+This module provides a client for interacting with the {{ tag }} endpoints of the X API.
+"""
+
+from typing import Dict, List, Optional, Any, Union
+import requests
+import requests_oauthlib
+from ..client import Client
+
+
+class {{ tag }}Client:
+    """Client for {{ tag }} operations"""
+    
+    def __init__(self, client: Client):
+        self.client = client
+    
+    {% for operation in operations %}
+    def {{ operation.operation_id | snake_case }}(self, 
+        {% for param in operation.parameters %}
+        {% if param.as_ref() %}
+        {% set param_ref = param.as_ref() %}
+        {{ param_ref.name | snake_case }}: {% if param_ref.schema and param_ref.schema.as_ref() %}{{ param_ref.schema.as_ref().type_ | python_type }}{% else %}Any{% endif %}{% if not param_ref.required %} = None{% endif %},
+        {% endif %}
+        {% endfor %}
+        {% if operation.request_body %}
+        {% if operation.request_body.content and operation.request_body.content.get("application/json") %}
+        {% set json_content = operation.request_body.content.get("application/json") %}
+        {% if json_content.schema and json_content.schema.as_ref() %}
+        {% set schema = json_content.schema.as_ref() %}
+        body: {% if schema.type_ == "object" %}Dict[str, Any]{% else %}{{ schema.type_ | python_type }}{% endif %}{% if not operation.request_body.required %} = None{% endif %},
+        {% else %}
+        body: Any = None,
+        {% endif %}
+        {% else %}
+        body: Any = None,
+        {% endif %}
+        {% endif %}
+    ) -> Dict[str, Any]:
+        """
+        {{ operation.summary }}
+        
+        {% if operation.description %}
+        {{ operation.description }}
+        {% endif %}
+        
+        {% for param in operation.parameters %}
+        {% if param.as_ref() %}
+        {% set param_ref = param.as_ref() %}
+        Args:
+            {{ param_ref.name | snake_case }}: {% if param_ref.description %}{{ param_ref.description }}{% else %}{{ param_ref.name }}{% endif %}
+        {% endif %}
+        {% endfor %}
+        {% if operation.request_body %}
+        {% if operation.request_body.content and operation.request_body.content.get("application/json") %}
+        {% set json_content = operation.request_body.content.get("application/json") %}
+        {% if json_content.schema and json_content.schema.as_ref() %}
+        {% set schema = json_content.schema.as_ref() %}
+        body: Request body
+        {% endif %}
+        {% endif %}
+        {% endif %}
+        
+        Returns:
+            Dict[str, Any]: Response data
+        """
+        url = self.client.base_url + "{{ operation.path }}"
+        
+        # Prepare query parameters
+        params = {}
+        {% for param in operation.parameters %}
+        {% if param.as_ref() %}
+        {% set param_ref = param.as_ref() %}
+        {% if param_ref.in_ == "query" %}
+        if {{ param_ref.name | snake_case }} is not None:
+            params["{{ param_ref.name }}"] = {{ param_ref.name | snake_case }}
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        
+        # Prepare path parameters
+        {% for param in operation.parameters %}
+        {% if param.as_ref() %}
+        {% set param_ref = param.as_ref() %}
+        {% if param_ref.in_ == "path" %}
+        url = url.replace("{{ '{' + param_ref.name + '}' }}", str({{ param_ref.name | snake_case }}))
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        
+        # Prepare headers
+        headers = {}
+        {% for param in operation.parameters %}
+        {% if param.as_ref() %}
+        {% set param_ref = param.as_ref() %}
+        {% if param_ref.in_ == "header" %}
+        if {{ param_ref.name | snake_case }} is not None:
+            headers["{{ param_ref.name }}"] = {{ param_ref.name | snake_case }}
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+        
+        # Make the request
+        response = self.client.session.{{ operation.method }}(
+            url,
+            params=params,
+            headers=headers,
+            {% if operation.request_body %}
+            json=body,
+            {% endif %}
+        )
+        
+        # Check for errors
+        response.raise_for_status()
+        
+        # Return the response data
+        return response.json()
+    
+    {% endfor %} 

@@ -1,0 +1,86 @@
+from typing import Dict, List, Optional, Any, Union
+import requests
+from .client import Client
+
+{% for tag in tags %}
+class {{ tag }}Client:
+    """Client for interacting with the {{ tag }} API"""
+    
+    def __init__(self, client: Client):
+        """Initialize the {{ tag }} API client.
+        
+        Args:
+            client: The parent X API client.
+        """
+        self.client = client
+    
+    {% for operation in operations[tag] %}
+    def {{ operation.operation_id | snake_case }}(
+        self,
+        {% for param in operation.parameters %}
+        {{ param.name | snake_case }}: {% if param.schema.type == "string" %}str{% elif param.schema.type == "integer" %}int{% elif param.schema.type == "number" %}float{% elif param.schema.type == "boolean" %}bool{% elif param.schema.type == "array" %}List[Any]{% else %}Any{% endif %}{% if not param.required %}, Optional{% endif %} = None{% if not loop.last %},{% endif %}
+        {% endfor %}
+        {% if operation.request_body %}
+        , body: {% if operation.request_body.schema.type == "object" %}Dict[str, Any]{% elif operation.request_body.schema.type == "array" %}List[Any]{% else %}Any{% endif %} = None
+        {% endif %}
+    ) -> {% if operation.responses["200"].schema.type == "object" %}Dict[str, Any]{% elif operation.responses["200"].schema.type == "array" %}List[Any]{% else %}Any{% endif %}:
+        """{{ operation.summary }}
+        
+        {% for param in operation.parameters %}
+        Args:
+            {{ param.name | snake_case }}: {{ param.description }}
+        {% endfor %}
+        {% if operation.request_body %}
+        Args:
+            body: {{ operation.request_body.description }}
+        {% endif %}
+        
+        Returns:
+            {{ operation.responses["200"].description }}
+        """
+        url = f"{self.client.base_url}{{ operation.path }}"
+        
+        # Prepare query parameters
+        params = {}
+        {% for param in operation.parameters %}
+        {% if param.in_ == "query" %}
+        if {{ param.name | snake_case }} is not None:
+            params["{{ param.name }}"] = {{ param.name | snake_case }}
+        {% endif %}
+        {% endfor %}
+        
+        # Prepare path parameters
+        {% for param in operation.parameters %}
+        {% if param.in_ == "path" %}
+        url = url.replace("{{" + "{{ param.name }}" + "}}", str({{ param.name | snake_case }}))
+        {% endif %}
+        {% endfor %}
+        
+        # Prepare header parameters
+        headers = {}
+        {% for param in operation.parameters %}
+        {% if param.in_ == "header" %}
+        if {{ param.name | snake_case }} is not None:
+            headers["{{ param.name }}"] = str({{ param.name | snake_case }})
+        {% endif %}
+        {% endfor %}
+        
+        # Make the request
+        response = self.client.session.request(
+            method="{{ operation.method }}",
+            url=url,
+            params=params,
+            headers=headers,
+            {% if operation.request_body %}
+            json=body,
+            {% endif %}
+        )
+        
+        # Check for errors
+        response.raise_for_status()
+        
+        # Return the response data
+        return response.json()
+    
+    {% endfor %}
+{% endfor %} 

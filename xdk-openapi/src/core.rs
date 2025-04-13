@@ -8,6 +8,8 @@ use std::collections::HashMap;
 use crate::components::{Components, Parameter, Schema};
 use crate::reference::Reference;
 
+type Path = String;
+
 /// Represents an OpenAPI 3.0.0 specification
 /// 
 /// This is the root object of an OpenAPI document. It contains all the information
@@ -19,7 +21,7 @@ pub struct OpenApi {
     /// Information about the API
     pub info: Info,
     /// The available paths and operations for the API
-    pub paths: HashMap<String, PathItem>,
+    pub paths: HashMap<Path, PathItem>,
     /// Reusable components for the API
     pub components: Option<Components>,
     /// Security requirements for the API
