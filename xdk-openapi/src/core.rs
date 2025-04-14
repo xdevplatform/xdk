@@ -6,7 +6,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use crate::components::{Components, Parameter, Schema};
-use crate::reference::Reference;
+use crate::reference::RefOrValue;
 
 type Path = String;
 
@@ -104,20 +104,21 @@ pub struct Operation {
     /// Tags for grouping operations
     pub tags: Option<Vec<String>>,
     /// Parameters for the operation
-    pub parameters: Option<Vec<Reference<Parameter>>>,
+    pub parameters: Option<Vec<RefOrValue<Parameter>>>,
     /// Request body for the operation
-    pub request_body: Option<RequestBody>,
+    #[serde(rename = "requestBody")]
+    pub request_body: Option<RefOrValue<RequestBody>>,
     /// Responses for the operation
-    pub responses: HashMap<String, Response>,
+    pub responses: HashMap<String, RefOrValue<Response>>,
 }
 
 /// Represents a request body
 /// 
 /// A request body contains the content that can be sent in a request.
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RequestBody {
-    /// The content of the request body, keyed by media type
-    pub content: HashMap<String, MediaType>,
+    /// The content of the request body, keyed by content type
+    pub content: HashMap<String, Content>,
     /// Whether the request body is required
     pub required: Option<bool>,
 }
@@ -125,19 +126,19 @@ pub struct RequestBody {
 /// Represents a response
 /// 
 /// A response contains information about a possible response from the API.
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Response {
     /// A description of the response
     pub description: String,
     /// The content of the response, keyed by media type
-    pub content: Option<HashMap<String, MediaType>>,
+    pub content: Option<HashMap<String, Content>>,
 }
 
-/// Represents a media type
+/// Represents a content type
 /// 
-/// A media type contains a schema that describes the structure of the content.
-#[derive(Debug, Serialize, Deserialize)]
-pub struct MediaType {
-    /// The schema for the media type
-    pub schema: Reference<Schema>,
+/// A content contains a schema that describes the structure of the content.
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Content {
+    /// The schema for the content
+    pub schema: RefOrValue<Schema>,
 } 

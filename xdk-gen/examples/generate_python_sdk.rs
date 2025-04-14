@@ -1,5 +1,5 @@
 use xdk_gen::{generate_python_sdk, error::Result};
-use openapi::OpenApi;
+use openapi::{OpenApi, RefOrValue};
 use std::path::Path;
 use std::fs;
 
@@ -36,7 +36,7 @@ fn main() -> Result<()> {
                         description: "Successful response".to_string(),
                         content: None,
                     };
-                    responses.insert("200".to_string(), response);
+                    responses.insert("200".to_string(), RefOrValue::Value(response));
                     responses
                 },
             };

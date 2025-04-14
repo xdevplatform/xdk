@@ -19,23 +19,13 @@ class {{ tag }}Client:
     {% for operation in operations %}
     def {{ operation.operation_id | snake_case }}(self, 
         {% for param in operation.parameters %}
-        {% if param.as_ref() %}
-        {% set param_ref = param.as_ref() %}
-        {{ param_ref.name | snake_case }}: {% if param_ref.schema and param_ref.schema.as_ref() %}{{ param_ref.schema.as_ref().type_ | python_type }}{% else %}Any{% endif %}{% if not param_ref.required %} = None{% endif %},
+        {% if param.name %}
+        {{ param.name | snake_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | python_type }}{% else %}Any{% endif %}{% if not param.required %} = None{% endif %},
         {% endif %}
         {% endfor %}
         {% if operation.request_body %}
-        {% if operation.request_body.content and operation.request_body.content.get("application/json") %}
-        {% set json_content = operation.request_body.content.get("application/json") %}
-        {% if json_content.schema and json_content.schema.as_ref() %}
-        {% set schema = json_content.schema.as_ref() %}
-        body: {% if schema.type_ == "object" %}Dict[str, Any]{% else %}{{ schema.type_ | python_type }}{% endif %}{% if not operation.request_body.required %} = None{% endif %},
-        {% else %}
-        body: Any = None,
-        {% endif %}
-        {% else %}
-        body: Any = None,
-        {% endif %}
+        {% set schema = operation.request_body.schema %}
+        body: {% if schema.type == "object" %}Dict[str, Any]{% else %}{{ schema.type | python_type }}{% endif %}{% if not operation.request_body.required %} = None{% endif %},
         {% endif %}
     ) -> Dict[str, Any]:
         """
@@ -46,20 +36,14 @@ class {{ tag }}Client:
         {% endif %}
         
         {% for param in operation.parameters %}
-        {% if param.as_ref() %}
-        {% set param_ref = param.as_ref() %}
+        {% if param.name %}
         Args:
-            {{ param_ref.name | snake_case }}: {% if param_ref.description %}{{ param_ref.description }}{% else %}{{ param_ref.name }}{% endif %}
+            {{ param.name | snake_case }}: {% if param.description %}{{ param.description }}{% else %}{{ param.name }}{% endif %}
         {% endif %}
         {% endfor %}
         {% if operation.request_body %}
-        {% if operation.request_body.content and operation.request_body.content.get("application/json") %}
-        {% set json_content = operation.request_body.content.get("application/json") %}
-        {% if json_content.schema and json_content.schema.as_ref() %}
-        {% set schema = json_content.schema.as_ref() %}
-        body: Request body
-        {% endif %}
-        {% endif %}
+        {% set schema = operation.request_body.schema %}
+            body: {% if schema.description %}{{ schema.description }}{% else %}Request body{% endif %}
         {% endif %}
         
         Returns:
@@ -70,21 +54,19 @@ class {{ tag }}Client:
         # Prepare query parameters
         params = {}
         {% for param in operation.parameters %}
-        {% if param.as_ref() %}
-        {% set param_ref = param.as_ref() %}
-        {% if param_ref.in_ == "query" %}
-        if {{ param_ref.name | snake_case }} is not None:
-            params["{{ param_ref.name }}"] = {{ param_ref.name | snake_case }}
+        {% if param.name %}
+        {% if param.in_ == "query" %}
+        if {{ param.name | snake_case }} is not None:
+            params["{{ param.name }}"] = {{ param.name | snake_case }}
         {% endif %}
         {% endif %}
         {% endfor %}
         
         # Prepare path parameters
         {% for param in operation.parameters %}
-        {% if param.as_ref() %}
-        {% set param_ref = param.as_ref() %}
-        {% if param_ref.in_ == "path" %}
-        url = url.replace("{{ '{' + param_ref.name + '}' }}", str({{ param_ref.name | snake_case }}))
+        {% if param.name %}
+        {% if param.in == "path" %}
+        url = url.replace("{{ '{' + param.name + '}' }}", str({{ param.name | snake_case }}))
         {% endif %}
         {% endif %}
         {% endfor %}
@@ -92,14 +74,16 @@ class {{ tag }}Client:
         # Prepare headers
         headers = {}
         {% for param in operation.parameters %}
-        {% if param.as_ref() %}
-        {% set param_ref = param.as_ref() %}
-        {% if param_ref.in_ == "header" %}
-        if {{ param_ref.name | snake_case }} is not None:
-            headers["{{ param_ref.name }}"] = {{ param_ref.name | snake_case }}
+        {% if param.name %}
+        {% if param.in == "header" %}
+        if {{ param.name | snake_case }} is not None:
+            headers["{{ param.name }}"] = {{ param.name | snake_case }}
         {% endif %}
         {% endif %}
         {% endfor %}
+        {% if operation.request_body %}
+        headers["Content-Type"] = "{{ operation.request_body.content_type }}"
+        {% endif %}
         
         # Make the request
         response = self.client.session.{{ operation.method }}(

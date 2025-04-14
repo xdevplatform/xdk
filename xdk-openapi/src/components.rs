@@ -6,7 +6,7 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use crate::reference::Reference;
+use crate::reference::RefOrValue;
 
 /// Represents a parameter in an API operation
 /// 
@@ -24,7 +24,7 @@ pub struct Parameter {
     pub required: Option<bool>,
     /// The schema for the parameter
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub schema: Option<Reference<Schema>>,
+    pub schema: Option<RefOrValue<Schema>>,
     /// A description of the parameter
     pub description: Option<String>,
 }
@@ -37,7 +37,7 @@ pub struct Parameter {
 pub struct Schema {
     /// The type of the schema (string, number, integer, boolean, object, array)
     #[serde(rename = "type")]
-    pub schema_type: Option<String>,
+    pub r#type: Option<String>,
     /// The format of the schema (e.g., date-time, email, uuid)
     pub format: Option<String>,
     /// The title of the schema
@@ -45,9 +45,9 @@ pub struct Schema {
     /// A description of the schema
     pub description: Option<String>,
     /// Properties of an object schema
-    pub properties: Option<HashMap<String, Reference<Schema>>>,
+    pub properties: Option<HashMap<String, RefOrValue<Schema>>>,
     /// Items of an array schema
-    pub items: Option<Box<Reference<Schema>>>,
+    pub items: Option<Box<RefOrValue<Schema>>>,
     /// Required properties of an object schema
     pub required: Option<Vec<String>>,
     /// An example value for the schema

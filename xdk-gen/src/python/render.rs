@@ -1,6 +1,5 @@
 use crate::error::Result;
 use minijinja::Environment;
-use super::models::{ClientClassContext, ClientModuleContext, MainClientContext, ReadmeContext, SetupPyContext, OperationInfo};
 
 /// Renderer for Python SDK templates
 pub struct Renderer<'a> {
@@ -74,62 +73,50 @@ impl<'a> Renderer<'a> {
         Ok(env)
     }
 
-    /// Generate the client class for a tag
-    pub fn generate_client_class(&self, tag: &str, operations: &[OperationInfo]) -> String {
-        let template = self.env.get_template("python/client_class.j2").unwrap();
-        let context = ClientClassContext {
-            tag: tag.to_string(),
-            operations: operations.to_vec(),
-        };
-        template.render(context).unwrap_or_default()
+    /// Generic method to render a template with a context
+    pub fn render_template<T>(&self, template_name: &str, context: T) -> Result<String> 
+    where
+        T: serde::Serialize,
+    {
+        let template = self.env.get_template(template_name)?;
+        let rendered = template.render(context)?;
+        Ok(self.format(&rendered))
     }
 
-    /// Generate the client module for a tag
-    pub fn generate_client_module(&self, tag: &str, operations: &[OperationInfo]) -> String {
-        let template = self.env.get_template("python/client_module.j2").unwrap();
-        let context = ClientModuleContext {
-            tag: tag.to_string(),
-            operations: operations.to_vec(),
-        };
-        template.render(context).unwrap_or_default()
-    }
-
-    /// Generate the main client class
-    pub fn generate_main_client(&self, tags: &[String]) -> String {
-        let template = self.env.get_template("python/main_client.j2").unwrap();
-        let context = MainClientContext {
-            tags: tags.to_vec(),
-        };
-        template.render(context).unwrap_or_default()
-    }
-
-    /// Generate the setup.py file
-    pub fn generate_setup_py(&self) -> String {
-        let template = self.env.get_template("python/setup_py.j2").unwrap();
-        let context = SetupPyContext {
-            version: "0.1.0".to_string(),
-        };
-        template.render(context).unwrap_or_default()
-    }
-
-    /// Generate the README.md file
-    pub fn generate_readme(&self) -> String {
-        let template = self.env.get_template("python/readme.j2").unwrap();
-        let context = ReadmeContext {
-            version: "0.1.0".to_string(),
-        };
-        template.render(context).unwrap_or_default()
-    }
-
-    /// Generate the __init__.py file
-    pub fn generate_init_py(&self) -> String {
-        let template = self.env.get_template("python/init_py.j2").unwrap();
-        template.render(()).unwrap_or_default()
-    }
-
-    /// Generate the requirements.txt file
-    pub fn generate_requirements_txt(&self) -> String {
-        let template = self.env.get_template("python/requirements_txt.j2").unwrap();
-        template.render(()).unwrap_or_default()
+    /// Clean up rendered content by removing unnecessary newlines while preserving code structure
+    fn format(&self, content: &str) -> String {
+        let lines: Vec<&str> = content.lines().collect();
+        let mut result = Vec::new();
+        
+        for (i, line) in lines.iter().enumerate() {
+            let line = line.trim_end();
+            
+            // Skip empty lines
+            if line.is_empty() {
+                continue;
+            }
+            
+            // Add the current line
+            result.push(line.to_string());
+            
+            // Add a newline after definitions, block starts, or before indented code
+            let is_definition = line.starts_with("class ") || 
+                               (line.starts_with("def ") && !line.contains("lambda"));
+            let is_block_start = line.ends_with(':');
+            let next_line_indented = i + 1 < lines.len() && 
+                                    lines[i + 1].starts_with(char::is_whitespace);
+            
+            if is_definition || is_block_start || next_line_indented {
+                result.push(String::new());
+            }
+        }
+        
+        // Join with newlines and ensure there's exactly one newline at the end
+        let mut formatted = result.join("\n");
+        if !formatted.ends_with('\n') {
+            formatted.push('\n');
+        }
+        
+        formatted
     }
 } 

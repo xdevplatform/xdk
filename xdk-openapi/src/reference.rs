@@ -1,204 +1,124 @@
-//! Reference handling for OpenAPI specifications
+//! Reference or Value handling for OpenAPI specifications
 //! 
-//! This module provides functionality for handling references in OpenAPI specifications.
-//! References allow components to be reused across the specification, reducing duplication
-//! and improving maintainability.
+//! This module provides the RefOrValue type which can hold either a direct value
+//! or a reference to another component, resolved lazily.
 
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, Deserializer, Serializer};
 use std::rc::Rc;
+use std::cell::RefCell;
+use std::any::Any;
+use crate::context::OpenApiContextGuard;
 use crate::error::OpenApiError;
-use crate::components::{Schema, Parameter};
-/// A reference to another component in the OpenAPI spec
-/// 
-/// This type provides a way to reference other components in the OpenAPI specification.
-/// It uses reference counting to efficiently share components across the specification.
-#[derive(Debug)]
-pub struct Reference<T> {
-    /// The inner value being referenced
-    inner: Rc<T>,
-}
 
-impl<T> Reference<T> {
-    /// Creates a new reference to a value
-    /// 
-    /// # Arguments
-    /// 
-    /// * `value` - The value to reference
-    /// 
-    /// # Returns
-    /// 
-    /// A new reference to the value
-    pub fn new(value: T) -> Self {
-        Self {
-            inner: Rc::new(value),
-        }
-    }
-
-    /// Gets a reference to the inner value
-    /// 
-    /// # Returns
-    /// 
-    /// A reference to the inner value
-    pub fn as_ref(&self) -> &T {
-        &self.inner
-    }
-}
-
-impl<T> Clone for Reference<T> {
-    /// Creates a clone of the reference
-    /// 
-    /// This implementation clones the reference count, not the inner value.
-    fn clone(&self) -> Self {
-        Self {
-            inner: Rc::clone(&self.inner),
-        }
-    }
-}
-
-impl<T> Serialize for Reference<T>
-where
-    T: Serialize,
-{
-    /// Serializes the reference
-    /// 
-    /// This implementation serializes the inner value directly.
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        self.inner.serialize(serializer)
-    }
-}
-
-impl<'de, T> Deserialize<'de> for Reference<T>
-where
-    T: Deserialize<'de> + 'static,
-{
-    /// Deserializes a reference
-    /// 
-    /// This implementation deserializes the value and wraps it in a reference.
-    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
-    where
-        D: serde::Deserializer<'de>,
-    {
-        let value = T::deserialize(deserializer)?;
-        Ok(Reference::new(value))
-    }
-}
-
-/// A context for deserializing OpenAPI specs with reference resolution
-/// 
-/// This type provides a context for resolving references during deserialization.
-/// It maintains a mapping of reference paths to their resolved values.
-#[derive(Clone)]
-pub struct OpenApiContext {
-    /// Map of schema references to their resolved values
-    schemas: std::collections::HashMap<String, Rc<Schema>>,
-    /// Map of parameter references to their resolved values
-    parameters: std::collections::HashMap<String, Rc<Parameter>>,
-}
-
-impl OpenApiContext {
-    /// Creates a new OpenAPI context
-    /// 
-    /// # Returns
-    /// 
-    /// A new OpenAPI context with empty maps for schemas and parameters
-    pub fn new() -> Self {
-        Self {
-            schemas: std::collections::HashMap::new(),
-            parameters: std::collections::HashMap::new(),
-        }
-    }
-
-    /// Adds a schema to the context
-    /// 
-    /// # Arguments
-    /// 
-    /// * `name` - The name of the schema
-    /// * `schema` - The schema to add
-    pub fn add_schema(&mut self, name: String, schema: Schema) {
-        self.schemas.insert(format!("#/components/schemas/{}", name), Rc::new(schema));
-    }
-
-    /// Adds a parameter to the context
-    /// 
-    /// # Arguments
-    /// 
-    /// * `name` - The name of the parameter
-    /// * `parameter` - The parameter to add
-    pub fn add_parameter(&mut self, name: String, parameter: Parameter) {
-        self.parameters.insert(format!("#/components/parameters/{}", name), Rc::new(parameter));
-    }
-
-    /// Resolves a reference to a component
-    /// 
-    /// # Arguments
-    /// 
-    /// * `reference` - The reference path to resolve
-    /// 
-    /// # Returns
-    /// 
-    /// The resolved component, or an error if the reference could not be resolved
-    pub fn resolve_reference<T>(&self, reference: &str) -> Result<Rc<T>, OpenApiError>
-    where
-        T: Clone + 'static,
-    {
-        if reference.starts_with("#/components/schemas/") {
-            self.schemas
-                .get(reference)
-                .cloned()
-                .ok_or_else(|| OpenApiError::ReferenceNotFound(reference.to_string()))
-                .map(|rc| unsafe { std::mem::transmute_copy(&rc) })
-        } else if reference.starts_with("#/components/parameters/") {
-            self.parameters
-                .get(reference)
-                .cloned()
-                .ok_or_else(|| OpenApiError::ReferenceNotFound(reference.to_string()))
-                .map(|rc| unsafe { std::mem::transmute_copy(&rc) })
-        } else {
-            Err(OpenApiError::ReferenceNotFound(reference.to_string()))
-        }
-    }
-}
-
-/// A value that can be either a reference or a direct value
+/// A value that can be either a reference or a direct value, with lazy resolution for references.
 /// 
 /// This type is used to represent values that can be either a reference to another
 /// component or a direct value.
-#[derive(Debug)]
-pub enum RefOrValue<T> {
-    /// A reference to another component
-    Reference(Reference<T>),
+#[derive(Debug, Clone)]
+pub enum RefOrValue<T: Clone + 'static> {
+    /// A reference to another component, holding the path and a cache for the resolved value.
+    Reference {
+        path: String,
+        /// Cache for the resolved value. None initially, Some(Rc<T>) after successful resolution.
+        /// RefCell allows interior mutability for caching within an immutable reference.
+        resolved: RefCell<Option<Result<Rc<T>, OpenApiError>>>,
+    },
     /// A direct value
     Value(T),
 }
 
+impl<T: Clone + Any> RefOrValue<T> {
+    /// Resolves the reference if it hasn't been already and returns a result containing the resolved Rc<T>.
+    /// Caches the result (Ok or Err) for subsequent calls.
+    ///
+    /// # Returns
+    ///
+    /// * `Ok(Rc<T>)` if it's a direct value (wrapped in a new Rc) or a successfully resolved reference.
+    /// * `Err(OpenApiError)` if the reference failed to resolve (e.g., not found, type mismatch).
+    pub fn try_resolve(&self) -> Result<Rc<T>, OpenApiError> {
+        match self {
+            RefOrValue::Value(value) => Ok(Rc::new(value.clone())),
+            RefOrValue::Reference { path, resolved } => {
+                if resolved.borrow().is_none() {
+                    let resolution_result = OpenApiContextGuard::with_context(|ctx| {
+                        ctx.resolve_reference::<T>(path)
+                    }).unwrap_or_else(|| Err(OpenApiError::InternalError("OpenAPI context not available".to_string())));
+                    *resolved.borrow_mut() = Some(resolution_result);
+                }
+
+                let cache_borrow = resolved.borrow();
+                let cached_result = cache_borrow.as_ref().expect("Cache should be populated here");
+
+                cached_result.clone()
+            }
+        }
+    }
+
+    /// Returns a mutable instance. If it's a `Value`, returns the owned value.
+    /// If it's a `Reference`, it resolves, clones the resolved value, and returns the owned clone.
+    /// Panics if the reference cannot be resolved.
+    pub fn into_mut_owned(self) -> T {
+         match self {
+            RefOrValue::Value(value) => value,
+            RefOrValue::Reference { .. } => { // Resolve (panics on error) and clone
+                let rc = self.try_resolve().expect("Failed to resolve reference in into_mut_owned");
+                rc.as_ref().clone()
+            }
+        }
+    }
+
+     /// Clones the inner value, resolving references if necessary.
+     /// Panics if the reference cannot be resolved.
+    pub fn clone_inner(&self) -> T {
+        // Resolve (panics on error) and clone
+        let rc = self.try_resolve().expect("Failed to resolve reference in clone_inner");
+        rc.as_ref().clone()
+    }
+
+    pub fn as_ref(&self) -> Rc<T> {
+        match self.try_resolve() {
+            Ok(rc_value) => rc_value,
+            Err(e) => panic!("Failed to resolve reference: {:?}", e),
+        }
+    }
+}
+// Custom Serialize for RefOrValue
+impl<T: Clone + Serialize + Any> Serialize for RefOrValue<T> {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        match self.try_resolve() {
+            Ok(rc_value) => rc_value.as_ref().serialize(serializer),
+            Err(e) => Err(serde::ser::Error::custom(format!("Failed to resolve reference during serialization: {:?}", e.clone()))),
+        }
+    }
+}
+
+// Custom Deserialize for RefOrValue
 impl<'de, T> Deserialize<'de> for RefOrValue<T>
 where
-    T: Deserialize<'de> + Clone + 'static,
+    T: Deserialize<'de> + Clone + Any + 'static,
 {
-    /// Deserializes a reference or value
-    /// 
-    /// This implementation handles both direct values and references.
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
-        D: serde::Deserializer<'de>,
+        D: Deserializer<'de>,
     {
+        // Temporary helper enum for untagged deserialization
         #[derive(Deserialize)]
         #[serde(untagged)]
-        enum Helper<T> {
-            Reference { #[serde(rename = "$ref")] reference: String },
-            Value(T),
+        enum Helper<Val> {
+            Ref { #[serde(rename = "$ref")] path: String },
+            Value(Val),
         }
 
         match Helper::<T>::deserialize(deserializer)? {
-            Helper::Reference { reference } => {
-                let context = Rc::new(OpenApiContext::new());
-                let resolved = context
-                    .resolve_reference::<T>(&reference)
-                    .map_err(serde::de::Error::custom)?;
-                Ok(RefOrValue::Reference(Reference::new((*resolved).clone())))
+            Helper::Ref { path } => {
+                // Store the path, don't resolve yet. Resolution happens in as_ref/try_resolve.
+                Ok(RefOrValue::Reference {
+                    path,
+                    resolved: RefCell::new(None), // Initialize cache as empty
+                })
             }
             Helper::Value(value) => Ok(RefOrValue::Value(value)),
         }

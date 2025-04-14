@@ -1,5 +1,5 @@
 [workspace]
-members = ["xdk-openapi", "xdk-gen", "xdk-cli"]
+members = ["xdk-openapi", "xdk-gen", "xdk-build"]
 
 [workspace.dependencies]
 serde = { version = "1.0", features = ["derive"] }
