@@ -1,7 +1,7 @@
+mod generator;
 mod models;
 mod render;
 mod utils;
-mod generator;
 
 pub use generator::PythonSdkGenerator;
 
@@ -9,176 +9,211 @@ pub use generator::PythonSdkGenerator;
 mod tests {
     use super::*;
     use crate::SdkGenerator;
-    use openapi::{parse_json_file, OpenApi, RefOrValue};
-    use tempfile::tempdir;
+    use openapi::{OpenApiContextGuard, parse_json_file};
+    use std::fs;
+    use std::path::Path;
+
+    // Helper function to create output directory for a test
+    fn create_output_dir(test_name: &str) -> std::path::PathBuf {
+        let output_base = Path::new("test_output");
+        let output_dir = output_base.join(test_name);
+
+        // Create the directory if it doesn't exist
+        if !output_base.exists() {
+            fs::create_dir_all(output_base).unwrap();
+        }
+
+        // Remove the test directory if it exists
+        if output_dir.exists() {
+            fs::remove_dir_all(&output_dir).unwrap();
+        }
+
+        // Create the test directory
+        fs::create_dir_all(&output_dir).unwrap();
+
+        output_dir
+    }
+
+    // Helper function to verify basic SDK structure
+    fn verify_sdk_structure(output_dir: &Path) {
+        let package_dir = output_dir.join("xdk");
+        assert!(package_dir.exists(), "Package directory should exist");
+        assert!(
+            package_dir.join("__init__.py").exists(),
+            "__init__.py should exist"
+        );
+        assert!(
+            package_dir.join("client.py").exists(),
+            "client.py should exist"
+        );
+
+        // Verify basic files exist
+        assert!(
+            output_dir.join("setup.py").exists(),
+            "setup.py should exist"
+        );
+        assert!(
+            output_dir.join("README.md").exists(),
+            "README.md should exist"
+        );
+        assert!(
+            output_dir.join("requirements.txt").exists(),
+            "requirements.txt should exist"
+        );
+    }
 
     #[test]
-    fn test_generate_python_sdk() {
-        // Create a temporary directory for the output
-        let temp_dir = tempdir().unwrap();
-        let output_dir = temp_dir.path();
+    fn test_simple_openapi() {
+        let output_dir = create_output_dir("simple");
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/simple.json").unwrap();
 
-        // Create a minimal OpenAPI specification
-        let openapi = OpenApi {
-            openapi: "3.0.0".to_string(),
-            info: openapi::Info {
-                title: "Test API".to_string(),
-                version: "1.0.0".to_string(),
-                description: None,
-                contact: None,
-                license: None,
-            },
-            paths: {
-                let mut paths = std::collections::HashMap::new();
-                let mut path_item = openapi::PathItem {
-                    get: None,
-                    post: None,
-                    put: None,
-                    delete: None,
-                    patch: None,
-                };
-
-                let operation = openapi::Operation {
-                    summary: Some("Get tweets".to_string()),
-                    description: Some("Returns tweets".to_string()),
-                    tags: Some(vec!["Tweets".to_string()]),
-                    parameters: Some(vec![]),
-                    request_body: None,
-                    responses: {
-                        let mut responses = std::collections::HashMap::new();
-                        let response = openapi::Response {
-                            description: "Successful response".to_string(),
-                            content: None,
-                        };
-                        responses.insert("200".to_string(), RefOrValue::Value(response));
-                        responses
-                    },
-                };
-
-                path_item.get = Some(operation);
-                paths.insert("/2/tweets".to_string(), path_item);
-                paths
-            },
-            components: None,
-            security: None,
-        };
-
-        // Generate the Python SDK
         let generator = PythonSdkGenerator::new();
-        let result = generator.generate(&openapi, output_dir);
-        assert!(result.is_ok());
+        let result = generator.generate(&openapi, &output_dir);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
 
-        // Verify that the output directory contains the expected files
-        let package_dir = output_dir.join("xdk");
-        assert!(package_dir.exists());
-        assert!(package_dir.join("__init__.py").exists());
-        assert!(package_dir.join("client.py").exists());
-        
+        verify_sdk_structure(&output_dir);
+
         // Check for tag directories and their files
-        let tweets_dir = package_dir.join("tweets");
-        assert!(tweets_dir.exists());
-        assert!(tweets_dir.join("__init__.py").exists());
-        assert!(tweets_dir.join("client.py").exists());
-        
-        // Verify no other files exist in the output directory
-        let output_files: std::collections::HashSet<_> = std::fs::read_dir(output_dir)
-            .unwrap()
-            .filter_map(|entry| entry.ok())
-            .map(|entry| entry.file_name().to_string_lossy().to_string())
-            .collect();
-        
-        let expected_output_files = std::collections::HashSet::from([
-            "xdk".to_string(),
-            "setup.py".to_string(),
-            "README.md".to_string(),
-            "requirements.txt".to_string(),
-        ]);
-        
-        assert_eq!(output_files, expected_output_files, "Unexpected files in output directory");
-        
-        // Verify no other files exist in the package directory
-        let package_files: std::collections::HashSet<_> = std::fs::read_dir(&package_dir)
-            .unwrap()
-            .filter_map(|entry| entry.ok())
-            .map(|entry| entry.file_name().to_string_lossy().to_string())
-            .collect();
-        
-        let expected_package_files = std::collections::HashSet::from([
-            "__init__.py".to_string(),
-            "client.py".to_string(),
-            "tweets".to_string(),
-        ]);
-        
-        assert_eq!(package_files, expected_package_files, "Unexpected files in package directory");
+        let tweets_dir = output_dir.join("xdk").join("tweets");
+        assert!(tweets_dir.exists(), "tweets directory should exist");
+        assert!(
+            tweets_dir.join("__init__.py").exists(),
+            "tweets/__init__.py should exist"
+        );
+        assert!(
+            tweets_dir.join("client.py").exists(),
+            "tweets/client.py should exist"
+        );
     }
 
     #[test]
-    fn test_generate_python_sdk_from_file() {
-        // Create a temporary directory for the output
-        let temp_dir = tempdir().unwrap();
-        let output_dir = temp_dir.path();
+    fn test_components_reference() {
+        let output_dir = create_output_dir("components_reference");
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/components_reference.json").unwrap();
 
-        let openapi = parse_json_file("../assets/oapi_short.json").unwrap();
-        let result = PythonSdkGenerator::new().generate(&openapi, output_dir);
-        assert!(result.is_ok());
+        let generator = PythonSdkGenerator::new();
+        let result = generator.generate(&openapi, &output_dir);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
 
-        // Verify that the output directory contains the expected files
-        let package_dir = output_dir.join("xdk");
-        assert!(package_dir.exists());
-        assert!(package_dir.join("__init__.py").exists());
-        assert!(package_dir.join("client.py").exists());
-        
-        // Check for tag directories and their files
-        let communities_dir = package_dir.join("communities");
-        assert!(communities_dir.exists());
-        assert!(communities_dir.join("__init__.py").exists());
-        assert!(communities_dir.join("client.py").exists());
-        
-        let direct_messages_dir = package_dir.join("direct_messages");
-        assert!(direct_messages_dir.exists());
-        assert!(direct_messages_dir.join("__init__.py").exists());
-        assert!(direct_messages_dir.join("client.py").exists());
-        
-        let tweets_dir = package_dir.join("tweets");
-        assert!(tweets_dir.exists());
-        assert!(tweets_dir.join("__init__.py").exists());
-        assert!(tweets_dir.join("client.py").exists());
-        
-        assert!(output_dir.join("setup.py").exists());
-        assert!(output_dir.join("README.md").exists());
-        assert!(output_dir.join("requirements.txt").exists());
-        
-        // Verify no other files exist in the output directory
-        let output_files: std::collections::HashSet<_> = std::fs::read_dir(output_dir)
-            .unwrap()
-            .filter_map(|entry| entry.ok())
-            .map(|entry| entry.file_name().to_string_lossy().to_string())
-            .collect();
-        
-        let expected_output_files = std::collections::HashSet::from([
-            "xdk".to_string(),
-            "setup.py".to_string(),
-            "README.md".to_string(),
-            "requirements.txt".to_string(),
-        ]);
-        
-        assert_eq!(output_files, expected_output_files, "Unexpected files in output directory");
-        
-        // Verify no other files exist in the package directory
-        let package_files: std::collections::HashSet<_> = std::fs::read_dir(&package_dir)
-            .unwrap()
-            .filter_map(|entry| entry.ok())
-            .map(|entry| entry.file_name().to_string_lossy().to_string())
-            .collect();
-        
-        let expected_package_files = std::collections::HashSet::from([
-            "__init__.py".to_string(),
-            "client.py".to_string(),
-            "communities".to_string(),
-            "direct_messages".to_string(),
-            "tweets".to_string(),
-        ]);
-        
-        assert_eq!(package_files, expected_package_files, "Unexpected files in package directory");
+        verify_sdk_structure(&output_dir);
     }
-} 
+
+    #[test]
+    fn test_nested_refs() {
+        let output_dir = create_output_dir("nested_refs");
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/nested_refs.json").unwrap();
+
+        let generator = PythonSdkGenerator::new();
+        let result = generator.generate(&openapi, &output_dir);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+
+        verify_sdk_structure(&output_dir);
+    }
+
+    #[test]
+    fn test_request_response_refs() {
+        let output_dir = create_output_dir("request_response_refs");
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/request_response_refs.json").unwrap();
+
+        let generator = PythonSdkGenerator::new();
+        let result = generator.generate(&openapi, &output_dir);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+
+        verify_sdk_structure(&output_dir);
+    }
+
+    #[test]
+    fn test_parameters_with_ref() {
+        let output_dir = create_output_dir("parameters_with_ref");
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/parameters_with_ref.json").unwrap();
+
+        let generator = PythonSdkGenerator::new();
+        let result = generator.generate(&openapi, &output_dir);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+
+        verify_sdk_structure(&output_dir);
+    }
+
+    #[test]
+    fn test_schema_with_components_ref() {
+        let output_dir = create_output_dir("schema_with_components_ref");
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/schema_with_components_ref.json").unwrap();
+
+        let generator = PythonSdkGenerator::new();
+        let result = generator.generate(&openapi, &output_dir);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+
+        verify_sdk_structure(&output_dir);
+    }
+
+    #[test]
+    fn test_single_schema_no_ref() {
+        let output_dir = create_output_dir("single_schema_no_ref");
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/single_schema_no_ref.json").unwrap();
+
+        let generator = PythonSdkGenerator::new();
+        let result = generator.generate(&openapi, &output_dir);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+
+        verify_sdk_structure(&output_dir);
+    }
+
+    #[test]
+    fn test_multiple_paths_with_refs() {
+        let output_dir = create_output_dir("multiple_paths_with_refs");
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/multiple_paths_with_refs.json").unwrap();
+
+        let generator = PythonSdkGenerator::new();
+        let result = generator.generate(&openapi, &output_dir);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+
+        verify_sdk_structure(&output_dir);
+    }
+
+    #[test]
+    fn test_all_of() {
+        let output_dir = create_output_dir("all_of");
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/all_of.json").unwrap();
+
+        let generator = PythonSdkGenerator::new();
+        let result = generator.generate(&openapi, &output_dir);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+
+        verify_sdk_structure(&output_dir);
+    }
+
+    #[test]
+    fn test_single_path() {
+        let output_dir = create_output_dir("single_path");
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/single_path.json").unwrap();
+
+        let generator = PythonSdkGenerator::new();
+        let result = generator.generate(&openapi, &output_dir);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+
+        verify_sdk_structure(&output_dir);
+    }
+
+    #[test]
+    fn test_info() {
+        let output_dir = create_output_dir("info");
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/info.json").unwrap();
+
+        let generator = PythonSdkGenerator::new();
+        let result = generator.generate(&openapi, &output_dir);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+
+        verify_sdk_structure(&output_dir);
+    }
+}

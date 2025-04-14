@@ -1,7 +1,7 @@
+use super::models::{OperationInfo, RequestBody};
 use crate::error::Result;
 use openapi::OpenApi;
 use std::collections::HashMap;
-use super::models::{OperationInfo, RequestBody};
 
 /// Extract operations by tag from the OpenAPI specification
 pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Vec<OperationInfo>>> {
@@ -24,18 +24,39 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                         summary: get_op.summary.clone().unwrap_or_default(),
                         description: get_op.description.clone().unwrap_or_default(),
                         parameters: get_op.parameters.clone().unwrap_or_default(),
-                        request_body: get_op.request_body.as_ref().and_then(|rb| {
-                            rb.as_ref().content.iter().next().map(|(content_type, media_type)| {
-                                RequestBody {
-                                    content_type: content_type.clone(),
-                                    schema: media_type.schema.clone(),
-                                    required: rb.as_ref().required.unwrap_or(false),
-                                }
+                        request_body: get_op
+                            .request_body
+                            .as_ref()
+                            .map(|rb_ref| rb_ref.try_resolve()) // Option<Result<Rc<RequestBody>, Error>>
+                            .transpose()? // Result<Option<Rc<RequestBody>>, Error>
+                            .and_then(|rb_rc| {
+                                // Option<Rc<RequestBody>> -> Option<RequestBody>
+                                rb_rc
+                                    .content
+                                    .iter()
+                                    .next()
+                                    .map(|(content_type, media_type)| RequestBody {
+                                        content_type: content_type.clone(),
+                                        schema: media_type.schema.clone(),
+                                        required: rb_rc.required.unwrap_or(false),
+                                    })
+                            }),
+                        responses: get_op
+                            .responses
+                            .iter()
+                            .map(|(k, v_ref)| {
+                                // &RefOrValue<Response>
+                                v_ref
+                                    .try_resolve()
+                                    .map_err(Into::into) // Convert OpenApiError to SdkGeneratorError
+                                    .map(|v_rc| (k.clone(), v_rc.description.clone())) // Result<(String, String), SdkGeneratorError>
                             })
-                        }),
-                        responses: get_op.responses.iter().map(|(k, v)| (k.clone(), v.as_ref().description.clone())).collect(),
+                            .collect::<Result<HashMap<_, _>>>()?, // Result<HashMap<String, String>, SdkGeneratorError>
                     };
-                    operations_by_tag.entry(normalized_tag).or_insert_with(Vec::new).push(operation_info);
+                    operations_by_tag
+                        .entry(normalized_tag)
+                        .or_default()
+                        .push(operation_info);
                 }
             }
         }
@@ -46,7 +67,6 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                 for tag in tags {
                     // Normalize tag name
                     let normalized_tag = tag.replace(" ", "_");
-                    println!("Operation: {}", serde_json::to_string_pretty(&post_op).unwrap());
                     let operation_info = OperationInfo {
                         path: path.clone(),
                         method: "post".to_string(),
@@ -57,18 +77,39 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                         summary: post_op.summary.clone().unwrap_or_default(),
                         description: post_op.description.clone().unwrap_or_default(),
                         parameters: post_op.parameters.clone().unwrap_or_default(),
-                        request_body: post_op.request_body.as_ref().and_then(|rb| {
-                            rb.as_ref().content.iter().next().map(|(content_type, media_type)| {
-                                RequestBody {
-                                    content_type: content_type.clone(),
-                                    schema: media_type.schema.clone(),
-                                    required: rb.as_ref().required.unwrap_or(false),
-                                }
+                        request_body: post_op
+                            .request_body
+                            .as_ref()
+                            .map(|rb_ref| rb_ref.try_resolve()) // Option<Result<Rc<RequestBody>, Error>>
+                            .transpose()? // Result<Option<Rc<RequestBody>>, Error>
+                            .and_then(|rb_rc| {
+                                // Option<Rc<RequestBody>> -> Option<RequestBody>
+                                rb_rc
+                                    .content
+                                    .iter()
+                                    .next()
+                                    .map(|(content_type, media_type)| RequestBody {
+                                        content_type: content_type.clone(),
+                                        schema: media_type.schema.clone(),
+                                        required: rb_rc.required.unwrap_or(false),
+                                    })
+                            }),
+                        responses: post_op
+                            .responses
+                            .iter()
+                            .map(|(k, v_ref)| {
+                                // &RefOrValue<Response>
+                                v_ref
+                                    .try_resolve()
+                                    .map_err(Into::into) // Convert OpenApiError to SdkGeneratorError
+                                    .map(|v_rc| (k.clone(), v_rc.description.clone())) // Result<(String, String), SdkGeneratorError>
                             })
-                        }),
-                        responses: post_op.responses.iter().map(|(k, v)| (k.clone(), v.as_ref().description.clone())).collect(),
+                            .collect::<Result<HashMap<_, _>>>()?, // Result<HashMap<String, String>, SdkGeneratorError>
                     };
-                    operations_by_tag.entry(normalized_tag).or_insert_with(Vec::new).push(operation_info);
+                    operations_by_tag
+                        .entry(normalized_tag)
+                        .or_default()
+                        .push(operation_info);
                 }
             }
         }
@@ -89,18 +130,39 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                         summary: put_op.summary.clone().unwrap_or_default(),
                         description: put_op.description.clone().unwrap_or_default(),
                         parameters: put_op.parameters.clone().unwrap_or_default(),
-                        request_body: put_op.request_body.as_ref().and_then(|rb| {
-                            rb.as_ref().content.iter().next().map(|(content_type, media_type)| {
-                                RequestBody {
-                                    content_type: content_type.clone(),
-                                    schema: media_type.schema.clone(),
-                                    required: rb.as_ref().required.unwrap_or(false),
-                                }
+                        request_body: put_op
+                            .request_body
+                            .as_ref()
+                            .map(|rb_ref| rb_ref.try_resolve()) // Option<Result<Rc<RequestBody>, Error>>
+                            .transpose()? // Result<Option<Rc<RequestBody>>, Error>
+                            .and_then(|rb_rc| {
+                                // Option<Rc<RequestBody>> -> Option<RequestBody>
+                                rb_rc
+                                    .content
+                                    .iter()
+                                    .next()
+                                    .map(|(content_type, media_type)| RequestBody {
+                                        content_type: content_type.clone(),
+                                        schema: media_type.schema.clone(),
+                                        required: rb_rc.required.unwrap_or(false),
+                                    })
+                            }),
+                        responses: put_op
+                            .responses
+                            .iter()
+                            .map(|(k, v_ref)| {
+                                // &RefOrValue<Response>
+                                v_ref
+                                    .try_resolve()
+                                    .map_err(Into::into) // Convert OpenApiError to SdkGeneratorError
+                                    .map(|v_rc| (k.clone(), v_rc.description.clone())) // Result<(String, String), SdkGeneratorError>
                             })
-                        }),
-                        responses: put_op.responses.iter().map(|(k, v)| (k.clone(), v.as_ref().description.clone())).collect(),
+                            .collect::<Result<HashMap<_, _>>>()?, // Result<HashMap<String, String>, SdkGeneratorError>
                     };
-                    operations_by_tag.entry(normalized_tag).or_insert_with(Vec::new).push(operation_info);
+                    operations_by_tag
+                        .entry(normalized_tag)
+                        .or_default()
+                        .push(operation_info);
                 }
             }
         }
@@ -121,18 +183,39 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                         summary: delete_op.summary.clone().unwrap_or_default(),
                         description: delete_op.description.clone().unwrap_or_default(),
                         parameters: delete_op.parameters.clone().unwrap_or_default(),
-                        request_body: delete_op.request_body.as_ref().and_then(|rb| {
-                            rb.as_ref().content.iter().next().map(|(content_type, media_type)| {
-                                RequestBody {
-                                    content_type: content_type.clone(),
-                                    schema: media_type.schema.clone(),
-                                    required: rb.as_ref().required.unwrap_or(false),
-                                }
+                        request_body: delete_op
+                            .request_body
+                            .as_ref()
+                            .map(|rb_ref| rb_ref.try_resolve()) // Option<Result<Rc<RequestBody>, Error>>
+                            .transpose()? // Result<Option<Rc<RequestBody>>, Error>
+                            .and_then(|rb_rc| {
+                                // Option<Rc<RequestBody>> -> Option<RequestBody>
+                                rb_rc
+                                    .content
+                                    .iter()
+                                    .next()
+                                    .map(|(content_type, media_type)| RequestBody {
+                                        content_type: content_type.clone(),
+                                        schema: media_type.schema.clone(),
+                                        required: rb_rc.required.unwrap_or(false),
+                                    })
+                            }),
+                        responses: delete_op
+                            .responses
+                            .iter()
+                            .map(|(k, v_ref)| {
+                                // &RefOrValue<Response>
+                                v_ref
+                                    .try_resolve()
+                                    .map_err(Into::into) // Convert OpenApiError to SdkGeneratorError
+                                    .map(|v_rc| (k.clone(), v_rc.description.clone())) // Result<(String, String), SdkGeneratorError>
                             })
-                        }),
-                        responses: delete_op.responses.iter().map(|(k, v)| (k.clone(), v.as_ref().description.clone())).collect(),
+                            .collect::<Result<HashMap<_, _>>>()?, // Result<HashMap<String, String>, SdkGeneratorError>
                     };
-                    operations_by_tag.entry(normalized_tag).or_insert_with(Vec::new).push(operation_info);
+                    operations_by_tag
+                        .entry(normalized_tag)
+                        .or_default()
+                        .push(operation_info);
                 }
             }
         }
@@ -153,22 +236,43 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                         summary: patch_op.summary.clone().unwrap_or_default(),
                         description: patch_op.description.clone().unwrap_or_default(),
                         parameters: patch_op.parameters.clone().unwrap_or_default(),
-                        request_body: patch_op.request_body.as_ref().and_then(|rb| {
-                            rb.as_ref().content.iter().next().map(|(content_type, media_type)| {
-                                RequestBody {
-                                    content_type: content_type.clone(),
-                                    schema: media_type.schema.clone(),
-                                    required: rb.as_ref().required.unwrap_or(false),
-                                }
+                        request_body: patch_op
+                            .request_body
+                            .as_ref()
+                            .map(|rb_ref| rb_ref.try_resolve()) // Option<Result<Rc<RequestBody>, Error>>
+                            .transpose()? // Result<Option<Rc<RequestBody>>, Error>
+                            .and_then(|rb_rc| {
+                                // Option<Rc<RequestBody>> -> Option<RequestBody>
+                                rb_rc
+                                    .content
+                                    .iter()
+                                    .next()
+                                    .map(|(content_type, media_type)| RequestBody {
+                                        content_type: content_type.clone(),
+                                        schema: media_type.schema.clone(),
+                                        required: rb_rc.required.unwrap_or(false),
+                                    })
+                            }),
+                        responses: patch_op
+                            .responses
+                            .iter()
+                            .map(|(k, v_ref)| {
+                                // &RefOrValue<Response>
+                                v_ref
+                                    .try_resolve()
+                                    .map_err(Into::into) // Convert OpenApiError to SdkGeneratorError
+                                    .map(|v_rc| (k.clone(), v_rc.description.clone())) // Result<(String, String), SdkGeneratorError>
                             })
-                        }),
-                        responses: patch_op.responses.iter().map(|(k, v)| (k.clone(), v.as_ref().description.clone())).collect(),
+                            .collect::<Result<HashMap<_, _>>>()?, // Result<HashMap<String, String>, SdkGeneratorError>
                     };
-                    operations_by_tag.entry(normalized_tag).or_insert_with(Vec::new).push(operation_info);
+                    operations_by_tag
+                        .entry(normalized_tag)
+                        .or_default()
+                        .push(operation_info);
                 }
             }
         }
     }
 
     Ok(operations_by_tag)
-} 
+}

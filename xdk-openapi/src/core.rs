@@ -1,17 +1,17 @@
 //! Core OpenAPI 3.0.0 data structures
-//! 
+//!
 //! This module contains the primary data structures that represent an OpenAPI 3.0.0 specification.
 //! These structures are designed to be serializable and deserializable using serde.
 
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use crate::components::{Components, Parameter, Schema};
 use crate::reference::RefOrValue;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 type Path = String;
 
 /// Represents an OpenAPI 3.0.0 specification
-/// 
+///
 /// This is the root object of an OpenAPI document. It contains all the information
 /// about the API, including paths, components, and security requirements.
 #[derive(Debug, Serialize, Deserialize)]
@@ -29,7 +29,7 @@ pub struct OpenApi {
 }
 
 /// Information about the API
-/// 
+///
 /// Contains metadata about the API, such as title, version, description,
 /// contact information, and license.
 #[derive(Debug, Serialize, Deserialize)]
@@ -47,7 +47,7 @@ pub struct Info {
 }
 
 /// Contact information for the API
-/// 
+///
 /// Contains information about the contact for the API.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Contact {
@@ -58,7 +58,7 @@ pub struct Contact {
 }
 
 /// License information for the API
-/// 
+///
 /// Contains information about the license for the API.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct License {
@@ -69,7 +69,7 @@ pub struct License {
 }
 
 /// Represents a path item in the API
-/// 
+///
 /// A path item represents a set of operations that can be performed on a specific path.
 /// Each path item can have multiple HTTP methods associated with it.
 #[derive(Debug, Serialize, Deserialize)]
@@ -92,7 +92,7 @@ pub struct PathItem {
 }
 
 /// Represents an API operation
-/// 
+///
 /// An operation represents a specific HTTP method that can be performed on a path.
 /// It contains information about parameters, request body, responses, and other metadata.
 #[derive(Debug, Serialize, Deserialize)]
@@ -113,7 +113,7 @@ pub struct Operation {
 }
 
 /// Represents a request body
-/// 
+///
 /// A request body contains the content that can be sent in a request.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RequestBody {
@@ -124,7 +124,7 @@ pub struct RequestBody {
 }
 
 /// Represents a response
-/// 
+///
 /// A response contains information about a possible response from the API.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Response {
@@ -135,10 +135,10 @@ pub struct Response {
 }
 
 /// Represents a content type
-/// 
+///
 /// A content contains a schema that describes the structure of the content.
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Content {
     /// The schema for the content
     pub schema: RefOrValue<Schema>,
-} 
+}

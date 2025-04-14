@@ -1,15 +1,15 @@
 //! OpenAPI components
-//! 
+//!
 //! This module contains the data structures for OpenAPI components.
 //! Components are reusable parts of an OpenAPI specification that can be referenced
 //! from multiple places.
 
+use crate::reference::RefOrValue;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-use crate::reference::RefOrValue;
 
 /// Represents a parameter in an API operation
-/// 
+///
 /// Parameters define inputs to operations. They can be path parameters, query parameters,
 /// header parameters, or cookie parameters.
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -30,7 +30,7 @@ pub struct Parameter {
 }
 
 /// Represents a schema
-/// 
+///
 /// Schemas define the structure of data types used in the API.
 /// They can represent primitive types, objects, arrays, and more.
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -66,7 +66,7 @@ pub struct Schema {
 }
 
 /// Represents the components section of the OpenAPI spec
-/// 
+///
 /// Components are reusable parts of an OpenAPI specification that can be referenced
 /// from multiple places.
 #[derive(Debug, Serialize, Deserialize)]
@@ -80,7 +80,7 @@ pub struct Components {
 }
 
 /// Represents a security scheme
-/// 
+///
 /// Security schemes define how the API can be secured.
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(tag = "type")]
@@ -97,7 +97,7 @@ pub enum SecurityScheme {
     #[serde(rename = "oauth2")]
     OAuth2 {
         /// The OAuth flows
-        flows: OAuthFlows,
+        flows: Box<OAuthFlows>,
     },
     /// API key authentication
     #[serde(rename = "apiKey")]
@@ -110,7 +110,7 @@ pub enum SecurityScheme {
 }
 
 /// Represents OAuth flows
-/// 
+///
 /// OAuth flows define how OAuth 2.0 authentication can be performed.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OAuthFlows {
@@ -125,7 +125,7 @@ pub struct OAuthFlows {
 }
 
 /// Represents an OAuth flow
-/// 
+///
 /// An OAuth flow defines the URLs and scopes for an OAuth 2.0 authentication flow.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct OAuthFlow {
@@ -137,4 +137,4 @@ pub struct OAuthFlow {
     pub refresh_url: Option<String>,
     /// The scopes available for the flow
     pub scopes: HashMap<String, String>,
-} 
+}

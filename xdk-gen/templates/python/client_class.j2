@@ -25,7 +25,10 @@ class {{ tag }}Client:
         {% endfor %}
         {% if operation.request_body %}
         {% set schema = operation.request_body.schema %}
-        body: {% if schema.type == "object" %}Dict[str, Any]{% else %}{{ schema.type | python_type }}{% endif %}{% if not operation.request_body.required %} = None{% endif %},
+        body: {% if schema.type == "object" %}Dict[str, Any]
+              {% elif schema.type is string %}{{ schema.type | python_type }}
+              {% else %}Any{% endif %}
+              {% if not operation.request_body.required %} = None{% endif %},
         {% endif %}
     ) -> Dict[str, Any]:
         """
@@ -55,7 +58,7 @@ class {{ tag }}Client:
         params = {}
         {% for param in operation.parameters %}
         {% if param.name %}
-        {% if param.in_ == "query" %}
+        {% if param.in == "query" %}
         if {{ param.name | snake_case }} is not None:
             params["{{ param.name }}"] = {{ param.name | snake_case }}
         {% endif %}

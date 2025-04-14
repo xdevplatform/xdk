@@ -1,7 +1,7 @@
-use xdk_gen::{generate_python_sdk, error::Result};
 use openapi::{OpenApi, RefOrValue};
-use std::path::Path;
 use std::fs;
+use std::path::Path;
+use xdk_gen::{error::Result, generate_python_sdk};
 
 fn main() -> Result<()> {
     // Create a minimal OpenAPI specification for testing
@@ -54,6 +54,9 @@ fn main() -> Result<()> {
     fs::create_dir_all(output_dir)?;
     generate_python_sdk(&openapi, output_dir)?;
 
-    println!("Python SDK generated successfully at {}", output_dir.display());
+    println!(
+        "Python SDK generated successfully at {}",
+        output_dir.display()
+    );
     Ok(())
-} 
+}
