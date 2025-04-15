@@ -18,7 +18,7 @@ class {{ tag }}Client:
     
     {% for operation in operations %}
     def {{ operation.operation_id | snake_case }}(self, 
-        {% for param in operation.parameters %}
+        {% for param in operation.parameters | sort(attribute='required', reverse=True) %}
         {% if param.name %}
         {{ param.name | snake_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | python_type }}{% else %}Any{% endif %}{% if not param.required %} = None{% endif %},
         {% endif %}
@@ -54,7 +54,6 @@ class {{ tag }}Client:
         """
         url = self.client.base_url + "{{ operation.path }}"
         
-        # Prepare query parameters
         params = {}
         {% for param in operation.parameters %}
         {% if param.name %}
@@ -65,7 +64,6 @@ class {{ tag }}Client:
         {% endif %}
         {% endfor %}
         
-        # Prepare path parameters
         {% for param in operation.parameters %}
         {% if param.name %}
         {% if param.in == "path" %}
@@ -74,7 +72,6 @@ class {{ tag }}Client:
         {% endif %}
         {% endfor %}
         
-        # Prepare headers
         headers = {}
         {% for param in operation.parameters %}
         {% if param.name %}
@@ -103,5 +100,4 @@ class {{ tag }}Client:
         
         # Return the response data
         return response.json()
-    
     {% endfor %} 

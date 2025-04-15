@@ -99,43 +99,6 @@ impl<'a> Renderer<'a> {
     {
         let template = self.env.get_template(template_name)?;
         let rendered = template.render(context)?;
-        Ok(self.format(&rendered))
-    }
-
-    /// Clean up rendered content by removing unnecessary newlines while preserving code structure
-    fn format(&self, content: &str) -> String {
-        let lines: Vec<&str> = content.lines().collect();
-        let mut result = Vec::new();
-
-        for (i, line) in lines.iter().enumerate() {
-            let line = line.trim_end();
-
-            // Skip empty lines
-            if line.is_empty() {
-                continue;
-            }
-
-            // Add the current line
-            result.push(line.to_string());
-
-            // Add a newline after definitions, block starts, or before indented code
-            let is_definition = line.starts_with("class ")
-                || (line.starts_with("def ") && !line.contains("lambda"));
-            let is_block_start = line.ends_with(':');
-            let next_line_indented =
-                i + 1 < lines.len() && lines[i + 1].starts_with(char::is_whitespace);
-
-            if is_definition || is_block_start || next_line_indented {
-                result.push(String::new());
-            }
-        }
-
-        // Join with newlines and ensure there's exactly one newline at the end
-        let mut formatted = result.join("\n");
-        if !formatted.ends_with('\n') {
-            formatted.push('\n');
-        }
-
-        formatted
+        Ok(rendered)
     }
 }

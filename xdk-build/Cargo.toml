@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 xdk-gen = { path = "../xdk-gen" }
 xdk-openapi = { path = "../xdk-openapi" }
-clap = { version = "4.5.1", features = ["derive"] }
+clap = { version = "4.5.4", features = ["derive"] }
 anyhow = "1.0.79"
 serde_json = { workspace = true }
+colored = "2.1"

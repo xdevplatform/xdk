@@ -1,7 +1,6 @@
 pub mod error;
 pub mod python;
 
-use crate::error::Result;
 use openapi::OpenApi;
 use std::path::Path;
 
@@ -26,4 +25,4 @@ pub fn generate_python_sdk(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
 }
 
 /// Re-export the error types
-pub use error::{Result as SdkResult, SdkGeneratorError};
+pub use error::{Result, SdkGeneratorError};
