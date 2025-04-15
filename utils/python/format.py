@@ -75,9 +75,9 @@ def format_file(file_path):
     code = ''.join(lines)
     try:
         defs = get_definitions_to_format(code) # Use the new function
-    except SyntaxError:
-        print(f"Syntax error in {file_path}, skipping")
-        return
+    except SyntaxError as e:
+        print(f"Syntax error in {file_path}: {e}")
+        sys.exit(1) # Exit the script if a syntax error occurs
     
     new_lines = []
     
@@ -121,12 +121,15 @@ def format_file(file_path):
 
 def format_directory(directory):
     """
-    Format all Python files in the given directory and its subdirectories.
+    Format all Python files in the given directory and its subdirectories,
+    skipping directories that start with a dot.
     
     Args:
         directory (str): Path to the directory to process.
     """
-    for root, _, files in os.walk(directory):
+    for root, dirs, files in os.walk(directory):
+        # Skip directories starting with a dot
+        dirs[:] = [d for d in dirs if not d.startswith('.')]
         for file in files:
             if file.endswith('.py'):
                 file_path = os.path.join(root, file)
@@ -149,4 +152,3 @@ if __name__ == '__main__':
     else:
         print(f"Error: '{path_arg}' is not a valid file or directory")
         sys.exit(1)
-    print("Formatting complete")

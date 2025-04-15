@@ -1,10 +1,11 @@
+use crate::error::{BuildError, Result};
 use crate::utils::run_command; // Import from utils module
 use crate::{log_error, log_info, log_success};
 use colored::*;
 use std::fs;
-use std::path::{Path, PathBuf};
+use std::path::Path;
 use std::process::Command;
-use xdk_gen::{Result, SdkGeneratorError, generate_python_sdk};
+use xdk_gen::generate_python_sdk;
 use xdk_openapi::OpenApi; // Add fs for directory removal
 
 /// Generates the Python SDK.
@@ -32,8 +33,10 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     let venv_bin_path = venv_path.join("bin");
 
     // 2. Install dependencies (black and libcst)
+    let dependencies = ["black"];
     log_info!(
-        "Installing black and libcst using {}",
+        "Installing {} using {}",
+        dependencies.join(" and "),
         venv_python_path.display().to_string().magenta()
     );
     let mut install_deps_cmd = Command::new(&venv_python_path);
@@ -41,7 +44,7 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
         .arg("-m")
         .arg("pip")
         .arg("install")
-        .arg("black");
+        .arg(dependencies.join(" "));
     run_command(&mut install_deps_cmd)?;
     log_success!("Formatting dependencies installed successfully.");
 
@@ -60,10 +63,7 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
         "Removing formatting virtual environment: {}",
         venv_path.display().to_string().magenta()
     );
-    fs::remove_dir_all(&venv_path).map_err(|e| {
-        log_error!("Failed to remove virtual environment: {}", e);
-        SdkGeneratorError::IoError(e)
-    })?;
+    fs::remove_dir_all(&venv_path)?;
     log_success!("Formatting virtual environment removed.");
 
     log_success!(
@@ -95,8 +95,28 @@ fn run_formatter(output_dir: &Path, venv_python_path: &Path, script_path: &Path)
     );
     let mut run_script_cmd = Command::new(venv_python_path);
     run_script_cmd.arg(script_path);
-    run_script_cmd.arg(output_dir); // Pass the directory to format as an argument
-    run_command(&mut run_script_cmd)?;
+    run_script_cmd.arg(output_dir);
+
+    // Execute the command and capture its output
+    let output = run_command(&mut run_script_cmd)?;
+
+    // Log stdout even on success if it's not empty
+    let stdout = String::from_utf8_lossy(&output.stdout);
+    if !stdout.trim().is_empty() {
+        println!();
+        stdout
+            .split("\n")
+            .collect::<Vec<&str>>()
+            .into_iter()
+            .for_each(|line| {
+                let parts = line.split(" ").collect::<Vec<&str>>();
+                if parts.len() == 2 {
+                    log_info!("{} {}", parts[0], parts[1].magenta());
+                }
+            });
+        println!();
+    }
+
     log_success!("Formatter script executed successfully.");
     Ok(())
 }

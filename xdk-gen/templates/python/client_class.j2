@@ -18,17 +18,31 @@ class {{ tag }}Client:
     
     {% for operation in operations %}
     def {{ operation.operation_id | snake_case }}(self, 
-        {% for param in operation.parameters | sort(attribute='required', reverse=True) %}
+        {# Required parameters #}
+        {% for param in operation.parameters | selectattr('required') %}
         {% if param.name %}
-        {{ param.name | snake_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | python_type }}{% else %}Any{% endif %}{% if not param.required %} = None{% endif %},
+        {{ param.name | snake_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | python_type }}{% else %}Any{% endif %},
         {% endif %}
         {% endfor %}
-        {% if operation.request_body %}
+        {# Required body #}
+        {% if operation.request_body and operation.request_body.required %}
         {% set schema = operation.request_body.schema %}
         body: {% if schema.type == "object" %}Dict[str, Any]
               {% elif schema.type is string %}{{ schema.type | python_type }}
-              {% else %}Any{% endif %}
-              {% if not operation.request_body.required %} = None{% endif %},
+              {% else %}Any{% endif %},
+        {% endif %}
+        {# Optional parameters #}
+        {% for param in operation.parameters | rejectattr('required') %}
+        {% if param.name %}
+        {{ param.name | snake_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | python_type }}{% else %}Any{% endif %} = None,
+        {% endif %}
+        {% endfor %}
+        {# Optional body #}
+        {% if operation.request_body and not operation.request_body.required %}
+        {% set schema = operation.request_body.schema %}
+        body: {% if schema.type == "object" %}Dict[str, Any]
+              {% elif schema.type is string %}{{ schema.type | python_type }}
+              {% else %}Any{% endif %} = None,
         {% endif %}
     ) -> Dict[str, Any]:
         """
