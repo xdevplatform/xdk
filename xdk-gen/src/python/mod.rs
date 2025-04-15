@@ -228,12 +228,17 @@ mod tests {
     fn test_operation_id_maps_to_function_name() {
         let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
-        let openapi = parse_json_file("../tests/openapi/operation_id_maps_to_function_name.json").unwrap();
+        let openapi =
+            parse_json_file("../tests/openapi/operation_id_maps_to_function_name.json").unwrap();
 
         let generator = PythonSdkGenerator::new();
         let result = generator.generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
-        assert_file_contains_text!(output_dir, "xdk/communities/client.py", "search_communities");
+        assert_file_contains_text!(
+            output_dir,
+            "xdk/communities/client.py",
+            "search_communities"
+        );
 
         verify_sdk_structure(&output_dir);
     }
