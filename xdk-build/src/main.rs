@@ -4,17 +4,12 @@
 // Declare modules
 mod logging;
 mod python;
-mod generator;
 mod utils;
 
 use clap::{Parser, Subcommand};
 use std::path::{Path, PathBuf};
-use xdk_gen::{Result, SdkGeneratorError}; 
+use xdk_gen::{Result, SdkGeneratorError};
 use xdk_openapi::{OpenApiContextGuard, parse_json_file, parse_yaml_file};
-
-// Import the generator trait and the specific Python generator
-use generator::LanguageGenerator;
-use python::PythonGenerator;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -42,7 +37,7 @@ fn main() -> Result<()> {
     let cli = Cli::parse();
 
     // Initialize OpenApi context once
-    let _guard = OpenApiContextGuard::new(); 
+    let _guard = OpenApiContextGuard::new();
 
     match cli.command {
         Commands::Python { spec, output } => {
@@ -51,7 +46,7 @@ fn main() -> Result<()> {
                 .extension()
                 .and_then(|ext| ext.to_str())
                 .ok_or_else(|| SdkGeneratorError::from("Invalid file extension"))?;
-            
+
             log_info!("Parsing OpenAPI spec: {}", spec.display());
 
             // Parse the OpenAPI specification based on the file extension
@@ -66,16 +61,12 @@ fn main() -> Result<()> {
                     return Err(SdkGeneratorError::from(err_msg));
                 }
             };
-            
+
             log_info!("Specification parsed successfully.");
 
-            // Create a Python generator instance
-            let python_generator = PythonGenerator::default();
-
             // Call the generate method
-            python_generator.generate(&openapi, &output)?;
-        }
-        // Handle other commands here
+            python::generate(&openapi, &output)?;
+        } // Handle other commands here
     }
 
     Ok(())

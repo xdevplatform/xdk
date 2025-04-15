@@ -1,7 +1,7 @@
+use crate::{log_error, log_info};
+use colored::*;
 use std::process::{Command, Output};
 use xdk_gen::{Result, SdkGeneratorError};
-use crate::{log_info, log_error};
-use colored::*;
 
 /// Helper function to run a command and check its status
 pub fn run_command(cmd: &mut Command) -> Result<Output> {
@@ -11,12 +11,15 @@ pub fn run_command(cmd: &mut Command) -> Result<Output> {
     let output_res = cmd.output();
 
     let output = match output_res {
-         Ok(o) => o,
-         Err(e) => {
-             let err_msg = format!("Failed to execute command '{}': {}", cmd_str, e);
-             log_error!("{}", err_msg);
-             return Err(SdkGeneratorError::from(format!("Failed to execute command '{:?}': {}", cmd, e)));
-         }
+        Ok(o) => o,
+        Err(e) => {
+            let err_msg = format!("Failed to execute command '{}': {}", cmd_str, e);
+            log_error!("{}", err_msg);
+            return Err(SdkGeneratorError::from(format!(
+                "Failed to execute command '{:?}': {}",
+                cmd, e
+            )));
+        }
     };
 
     if !output.status.success() {
@@ -38,4 +41,4 @@ pub fn run_command(cmd: &mut Command) -> Result<Output> {
         )));
     }
     Ok(output)
-} 
+}

@@ -35,4 +35,4 @@ macro_rules! log_warn {
 #[macro_export]
 macro_rules! log_error {
     ($($arg:tt)*) => { $crate::logging::error(&format!($($arg)*)) };
-} 
+}
