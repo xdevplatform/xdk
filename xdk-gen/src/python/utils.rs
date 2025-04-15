@@ -17,10 +17,7 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                     let operation_info = OperationInfo {
                         path: path.clone(),
                         method: "get".to_string(),
-                        operation_id: get_op.summary.clone().unwrap_or_else(|| {
-                            // Generate a default operation ID if none is provided
-                            format!("get_{}", path.trim_start_matches('/').replace('/', "_"))
-                        }),
+                        operation_id: get_op.operation_id.clone().unwrap_or_default(),
                         summary: get_op.summary.clone().unwrap_or_default(),
                         description: get_op.description.clone().unwrap_or_default(),
                         parameters: get_op.parameters.clone().unwrap_or_default(),
@@ -70,10 +67,7 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                     let operation_info = OperationInfo {
                         path: path.clone(),
                         method: "post".to_string(),
-                        operation_id: post_op.summary.clone().unwrap_or_else(|| {
-                            // Generate a default operation ID if none is provided
-                            format!("post_{}", path.trim_start_matches('/').replace('/', "_"))
-                        }),
+                        operation_id: post_op.operation_id.clone().unwrap_or_default(),
                         summary: post_op.summary.clone().unwrap_or_default(),
                         description: post_op.description.clone().unwrap_or_default(),
                         parameters: post_op.parameters.clone().unwrap_or_default(),
@@ -123,10 +117,7 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                     let operation_info = OperationInfo {
                         path: path.clone(),
                         method: "put".to_string(),
-                        operation_id: put_op.summary.clone().unwrap_or_else(|| {
-                            // Generate a default operation ID if none is provided
-                            format!("put_{}", path.trim_start_matches('/').replace('/', "_"))
-                        }),
+                        operation_id: put_op.operation_id.clone().unwrap_or_default(),
                         summary: put_op.summary.clone().unwrap_or_default(),
                         description: put_op.description.clone().unwrap_or_default(),
                         parameters: put_op.parameters.clone().unwrap_or_default(),
@@ -176,10 +167,7 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                     let operation_info = OperationInfo {
                         path: path.clone(),
                         method: "delete".to_string(),
-                        operation_id: delete_op.summary.clone().unwrap_or_else(|| {
-                            // Generate a default operation ID if none is provided
-                            format!("delete_{}", path.trim_start_matches('/').replace('/', "_"))
-                        }),
+                        operation_id: delete_op.operation_id.clone().unwrap_or_default(),
                         summary: delete_op.summary.clone().unwrap_or_default(),
                         description: delete_op.description.clone().unwrap_or_default(),
                         parameters: delete_op.parameters.clone().unwrap_or_default(),
@@ -229,10 +217,7 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                     let operation_info = OperationInfo {
                         path: path.clone(),
                         method: "patch".to_string(),
-                        operation_id: patch_op.summary.clone().unwrap_or_else(|| {
-                            // Generate a default operation ID if none is provided
-                            format!("patch_{}", path.trim_start_matches('/').replace('/', "_"))
-                        }),
+                        operation_id: patch_op.operation_id.clone().unwrap_or_default(),
                         summary: patch_op.summary.clone().unwrap_or_default(),
                         description: patch_op.description.clone().unwrap_or_default(),
                         parameters: patch_op.parameters.clone().unwrap_or_default(),

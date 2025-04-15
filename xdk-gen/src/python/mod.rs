@@ -12,26 +12,16 @@ mod tests {
     use openapi::{OpenApiContextGuard, parse_json_file};
     use std::fs;
     use std::path::Path;
+    use tempfile::Builder;
 
     // Helper function to create output directory for a test
-    fn create_output_dir(test_name: &str) -> std::path::PathBuf {
-        let output_base = Path::new("test_output");
-        let output_dir = output_base.join(test_name);
+    fn create_output_dir() -> std::path::PathBuf {
+        let temp_dir = Builder::new()
+            .prefix("rust_test")
+            .tempdir()
+            .expect("Failed to create temporary directory");
 
-        // Create the directory if it doesn't exist
-        if !output_base.exists() {
-            fs::create_dir_all(output_base).unwrap();
-        }
-
-        // Remove the test directory if it exists
-        if output_dir.exists() {
-            fs::remove_dir_all(&output_dir).unwrap();
-        }
-
-        // Create the test directory
-        fs::create_dir_all(&output_dir).unwrap();
-
-        output_dir
+        temp_dir.into_path()
     }
 
     // Helper function to verify basic SDK structure
@@ -62,9 +52,26 @@ mod tests {
         );
     }
 
+    macro_rules! assert_file_contains_text {
+        ($output_dir:expr, $rel_path:expr, $text:expr) => {
+            // Construct the full path using the passed output_dir
+            let full_path = $output_dir.join($rel_path);
+            let contents = fs::read_to_string(&full_path).unwrap_or_else(|err| {
+                panic!("Failed to read file {:?}: {}", full_path, err);
+            });
+            assert!(
+                contents.contains($text),
+                "File {:?} should contain text: {}\nActual contents:\n---\n{}\n---",
+                full_path,
+                $text,
+                contents
+            );
+        };
+    }
+
     #[test]
     fn test_simple_openapi() {
-        let output_dir = create_output_dir("simple");
+        let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/simple.json").unwrap();
 
@@ -89,7 +96,7 @@ mod tests {
 
     #[test]
     fn test_components_reference() {
-        let output_dir = create_output_dir("components_reference");
+        let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/components_reference.json").unwrap();
 
@@ -102,7 +109,7 @@ mod tests {
 
     #[test]
     fn test_nested_refs() {
-        let output_dir = create_output_dir("nested_refs");
+        let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/nested_refs.json").unwrap();
 
@@ -115,7 +122,7 @@ mod tests {
 
     #[test]
     fn test_request_response_refs() {
-        let output_dir = create_output_dir("request_response_refs");
+        let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/request_response_refs.json").unwrap();
 
@@ -128,7 +135,7 @@ mod tests {
 
     #[test]
     fn test_parameters_with_ref() {
-        let output_dir = create_output_dir("parameters_with_ref");
+        let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/parameters_with_ref.json").unwrap();
 
@@ -141,7 +148,7 @@ mod tests {
 
     #[test]
     fn test_schema_with_components_ref() {
-        let output_dir = create_output_dir("schema_with_components_ref");
+        let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/schema_with_components_ref.json").unwrap();
 
@@ -154,7 +161,7 @@ mod tests {
 
     #[test]
     fn test_single_schema_no_ref() {
-        let output_dir = create_output_dir("single_schema_no_ref");
+        let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/single_schema_no_ref.json").unwrap();
 
@@ -167,7 +174,7 @@ mod tests {
 
     #[test]
     fn test_multiple_paths_with_refs() {
-        let output_dir = create_output_dir("multiple_paths_with_refs");
+        let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/multiple_paths_with_refs.json").unwrap();
 
@@ -180,7 +187,7 @@ mod tests {
 
     #[test]
     fn test_all_of() {
-        let output_dir = create_output_dir("all_of");
+        let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/all_of.json").unwrap();
 
@@ -193,7 +200,7 @@ mod tests {
 
     #[test]
     fn test_single_path() {
-        let output_dir = create_output_dir("single_path");
+        let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/single_path.json").unwrap();
 
@@ -206,13 +213,27 @@ mod tests {
 
     #[test]
     fn test_info() {
-        let output_dir = create_output_dir("info");
+        let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/info.json").unwrap();
 
         let generator = PythonSdkGenerator::new();
         let result = generator.generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+
+        verify_sdk_structure(&output_dir);
+    }
+
+    #[test]
+    fn test_operation_id_maps_to_function_name() {
+        let output_dir = create_output_dir();
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/operation_id_maps_to_function_name.json").unwrap();
+
+        let generator = PythonSdkGenerator::new();
+        let result = generator.generate(&openapi, &output_dir);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+        assert_file_contains_text!(output_dir, "xdk/communities/client.py", "search_communities");
 
         verify_sdk_structure(&output_dir);
     }

@@ -101,6 +101,9 @@ pub struct Operation {
     pub summary: Option<String>,
     /// A detailed description of the operation
     pub description: Option<String>,
+    /// The operation ID
+    #[serde(rename = "operationId")]
+    pub operation_id: Option<String>,
     /// Tags for grouping operations
     pub tags: Option<Vec<String>>,
     /// Parameters for the operation

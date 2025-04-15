@@ -26,6 +26,7 @@ fn main() -> Result<()> {
 
             let operation = openapi::Operation {
                 summary: Some("Get tweets".to_string()),
+                operation_id: Some("getTweets".to_string()),
                 description: Some("Returns tweets".to_string()),
                 tags: Some(vec!["Tweets".to_string()]),
                 parameters: Some(vec![]),
