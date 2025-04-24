@@ -1,3 +1,12 @@
+/// Python SDK Generator Module
+///
+/// This module implements the SDK generator for Python. It serves as a reference
+/// implementation for creating generators for other languages.
+///
+/// # Structure
+/// - `generator.rs`: Contains the PythonGenerator implementation using the define_generator! macro
+/// - `models.rs`: Contains context structs used for rendering templates
+/// - Tests in this file demonstrate how to use the generator with various OpenAPI specs
 mod generator;
 mod models;
 

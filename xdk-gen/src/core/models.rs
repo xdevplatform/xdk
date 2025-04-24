@@ -1,22 +1,41 @@
+/// Common data models for SDK generation
+///
+/// This file contains the core data models that are used across different language generators.
+/// They represent common concepts like operations, parameters, etc. from the OpenAPI spec.
+///
+/// When creating a language generator, you should use these models for the common OpenAPI
+/// concepts, and create language-specific models for template rendering.
 use openapi::{Parameter, RefOrValue, Schema};
 use serde::Serialize;
 use std::collections::HashMap;
 
+/// Information about an operation in the OpenAPI spec
 #[derive(Debug, Serialize, Clone)]
 pub struct OperationInfo {
-    pub path: String,
-    pub method: String,
+    /// Operation ID from the OpenAPI spec
     pub operation_id: String,
-    pub summary: String,
+    /// HTTP method (GET, POST, etc.)
+    pub method: String,
+    /// Path for the operation
+    pub path: String,
+    /// Description of the operation
     pub description: String,
+    /// Summary of the operation
+    pub summary: String,
+    /// Parameters for the operation
     pub parameters: Vec<RefOrValue<Parameter>>,
+    /// Request body information
     pub request_body: Option<RequestBody>,
+    /// Response information
     pub responses: HashMap<String, String>,
 }
 
 #[derive(Debug, Serialize, Clone)]
 pub struct RequestBody {
+    /// Content type of the request body
     pub content_type: String,
+    /// Schema information for the request body
     pub schema: RefOrValue<Schema>,
+    /// Whether the request body is required
     pub required: bool,
 }
