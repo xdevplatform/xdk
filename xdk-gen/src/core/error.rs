@@ -44,6 +44,3 @@ impl From<&str> for SdkGeneratorError {
         SdkGeneratorError::Other(err.to_string())
     }
 }
-
-/// Result type for SDK generator operations
-pub type Result<T> = std::result::Result<T, SdkGeneratorError>;

@@ -1,6 +1,8 @@
 use super::models::{OperationInfo, RequestBody};
-use crate::error::Result;
+use crate::core::Result;
+use minijinja::Environment;
 use openapi::OpenApi;
+use serde::Serialize;
 use std::collections::HashMap;
 
 /// Extract operations by tag from the OpenAPI specification
@@ -260,4 +262,8 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
     }
 
     Ok(operations_by_tag)
+}
+
+pub fn render_template<C: Serialize>(env: &Environment, template: &str, context: &C) -> Result<String> {
+    Ok(env.get_template(template)?.render(context)?)
 }

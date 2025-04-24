@@ -1,15 +1,14 @@
 mod generator;
 mod models;
-mod render;
-mod utils;
 
-pub use generator::PythonSdkGenerator;
+pub use generator::PythonGenerator;
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::SdkGenerator;
-    use openapi::{OpenApiContextGuard, parse_json_file};
+    use crate::core::generator::SdkGenerator;
+    use crate::core::Result;
+    use crate::python::generator::PythonGenerator;
+    use openapi::{parse_json_file, OpenApi, OpenApiContextGuard};
     use std::fs;
     use std::path::Path;
     use tempfile::Builder;
@@ -69,14 +68,17 @@ mod tests {
         };
     }
 
+    fn setup_generator_and_generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
+        let generator = SdkGenerator::new(PythonGenerator);
+        generator.generate(openapi, output_dir)
+    }
+
     #[test]
     fn test_simple_openapi() {
         let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/simple.json").unwrap();
-
-        let generator = PythonSdkGenerator::new();
-        let result = generator.generate(&openapi, &output_dir);
+        let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
 
         verify_sdk_structure(&output_dir);
@@ -99,9 +101,7 @@ mod tests {
         let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/components_reference.json").unwrap();
-
-        let generator = PythonSdkGenerator::new();
-        let result = generator.generate(&openapi, &output_dir);
+        let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
 
         verify_sdk_structure(&output_dir);
@@ -112,9 +112,7 @@ mod tests {
         let output_dir = create_output_dir();
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/nested_refs.json").unwrap();
-
-        let generator = PythonSdkGenerator::new();
-        let result = generator.generate(&openapi, &output_dir);
+        let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
 
         verify_sdk_structure(&output_dir);
@@ -126,8 +124,7 @@ mod tests {
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/request_response_refs.json").unwrap();
 
-        let generator = PythonSdkGenerator::new();
-        let result = generator.generate(&openapi, &output_dir);
+        let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
 
         verify_sdk_structure(&output_dir);
@@ -139,8 +136,7 @@ mod tests {
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/parameters_with_ref.json").unwrap();
 
-        let generator = PythonSdkGenerator::new();
-        let result = generator.generate(&openapi, &output_dir);
+        let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
 
         verify_sdk_structure(&output_dir);
@@ -152,8 +148,7 @@ mod tests {
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/schema_with_components_ref.json").unwrap();
 
-        let generator = PythonSdkGenerator::new();
-        let result = generator.generate(&openapi, &output_dir);
+        let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
 
         verify_sdk_structure(&output_dir);
@@ -165,8 +160,7 @@ mod tests {
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/single_schema_no_ref.json").unwrap();
 
-        let generator = PythonSdkGenerator::new();
-        let result = generator.generate(&openapi, &output_dir);
+        let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
 
         verify_sdk_structure(&output_dir);
@@ -178,8 +172,7 @@ mod tests {
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/multiple_paths_with_refs.json").unwrap();
 
-        let generator = PythonSdkGenerator::new();
-        let result = generator.generate(&openapi, &output_dir);
+        let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
 
         verify_sdk_structure(&output_dir);
@@ -191,8 +184,7 @@ mod tests {
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/all_of.json").unwrap();
 
-        let generator = PythonSdkGenerator::new();
-        let result = generator.generate(&openapi, &output_dir);
+        let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
 
         verify_sdk_structure(&output_dir);
@@ -204,8 +196,7 @@ mod tests {
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/single_path.json").unwrap();
 
-        let generator = PythonSdkGenerator::new();
-        let result = generator.generate(&openapi, &output_dir);
+        let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
 
         verify_sdk_structure(&output_dir);
@@ -217,8 +208,7 @@ mod tests {
         let _guard = OpenApiContextGuard::new();
         let openapi = parse_json_file("../tests/openapi/info.json").unwrap();
 
-        let generator = PythonSdkGenerator::new();
-        let result = generator.generate(&openapi, &output_dir);
+        let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
 
         verify_sdk_structure(&output_dir);
@@ -231,8 +221,7 @@ mod tests {
         let openapi =
             parse_json_file("../tests/openapi/operation_id_maps_to_function_name.json").unwrap();
 
-        let generator = PythonSdkGenerator::new();
-        let result = generator.generate(&openapi, &output_dir);
+        let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
         assert_file_contains_text!(
             output_dir,
