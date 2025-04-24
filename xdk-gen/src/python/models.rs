@@ -1,5 +1,5 @@
-use serde::Serialize;
 use crate::core::models::OperationInfo;
+use serde::Serialize;
 
 #[derive(Debug, Serialize)]
 pub struct ClientClassContext {

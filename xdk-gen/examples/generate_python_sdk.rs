@@ -1,7 +1,7 @@
 use openapi::{OpenApi, RefOrValue};
 use std::fs;
 use std::path::Path;
-use xdk_gen::{Result, SdkGenerator, PythonGenerator};
+use xdk_gen::{PythonGenerator, Result, SdkGenerator};
 
 fn main() -> Result<()> {
     // Create a minimal OpenAPI specification for testing

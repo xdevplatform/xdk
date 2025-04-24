@@ -5,7 +5,7 @@ use colored::*;
 use std::fs;
 use std::path::Path;
 use std::process::Command;
-use xdk_gen::{SdkGenerator, PythonGenerator};
+use xdk_gen::{PythonGenerator, SdkGenerator};
 use xdk_openapi::OpenApi; // Add fs for directory removal
 
 /// Generates the Python SDK.

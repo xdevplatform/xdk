@@ -4,15 +4,20 @@ use std::collections::HashMap;
 use std::fs;
 use std::path::Path;
 
-use super::utils::extract_operations_by_tag;
 use super::models::OperationInfo;
+use super::utils::extract_operations_by_tag;
 use minijinja::Environment;
 
 pub trait LanguageGenerator {
     fn name(&self) -> &str;
     fn templates(&self) -> Vec<(String, String)>;
     fn add_filters(&self, env: &mut Environment);
-    fn generate(&self, env: &Environment, operations: &HashMap<String, Vec<OperationInfo>>, output_dir: &Path) -> Result<()>;
+    fn generate(
+        &self,
+        env: &Environment,
+        operations: &HashMap<String, Vec<OperationInfo>>,
+        output_dir: &Path,
+    ) -> Result<()>;
 }
 
 /// SDK generator
@@ -22,15 +27,13 @@ pub struct SdkGenerator<T: LanguageGenerator> {
 
 impl<T: LanguageGenerator> SdkGenerator<T> {
     pub fn new(inner: T) -> Self {
-        Self { 
-            inner
-        }
+        Self { inner }
     }
 
     pub fn generate(&self, openapi: &OpenApi, output_dir: &Path) -> Result<()> {
         // Get the language generator
         let inner = &self.inner;
-            
+
         // Create the output directory if it doesn't exist
         fs::create_dir_all(output_dir)?;
 
@@ -52,7 +55,6 @@ impl<T: LanguageGenerator> SdkGenerator<T> {
         // Generate using the language-specific generator function
         inner.generate(&env, &operations_by_tag, output_dir)
     }
-
 }
 
 #[macro_export]

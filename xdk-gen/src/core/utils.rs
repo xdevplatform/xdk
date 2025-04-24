@@ -264,6 +264,10 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
     Ok(operations_by_tag)
 }
 
-pub fn render_template<C: Serialize>(env: &Environment, template: &str, context: &C) -> Result<String> {
+pub fn render_template<C: Serialize>(
+    env: &Environment,
+    template: &str,
+    context: &C,
+) -> Result<String> {
     Ok(env.get_template(template)?.render(context)?)
 }

@@ -2,9 +2,9 @@ use minijinja::Environment;
 use std::collections::HashMap;
 use std::path::Path;
 
-use super::models::{ClientModuleContext, ClientClassContext, MainClientContext};
-use crate::core::generator::LanguageGenerator;
+use super::models::{ClientClassContext, ClientModuleContext, MainClientContext};
 use crate::core::Result;
+use crate::core::generator::LanguageGenerator;
 use crate::core::models::OperationInfo;
 use crate::define_generator;
 

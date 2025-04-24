@@ -5,10 +5,10 @@ pub use generator::PythonGenerator;
 
 #[cfg(test)]
 mod tests {
-    use crate::core::generator::SdkGenerator;
     use crate::core::Result;
+    use crate::core::generator::SdkGenerator;
     use crate::python::generator::PythonGenerator;
-    use openapi::{parse_json_file, OpenApi, OpenApiContextGuard};
+    use openapi::{OpenApi, OpenApiContextGuard, parse_json_file};
     use std::fs;
     use std::path::Path;
     use tempfile::Builder;
