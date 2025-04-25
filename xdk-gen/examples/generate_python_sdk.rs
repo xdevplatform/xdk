@@ -1,7 +1,7 @@
-use openapi::{OpenApi, RefOrValue};
+use openapi::OpenApi;
 use std::fs;
 use std::path::Path;
-use xdk_gen::{PythonGenerator, Result, SdkGenerator};
+use xdk_gen::{Python, core::Result, core::generator::SdkGenerator};
 
 fn main() -> Result<()> {
     // Create a minimal OpenAPI specification for testing
@@ -26,7 +26,7 @@ fn main() -> Result<()> {
 
             let operation = openapi::Operation {
                 summary: Some("Get tweets".to_string()),
-                operation_id: Some("getTweets".to_string()),
+                operation_id: "getTweets".to_string(),
                 description: Some("Returns tweets".to_string()),
                 tags: Some(vec!["Tweets".to_string()]),
                 parameters: Some(vec![]),
@@ -34,10 +34,10 @@ fn main() -> Result<()> {
                 responses: {
                     let mut responses = std::collections::HashMap::new();
                     let response = openapi::Response {
-                        description: "Successful response".to_string(),
+                        description: Some("Successful response".to_string()),
                         content: None,
                     };
-                    responses.insert("200".to_string(), RefOrValue::Value(response));
+                    responses.insert("200".to_string(), response);
                     responses
                 },
             };
@@ -53,7 +53,7 @@ fn main() -> Result<()> {
     // Generate the Python SDK
     let output_dir = Path::new("output/python-sdk");
     fs::create_dir_all(output_dir)?;
-    let generator = SdkGenerator::new(PythonGenerator);
+    let generator = SdkGenerator::new(Python);
     generator.generate(&openapi, output_dir)?;
 
     println!(

@@ -8,6 +8,7 @@
         "/test": {
             "get": {
                 "summary": "Test endpoint",
+                "operationId": "test",
                 "requestBody": {
                     "content": {
                         "application/json": {

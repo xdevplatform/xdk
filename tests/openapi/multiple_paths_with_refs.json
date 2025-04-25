@@ -17,6 +17,7 @@
     "/2/communities/search": {
       "get": {
         "summary": "Search Communities",
+        "operationId": "searchCommunities",
         "description": "Returns communities matching a search query.",
         "tags": ["Communities"],
         "parameters": [
@@ -67,6 +68,7 @@
     "/2/dm_conversations/with/{participant_id}/messages": {
       "post": {
         "summary": "Send a Direct Message",
+        "operationId": "sendDirectMessage",
         "description": "Sends a new message to a user in a DM conversation.",
         "tags": ["Direct Messages"],
         "parameters": [
@@ -116,6 +118,7 @@
     "/2/tweets": {
       "post": {
         "summary": "Create a Tweet",
+        "operationId": "createTweet",
         "description": "Posts a new tweet for the authenticated user.",
         "tags": ["Tweets"],
         "requestBody": {

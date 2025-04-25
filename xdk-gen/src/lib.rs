@@ -15,10 +15,7 @@
 ///   - `models.rs`: Context models for templates
 ///
 /// Everything else (parsing, utilities, error handling) is abstracted in the `core` module.
-mod core;
+pub mod core;
 mod python;
 
-pub use core::Result;
-pub use core::SdkGeneratorError;
-pub use core::generator::SdkGenerator;
-pub use python::PythonGenerator;
+pub use python::Python;

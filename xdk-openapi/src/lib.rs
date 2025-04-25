@@ -26,6 +26,7 @@
 //!   /test:
 //!     get:
 //!       summary: Test endpoint
+//!       operationId: getTest
 //!       responses:
 //!         '200':
 //!           description: Successful response
@@ -82,11 +83,9 @@ mod tests {
         assert!(post_op.request_body.is_some());
 
         let request_body = post_op.request_body.as_ref().unwrap();
-        let body = request_body.try_resolve().unwrap();
-        assert!(body.content.contains_key("application/json"));
-        let content = body.content.get("application/json").unwrap();
+        let body = request_body.content.get("application/json").unwrap();
 
-        let schema = content.schema.try_resolve().unwrap();
+        let schema = body.schema.try_resolve().unwrap();
         assert_eq!(schema.r#type.as_ref().unwrap(), "object");
         assert!(schema.properties.as_ref().unwrap().contains_key("name"));
         assert!(schema.properties.as_ref().unwrap().contains_key("age"));
@@ -115,10 +114,7 @@ mod tests {
         assert_eq!(get_op.summary, Some("Test endpoint".to_string()));
         assert!(get_op.responses.contains_key("200"));
         let response = get_op.responses.get("200").unwrap();
-        assert_eq!(
-            response.try_resolve().unwrap().description,
-            "Successful response"
-        );
+        assert_eq!(response.description, Some("Successful response".to_string()));
     }
 
     #[test]

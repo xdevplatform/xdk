@@ -91,6 +91,11 @@ pub struct PathItem {
     pub patch: Option<Operation>,
 }
 
+/// Represents a status code
+///
+/// A status code is a string that represents the status code of a response (e.g. "200", "500")
+pub type StatusCode = String;
+
 /// Represents an API operation
 ///
 /// An operation represents a specific HTTP method that can be performed on a path.
@@ -103,17 +108,22 @@ pub struct Operation {
     pub description: Option<String>,
     /// The operation ID
     #[serde(rename = "operationId")]
-    pub operation_id: Option<String>,
+    pub operation_id: String,
     /// Tags for grouping operations
     pub tags: Option<Vec<String>>,
     /// Parameters for the operation
     pub parameters: Option<Vec<RefOrValue<Parameter>>>,
     /// Request body for the operation
     #[serde(rename = "requestBody")]
-    pub request_body: Option<RefOrValue<RequestBody>>,
+    pub request_body: Option<RequestBody>,
     /// Responses for the operation
-    pub responses: HashMap<String, RefOrValue<Response>>,
+    pub responses: HashMap<StatusCode, Response>,
 }
+
+/// Represents a content type
+///
+/// A content type is a string that represents the type of content in the request or response (e.g. "application/json")
+type ContentType = String;
 
 /// Represents a request body
 ///
@@ -121,7 +131,7 @@ pub struct Operation {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct RequestBody {
     /// The content of the request body, keyed by content type
-    pub content: HashMap<String, Content>,
+    pub content: HashMap<ContentType, Content>,
     /// Whether the request body is required
     pub required: Option<bool>,
 }
@@ -132,9 +142,9 @@ pub struct RequestBody {
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Response {
     /// A description of the response
-    pub description: String,
-    /// The content of the response, keyed by media type
-    pub content: Option<HashMap<String, Content>>,
+    pub description: Option<String>,
+    /// The content of the response, keyed by content type
+    pub content: Option<HashMap<ContentType, Content>>,
 }
 
 /// Represents a content type

@@ -5,10 +5,9 @@
 ///
 /// When creating a language generator, you should use these models for the common OpenAPI
 /// concepts, and create language-specific models for template rendering.
-use openapi::{Parameter, RefOrValue, Schema};
+use openapi::{Parameter, RefOrValue, RequestBody, Response, StatusCode};
 use serde::Serialize;
 use std::collections::HashMap;
-
 /// Information about an operation in the OpenAPI spec
 #[derive(Debug, Serialize, Clone)]
 pub struct OperationInfo {
@@ -19,23 +18,13 @@ pub struct OperationInfo {
     /// Path for the operation
     pub path: String,
     /// Description of the operation
-    pub description: String,
+    pub description: Option<String>,
     /// Summary of the operation
-    pub summary: String,
+    pub summary: Option<String>,
     /// Parameters for the operation
-    pub parameters: Vec<RefOrValue<Parameter>>,
+    pub parameters: Option<Vec<RefOrValue<Parameter>>>,
     /// Request body information
     pub request_body: Option<RequestBody>,
     /// Response information
-    pub responses: HashMap<String, String>,
-}
-
-#[derive(Debug, Serialize, Clone)]
-pub struct RequestBody {
-    /// Content type of the request body
-    pub content_type: String,
-    /// Schema information for the request body
-    pub schema: RefOrValue<Schema>,
-    /// Whether the request body is required
-    pub required: bool,
+    pub responses: HashMap<StatusCode, Response>,
 }

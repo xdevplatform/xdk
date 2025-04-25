@@ -11,7 +11,7 @@ use crate::error::{BuildError, Result};
 
 use clap::{Parser, Subcommand};
 use std::path::{Path, PathBuf};
-use xdk_gen::SdkGeneratorError;
+use xdk_gen::core::SdkGeneratorError;
 use xdk_openapi::{OpenApiContextGuard, parse_json_file, parse_yaml_file};
 
 #[derive(Parser)]

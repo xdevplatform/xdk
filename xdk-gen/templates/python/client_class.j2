@@ -4,7 +4,7 @@
 This module provides a client for interacting with the {{ tag }} endpoints of the X API.
 """
 
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any, Union, TypedDict
 import requests
 import requests_oauthlib
 from ..client import Client
@@ -26,10 +26,7 @@ class {{ tag }}Client:
         {% endfor %}
         {# Required body #}
         {% if operation.request_body and operation.request_body.required %}
-        {% set schema = operation.request_body.schema %}
-        body: {% if schema.type == "object" %}Dict[str, Any]
-              {% elif schema.type is string %}{{ schema.type | python_type }}
-              {% else %}Any{% endif %},
+        body: {{ operation.operation_id | snake_case }}_request,
         {% endif %}
         {# Optional parameters #}
         {% for param in operation.parameters | rejectattr('required') %}
@@ -39,14 +36,11 @@ class {{ tag }}Client:
         {% endfor %}
         {# Optional body #}
         {% if operation.request_body and not operation.request_body.required %}
-        {% set schema = operation.request_body.schema %}
-        body: {% if schema.type == "object" %}Dict[str, Any]
-              {% elif schema.type is string %}{{ schema.type | python_type }}
-              {% else %}Any{% endif %} = None,
+        body: {{ operation.operation_id | snake_case }}_request = None,
         {% endif %}
-    ) -> Dict[str, Any]:
+    ) -> {% if operation.responses and "200" in operation.responses %}{{ operation.operation_id | snake_case }}_response{% else %}Dict[str, Any]{% endif %}:
         """
-        {{ operation.summary }}
+        {{ operation.summary | default("") }}
         
         {% if operation.description %}
         {{ operation.description }}
@@ -59,12 +53,21 @@ class {{ tag }}Client:
         {% endif %}
         {% endfor %}
         {% if operation.request_body %}
-        {% set schema = operation.request_body.schema %}
-            body: {% if schema.description %}{{ schema.description }}{% else %}Request body{% endif %}
+        {% if operation.request_body.content %}
+        {% set content_type = "application/json" %}
+        {% if operation.request_body.content[content_type] %}
+        {% set schema = operation.request_body.content[content_type].schema %}
+            body: {% if schema and schema.description %}{{ schema.description }}{% else %}Request body{% endif %}
+        {% else %}
+            body: Request body
+        {% endif %}
+        {% else %}
+            body: Request body
+        {% endif %}
         {% endif %}
         
         Returns:
-            Dict[str, Any]: Response data
+            {% if operation.responses and "200" in operation.responses %}{{ operation.operation_id | snake_case }}_response{% else %}Dict[str, Any]{% endif %}: Response data
         """
         url = self.client.base_url + "{{ operation.path }}"
         
@@ -95,8 +98,9 @@ class {{ tag }}Client:
         {% endif %}
         {% endif %}
         {% endfor %}
-        {% if operation.request_body %}
-        headers["Content-Type"] = "{{ operation.request_body.content_type }}"
+        {% if operation.request_body and operation.request_body.content %}
+        {% set content_type = "application/json" %}
+        headers["Content-Type"] = "{{ content_type }}"
         {% endif %}
         
         # Make the request
@@ -114,4 +118,4 @@ class {{ tag }}Client:
         
         # Return the response data
         return response.json()
-    {% endfor %} 
+    {% endfor %}

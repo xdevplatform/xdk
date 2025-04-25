@@ -7,15 +7,8 @@
 /// 1. Define language-specific filters (e.g., type conversion, naming conventions)
 /// 2. Use the define_generator! macro to create the generator struct
 /// 3. Implement the generate method to render templates and write files
-use minijinja::Environment;
-use std::collections::HashMap;
-use std::path::Path;
-
 use super::models::{ClientClassContext, ClientModuleContext, MainClientContext};
-use crate::core::Result;
-use crate::core::generator::LanguageGenerator;
-use crate::core::models::OperationInfo;
-use crate::define_generator;
+use crate::language;
 
 /// MiniJinja filter for converting a string to snake_case
 ///
@@ -58,8 +51,8 @@ fn python_type(value: &str) -> String {
     python_type.to_string()
 }
 
-define_generator! {
-    PythonGenerator {
+language! {
+    Python {
         name: "python",
         templates: [
             ("python/client_module.j2", include_str!("../../templates/python/client_module.j2")),

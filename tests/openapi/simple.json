@@ -8,6 +8,7 @@
     "/2/tweets": {
       "get": {
         "summary": "Get tweets",
+        "operationId": "getTweets",
         "description": "Returns tweets",
         "tags": [
           "Tweets"

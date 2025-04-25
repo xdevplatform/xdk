@@ -1,4 +1,3 @@
-use crate::core::Result;
 use openapi::OpenApi;
 use std::collections::HashMap;
 use std::fs;
@@ -33,7 +32,7 @@ pub trait LanguageGenerator {
         env: &Environment,
         operations: &HashMap<String, Vec<OperationInfo>>,
         output_dir: &Path,
-    ) -> Result<()>;
+    ) -> crate::core::Result<()>;
 }
 
 /// SDK generator that orchestrates the generation process.
@@ -55,7 +54,7 @@ impl<T: LanguageGenerator> SdkGenerator<T> {
     /// # Parameters
     /// * `openapi` - The parsed OpenAPI specification
     /// * `output_dir` - The directory where the generated code will be written
-    pub fn generate(&self, openapi: &OpenApi, output_dir: &Path) -> Result<()> {
+    pub fn generate(&self, openapi: &OpenApi, output_dir: &Path) -> crate::core::Result<()> {
         let inner = &self.inner;
         fs::create_dir_all(output_dir)?;
         let mut env = Environment::new();
@@ -77,15 +76,24 @@ impl<T: LanguageGenerator> SdkGenerator<T> {
 ///
 /// # Example
 ///
-/// ```
-/// define_generator! {
-///     JavascriptGenerator {
-///         name: "javascript",
+/// ```no_run
+/// use xdk_gen::language;
+/// 
+/// fn camel_case(value: &str) -> String {
+///     unimplemented!("Implements camel_case filter for Python")
+/// }
+/// 
+/// fn js_type(value: &str) -> String {
+///     unimplemented!("Implements js_type filter for Python")
+/// }
+/// 
+/// language! {
+///     Python {
+///         name: "python",
 ///         templates: [
-///             ("javascript/client.j2", include_str!("../../templates/javascript/client.j2")),
-///             // Add more templates here
+///             ("python/client.j2", include_str!("../../templates/python/client.j2"))
 ///         ],
-///         filters: [camel_case, js_type],  // Custom filters defined elsewhere
+///         filters: [camel_case, js_type],
 ///         generate: |env, operations, output_dir| {
 ///             // Implementation of the generate method
 ///             // Use your language-specific code generation logic here
@@ -97,7 +105,7 @@ impl<T: LanguageGenerator> SdkGenerator<T> {
 ///
 /// The generated struct will automatically implement the `LanguageGenerator` trait.
 #[macro_export]
-macro_rules! define_generator {
+macro_rules! language {
     (
         $struct_name:ident {
             name: $name:expr,
@@ -106,6 +114,8 @@ macro_rules! define_generator {
             generate: |$env:ident, $operations:ident, $output_dir:ident| $body:block
         }
     ) => {
+        use $crate::core::generator::LanguageGenerator;
+
         pub struct $struct_name;
 
         impl LanguageGenerator for $struct_name {
@@ -117,16 +127,16 @@ macro_rules! define_generator {
                 vec![$(($t_name.to_string(), $t_content.to_string())),*]
             }
 
-            fn add_filters(&self, env: &mut Environment) {
+            fn add_filters(&self, env: &mut minijinja::Environment) {
                 $(env.add_filter(stringify!($filter), $filter);)*
             }
 
             fn generate(
                 &self,
-                $env: &Environment,
-                $operations: &HashMap<String, Vec<OperationInfo>>,
-                $output_dir: &Path,
-            ) -> Result<()> {
+                $env: &minijinja::Environment,
+                $operations: &std::collections::HashMap<String, Vec<$crate::core::models::OperationInfo>>,
+                $output_dir: &std::path::Path,
+            ) -> $crate::core::Result<()> {
                 $body
             }
         }

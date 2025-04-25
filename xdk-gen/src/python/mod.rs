@@ -10,13 +10,13 @@
 mod generator;
 mod models;
 
-pub use generator::PythonGenerator;
+pub use generator::Python;
 
 #[cfg(test)]
 mod tests {
     use crate::core::Result;
     use crate::core::generator::SdkGenerator;
-    use crate::python::generator::PythonGenerator;
+    use crate::python::generator::Python;
     use openapi::{OpenApi, OpenApiContextGuard, parse_json_file};
     use std::fs;
     use std::path::Path;
@@ -78,7 +78,7 @@ mod tests {
     }
 
     fn setup_generator_and_generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
-        let generator = SdkGenerator::new(PythonGenerator);
+        let generator = SdkGenerator::new(Python);
         generator.generate(openapi, output_dir)
     }
 

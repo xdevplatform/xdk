@@ -34,6 +34,7 @@ use serde_yaml::Value as YamlValue;
 ///   /test:
 ///     get:
 ///       summary: Test endpoint
+///       operationId: getTest
 ///       responses:
 ///         '200':
 ///           description: Successful response
@@ -186,6 +187,7 @@ pub fn parse_yaml_file(path: &str) -> Result<OpenApi> {
 ///     "/test": {
 ///       "get": {
 ///         "summary": "Test endpoint",
+///         "operationId": "getTest",
 ///         "responses": {
 ///           "200": {
 ///             "description": "Successful response"
