@@ -97,9 +97,9 @@ impl<T: LanguageGenerator> SdkGenerator<T> {
 ///     filters: [snake_case, pascal_case],
 ///     render: [
 ///         multiple { // Render once per API tag
-///             render("module") to("python/src/{}.py")
+///             render "module" => "python/src/{}.py"
 ///         },
-///         render("__init__") to("python/src/__init__.py") // Render once for the entire SDK
+///         render "__init__" => "python/src/__init__.py" // Render once for the entire SDK
 ///     ]
 /// }
 /// ```
