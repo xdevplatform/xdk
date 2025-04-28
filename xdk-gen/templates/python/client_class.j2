@@ -4,10 +4,10 @@
 This module provides a client for interacting with the {{ tag }} endpoints of the X API.
 """
 
+from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from ..client import Client
 from .models import {% for operation in operations %}{% if operation.request_body %}{{ operation.operation_id | snake_case }}_request{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}, {{ operation.operation_id | snake_case }}_response{% endif %}{% elif operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.operation_id | snake_case }}_response{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}
 
 class {{ tag }}Client:
@@ -100,7 +100,11 @@ class {{ tag }}Client:
         {% if param.name %}
         {% if param.in == "query" %}
         if {{ param.name | snake_case }} is not None:
+            {% if param.schema and param.schema.type == "array" and not param.explode %}
+            params["{{ param.name }}"] = ",".join(str(item) for item in {{ param.name | snake_case }})
+            {% else %}
             params["{{ param.name }}"] = {{ param.name | snake_case }}
+            {% endif %}
         {% endif %}
         {% endif %}
         {% endfor %}

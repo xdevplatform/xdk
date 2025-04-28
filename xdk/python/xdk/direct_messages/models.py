@@ -9,46 +9,35 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for getDmConversationsIdDmEvents
+# Models for dmConversationIdCreate
 
 
-class get_dm_conversations_id_dm_events_response(BaseModel):
-    """Response model for getDmConversationsIdDmEvents"""
+class dm_conversation_id_create_request(BaseModel):
+    """Request model for dmConversationIdCreate"""
 
-    data: Optional[List] = None
+    conversation_type: Optional[str] = None
 
-    errors: Optional[List] = None
+    message: Any = None
 
-    includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
+    participant_ids: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
-# Models for getDmConversationsWithParticipantIdDmEvents
+class dm_conversation_id_create_response(BaseModel):
+    """Response model for dmConversationIdCreate"""
 
-
-class get_dm_conversations_with_participant_id_dm_events_response(BaseModel):
-    """Response model for getDmConversationsWithParticipantIdDmEvents"""
-
-    data: Optional[List] = None
+    data: Dict[str, Any] = Field(default_factory=dict)
 
     errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
 
     class Config:
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
 # Models for getDmEventsById
@@ -67,7 +56,6 @@ class get_dm_events_by_id_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
 # Models for dmEventDelete
@@ -84,39 +72,26 @@ class dm_event_delete_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
-# Models for dmConversationByIdEventIdCreate
+# Models for getDmConversationsIdDmEvents
 
 
-class dm_conversation_by_id_event_id_create_request(BaseModel):
-    """Request model for dmConversationByIdEventIdCreate"""
+class get_dm_conversations_id_dm_events_response(BaseModel):
+    """Response model for getDmConversationsIdDmEvents"""
 
-    class Config:
-        """Pydantic model configuration"""
+    data: Optional[List] = None
 
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
+    errors: Optional[List] = None
 
+    includes: Optional[Dict[str, Any]] = None
 
-# Models for dmConversationIdCreate
-
-
-class dm_conversation_id_create_request(BaseModel):
-    """Request model for dmConversationIdCreate"""
-
-    conversation_type: Optional[str] = None
-
-    message: Any = None
-
-    participant_ids: Optional[List] = None
+    meta: Optional[Dict[str, Any]] = None
 
     class Config:
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
 # Models for getDmEvents
@@ -137,7 +112,51 @@ class get_dm_events_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
+
+
+# Models for dmConversationByIdEventIdCreate
+
+
+class dm_conversation_by_id_event_id_create_request(BaseModel):
+    """Request model for dmConversationByIdEventIdCreate"""
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class dm_conversation_by_id_event_id_create_response(BaseModel):
+    """Response model for dmConversationByIdEventIdCreate"""
+
+    data: Dict[str, Any] = Field(default_factory=dict)
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getDmConversationsWithParticipantIdDmEvents
+
+
+class get_dm_conversations_with_participant_id_dm_events_response(BaseModel):
+    """Response model for getDmConversationsWithParticipantIdDmEvents"""
+
+    data: Optional[List] = None
+
+    errors: Optional[List] = None
+
+    includes: Optional[Dict[str, Any]] = None
+
+    meta: Optional[Dict[str, Any]] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
 
 
 # Models for dmConversationWithUserEventIdCreate
@@ -150,4 +169,16 @@ class dm_conversation_with_user_event_id_create_request(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
+
+
+class dm_conversation_with_user_event_id_create_response(BaseModel):
+    """Response model for dmConversationWithUserEventIdCreate"""
+
+    data: Dict[str, Any] = Field(default_factory=dict)
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True

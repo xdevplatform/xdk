@@ -19,7 +19,6 @@ class get_open_api_spec_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
 # Models for getRuleCount
@@ -36,4 +35,3 @@ class get_rule_count_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}

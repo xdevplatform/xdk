@@ -25,7 +25,6 @@ class likes_firehose_stream_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
 # Models for likesSample10Stream
@@ -44,4 +43,3 @@ class likes_sample10_stream_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}

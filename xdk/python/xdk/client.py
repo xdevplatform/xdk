@@ -9,35 +9,35 @@ from typing import Dict, List, Optional, Union, Any, Callable
 
 from .oauth2_auth import OAuth2PKCEAuth
 
-from .general.client import GeneralClient
-
-from .compliance.client import ComplianceClient
+from .tweets.client import TweetsClient
 
 from .usage.client import UsageClient
 
-from .tweets.client import TweetsClient
+from .communities.client import CommunitiesClient
 
-from .likes.client import LikesClient
-
-from .lists.client import ListsClient
-
-from .bookmarks.client import BookmarksClient
+from .spaces.client import SpacesClient
 
 from .mediaupload.client import MediaUploadClient
 
+from .bookmarks.client import BookmarksClient
+
 from .trends.client import TrendsClient
-
-from .communities.client import CommunitiesClient
-
-from .users.client import UsersClient
-
-from .community_notes.client import Community_NotesClient
 
 from .connection.client import ConnectionClient
 
 from .direct_messages.client import Direct_MessagesClient
 
-from .spaces.client import SpacesClient
+from .compliance.client import ComplianceClient
+
+from .lists.client import ListsClient
+
+from .general.client import GeneralClient
+
+from .likes.client import LikesClient
+
+from .community_notes.client import Community_NotesClient
+
+from .users.client import UsersClient
 
 
 class Client:
@@ -79,21 +79,21 @@ class Client:
                 scope=scope,
             )
         # Initialize clients for each tag
-        self.general = GeneralClient(self)
-        self.compliance = ComplianceClient(self)
-        self.usage = UsageClient(self)
         self.tweets = TweetsClient(self)
-        self.likes = LikesClient(self)
-        self.lists = ListsClient(self)
-        self.bookmarks = BookmarksClient(self)
-        self.mediaupload = MediaUploadClient(self)
-        self.trends = TrendsClient(self)
+        self.usage = UsageClient(self)
         self.communities = CommunitiesClient(self)
-        self.users = UsersClient(self)
-        self.community_notes = Community_NotesClient(self)
+        self.spaces = SpacesClient(self)
+        self.mediaupload = MediaUploadClient(self)
+        self.bookmarks = BookmarksClient(self)
+        self.trends = TrendsClient(self)
         self.connection = ConnectionClient(self)
         self.direct_messages = Direct_MessagesClient(self)
-        self.spaces = SpacesClient(self)
+        self.compliance = ComplianceClient(self)
+        self.lists = ListsClient(self)
+        self.general = GeneralClient(self)
+        self.likes = LikesClient(self)
+        self.community_notes = Community_NotesClient(self)
+        self.users = UsersClient(self)
 
     @property
 

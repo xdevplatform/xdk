@@ -4,10 +4,10 @@ Connection client for the X API.
 This module provides a client for interacting with the Connection endpoints of the X API.
 """
 
+from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from ..client import Client
 from .models import kill_all_app_connections_response
 
 

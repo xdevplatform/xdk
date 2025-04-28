@@ -25,4 +25,3 @@ class find_note_by_tweet_id_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}

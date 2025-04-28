@@ -23,4 +23,3 @@ class get_usage_tweets_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}

@@ -19,7 +19,58 @@ class get_tweets_label_stream_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
+
+
+# Models for getUsersComplianceStream
+
+
+class get_users_compliance_stream_response(BaseModel):
+    """Response model for getUsersComplianceStream"""
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getLikesComplianceStream
+
+
+class get_likes_compliance_stream_response(BaseModel):
+    """Response model for getLikesComplianceStream"""
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getBatchComplianceJob
+
+
+class get_batch_compliance_job_response(BaseModel):
+    """Response model for getBatchComplianceJob"""
+
+    data: Dict[str, Any] = Field(default_factory=dict)
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getTweetsComplianceStream
+
+
+class get_tweets_compliance_stream_response(BaseModel):
+    """Response model for getTweetsComplianceStream"""
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
 
 
 # Models for listBatchComplianceJobs
@@ -38,7 +89,6 @@ class list_batch_compliance_jobs_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
 # Models for createBatchComplianceJob
@@ -57,11 +107,6 @@ class create_batch_compliance_job_request(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {
-            "example": {
-                "name": "my-job",
-            }
-        }
 
 
 class create_batch_compliance_job_response(BaseModel):
@@ -75,60 +120,3 @@ class create_batch_compliance_job_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for getUsersComplianceStream
-
-
-class get_users_compliance_stream_response(BaseModel):
-    """Response model for getUsersComplianceStream"""
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for getBatchComplianceJob
-
-
-class get_batch_compliance_job_response(BaseModel):
-    """Response model for getBatchComplianceJob"""
-
-    data: Dict[str, Any] = Field(default_factory=dict)
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for getLikesComplianceStream
-
-
-class get_likes_compliance_stream_response(BaseModel):
-    """Response model for getLikesComplianceStream"""
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for getTweetsComplianceStream
-
-
-class get_tweets_compliance_stream_response(BaseModel):
-    """Response model for getTweetsComplianceStream"""
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}

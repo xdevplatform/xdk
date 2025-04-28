@@ -4,10 +4,10 @@ General client for the X API.
 This module provides a client for interacting with the General endpoints of the X API.
 """
 
+from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from ..client import Client
 from .models import get_open_api_spec_response, get_rule_count_response
 
 
@@ -69,7 +69,9 @@ class GeneralClient:
             )
         params = {}
         if rules_count_fields is not None:
-            params["rules_count.fields"] = rules_count_fields
+            params["rules_count.fields"] = ",".join(
+                str(item) for item in rules_count_fields
+            )
         headers = {}
         # Make the request
         response = self.client.session.get(

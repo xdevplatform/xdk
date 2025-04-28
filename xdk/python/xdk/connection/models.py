@@ -23,4 +23,3 @@ class kill_all_app_connections_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}

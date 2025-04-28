@@ -47,7 +47,6 @@ fn python_type(value: &str) -> String {
     };
     python_type.to_string()
 }
-
 /*
     This is the main generator for the Python SDK
     It declares the templates and filters used as well as the rendering logic

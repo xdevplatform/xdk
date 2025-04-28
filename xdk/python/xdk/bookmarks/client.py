@@ -4,16 +4,16 @@ Bookmarks client for the X API.
 This module provides a client for interacting with the Bookmarks endpoints of the X API.
 """
 
+from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from ..client import Client
 from .models import (
-    get_users_id_bookmark_folders_response,
-    users_id_bookmarks_delete_response,
     get_users_id_bookmarks_response,
     post_users_id_bookmarks_request,
     post_users_id_bookmarks_response,
+    get_users_id_bookmark_folders_response,
+    users_id_bookmarks_delete_response,
     get_users_id_bookmark_folder_posts_response,
 )
 
@@ -24,6 +24,135 @@ class BookmarksClient:
 
     def __init__(self, client: Client):
         self.client = client
+
+
+    def get_users_id_bookmarks(
+        self,
+        id: str,
+        max_results: int = None,
+        pagination_token: str = None,
+        tweet_fields: List = None,
+        expansions: List = None,
+        media_fields: List = None,
+        poll_fields: List = None,
+        user_fields: List = None,
+        place_fields: List = None,
+    ) -> get_users_id_bookmarks_response:
+        """
+        Bookmarks by User
+        Returns Post objects that have been bookmarked by the requesting User
+        Args:
+            id: The ID of the authenticated source User for whom to return results.
+        Args:
+            max_results: The maximum number of results.
+        Args:
+            pagination_token: This parameter is used to get the next 'page' of results.
+        Args:
+            tweet_fields: A comma separated list of Tweet fields to display.
+        Args:
+            expansions: A comma separated list of fields to expand.
+        Args:
+            media_fields: A comma separated list of Media fields to display.
+        Args:
+            poll_fields: A comma separated list of Poll fields to display.
+        Args:
+            user_fields: A comma separated list of User fields to display.
+        Args:
+            place_fields: A comma separated list of Place fields to display.
+        Returns:
+            get_users_id_bookmarks_response: Response data
+        """
+        url = self.client.base_url + "/2/users/{id}/bookmarks"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        if max_results is not None:
+            params["max_results"] = max_results
+        if pagination_token is not None:
+            params["pagination_token"] = pagination_token
+        if tweet_fields is not None:
+            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
+        if expansions is not None:
+            params["expansions"] = ",".join(str(item) for item in expansions)
+        if media_fields is not None:
+            params["media.fields"] = ",".join(str(item) for item in media_fields)
+        if poll_fields is not None:
+            params["poll.fields"] = ",".join(str(item) for item in poll_fields)
+        if user_fields is not None:
+            params["user.fields"] = ",".join(str(item) for item in user_fields)
+        if place_fields is not None:
+            params["place.fields"] = ",".join(str(item) for item in place_fields)
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.get(
+                url,
+                params=params,
+                headers=headers,
+            )
+        else:
+            response = self.client.session.get(
+                url,
+                params=params,
+                headers=headers,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return get_users_id_bookmarks_response.model_validate(response_data)
+
+
+    def post_users_id_bookmarks(
+        self,
+        id: str,
+        body: post_users_id_bookmarks_request,
+    ) -> post_users_id_bookmarks_response:
+        """
+        Add Post to Bookmarks
+        Adds a Post (ID in the body) to the requesting User's (in the path) bookmarks
+        Args:
+            id: The ID of the authenticated source User for whom to add bookmarks.
+            body: Request body
+        Returns:
+            post_users_id_bookmarks_response: Response data
+        """
+        url = self.client.base_url + "/2/users/{id}/bookmarks"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        url = url.replace("{id}", str(id))
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return post_users_id_bookmarks_response.model_validate(response_data)
 
 
     def get_users_id_bookmark_folders(
@@ -122,135 +251,6 @@ class BookmarksClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return users_id_bookmarks_delete_response.model_validate(response_data)
-
-
-    def get_users_id_bookmarks(
-        self,
-        id: str,
-        max_results: int = None,
-        pagination_token: str = None,
-        tweet_fields: List = None,
-        expansions: List = None,
-        media_fields: List = None,
-        poll_fields: List = None,
-        user_fields: List = None,
-        place_fields: List = None,
-    ) -> get_users_id_bookmarks_response:
-        """
-        Bookmarks by User
-        Returns Post objects that have been bookmarked by the requesting User
-        Args:
-            id: The ID of the authenticated source User for whom to return results.
-        Args:
-            max_results: The maximum number of results.
-        Args:
-            pagination_token: This parameter is used to get the next 'page' of results.
-        Args:
-            tweet_fields: A comma separated list of Tweet fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            media_fields: A comma separated list of Media fields to display.
-        Args:
-            poll_fields: A comma separated list of Poll fields to display.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            place_fields: A comma separated list of Place fields to display.
-        Returns:
-            get_users_id_bookmarks_response: Response data
-        """
-        url = self.client.base_url + "/2/users/{id}/bookmarks"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        if max_results is not None:
-            params["max_results"] = max_results
-        if pagination_token is not None:
-            params["pagination_token"] = pagination_token
-        if tweet_fields is not None:
-            params["tweet.fields"] = tweet_fields
-        if expansions is not None:
-            params["expansions"] = expansions
-        if media_fields is not None:
-            params["media.fields"] = media_fields
-        if poll_fields is not None:
-            params["poll.fields"] = poll_fields
-        if user_fields is not None:
-            params["user.fields"] = user_fields
-        if place_fields is not None:
-            params["place.fields"] = place_fields
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.get(
-                url,
-                params=params,
-                headers=headers,
-            )
-        else:
-            response = self.client.session.get(
-                url,
-                params=params,
-                headers=headers,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return get_users_id_bookmarks_response.model_validate(response_data)
-
-
-    def post_users_id_bookmarks(
-        self,
-        id: str,
-        body: post_users_id_bookmarks_request,
-    ) -> post_users_id_bookmarks_response:
-        """
-        Add Post to Bookmarks
-        Adds a Post (ID in the body) to the requesting User's (in the path) bookmarks
-        Args:
-            id: The ID of the authenticated source User for whom to add bookmarks.
-            body: Request body
-        Returns:
-            post_users_id_bookmarks_response: Response data
-        """
-        url = self.client.base_url + "/2/users/{id}/bookmarks"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        url = url.replace("{id}", str(id))
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return post_users_id_bookmarks_response.model_validate(response_data)
 
 
     def get_users_id_bookmark_folder_posts(

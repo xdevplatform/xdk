@@ -4,18 +4,18 @@ MediaUpload client for the X API.
 This module provides a client for interacting with the MediaUpload endpoints of the X API.
 """
 
+from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from ..client import Client
 from .models import (
-    upload_media_status_response,
-    upload_media_request,
-    upload_media_response,
     create_subtitles_request,
     create_subtitles_response,
     delete_subtitles_request,
     delete_subtitles_response,
+    upload_media_status_response,
+    upload_media_request,
+    upload_media_response,
     metadata_create_request,
     metadata_create_response,
 )
@@ -27,6 +27,92 @@ class MediaUploadClient:
 
     def __init__(self, client: Client):
         self.client = client
+
+
+    def create_subtitles(
+        self,
+        body: Optional[create_subtitles_request] = None,
+    ) -> create_subtitles_response:
+        """
+        Subtitle Create
+        SubtitleCreate
+            body: Request body
+        Returns:
+            create_subtitles_response: Response data
+        """
+        url = self.client.base_url + "/2/media/subtitles"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return create_subtitles_response.model_validate(response_data)
+
+
+    def delete_subtitles(
+        self,
+        body: Optional[delete_subtitles_request] = None,
+    ) -> delete_subtitles_response:
+        """
+        Subtitle Delete
+        SubtitleDelete
+            body: Request body
+        Returns:
+            delete_subtitles_response: Response data
+        """
+        url = self.client.base_url + "/2/media/subtitles"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.delete(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        else:
+            response = self.client.session.delete(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return delete_subtitles_response.model_validate(response_data)
 
 
     def upload_media_status(
@@ -122,7 +208,9 @@ class MediaUploadClient:
         if media_category is not None:
             params["media_category"] = media_category
         if additional_owners is not None:
-            params["additional_owners"] = additional_owners
+            params["additional_owners"] = ",".join(
+                str(item) for item in additional_owners
+            )
         if command is not None:
             params["command"] = command
         headers = {}
@@ -148,92 +236,6 @@ class MediaUploadClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return upload_media_response.model_validate(response_data)
-
-
-    def create_subtitles(
-        self,
-        body: Optional[create_subtitles_request] = None,
-    ) -> create_subtitles_response:
-        """
-        Subtitle Create
-        SubtitleCreate
-            body: Request body
-        Returns:
-            create_subtitles_response: Response data
-        """
-        url = self.client.base_url + "/2/media/subtitles"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return create_subtitles_response.model_validate(response_data)
-
-
-    def delete_subtitles(
-        self,
-        body: Optional[delete_subtitles_request] = None,
-    ) -> delete_subtitles_response:
-        """
-        Subtitle Delete
-        SubtitleDelete
-            body: Request body
-        Returns:
-            delete_subtitles_response: Response data
-        """
-        url = self.client.base_url + "/2/media/subtitles"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.delete(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        else:
-            response = self.client.session.delete(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return delete_subtitles_response.model_validate(response_data)
 
 
     def metadata_create(

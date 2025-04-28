@@ -4,10 +4,10 @@ Likes client for the X API.
 This module provides a client for interacting with the Likes endpoints of the X API.
 """
 
+from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from ..client import Client
 from .models import likes_firehose_stream_response, likes_sample10_stream_response
 
 
@@ -71,13 +71,15 @@ class LikesClient:
         if end_time is not None:
             params["end_time"] = end_time
         if like_with_tweet_author_fields is not None:
-            params["like_with_tweet_author.fields"] = like_with_tweet_author_fields
+            params["like_with_tweet_author.fields"] = ",".join(
+                str(item) for item in like_with_tweet_author_fields
+            )
         if expansions is not None:
-            params["expansions"] = expansions
+            params["expansions"] = ",".join(str(item) for item in expansions)
         if user_fields is not None:
-            params["user.fields"] = user_fields
+            params["user.fields"] = ",".join(str(item) for item in user_fields)
         if tweet_fields is not None:
-            params["tweet.fields"] = tweet_fields
+            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
         headers = {}
         # Make the request
         response = self.client.session.get(
@@ -145,13 +147,15 @@ class LikesClient:
         if end_time is not None:
             params["end_time"] = end_time
         if like_with_tweet_author_fields is not None:
-            params["like_with_tweet_author.fields"] = like_with_tweet_author_fields
+            params["like_with_tweet_author.fields"] = ",".join(
+                str(item) for item in like_with_tweet_author_fields
+            )
         if expansions is not None:
-            params["expansions"] = expansions
+            params["expansions"] = ",".join(str(item) for item in expansions)
         if user_fields is not None:
-            params["user.fields"] = user_fields
+            params["user.fields"] = ",".join(str(item) for item in user_fields)
         if tweet_fields is not None:
-            params["tweet.fields"] = tweet_fields
+            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
         headers = {}
         # Make the request
         response = self.client.session.get(

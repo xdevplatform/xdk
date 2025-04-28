@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="xdk",
-    version="",
+    version="0.1.0",
     description="Python SDK for the X API",
     author="XDK Team",
     author_email="info@xdk.com",

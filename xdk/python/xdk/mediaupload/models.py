@@ -9,50 +9,6 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for uploadMediaStatus
-
-
-class upload_media_status_response(BaseModel):
-    """Response model for uploadMediaStatus"""
-
-    data: Dict[str, Any] = Field(default_factory=dict)
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for uploadMedia
-
-
-class upload_media_request(BaseModel):
-    """Request model for uploadMedia"""
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-class upload_media_response(BaseModel):
-    """Response model for uploadMedia"""
-
-    data: Dict[str, Any] = Field(default_factory=dict)
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
 # Models for createSubtitles
 
 
@@ -69,12 +25,6 @@ class create_subtitles_request(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {
-            "example": {
-                "id": "1146654567674912769",
-                "media_category": "TweetVideo",
-            }
-        }
 
 
 class create_subtitles_response(BaseModel):
@@ -88,7 +38,6 @@ class create_subtitles_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
 # Models for deleteSubtitles
@@ -107,13 +56,6 @@ class delete_subtitles_request(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {
-            "example": {
-                "id": "1146654567674912769",
-                "language_code": "EN",
-                "media_category": "TweetVideo",
-            }
-        }
 
 
 class delete_subtitles_response(BaseModel):
@@ -127,7 +69,47 @@ class delete_subtitles_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
+
+
+# Models for uploadMediaStatus
+
+
+class upload_media_status_response(BaseModel):
+    """Response model for uploadMediaStatus"""
+
+    data: Dict[str, Any] = Field(default_factory=dict)
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for uploadMedia
+
+
+class upload_media_request(BaseModel):
+    """Request model for uploadMedia"""
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class upload_media_response(BaseModel):
+    """Response model for uploadMedia"""
+
+    data: Dict[str, Any] = Field(default_factory=dict)
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
 
 
 # Models for metadataCreate
@@ -144,11 +126,6 @@ class metadata_create_request(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {
-            "example": {
-                "id": "1146654567674912769",
-            }
-        }
 
 
 class metadata_create_response(BaseModel):
@@ -162,4 +139,3 @@ class metadata_create_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}

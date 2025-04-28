@@ -9,11 +9,11 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for spaceBuyers
+# Models for searchSpaces
 
 
-class space_buyers_response(BaseModel):
-    """Response model for spaceBuyers"""
+class search_spaces_response(BaseModel):
+    """Response model for searchSpaces"""
 
     data: Optional[List] = None
 
@@ -27,7 +27,6 @@ class space_buyers_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
 # Models for findSpacesByCreatorIds
@@ -48,14 +47,13 @@ class find_spaces_by_creator_ids_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
-# Models for findSpacesByIds
+# Models for spaceBuyers
 
 
-class find_spaces_by_ids_response(BaseModel):
-    """Response model for findSpacesByIds"""
+class space_buyers_response(BaseModel):
+    """Response model for spaceBuyers"""
 
     data: Optional[List] = None
 
@@ -63,11 +61,12 @@ class find_spaces_by_ids_response(BaseModel):
 
     includes: Optional[Dict[str, Any]] = None
 
+    meta: Optional[Dict[str, Any]] = None
+
     class Config:
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
 # Models for findSpaceById
@@ -86,7 +85,6 @@ class find_space_by_id_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
 # Models for spaceTweets
@@ -107,14 +105,13 @@ class space_tweets_response(BaseModel):
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
 
 
-# Models for searchSpaces
+# Models for findSpacesByIds
 
 
-class search_spaces_response(BaseModel):
-    """Response model for searchSpaces"""
+class find_spaces_by_ids_response(BaseModel):
+    """Response model for findSpacesByIds"""
 
     data: Optional[List] = None
 
@@ -122,10 +119,7 @@ class search_spaces_response(BaseModel):
 
     includes: Optional[Dict[str, Any]] = None
 
-    meta: Optional[Dict[str, Any]] = None
-
     class Config:
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}

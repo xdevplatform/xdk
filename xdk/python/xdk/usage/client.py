@@ -4,10 +4,10 @@ Usage client for the X API.
 This module provides a client for interacting with the Usage endpoints of the X API.
 """
 
+from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from ..client import Client
 from .models import get_usage_tweets_response
 
 
@@ -47,7 +47,7 @@ class UsageClient:
         if days is not None:
             params["days"] = days
         if usage_fields is not None:
-            params["usage.fields"] = usage_fields
+            params["usage.fields"] = ",".join(str(item) for item in usage_fields)
         headers = {}
         # Make the request
         response = self.client.session.get(

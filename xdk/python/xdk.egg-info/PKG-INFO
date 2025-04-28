@@ -1,0 +1,25 @@
+Metadata-Version: 2.4
+Name: xdk
+Version: 0.1.0
+Summary: Python SDK for the X API
+Home-page: https://github.com/xdk/xdk-python
+Author: XDK Team
+Author-email: info@xdk.com
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Requires-Python: >=3.7
+Requires-Dist: requests>=2.25.0
+Requires-Dist: requests-oauthlib>=1.3.0
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: home-page
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

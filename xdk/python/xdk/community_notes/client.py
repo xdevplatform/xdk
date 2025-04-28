@@ -4,10 +4,10 @@ Community_Notes client for the X API.
 This module provides a client for interacting with the Community_Notes endpoints of the X API.
 """
 
+from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from ..client import Client
 from .models import find_note_by_tweet_id_response
 
 
@@ -52,7 +52,7 @@ class Community_NotesClient:
         if post_id is not None:
             params["postId"] = post_id
         if note_fields is not None:
-            params["note.fields"] = note_fields
+            params["note.fields"] = ",".join(str(item) for item in note_fields)
         headers = {}
         # Make the request
         response = self.client.session.get(

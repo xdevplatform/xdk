@@ -29,21 +29,10 @@ class {{ operation.operation_id | snake_case }}_request(BaseModel):
     class Config:
         """Pydantic model configuration"""
         populate_by_name = True
-        json_schema_extra = {
-            "example": {
-                {% if schema and schema.properties %}
-                {% for key in schema.properties %}
-                {% if schema.properties[key].example %}
-                "{{ key }}": "{{ schema.properties[key].example }}",
-                {% endif %}
-                {% endfor %}
-                {% endif %}
-            }
-        }
 {% endif %}
 
-{% if operation.responses and "200" in operation.responses %}
-{% set response = operation.responses["200"] %}
+{% if operation.responses and "200" in operation.responses or "201" in operation.responses %}
+{% set response = operation.responses["200"] if "200" in operation.responses else operation.responses["201"] %}
 {% if response.content %}
 {% set content_type = "application/json" %}
 {% if response.content[content_type] %}
@@ -59,17 +48,6 @@ class {{ operation.operation_id | snake_case }}_response(BaseModel):
     class Config:
         """Pydantic model configuration"""
         populate_by_name = True
-        json_schema_extra = {
-            "example": {
-                {% if schema and schema.properties %}
-                {% for key in schema.properties %}
-                {% if schema.properties[key].example %}
-                "{{ key }}": {{ schema.properties[key].example }},
-                {% endif %}
-                {% endfor %}
-                {% endif %}
-            }
-        }
 {% endif %}
 {% endif %}
 {% endif %}
