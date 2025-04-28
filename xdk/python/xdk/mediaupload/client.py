@@ -6,7 +6,7 @@ This module provides a client for interacting with the MediaUpload endpoints of 
 
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
-import requests_oauthlib
+import time
 from ..client import Client
 from .models import (
     upload_media_status_response,
@@ -45,6 +45,11 @@ class MediaUploadClient:
             upload_media_status_response: Response data
         """
         url = self.client.base_url + "/2/media/upload"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
         params = {}
         if media_id is not None:
             params["media_id"] = media_id
@@ -52,11 +57,18 @@ class MediaUploadClient:
             params["command"] = command
         headers = {}
         # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.get(
+                url,
+                params=params,
+                headers=headers,
+            )
+        else:
+            response = self.client.session.get(
+                url,
+                params=params,
+                headers=headers,
+            )
         # Check for errors
         response.raise_for_status()
         # Parse the response data
@@ -95,6 +107,11 @@ class MediaUploadClient:
             upload_media_response: Response data
         """
         url = self.client.base_url + "/2/media/upload"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
         params = {}
         if media_id is not None:
             params["media_id"] = media_id
@@ -111,12 +128,20 @@ class MediaUploadClient:
         headers = {}
         headers["Content-Type"] = "application/json"
         # Make the request
-        response = self.client.session.post(
-            url,
-            params=params,
-            headers=headers,
-            json=body.model_dump(exclude_none=True) if body else None,
-        )
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
         # Check for errors
         response.raise_for_status()
         # Parse the response data
@@ -137,16 +162,29 @@ class MediaUploadClient:
             create_subtitles_response: Response data
         """
         url = self.client.base_url + "/2/media/subtitles"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
         params = {}
         headers = {}
         headers["Content-Type"] = "application/json"
         # Make the request
-        response = self.client.session.post(
-            url,
-            params=params,
-            headers=headers,
-            json=body.model_dump(exclude_none=True) if body else None,
-        )
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
         # Check for errors
         response.raise_for_status()
         # Parse the response data
@@ -167,16 +205,29 @@ class MediaUploadClient:
             delete_subtitles_response: Response data
         """
         url = self.client.base_url + "/2/media/subtitles"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
         params = {}
         headers = {}
         headers["Content-Type"] = "application/json"
         # Make the request
-        response = self.client.session.delete(
-            url,
-            params=params,
-            headers=headers,
-            json=body.model_dump(exclude_none=True) if body else None,
-        )
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.delete(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        else:
+            response = self.client.session.delete(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
         # Check for errors
         response.raise_for_status()
         # Parse the response data
@@ -197,16 +248,29 @@ class MediaUploadClient:
             metadata_create_response: Response data
         """
         url = self.client.base_url + "/2/media/metadata"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
         params = {}
         headers = {}
         headers["Content-Type"] = "application/json"
         # Make the request
-        response = self.client.session.post(
-            url,
-            params=params,
-            headers=headers,
-            json=body.model_dump(exclude_none=True) if body else None,
-        )
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
         # Check for errors
         response.raise_for_status()
         # Parse the response data

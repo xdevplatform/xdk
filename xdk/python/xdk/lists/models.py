@@ -9,32 +9,19 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for listUserUnfollow
+# Models for getUserListMemberships
 
 
-class list_user_unfollow_response(BaseModel):
-    """Response model for listUserUnfollow"""
+class get_user_list_memberships_response(BaseModel):
+    """Response model for getUserListMemberships"""
 
-    data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for listUserUnpin
-
-
-class list_user_unpin_response(BaseModel):
-    """Response model for listUserUnpin"""
-
-    data: Optional[Dict[str, Any]] = None
+    data: Optional[List] = None
 
     errors: Optional[List] = None
+
+    includes: Optional[Dict[str, Any]] = None
+
+    meta: Optional[Dict[str, Any]] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -64,6 +51,77 @@ class list_add_member_request(BaseModel):
 
 class list_add_member_response(BaseModel):
     """Response model for listAddMember"""
+
+    data: Optional[Dict[str, Any]] = None
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for listIdGet
+
+
+class list_id_get_response(BaseModel):
+    """Response model for listIdGet"""
+
+    data: Dict[str, Any] = Field(
+        description="A X List is a curated group of accounts.", default_factory=dict
+    )
+
+    errors: Optional[List] = None
+
+    includes: Optional[Dict[str, Any]] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for listIdUpdate
+
+
+class list_id_update_request(BaseModel):
+    """Request model for listIdUpdate"""
+
+    description: Optional[str] = None
+
+    name: Optional[str] = None
+
+    private: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+class list_id_update_response(BaseModel):
+    """Response model for listIdUpdate"""
+
+    data: Optional[Dict[str, Any]] = None
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for listIdDelete
+
+
+class list_id_delete_response(BaseModel):
+    """Response model for listIdDelete"""
 
     data: Optional[Dict[str, Any]] = None
 
@@ -151,23 +209,6 @@ class list_user_owned_lists_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for listRemoveMember
-
-
-class list_remove_member_response(BaseModel):
-    """Response model for listRemoveMember"""
-
-    data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
 # Models for listUserPinnedLists
 
 
@@ -222,48 +263,11 @@ class list_user_pin_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for listIdGet
+# Models for listRemoveMember
 
 
-class list_id_get_response(BaseModel):
-    """Response model for listIdGet"""
-
-    data: Dict[str, Any] = Field(
-        description="A X List is a curated group of accounts.", default_factory=dict
-    )
-
-    errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for listIdUpdate
-
-
-class list_id_update_request(BaseModel):
-    """Request model for listIdUpdate"""
-
-    description: Optional[str] = None
-
-    name: Optional[str] = None
-
-    private: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-class list_id_update_response(BaseModel):
-    """Response model for listIdUpdate"""
+class list_remove_member_response(BaseModel):
+    """Response model for listRemoveMember"""
 
     data: Optional[Dict[str, Any]] = None
 
@@ -276,11 +280,11 @@ class list_id_update_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for listIdDelete
+# Models for listUserUnpin
 
 
-class list_id_delete_response(BaseModel):
-    """Response model for listIdDelete"""
+class list_user_unpin_response(BaseModel):
+    """Response model for listUserUnpin"""
 
     data: Optional[Dict[str, Any]] = None
 
@@ -293,19 +297,15 @@ class list_id_delete_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for getUserListMemberships
+# Models for listUserUnfollow
 
 
-class get_user_list_memberships_response(BaseModel):
-    """Response model for getUserListMemberships"""
+class list_user_unfollow_response(BaseModel):
+    """Response model for listUserUnfollow"""
 
-    data: Optional[List] = None
+    data: Optional[Dict[str, Any]] = None
 
     errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
 
     class Config:
         """Pydantic model configuration"""

@@ -6,7 +6,7 @@ This module provides a client for interacting with the Connection endpoints of t
 
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
-import requests_oauthlib
+import time
 from ..client import Client
 from .models import kill_all_app_connections_response
 
@@ -29,7 +29,14 @@ class ConnectionClient:
             kill_all_app_connections_response: Response data
         """
         url = self.client.base_url + "/2/connections/all"
-        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
         params = {}
         headers = {}
         # Make the request

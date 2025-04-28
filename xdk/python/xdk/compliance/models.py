@@ -9,6 +9,19 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
+# Models for getTweetsLabelStream
+
+
+class get_tweets_label_stream_response(BaseModel):
+    """Response model for getTweetsLabelStream"""
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
 # Models for listBatchComplianceJobs
 
 
@@ -65,11 +78,28 @@ class create_batch_compliance_job_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for getTweetsLabelStream
+# Models for getUsersComplianceStream
 
 
-class get_tweets_label_stream_response(BaseModel):
-    """Response model for getTweetsLabelStream"""
+class get_users_compliance_stream_response(BaseModel):
+    """Response model for getUsersComplianceStream"""
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for getBatchComplianceJob
+
+
+class get_batch_compliance_job_response(BaseModel):
+    """Response model for getBatchComplianceJob"""
+
+    data: Dict[str, Any] = Field(default_factory=dict)
+
+    errors: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -91,41 +121,11 @@ class get_likes_compliance_stream_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for getUsersComplianceStream
-
-
-class get_users_compliance_stream_response(BaseModel):
-    """Response model for getUsersComplianceStream"""
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
 # Models for getTweetsComplianceStream
 
 
 class get_tweets_compliance_stream_response(BaseModel):
     """Response model for getTweetsComplianceStream"""
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for getBatchComplianceJob
-
-
-class get_batch_compliance_job_response(BaseModel):
-    """Response model for getBatchComplianceJob"""
-
-    data: Dict[str, Any] = Field(default_factory=dict)
-
-    errors: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""

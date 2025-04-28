@@ -6,7 +6,7 @@ This module provides a client for interacting with the General endpoints of the 
 
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
-import requests_oauthlib
+import time
 from ..client import Client
 from .models import get_open_api_spec_response, get_rule_count_response
 
@@ -32,6 +32,7 @@ class GeneralClient:
         params = {}
         headers = {}
         # Make the request
+        # This should only happend for the /2/openapi.json route
         response = self.client.session.get(
             url,
             params=params,
@@ -58,7 +59,14 @@ class GeneralClient:
             get_rule_count_response: Response data
         """
         url = self.client.base_url + "/2/tweets/search/stream/rules/counts"
-        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
         params = {}
         if rules_count_fields is not None:
             params["rules_count.fields"] = rules_count_fields

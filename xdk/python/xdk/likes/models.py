@@ -9,11 +9,11 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for likesSample10Stream
+# Models for likesFirehoseStream
 
 
-class likes_sample10_stream_response(BaseModel):
-    """Response model for likesSample10Stream"""
+class likes_firehose_stream_response(BaseModel):
+    """Response model for likesFirehoseStream"""
 
     data: Optional[Dict[str, Any]] = None
 
@@ -28,11 +28,11 @@ class likes_sample10_stream_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for likesFirehoseStream
+# Models for likesSample10Stream
 
 
-class likes_firehose_stream_response(BaseModel):
-    """Response model for likesFirehoseStream"""
+class likes_sample10_stream_response(BaseModel):
+    """Response model for likesSample10Stream"""
 
     data: Optional[Dict[str, Any]] = None
 

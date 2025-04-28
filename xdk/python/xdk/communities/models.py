@@ -9,25 +9,6 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for communityIdGet
-
-
-class community_id_get_response(BaseModel):
-    """Response model for communityIdGet"""
-
-    data: Dict[str, Any] = Field(
-        description="A X Community is a curated group of Posts.", default_factory=dict
-    )
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
 # Models for communitiesSearch
 
 
@@ -39,6 +20,25 @@ class communities_search_response(BaseModel):
     errors: Optional[List] = None
 
     meta: Optional[Dict[str, Any]] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for communityIdGet
+
+
+class community_id_get_response(BaseModel):
+    """Response model for communityIdGet"""
+
+    data: Dict[str, Any] = Field(
+        description="A X Community is a curated group of Posts.", default_factory=dict
+    )
+
+    errors: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""

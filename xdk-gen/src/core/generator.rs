@@ -112,12 +112,12 @@ macro_rules! language {
             $(
                 multiple {
                     $(
-                        render ($template:expr) to ($path:expr)
+                        render $template:expr => $path:expr
                     ),*
                 }
             ),*,
             $(
-                render ($s_template:expr) to ($s_path:expr)
+                render $s_template:expr => $s_path:expr
             ),*
         ]
     ) => {

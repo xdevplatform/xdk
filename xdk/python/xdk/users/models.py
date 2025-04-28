@@ -9,17 +9,78 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for findUsersById
+# Models for usersIdDMBlock
 
 
-class find_users_by_id_response(BaseModel):
-    """Response model for findUsersById"""
+class users_id_d_m_block_response(BaseModel):
+    """Response model for usersIdDMBlock"""
+
+    data: Optional[Dict[str, Any]] = None
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for listGetFollowers
+
+
+class list_get_followers_response(BaseModel):
+    """Response model for listGetFollowers"""
 
     data: Optional[List] = None
 
     errors: Optional[List] = None
 
     includes: Optional[Dict[str, Any]] = None
+
+    meta: Optional[Dict[str, Any]] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for tweetsIdRetweetingUsers
+
+
+class tweets_id_retweeting_users_response(BaseModel):
+    """Response model for tweetsIdRetweetingUsers"""
+
+    data: Optional[List] = None
+
+    errors: Optional[List] = None
+
+    includes: Optional[Dict[str, Any]] = None
+
+    meta: Optional[Dict[str, Any]] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for listOfRepostOfUser
+
+
+class list_of_repost_of_user_response(BaseModel):
+    """Response model for listOfRepostOfUser"""
+
+    data: Optional[List] = None
+
+    errors: Optional[List] = None
+
+    includes: Optional[Dict[str, Any]] = None
+
+    meta: Optional[Dict[str, Any]] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -57,11 +118,11 @@ class find_user_by_id_response(BaseModel):
         }
 
 
-# Models for listGetMembers
+# Models for usersIdBlocking
 
 
-class list_get_members_response(BaseModel):
-    """Response model for listGetMembers"""
+class users_id_blocking_response(BaseModel):
+    """Response model for usersIdBlocking"""
 
     data: Optional[List] = None
 
@@ -70,23 +131,6 @@ class list_get_members_response(BaseModel):
     includes: Optional[Dict[str, Any]] = None
 
     meta: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for usersIdUnfollow
-
-
-class users_id_unfollow_response(BaseModel):
-    """Response model for usersIdUnfollow"""
-
-    data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -124,11 +168,30 @@ class find_my_user_response(BaseModel):
         }
 
 
-# Models for usersIdFollowers
+# Models for findUsersById
 
 
-class users_id_followers_response(BaseModel):
-    """Response model for usersIdFollowers"""
+class find_users_by_id_response(BaseModel):
+    """Response model for findUsersById"""
+
+    data: Optional[List] = None
+
+    errors: Optional[List] = None
+
+    includes: Optional[Dict[str, Any]] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for listGetMembers
+
+
+class list_get_members_response(BaseModel):
+    """Response model for listGetMembers"""
 
     data: Optional[List] = None
 
@@ -145,25 +208,33 @@ class users_id_followers_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for listOfRepostOfUser
+# Models for findUserByUsername
 
 
-class list_of_repost_of_user_response(BaseModel):
-    """Response model for listOfRepostOfUser"""
+class find_user_by_username_response(BaseModel):
+    """Response model for findUserByUsername"""
 
-    data: Optional[List] = None
+    data: Dict[str, Any] = Field(description="The X User object.", default_factory=dict)
 
     errors: Optional[List] = None
 
     includes: Optional[Dict[str, Any]] = None
 
-    meta: Optional[Dict[str, Any]] = None
-
     class Config:
         """Pydantic model configuration"""
 
         populate_by_name = True
-        json_schema_extra = {"example": {}}
+        json_schema_extra = {
+            "example": {
+                "data": {
+                    "created_at": "2013-12-14T04:35:55Z",
+                    "id": "2244994945",
+                    "name": "X Dev",
+                    "protected": false,
+                    "username": "TwitterDev",
+                },
+            }
+        }
 
 
 # Models for usersIdFollowing
@@ -220,11 +291,28 @@ class users_id_follow_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for usersIdBlocking
+# Models for usersIdUnfollow
 
 
-class users_id_blocking_response(BaseModel):
-    """Response model for usersIdBlocking"""
+class users_id_unfollow_response(BaseModel):
+    """Response model for usersIdUnfollow"""
+
+    data: Optional[Dict[str, Any]] = None
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for usersIdFollowers
+
+
+class users_id_followers_response(BaseModel):
+    """Response model for usersIdFollowers"""
 
     data: Optional[List] = None
 
@@ -295,151 +383,6 @@ class users_id_mute_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for tweetsIdRetweetingUsers
-
-
-class tweets_id_retweeting_users_response(BaseModel):
-    """Response model for tweetsIdRetweetingUsers"""
-
-    data: Optional[List] = None
-
-    errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for listGetFollowers
-
-
-class list_get_followers_response(BaseModel):
-    """Response model for listGetFollowers"""
-
-    data: Optional[List] = None
-
-    errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for searchUserByQuery
-
-
-class search_user_by_query_response(BaseModel):
-    """Response model for searchUserByQuery"""
-
-    data: Optional[List] = None
-
-    errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for findUsersByUsername
-
-
-class find_users_by_username_response(BaseModel):
-    """Response model for findUsersByUsername"""
-
-    data: Optional[List] = None
-
-    errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for findUserByUsername
-
-
-class find_user_by_username_response(BaseModel):
-    """Response model for findUserByUsername"""
-
-    data: Dict[str, Any] = Field(description="The X User object.", default_factory=dict)
-
-    errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {
-            "example": {
-                "data": {
-                    "created_at": "2013-12-14T04:35:55Z",
-                    "id": "2244994945",
-                    "name": "X Dev",
-                    "protected": false,
-                    "username": "TwitterDev",
-                },
-            }
-        }
-
-
-# Models for usersIdDMBlock
-
-
-class users_id_d_m_block_response(BaseModel):
-    """Response model for usersIdDMBlock"""
-
-    data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for usersIdDMUnBlock
-
-
-class users_id_d_m_un_block_response(BaseModel):
-    """Response model for usersIdDMUnBlock"""
-
-    data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
 # Models for tweetsIdLikingUsers
 
 
@@ -470,6 +413,63 @@ class users_id_unmute_response(BaseModel):
     data: Optional[Dict[str, Any]] = None
 
     errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for findUsersByUsername
+
+
+class find_users_by_username_response(BaseModel):
+    """Response model for findUsersByUsername"""
+
+    data: Optional[List] = None
+
+    errors: Optional[List] = None
+
+    includes: Optional[Dict[str, Any]] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for usersIdDMUnBlock
+
+
+class users_id_d_m_un_block_response(BaseModel):
+    """Response model for usersIdDMUnBlock"""
+
+    data: Optional[Dict[str, Any]] = None
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for searchUserByQuery
+
+
+class search_user_by_query_response(BaseModel):
+    """Response model for searchUserByQuery"""
+
+    data: Optional[List] = None
+
+    errors: Optional[List] = None
+
+    includes: Optional[Dict[str, Any]] = None
+
+    meta: Optional[Dict[str, Any]] = None
 
     class Config:
         """Pydantic model configuration"""

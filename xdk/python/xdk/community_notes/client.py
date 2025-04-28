@@ -6,7 +6,7 @@ This module provides a client for interacting with the Community_Notes endpoints
 
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
-import requests_oauthlib
+import time
 from ..client import Client
 from .models import find_note_by_tweet_id_response
 
@@ -35,7 +35,19 @@ class Community_NotesClient:
             find_note_by_tweet_id_response: Response data
         """
         url = self.client.base_url + "/2/notes"
-        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
         params = {}
         if post_id is not None:
             params["postId"] = post_id

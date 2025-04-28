@@ -57,14 +57,15 @@ language! {
     filters: [snake_case, python_type],
     render: [
         multiple {
-            render ("models") to ("xdk/{}/models.py"),
-            render ("client_module") to ("xdk/{}/__init__.py"),
-            render ("client_class") to ("xdk/{}/client.py")
+            render "models" => "xdk/{}/models.py",
+            render "client_module" => "xdk/{}/__init__.py",
+            render "client_class" => "xdk/{}/client.py"
         },
-        render ("main_client") to ("xdk/client.py"),
-        render ("init_py") to ("xdk/__init__.py"),
-        render ("setup_py") to ("setup.py"),
-        render ("readme") to ("README.md"),
-        render ("requirements_txt") to ("requirements.txt")
+        render "main_client" => "xdk/client.py",
+        render "oauth2_auth" => "xdk/oauth2_auth.py",
+        render "init_py" => "xdk/__init__.py",
+        render "setup_py" => "setup.py",
+        render "readme" => "README.md",
+        render "requirements_txt" => "requirements.txt"
     ]
 }

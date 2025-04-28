@@ -16,7 +16,7 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     log_success!("SDK code generated.");
 
     // Create and manage a single virtual environment for formatting
-    let venv_path = output_dir.join(".venv_format");
+    let venv_path = output_dir.join(".venv");
     let python_executable = "python3.12"; // Assuming python3.12 is in PATH
 
     // 1. Create the virtual environment
@@ -33,8 +33,9 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     let venv_python_path = venv_path.join("bin").join("python");
     let venv_bin_path = venv_path.join("bin");
 
-    // 2. Install dependencies (black and libcst)
-    let dependencies = ["black"];
+    // 2. Install dependencies (black)
+    let dependencies = fs::read_to_string(output_dir.join("requirements.txt"))?;
+    let dependencies = dependencies.split("\n").collect::<Vec<&str>>();
     log_info!(
         "Installing {} using {}",
         dependencies.join(" and "),
@@ -45,7 +46,8 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
         .arg("-m")
         .arg("pip")
         .arg("install")
-        .arg(dependencies.join(" "));
+        .arg("-r")
+        .arg(output_dir.join("requirements.txt"));
     run_command(&mut install_deps_cmd)?;
     log_success!("Formatting dependencies installed successfully.");
 
@@ -58,14 +60,6 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     // Adjust this path if the execution context is different
     let script_path = Path::new("utils/python/format.py");
     run_formatter(output_dir, &venv_python_path, script_path)?;
-
-    // 5. Clean up the virtual environment
-    log_info!(
-        "Removing formatting virtual environment: {}",
-        venv_path.display().to_string().magenta()
-    );
-    fs::remove_dir_all(&venv_path)?;
-    log_success!("Formatting virtual environment removed.");
 
     log_success!(
         "Successfully generated Python SDK in {}",

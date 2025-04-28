@@ -6,9 +6,9 @@ This module provides a client for interacting with the {{ tag }} endpoints of th
 
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
-import requests_oauthlib
+import time
 from ..client import Client
-from .models import {% for operation in operations %}{% if operation.request_body %}{{ operation.operation_id | snake_case }}_request{% if operation.responses and "200" in operation.responses %}, {{ operation.operation_id | snake_case }}_response{% endif %}{% elif operation.responses and "200" in operation.responses %}{{ operation.operation_id | snake_case }}_response{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}
+from .models import {% for operation in operations %}{% if operation.request_body %}{{ operation.operation_id | snake_case }}_request{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}, {{ operation.operation_id | snake_case }}_response{% endif %}{% elif operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.operation_id | snake_case }}_response{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}
 
 class {{ tag }}Client:
     """Client for {{ tag }} operations"""
@@ -67,15 +67,29 @@ class {{ tag }}Client:
         {% endif %}
         
         Returns:
-            {% if operation.responses and "200" in operation.responses %}{{ operation.operation_id | snake_case }}_response{% else %}Dict[str, Any]{% endif %}: Response data
+            {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.operation_id | snake_case }}_response{% else %}Dict[str, Any]{% endif %}: Response data
         """
         url = self.client.base_url + "{{ operation.path }}"
+
+        {% set ns = namespace(has_bearer_token = false, has_oauth2_token = false) %}
 
         {% if operation.security %}
         {% for security_requirement in operation.security %}
         {% for scheme_name in security_requirement %}
         {% if scheme_name == "BearerToken" %}
-        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
+        {% set ns.has_bearer_token = true %}
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = f"Bearer {self.client.bearer_token}"
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = f"Bearer {self.client.access_token}"
+        {% endif %}
+        {% if scheme_name == "OAuth2UserToken" %}
+        {% set ns.has_oauth2_token = true %}
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
         {% endif %}
         {% endfor %}
         {% endfor %}
@@ -114,6 +128,8 @@ class {{ tag }}Client:
         {% endif %}
         
         # Make the request
+        {% if operation.security %}
+        {% if ns.has_bearer_token %}
         response = self.client.session.{{ operation.method }}(
             url,
             params=params,
@@ -122,6 +138,46 @@ class {{ tag }}Client:
             json=body.model_dump(exclude_none=True) if body else None,
             {% endif %}
         )
+        {% elif ns.has_oauth2_token %}
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.{{ operation.method }}(
+                url,
+                params=params,
+                headers=headers,
+                {% if operation.request_body %}
+                json=body.model_dump(exclude_none=True) if body else None,
+                {% endif %}
+            )
+        else:
+            response = self.client.session.{{ operation.method }}(
+                url,
+                params=params,
+                headers=headers,
+                {% if operation.request_body %}
+                json=body.model_dump(exclude_none=True) if body else None,
+                {% endif %}
+            )
+        {% else %}
+        response = self.client.session.{{ operation.method }}(
+            url,
+            params=params,
+            headers=headers,
+            {% if operation.request_body %}
+            json=body.model_dump(exclude_none=True) if body else None,
+            {% endif %}
+        )
+        {% endif %}
+        {% else %}
+        # This should only happend for the /2/openapi.json route
+        response = self.client.session.{{ operation.method }}(
+            url,
+            params=params,
+            headers=headers,
+            {% if operation.request_body %}
+            json=body.model_dump(exclude_none=True) if body else None,
+            {% endif %}
+        )
+        {% endif %}
         
         # Check for errors
         response.raise_for_status()
@@ -130,7 +186,7 @@ class {{ tag }}Client:
         response_data = response.json()
         
         # Convert to Pydantic model if applicable
-        {% if operation.responses and "200" in operation.responses %}
+        {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
         return {{ operation.operation_id | snake_case }}_response.model_validate(response_data)
         {% else %}
         return response_data
