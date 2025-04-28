@@ -1,0 +1,77 @@
+"""
+{{ tag }} models for the X API.
+
+This module provides models for the {{ tag }} endpoints of the X API.
+"""
+
+from typing import Dict, List, Optional, Any, Union, Literal
+from pydantic import BaseModel, Field
+from datetime import datetime
+
+{% for operation in operations %}
+{% if operation.request_body or operation.responses %}
+# Models for {{ operation.operation_id }}
+{% if operation.request_body %}
+class {{ operation.operation_id | snake_case }}_request(BaseModel):
+    """Request model for {{ operation.operation_id }}"""
+    {% if operation.request_body.content %}
+    {% set content_type = "application/json" %}
+    {% if operation.request_body.content[content_type] %}
+    {% set schema = operation.request_body.content[content_type].schema %}
+    {% if schema and schema.properties %}
+    {% for key in schema.properties %}
+    {{ key }}: {% if schema.properties[key].type %}{% if schema.properties[key].required %}{{ schema.properties[key].type | python_type }}{% else %}Optional[{{ schema.properties[key].type | python_type }}]{% endif %}{% else %}Any{% endif %} = {% if not schema.properties[key].required %}None{% else %}Field({% if schema.properties[key].description %}description="{{ schema.properties[key].description }}", {% endif %}{% if schema.properties[key].default %}default={{ schema.properties[key].default }}{% elif schema.properties[key].type == 'array' %}default_factory=list{% elif schema.properties[key].type == 'object' %}default_factory=dict{% else %}...{% endif %}){% endif %}
+    {% endfor %}
+    {% endif %}
+    {% endif %}
+    {% endif %}
+
+    class Config:
+        """Pydantic model configuration"""
+        populate_by_name = True
+        json_schema_extra = {
+            "example": {
+                {% if schema and schema.properties %}
+                {% for key in schema.properties %}
+                {% if schema.properties[key].example %}
+                "{{ key }}": "{{ schema.properties[key].example }}",
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+            }
+        }
+{% endif %}
+
+{% if operation.responses and "200" in operation.responses %}
+{% set response = operation.responses["200"] %}
+{% if response.content %}
+{% set content_type = "application/json" %}
+{% if response.content[content_type] %}
+{% set schema = response.content[content_type].schema %}
+class {{ operation.operation_id | snake_case }}_response(BaseModel):
+    """Response model for {{ operation.operation_id }}"""
+    {% if schema and schema.properties %}
+    {% for key in schema.properties %}
+    {{ key }}: {% if schema.properties[key].type %}{% if schema.properties[key].required %}{{ schema.properties[key].type | python_type }}{% else %}Optional[{{ schema.properties[key].type | python_type }}]{% endif %}{% else %}Any{% endif %} = {% if not schema.properties[key].required %}None{% else %}Field({% if schema.properties[key].description %}description="{{ schema.properties[key].description }}", {% endif %}{% if schema.properties[key].default %}default={{ schema.properties[key].default }}{% elif schema.properties[key].type == 'array' %}default_factory=list{% elif schema.properties[key].type == 'object' %}default_factory=dict{% else %}...{% endif %}){% endif %}
+    {% endfor %}
+    {% endif %}
+
+    class Config:
+        """Pydantic model configuration"""
+        populate_by_name = True
+        json_schema_extra = {
+            "example": {
+                {% if schema and schema.properties %}
+                {% for key in schema.properties %}
+                {% if schema.properties[key].example %}
+                "{{ key }}": {{ schema.properties[key].example }},
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+            }
+        }
+{% endif %}
+{% endif %}
+{% endif %}
+{% endif %}
+{% endfor %} 

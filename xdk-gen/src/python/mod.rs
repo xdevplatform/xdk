@@ -8,7 +8,6 @@
 /// - `models.rs`: Contains context structs used for rendering templates
 /// - Tests in this file demonstrate how to use the generator with various OpenAPI specs
 mod generator;
-mod models;
 
 pub use generator::Python;
 
@@ -25,11 +24,18 @@ mod tests {
     // Helper function to create output directory for a test
     fn create_output_dir() -> std::path::PathBuf {
         let temp_dir = Builder::new()
-            .prefix("rust_test")
+            .prefix("test_output")
             .tempdir()
             .expect("Failed to create temporary directory");
 
-        temp_dir.into_path()
+        // make a real dir from tempdir on ./test_output
+        // let output_dir = Path::new("./test_output");
+        // fs::create_dir_all(output_dir).expect("Failed to create test_output directory");
+
+        // // copy the tempdir to the output_dir
+        // fs::copy_dir_all(temp_dir.path(), output_dir).expect("Failed to copy tempdir to test_output directory");
+
+        temp_dir.path().to_path_buf()
     }
 
     // Helper function to verify basic SDK structure

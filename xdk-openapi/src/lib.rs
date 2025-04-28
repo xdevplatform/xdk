@@ -114,7 +114,10 @@ mod tests {
         assert_eq!(get_op.summary, Some("Test endpoint".to_string()));
         assert!(get_op.responses.contains_key("200"));
         let response = get_op.responses.get("200").unwrap();
-        assert_eq!(response.description, Some("Successful response".to_string()));
+        assert_eq!(
+            response.description,
+            Some("Successful response".to_string())
+        );
     }
 
     #[test]

@@ -4,10 +4,18 @@ Spaces client for the X API.
 This module provides a client for interacting with the Spaces endpoints of the X API.
 """
 
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import requests_oauthlib
 from ..client import Client
+from .models import (
+    space_buyers_response,
+    search_spaces_response,
+    find_spaces_by_creator_ids_response,
+    space_tweets_response,
+    find_spaces_by_ids_response,
+    find_space_by_id_response,
+)
 
 
 class SpacesClient:
@@ -18,62 +26,15 @@ class SpacesClient:
         self.client = client
 
 
-    def find_spaces_by_ids(self,
-        ids: List,
-        space_fields: List = None,
-        expansions: List = None,
-        user_fields: List = None,
-        topic_fields: List = None,
-    ) -> Dict[str, Any]:
-        """
-        Space lookup up Space IDs
-        Returns a variety of information about the Spaces specified by the requested IDs
-        Args:
-            ids: The list of Space IDs to return.
-        Args:
-            space_fields: A comma separated list of Space fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            topic_fields: A comma separated list of Topic fields to display.
-        Returns:
-            Dict[str, Any]: Response data
-        """
-        url = self.client.base_url + "/2/spaces"
-        params = {}
-        if ids is not None:
-            params["ids"] = ids
-        if space_fields is not None:
-            params["space.fields"] = space_fields
-        if expansions is not None:
-            params["expansions"] = expansions
-        if user_fields is not None:
-            params["user.fields"] = user_fields
-        if topic_fields is not None:
-            params["topic.fields"] = topic_fields
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Return the response data
-        return response.json()
-
-
-    def space_buyers(self,
+    def space_buyers(
+        self,
         id: str,
         pagination_token: str = None,
         max_results: int = None,
         user_fields: List = None,
         expansions: List = None,
         tweet_fields: List = None,
-    ) -> Dict[str, Any]:
+    ) -> space_buyers_response:
         """
         Retrieve the list of Users who purchased a ticket to the given space
         Retrieves the list of Users who purchased a ticket to the given space
@@ -90,7 +51,7 @@ class SpacesClient:
         Args:
             tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            Dict[str, Any]: Response data
+            space_buyers_response: Response data
         """
         url = self.client.base_url + "/2/spaces/{id}/buyers"
         params = {}
@@ -114,11 +75,126 @@ class SpacesClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return space_buyers_response.model_validate(response_data)
 
 
-    def space_tweets(self,
+    def search_spaces(
+        self,
+        query: str,
+        state: str = None,
+        max_results: int = None,
+        space_fields: List = None,
+        expansions: List = None,
+        user_fields: List = None,
+        topic_fields: List = None,
+    ) -> search_spaces_response:
+        """
+        Search for Spaces
+        Returns Spaces that match the provided query.
+        Args:
+            query: The search query.
+        Args:
+            state: The state of Spaces to search for.
+        Args:
+            max_results: The number of results to return.
+        Args:
+            space_fields: A comma separated list of Space fields to display.
+        Args:
+            expansions: A comma separated list of fields to expand.
+        Args:
+            user_fields: A comma separated list of User fields to display.
+        Args:
+            topic_fields: A comma separated list of Topic fields to display.
+        Returns:
+            search_spaces_response: Response data
+        """
+        url = self.client.base_url + "/2/spaces/search"
+        params = {}
+        if query is not None:
+            params["query"] = query
+        if state is not None:
+            params["state"] = state
+        if max_results is not None:
+            params["max_results"] = max_results
+        if space_fields is not None:
+            params["space.fields"] = space_fields
+        if expansions is not None:
+            params["expansions"] = expansions
+        if user_fields is not None:
+            params["user.fields"] = user_fields
+        if topic_fields is not None:
+            params["topic.fields"] = topic_fields
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return search_spaces_response.model_validate(response_data)
+
+
+    def find_spaces_by_creator_ids(
+        self,
+        user_ids: List,
+        space_fields: List = None,
+        expansions: List = None,
+        user_fields: List = None,
+        topic_fields: List = None,
+    ) -> find_spaces_by_creator_ids_response:
+        """
+        Space lookup by their creators
+        Returns a variety of information about the Spaces created by the provided User IDs
+        Args:
+            user_ids: The IDs of Users to search through.
+        Args:
+            space_fields: A comma separated list of Space fields to display.
+        Args:
+            expansions: A comma separated list of fields to expand.
+        Args:
+            user_fields: A comma separated list of User fields to display.
+        Args:
+            topic_fields: A comma separated list of Topic fields to display.
+        Returns:
+            find_spaces_by_creator_ids_response: Response data
+        """
+        url = self.client.base_url + "/2/spaces/by/creator_ids"
+        params = {}
+        if user_ids is not None:
+            params["user_ids"] = user_ids
+        if space_fields is not None:
+            params["space.fields"] = space_fields
+        if expansions is not None:
+            params["expansions"] = expansions
+        if user_fields is not None:
+            params["user.fields"] = user_fields
+        if topic_fields is not None:
+            params["topic.fields"] = topic_fields
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return find_spaces_by_creator_ids_response.model_validate(response_data)
+
+
+    def space_tweets(
+        self,
         id: str,
         max_results: int = None,
         tweet_fields: List = None,
@@ -127,7 +203,7 @@ class SpacesClient:
         poll_fields: List = None,
         user_fields: List = None,
         place_fields: List = None,
-    ) -> Dict[str, Any]:
+    ) -> space_tweets_response:
         """
         Retrieve Posts from a Space.
         Retrieves Posts shared in the specified Space.
@@ -148,7 +224,7 @@ class SpacesClient:
         Args:
             place_fields: A comma separated list of Place fields to display.
         Returns:
-            Dict[str, Any]: Response data
+            space_tweets_response: Response data
         """
         url = self.client.base_url + "/2/spaces/{id}/tweets"
         params = {}
@@ -176,28 +252,25 @@ class SpacesClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return space_tweets_response.model_validate(response_data)
 
 
-    def search_spaces(self,
-        query: str,
-        state: str = None,
-        max_results: int = None,
+    def find_spaces_by_ids(
+        self,
+        ids: List,
         space_fields: List = None,
         expansions: List = None,
         user_fields: List = None,
         topic_fields: List = None,
-    ) -> Dict[str, Any]:
+    ) -> find_spaces_by_ids_response:
         """
-        Search for Spaces
-        Returns Spaces that match the provided query.
+        Space lookup up Space IDs
+        Returns a variety of information about the Spaces specified by the requested IDs
         Args:
-            query: The search query.
-        Args:
-            state: The state of Spaces to search for.
-        Args:
-            max_results: The number of results to return.
+            ids: The list of Space IDs to return.
         Args:
             space_fields: A comma separated list of Space fields to display.
         Args:
@@ -207,16 +280,12 @@ class SpacesClient:
         Args:
             topic_fields: A comma separated list of Topic fields to display.
         Returns:
-            Dict[str, Any]: Response data
+            find_spaces_by_ids_response: Response data
         """
-        url = self.client.base_url + "/2/spaces/search"
+        url = self.client.base_url + "/2/spaces"
         params = {}
-        if query is not None:
-            params["query"] = query
-        if state is not None:
-            params["state"] = state
-        if max_results is not None:
-            params["max_results"] = max_results
+        if ids is not None:
+            params["ids"] = ids
         if space_fields is not None:
             params["space.fields"] = space_fields
         if expansions is not None:
@@ -234,17 +303,20 @@ class SpacesClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return find_spaces_by_ids_response.model_validate(response_data)
 
 
-    def find_space_by_id(self,
+    def find_space_by_id(
+        self,
         id: str,
         space_fields: List = None,
         expansions: List = None,
         user_fields: List = None,
         topic_fields: List = None,
-    ) -> Dict[str, Any]:
+    ) -> find_space_by_id_response:
         """
         Space lookup by Space ID
         Returns a variety of information about the Space specified by the requested ID
@@ -259,7 +331,7 @@ class SpacesClient:
         Args:
             topic_fields: A comma separated list of Topic fields to display.
         Returns:
-            Dict[str, Any]: Response data
+            find_space_by_id_response: Response data
         """
         url = self.client.base_url + "/2/spaces/{id}"
         params = {}
@@ -281,53 +353,7 @@ class SpacesClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
-
-
-    def find_spaces_by_creator_ids(self,
-        user_ids: List,
-        space_fields: List = None,
-        expansions: List = None,
-        user_fields: List = None,
-        topic_fields: List = None,
-    ) -> Dict[str, Any]:
-        """
-        Space lookup by their creators
-        Returns a variety of information about the Spaces created by the provided User IDs
-        Args:
-            user_ids: The IDs of Users to search through.
-        Args:
-            space_fields: A comma separated list of Space fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            topic_fields: A comma separated list of Topic fields to display.
-        Returns:
-            Dict[str, Any]: Response data
-        """
-        url = self.client.base_url + "/2/spaces/by/creator_ids"
-        params = {}
-        if user_ids is not None:
-            params["user_ids"] = user_ids
-        if space_fields is not None:
-            params["space.fields"] = space_fields
-        if expansions is not None:
-            params["expansions"] = expansions
-        if user_fields is not None:
-            params["user.fields"] = user_fields
-        if topic_fields is not None:
-            params["topic.fields"] = topic_fields
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return find_space_by_id_response.model_validate(response_data)

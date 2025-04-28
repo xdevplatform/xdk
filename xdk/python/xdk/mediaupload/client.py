@@ -4,10 +4,21 @@ MediaUpload client for the X API.
 This module provides a client for interacting with the MediaUpload endpoints of the X API.
 """
 
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import requests_oauthlib
 from ..client import Client
+from .models import (
+    metadata_create_request,
+    metadata_create_response,
+    create_subtitles_request,
+    create_subtitles_response,
+    delete_subtitles_request,
+    delete_subtitles_response,
+    upload_media_status_response,
+    upload_media_request,
+    upload_media_response,
+)
 
 
 class MediaUploadClient:
@@ -18,10 +29,101 @@ class MediaUploadClient:
         self.client = client
 
 
-    def upload_media_status(self,
+    def metadata_create(
+        self,
+        body: Optional[metadata_create_request] = None,
+    ) -> metadata_create_response:
+        """
+        Metadata Create
+        MetadataCreate
+            body: Request body
+        Returns:
+            metadata_create_response: Response data
+        """
+        url = self.client.base_url + "/2/media/metadata"
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        response = self.client.session.post(
+            url,
+            params=params,
+            headers=headers,
+            json=body.model_dump(exclude_none=True) if body else None,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return metadata_create_response.model_validate(response_data)
+
+
+    def create_subtitles(
+        self,
+        body: Optional[create_subtitles_request] = None,
+    ) -> create_subtitles_response:
+        """
+        Subtitle Create
+        SubtitleCreate
+            body: Request body
+        Returns:
+            create_subtitles_response: Response data
+        """
+        url = self.client.base_url + "/2/media/subtitles"
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        response = self.client.session.post(
+            url,
+            params=params,
+            headers=headers,
+            json=body.model_dump(exclude_none=True) if body else None,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return create_subtitles_response.model_validate(response_data)
+
+
+    def delete_subtitles(
+        self,
+        body: Optional[delete_subtitles_request] = None,
+    ) -> delete_subtitles_response:
+        """
+        Subtitle Delete
+        SubtitleDelete
+            body: Request body
+        Returns:
+            delete_subtitles_response: Response data
+        """
+        url = self.client.base_url + "/2/media/subtitles"
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        response = self.client.session.delete(
+            url,
+            params=params,
+            headers=headers,
+            json=body.model_dump(exclude_none=True) if body else None,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return delete_subtitles_response.model_validate(response_data)
+
+
+    def upload_media_status(
+        self,
         media_id: str,
         command: str = None,
-    ) -> Dict[str, Any]:
+    ) -> upload_media_status_response:
         """
         Media Upload Status
         Get MediaUpload Status
@@ -30,7 +132,7 @@ class MediaUploadClient:
         Args:
             command: The command for the media upload request.
         Returns:
-            Dict[str, Any]: Response data
+            upload_media_status_response: Response data
         """
         url = self.client.base_url + "/2/media/upload"
         params = {}
@@ -47,20 +149,22 @@ class MediaUploadClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return upload_media_status_response.model_validate(response_data)
 
 
-    def upload_media(self,
+    def upload_media(
+        self,
         command: str,
         media_id: str = None,
         total_bytes: int = None,
         media_type: str = None,
         media_category: str = None,
         additional_owners: List = None,
-        body: Dict[str, Any]
-               = None,
-    ) -> Dict[str, Any]:
+        body: Optional[upload_media_request] = None,
+    ) -> upload_media_response:
         """
         Media Upload
         MediaUpload
@@ -78,7 +182,7 @@ class MediaUploadClient:
             command: The type of command to use.
             body: Request body
         Returns:
-            Dict[str, Any]: Response data
+            upload_media_response: Response data
         """
         url = self.client.base_url + "/2/media/upload"
         params = {}
@@ -95,99 +199,17 @@ class MediaUploadClient:
         if command is not None:
             params["command"] = command
         headers = {}
-        headers["Content-Type"] = "multipart/form-data"
-        # Make the request
-        response = self.client.session.post(
-            url,
-            params=params,
-            headers=headers,
-            json=body,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Return the response data
-        return response.json()
-
-
-    def metadata_create(self,
-        body: Dict[str, Any]
-               = None,
-    ) -> Dict[str, Any]:
-        """
-        Metadata Create
-        MetadataCreate
-            body: Request body
-        Returns:
-            Dict[str, Any]: Response data
-        """
-        url = self.client.base_url + "/2/media/metadata"
-        params = {}
-        headers = {}
         headers["Content-Type"] = "application/json"
         # Make the request
         response = self.client.session.post(
             url,
             params=params,
             headers=headers,
-            json=body,
+            json=body.model_dump(exclude_none=True) if body else None,
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
-
-
-    def create_subtitles(self,
-        body: Dict[str, Any]
-               = None,
-    ) -> Dict[str, Any]:
-        """
-        Subtitle Create
-        SubtitleCreate
-            body: Request body
-        Returns:
-            Dict[str, Any]: Response data
-        """
-        url = self.client.base_url + "/2/media/subtitles"
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        response = self.client.session.post(
-            url,
-            params=params,
-            headers=headers,
-            json=body,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Return the response data
-        return response.json()
-
-
-    def delete_subtitles(self,
-        body: Dict[str, Any]
-               = None,
-    ) -> Dict[str, Any]:
-        """
-        Subtitle Delete
-        SubtitleDelete
-            body: Request body
-        Returns:
-            Dict[str, Any]: Response data
-        """
-        url = self.client.base_url + "/2/media/subtitles"
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        response = self.client.session.delete(
-            url,
-            params=params,
-            headers=headers,
-            json=body,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return upload_media_response.model_validate(response_data)

@@ -4,10 +4,11 @@ Communities client for the X API.
 This module provides a client for interacting with the Communities endpoints of the X API.
 """
 
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import requests_oauthlib
 from ..client import Client
+from .models import community_id_get_response, communities_search_response
 
 
 class CommunitiesClient:
@@ -18,10 +19,11 @@ class CommunitiesClient:
         self.client = client
 
 
-    def community_id_get(self,
+    def community_id_get(
+        self,
         id: str,
         community_fields: List = None,
-    ) -> Dict[str, Any]:
+    ) -> community_id_get_response:
         """
         Communities lookup by Community ID.
         Returns a Community.
@@ -30,7 +32,7 @@ class CommunitiesClient:
         Args:
             community_fields: A comma separated list of Community fields to display.
         Returns:
-            Dict[str, Any]: Response data
+            community_id_get_response: Response data
         """
         url = self.client.base_url + "/2/communities/{id}"
         params = {}
@@ -46,17 +48,20 @@ class CommunitiesClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return community_id_get_response.model_validate(response_data)
 
 
-    def communities_search(self,
+    def communities_search(
+        self,
         query: str,
         max_results: int = None,
         next_token: str = None,
         pagination_token: str = None,
         community_fields: List = None,
-    ) -> Dict[str, Any]:
+    ) -> communities_search_response:
         """
         Search Communities
         Returns Communities that match search query
@@ -71,7 +76,7 @@ class CommunitiesClient:
         Args:
             community_fields: A comma separated list of Community fields to display.
         Returns:
-            Dict[str, Any]: Response data
+            communities_search_response: Response data
         """
         url = self.client.base_url + "/2/communities/search"
         params = {}
@@ -94,5 +99,7 @@ class CommunitiesClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return communities_search_response.model_validate(response_data)

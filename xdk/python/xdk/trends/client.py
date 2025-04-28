@@ -4,10 +4,11 @@ Trends client for the X API.
 This module provides a client for interacting with the Trends endpoints of the X API.
 """
 
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import requests_oauthlib
 from ..client import Client
+from .models import personalized_trends_response, get_trends_response
 
 
 class TrendsClient:
@@ -18,11 +19,43 @@ class TrendsClient:
         self.client = client
 
 
-    def get_trends(self,
+    def personalized_trends(
+        self,
+        personalized_trend_fields: List = None,
+    ) -> personalized_trends_response:
+        """
+        Get personalized Trends
+        Returns Personalized trends for the authenticated user
+        Args:
+            personalized_trend_fields: A comma separated list of PersonalizedTrend fields to display.
+        Returns:
+            personalized_trends_response: Response data
+        """
+        url = self.client.base_url + "/2/users/personalized_trends"
+        params = {}
+        if personalized_trend_fields is not None:
+            params["personalized_trend.fields"] = personalized_trend_fields
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return personalized_trends_response.model_validate(response_data)
+
+
+    def get_trends(
+        self,
         woeid: int,
         max_trends: int = None,
         trend_fields: List = None,
-    ) -> Dict[str, Any]:
+    ) -> get_trends_response:
         """
         Trends
         Returns the Trend associated with the supplied WoeId.
@@ -33,7 +66,7 @@ class TrendsClient:
         Args:
             trend_fields: A comma separated list of Trend fields to display.
         Returns:
-            Dict[str, Any]: Response data
+            get_trends_response: Response data
         """
         url = self.client.base_url + "/2/trends/by/woeid/{woeid}"
         params = {}
@@ -51,33 +84,7 @@ class TrendsClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
-
-
-    def personalized_trends(self,
-        personalized_trend_fields: List = None,
-    ) -> Dict[str, Any]:
-        """
-        Get personalized Trends
-        Returns Personalized trends for the authenticated user
-        Args:
-            personalized_trend_fields: A comma separated list of PersonalizedTrend fields to display.
-        Returns:
-            Dict[str, Any]: Response data
-        """
-        url = self.client.base_url + "/2/users/personalized_trends"
-        params = {}
-        if personalized_trend_fields is not None:
-            params["personalized_trend.fields"] = personalized_trend_fields
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return get_trends_response.model_validate(response_data)

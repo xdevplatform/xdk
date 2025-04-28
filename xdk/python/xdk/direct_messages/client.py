@@ -4,10 +4,20 @@ Direct_Messages client for the X API.
 This module provides a client for interacting with the Direct_Messages endpoints of the X API.
 """
 
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import requests_oauthlib
 from ..client import Client
+from .models import (
+    get_dm_conversations_with_participant_id_dm_events_response,
+    dm_conversation_with_user_event_id_create_request,
+    get_dm_events_by_id_response,
+    dm_event_delete_response,
+    dm_conversation_id_create_request,
+    get_dm_events_response,
+    get_dm_conversations_id_dm_events_response,
+    dm_conversation_by_id_event_id_create_request,
+)
 
 
 class Direct_MessagesClient:
@@ -18,66 +28,8 @@ class Direct_MessagesClient:
         self.client = client
 
 
-    def dm_conversation_id_create(self,
-        body: Dict[str, Any]
-               = None,
-    ) -> Dict[str, Any]:
-        """
-        Create a new DM Conversation
-        Creates a new DM Conversation.
-            body: Request body
-        Returns:
-            Dict[str, Any]: Response data
-        """
-        url = self.client.base_url + "/2/dm_conversations"
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        response = self.client.session.post(
-            url,
-            params=params,
-            headers=headers,
-            json=body,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Return the response data
-        return response.json()
-
-
-    def dm_conversation_with_user_event_id_create(self,
-        participant_id: str,
-        body: Any = None,
-    ) -> Dict[str, Any]:
-        """
-        Send a new message to a user
-        Creates a new message for a DM Conversation with a participant user by ID
-        Args:
-            participant_id: The ID of the recipient user that will receive the DM.
-            body: Request body
-        Returns:
-            Dict[str, Any]: Response data
-        """
-        url = self.client.base_url + "/2/dm_conversations/with/{participant_id}/messages"
-        params = {}
-        url = url.replace("{participant_id}", str(participant_id))
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        response = self.client.session.post(
-            url,
-            params=params,
-            headers=headers,
-            json=body,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Return the response data
-        return response.json()
-
-
-    def get_dm_conversations_with_participant_id_dm_events(self,
+    def get_dm_conversations_with_participant_id_dm_events(
+        self,
         participant_id: str,
         max_results: int = None,
         pagination_token: str = None,
@@ -87,7 +39,7 @@ class Direct_MessagesClient:
         media_fields: List = None,
         user_fields: List = None,
         tweet_fields: List = None,
-    ) -> Dict[str, Any]:
+    ) -> get_dm_conversations_with_participant_id_dm_events_response:
         """
         Get DM Events for a DM Conversation
         Returns DM Events for a DM Conversation
@@ -110,9 +62,11 @@ class Direct_MessagesClient:
         Args:
             tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            Dict[str, Any]: Response data
+            get_dm_conversations_with_participant_id_dm_events_response: Response data
         """
-        url = self.client.base_url + "/2/dm_conversations/with/{participant_id}/dm_events"
+        url = (
+            self.client.base_url + "/2/dm_conversations/with/{participant_id}/dm_events"
+        )
         params = {}
         if max_results is not None:
             params["max_results"] = max_results
@@ -140,18 +94,61 @@ class Direct_MessagesClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return (
+            get_dm_conversations_with_participant_id_dm_events_response.model_validate(
+                response_data
+            )
+        )
 
 
-    def get_dm_events_by_id(self,
+    def dm_conversation_with_user_event_id_create(
+        self,
+        participant_id: str,
+        body: Optional[dm_conversation_with_user_event_id_create_request] = None,
+    ) -> Dict[str, Any]:
+        """
+        Send a new message to a user
+        Creates a new message for a DM Conversation with a participant user by ID
+        Args:
+            participant_id: The ID of the recipient user that will receive the DM.
+            body: Request body
+        Returns:
+            Dict[str, Any]: Response data
+        """
+        url = (
+            self.client.base_url + "/2/dm_conversations/with/{participant_id}/messages"
+        )
+        params = {}
+        url = url.replace("{participant_id}", str(participant_id))
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        response = self.client.session.post(
+            url,
+            params=params,
+            headers=headers,
+            json=body.model_dump(exclude_none=True) if body else None,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return response_data
+
+
+    def get_dm_events_by_id(
+        self,
         event_id: str,
         dm_event_fields: List = None,
         expansions: List = None,
         media_fields: List = None,
         user_fields: List = None,
         tweet_fields: List = None,
-    ) -> Dict[str, Any]:
+    ) -> get_dm_events_by_id_response:
         """
         Get DM Events by id
         Returns DM Events by event id.
@@ -168,7 +165,7 @@ class Direct_MessagesClient:
         Args:
             tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            Dict[str, Any]: Response data
+            get_dm_events_by_id_response: Response data
         """
         url = self.client.base_url + "/2/dm_events/{event_id}"
         params = {}
@@ -192,20 +189,23 @@ class Direct_MessagesClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return get_dm_events_by_id_response.model_validate(response_data)
 
 
-    def dm_event_delete(self,
+    def dm_event_delete(
+        self,
         event_id: str,
-    ) -> Dict[str, Any]:
+    ) -> dm_event_delete_response:
         """
         Delete Dm
         Delete a Dm Event that you own.
         Args:
             event_id: The ID of the direct-message event to delete.
         Returns:
-            Dict[str, Any]: Response data
+            dm_event_delete_response: Response data
         """
         url = self.client.base_url + "/2/dm_events/{event_id}"
         params = {}
@@ -219,26 +219,25 @@ class Direct_MessagesClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return dm_event_delete_response.model_validate(response_data)
 
 
-    def dm_conversation_by_id_event_id_create(self,
-        dm_conversation_id: str,
-        body: Any = None,
+    def dm_conversation_id_create(
+        self,
+        body: Optional[dm_conversation_id_create_request] = None,
     ) -> Dict[str, Any]:
         """
-        Send a new message to a DM Conversation
-        Creates a new message for a DM Conversation specified by DM Conversation ID
-        Args:
-            dm_conversation_id: The DM Conversation ID.
+        Create a new DM Conversation
+        Creates a new DM Conversation.
             body: Request body
         Returns:
             Dict[str, Any]: Response data
         """
-        url = self.client.base_url + "/2/dm_conversations/{dm_conversation_id}/messages"
+        url = self.client.base_url + "/2/dm_conversations"
         params = {}
-        url = url.replace("{dm_conversation_id}", str(dm_conversation_id))
         headers = {}
         headers["Content-Type"] = "application/json"
         # Make the request
@@ -246,15 +245,18 @@ class Direct_MessagesClient:
             url,
             params=params,
             headers=headers,
-            json=body,
+            json=body.model_dump(exclude_none=True) if body else None,
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return response_data
 
 
-    def get_dm_events(self,
+    def get_dm_events(
+        self,
         max_results: int = None,
         pagination_token: str = None,
         event_types: List = None,
@@ -263,7 +265,7 @@ class Direct_MessagesClient:
         media_fields: List = None,
         user_fields: List = None,
         tweet_fields: List = None,
-    ) -> Dict[str, Any]:
+    ) -> get_dm_events_response:
         """
         Get recent DM Events
         Returns recent DM Events across DM conversations
@@ -284,7 +286,7 @@ class Direct_MessagesClient:
         Args:
             tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            Dict[str, Any]: Response data
+            get_dm_events_response: Response data
         """
         url = self.client.base_url + "/2/dm_events"
         params = {}
@@ -313,11 +315,14 @@ class Direct_MessagesClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return get_dm_events_response.model_validate(response_data)
 
 
-    def get_dm_conversations_id_dm_events(self,
+    def get_dm_conversations_id_dm_events(
+        self,
         id: str,
         max_results: int = None,
         pagination_token: str = None,
@@ -327,7 +332,7 @@ class Direct_MessagesClient:
         media_fields: List = None,
         user_fields: List = None,
         tweet_fields: List = None,
-    ) -> Dict[str, Any]:
+    ) -> get_dm_conversations_id_dm_events_response:
         """
         Get DM Events for a DM Conversation
         Returns DM Events for a DM Conversation
@@ -350,7 +355,7 @@ class Direct_MessagesClient:
         Args:
             tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            Dict[str, Any]: Response data
+            get_dm_conversations_id_dm_events_response: Response data
         """
         url = self.client.base_url + "/2/dm_conversations/{id}/dm_events"
         params = {}
@@ -380,5 +385,41 @@ class Direct_MessagesClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return get_dm_conversations_id_dm_events_response.model_validate(response_data)
+
+
+    def dm_conversation_by_id_event_id_create(
+        self,
+        dm_conversation_id: str,
+        body: Optional[dm_conversation_by_id_event_id_create_request] = None,
+    ) -> Dict[str, Any]:
+        """
+        Send a new message to a DM Conversation
+        Creates a new message for a DM Conversation specified by DM Conversation ID
+        Args:
+            dm_conversation_id: The DM Conversation ID.
+            body: Request body
+        Returns:
+            Dict[str, Any]: Response data
+        """
+        url = self.client.base_url + "/2/dm_conversations/{dm_conversation_id}/messages"
+        params = {}
+        url = url.replace("{dm_conversation_id}", str(dm_conversation_id))
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        response = self.client.session.post(
+            url,
+            params=params,
+            headers=headers,
+            json=body.model_dump(exclude_none=True) if body else None,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return response_data

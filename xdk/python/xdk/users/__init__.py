@@ -6,4 +6,4 @@ This module provides access to the Users endpoints of the X API.
 
 from .client import UsersClient
 
-__all__ = ["UsersClient"] 
+__all__ = ["UsersClient"]

@@ -4,10 +4,11 @@ Likes client for the X API.
 This module provides a client for interacting with the Likes endpoints of the X API.
 """
 
-from typing import Dict, List, Optional, Any, Union
+from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import requests_oauthlib
 from ..client import Client
+from .models import likes_sample10_stream_response, likes_firehose_stream_response
 
 
 class LikesClient:
@@ -18,7 +19,8 @@ class LikesClient:
         self.client = client
 
 
-    def likes_sample10_stream(self,
+    def likes_sample10_stream(
+        self,
         partition: int,
         backfill_minutes: int = None,
         start_time: str = None,
@@ -27,7 +29,7 @@ class LikesClient:
         expansions: List = None,
         user_fields: List = None,
         tweet_fields: List = None,
-    ) -> Dict[str, Any]:
+    ) -> likes_sample10_stream_response:
         """
         Likes Sample 10 stream
         Streams 10% of public Likes.
@@ -48,7 +50,7 @@ class LikesClient:
         Args:
             tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            Dict[str, Any]: Response data
+            likes_sample10_stream_response: Response data
         """
         url = self.client.base_url + "/2/likes/sample10/stream"
         params = {}
@@ -77,11 +79,14 @@ class LikesClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return likes_sample10_stream_response.model_validate(response_data)
 
 
-    def likes_firehose_stream(self,
+    def likes_firehose_stream(
+        self,
         partition: int,
         backfill_minutes: int = None,
         start_time: str = None,
@@ -90,7 +95,7 @@ class LikesClient:
         expansions: List = None,
         user_fields: List = None,
         tweet_fields: List = None,
-    ) -> Dict[str, Any]:
+    ) -> likes_firehose_stream_response:
         """
         Likes Firehose stream
         Streams 100% of public Likes.
@@ -111,7 +116,7 @@ class LikesClient:
         Args:
             tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            Dict[str, Any]: Response data
+            likes_firehose_stream_response: Response data
         """
         url = self.client.base_url + "/2/likes/firehose/stream"
         params = {}
@@ -140,5 +145,7 @@ class LikesClient:
         )
         # Check for errors
         response.raise_for_status()
-        # Return the response data
-        return response.json()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return likes_firehose_stream_response.model_validate(response_data)
