@@ -9,29 +9,29 @@ import requests
 import requests_oauthlib
 from ..client import Client
 from .models import (
+    users_id_blocking_response,
+    find_my_user_response,
+    list_of_repost_of_user_response,
+    users_id_d_m_un_block_response,
     users_id_d_m_block_response,
-    find_users_by_id_response,
-    tweets_id_retweeting_users_response,
+    find_users_by_username_response,
+    list_get_members_response,
+    find_user_by_id_response,
+    list_get_followers_response,
+    tweets_id_liking_users_response,
     users_id_muting_response,
     users_id_mute_request,
     users_id_mute_response,
-    find_user_by_username_response,
+    find_users_by_id_response,
     search_user_by_query_response,
-    find_my_user_response,
-    users_id_unfollow_response,
-    list_get_followers_response,
-    find_users_by_username_response,
-    list_of_repost_of_user_response,
-    find_user_by_id_response,
+    tweets_id_retweeting_users_response,
     users_id_following_response,
     users_id_follow_request,
     users_id_follow_response,
-    users_id_blocking_response,
-    list_get_members_response,
-    users_id_d_m_un_block_response,
+    users_id_unfollow_response,
+    find_user_by_username_response,
     users_id_followers_response,
     users_id_unmute_response,
-    tweets_id_liking_users_response,
 )
 
 
@@ -41,6 +41,198 @@ class UsersClient:
 
     def __init__(self, client: Client):
         self.client = client
+
+
+    def users_id_blocking(
+        self,
+        id: str,
+        max_results: int = None,
+        pagination_token: str = None,
+        user_fields: List = None,
+        expansions: List = None,
+        tweet_fields: List = None,
+    ) -> users_id_blocking_response:
+        """
+        Returns User objects that are blocked by provided User ID
+        Returns a list of Users that are blocked by the provided User ID
+        Args:
+            id: The ID of the authenticated source User for whom to return results.
+        Args:
+            max_results: The maximum number of results.
+        Args:
+            pagination_token: This parameter is used to get a specified 'page' of results.
+        Args:
+            user_fields: A comma separated list of User fields to display.
+        Args:
+            expansions: A comma separated list of fields to expand.
+        Args:
+            tweet_fields: A comma separated list of Tweet fields to display.
+        Returns:
+            users_id_blocking_response: Response data
+        """
+        url = self.client.base_url + "/2/users/{id}/blocking"
+        params = {}
+        if max_results is not None:
+            params["max_results"] = max_results
+        if pagination_token is not None:
+            params["pagination_token"] = pagination_token
+        if user_fields is not None:
+            params["user.fields"] = user_fields
+        if expansions is not None:
+            params["expansions"] = expansions
+        if tweet_fields is not None:
+            params["tweet.fields"] = tweet_fields
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return users_id_blocking_response.model_validate(response_data)
+
+
+    def find_my_user(
+        self,
+        user_fields: List = None,
+        expansions: List = None,
+        tweet_fields: List = None,
+    ) -> find_my_user_response:
+        """
+        User lookup me
+        This endpoint returns information about the requesting User.
+        Args:
+            user_fields: A comma separated list of User fields to display.
+        Args:
+            expansions: A comma separated list of fields to expand.
+        Args:
+            tweet_fields: A comma separated list of Tweet fields to display.
+        Returns:
+            find_my_user_response: Response data
+        """
+        url = self.client.base_url + "/2/users/me"
+        params = {}
+        if user_fields is not None:
+            params["user.fields"] = user_fields
+        if expansions is not None:
+            params["expansions"] = expansions
+        if tweet_fields is not None:
+            params["tweet.fields"] = tweet_fields
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return find_my_user_response.model_validate(response_data)
+
+
+    def list_of_repost_of_user(
+        self,
+        max_results: int = None,
+        pagination_token: str = None,
+        tweet_fields: List = None,
+        expansions: List = None,
+        media_fields: List = None,
+        poll_fields: List = None,
+        user_fields: List = None,
+        place_fields: List = None,
+    ) -> list_of_repost_of_user_response:
+        """
+        Returns repost of user
+        This endpoint returns reposts of the requesting User.
+        Args:
+            max_results: The maximum number of results.
+        Args:
+            pagination_token: This parameter is used to get the next 'page' of results.
+        Args:
+            tweet_fields: A comma separated list of Tweet fields to display.
+        Args:
+            expansions: A comma separated list of fields to expand.
+        Args:
+            media_fields: A comma separated list of Media fields to display.
+        Args:
+            poll_fields: A comma separated list of Poll fields to display.
+        Args:
+            user_fields: A comma separated list of User fields to display.
+        Args:
+            place_fields: A comma separated list of Place fields to display.
+        Returns:
+            list_of_repost_of_user_response: Response data
+        """
+        url = self.client.base_url + "/2/users/reposts_of_me"
+        params = {}
+        if max_results is not None:
+            params["max_results"] = max_results
+        if pagination_token is not None:
+            params["pagination_token"] = pagination_token
+        if tweet_fields is not None:
+            params["tweet.fields"] = tweet_fields
+        if expansions is not None:
+            params["expansions"] = expansions
+        if media_fields is not None:
+            params["media.fields"] = media_fields
+        if poll_fields is not None:
+            params["poll.fields"] = poll_fields
+        if user_fields is not None:
+            params["user.fields"] = user_fields
+        if place_fields is not None:
+            params["place.fields"] = place_fields
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return list_of_repost_of_user_response.model_validate(response_data)
+
+
+    def users_id_d_m_un_block(
+        self,
+        id: str,
+    ) -> users_id_d_m_un_block_response:
+        """
+        Causes DMs to/from the target User (in the path) to be unblocked by the authenticated request user
+        Causes DMs to/from the target User (in the path) to be unblocked by the authenticated request user
+        Args:
+            id: The ID of the target User that the authenticated user requesting to unblock dms for.
+        Returns:
+            users_id_d_m_un_block_response: Response data
+        """
+        url = self.client.base_url + "/2/users/{id}/dm/unblock"
+        params = {}
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.post(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return users_id_d_m_un_block_response.model_validate(response_data)
 
 
     def users_id_d_m_block(
@@ -73,18 +265,18 @@ class UsersClient:
         return users_id_d_m_block_response.model_validate(response_data)
 
 
-    def find_users_by_id(
+    def find_users_by_username(
         self,
-        ids: List,
+        usernames: List,
         user_fields: List = None,
         expansions: List = None,
         tweet_fields: List = None,
-    ) -> find_users_by_id_response:
+    ) -> find_users_by_username_response:
         """
-        User lookup by IDs
-        This endpoint returns information about Users. Specify Users by their ID.
+        User lookup by usernames
+        This endpoint returns information about Users. Specify Users by their username.
         Args:
-            ids: A list of User IDs, comma-separated. You can specify up to 100 IDs.
+            usernames: A list of usernames, comma-separated.
         Args:
             user_fields: A comma separated list of User fields to display.
         Args:
@@ -92,12 +284,12 @@ class UsersClient:
         Args:
             tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            find_users_by_id_response: Response data
+            find_users_by_username_response: Response data
         """
-        url = self.client.base_url + "/2/users"
+        url = self.client.base_url + "/2/users/by"
         params = {}
-        if ids is not None:
-            params["ids"] = ids
+        if usernames is not None:
+            params["usernames"] = usernames
         if user_fields is not None:
             params["user.fields"] = user_fields
         if expansions is not None:
@@ -116,10 +308,10 @@ class UsersClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return find_users_by_id_response.model_validate(response_data)
+        return find_users_by_username_response.model_validate(response_data)
 
 
-    def tweets_id_retweeting_users(
+    def list_get_members(
         self,
         id: str,
         max_results: int = None,
@@ -127,16 +319,16 @@ class UsersClient:
         user_fields: List = None,
         expansions: List = None,
         tweet_fields: List = None,
-    ) -> tweets_id_retweeting_users_response:
+    ) -> list_get_members_response:
         """
-        Returns User objects that have retweeted the provided Post ID
-        Returns a list of Users that have retweeted the provided Post ID
+        Returns User objects that are members of a List by the provided List ID.
+        Returns a list of Users that are members of a List by the provided List ID.
         Args:
-            id: A single Post ID.
+            id: The ID of the List.
         Args:
             max_results: The maximum number of results.
         Args:
-            pagination_token: This parameter is used to get the next 'page' of results.
+            pagination_token: This parameter is used to get a specified 'page' of results.
         Args:
             user_fields: A comma separated list of User fields to display.
         Args:
@@ -144,9 +336,9 @@ class UsersClient:
         Args:
             tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            tweets_id_retweeting_users_response: Response data
+            list_get_members_response: Response data
         """
-        url = self.client.base_url + "/2/tweets/{id}/retweeted_by"
+        url = self.client.base_url + "/2/lists/{id}/members"
         params = {}
         if max_results is not None:
             params["max_results"] = max_results
@@ -171,7 +363,162 @@ class UsersClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return tweets_id_retweeting_users_response.model_validate(response_data)
+        return list_get_members_response.model_validate(response_data)
+
+
+    def find_user_by_id(
+        self,
+        id: str,
+        user_fields: List = None,
+        expansions: List = None,
+        tweet_fields: List = None,
+    ) -> find_user_by_id_response:
+        """
+        User lookup by ID
+        This endpoint returns information about a User. Specify User by ID.
+        Args:
+            id: The ID of the User to lookup.
+        Args:
+            user_fields: A comma separated list of User fields to display.
+        Args:
+            expansions: A comma separated list of fields to expand.
+        Args:
+            tweet_fields: A comma separated list of Tweet fields to display.
+        Returns:
+            find_user_by_id_response: Response data
+        """
+        url = self.client.base_url + "/2/users/{id}"
+        params = {}
+        if user_fields is not None:
+            params["user.fields"] = user_fields
+        if expansions is not None:
+            params["expansions"] = expansions
+        if tweet_fields is not None:
+            params["tweet.fields"] = tweet_fields
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return find_user_by_id_response.model_validate(response_data)
+
+
+    def list_get_followers(
+        self,
+        id: str,
+        max_results: int = None,
+        pagination_token: str = None,
+        user_fields: List = None,
+        expansions: List = None,
+        tweet_fields: List = None,
+    ) -> list_get_followers_response:
+        """
+        Returns User objects that follow a List by the provided List ID
+        Returns a list of Users that follow a List by the provided List ID
+        Args:
+            id: The ID of the List.
+        Args:
+            max_results: The maximum number of results.
+        Args:
+            pagination_token: This parameter is used to get a specified 'page' of results.
+        Args:
+            user_fields: A comma separated list of User fields to display.
+        Args:
+            expansions: A comma separated list of fields to expand.
+        Args:
+            tweet_fields: A comma separated list of Tweet fields to display.
+        Returns:
+            list_get_followers_response: Response data
+        """
+        url = self.client.base_url + "/2/lists/{id}/followers"
+        params = {}
+        if max_results is not None:
+            params["max_results"] = max_results
+        if pagination_token is not None:
+            params["pagination_token"] = pagination_token
+        if user_fields is not None:
+            params["user.fields"] = user_fields
+        if expansions is not None:
+            params["expansions"] = expansions
+        if tweet_fields is not None:
+            params["tweet.fields"] = tweet_fields
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return list_get_followers_response.model_validate(response_data)
+
+
+    def tweets_id_liking_users(
+        self,
+        id: str,
+        max_results: int = None,
+        pagination_token: str = None,
+        user_fields: List = None,
+        expansions: List = None,
+        tweet_fields: List = None,
+    ) -> tweets_id_liking_users_response:
+        """
+        Returns User objects that have liked the provided Post ID
+        Returns a list of Users that have liked the provided Post ID
+        Args:
+            id: A single Post ID.
+        Args:
+            max_results: The maximum number of results.
+        Args:
+            pagination_token: This parameter is used to get the next 'page' of results.
+        Args:
+            user_fields: A comma separated list of User fields to display.
+        Args:
+            expansions: A comma separated list of fields to expand.
+        Args:
+            tweet_fields: A comma separated list of Tweet fields to display.
+        Returns:
+            tweets_id_liking_users_response: Response data
+        """
+        url = self.client.base_url + "/2/tweets/{id}/liking_users"
+        params = {}
+        if max_results is not None:
+            params["max_results"] = max_results
+        if pagination_token is not None:
+            params["pagination_token"] = pagination_token
+        if user_fields is not None:
+            params["user.fields"] = user_fields
+        if expansions is not None:
+            params["expansions"] = expansions
+        if tweet_fields is not None:
+            params["tweet.fields"] = tweet_fields
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return tweets_id_liking_users_response.model_validate(response_data)
 
 
     def users_id_muting(
@@ -263,18 +610,18 @@ class UsersClient:
         return users_id_mute_response.model_validate(response_data)
 
 
-    def find_user_by_username(
+    def find_users_by_id(
         self,
-        username: str,
+        ids: List,
         user_fields: List = None,
         expansions: List = None,
         tweet_fields: List = None,
-    ) -> find_user_by_username_response:
+    ) -> find_users_by_id_response:
         """
-        User lookup by username
-        This endpoint returns information about a User. Specify User by username.
+        User lookup by IDs
+        This endpoint returns information about Users. Specify Users by their ID.
         Args:
-            username: A username.
+            ids: A list of User IDs, comma-separated. You can specify up to 100 IDs.
         Args:
             user_fields: A comma separated list of User fields to display.
         Args:
@@ -282,17 +629,18 @@ class UsersClient:
         Args:
             tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            find_user_by_username_response: Response data
+            find_users_by_id_response: Response data
         """
-        url = self.client.base_url + "/2/users/by/username/{username}"
+        url = self.client.base_url + "/2/users"
         params = {}
+        if ids is not None:
+            params["ids"] = ids
         if user_fields is not None:
             params["user.fields"] = user_fields
         if expansions is not None:
             params["expansions"] = expansions
         if tweet_fields is not None:
             params["tweet.fields"] = tweet_fields
-        url = url.replace("{username}", str(username))
         headers = {}
         # Make the request
         response = self.client.session.get(
@@ -305,7 +653,7 @@ class UsersClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return find_user_by_username_response.model_validate(response_data)
+        return find_users_by_id_response.model_validate(response_data)
 
 
     def search_user_by_query(
@@ -364,85 +712,7 @@ class UsersClient:
         return search_user_by_query_response.model_validate(response_data)
 
 
-    def find_my_user(
-        self,
-        user_fields: List = None,
-        expansions: List = None,
-        tweet_fields: List = None,
-    ) -> find_my_user_response:
-        """
-        User lookup me
-        This endpoint returns information about the requesting User.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            tweet_fields: A comma separated list of Tweet fields to display.
-        Returns:
-            find_my_user_response: Response data
-        """
-        url = self.client.base_url + "/2/users/me"
-        params = {}
-        if user_fields is not None:
-            params["user.fields"] = user_fields
-        if expansions is not None:
-            params["expansions"] = expansions
-        if tweet_fields is not None:
-            params["tweet.fields"] = tweet_fields
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return find_my_user_response.model_validate(response_data)
-
-
-    def users_id_unfollow(
-        self,
-        source_user_id: str,
-        target_user_id: str,
-    ) -> users_id_unfollow_response:
-        """
-        Unfollow User
-        Causes the source User to unfollow the target User. The source User must match the User context authorizing the request
-        Args:
-            source_user_id: The ID of the authenticated source User that is requesting to unfollow the target User.
-        Args:
-            target_user_id: The ID of the User that the source User is requesting to unfollow.
-        Returns:
-            users_id_unfollow_response: Response data
-        """
-        url = (
-            self.client.base_url
-            + "/2/users/{source_user_id}/following/{target_user_id}"
-        )
-        params = {}
-        url = url.replace("{source_user_id}", str(source_user_id))
-        url = url.replace("{target_user_id}", str(target_user_id))
-        headers = {}
-        # Make the request
-        response = self.client.session.delete(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return users_id_unfollow_response.model_validate(response_data)
-
-
-    def list_get_followers(
+    def tweets_id_retweeting_users(
         self,
         id: str,
         max_results: int = None,
@@ -450,188 +720,31 @@ class UsersClient:
         user_fields: List = None,
         expansions: List = None,
         tweet_fields: List = None,
-    ) -> list_get_followers_response:
+    ) -> tweets_id_retweeting_users_response:
         """
-        Returns User objects that follow a List by the provided List ID
-        Returns a list of Users that follow a List by the provided List ID
+        Returns User objects that have retweeted the provided Post ID
+        Returns a list of Users that have retweeted the provided Post ID
         Args:
-            id: The ID of the List.
-        Args:
-            max_results: The maximum number of results.
-        Args:
-            pagination_token: This parameter is used to get a specified 'page' of results.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            tweet_fields: A comma separated list of Tweet fields to display.
-        Returns:
-            list_get_followers_response: Response data
-        """
-        url = self.client.base_url + "/2/lists/{id}/followers"
-        params = {}
-        if max_results is not None:
-            params["max_results"] = max_results
-        if pagination_token is not None:
-            params["pagination_token"] = pagination_token
-        if user_fields is not None:
-            params["user.fields"] = user_fields
-        if expansions is not None:
-            params["expansions"] = expansions
-        if tweet_fields is not None:
-            params["tweet.fields"] = tweet_fields
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return list_get_followers_response.model_validate(response_data)
-
-
-    def find_users_by_username(
-        self,
-        usernames: List,
-        user_fields: List = None,
-        expansions: List = None,
-        tweet_fields: List = None,
-    ) -> find_users_by_username_response:
-        """
-        User lookup by usernames
-        This endpoint returns information about Users. Specify Users by their username.
-        Args:
-            usernames: A list of usernames, comma-separated.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            tweet_fields: A comma separated list of Tweet fields to display.
-        Returns:
-            find_users_by_username_response: Response data
-        """
-        url = self.client.base_url + "/2/users/by"
-        params = {}
-        if usernames is not None:
-            params["usernames"] = usernames
-        if user_fields is not None:
-            params["user.fields"] = user_fields
-        if expansions is not None:
-            params["expansions"] = expansions
-        if tweet_fields is not None:
-            params["tweet.fields"] = tweet_fields
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return find_users_by_username_response.model_validate(response_data)
-
-
-    def list_of_repost_of_user(
-        self,
-        max_results: int = None,
-        pagination_token: str = None,
-        tweet_fields: List = None,
-        expansions: List = None,
-        media_fields: List = None,
-        poll_fields: List = None,
-        user_fields: List = None,
-        place_fields: List = None,
-    ) -> list_of_repost_of_user_response:
-        """
-        Returns repost of user
-        This endpoint returns reposts of the requesting User.
+            id: A single Post ID.
         Args:
             max_results: The maximum number of results.
         Args:
             pagination_token: This parameter is used to get the next 'page' of results.
         Args:
-            tweet_fields: A comma separated list of Tweet fields to display.
+            user_fields: A comma separated list of User fields to display.
         Args:
             expansions: A comma separated list of fields to expand.
         Args:
-            media_fields: A comma separated list of Media fields to display.
-        Args:
-            poll_fields: A comma separated list of Poll fields to display.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            place_fields: A comma separated list of Place fields to display.
+            tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            list_of_repost_of_user_response: Response data
+            tweets_id_retweeting_users_response: Response data
         """
-        url = self.client.base_url + "/2/users/reposts_of_me"
+        url = self.client.base_url + "/2/tweets/{id}/retweeted_by"
         params = {}
         if max_results is not None:
             params["max_results"] = max_results
         if pagination_token is not None:
             params["pagination_token"] = pagination_token
-        if tweet_fields is not None:
-            params["tweet.fields"] = tweet_fields
-        if expansions is not None:
-            params["expansions"] = expansions
-        if media_fields is not None:
-            params["media.fields"] = media_fields
-        if poll_fields is not None:
-            params["poll.fields"] = poll_fields
-        if user_fields is not None:
-            params["user.fields"] = user_fields
-        if place_fields is not None:
-            params["place.fields"] = place_fields
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return list_of_repost_of_user_response.model_validate(response_data)
-
-
-    def find_user_by_id(
-        self,
-        id: str,
-        user_fields: List = None,
-        expansions: List = None,
-        tweet_fields: List = None,
-    ) -> find_user_by_id_response:
-        """
-        User lookup by ID
-        This endpoint returns information about a User. Specify User by ID.
-        Args:
-            id: The ID of the User to lookup.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            tweet_fields: A comma separated list of Tweet fields to display.
-        Returns:
-            find_user_by_id_response: Response data
-        """
-        url = self.client.base_url + "/2/users/{id}"
-        params = {}
         if user_fields is not None:
             params["user.fields"] = user_fields
         if expansions is not None:
@@ -651,7 +764,7 @@ class UsersClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return find_user_by_id_response.model_validate(response_data)
+        return tweets_id_retweeting_users_response.model_validate(response_data)
 
 
     def users_id_following(
@@ -743,24 +856,55 @@ class UsersClient:
         return users_id_follow_response.model_validate(response_data)
 
 
-    def users_id_blocking(
+    def users_id_unfollow(
         self,
-        id: str,
-        max_results: int = None,
-        pagination_token: str = None,
+        source_user_id: str,
+        target_user_id: str,
+    ) -> users_id_unfollow_response:
+        """
+        Unfollow User
+        Causes the source User to unfollow the target User. The source User must match the User context authorizing the request
+        Args:
+            source_user_id: The ID of the authenticated source User that is requesting to unfollow the target User.
+        Args:
+            target_user_id: The ID of the User that the source User is requesting to unfollow.
+        Returns:
+            users_id_unfollow_response: Response data
+        """
+        url = (
+            self.client.base_url
+            + "/2/users/{source_user_id}/following/{target_user_id}"
+        )
+        params = {}
+        url = url.replace("{source_user_id}", str(source_user_id))
+        url = url.replace("{target_user_id}", str(target_user_id))
+        headers = {}
+        # Make the request
+        response = self.client.session.delete(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return users_id_unfollow_response.model_validate(response_data)
+
+
+    def find_user_by_username(
+        self,
+        username: str,
         user_fields: List = None,
         expansions: List = None,
         tweet_fields: List = None,
-    ) -> users_id_blocking_response:
+    ) -> find_user_by_username_response:
         """
-        Returns User objects that are blocked by provided User ID
-        Returns a list of Users that are blocked by the provided User ID
+        User lookup by username
+        This endpoint returns information about a User. Specify User by username.
         Args:
-            id: The ID of the authenticated source User for whom to return results.
-        Args:
-            max_results: The maximum number of results.
-        Args:
-            pagination_token: This parameter is used to get a specified 'page' of results.
+            username: A username.
         Args:
             user_fields: A comma separated list of User fields to display.
         Args:
@@ -768,21 +912,17 @@ class UsersClient:
         Args:
             tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            users_id_blocking_response: Response data
+            find_user_by_username_response: Response data
         """
-        url = self.client.base_url + "/2/users/{id}/blocking"
+        url = self.client.base_url + "/2/users/by/username/{username}"
         params = {}
-        if max_results is not None:
-            params["max_results"] = max_results
-        if pagination_token is not None:
-            params["pagination_token"] = pagination_token
         if user_fields is not None:
             params["user.fields"] = user_fields
         if expansions is not None:
             params["expansions"] = expansions
         if tweet_fields is not None:
             params["tweet.fields"] = tweet_fields
-        url = url.replace("{id}", str(id))
+        url = url.replace("{username}", str(username))
         headers = {}
         # Make the request
         response = self.client.session.get(
@@ -795,92 +935,7 @@ class UsersClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return users_id_blocking_response.model_validate(response_data)
-
-
-    def list_get_members(
-        self,
-        id: str,
-        max_results: int = None,
-        pagination_token: str = None,
-        user_fields: List = None,
-        expansions: List = None,
-        tweet_fields: List = None,
-    ) -> list_get_members_response:
-        """
-        Returns User objects that are members of a List by the provided List ID.
-        Returns a list of Users that are members of a List by the provided List ID.
-        Args:
-            id: The ID of the List.
-        Args:
-            max_results: The maximum number of results.
-        Args:
-            pagination_token: This parameter is used to get a specified 'page' of results.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            tweet_fields: A comma separated list of Tweet fields to display.
-        Returns:
-            list_get_members_response: Response data
-        """
-        url = self.client.base_url + "/2/lists/{id}/members"
-        params = {}
-        if max_results is not None:
-            params["max_results"] = max_results
-        if pagination_token is not None:
-            params["pagination_token"] = pagination_token
-        if user_fields is not None:
-            params["user.fields"] = user_fields
-        if expansions is not None:
-            params["expansions"] = expansions
-        if tweet_fields is not None:
-            params["tweet.fields"] = tweet_fields
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return list_get_members_response.model_validate(response_data)
-
-
-    def users_id_d_m_un_block(
-        self,
-        id: str,
-    ) -> users_id_d_m_un_block_response:
-        """
-        Causes DMs to/from the target User (in the path) to be unblocked by the authenticated request user
-        Causes DMs to/from the target User (in the path) to be unblocked by the authenticated request user
-        Args:
-            id: The ID of the target User that the authenticated user requesting to unblock dms for.
-        Returns:
-            users_id_d_m_un_block_response: Response data
-        """
-        url = self.client.base_url + "/2/users/{id}/dm/unblock"
-        params = {}
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.post(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return users_id_d_m_un_block_response.model_validate(response_data)
+        return find_user_by_username_response.model_validate(response_data)
 
 
     def users_id_followers(
@@ -970,58 +1025,3 @@ class UsersClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return users_id_unmute_response.model_validate(response_data)
-
-
-    def tweets_id_liking_users(
-        self,
-        id: str,
-        max_results: int = None,
-        pagination_token: str = None,
-        user_fields: List = None,
-        expansions: List = None,
-        tweet_fields: List = None,
-    ) -> tweets_id_liking_users_response:
-        """
-        Returns User objects that have liked the provided Post ID
-        Returns a list of Users that have liked the provided Post ID
-        Args:
-            id: A single Post ID.
-        Args:
-            max_results: The maximum number of results.
-        Args:
-            pagination_token: This parameter is used to get the next 'page' of results.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            tweet_fields: A comma separated list of Tweet fields to display.
-        Returns:
-            tweets_id_liking_users_response: Response data
-        """
-        url = self.client.base_url + "/2/tweets/{id}/liking_users"
-        params = {}
-        if max_results is not None:
-            params["max_results"] = max_results
-        if pagination_token is not None:
-            params["pagination_token"] = pagination_token
-        if user_fields is not None:
-            params["user.fields"] = user_fields
-        if expansions is not None:
-            params["expansions"] = expansions
-        if tweet_fields is not None:
-            params["tweet.fields"] = tweet_fields
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return tweets_id_liking_users_response.model_validate(response_data)

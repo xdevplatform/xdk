@@ -9,6 +9,27 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
+# Models for searchSpaces
+
+
+class search_spaces_response(BaseModel):
+    """Response model for searchSpaces"""
+
+    data: Optional[List] = None
+
+    errors: Optional[List] = None
+
+    includes: Optional[Dict[str, Any]] = None
+
+    meta: Optional[Dict[str, Any]] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
 # Models for spaceBuyers
 
 
@@ -30,19 +51,17 @@ class space_buyers_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for searchSpaces
+# Models for findSpaceById
 
 
-class search_spaces_response(BaseModel):
-    """Response model for searchSpaces"""
+class find_space_by_id_response(BaseModel):
+    """Response model for findSpaceById"""
 
-    data: Optional[List] = None
+    data: Dict[str, Any] = Field(default_factory=dict)
 
     errors: Optional[List] = None
 
     includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -100,25 +119,6 @@ class find_spaces_by_ids_response(BaseModel):
     """Response model for findSpacesByIds"""
 
     data: Optional[List] = None
-
-    errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for findSpaceById
-
-
-class find_space_by_id_response(BaseModel):
-    """Response model for findSpaceById"""
-
-    data: Dict[str, Any] = Field(default_factory=dict)
 
     errors: Optional[List] = None
 

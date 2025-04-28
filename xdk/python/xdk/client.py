@@ -9,35 +9,35 @@ import requests_oauthlib
 from typing import Dict, List, Optional, Union, Any
 
 
-from .users.client import UsersClient
+from .spaces.client import SpacesClient
 
-from .direct_messages.client import Direct_MessagesClient
+from .usage.client import UsageClient
 
 from .communities.client import CommunitiesClient
 
-from .general.client import GeneralClient
-
-from .compliance.client import ComplianceClient
-
-from .mediaupload.client import MediaUploadClient
-
-from .lists.client import ListsClient
-
-from .trends.client import TrendsClient
-
-from .spaces.client import SpacesClient
-
-from .bookmarks.client import BookmarksClient
-
-from .tweets.client import TweetsClient
-
 from .community_notes.client import Community_NotesClient
 
-from .usage.client import UsageClient
+from .users.client import UsersClient
+
+from .bookmarks.client import BookmarksClient
 
 from .likes.client import LikesClient
 
 from .connection.client import ConnectionClient
+
+from .compliance.client import ComplianceClient
+
+from .trends.client import TrendsClient
+
+from .mediaupload.client import MediaUploadClient
+
+from .tweets.client import TweetsClient
+
+from .direct_messages.client import Direct_MessagesClient
+
+from .lists.client import ListsClient
+
+from .general.client import GeneralClient
 
 
 class Client:
@@ -67,18 +67,18 @@ class Client:
             api_key, api_secret, access_token, access_token_secret
         )
         # Initialize clients for each tag
-        self.users = UsersClient(self)
-        self.direct_messages = Direct_MessagesClient(self)
-        self.communities = CommunitiesClient(self)
-        self.general = GeneralClient(self)
-        self.compliance = ComplianceClient(self)
-        self.mediaupload = MediaUploadClient(self)
-        self.lists = ListsClient(self)
-        self.trends = TrendsClient(self)
         self.spaces = SpacesClient(self)
-        self.bookmarks = BookmarksClient(self)
-        self.tweets = TweetsClient(self)
-        self.community_notes = Community_NotesClient(self)
         self.usage = UsageClient(self)
+        self.communities = CommunitiesClient(self)
+        self.community_notes = Community_NotesClient(self)
+        self.users = UsersClient(self)
+        self.bookmarks = BookmarksClient(self)
         self.likes = LikesClient(self)
         self.connection = ConnectionClient(self)
+        self.compliance = ComplianceClient(self)
+        self.trends = TrendsClient(self)
+        self.mediaupload = MediaUploadClient(self)
+        self.tweets = TweetsClient(self)
+        self.direct_messages = Direct_MessagesClient(self)
+        self.lists = ListsClient(self)
+        self.general = GeneralClient(self)

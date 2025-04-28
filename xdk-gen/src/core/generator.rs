@@ -16,7 +16,7 @@ pub trait LanguageGenerator {
     fn name(&self) -> &str;
 
     /// Returns a list of (template_name, template_content) pairs for rendering
-    fn templates(&self) -> crate::core::Result<Vec<(String, String)>>;
+    fn templates(&self) -> crate::core::Result<HashMap<String, String>>;
 
     /// Adds language-specific filters to the MiniJinja environment
     fn add_filters(&self, env: &mut Environment);
@@ -69,6 +69,40 @@ impl<T: LanguageGenerator> SdkGenerator<T> {
     }
 }
 
+/// Macro for creating a language-specific SDK generator.
+///
+/// This macro reduces boilerplate by implementing the `LanguageGenerator` trait
+/// for a given struct. It provides a convenient way to configure templates,
+/// filters, and rendering logic for a specific language.
+///
+/// # Parameters
+/// * `name` - Name of the language generator struct to create
+/// * `filters` - A list of filter functions to be added to the MiniJinja environment
+/// * `render` - Configuration for how templates should be rendered
+///   * `multiple` - Block that defines templates to be rendered for each API tag
+///   * `render ($template) to ($path)` - Render a template to a specific path
+///
+/// # Example
+/// ```
+/// # use xdk_gen::language;
+/// # fn snake_case(value: &str) -> String {
+/// #     value.to_lowercase()
+/// # }
+/// # fn pascal_case(value: &str) -> String {
+/// #     value.to_uppercase()
+/// # }
+///
+/// language! {
+///     name: Python,
+///     filters: [snake_case, pascal_case],
+///     render: [
+///         multiple { // Render once per API tag
+///             render("module") to("python/src/{}.py")
+///         },
+///         render("__init__") to("python/src/__init__.py") // Render once for the entire SDK
+///     ]
+/// }
+/// ```
 #[macro_export]
 macro_rules! language {
     (
@@ -95,14 +129,24 @@ macro_rules! language {
         use $crate::core::Result;
         use $crate::core::models::{OperationContext, TagsContext};
 
+        /// Generator implementation for the specified language
         pub struct $name;
 
         impl LanguageGenerator for $name {
+            /// Returns the name of the generator as a string
             fn name(&self) -> &'static str {
                 stringify!($name)
             }
 
-            fn templates(&self) -> Result<Vec<(String, String)>> {
+            /// Loads templates from the filesystem for this language
+            ///
+            /// Searches for templates in multiple potential locations:
+            /// 1. ./templates/{language_name}/
+            /// 2. ../{project_root}/xdk-gen/templates/{language_name}/
+            ///
+            /// # Returns
+            /// A HashMap containing template names and their contents
+            fn templates(&self) -> Result<HashMap<String, String>> {
                 use std::fs;
                 use std::path::PathBuf;
                 use std::env;
@@ -111,13 +155,18 @@ macro_rules! language {
 
                 // Try multiple potential locations for the templates directory
                 let potential_paths = vec![
-                    PathBuf::from("templates").join(&language_name),
                     PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string()))
+                        .join("templates")
+                        .join(&language_name),
+                    // Find the workspace root directory that contains xdk-gen
+                    PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string()))
+                        .parent().unwrap_or(Path::new("."))
+                        .join("xdk-gen")
                         .join("templates")
                         .join(&language_name),
                 ];
 
-                let mut templates = Vec::new();
+                let mut templates = HashMap::new();
                 for template_dir in potential_paths {
                     if !template_dir.exists() || !template_dir.is_dir() {
                         continue;
@@ -133,19 +182,33 @@ macro_rules! language {
                                     } else {
                                         file_name
                                     };
-                                    templates.push((template_name.to_string(), fs::read_to_string(entry.path())?));
+                                    templates.insert(template_name.to_string(), fs::read_to_string(entry.path())?);
                                 }
                             }
                         }
                     }
                 }
+                if templates.is_empty() {
+                    return Err($crate::core::SdkGeneratorError::FrameworkError(format!("No templates found for language: {}", language_name)));
+                }
                 Ok(templates)
             }
 
+            /// Adds the specified language-specific filters to the MiniJinja environment
             fn add_filters(&self, env: &mut minijinja::Environment) {
                 $(env.add_filter(stringify!($filter), $filter);)*
             }
 
+            /// Generates the SDK code by rendering templates with appropriate contexts
+            ///
+            /// This implementation handles two types of template rendering:
+            /// 1. Templates that are rendered once per API tag (like modules)
+            /// 2. Templates that are rendered once for the entire SDK (like index files)
+            ///
+            /// # Parameters
+            /// * `env` - The MiniJinja environment with templates and filters
+            /// * `operations` - A map of operations grouped by tag
+            /// * `output_dir` - The directory where the generated code will be written
             fn generate(
                 &self,
                 env: &minijinja::Environment,
@@ -155,7 +218,7 @@ macro_rules! language {
 
                 let tags: Vec<String> = operations.keys().cloned().collect();
 
-                // Handle loop renders
+                // Handle per-tag template renders
                 $(
                     for tag in &tags {
                         $(
@@ -172,6 +235,7 @@ macro_rules! language {
                     }
                 )*
 
+                // Handle singleton template renders (once per SDK)
                 $(
                     let context = TagsContext {
                         tags: tags.clone(),

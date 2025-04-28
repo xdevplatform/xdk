@@ -9,12 +9,12 @@ import requests
 import requests_oauthlib
 from ..client import Client
 from .models import (
-    space_buyers_response,
     search_spaces_response,
+    space_buyers_response,
+    find_space_by_id_response,
     find_spaces_by_creator_ids_response,
     space_tweets_response,
     find_spaces_by_ids_response,
-    find_space_by_id_response,
 )
 
 
@@ -24,61 +24,6 @@ class SpacesClient:
 
     def __init__(self, client: Client):
         self.client = client
-
-
-    def space_buyers(
-        self,
-        id: str,
-        pagination_token: str = None,
-        max_results: int = None,
-        user_fields: List = None,
-        expansions: List = None,
-        tweet_fields: List = None,
-    ) -> space_buyers_response:
-        """
-        Retrieve the list of Users who purchased a ticket to the given space
-        Retrieves the list of Users who purchased a ticket to the given space
-        Args:
-            id: The ID of the Space to be retrieved.
-        Args:
-            pagination_token: This parameter is used to get a specified 'page' of results.
-        Args:
-            max_results: The maximum number of results.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            tweet_fields: A comma separated list of Tweet fields to display.
-        Returns:
-            space_buyers_response: Response data
-        """
-        url = self.client.base_url + "/2/spaces/{id}/buyers"
-        params = {}
-        if pagination_token is not None:
-            params["pagination_token"] = pagination_token
-        if max_results is not None:
-            params["max_results"] = max_results
-        if user_fields is not None:
-            params["user.fields"] = user_fields
-        if expansions is not None:
-            params["expansions"] = expansions
-        if tweet_fields is not None:
-            params["tweet.fields"] = tweet_fields
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return space_buyers_response.model_validate(response_data)
 
 
     def search_spaces(
@@ -140,6 +85,111 @@ class SpacesClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return search_spaces_response.model_validate(response_data)
+
+
+    def space_buyers(
+        self,
+        id: str,
+        pagination_token: str = None,
+        max_results: int = None,
+        user_fields: List = None,
+        expansions: List = None,
+        tweet_fields: List = None,
+    ) -> space_buyers_response:
+        """
+        Retrieve the list of Users who purchased a ticket to the given space
+        Retrieves the list of Users who purchased a ticket to the given space
+        Args:
+            id: The ID of the Space to be retrieved.
+        Args:
+            pagination_token: This parameter is used to get a specified 'page' of results.
+        Args:
+            max_results: The maximum number of results.
+        Args:
+            user_fields: A comma separated list of User fields to display.
+        Args:
+            expansions: A comma separated list of fields to expand.
+        Args:
+            tweet_fields: A comma separated list of Tweet fields to display.
+        Returns:
+            space_buyers_response: Response data
+        """
+        url = self.client.base_url + "/2/spaces/{id}/buyers"
+        params = {}
+        if pagination_token is not None:
+            params["pagination_token"] = pagination_token
+        if max_results is not None:
+            params["max_results"] = max_results
+        if user_fields is not None:
+            params["user.fields"] = user_fields
+        if expansions is not None:
+            params["expansions"] = expansions
+        if tweet_fields is not None:
+            params["tweet.fields"] = tweet_fields
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return space_buyers_response.model_validate(response_data)
+
+
+    def find_space_by_id(
+        self,
+        id: str,
+        space_fields: List = None,
+        expansions: List = None,
+        user_fields: List = None,
+        topic_fields: List = None,
+    ) -> find_space_by_id_response:
+        """
+        Space lookup by Space ID
+        Returns a variety of information about the Space specified by the requested ID
+        Args:
+            id: The ID of the Space to be retrieved.
+        Args:
+            space_fields: A comma separated list of Space fields to display.
+        Args:
+            expansions: A comma separated list of fields to expand.
+        Args:
+            user_fields: A comma separated list of User fields to display.
+        Args:
+            topic_fields: A comma separated list of Topic fields to display.
+        Returns:
+            find_space_by_id_response: Response data
+        """
+        url = self.client.base_url + "/2/spaces/{id}"
+        params = {}
+        if space_fields is not None:
+            params["space.fields"] = space_fields
+        if expansions is not None:
+            params["expansions"] = expansions
+        if user_fields is not None:
+            params["user.fields"] = user_fields
+        if topic_fields is not None:
+            params["topic.fields"] = topic_fields
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return find_space_by_id_response.model_validate(response_data)
 
 
     def find_spaces_by_creator_ids(
@@ -307,53 +357,3 @@ class SpacesClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return find_spaces_by_ids_response.model_validate(response_data)
-
-
-    def find_space_by_id(
-        self,
-        id: str,
-        space_fields: List = None,
-        expansions: List = None,
-        user_fields: List = None,
-        topic_fields: List = None,
-    ) -> find_space_by_id_response:
-        """
-        Space lookup by Space ID
-        Returns a variety of information about the Space specified by the requested ID
-        Args:
-            id: The ID of the Space to be retrieved.
-        Args:
-            space_fields: A comma separated list of Space fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            topic_fields: A comma separated list of Topic fields to display.
-        Returns:
-            find_space_by_id_response: Response data
-        """
-        url = self.client.base_url + "/2/spaces/{id}"
-        params = {}
-        if space_fields is not None:
-            params["space.fields"] = space_fields
-        if expansions is not None:
-            params["expansions"] = expansions
-        if user_fields is not None:
-            params["user.fields"] = user_fields
-        if topic_fields is not None:
-            params["topic.fields"] = topic_fields
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return find_space_by_id_response.model_validate(response_data)

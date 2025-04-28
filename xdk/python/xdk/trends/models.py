@@ -9,11 +9,11 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for personalizedTrends
+# Models for getTrends
 
 
-class personalized_trends_response(BaseModel):
-    """Response model for personalizedTrends"""
+class get_trends_response(BaseModel):
+    """Response model for getTrends"""
 
     data: Optional[List] = None
 
@@ -26,11 +26,11 @@ class personalized_trends_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for getTrends
+# Models for personalizedTrends
 
 
-class get_trends_response(BaseModel):
-    """Response model for getTrends"""
+class personalized_trends_response(BaseModel):
+    """Response model for personalizedTrends"""
 
     data: Optional[List] = None
 

@@ -26,6 +26,181 @@ class list_user_unpin_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
+# Models for listUserPinnedLists
+
+
+class list_user_pinned_lists_response(BaseModel):
+    """Response model for listUserPinnedLists"""
+
+    data: Optional[List] = None
+
+    errors: Optional[List] = None
+
+    includes: Optional[Dict[str, Any]] = None
+
+    meta: Optional[Dict[str, Any]] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for listUserPin
+
+
+class list_user_pin_request(BaseModel):
+    """Request model for listUserPin"""
+
+    list_id: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {
+            "example": {
+                "list_id": "1146654567674912769",
+            }
+        }
+
+
+class list_user_pin_response(BaseModel):
+    """Response model for listUserPin"""
+
+    data: Optional[Dict[str, Any]] = None
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for userFollowedLists
+
+
+class user_followed_lists_response(BaseModel):
+    """Response model for userFollowedLists"""
+
+    data: Optional[List] = None
+
+    errors: Optional[List] = None
+
+    includes: Optional[Dict[str, Any]] = None
+
+    meta: Optional[Dict[str, Any]] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for listUserFollow
+
+
+class list_user_follow_request(BaseModel):
+    """Request model for listUserFollow"""
+
+    list_id: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {
+            "example": {
+                "list_id": "1146654567674912769",
+            }
+        }
+
+
+class list_user_follow_response(BaseModel):
+    """Response model for listUserFollow"""
+
+    data: Optional[Dict[str, Any]] = None
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for listRemoveMember
+
+
+class list_remove_member_response(BaseModel):
+    """Response model for listRemoveMember"""
+
+    data: Optional[Dict[str, Any]] = None
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for listAddMember
+
+
+class list_add_member_request(BaseModel):
+    """Request model for listAddMember"""
+
+    user_id: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {
+            "example": {
+                "user_id": "2244994945",
+            }
+        }
+
+
+class list_add_member_response(BaseModel):
+    """Response model for listAddMember"""
+
+    data: Optional[Dict[str, Any]] = None
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for listUserUnfollow
+
+
+class list_user_unfollow_response(BaseModel):
+    """Response model for listUserUnfollow"""
+
+    data: Optional[Dict[str, Any]] = None
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
 # Models for listIdGet
 
 
@@ -118,60 +293,6 @@ class list_user_owned_lists_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for listUserPinnedLists
-
-
-class list_user_pinned_lists_response(BaseModel):
-    """Response model for listUserPinnedLists"""
-
-    data: Optional[List] = None
-
-    errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for listUserPin
-
-
-class list_user_pin_request(BaseModel):
-    """Request model for listUserPin"""
-
-    list_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {
-            "example": {
-                "list_id": "1146654567674912769",
-            }
-        }
-
-
-class list_user_pin_response(BaseModel):
-    """Response model for listUserPin"""
-
-    data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
 # Models for listIdCreate
 
 
@@ -220,127 +341,6 @@ class get_user_list_memberships_response(BaseModel):
     includes: Optional[Dict[str, Any]] = None
 
     meta: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for listUserUnfollow
-
-
-class list_user_unfollow_response(BaseModel):
-    """Response model for listUserUnfollow"""
-
-    data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for listRemoveMember
-
-
-class list_remove_member_response(BaseModel):
-    """Response model for listRemoveMember"""
-
-    data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for userFollowedLists
-
-
-class user_followed_lists_response(BaseModel):
-    """Response model for userFollowedLists"""
-
-    data: Optional[List] = None
-
-    errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for listUserFollow
-
-
-class list_user_follow_request(BaseModel):
-    """Request model for listUserFollow"""
-
-    list_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {
-            "example": {
-                "list_id": "1146654567674912769",
-            }
-        }
-
-
-class list_user_follow_response(BaseModel):
-    """Response model for listUserFollow"""
-
-    data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for listAddMember
-
-
-class list_add_member_request(BaseModel):
-    """Request model for listAddMember"""
-
-    user_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {
-            "example": {
-                "user_id": "2244994945",
-            }
-        }
-
-
-class list_add_member_response(BaseModel):
-    """Response model for listAddMember"""
-
-    data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""

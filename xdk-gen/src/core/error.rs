@@ -13,6 +13,12 @@ pub enum SdkGeneratorError {
     #[error("Template error: {0}")]
     TemplateError(#[from] minijinja::Error),
 
+    /// An error that occurs when there's a framework-specific error
+    /// For example, the templates for a language are not found or
+    /// some file naming convention is not followed
+    #[error("Framework error: {0}")]
+    FrameworkError(String),
+
     // /// Invalid OpenAPI specification
     // #[error("Invalid OpenAPI: {0}")]
     // InvalidOpenApi(String),

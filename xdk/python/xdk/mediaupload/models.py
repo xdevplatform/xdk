@@ -9,6 +9,50 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
+# Models for uploadMediaStatus
+
+
+class upload_media_status_response(BaseModel):
+    """Response model for uploadMediaStatus"""
+
+    data: Dict[str, Any] = Field(default_factory=dict)
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for uploadMedia
+
+
+class upload_media_request(BaseModel):
+    """Request model for uploadMedia"""
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+class upload_media_response(BaseModel):
+    """Response model for uploadMedia"""
+
+    data: Dict[str, Any] = Field(default_factory=dict)
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
 # Models for metadataCreate
 
 
@@ -109,50 +153,6 @@ class delete_subtitles_request(BaseModel):
 
 class delete_subtitles_response(BaseModel):
     """Response model for deleteSubtitles"""
-
-    data: Dict[str, Any] = Field(default_factory=dict)
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for uploadMediaStatus
-
-
-class upload_media_status_response(BaseModel):
-    """Response model for uploadMediaStatus"""
-
-    data: Dict[str, Any] = Field(default_factory=dict)
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for uploadMedia
-
-
-class upload_media_request(BaseModel):
-    """Request model for uploadMedia"""
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-class upload_media_response(BaseModel):
-    """Response model for uploadMedia"""
 
     data: Dict[str, Any] = Field(default_factory=dict)
 

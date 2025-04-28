@@ -9,21 +9,6 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for getUsersIdBookmarkFolderPosts
-
-
-class get_users_id_bookmark_folder_posts_response(BaseModel):
-    """Response model for getUsersIdBookmarkFolderPosts"""
-
-    data: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
 # Models for getUsersIdBookmarkFolders
 
 
@@ -31,23 +16,6 @@ class get_users_id_bookmark_folders_response(BaseModel):
     """Response model for getUsersIdBookmarkFolders"""
 
     data: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for usersIdBookmarksDelete
-
-
-class users_id_bookmarks_delete_response(BaseModel):
-    """Response model for usersIdBookmarksDelete"""
-
-    data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -98,6 +66,38 @@ class post_users_id_bookmarks_request(BaseModel):
 
 class post_users_id_bookmarks_response(BaseModel):
     """Response model for postUsersIdBookmarks"""
+
+    data: Optional[Dict[str, Any]] = None
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for getUsersIdBookmarkFolderPosts
+
+
+class get_users_id_bookmark_folder_posts_response(BaseModel):
+    """Response model for getUsersIdBookmarkFolderPosts"""
+
+    data: Optional[Dict[str, Any]] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for usersIdBookmarksDelete
+
+
+class users_id_bookmarks_delete_response(BaseModel):
+    """Response model for usersIdBookmarksDelete"""
 
     data: Optional[Dict[str, Any]] = None
 

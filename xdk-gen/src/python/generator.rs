@@ -1,17 +1,15 @@
 /// Python SDK Generator Implementation
 ///
-/// This file demonstrates how to implement a language-specific generator using the `define_generator!` macro.
+/// This file demonstrates how to implement a language-specific generator using the `language!` macro.
 /// It defines filters for Python-specific formatting and implements the generator.
 ///
 /// When creating a generator for a new language, follow this pattern:
 /// 1. Define language-specific filters (e.g., type conversion, naming conventions)
-/// 2. Use the define_generator! macro to create the generator struct
-/// 3. Implement the generate method to render templates and write files
+/// 2. Use the language! macro to create the generator struct
+/// 3. Implement the rendering logic in the generate field
 use crate::language;
 
 /// MiniJinja filter for converting a string to snake_case
-///
-/// Example of a language-specific filter that transforms naming conventions.
 fn snake_case(value: &str) -> String {
     let chars = value.chars();
     let mut result = String::new();
@@ -50,6 +48,10 @@ fn python_type(value: &str) -> String {
     python_type.to_string()
 }
 
+/*
+    This is the main generator for the Python SDK
+    It declares the templates and filters used as well as the rendering logic
+*/
 language! {
     name: Python,
     filters: [snake_case, python_type],

@@ -9,15 +9,15 @@ import requests
 import requests_oauthlib
 from ..client import Client
 from .models import (
+    upload_media_status_response,
+    upload_media_request,
+    upload_media_response,
     metadata_create_request,
     metadata_create_response,
     create_subtitles_request,
     create_subtitles_response,
     delete_subtitles_request,
     delete_subtitles_response,
-    upload_media_status_response,
-    upload_media_request,
-    upload_media_response,
 )
 
 
@@ -27,96 +27,6 @@ class MediaUploadClient:
 
     def __init__(self, client: Client):
         self.client = client
-
-
-    def metadata_create(
-        self,
-        body: Optional[metadata_create_request] = None,
-    ) -> metadata_create_response:
-        """
-        Metadata Create
-        MetadataCreate
-            body: Request body
-        Returns:
-            metadata_create_response: Response data
-        """
-        url = self.client.base_url + "/2/media/metadata"
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        response = self.client.session.post(
-            url,
-            params=params,
-            headers=headers,
-            json=body.model_dump(exclude_none=True) if body else None,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return metadata_create_response.model_validate(response_data)
-
-
-    def create_subtitles(
-        self,
-        body: Optional[create_subtitles_request] = None,
-    ) -> create_subtitles_response:
-        """
-        Subtitle Create
-        SubtitleCreate
-            body: Request body
-        Returns:
-            create_subtitles_response: Response data
-        """
-        url = self.client.base_url + "/2/media/subtitles"
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        response = self.client.session.post(
-            url,
-            params=params,
-            headers=headers,
-            json=body.model_dump(exclude_none=True) if body else None,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return create_subtitles_response.model_validate(response_data)
-
-
-    def delete_subtitles(
-        self,
-        body: Optional[delete_subtitles_request] = None,
-    ) -> delete_subtitles_response:
-        """
-        Subtitle Delete
-        SubtitleDelete
-            body: Request body
-        Returns:
-            delete_subtitles_response: Response data
-        """
-        url = self.client.base_url + "/2/media/subtitles"
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        response = self.client.session.delete(
-            url,
-            params=params,
-            headers=headers,
-            json=body.model_dump(exclude_none=True) if body else None,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return delete_subtitles_response.model_validate(response_data)
 
 
     def upload_media_status(
@@ -213,3 +123,93 @@ class MediaUploadClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return upload_media_response.model_validate(response_data)
+
+
+    def metadata_create(
+        self,
+        body: Optional[metadata_create_request] = None,
+    ) -> metadata_create_response:
+        """
+        Metadata Create
+        MetadataCreate
+            body: Request body
+        Returns:
+            metadata_create_response: Response data
+        """
+        url = self.client.base_url + "/2/media/metadata"
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        response = self.client.session.post(
+            url,
+            params=params,
+            headers=headers,
+            json=body.model_dump(exclude_none=True) if body else None,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return metadata_create_response.model_validate(response_data)
+
+
+    def create_subtitles(
+        self,
+        body: Optional[create_subtitles_request] = None,
+    ) -> create_subtitles_response:
+        """
+        Subtitle Create
+        SubtitleCreate
+            body: Request body
+        Returns:
+            create_subtitles_response: Response data
+        """
+        url = self.client.base_url + "/2/media/subtitles"
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        response = self.client.session.post(
+            url,
+            params=params,
+            headers=headers,
+            json=body.model_dump(exclude_none=True) if body else None,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return create_subtitles_response.model_validate(response_data)
+
+
+    def delete_subtitles(
+        self,
+        body: Optional[delete_subtitles_request] = None,
+    ) -> delete_subtitles_response:
+        """
+        Subtitle Delete
+        SubtitleDelete
+            body: Request body
+        Returns:
+            delete_subtitles_response: Response data
+        """
+        url = self.client.base_url + "/2/media/subtitles"
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        response = self.client.session.delete(
+            url,
+            params=params,
+            headers=headers,
+            json=body.model_dump(exclude_none=True) if body else None,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return delete_subtitles_response.model_validate(response_data)

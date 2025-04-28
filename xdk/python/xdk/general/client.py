@@ -8,7 +8,7 @@ from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import requests_oauthlib
 from ..client import Client
-from .models import get_rule_count_response, get_open_api_spec_response
+from .models import get_open_api_spec_response, get_rule_count_response
 
 
 class GeneralClient:
@@ -17,6 +17,32 @@ class GeneralClient:
 
     def __init__(self, client: Client):
         self.client = client
+
+
+    def get_open_api_spec(
+        self,
+    ) -> get_open_api_spec_response:
+        """
+        Returns the OpenAPI Specification document.
+        Full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)
+        Returns:
+            get_open_api_spec_response: Response data
+        """
+        url = self.client.base_url + "/2/openapi.json"
+        params = {}
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return get_open_api_spec_response.model_validate(response_data)
 
 
     def get_rule_count(
@@ -48,29 +74,3 @@ class GeneralClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return get_rule_count_response.model_validate(response_data)
-
-
-    def get_open_api_spec(
-        self,
-    ) -> get_open_api_spec_response:
-        """
-        Returns the OpenAPI Specification document.
-        Full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)
-        Returns:
-            get_open_api_spec_response: Response data
-        """
-        url = self.client.base_url + "/2/openapi.json"
-        params = {}
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return get_open_api_spec_response.model_validate(response_data)
