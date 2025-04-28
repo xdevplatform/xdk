@@ -53,41 +53,6 @@ class upload_media_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for metadataCreate
-
-
-class metadata_create_request(BaseModel):
-    """Request model for metadataCreate"""
-
-    id: Optional[str] = None
-
-    metadata: Optional[Dict[str, Any]] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {
-            "example": {
-                "id": "1146654567674912769",
-            }
-        }
-
-
-class metadata_create_response(BaseModel):
-    """Response model for metadataCreate"""
-
-    data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
 # Models for createSubtitles
 
 
@@ -155,6 +120,41 @@ class delete_subtitles_response(BaseModel):
     """Response model for deleteSubtitles"""
 
     data: Dict[str, Any] = Field(default_factory=dict)
+
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for metadataCreate
+
+
+class metadata_create_request(BaseModel):
+    """Request model for metadataCreate"""
+
+    id: Optional[str] = None
+
+    metadata: Optional[Dict[str, Any]] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+        json_schema_extra = {
+            "example": {
+                "id": "1146654567674912769",
+            }
+        }
+
+
+class metadata_create_response(BaseModel):
+    """Response model for metadataCreate"""
+
+    data: Optional[Dict[str, Any]] = None
 
     errors: Optional[List] = None
 

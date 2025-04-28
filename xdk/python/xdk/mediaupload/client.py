@@ -12,12 +12,12 @@ from .models import (
     upload_media_status_response,
     upload_media_request,
     upload_media_response,
-    metadata_create_request,
-    metadata_create_response,
     create_subtitles_request,
     create_subtitles_response,
     delete_subtitles_request,
     delete_subtitles_response,
+    metadata_create_request,
+    metadata_create_response,
 )
 
 
@@ -125,36 +125,6 @@ class MediaUploadClient:
         return upload_media_response.model_validate(response_data)
 
 
-    def metadata_create(
-        self,
-        body: Optional[metadata_create_request] = None,
-    ) -> metadata_create_response:
-        """
-        Metadata Create
-        MetadataCreate
-            body: Request body
-        Returns:
-            metadata_create_response: Response data
-        """
-        url = self.client.base_url + "/2/media/metadata"
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        response = self.client.session.post(
-            url,
-            params=params,
-            headers=headers,
-            json=body.model_dump(exclude_none=True) if body else None,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return metadata_create_response.model_validate(response_data)
-
-
     def create_subtitles(
         self,
         body: Optional[create_subtitles_request] = None,
@@ -213,3 +183,33 @@ class MediaUploadClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return delete_subtitles_response.model_validate(response_data)
+
+
+    def metadata_create(
+        self,
+        body: Optional[metadata_create_request] = None,
+    ) -> metadata_create_response:
+        """
+        Metadata Create
+        MetadataCreate
+            body: Request body
+        Returns:
+            metadata_create_response: Response data
+        """
+        url = self.client.base_url + "/2/media/metadata"
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        response = self.client.session.post(
+            url,
+            params=params,
+            headers=headers,
+            json=body.model_dump(exclude_none=True) if body else None,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return metadata_create_response.model_validate(response_data)

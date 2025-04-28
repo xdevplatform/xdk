@@ -16,7 +16,7 @@ from .{{ tag|replace(" ", "_")|lower }}.client import {{ tag }}Client
 class Client:
     """Client for interacting with the X API."""
 
-    def __init__(self, api_key: str, api_secret: str, access_token: str, access_token_secret: str, base_url: str = "https://api.twitter.com"):
+    def __init__(self, api_key: str, api_secret: str, access_token: str, access_token_secret: str, base_url: str = "https://api.twitter.com", bearer_token: str = None):
         """Initialize the X API client.
 
         Args:
@@ -25,9 +25,11 @@ class Client:
             access_token: The access token for the X API.
             access_token_secret: The access token secret for the X API.
             base_url: The base URL for the X API.
+            bearer_token: The bearer token for the X API.
         """
         self.session = requests.Session()
         self.base_url = base_url
+        self.bearer_token = bearer_token
 
         # Set up authentication
         self.session.auth = requests_oauthlib.OAuth1(

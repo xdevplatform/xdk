@@ -29,6 +29,7 @@ class ConnectionClient:
             kill_all_app_connections_response: Response data
         """
         url = self.client.base_url + "/2/connections/all"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
         params = {}
         headers = {}
         # Make the request

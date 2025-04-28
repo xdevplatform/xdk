@@ -35,6 +35,7 @@ class UsageClient:
             get_usage_tweets_response: Response data
         """
         url = self.client.base_url + "/2/usage/tweets"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
         params = {}
         if days is not None:
             params["days"] = days

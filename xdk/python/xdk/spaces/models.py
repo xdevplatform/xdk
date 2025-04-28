@@ -9,19 +9,17 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for searchSpaces
+# Models for findSpacesByIds
 
 
-class search_spaces_response(BaseModel):
-    """Response model for searchSpaces"""
+class find_spaces_by_ids_response(BaseModel):
+    """Response model for findSpacesByIds"""
 
     data: Optional[List] = None
 
     errors: Optional[List] = None
 
     includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -30,11 +28,11 @@ class search_spaces_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for spaceBuyers
+# Models for searchSpaces
 
 
-class space_buyers_response(BaseModel):
-    """Response model for spaceBuyers"""
+class search_spaces_response(BaseModel):
+    """Response model for searchSpaces"""
 
     data: Optional[List] = None
 
@@ -70,11 +68,11 @@ class find_space_by_id_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for findSpacesByCreatorIds
+# Models for spaceBuyers
 
 
-class find_spaces_by_creator_ids_response(BaseModel):
-    """Response model for findSpacesByCreatorIds"""
+class space_buyers_response(BaseModel):
+    """Response model for spaceBuyers"""
 
     data: Optional[List] = None
 
@@ -112,17 +110,19 @@ class space_tweets_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for findSpacesByIds
+# Models for findSpacesByCreatorIds
 
 
-class find_spaces_by_ids_response(BaseModel):
-    """Response model for findSpacesByIds"""
+class find_spaces_by_creator_ids_response(BaseModel):
+    """Response model for findSpacesByCreatorIds"""
 
     data: Optional[List] = None
 
     errors: Optional[List] = None
 
     includes: Optional[Dict[str, Any]] = None
+
+    meta: Optional[Dict[str, Any]] = None
 
     class Config:
         """Pydantic model configuration"""

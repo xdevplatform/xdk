@@ -35,6 +35,7 @@ class Community_NotesClient:
             find_note_by_tweet_id_response: Response data
         """
         url = self.client.base_url + "/2/notes"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
         params = {}
         if post_id is not None:
             params["postId"] = post_id

@@ -35,6 +35,7 @@ class CommunitiesClient:
             community_id_get_response: Response data
         """
         url = self.client.base_url + "/2/communities/{id}"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
         params = {}
         if community_fields is not None:
             params["community.fields"] = community_fields

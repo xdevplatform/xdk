@@ -58,6 +58,7 @@ class GeneralClient:
             get_rule_count_response: Response data
         """
         url = self.client.base_url + "/2/tweets/search/stream/rules/counts"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
         params = {}
         if rules_count_fields is not None:
             params["rules_count.fields"] = rules_count_fields

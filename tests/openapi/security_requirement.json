@@ -1,0 +1,33 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Test API",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/2/tweets": {
+        "get": {
+          "summary": "Get tweets",
+          "operationId": "getTweets",
+          "description": "Returns tweets",
+          "security": [
+            {
+              "BearerToken": [
+
+              ]
+            }
+          ],
+          "tags": [
+            "Tweets"
+          ],
+          "parameters": [],
+          "responses": {
+            "200": {
+              "description": "Successful response"
+            }
+          }
+        }
+      }
+    }
+  }
+  

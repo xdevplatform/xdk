@@ -38,6 +38,7 @@ class TrendsClient:
             get_trends_response: Response data
         """
         url = self.client.base_url + "/2/trends/by/woeid/{woeid}"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
         params = {}
         if max_trends is not None:
             params["max_trends"] = max_trends

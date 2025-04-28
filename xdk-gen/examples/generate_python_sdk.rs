@@ -30,6 +30,9 @@ fn main() -> Result<()> {
                 description: Some("Returns tweets".to_string()),
                 tags: Some(vec!["Tweets".to_string()]),
                 parameters: Some(vec![]),
+                security: Some(vec![openapi::SecurityRequirement(
+                    std::collections::HashMap::new(),
+                )]),
                 request_body: None,
                 responses: {
                     let mut responses = std::collections::HashMap::new();

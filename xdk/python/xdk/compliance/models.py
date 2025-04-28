@@ -65,11 +65,11 @@ class create_batch_compliance_job_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for getUsersComplianceStream
+# Models for getTweetsLabelStream
 
 
-class get_users_compliance_stream_response(BaseModel):
-    """Response model for getUsersComplianceStream"""
+class get_tweets_label_stream_response(BaseModel):
+    """Response model for getTweetsLabelStream"""
 
     class Config:
         """Pydantic model configuration"""
@@ -78,15 +78,24 @@ class get_users_compliance_stream_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for getBatchComplianceJob
+# Models for getLikesComplianceStream
 
 
-class get_batch_compliance_job_response(BaseModel):
-    """Response model for getBatchComplianceJob"""
+class get_likes_compliance_stream_response(BaseModel):
+    """Response model for getLikesComplianceStream"""
 
-    data: Dict[str, Any] = Field(default_factory=dict)
+    class Config:
+        """Pydantic model configuration"""
 
-    errors: Optional[List] = None
+        populate_by_name = True
+        json_schema_extra = {"example": {}}
+
+
+# Models for getUsersComplianceStream
+
+
+class get_users_compliance_stream_response(BaseModel):
+    """Response model for getUsersComplianceStream"""
 
     class Config:
         """Pydantic model configuration"""
@@ -108,24 +117,15 @@ class get_tweets_compliance_stream_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for getTweetsLabelStream
+# Models for getBatchComplianceJob
 
 
-class get_tweets_label_stream_response(BaseModel):
-    """Response model for getTweetsLabelStream"""
+class get_batch_compliance_job_response(BaseModel):
+    """Response model for getBatchComplianceJob"""
 
-    class Config:
-        """Pydantic model configuration"""
+    data: Dict[str, Any] = Field(default_factory=dict)
 
-        populate_by_name = True
-        json_schema_extra = {"example": {}}
-
-
-# Models for getLikesComplianceStream
-
-
-class get_likes_compliance_stream_response(BaseModel):
-    """Response model for getLikesComplianceStream"""
+    errors: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""

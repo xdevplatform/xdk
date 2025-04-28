@@ -70,6 +70,16 @@ class {{ tag }}Client:
             {% if operation.responses and "200" in operation.responses %}{{ operation.operation_id | snake_case }}_response{% else %}Dict[str, Any]{% endif %}: Response data
         """
         url = self.client.base_url + "{{ operation.path }}"
+
+        {% if operation.security %}
+        {% for security_requirement in operation.security %}
+        {% for scheme_name in security_requirement %}
+        {% if scheme_name == "BearerToken" %}
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
         
         params = {}
         {% for param in operation.parameters %}

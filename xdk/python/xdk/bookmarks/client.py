@@ -9,12 +9,12 @@ import requests
 import requests_oauthlib
 from ..client import Client
 from .models import (
-    get_users_id_bookmark_folders_response,
+    users_id_bookmarks_delete_response,
     get_users_id_bookmarks_response,
     post_users_id_bookmarks_request,
     post_users_id_bookmarks_response,
     get_users_id_bookmark_folder_posts_response,
-    users_id_bookmarks_delete_response,
+    get_users_id_bookmark_folders_response,
 )
 
 
@@ -26,34 +26,28 @@ class BookmarksClient:
         self.client = client
 
 
-    def get_users_id_bookmark_folders(
+    def users_id_bookmarks_delete(
         self,
         id: str,
-        max_results: int = None,
-        pagination_token: str = None,
-    ) -> get_users_id_bookmark_folders_response:
+        tweet_id: str,
+    ) -> users_id_bookmarks_delete_response:
         """
-        Bookmark folders by User
-        Returns metadata about Bookmark folders that have been created by the requesting User
+        Remove a bookmarked Post
+        Removes a Post from the requesting User's bookmarked Posts.
         Args:
-            id: The ID of the authenticated source User for whom to return results.
+            id: The ID of the authenticated source User whose bookmark is to be removed.
         Args:
-            max_results: The maximum number of results.
-        Args:
-            pagination_token: This parameter is used to get the next 'page' of results.
+            tweet_id: The ID of the Post that the source User is removing from bookmarks.
         Returns:
-            get_users_id_bookmark_folders_response: Response data
+            users_id_bookmarks_delete_response: Response data
         """
-        url = self.client.base_url + "/2/users/{id}/bookmarks/folders"
+        url = self.client.base_url + "/2/users/{id}/bookmarks/{tweet_id}"
         params = {}
-        if max_results is not None:
-            params["max_results"] = max_results
-        if pagination_token is not None:
-            params["pagination_token"] = pagination_token
         url = url.replace("{id}", str(id))
+        url = url.replace("{tweet_id}", str(tweet_id))
         headers = {}
         # Make the request
-        response = self.client.session.get(
+        response = self.client.session.delete(
             url,
             params=params,
             headers=headers,
@@ -63,7 +57,7 @@ class BookmarksClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return get_users_id_bookmark_folders_response.model_validate(response_data)
+        return users_id_bookmarks_delete_response.model_validate(response_data)
 
 
     def get_users_id_bookmarks(
@@ -204,28 +198,34 @@ class BookmarksClient:
         return get_users_id_bookmark_folder_posts_response.model_validate(response_data)
 
 
-    def users_id_bookmarks_delete(
+    def get_users_id_bookmark_folders(
         self,
         id: str,
-        tweet_id: str,
-    ) -> users_id_bookmarks_delete_response:
+        max_results: int = None,
+        pagination_token: str = None,
+    ) -> get_users_id_bookmark_folders_response:
         """
-        Remove a bookmarked Post
-        Removes a Post from the requesting User's bookmarked Posts.
+        Bookmark folders by User
+        Returns metadata about Bookmark folders that have been created by the requesting User
         Args:
-            id: The ID of the authenticated source User whose bookmark is to be removed.
+            id: The ID of the authenticated source User for whom to return results.
         Args:
-            tweet_id: The ID of the Post that the source User is removing from bookmarks.
+            max_results: The maximum number of results.
+        Args:
+            pagination_token: This parameter is used to get the next 'page' of results.
         Returns:
-            users_id_bookmarks_delete_response: Response data
+            get_users_id_bookmark_folders_response: Response data
         """
-        url = self.client.base_url + "/2/users/{id}/bookmarks/{tweet_id}"
+        url = self.client.base_url + "/2/users/{id}/bookmarks/folders"
         params = {}
+        if max_results is not None:
+            params["max_results"] = max_results
+        if pagination_token is not None:
+            params["pagination_token"] = pagination_token
         url = url.replace("{id}", str(id))
-        url = url.replace("{tweet_id}", str(tweet_id))
         headers = {}
         # Make the request
-        response = self.client.session.delete(
+        response = self.client.session.get(
             url,
             params=params,
             headers=headers,
@@ -235,4 +235,4 @@ class BookmarksClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return users_id_bookmarks_delete_response.model_validate(response_data)
+        return get_users_id_bookmark_folders_response.model_validate(response_data)

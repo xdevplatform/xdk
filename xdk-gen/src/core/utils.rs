@@ -28,6 +28,7 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                         summary: op.summary.clone(),
                         description: op.description.clone(),
                         parameters: op.parameters.clone(),
+                        security: op.security.clone(),
                         request_body: op.request_body.clone(),
                         responses: op.responses.clone(),
                     };

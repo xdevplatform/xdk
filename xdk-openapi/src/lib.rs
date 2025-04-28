@@ -158,4 +158,24 @@ mod tests {
                 .any(|p| p.try_resolve().unwrap().name.as_deref() == Some("max_results"))
         );
     }
+
+    #[test]
+    fn test_parse_security_requirement() {
+        let result = parse_json_file("../tests/openapi/security_requirement.json");
+        assert!(result.is_ok());
+        let openapi = result.unwrap();
+        assert!(openapi.paths.contains_key("/2/tweets"));
+        let get_op = openapi
+            .paths
+            .get("/2/tweets")
+            .unwrap()
+            .get
+            .as_ref()
+            .unwrap();
+        assert!(get_op.security.is_some());
+        let security = get_op.security.as_ref().unwrap();
+        assert_eq!(security.len(), 1);
+        let security_requirement = security[0].clone();
+        assert_eq!(security_requirement.0.get("BearerToken"), Some(&vec![]));
+    }
 }

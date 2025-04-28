@@ -96,6 +96,13 @@ pub struct PathItem {
 /// A status code is a string that represents the status code of a response (e.g. "200", "500")
 pub type StatusCode = String;
 
+/// Represents a security requirement in OpenAPI
+///
+/// A security requirement specifies which security scheme(s) should be used
+/// and what scopes are required for each scheme.
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct SecurityRequirement(pub HashMap<String, Vec<String>>);
+
 /// Represents an API operation
 ///
 /// An operation represents a specific HTTP method that can be performed on a path.
@@ -111,6 +118,8 @@ pub struct Operation {
     pub operation_id: String,
     /// Tags for grouping operations
     pub tags: Option<Vec<String>>,
+    /// Security requirements for the operation
+    pub security: Option<Vec<SecurityRequirement>>,
     /// Parameters for the operation
     pub parameters: Option<Vec<RefOrValue<Parameter>>>,
     /// Request body for the operation

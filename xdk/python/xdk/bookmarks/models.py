@@ -9,13 +9,15 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for getUsersIdBookmarkFolders
+# Models for usersIdBookmarksDelete
 
 
-class get_users_id_bookmark_folders_response(BaseModel):
-    """Response model for getUsersIdBookmarkFolders"""
+class users_id_bookmarks_delete_response(BaseModel):
+    """Response model for usersIdBookmarksDelete"""
 
     data: Optional[Dict[str, Any]] = None
+
+    errors: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -93,15 +95,13 @@ class get_users_id_bookmark_folder_posts_response(BaseModel):
         json_schema_extra = {"example": {}}
 
 
-# Models for usersIdBookmarksDelete
+# Models for getUsersIdBookmarkFolders
 
 
-class users_id_bookmarks_delete_response(BaseModel):
-    """Response model for usersIdBookmarksDelete"""
+class get_users_id_bookmark_folders_response(BaseModel):
+    """Response model for getUsersIdBookmarkFolders"""
 
     data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""

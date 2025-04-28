@@ -12,11 +12,11 @@ from .models import (
     list_batch_compliance_jobs_response,
     create_batch_compliance_job_request,
     create_batch_compliance_job_response,
-    get_users_compliance_stream_response,
-    get_batch_compliance_job_response,
-    get_tweets_compliance_stream_response,
     get_tweets_label_stream_response,
     get_likes_compliance_stream_response,
+    get_users_compliance_stream_response,
+    get_tweets_compliance_stream_response,
+    get_batch_compliance_job_response,
 )
 
 
@@ -47,6 +47,7 @@ class ComplianceClient:
             list_batch_compliance_jobs_response: Response data
         """
         url = self.client.base_url + "/2/compliance/jobs"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
         params = {}
         if type is not None:
             params["type"] = type
@@ -81,6 +82,7 @@ class ComplianceClient:
             create_batch_compliance_job_response: Response data
         """
         url = self.client.base_url + "/2/compliance/jobs"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
         params = {}
         headers = {}
         headers["Content-Type"] = "application/json"
@@ -97,133 +99,6 @@ class ComplianceClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return create_batch_compliance_job_response.model_validate(response_data)
-
-
-    def get_users_compliance_stream(
-        self,
-        partition: int,
-        backfill_minutes: int = None,
-        start_time: str = None,
-        end_time: str = None,
-    ) -> get_users_compliance_stream_response:
-        """
-        Users Compliance stream
-        Streams 100% of compliance data for Users
-        Args:
-            backfill_minutes: The number of minutes of backfill requested.
-        Args:
-            partition: The partition number.
-        Args:
-            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the User Compliance events will be provided.
-        Args:
-            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the User Compliance events will be provided.
-        Returns:
-            get_users_compliance_stream_response: Response data
-        """
-        url = self.client.base_url + "/2/users/compliance/stream"
-        params = {}
-        if backfill_minutes is not None:
-            params["backfill_minutes"] = backfill_minutes
-        if partition is not None:
-            params["partition"] = partition
-        if start_time is not None:
-            params["start_time"] = start_time
-        if end_time is not None:
-            params["end_time"] = end_time
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return get_users_compliance_stream_response.model_validate(response_data)
-
-
-    def get_batch_compliance_job(
-        self,
-        id: str,
-        compliance_job_fields: List = None,
-    ) -> get_batch_compliance_job_response:
-        """
-        Get Compliance Job
-        Returns a single Compliance Job by ID
-        Args:
-            id: The ID of the Compliance Job to retrieve.
-        Args:
-            compliance_job_fields: A comma separated list of ComplianceJob fields to display.
-        Returns:
-            get_batch_compliance_job_response: Response data
-        """
-        url = self.client.base_url + "/2/compliance/jobs/{id}"
-        params = {}
-        if compliance_job_fields is not None:
-            params["compliance_job.fields"] = compliance_job_fields
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return get_batch_compliance_job_response.model_validate(response_data)
-
-
-    def get_tweets_compliance_stream(
-        self,
-        partition: int,
-        backfill_minutes: int = None,
-        start_time: str = None,
-        end_time: str = None,
-    ) -> get_tweets_compliance_stream_response:
-        """
-        Posts Compliance stream
-        Streams 100% of compliance data for Posts
-        Args:
-            backfill_minutes: The number of minutes of backfill requested.
-        Args:
-            partition: The partition number.
-        Args:
-            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post Compliance events will be provided.
-        Args:
-            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Post Compliance events will be provided.
-        Returns:
-            get_tweets_compliance_stream_response: Response data
-        """
-        url = self.client.base_url + "/2/tweets/compliance/stream"
-        params = {}
-        if backfill_minutes is not None:
-            params["backfill_minutes"] = backfill_minutes
-        if partition is not None:
-            params["partition"] = partition
-        if start_time is not None:
-            params["start_time"] = start_time
-        if end_time is not None:
-            params["end_time"] = end_time
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return get_tweets_compliance_stream_response.model_validate(response_data)
 
 
     def get_tweets_label_stream(
@@ -245,6 +120,7 @@ class ComplianceClient:
             get_tweets_label_stream_response: Response data
         """
         url = self.client.base_url + "/2/tweets/label/stream"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
         params = {}
         if backfill_minutes is not None:
             params["backfill_minutes"] = backfill_minutes
@@ -286,6 +162,7 @@ class ComplianceClient:
             get_likes_compliance_stream_response: Response data
         """
         url = self.client.base_url + "/2/likes/compliance/stream"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
         params = {}
         if backfill_minutes is not None:
             params["backfill_minutes"] = backfill_minutes
@@ -306,3 +183,133 @@ class ComplianceClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return get_likes_compliance_stream_response.model_validate(response_data)
+
+
+    def get_users_compliance_stream(
+        self,
+        partition: int,
+        backfill_minutes: int = None,
+        start_time: str = None,
+        end_time: str = None,
+    ) -> get_users_compliance_stream_response:
+        """
+        Users Compliance stream
+        Streams 100% of compliance data for Users
+        Args:
+            backfill_minutes: The number of minutes of backfill requested.
+        Args:
+            partition: The partition number.
+        Args:
+            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the User Compliance events will be provided.
+        Args:
+            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the User Compliance events will be provided.
+        Returns:
+            get_users_compliance_stream_response: Response data
+        """
+        url = self.client.base_url + "/2/users/compliance/stream"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
+        params = {}
+        if backfill_minutes is not None:
+            params["backfill_minutes"] = backfill_minutes
+        if partition is not None:
+            params["partition"] = partition
+        if start_time is not None:
+            params["start_time"] = start_time
+        if end_time is not None:
+            params["end_time"] = end_time
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return get_users_compliance_stream_response.model_validate(response_data)
+
+
+    def get_tweets_compliance_stream(
+        self,
+        partition: int,
+        backfill_minutes: int = None,
+        start_time: str = None,
+        end_time: str = None,
+    ) -> get_tweets_compliance_stream_response:
+        """
+        Posts Compliance stream
+        Streams 100% of compliance data for Posts
+        Args:
+            backfill_minutes: The number of minutes of backfill requested.
+        Args:
+            partition: The partition number.
+        Args:
+            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post Compliance events will be provided.
+        Args:
+            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Post Compliance events will be provided.
+        Returns:
+            get_tweets_compliance_stream_response: Response data
+        """
+        url = self.client.base_url + "/2/tweets/compliance/stream"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
+        params = {}
+        if backfill_minutes is not None:
+            params["backfill_minutes"] = backfill_minutes
+        if partition is not None:
+            params["partition"] = partition
+        if start_time is not None:
+            params["start_time"] = start_time
+        if end_time is not None:
+            params["end_time"] = end_time
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return get_tweets_compliance_stream_response.model_validate(response_data)
+
+
+    def get_batch_compliance_job(
+        self,
+        id: str,
+        compliance_job_fields: List = None,
+    ) -> get_batch_compliance_job_response:
+        """
+        Get Compliance Job
+        Returns a single Compliance Job by ID
+        Args:
+            id: The ID of the Compliance Job to retrieve.
+        Args:
+            compliance_job_fields: A comma separated list of ComplianceJob fields to display.
+        Returns:
+            get_batch_compliance_job_response: Response data
+        """
+        url = self.client.base_url + "/2/compliance/jobs/{id}"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
+        params = {}
+        if compliance_job_fields is not None:
+            params["compliance_job.fields"] = compliance_job_fields
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return get_batch_compliance_job_response.model_validate(response_data)

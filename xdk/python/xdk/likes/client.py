@@ -53,6 +53,7 @@ class LikesClient:
             likes_sample10_stream_response: Response data
         """
         url = self.client.base_url + "/2/likes/sample10/stream"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
         params = {}
         if backfill_minutes is not None:
             params["backfill_minutes"] = backfill_minutes
@@ -119,6 +120,7 @@ class LikesClient:
             likes_firehose_stream_response: Response data
         """
         url = self.client.base_url + "/2/likes/firehose/stream"
+        self.client.session.headers["Authorization"] = f"Bearer {self.client.token}"
         params = {}
         if backfill_minutes is not None:
             params["backfill_minutes"] = backfill_minutes
