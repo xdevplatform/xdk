@@ -1,7 +1,8 @@
 use openapi::OpenApi;
 use std::collections::HashMap;
+use std::env;
 use std::fs;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use super::models::OperationInfo;
 use super::utils::extract_operations_by_tag;
@@ -13,10 +14,66 @@ use minijinja::Environment;
 /// way is to use the `define_generator!` macro which simplifies the implementation.
 pub trait LanguageGenerator {
     /// Returns the name of the generator, this should be the name of the language (e.g., "python", "javascript")
-    fn name(&self) -> &str;
+    fn name(&self) -> String;
 
-    /// Returns a list of (template_name, template_content) pairs for rendering
-    fn templates(&self) -> crate::core::Result<HashMap<String, String>>;
+    /// Loads templates from the filesystem for this language
+    ///
+    /// Searches for templates in multiple potential locations:
+    /// 1. ./templates/{language_name}/
+    /// 2. ../{project_root}/xdk-gen/templates/{language_name}/
+    ///
+    /// # Returns
+    /// A HashMap containing template names and their contents
+    fn templates(&self) -> crate::core::Result<HashMap<String, String>> {
+        let language_name = self.name();
+
+        let potential_paths = vec![
+            PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string()))
+                .join("templates")
+                .join(&language_name),
+            PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string()))
+                .parent()
+                .unwrap_or(Path::new("."))
+                .join("xdk-gen")
+                .join("templates")
+                .join(&language_name),
+        ];
+
+        let mut templates = HashMap::new();
+        for template_dir in potential_paths {
+            if !template_dir.exists() || !template_dir.is_dir() {
+                continue;
+            }
+
+            for entry in fs::read_dir(&template_dir)?.filter_map(|e| e.ok()) {
+                if let Ok(file_type) = entry.file_type() {
+                    if file_type.is_file() {
+                        if let Some(file_name) = entry.file_name().to_str() {
+                            let template_name = if file_name.ends_with(".j2")
+                                || file_name.ends_with(".jinja")
+                                || file_name.ends_with(".jinja2")
+                            {
+                                file_name.rsplit_once('.').map(|x| x.0).unwrap_or(file_name)
+                            } else {
+                                file_name
+                            };
+                            templates.insert(
+                                template_name.to_string(),
+                                fs::read_to_string(entry.path())?,
+                            );
+                        }
+                    }
+                }
+            }
+        }
+        if templates.is_empty() {
+            return Err(crate::core::SdkGeneratorError::FrameworkError(format!(
+                "No templates found for language: {}",
+                language_name
+            )));
+        }
+        Ok(templates)
+    }
 
     /// Adds language-specific filters to the MiniJinja environment
     fn add_filters(&self, env: &mut Environment);
@@ -133,68 +190,9 @@ macro_rules! language {
         pub struct $name;
 
         impl LanguageGenerator for $name {
-            /// Returns the name of the generator as a string
-            fn name(&self) -> &'static str {
-                stringify!($name)
+            fn name(&self) -> String {
+                stringify!($name).to_lowercase()
             }
-
-            /// Loads templates from the filesystem for this language
-            ///
-            /// Searches for templates in multiple potential locations:
-            /// 1. ./templates/{language_name}/
-            /// 2. ../{project_root}/xdk-gen/templates/{language_name}/
-            ///
-            /// # Returns
-            /// A HashMap containing template names and their contents
-            fn templates(&self) -> Result<HashMap<String, String>> {
-                use std::fs;
-                use std::path::PathBuf;
-                use std::env;
-
-                let language_name = stringify!($name).to_lowercase();
-
-                // Try multiple potential locations for the templates directory
-                let potential_paths = vec![
-                    PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string()))
-                        .join("templates")
-                        .join(&language_name),
-                    // Find the workspace root directory that contains xdk-gen
-                    PathBuf::from(env::var("CARGO_MANIFEST_DIR").unwrap_or_else(|_| ".".to_string()))
-                        .parent().unwrap_or(Path::new("."))
-                        .join("xdk-gen")
-                        .join("templates")
-                        .join(&language_name),
-                ];
-
-                let mut templates = HashMap::new();
-                for template_dir in potential_paths {
-                    if !template_dir.exists() || !template_dir.is_dir() {
-                        continue;
-                    }
-
-                    for entry in fs::read_dir(&template_dir)?.filter_map(|e| e.ok()) {
-                        if let Ok(file_type) = entry.file_type() {
-                            if file_type.is_file() {
-                                if let Some(file_name) = entry.file_name().to_str() {
-                                    // Get the template name without the extension
-                                    let template_name = if file_name.ends_with(".j2") || file_name.ends_with(".jinja") || file_name.ends_with(".jinja2") {
-                                        file_name.rsplitn(2, '.').nth(1).unwrap_or(file_name)
-                                    } else {
-                                        file_name
-                                    };
-                                    templates.insert(template_name.to_string(), fs::read_to_string(entry.path())?);
-                                }
-                            }
-                        }
-                    }
-                }
-                if templates.is_empty() {
-                    return Err($crate::core::SdkGeneratorError::FrameworkError(format!("No templates found for language: {}", language_name)));
-                }
-                Ok(templates)
-            }
-
-            /// Adds the specified language-specific filters to the MiniJinja environment
             fn add_filters(&self, env: &mut minijinja::Environment) {
                 $(env.add_filter(stringify!($filter), $filter);)*
             }
