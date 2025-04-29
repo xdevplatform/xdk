@@ -1,5 +1,5 @@
 use super::models::OperationInfo;
-use crate::core::Result;
+use crate::Result;
 use minijinja::Environment;
 use openapi::OpenApi;
 use serde::Serialize;

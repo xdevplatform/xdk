@@ -13,13 +13,13 @@ pub use generator::Python;
 
 #[cfg(test)]
 mod tests {
-    use crate::core::Result;
-    use crate::core::generator::generate;
     use crate::python::generator::Python;
-    use openapi::{OpenApi, OpenApiContextGuard, parse_json_file};
     use std::fs;
     use std::path::Path;
     use tempfile::Builder;
+    use xdk_lib::Result;
+    use xdk_lib::generator::generate;
+    use xdk_openapi::{OpenApi, OpenApiContextGuard, parse_json_file};
 
     // Helper function to create output directory for a test
     fn create_output_dir() -> std::path::PathBuf {

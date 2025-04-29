@@ -483,6 +483,7 @@ dependencies = [
  "serde_json",
  "thiserror",
  "xdk-gen",
+ "xdk-lib",
  "xdk-openapi",
 ]
 
@@ -494,6 +495,18 @@ dependencies = [
  "serde",
  "serde_json",
  "tempfile",
+ "thiserror",
+ "xdk-lib",
+ "xdk-openapi",
+]
+
+[[package]]
+name = "xdk-lib"
+version = "0.1.0"
+dependencies = [
+ "minijinja",
+ "serde",
+ "serde_json",
  "thiserror",
  "xdk-openapi",
 ]

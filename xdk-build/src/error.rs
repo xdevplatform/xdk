@@ -1,6 +1,6 @@
 use std::io;
 use thiserror::Error;
-use xdk_gen::core::SdkGeneratorError;
+use xdk_lib::SdkGeneratorError;
 
 /// Errors that can occur during the SDK build process.
 #[derive(Error, Debug)]

@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-openapi = { path = "../xdk-openapi", package = "xdk-openapi" }
+xdk-openapi = { path = "../xdk-openapi" }
+xdk-lib = { path = "../xdk-lib" }
 minijinja = "2.9.0"
 serde = { workspace = true }
 serde_json = { workspace = true }
@@ -12,7 +13,3 @@ thiserror = { workspace = true }
 
 [dev-dependencies]
 tempfile = "3.2.0"
-
-[[example]]
-name = "generate_python_sdk"
-path = "examples/generate_python_sdk.rs"

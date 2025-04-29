@@ -7,7 +7,7 @@
 /// 1. Define language-specific filters (e.g., type conversion, naming conventions)
 /// 2. Use the language! macro to create the generator struct
 /// 3. Implement the rendering logic in the generate field
-use crate::language;
+use xdk_lib::language;
 
 /// MiniJinja filter for converting a string to snake_case
 fn snake_case(value: &str) -> String {

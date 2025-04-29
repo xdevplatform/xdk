@@ -1,5 +1,5 @@
 [workspace]
-members = ["xdk-openapi", "xdk-gen", "xdk-build"]
+members = ["xdk-openapi", "xdk-gen", "xdk-build", "xdk-lib"]
 resolver = "3"
 
 [workspace.dependencies]

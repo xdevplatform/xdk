@@ -11,7 +11,7 @@ use xdk_openapi::OpenApi; // Add fs for directory removal
 /// Generates the Python SDK.
 pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     log_info!("Generating Python SDK code...");
-    xdk_gen::core::generator::generate(Python, openapi, output_dir)?;
+    xdk_lib::generator::generate(Python, openapi, output_dir)?;
     log_success!("SDK code generated.");
 
     // Create and manage a single virtual environment for formatting

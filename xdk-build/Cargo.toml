@@ -6,6 +6,7 @@ edition = "2024"
 [dependencies]
 xdk-gen = { path = "../xdk-gen" }
 xdk-openapi = { path = "../xdk-openapi" }
+xdk-lib = { path = "../xdk-lib" }
 clap = { version = "4.5.4", features = ["derive"] }
 colored = "2.1"
 thiserror = { workspace = true }

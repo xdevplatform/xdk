@@ -24,7 +24,7 @@ pub trait LanguageGenerator {
     ///
     /// # Returns
     /// A HashMap containing template names and their contents
-    fn templates(&self) -> crate::core::Result<HashMap<String, String>> {
+    fn templates(&self) -> crate::Result<HashMap<String, String>> {
         let language_name = self.name();
 
         let potential_paths = vec![
@@ -67,7 +67,7 @@ pub trait LanguageGenerator {
             }
         }
         if templates.is_empty() {
-            return Err(crate::core::SdkGeneratorError::FrameworkError(format!(
+            return Err(crate::SdkGeneratorError::FrameworkError(format!(
                 "No templates found for language: {}",
                 language_name
             )));
@@ -89,12 +89,12 @@ pub trait LanguageGenerator {
         env: &Environment,
         operations: &HashMap<String, Vec<OperationInfo>>,
         output_dir: &Path,
-    ) -> crate::core::Result<()>;
+    ) -> crate::Result<()>;
 }
 
 /// SDK generation function that takes a language generator and an OpenAPI specification
 /// and generates the SDK code for the given language in the output directory.
-pub fn generate<T>(language: T, openapi: &OpenApi, output_dir: &Path) -> crate::core::Result<()>
+pub fn generate<T>(language: T, openapi: &OpenApi, output_dir: &Path) -> crate::Result<()>
 where
     T: LanguageGenerator,
 {
@@ -164,11 +164,11 @@ macro_rules! language {
     ) => {
         use std::collections::HashMap;
         use std::path::{Path, PathBuf};
-        use $crate::core::utils::render_template;
-        use $crate::core::models::OperationInfo;
-        use $crate::core::generator::LanguageGenerator;
-        use $crate::core::Result;
-        use $crate::core::models::{OperationContext, TagsContext};
+        use $crate::utils::render_template;
+        use $crate::models::OperationInfo;
+        use $crate::generator::LanguageGenerator;
+        use $crate::Result;
+        use $crate::models::{OperationContext, TagsContext};
 
         /// Generator implementation for the specified language
         pub struct $name;
