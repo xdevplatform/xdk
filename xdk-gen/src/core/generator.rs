@@ -94,11 +94,7 @@ pub trait LanguageGenerator {
 
 /// SDK generation function that takes a language generator and an OpenAPI specification
 /// and generates the SDK code for the given language in the output directory.
-pub fn generate<T: LanguageGenerator>(
-    language: T,
-    openapi: &OpenApi,
-    output_dir: &Path,
-) -> crate::core::Result<()>
+pub fn generate<T>(language: T, openapi: &OpenApi, output_dir: &Path) -> crate::core::Result<()>
 where
     T: LanguageGenerator,
 {
