@@ -5,14 +5,13 @@ use colored::*;
 use std::fs;
 use std::path::Path;
 use std::process::Command;
-use xdk_gen::{Python, core::generator::SdkGenerator};
+use xdk_gen::Python;
 use xdk_openapi::OpenApi; // Add fs for directory removal
 
 /// Generates the Python SDK.
 pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     log_info!("Generating Python SDK code...");
-    let generator = SdkGenerator::new(Python);
-    generator.generate(openapi, output_dir)?;
+    xdk_gen::core::generator::generate(Python, openapi, output_dir)?;
     log_success!("SDK code generated.");
 
     // Create and manage a single virtual environment for formatting

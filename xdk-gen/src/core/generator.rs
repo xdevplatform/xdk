@@ -92,38 +92,26 @@ pub trait LanguageGenerator {
     ) -> crate::core::Result<()>;
 }
 
-/// SDK generator that orchestrates the generation process.
-///
-/// This struct wraps a language-specific generator and handles common operations like
-/// setting up the MiniJinja environment and processing the OpenAPI spec.
-pub struct SdkGenerator<T: LanguageGenerator> {
-    inner: T,
-}
-
-impl<T: LanguageGenerator> SdkGenerator<T> {
-    /// Creates a new SDK generator with the given language generator
-    pub fn new(inner: T) -> Self {
-        Self { inner }
+/// SDK generation function that takes a language generator and an OpenAPI specification
+/// and generates the SDK code for the given language in the output directory.
+pub fn generate<T: LanguageGenerator>(
+    language: T,
+    openapi: &OpenApi,
+    output_dir: &Path,
+) -> crate::core::Result<()>
+where
+    T: LanguageGenerator,
+{
+    fs::create_dir_all(output_dir)?;
+    let mut env = Environment::new();
+    language.add_filters(&mut env);
+    let templates = language.templates()?;
+    for (name, content) in &templates {
+        env.add_template(name, content)?;
     }
 
-    /// Generates the SDK for the given OpenAPI specification and writes it to the output directory
-    ///
-    /// # Parameters
-    /// * `openapi` - The parsed OpenAPI specification
-    /// * `output_dir` - The directory where the generated code will be written
-    pub fn generate(&self, openapi: &OpenApi, output_dir: &Path) -> crate::core::Result<()> {
-        let inner = &self.inner;
-        fs::create_dir_all(output_dir)?;
-        let mut env = Environment::new();
-        inner.add_filters(&mut env);
-        let templates = inner.templates()?;
-        for (name, content) in &templates {
-            env.add_template(name, content)?;
-        }
-
-        let operations_by_tag = extract_operations_by_tag(openapi)?;
-        inner.generate(&env, &operations_by_tag, output_dir)
-    }
+    let operations_by_tag = extract_operations_by_tag(openapi)?;
+    language.generate(&env, &operations_by_tag, output_dir)
 }
 
 /// Macro for creating a language-specific SDK generator.
