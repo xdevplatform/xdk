@@ -1,0 +1,70 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/2/communities/search": {
+      "get": {
+        "summary": "Search Communities",
+        "description": "Returns communities matching a search query.",
+        "operationId": "searchCommunities",
+        "tags": ["Communities"],
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "Love"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all": {
+      "post": {
+        "summary": "Post Account Activity Replay",
+        "description": "Posts account activity replay.",
+        "operationId": "postAccountActivityReplay",
+        "tags": ["Account Activity"],
+        "parameters": [
+          {
+            "name": "webhook_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    },
+    "/2/tweets": {
+      "get": {
+        "summary": "Get tweets",
+        "operationId": "getTweets",
+        "description": "Returns tweets",
+        "tags": ["Tweets"],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successful response"
+          }
+        }
+      }
+    }
+  }
+} 

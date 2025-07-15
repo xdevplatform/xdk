@@ -12,7 +12,7 @@ from datetime import datetime
 {% if operation.request_body or operation.responses %}
 # Models for {{ operation.operation_id }}
 {% if operation.request_body %}
-class {{ operation.operation_id | snake_case }}_request(BaseModel):
+class {{ operation.operation_id | strip_resource_name(operation.path) | snake_case }}_request(BaseModel):
     """Request model for {{ operation.operation_id }}"""
     {% if operation.request_body.content %}
     {% set content_type = "application/json" %}
@@ -37,7 +37,7 @@ class {{ operation.operation_id | snake_case }}_request(BaseModel):
 {% set content_type = "application/json" %}
 {% if response.content[content_type] %}
 {% set schema = response.content[content_type].schema %}
-class {{ operation.operation_id | snake_case }}_response(BaseModel):
+class {{ operation.operation_id | strip_resource_name(operation.path) | snake_case }}_response(BaseModel):
     """Response model for {{ operation.operation_id }}"""
     {% if schema and schema.properties %}
     {% for key in schema.properties %}
