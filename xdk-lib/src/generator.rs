@@ -68,8 +68,7 @@ pub trait LanguageGenerator {
         }
         if templates.is_empty() {
             return Err(crate::SdkGeneratorError::FrameworkError(format!(
-                "No templates found for language: {}",
-                language_name
+                "No templates found for language: {language_name}"
             )));
         }
         Ok(templates)
