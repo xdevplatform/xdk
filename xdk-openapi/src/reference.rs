@@ -71,8 +71,7 @@ impl<T: Clone + Serialize + Any> Serialize for RefOrValue<T> {
         match self.try_resolve() {
             Ok(rc_value) => rc_value.as_ref().serialize(serializer),
             Err(e) => Err(serde::ser::Error::custom(format!(
-                "Failed to resolve reference during serialization: {:?}",
-                e
+                "Failed to resolve reference during serialization: {e:?}"
             ))),
         }
     }

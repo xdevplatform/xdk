@@ -91,35 +91,35 @@ impl OpenApiContext {
 
     /// Adds a schema to the context
     pub fn add_schema(&mut self, name: String, schema: Schema) {
-        let path = format!("#/components/schemas/{}", name);
+        let path = format!("#/components/schemas/{name}");
         self.components
             .insert(path, StoredComponent::Schema(Rc::new(schema)));
     }
 
     /// Adds a parameter to the context
     pub fn add_parameter(&mut self, name: String, parameter: Parameter) {
-        let path = format!("#/components/parameters/{}", name);
+        let path = format!("#/components/parameters/{name}");
         self.components
             .insert(path, StoredComponent::Parameter(Rc::new(parameter)));
     }
 
     /// Adds a response to the context
     pub fn add_response(&mut self, name: String, response: Response) {
-        let path = format!("#/components/responses/{}", name);
+        let path = format!("#/components/responses/{name}");
         self.components
             .insert(path, StoredComponent::Response(Rc::new(response)));
     }
 
     /// Adds a request body to the context
     pub fn add_request_body(&mut self, name: String, request_body: RequestBody) {
-        let path = format!("#/components/requestBodies/{}", name);
+        let path = format!("#/components/requestBodies/{name}");
         self.components
             .insert(path, StoredComponent::RequestBody(Rc::new(request_body)));
     }
 
     /// Adds a security scheme to the context
     pub fn add_security_scheme(&mut self, name: String, security_scheme: SecurityScheme) {
-        let path = format!("#/components/securitySchemes/{}", name);
+        let path = format!("#/components/securitySchemes/{name}");
         self.components.insert(
             path,
             StoredComponent::SecurityScheme(Rc::new(security_scheme)),

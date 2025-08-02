@@ -61,7 +61,7 @@ pub fn parse_yaml(yaml: &str) -> Result<OpenApi> {
                         ) {
                             Ok(schema) => ctx.add_schema(name_str.to_string(), schema),
                             Err(e) => {
-                                eprintln!("Warning: Failed to parse schema {}: {}", name_str, e)
+                                eprintln!("Warning: Failed to parse schema {name_str}: {e}")
                             }
                         }
                     }
@@ -75,7 +75,7 @@ pub fn parse_yaml(yaml: &str) -> Result<OpenApi> {
                         ) {
                             Ok(param) => ctx.add_parameter(name_str.to_string(), param),
                             Err(e) => {
-                                eprintln!("Warning: Failed to parse parameter {}: {}", name_str, e)
+                                eprintln!("Warning: Failed to parse parameter {name_str}: {e}")
                             }
                         }
                     }
@@ -87,7 +87,7 @@ pub fn parse_yaml(yaml: &str) -> Result<OpenApi> {
                         match serde_yaml::from_value::<crate::core::Response>(resp_val.clone()) {
                             Ok(resp) => ctx.add_response(name_str.to_string(), resp),
                             Err(e) => {
-                                eprintln!("Warning: Failed to parse response {}: {}", name_str, e)
+                                eprintln!("Warning: Failed to parse response {name_str}: {e}")
                             }
                         }
                     }
@@ -101,10 +101,9 @@ pub fn parse_yaml(yaml: &str) -> Result<OpenApi> {
                     if let Some(name_str) = name.as_str() {
                         match serde_yaml::from_value::<crate::core::RequestBody>(rb_val.clone()) {
                             Ok(rb) => ctx.add_request_body(name_str.to_string(), rb),
-                            Err(e) => eprintln!(
-                                "Warning: Failed to parse requestBody {}: {}",
-                                name_str, e
-                            ),
+                            Err(e) => {
+                                eprintln!("Warning: Failed to parse requestBody {name_str}: {e}")
+                            }
                         }
                     }
                 }
@@ -119,10 +118,9 @@ pub fn parse_yaml(yaml: &str) -> Result<OpenApi> {
                             ss_val.clone(),
                         ) {
                             Ok(ss) => ctx.add_security_scheme(name_str.to_string(), ss),
-                            Err(e) => eprintln!(
-                                "Warning: Failed to parse securityScheme {}: {}",
-                                name_str, e
-                            ),
+                            Err(e) => {
+                                eprintln!("Warning: Failed to parse securityScheme {name_str}: {e}")
+                            }
                         }
                     }
                 }
@@ -215,7 +213,7 @@ pub fn parse_json(json: &str) -> Result<OpenApi> {
                 for (name, schema_val) in schemas {
                     match serde_json::from_value::<crate::components::Schema>(schema_val.clone()) {
                         Ok(schema) => ctx.add_schema(name.clone(), schema),
-                        Err(e) => eprintln!("Warning: Failed to parse schema {}: {}", name, e),
+                        Err(e) => eprintln!("Warning: Failed to parse schema {name}: {e}"),
                     }
                 }
             }
@@ -224,7 +222,7 @@ pub fn parse_json(json: &str) -> Result<OpenApi> {
                     match serde_json::from_value::<crate::components::Parameter>(param_val.clone())
                     {
                         Ok(param) => ctx.add_parameter(name.clone(), param),
-                        Err(e) => eprintln!("Warning: Failed to parse parameter {}: {}", name, e),
+                        Err(e) => eprintln!("Warning: Failed to parse parameter {name}: {e}"),
                     }
                 }
             }
@@ -232,7 +230,7 @@ pub fn parse_json(json: &str) -> Result<OpenApi> {
                 for (name, resp_val) in responses {
                     match serde_json::from_value::<crate::core::Response>(resp_val.clone()) {
                         Ok(resp) => ctx.add_response(name.clone(), resp),
-                        Err(e) => eprintln!("Warning: Failed to parse response {}: {}", name, e),
+                        Err(e) => eprintln!("Warning: Failed to parse response {name}: {e}"),
                     }
                 }
             }
@@ -243,7 +241,7 @@ pub fn parse_json(json: &str) -> Result<OpenApi> {
                 for (name, rb_val) in request_bodies {
                     match serde_json::from_value::<crate::core::RequestBody>(rb_val.clone()) {
                         Ok(rb) => ctx.add_request_body(name.clone(), rb),
-                        Err(e) => eprintln!("Warning: Failed to parse requestBody {}: {}", name, e),
+                        Err(e) => eprintln!("Warning: Failed to parse requestBody {name}: {e}"),
                     }
                 }
             }
@@ -257,7 +255,7 @@ pub fn parse_json(json: &str) -> Result<OpenApi> {
                     ) {
                         Ok(ss) => ctx.add_security_scheme(name.clone(), ss),
                         Err(e) => {
-                            eprintln!("Warning: Failed to parse securityScheme {}: {}", name, e)
+                            eprintln!("Warning: Failed to parse securityScheme {name}: {e}")
                         }
                     }
                 }
