@@ -12,16 +12,13 @@ from datetime import datetime
 # Models for searchSpaces
 
 
-class search_spaces_response(BaseModel):
+class SearchSpacesResponse(BaseModel):
     """Response model for searchSpaces"""
 
     data: Optional[List] = None
-
     errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
+    includes: Optional["SearchSpacesResponseIncludes"] = None
+    meta: Optional["SearchSpacesResponseMeta"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -29,19 +26,43 @@ class search_spaces_response(BaseModel):
         populate_by_name = True
 
 
-# Models for findSpacesByCreatorIds
+class SearchSpacesResponseIncludes(BaseModel):
+    """Nested model for SearchSpacesResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
 
 
-class find_spaces_by_creator_ids_response(BaseModel):
-    """Response model for findSpacesByCreatorIds"""
+class SearchSpacesResponseMeta(BaseModel):
+    """Nested model for SearchSpacesResponseMeta"""
+
+    result_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getSpacesByCreatorIds
+
+
+class GetSpacesByCreatorIdsResponse(BaseModel):
+    """Response model for getSpacesByCreatorIds"""
 
     data: Optional[List] = None
-
     errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
+    includes: Optional["GetSpacesByCreatorIdsResponseIncludes"] = None
+    meta: Optional["GetSpacesByCreatorIdsResponseMeta"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -49,19 +70,43 @@ class find_spaces_by_creator_ids_response(BaseModel):
         populate_by_name = True
 
 
-# Models for spaceBuyers
+class GetSpacesByCreatorIdsResponseIncludes(BaseModel):
+    """Nested model for GetSpacesByCreatorIdsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
 
 
-class space_buyers_response(BaseModel):
-    """Response model for spaceBuyers"""
+class GetSpacesByCreatorIdsResponseMeta(BaseModel):
+    """Nested model for GetSpacesByCreatorIdsResponseMeta"""
+
+    result_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getSpacesPosts
+
+
+class GetSpacesPostsResponse(BaseModel):
+    """Response model for getSpacesPosts"""
 
     data: Optional[List] = None
-
     errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
+    includes: Optional["GetSpacesPostsResponseIncludes"] = None
+    meta: Optional["GetSpacesPostsResponseMeta"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -69,17 +114,15 @@ class space_buyers_response(BaseModel):
         populate_by_name = True
 
 
-# Models for findSpaceById
+class GetSpacesPostsResponseIncludes(BaseModel):
+    """Nested model for GetSpacesPostsResponseIncludes"""
 
-
-class find_space_by_id_response(BaseModel):
-    """Response model for findSpaceById"""
-
-    data: Dict[str, Any] = Field(default_factory=dict)
-
-    errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -87,19 +130,29 @@ class find_space_by_id_response(BaseModel):
         populate_by_name = True
 
 
-# Models for spaceTweets
+class GetSpacesPostsResponseMeta(BaseModel):
+    """Nested model for GetSpacesPostsResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
 
 
-class space_tweets_response(BaseModel):
-    """Response model for spaceTweets"""
+# Models for getSpacesBuyers
+
+
+class GetSpacesBuyersResponse(BaseModel):
+    """Response model for getSpacesBuyers"""
 
     data: Optional[List] = None
-
     errors: Optional[List] = None
-
-    includes: Optional[Dict[str, Any]] = None
-
-    meta: Optional[Dict[str, Any]] = None
+    includes: Optional["GetSpacesBuyersResponseIncludes"] = None
+    meta: Optional["GetSpacesBuyersResponseMeta"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -107,17 +160,119 @@ class space_tweets_response(BaseModel):
         populate_by_name = True
 
 
-# Models for findSpacesByIds
+class GetSpacesBuyersResponseIncludes(BaseModel):
+    """Nested model for GetSpacesBuyersResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
 
 
-class find_spaces_by_ids_response(BaseModel):
-    """Response model for findSpacesByIds"""
+class GetSpacesBuyersResponseMeta(BaseModel):
+    """Nested model for GetSpacesBuyersResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getSpacesByIds
+
+
+class GetSpacesByIdsResponse(BaseModel):
+    """Response model for getSpacesByIds"""
 
     data: Optional[List] = None
-
     errors: Optional[List] = None
+    includes: Optional["GetSpacesByIdsResponseIncludes"] = None
 
-    includes: Optional[Dict[str, Any]] = None
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetSpacesByIdsResponseIncludes(BaseModel):
+    """Nested model for GetSpacesByIdsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getSpacesById
+
+
+class GetSpacesByIdResponse(BaseModel):
+    """Response model for getSpacesById"""
+
+    data: Optional["GetSpacesByIdResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+    includes: Optional["GetSpacesByIdResponseIncludes"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetSpacesByIdResponseData(BaseModel):
+    """Nested model for GetSpacesByIdResponseData"""
+
+    created_at: Optional[str] = None
+    creator_id: Optional[str] = None
+    ended_at: Optional[str] = None
+    host_ids: Optional[List] = None
+    id: Optional[str] = None
+    invited_user_ids: Optional[List] = None
+    is_ticketed: Optional[bool] = None
+    lang: Optional[str] = None
+    participant_count: Optional[int] = None
+    scheduled_start: Optional[str] = None
+    speaker_ids: Optional[List] = None
+    started_at: Optional[str] = None
+    state: Optional[str] = None
+    subscriber_count: Optional[int] = None
+    title: Optional[str] = None
+    topics: Optional[List] = None
+    updated_at: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetSpacesByIdResponseIncludes(BaseModel):
+    """Nested model for GetSpacesByIdResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""

@@ -32,37 +32,241 @@ pub struct Parameter {
 /// Represents a schema
 ///
 /// Schemas define the structure of data types used in the API.
-/// They can represent primitive types, objects, arrays, and more.
+/// This enum captures the different types of schemas supported by OpenAPI 3.0.0.
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct Schema {
-    /// The type of the schema (string, number, integer, boolean, object, array)
-    #[serde(rename = "type")]
-    pub r#type: Option<String>,
-    /// The format of the schema (e.g., date-time, email, uuid)
-    pub format: Option<String>,
+#[serde(untagged)]
+pub enum Schema {
+    /// Composition schema using anyOf
+    AnyOf(Box<AnyOfSchema>),
+    /// Composition schema using allOf
+    AllOf(Box<AllOfSchema>),
+    /// Composition schema using oneOf
+    OneOf(Box<OneOfSchema>),
+    /// Negation schema using not
+    Not(Box<NotSchema>),
+    /// Typed schema with a specific type
+    Typed(Box<TypedSchema>),
+}
+
+/// A schema with a specific type
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(tag = "type")]
+pub enum TypedSchema {
+    /// Object schema
+    #[serde(rename = "object")]
+    Object(Box<ObjectSchema>),
+    /// Array schema
+    #[serde(rename = "array")]
+    Array(Box<ArraySchema>),
+    /// String schema
+    #[serde(rename = "string")]
+    String(Box<StringSchema>),
+    /// Integer schema
+    #[serde(rename = "integer")]
+    Integer(Box<IntegerSchema>),
+    /// Number schema
+    #[serde(rename = "number")]
+    Number(Box<NumberSchema>),
+    /// Boolean schema
+    #[serde(rename = "boolean")]
+    Boolean(Box<BooleanSchema>),
+}
+
+/// Base fields common to all schemas
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct BaseSchema {
     /// The title of the schema
     pub title: Option<String>,
     /// A description of the schema
     pub description: Option<String>,
-    /// Properties of an object schema
-    pub properties: Option<HashMap<String, RefOrValue<Schema>>>,
-    /// Items of an array schema
-    pub items: Option<Box<RefOrValue<Schema>>>,
-    /// Required properties of an object schema
-    pub required: Option<Vec<String>>,
     /// An example value for the schema
     pub example: Option<serde_json::Value>,
-    /// Enum values for the schema
-    pub enum_values: Option<Vec<String>>,
-    /// Enum values for the schema (alternative field name)
-    #[serde(rename = "enum")]
-    pub enum_field: Option<Vec<String>>,
-    /// Minimum value for number/integer schemas
-    pub minimum: Option<i64>,
-    /// Maximum value for number/integer schemas
-    pub maximum: Option<i64>,
     /// Default value for the schema
     pub default: Option<serde_json::Value>,
+    /// Whether the schema is deprecated
+    pub deprecated: Option<bool>,
+}
+
+/// Object schema fields
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct ObjectSchema {
+    #[serde(flatten)]
+    pub base: BaseSchema,
+    /// Properties of the object
+    pub properties: Option<HashMap<String, RefOrValue<Schema>>>,
+    /// Required property names
+    pub required: Option<Vec<String>>,
+    /// Additional properties behavior
+    #[serde(rename = "additionalProperties")]
+    pub additional_properties: Option<Box<AdditionalProperties>>,
+    /// Discriminator for polymorphism
+    pub discriminator: Option<Discriminator>,
+    /// Minimum number of properties
+    #[serde(rename = "minProperties")]
+    pub min_properties: Option<u32>,
+    /// Maximum number of properties
+    #[serde(rename = "maxProperties")]
+    pub max_properties: Option<u32>,
+}
+
+/// Array schema fields
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct ArraySchema {
+    #[serde(flatten)]
+    pub base: BaseSchema,
+    /// Schema for array items
+    pub items: Option<Box<RefOrValue<Schema>>>,
+    /// Minimum number of items
+    #[serde(rename = "minItems")]
+    pub min_items: Option<u32>,
+    /// Maximum number of items
+    #[serde(rename = "maxItems")]
+    pub max_items: Option<u32>,
+    /// Whether items must be unique
+    #[serde(rename = "uniqueItems")]
+    pub unique_items: Option<bool>,
+}
+
+/// String schema fields
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct StringSchema {
+    #[serde(flatten)]
+    pub base: BaseSchema,
+    /// String format (e.g., date-time, email, uuid)
+    pub format: Option<String>,
+    /// Minimum string length
+    #[serde(rename = "minLength")]
+    pub min_length: Option<u32>,
+    /// Maximum string length
+    #[serde(rename = "maxLength")]
+    pub max_length: Option<u32>,
+    /// Regex pattern
+    pub pattern: Option<String>,
+    /// Enumeration of valid values
+    #[serde(rename = "enum")]
+    pub enum_values: Option<Vec<String>>,
+}
+
+/// Integer schema fields
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct IntegerSchema {
+    #[serde(flatten)]
+    pub base: BaseSchema,
+    /// Integer format (e.g., int32, int64)
+    pub format: Option<String>,
+    /// Minimum value
+    pub minimum: Option<i64>,
+    /// Maximum value
+    pub maximum: Option<i64>,
+    /// Exclusive minimum
+    #[serde(rename = "exclusiveMinimum")]
+    pub exclusive_minimum: Option<bool>,
+    /// Exclusive maximum
+    #[serde(rename = "exclusiveMaximum")]
+    pub exclusive_maximum: Option<bool>,
+    /// Multiple of constraint
+    #[serde(rename = "multipleOf")]
+    pub multiple_of: Option<f64>,
+    /// Enumeration of valid values
+    #[serde(rename = "enum")]
+    pub enum_values: Option<Vec<i64>>,
+}
+
+/// Number schema fields
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct NumberSchema {
+    #[serde(flatten)]
+    pub base: BaseSchema,
+    /// Number format (e.g., float, double)
+    pub format: Option<String>,
+    /// Minimum value
+    pub minimum: Option<f64>,
+    /// Maximum value
+    pub maximum: Option<f64>,
+    /// Exclusive minimum
+    #[serde(rename = "exclusiveMinimum")]
+    pub exclusive_minimum: Option<bool>,
+    /// Exclusive maximum
+    #[serde(rename = "exclusiveMaximum")]
+    pub exclusive_maximum: Option<bool>,
+    /// Multiple of constraint
+    #[serde(rename = "multipleOf")]
+    pub multiple_of: Option<f64>,
+    /// Enumeration of valid values
+    #[serde(rename = "enum")]
+    pub enum_values: Option<Vec<f64>>,
+}
+
+/// Boolean schema fields
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct BooleanSchema {
+    #[serde(flatten)]
+    pub base: BaseSchema,
+}
+
+/// AnyOf composition schema
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct AnyOfSchema {
+    #[serde(flatten)]
+    pub base: BaseSchema,
+    /// Schemas to match any of
+    #[serde(rename = "anyOf")]
+    pub any_of: Vec<RefOrValue<Schema>>,
+    /// Discriminator for polymorphism
+    pub discriminator: Option<Discriminator>,
+}
+
+/// AllOf composition schema
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct AllOfSchema {
+    #[serde(flatten)]
+    pub base: BaseSchema,
+    /// Schemas to match all of
+    #[serde(rename = "allOf")]
+    pub all_of: Vec<RefOrValue<Schema>>,
+    /// Discriminator for polymorphism
+    pub discriminator: Option<Discriminator>,
+}
+
+/// OneOf composition schema
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct OneOfSchema {
+    #[serde(flatten)]
+    pub base: BaseSchema,
+    /// Schemas to match exactly one of
+    #[serde(rename = "oneOf")]
+    pub one_of: Vec<RefOrValue<Schema>>,
+    /// Discriminator for polymorphism
+    pub discriminator: Option<Discriminator>,
+}
+
+/// Not composition schema
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct NotSchema {
+    #[serde(flatten)]
+    pub base: BaseSchema,
+    /// Schema that must not match
+    pub not: Box<RefOrValue<Schema>>,
+}
+
+/// Additional properties behavior for object schemas
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(untagged)]
+pub enum AdditionalProperties {
+    /// Boolean value - true allows any additional properties, false disallows them
+    Boolean(bool),
+    /// Schema for additional properties
+    Schema(Box<RefOrValue<Schema>>),
+}
+
+/// Discriminator for polymorphic schemas
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct Discriminator {
+    /// Property name that holds the discriminator value
+    #[serde(rename = "propertyName")]
+    pub property_name: String,
+    /// Mapping of discriminator values to schema names
+    pub mapping: Option<HashMap<String, String>>,
 }
 
 /// Represents the components section of the OpenAPI spec

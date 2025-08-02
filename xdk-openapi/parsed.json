@@ -1,0 +1,519 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Test API",
+    "version": "1.0.0",
+    "description": null,
+    "contact": null,
+    "license": null
+  },
+  "paths": {
+    "/test": {
+      "get": {
+        "summary": "Test endpoint",
+        "description": null,
+        "operationId": "test",
+        "tags": null,
+        "security": null,
+        "parameters": null,
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "title": null,
+                "description": null,
+                "example": null,
+                "default": null,
+                "deprecated": null,
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "title": null,
+                    "description": null,
+                    "example": null,
+                    "default": null,
+                    "deprecated": null,
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "title": null,
+                        "description": null,
+                        "example": null,
+                        "default": null,
+                        "deprecated": null,
+                        "format": null,
+                        "minLength": null,
+                        "maxLength": null,
+                        "pattern": null,
+                        "enum": null
+                      }
+                    },
+                    "required": null,
+                    "additionalProperties": null,
+                    "discriminator": null,
+                    "minProperties": null,
+                    "maxProperties": null
+                  },
+                  {
+                    "type": "object",
+                    "title": null,
+                    "description": null,
+                    "example": null,
+                    "default": null,
+                    "deprecated": null,
+                    "properties": {
+                      "age": {
+                        "type": "integer",
+                        "title": null,
+                        "description": null,
+                        "example": null,
+                        "default": null,
+                        "deprecated": null,
+                        "format": null,
+                        "minimum": null,
+                        "maximum": null,
+                        "exclusiveMinimum": null,
+                        "exclusiveMaximum": null,
+                        "multipleOf": null,
+                        "enum": null
+                      }
+                    },
+                    "required": null,
+                    "additionalProperties": null,
+                    "discriminator": null,
+                    "minProperties": null,
+                    "maxProperties": null
+                  },
+                  {
+                    "type": "object",
+                    "title": null,
+                    "description": null,
+                    "example": null,
+                    "default": null,
+                    "deprecated": null,
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "title": null,
+                        "description": null,
+                        "example": null,
+                        "default": null,
+                        "deprecated": null,
+                        "format": null,
+                        "minLength": null,
+                        "maxLength": null,
+                        "pattern": null,
+                        "enum": null
+                      }
+                    },
+                    "required": null,
+                    "additionalProperties": null,
+                    "discriminator": null,
+                    "minProperties": null,
+                    "maxProperties": null
+                  }
+                ],
+                "discriminator": null
+              }
+            }
+          },
+          "required": null
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": null,
+                  "description": null,
+                  "example": null,
+                  "default": null,
+                  "deprecated": null,
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "title": null,
+                      "description": null,
+                      "example": null,
+                      "default": null,
+                      "deprecated": null,
+                      "properties": {
+                        "name": {
+                          "type": "string",
+                          "title": null,
+                          "description": null,
+                          "example": null,
+                          "default": null,
+                          "deprecated": null,
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null,
+                          "pattern": null,
+                          "enum": null
+                        }
+                      },
+                      "required": null,
+                      "additionalProperties": null,
+                      "discriminator": null,
+                      "minProperties": null,
+                      "maxProperties": null
+                    },
+                    {
+                      "type": "object",
+                      "title": null,
+                      "description": null,
+                      "example": null,
+                      "default": null,
+                      "deprecated": null,
+                      "properties": {
+                        "age": {
+                          "type": "integer",
+                          "title": null,
+                          "description": null,
+                          "example": null,
+                          "default": null,
+                          "deprecated": null,
+                          "format": null,
+                          "minimum": null,
+                          "maximum": null,
+                          "exclusiveMinimum": null,
+                          "exclusiveMaximum": null,
+                          "multipleOf": null,
+                          "enum": null
+                        }
+                      },
+                      "required": null,
+                      "additionalProperties": null,
+                      "discriminator": null,
+                      "minProperties": null,
+                      "maxProperties": null
+                    },
+                    {
+                      "type": "object",
+                      "title": null,
+                      "description": null,
+                      "example": null,
+                      "default": null,
+                      "deprecated": null,
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "title": null,
+                          "description": null,
+                          "example": null,
+                          "default": null,
+                          "deprecated": null,
+                          "format": null,
+                          "minLength": null,
+                          "maxLength": null,
+                          "pattern": null,
+                          "enum": null
+                        }
+                      },
+                      "required": null,
+                      "additionalProperties": null,
+                      "discriminator": null,
+                      "minProperties": null,
+                      "maxProperties": null
+                    }
+                  ],
+                  "discriminator": null
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": null,
+      "put": null,
+      "delete": null,
+      "patch": null
+    }
+  },
+  "components": {
+    "schemas": {
+      "TestSchemaTwo": {
+        "type": "object",
+        "title": null,
+        "description": null,
+        "example": null,
+        "default": null,
+        "deprecated": null,
+        "properties": {
+          "age": {
+            "type": "integer",
+            "title": null,
+            "description": null,
+            "example": null,
+            "default": null,
+            "deprecated": null,
+            "format": null,
+            "minimum": null,
+            "maximum": null,
+            "exclusiveMinimum": null,
+            "exclusiveMaximum": null,
+            "multipleOf": null,
+            "enum": null
+          }
+        },
+        "required": null,
+        "additionalProperties": null,
+        "discriminator": null,
+        "minProperties": null,
+        "maxProperties": null
+      },
+      "TestSchemaAllOf": {
+        "title": null,
+        "description": null,
+        "example": null,
+        "default": null,
+        "deprecated": null,
+        "allOf": [
+          {
+            "type": "object",
+            "title": null,
+            "description": null,
+            "example": null,
+            "default": null,
+            "deprecated": null,
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": null,
+                "description": null,
+                "example": null,
+                "default": null,
+                "deprecated": null,
+                "format": null,
+                "minLength": null,
+                "maxLength": null,
+                "pattern": null,
+                "enum": null
+              }
+            },
+            "required": null,
+            "additionalProperties": null,
+            "discriminator": null,
+            "minProperties": null,
+            "maxProperties": null
+          },
+          {
+            "type": "object",
+            "title": null,
+            "description": null,
+            "example": null,
+            "default": null,
+            "deprecated": null,
+            "properties": {
+              "age": {
+                "type": "integer",
+                "title": null,
+                "description": null,
+                "example": null,
+                "default": null,
+                "deprecated": null,
+                "format": null,
+                "minimum": null,
+                "maximum": null,
+                "exclusiveMinimum": null,
+                "exclusiveMaximum": null,
+                "multipleOf": null,
+                "enum": null
+              }
+            },
+            "required": null,
+            "additionalProperties": null,
+            "discriminator": null,
+            "minProperties": null,
+            "maxProperties": null
+          },
+          {
+            "type": "object",
+            "title": null,
+            "description": null,
+            "example": null,
+            "default": null,
+            "deprecated": null,
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": null,
+                "description": null,
+                "example": null,
+                "default": null,
+                "deprecated": null,
+                "format": null,
+                "minLength": null,
+                "maxLength": null,
+                "pattern": null,
+                "enum": null
+              }
+            },
+            "required": null,
+            "additionalProperties": null,
+            "discriminator": null,
+            "minProperties": null,
+            "maxProperties": null
+          }
+        ],
+        "discriminator": null
+      },
+      "TestSchemaAnyOf": {
+        "title": null,
+        "description": null,
+        "example": null,
+        "default": null,
+        "deprecated": null,
+        "anyOf": [
+          {
+            "type": "object",
+            "title": null,
+            "description": null,
+            "example": null,
+            "default": null,
+            "deprecated": null,
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": null,
+                "description": null,
+                "example": null,
+                "default": null,
+                "deprecated": null,
+                "format": null,
+                "minLength": null,
+                "maxLength": null,
+                "pattern": null,
+                "enum": null
+              }
+            },
+            "required": null,
+            "additionalProperties": null,
+            "discriminator": null,
+            "minProperties": null,
+            "maxProperties": null
+          },
+          {
+            "type": "object",
+            "title": null,
+            "description": null,
+            "example": null,
+            "default": null,
+            "deprecated": null,
+            "properties": {
+              "age": {
+                "type": "integer",
+                "title": null,
+                "description": null,
+                "example": null,
+                "default": null,
+                "deprecated": null,
+                "format": null,
+                "minimum": null,
+                "maximum": null,
+                "exclusiveMinimum": null,
+                "exclusiveMaximum": null,
+                "multipleOf": null,
+                "enum": null
+              }
+            },
+            "required": null,
+            "additionalProperties": null,
+            "discriminator": null,
+            "minProperties": null,
+            "maxProperties": null
+          },
+          {
+            "type": "object",
+            "title": null,
+            "description": null,
+            "example": null,
+            "default": null,
+            "deprecated": null,
+            "properties": {
+              "id": {
+                "type": "string",
+                "title": null,
+                "description": null,
+                "example": null,
+                "default": null,
+                "deprecated": null,
+                "format": null,
+                "minLength": null,
+                "maxLength": null,
+                "pattern": null,
+                "enum": null
+              }
+            },
+            "required": null,
+            "additionalProperties": null,
+            "discriminator": null,
+            "minProperties": null,
+            "maxProperties": null
+          }
+        ],
+        "discriminator": null
+      },
+      "TestSchemaOne": {
+        "type": "object",
+        "title": null,
+        "description": null,
+        "example": null,
+        "default": null,
+        "deprecated": null,
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": null,
+            "description": null,
+            "example": null,
+            "default": null,
+            "deprecated": null,
+            "format": null,
+            "minLength": null,
+            "maxLength": null,
+            "pattern": null,
+            "enum": null
+          }
+        },
+        "required": null,
+        "additionalProperties": null,
+        "discriminator": null,
+        "minProperties": null,
+        "maxProperties": null
+      },
+      "VariantOne": {
+        "type": "object",
+        "title": null,
+        "description": null,
+        "example": null,
+        "default": null,
+        "deprecated": null,
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": null,
+            "description": null,
+            "example": null,
+            "default": null,
+            "deprecated": null,
+            "format": null,
+            "minLength": null,
+            "maxLength": null,
+            "pattern": null,
+            "enum": null
+          }
+        },
+        "required": null,
+        "additionalProperties": null,
+        "discriminator": null,
+        "minProperties": null,
+        "maxProperties": null
+      }
+    },
+    "parameters": null,
+    "security_schemes": null
+  },
+  "security": null
+}

@@ -12,24 +12,8 @@ from datetime import datetime
 # Models for getOpenApiSpec
 
 
-class get_open_api_spec_response(BaseModel):
+class GetOpenApiSpecResponse(BaseModel):
     """Response model for getOpenApiSpec"""
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getRuleCount
-
-
-class get_rule_count_response(BaseModel):
-    """Response model for getRuleCount"""
-
-    data: Optional[Dict[str, Any]] = None
-
-    errors: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""

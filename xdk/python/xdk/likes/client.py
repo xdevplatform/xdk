@@ -8,7 +8,10 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from .models import likes_firehose_stream_response, likes_sample10_stream_response
+from .models import (
+    StreamLikesFirehoseResponse,
+    StreamLikesSample10Response,
+)
 
 
 class LikesClient:
@@ -19,7 +22,7 @@ class LikesClient:
         self.client = client
 
 
-    def likes_firehose_stream(
+    def stream_likes_firehose(
         self,
         partition: int,
         backfill_minutes: int = None,
@@ -29,10 +32,10 @@ class LikesClient:
         expansions: List = None,
         user_fields: List = None,
         tweet_fields: List = None,
-    ) -> likes_firehose_stream_response:
+    ) -> StreamLikesFirehoseResponse:
         """
-        Likes Firehose stream
-        Streams 100% of public Likes.
+        Stream all Likes
+        Streams all public Likes in real-time.
         Args:
             backfill_minutes: The number of minutes of backfill requested.
         Args:
@@ -50,7 +53,7 @@ class LikesClient:
         Args:
             tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            likes_firehose_stream_response: Response data
+            StreamLikesFirehoseResponse: Response data
         """
         url = self.client.base_url + "/2/likes/firehose/stream"
         if self.client.bearer_token:
@@ -92,10 +95,10 @@ class LikesClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return likes_firehose_stream_response.model_validate(response_data)
+        return StreamLikesFirehoseResponse.model_validate(response_data)
 
 
-    def likes_sample10_stream(
+    def stream_likes_sample10(
         self,
         partition: int,
         backfill_minutes: int = None,
@@ -105,10 +108,10 @@ class LikesClient:
         expansions: List = None,
         user_fields: List = None,
         tweet_fields: List = None,
-    ) -> likes_sample10_stream_response:
+    ) -> StreamLikesSample10Response:
         """
-        Likes Sample 10 stream
-        Streams 10% of public Likes.
+        Stream sampled Likes
+        Streams a 10% sample of public Likes in real-time.
         Args:
             backfill_minutes: The number of minutes of backfill requested.
         Args:
@@ -126,7 +129,7 @@ class LikesClient:
         Args:
             tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            likes_sample10_stream_response: Response data
+            StreamLikesSample10Response: Response data
         """
         url = self.client.base_url + "/2/likes/sample10/stream"
         if self.client.bearer_token:
@@ -168,4 +171,4 @@ class LikesClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return likes_sample10_stream_response.model_validate(response_data)
+        return StreamLikesSample10Response.model_validate(response_data)

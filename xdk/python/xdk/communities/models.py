@@ -9,16 +9,15 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for communityIdGet
+# Models for getCommunitiesById
 
 
-class community_id_get_response(BaseModel):
-    """Response model for communityIdGet"""
+class GetCommunitiesByIdResponse(BaseModel):
+    """Response model for getCommunitiesById"""
 
-    data: Dict[str, Any] = Field(
+    data: Optional["GetCommunitiesByIdResponseData"] = Field(
         description="A X Community is a curated group of Posts.", default_factory=dict
     )
-
     errors: Optional[List] = None
 
     class Config:
@@ -27,17 +26,39 @@ class community_id_get_response(BaseModel):
         populate_by_name = True
 
 
-# Models for communitiesSearch
+class GetCommunitiesByIdResponseData(BaseModel):
+    """Nested model for GetCommunitiesByIdResponseData"""
+
+    created_at: Optional[str] = None
+    id: Optional[str] = None
+    name: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
 
 
-class communities_search_response(BaseModel):
-    """Response model for communitiesSearch"""
+# Models for searchCommunities
+
+
+class SearchCommunitiesResponse(BaseModel):
+    """Response model for searchCommunities"""
 
     data: Optional[List] = None
-
     errors: Optional[List] = None
+    meta: Optional["SearchCommunitiesResponseMeta"] = None
 
-    meta: Optional[Dict[str, Any]] = None
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class SearchCommunitiesResponseMeta(BaseModel):
+    """Nested model for SearchCommunitiesResponseMeta"""
+
+    next_token: Optional[str] = None
 
     class Config:
         """Pydantic model configuration"""

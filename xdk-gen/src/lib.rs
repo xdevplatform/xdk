@@ -30,6 +30,7 @@
 /// # Example
 ///
 /// See the `python` module for a reference implementation of a language generator.
-mod python;
-
 pub use python::Python;
+
+mod common;
+mod python;

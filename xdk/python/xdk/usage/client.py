@@ -8,7 +8,9 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from .models import get_usage_tweets_response
+from .models import (
+    GetUsageResponse,
+)
 
 
 class UsageClient:
@@ -19,20 +21,20 @@ class UsageClient:
         self.client = client
 
 
-    def get_usage_tweets(
+    def get_usage(
         self,
         days: int = None,
         usage_fields: List = None,
-    ) -> get_usage_tweets_response:
+    ) -> GetUsageResponse:
         """
-        Post Usage
-        Returns the Post Usage.
+        Get usage
+        Retrieves usage statistics for Posts over a specified number of days.
         Args:
             days: The number of days for which you need usage for.
         Args:
             usage_fields: A comma separated list of Usage fields to display.
         Returns:
-            get_usage_tweets_response: Response data
+            GetUsageResponse: Response data
         """
         url = self.client.base_url + "/2/usage/tweets"
         if self.client.bearer_token:
@@ -60,4 +62,4 @@ class UsageClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return get_usage_tweets_response.model_validate(response_data)
+        return GetUsageResponse.model_validate(response_data)

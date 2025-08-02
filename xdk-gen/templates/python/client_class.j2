@@ -8,7 +8,18 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from .models import {% for operation in operations %}{% if operation.request_body %}{{ operation.operation_id | snake_case }}_request{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}, {{ operation.operation_id | snake_case }}_response{% endif %}{% elif operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.operation_id | snake_case }}_response{% endif %}{% if not loop.last %}, {% endif %}{% endfor %}
+from .models import (
+    {% for operation in operations %}
+    {% if operation.request_body %}
+    {{ operation.operation_id | pascal_case }}Request,
+    {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
+    {{ operation.operation_id | pascal_case }}Response,
+    {% endif %}
+    {% elif operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
+    {{ operation.operation_id | pascal_case }}Response,
+    {% endif %}
+    {% endfor %}
+)
 
 class {{ tag }}Client:
     """Client for {{ tag }} operations"""
@@ -26,7 +37,7 @@ class {{ tag }}Client:
         {% endfor %}
         {# Required body #}
         {% if operation.request_body and operation.request_body.required %}
-        body: {{ operation.operation_id | snake_case }}_request,
+        body: {{ operation.operation_id | pascal_case }}Request,
         {% endif %}
         {# Optional parameters #}
         {% for param in operation.parameters | rejectattr('required') %}
@@ -36,9 +47,9 @@ class {{ tag }}Client:
         {% endfor %}
         {# Optional body #}
         {% if operation.request_body and not operation.request_body.required %}
-        body: Optional[{{ operation.operation_id | snake_case }}_request] = None,
+        body: Optional[{{ operation.operation_id | pascal_case }}Request] = None,
         {% endif %}
-    ) -> {% if operation.responses and "200" in operation.responses %}{{ operation.operation_id | snake_case }}_response{% else %}Dict[str, Any]{% endif %}:
+    ) -> {% if operation.responses and "200" in operation.responses %}{{ operation.operation_id | pascal_case }}Response{% else %}Dict[str, Any]{% endif %}:
         """
         {{ operation.summary | default("") }}
         
@@ -67,7 +78,7 @@ class {{ tag }}Client:
         {% endif %}
         
         Returns:
-            {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.operation_id | snake_case }}_response{% else %}Dict[str, Any]{% endif %}: Response data
+            {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.operation_id | pascal_case }}Response{% else %}Dict[str, Any]{% endif %}: Response data
         """
         url = self.client.base_url + "{{ operation.path }}"
 
@@ -191,7 +202,7 @@ class {{ tag }}Client:
         
         # Convert to Pydantic model if applicable
         {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
-        return {{ operation.operation_id | snake_case }}_response.model_validate(response_data)
+        return {{ operation.operation_id | pascal_case }}Response.model_validate(response_data)
         {% else %}
         return response_data
         {% endif %}

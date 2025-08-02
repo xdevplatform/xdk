@@ -10,7 +10,7 @@ use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::any::Any;
 use std::cell::RefCell;
 use std::rc::Rc;
-/// A value that can be either a reference or a direct value, with lazy resolution for references.
+/// A value that can be either a reference or a direct value with lazy resolution for references.
 ///
 /// This type is used to represent values that can be either a reference to another
 /// component or a direct value.

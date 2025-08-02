@@ -7,32 +7,8 @@
 /// 1. Define language-specific filters (e.g., type conversion, naming conventions)
 /// 2. Use the language! macro to create the generator struct
 /// 3. Implement the rendering logic in the generate field
+use crate::common::casing::{pascal_case, snake_case};
 use xdk_lib::language;
-
-/// MiniJinja filter for converting a string to snake_case
-fn snake_case(value: &str) -> String {
-    let chars = value.chars();
-    let mut result = String::new();
-    let mut prev_is_underscore = false;
-
-    for c in chars {
-        if c.is_uppercase() {
-            if !result.is_empty() && !prev_is_underscore {
-                result.push('_');
-            }
-            result.push(c.to_ascii_lowercase());
-            prev_is_underscore = false;
-        } else if c.is_alphanumeric() {
-            result.push(c.to_ascii_lowercase());
-            prev_is_underscore = false;
-        } else if !prev_is_underscore {
-            result.push('_');
-            prev_is_underscore = true;
-        }
-    }
-
-    result.trim_matches('_').to_string()
-}
 
 /// MiniJinja filter for converting to Python types
 fn python_type(value: &str) -> String {
@@ -53,7 +29,7 @@ fn python_type(value: &str) -> String {
 */
 language! {
     name: Python,
-    filters: [snake_case, python_type],
+    filters: [snake_case, pascal_case, python_type],
     render: [
         multiple {
             render "models" => "xdk/{}/models.py",

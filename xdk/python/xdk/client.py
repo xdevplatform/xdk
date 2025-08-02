@@ -9,35 +9,43 @@ from typing import Dict, List, Optional, Union, Any, Callable
 
 from .oauth2_auth import OAuth2PKCEAuth
 
-from .tweets.client import TweetsClient
+from .webhooks.client import WebhooksClient
 
-from .usage.client import UsageClient
+from .stream.client import StreamClient
 
-from .communities.client import CommunitiesClient
-
-from .spaces.client import SpacesClient
-
-from .mediaupload.client import MediaUploadClient
-
-from .bookmarks.client import BookmarksClient
+from .users.client import UsersClient
 
 from .trends.client import TrendsClient
-
-from .connection.client import ConnectionClient
-
-from .direct_messages.client import Direct_MessagesClient
-
-from .compliance.client import ComplianceClient
-
-from .lists.client import ListsClient
 
 from .general.client import GeneralClient
 
 from .likes.client import LikesClient
 
+from .bookmarks.client import BookmarksClient
+
+from .aaasubscriptions.client import AAASubscriptionsClient
+
+from .spaces.client import SpacesClient
+
+from .usage.client import UsageClient
+
+from .direct_messages.client import Direct_MessagesClient
+
+from .communities.client import CommunitiesClient
+
+from .account_activity.client import Account_ActivityClient
+
+from .compliance.client import ComplianceClient
+
+from .lists.client import ListsClient
+
+from .connection.client import ConnectionClient
+
 from .community_notes.client import Community_NotesClient
 
-from .users.client import UsersClient
+from .media.client import MediaClient
+
+from .tweets.client import TweetsClient
 
 
 class Client:
@@ -79,21 +87,25 @@ class Client:
                 scope=scope,
             )
         # Initialize clients for each tag
-        self.tweets = TweetsClient(self)
-        self.usage = UsageClient(self)
-        self.communities = CommunitiesClient(self)
-        self.spaces = SpacesClient(self)
-        self.mediaupload = MediaUploadClient(self)
-        self.bookmarks = BookmarksClient(self)
+        self.webhooks = WebhooksClient(self)
+        self.stream = StreamClient(self)
+        self.users = UsersClient(self)
         self.trends = TrendsClient(self)
-        self.connection = ConnectionClient(self)
-        self.direct_messages = Direct_MessagesClient(self)
-        self.compliance = ComplianceClient(self)
-        self.lists = ListsClient(self)
         self.general = GeneralClient(self)
         self.likes = LikesClient(self)
+        self.bookmarks = BookmarksClient(self)
+        self.aaasubscriptions = AAASubscriptionsClient(self)
+        self.spaces = SpacesClient(self)
+        self.usage = UsageClient(self)
+        self.direct_messages = Direct_MessagesClient(self)
+        self.communities = CommunitiesClient(self)
+        self.account_activity = Account_ActivityClient(self)
+        self.compliance = ComplianceClient(self)
+        self.lists = ListsClient(self)
+        self.connection = ConnectionClient(self)
         self.community_notes = Community_NotesClient(self)
-        self.users = UsersClient(self)
+        self.media = MediaClient(self)
+        self.tweets = TweetsClient(self)
 
     @property
 

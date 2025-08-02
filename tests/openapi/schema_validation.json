@@ -1,0 +1,55 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Schema Validation Test API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/test": {
+      "post": {
+        "operationId": "testOperation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "minLength": 3,
+                    "maxLength": 50,
+                    "pattern": "^[a-zA-Z0-9_]+$",
+                    "description": "Username field"
+                  },
+                  "age": {
+                    "type": "integer",
+                    "minimum": 0,
+                    "maximum": 120,
+                    "multipleOf": 1
+                  },
+                  "tags": {
+                    "type": "array",
+                    "minItems": 1,
+                    "maxItems": 10,
+                    "uniqueItems": true,
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "username"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  }
+}

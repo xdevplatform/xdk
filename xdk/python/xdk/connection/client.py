@@ -8,7 +8,9 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from .models import kill_all_app_connections_response
+from .models import (
+    DeleteAllConnectionsResponse,
+)
 
 
 class ConnectionClient:
@@ -19,14 +21,14 @@ class ConnectionClient:
         self.client = client
 
 
-    def kill_all_app_connections(
+    def delete_all_connections(
         self,
-    ) -> kill_all_app_connections_response:
+    ) -> DeleteAllConnectionsResponse:
         """
-        Force kills all streaming connections of the authenticated application.
-        Force kills all streaming connections of the authenticated application.
+        Terminate all connections
+        Terminates all active streaming connections for the authenticated application.
         Returns:
-            kill_all_app_connections_response: Response data
+            DeleteAllConnectionsResponse: Response data
         """
         url = self.client.base_url + "/2/connections/all"
         if self.client.bearer_token:
@@ -50,4 +52,4 @@ class ConnectionClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return kill_all_app_connections_response.model_validate(response_data)
+        return DeleteAllConnectionsResponse.model_validate(response_data)

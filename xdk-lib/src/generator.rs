@@ -11,9 +11,9 @@ use minijinja::Environment;
 /// Trait that defines the interface for language-specific SDK generators.
 ///
 /// Implement this trait to create a generator for a new language. The recommended
-/// way is to use the `define_generator!` macro which simplifies the implementation.
+/// way is to use the `define_generator!` macro, which simplifies the implementation.
 pub trait LanguageGenerator {
-    /// Returns the name of the generator, this should be the name of the language (e.g., "python", "javascript")
+    /// Returns the name of the generator; this should be the name of the language (e.g., "python", "javascript")
     fn name(&self) -> String;
 
     /// Loads templates from the filesystem for this language
@@ -125,7 +125,7 @@ where
 ///
 /// # Example
 /// ```
-/// # use xdk_gen::language;
+/// # use xdk_lib::language;
 /// # fn snake_case(value: &str) -> String {
 /// #     value.to_lowercase()
 /// # }

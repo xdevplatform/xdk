@@ -1,0 +1,44 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Enum Schemas Test API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/test": {
+      "post": {
+        "operationId": "testOperation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "enum": ["active", "inactive", "pending"],
+                    "description": "Status of the item"
+                  },
+                  "priority": {
+                    "type": "integer",
+                    "enum": [1, 2, 3, 4, 5],
+                    "default": 3
+                  },
+                  "score": {
+                    "type": "number",
+                    "enum": [0.0, 0.5, 1.0]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    }
+  }
+}

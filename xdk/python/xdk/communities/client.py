@@ -8,7 +8,10 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from .models import community_id_get_response, communities_search_response
+from .models import (
+    GetCommunitiesByIdResponse,
+    SearchCommunitiesResponse,
+)
 
 
 class CommunitiesClient:
@@ -19,20 +22,20 @@ class CommunitiesClient:
         self.client = client
 
 
-    def community_id_get(
+    def get_communities_by_id(
         self,
         id: str,
         community_fields: List = None,
-    ) -> community_id_get_response:
+    ) -> GetCommunitiesByIdResponse:
         """
-        Communities lookup by Community ID.
-        Returns a Community.
+        Get Community by ID
+        Retrieves details of a specific Community by its ID.
         Args:
             id: The ID of the Community.
         Args:
             community_fields: A comma separated list of Community fields to display.
         Returns:
-            community_id_get_response: Response data
+            GetCommunitiesByIdResponse: Response data
         """
         url = self.client.base_url + "/2/communities/{id}"
         if self.client.bearer_token:
@@ -66,20 +69,20 @@ class CommunitiesClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return community_id_get_response.model_validate(response_data)
+        return GetCommunitiesByIdResponse.model_validate(response_data)
 
 
-    def communities_search(
+    def search_communities(
         self,
         query: str,
         max_results: int = None,
         next_token: str = None,
         pagination_token: str = None,
         community_fields: List = None,
-    ) -> communities_search_response:
+    ) -> SearchCommunitiesResponse:
         """
         Search Communities
-        Returns Communities that match search query
+        Retrieves a list of Communities matching the specified search query.
         Args:
             query: Query to search communities.
         Args:
@@ -91,7 +94,7 @@ class CommunitiesClient:
         Args:
             community_fields: A comma separated list of Community fields to display.
         Returns:
-            communities_search_response: Response data
+            SearchCommunitiesResponse: Response data
         """
         url = self.client.base_url + "/2/communities/search"
         # Ensure we have a valid access token
@@ -131,4 +134,4 @@ class CommunitiesClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return communities_search_response.model_validate(response_data)
+        return SearchCommunitiesResponse.model_validate(response_data)

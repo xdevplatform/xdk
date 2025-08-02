@@ -9,15 +9,25 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for killAllAppConnections
+# Models for deleteAllConnections
 
 
-class kill_all_app_connections_response(BaseModel):
-    """Response model for killAllAppConnections"""
+class DeleteAllConnectionsResponse(BaseModel):
+    """Response model for deleteAllConnections"""
 
-    data: Optional[Dict[str, Any]] = None
-
+    data: Optional["DeleteAllConnectionsResponseData"] = None
     errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class DeleteAllConnectionsResponseData(BaseModel):
+    """Nested model for DeleteAllConnectionsResponseData"""
+
+    killed_connections: Optional[bool] = None
 
     class Config:
         """Pydantic model configuration"""

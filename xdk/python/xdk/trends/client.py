@@ -8,7 +8,10 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast
 import requests
 import time
-from .models import get_trends_response, personalized_trends_response
+from .models import (
+    GetUsersPersonalizedTrendsResponse,
+    GetTrendsByWoeidResponse,
+)
 
 
 class TrendsClient:
@@ -19,65 +22,17 @@ class TrendsClient:
         self.client = client
 
 
-    def get_trends(
-        self,
-        woeid: int,
-        max_trends: int = None,
-        trend_fields: List = None,
-    ) -> get_trends_response:
-        """
-        Trends
-        Returns the Trend associated with the supplied WoeId.
-        Args:
-            woeid: The WOEID of the place to lookup a trend for.
-        Args:
-            max_trends: The maximum number of results.
-        Args:
-            trend_fields: A comma separated list of Trend fields to display.
-        Returns:
-            get_trends_response: Response data
-        """
-        url = self.client.base_url + "/2/trends/by/woeid/{woeid}"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        if max_trends is not None:
-            params["max_trends"] = max_trends
-        if trend_fields is not None:
-            params["trend.fields"] = ",".join(str(item) for item in trend_fields)
-        url = url.replace("{woeid}", str(woeid))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return get_trends_response.model_validate(response_data)
-
-
-    def personalized_trends(
+    def get_users_personalized_trends(
         self,
         personalized_trend_fields: List = None,
-    ) -> personalized_trends_response:
+    ) -> GetUsersPersonalizedTrendsResponse:
         """
         Get personalized Trends
-        Returns Personalized trends for the authenticated user
+        Retrieves personalized trending topics for the authenticated user.
         Args:
             personalized_trend_fields: A comma separated list of PersonalizedTrend fields to display.
         Returns:
-            personalized_trends_response: Response data
+            GetUsersPersonalizedTrendsResponse: Response data
         """
         url = self.client.base_url + "/2/users/personalized_trends"
         # Ensure we have a valid access token
@@ -109,4 +64,52 @@ class TrendsClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return personalized_trends_response.model_validate(response_data)
+        return GetUsersPersonalizedTrendsResponse.model_validate(response_data)
+
+
+    def get_trends_by_woeid(
+        self,
+        woeid: int,
+        max_trends: int = None,
+        trend_fields: List = None,
+    ) -> GetTrendsByWoeidResponse:
+        """
+        Get Trends by WOEID
+        Retrieves trending topics for a specific location identified by its WOEID.
+        Args:
+            woeid: The WOEID of the place to lookup a trend for.
+        Args:
+            max_trends: The maximum number of results.
+        Args:
+            trend_fields: A comma separated list of Trend fields to display.
+        Returns:
+            GetTrendsByWoeidResponse: Response data
+        """
+        url = self.client.base_url + "/2/trends/by/woeid/{woeid}"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        if max_trends is not None:
+            params["max_trends"] = max_trends
+        if trend_fields is not None:
+            params["trend.fields"] = ",".join(str(item) for item in trend_fields)
+        url = url.replace("{woeid}", str(woeid))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetTrendsByWoeidResponse.model_validate(response_data)
