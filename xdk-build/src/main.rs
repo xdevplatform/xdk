@@ -10,7 +10,6 @@ mod utils;
 use crate::error::{BuildError, Result};
 
 use clap::{Parser, Subcommand};
-use reqwest;
 use std::path::{Path, PathBuf};
 use xdk_lib::SdkGeneratorError;
 use xdk_openapi::{OpenApiContextGuard, parse_json, parse_json_file, parse_yaml_file};
