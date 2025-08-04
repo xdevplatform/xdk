@@ -5,52 +5,83 @@ This module provides models for the Webhooks endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
+
+
+# Models for validateWebhooks
+
+
+class ValidateWebhooksResponse(BaseModel):
+    """Response model for validateWebhooks"""
+
+    data: Optional["ValidateWebhooksResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class ValidateWebhooksResponseData(BaseModel):
+    """Nested model for ValidateWebhooksResponseData"""
+
+    attempted: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for deleteWebhooks
+
+
+class DeleteWebhooksResponse(BaseModel):
+    """Response model for deleteWebhooks"""
+
+    data: Optional["DeleteWebhooksResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DeleteWebhooksResponseData(BaseModel):
+    """Nested model for DeleteWebhooksResponseData"""
+
+    deleted: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # Models for getWebhooks
 
 
-class GetwebhooksResponse(BaseModel):
+class GetWebhooksResponse(BaseModel):
     """Response model for getWebhooks"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    meta: Optional["GetwebhooksResponseMeta"] = None
+    meta: Optional["GetWebhooksResponseMeta"] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class GetwebhooksResponseMeta(BaseModel):
-    """Nested model for GetwebhooksResponseMeta"""
+class GetWebhooksResponseMeta(BaseModel):
+    """Nested model for GetWebhooksResponseMeta"""
 
     result_count: Optional[int] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # Models for createWebhooks
 
 
-class CreatewebhooksRequest(BaseModel):
+class CreateWebhooksRequest(BaseModel):
     """Request model for createWebhooks"""
 
     url: Optional[str] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class CreatewebhooksResponse(BaseModel):
+class CreateWebhooksResponse(BaseModel):
     """Response model for createWebhooks"""
 
     created_at: Optional[str] = None
@@ -58,59 +89,4 @@ class CreatewebhooksResponse(BaseModel):
     url: Optional[str] = None
     valid: Optional[bool] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for validateWebhooks
-
-
-class ValidatewebhooksResponse(BaseModel):
-    """Response model for validateWebhooks"""
-
-    data: Optional["ValidatewebhooksResponseData"] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class ValidatewebhooksResponseData(BaseModel):
-    """Nested model for ValidatewebhooksResponseData"""
-
-    attempted: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for deleteWebhooks
-
-
-class DeletewebhooksResponse(BaseModel):
-    """Response model for deleteWebhooks"""
-
-    data: Optional["DeletewebhooksResponseData"] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class DeletewebhooksResponseData(BaseModel):
-    """Nested model for DeletewebhooksResponseData"""
-
-    deleted: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)

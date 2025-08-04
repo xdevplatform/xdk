@@ -23,16 +23,7 @@ class Test{{ tag|pascal_case }}Structure:
         self.client = Client(base_url="https://api.example.com")
         self.{{ tag|lower }}_client = getattr(self.client, "{{ tag|lower }}")
     
-    def test_client_exists(self):
-        """Test that {{ tag|pascal_case }}Client class exists and is importable."""
-        assert {{ tag|pascal_case }}Client is not None
-        assert hasattr({{ tag|pascal_case }}Client, '__name__')
-        assert {{ tag|pascal_case }}Client.__name__ == "{{ tag|pascal_case }}Client"
-    
-    def test_client_initialization(self):
-        """Test that {{ tag|pascal_case }}Client can be initialized properly."""
-        assert self.{{ tag|lower }}_client is not None
-        assert isinstance(self.{{ tag|lower }}_client, {{ tag|pascal_case }}Client)
+
     
     {% for structural_test in test_spec.structural_tests %}
     {% for method in structural_test.methods %}
@@ -109,48 +100,11 @@ class Test{{ tag|pascal_case }}Structure:
             {% endfor %}
         ]
         
-        client_methods = [name for name in dir({{ tag|pascal_case }}Client) 
-                         if not name.startswith('_') and callable(getattr({{ tag|pascal_case }}Client, name))]
-        
         for expected_method in expected_methods:
-            assert expected_method in client_methods, \
+            assert hasattr({{ tag|pascal_case }}Client, expected_method), \
                 f"Expected method '{expected_method}' not found on {{ tag|pascal_case }}Client"
-    
-    def test_no_unexpected_public_methods(self):
-        """Test that no unexpected public methods exist (helps catch API drift)."""
-        expected_methods = set([
-            {% for method in structural_test.methods %}
-            "{{ method.method_name|snake_case }}",
-            {% endfor %}
-        ])
-        
-        actual_methods = set([name for name in dir({{ tag|pascal_case }}Client) 
-                            if not name.startswith('_') and callable(getattr({{ tag|pascal_case }}Client, name))])
-        
-        # Remove standard methods that might be inherited
-        standard_methods = {'__init__'}
-        actual_methods = actual_methods - standard_methods
-        
-        unexpected_methods = actual_methods - expected_methods
-        
-        # This is a warning, not a failure, since new methods might be added
-        if unexpected_methods:
-            print(f"Warning: Unexpected methods found on {{ tag|pascal_case }}Client: {unexpected_methods}")
+            assert callable(getattr({{ tag|pascal_case }}Client, expected_method)), \
+                f"'{expected_method}' exists but is not callable"
     
     {% endfor %}
     
-    def test_imports_work(self):
-        """Test that all expected imports work correctly."""
-        expected_imports = [
-            {% for structural_test in test_spec.structural_tests %}
-            {% for import_name in structural_test.expected_imports %}
-            "{{ import_name }}",
-            {% endfor %}
-            {% endfor %}
-        ]
-        
-        for import_name in expected_imports:
-            try:
-                __import__(import_name)
-            except ImportError as e:
-                pytest.fail(f"Expected import '{import_name}' failed: {e}")

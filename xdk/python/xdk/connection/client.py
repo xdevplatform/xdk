@@ -12,34 +12,28 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    DeleteallconnectionsResponse,
+    DeleteAllConnectionsResponse,
 )
 
 
 class ConnectionClient:
     """Client for Connection operations"""
 
+
     def __init__(self, client: Client):
         self.client = client
 
+
     def delete_all_connections(
         self,
-    ) -> DeleteallconnectionsResponse:
+    ) -> DeleteAllConnectionsResponse:
         """
         Terminate all connections
-
-
         Terminates all active streaming connections for the authenticated application.
-
-
-
-
-
         Returns:
-            DeleteallconnectionsResponse: Response data
+            DeleteAllConnectionsResponse: Response data
         """
         url = self.client.base_url + "/2/connections/all"
-
         if self.client.bearer_token:
             self.client.session.headers["Authorization"] = (
                 f"Bearer {self.client.bearer_token}"
@@ -48,25 +42,17 @@ class ConnectionClient:
             self.client.session.headers["Authorization"] = (
                 f"Bearer {self.client.access_token}"
             )
-
         params = {}
-
         headers = {}
-
         # Make the request
-
         response = self.client.session.delete(
             url,
             params=params,
             headers=headers,
         )
-
         # Check for errors
         response.raise_for_status()
-
         # Parse the response data
         response_data = response.json()
-
         # Convert to Pydantic model if applicable
-
-        return DeleteallconnectionsResponse.model_validate(response_data)
+        return DeleteAllConnectionsResponse.model_validate(response_data)

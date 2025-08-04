@@ -5,35 +5,29 @@ This module provides models for the Trends endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
 # Models for getUsersPersonalizedTrends
 
 
-class GetuserspersonalizedtrendsResponse(BaseModel):
+class GetUsersPersonalizedTrendsResponse(BaseModel):
     """Response model for getUsersPersonalizedTrends"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # Models for getTrendsByWoeid
 
 
-class GettrendsbywoeidResponse(BaseModel):
+class GetTrendsByWoeidResponse(BaseModel):
     """Response model for getTrendsByWoeid"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)

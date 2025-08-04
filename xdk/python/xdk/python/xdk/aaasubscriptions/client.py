@@ -20,8 +20,10 @@ from .models import (
 class AaasubscriptionsClient:
     """Client for AAASubscriptions operations"""
 
+
     def __init__(self, client: Client):
         self.client = client
+
 
     def create_account_activity_subscription(
         self,

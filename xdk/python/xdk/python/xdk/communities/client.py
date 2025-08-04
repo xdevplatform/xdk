@@ -20,8 +20,10 @@ from .models import (
 class CommunitiesClient:
     """Client for Communities operations"""
 
+
     def __init__(self, client: Client):
         self.client = client
+
 
     def get_communities_by_id(
         self,
@@ -71,6 +73,7 @@ class CommunitiesClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return GetcommunitiesbyidResponse.model_validate(response_data)
+
 
     def search_communities(
         self,

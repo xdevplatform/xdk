@@ -6,19 +6,19 @@ use xdk_lib::SdkGeneratorError;
 #[derive(Error, Debug)]
 pub enum BuildError {
     /// IO error occurred during file operations.
-    #[error("IO error: {0}")]
+    #[error("File system operation failed: {0}")]
     IoError(#[from] io::Error),
 
     /// Error during SDK generation (from xdk-gen crate).
-    #[error("SDK generation error: {0}")]
+    #[error("SDK generation failed: {0}")]
     SdkGenError(#[from] SdkGeneratorError),
 
     /// A command failed to execute successfully.
-    #[error("Command failed: {0}")]
+    #[error("Command execution failed: {0}")]
     CommandFailed(String),
 
     /// The Python formatter script failed.
-    #[error("Formatter script failed: {0}")]
+    #[error("Code formatting failed: {0}")]
     FormatterFailed(String),
 }
 

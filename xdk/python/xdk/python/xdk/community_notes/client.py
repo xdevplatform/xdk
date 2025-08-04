@@ -12,10 +12,10 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    SearchnoteswrittenResponse,
-    SearchforeligiblepostsResponse,
     CreatenotesRequest,
     CreatenotesResponse,
+    SearchnoteswrittenResponse,
+    SearchforeligiblepostsResponse,
     DeletenotesResponse,
 )
 
@@ -23,8 +23,53 @@ from .models import (
 class CommunityNotesClient:
     """Client for Community_Notes operations"""
 
+
     def __init__(self, client: Client):
         self.client = client
+
+
+    def create_notes(
+        self,
+        body: Optional[CreatenotesRequest] = None,
+    ) -> CreatenotesResponse:
+        """
+        Create a Community Note
+        Creates a community note endpoint for LLM use case.
+            body: Request body
+        Returns:
+            CreatenotesResponse: Response data
+        """
+        url = self.client.base_url + "/2/notes"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return CreatenotesResponse.model_validate(response_data)
+
 
     def search_notes_written(
         self,
@@ -82,6 +127,7 @@ class CommunityNotesClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return SearchnoteswrittenResponse.model_validate(response_data)
+
 
     def search_for_eligible_posts(
         self,
@@ -165,47 +211,6 @@ class CommunityNotesClient:
         # Convert to Pydantic model if applicable
         return SearchforeligiblepostsResponse.model_validate(response_data)
 
-    def create_notes(
-        self,
-        body: Optional[CreatenotesRequest] = None,
-    ) -> CreatenotesResponse:
-        """
-        Create a Community Note
-        Creates a community note endpoint for LLM use case.
-            body: Request body
-        Returns:
-            CreatenotesResponse: Response data
-        """
-        url = self.client.base_url + "/2/notes"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return CreatenotesResponse.model_validate(response_data)
 
     def delete_notes(
         self,

@@ -5,112 +5,26 @@ This module provides models for the Lists endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
-
-
-# Models for getUsersFollowedLists
-
-
-class GetusersfollowedlistsResponse(BaseModel):
-    """Response model for getUsersFollowedLists"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetusersfollowedlistsResponseIncludes"] = None
-    meta: Optional["GetusersfollowedlistsResponseMeta"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetusersfollowedlistsResponseIncludes(BaseModel):
-    """Nested model for GetusersfollowedlistsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetusersfollowedlistsResponseMeta(BaseModel):
-    """Nested model for GetusersfollowedlistsResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for followList
-
-
-class FollowlistRequest(BaseModel):
-    """Request model for followList"""
-
-    list_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class FollowlistResponse(BaseModel):
-    """Response model for followList"""
-
-    data: Optional["FollowlistResponseData"] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class FollowlistResponseData(BaseModel):
-    """Nested model for FollowlistResponseData"""
-
-    following: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
 
 
 # Models for getUsersListMemberships
 
 
-class GetuserslistmembershipsResponse(BaseModel):
+class GetUsersListMembershipsResponse(BaseModel):
     """Response model for getUsersListMemberships"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["GetuserslistmembershipsResponseIncludes"] = None
-    meta: Optional["GetuserslistmembershipsResponseMeta"] = None
+    includes: Optional["GetUsersListMembershipsResponseIncludes"] = None
+    meta: Optional["GetUsersListMembershipsResponseMeta"] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class GetuserslistmembershipsResponseIncludes(BaseModel):
-    """Nested model for GetuserslistmembershipsResponseIncludes"""
+class GetUsersListMembershipsResponseIncludes(BaseModel):
+    """Nested model for GetUsersListMembershipsResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -119,44 +33,35 @@ class GetuserslistmembershipsResponseIncludes(BaseModel):
     tweets: Optional[List] = None
     users: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class GetuserslistmembershipsResponseMeta(BaseModel):
-    """Nested model for GetuserslistmembershipsResponseMeta"""
+class GetUsersListMembershipsResponseMeta(BaseModel):
+    """Nested model for GetUsersListMembershipsResponseMeta"""
 
     next_token: Optional[str] = None
     previous_token: Optional[str] = None
     result_count: Optional[int] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for getUsersPinnedLists
+# Models for getUsersFollowedLists
 
 
-class GetuserspinnedlistsResponse(BaseModel):
-    """Response model for getUsersPinnedLists"""
+class GetUsersFollowedListsResponse(BaseModel):
+    """Response model for getUsersFollowedLists"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["GetuserspinnedlistsResponseIncludes"] = None
-    meta: Optional["GetuserspinnedlistsResponseMeta"] = None
+    includes: Optional["GetUsersFollowedListsResponseIncludes"] = None
+    meta: Optional["GetUsersFollowedListsResponseMeta"] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class GetuserspinnedlistsResponseIncludes(BaseModel):
-    """Nested model for GetuserspinnedlistsResponseIncludes"""
+class GetUsersFollowedListsResponseIncludes(BaseModel):
+    """Nested model for GetUsersFollowedListsResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -165,205 +70,64 @@ class GetuserspinnedlistsResponseIncludes(BaseModel):
     tweets: Optional[List] = None
     users: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class GetuserspinnedlistsResponseMeta(BaseModel):
-    """Nested model for GetuserspinnedlistsResponseMeta"""
+class GetUsersFollowedListsResponseMeta(BaseModel):
+    """Nested model for GetUsersFollowedListsResponseMeta"""
 
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
     result_count: Optional[int] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for pinList
+# Models for followList
 
 
-class PinlistRequest(BaseModel):
-    """Request model for pinList"""
+class FollowListRequest(BaseModel):
+    """Request model for followList"""
 
     list_id: Optional[str] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class PinlistResponse(BaseModel):
-    """Response model for pinList"""
+class FollowListResponse(BaseModel):
+    """Response model for followList"""
 
-    data: Optional["PinlistResponseData"] = None
+    data: Optional["FollowListResponseData"] = None
     errors: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class PinlistResponseData(BaseModel):
-    """Nested model for PinlistResponseData"""
+class FollowListResponseData(BaseModel):
+    """Nested model for FollowListResponseData"""
 
-    pinned: Optional[bool] = None
+    following: Optional[bool] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getUsersOwnedLists
-
-
-class GetusersownedlistsResponse(BaseModel):
-    """Response model for getUsersOwnedLists"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetusersownedlistsResponseIncludes"] = None
-    meta: Optional["GetusersownedlistsResponseMeta"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetusersownedlistsResponseIncludes(BaseModel):
-    """Nested model for GetusersownedlistsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetusersownedlistsResponseMeta(BaseModel):
-    """Nested model for GetusersownedlistsResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for createLists
-
-
-class CreatelistsRequest(BaseModel):
-    """Request model for createLists"""
-
-    description: Optional[str] = None
-    name: Optional[str] = None
-    private: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreatelistsResponse(BaseModel):
-    """Response model for createLists"""
-
-    data: Optional["CreatelistsResponseData"] = Field(
-        description="A X List is a curated group of accounts.", default_factory=dict
-    )
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreatelistsResponseData(BaseModel):
-    """Nested model for CreatelistsResponseData"""
-
-    id: Optional[str] = None
-    name: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for addListsMember
-
-
-class AddlistsmemberRequest(BaseModel):
-    """Request model for addListsMember"""
-
-    user_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class AddlistsmemberResponse(BaseModel):
-    """Response model for addListsMember"""
-
-    data: Optional["AddlistsmemberResponseData"] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class AddlistsmemberResponseData(BaseModel):
-    """Nested model for AddlistsmemberResponseData"""
-
-    is_member: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # Models for getListsById
 
 
-class GetlistsbyidResponse(BaseModel):
+class GetListsByIdResponse(BaseModel):
     """Response model for getListsById"""
 
-    data: Optional["GetlistsbyidResponseData"] = Field(
+    data: Optional["GetListsByIdResponseData"] = Field(
         description="A X List is a curated group of accounts.", default_factory=dict
     )
     errors: Optional[List] = None
-    includes: Optional["GetlistsbyidResponseIncludes"] = None
+    includes: Optional["GetListsByIdResponseIncludes"] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class GetlistsbyidResponseData(BaseModel):
-    """Nested model for GetlistsbyidResponseData"""
+class GetListsByIdResponseData(BaseModel):
+    """Nested model for GetListsByIdResponseData"""
 
     created_at: Optional[str] = None
     description: Optional[str] = None
@@ -374,14 +138,11 @@ class GetlistsbyidResponseData(BaseModel):
     owner_id: Optional[str] = None
     private: Optional[bool] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class GetlistsbyidResponseIncludes(BaseModel):
-    """Nested model for GetlistsbyidResponseIncludes"""
+class GetListsByIdResponseIncludes(BaseModel):
+    """Nested model for GetListsByIdResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -390,150 +151,275 @@ class GetlistsbyidResponseIncludes(BaseModel):
     tweets: Optional[List] = None
     users: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # Models for updateLists
 
 
-class UpdatelistsRequest(BaseModel):
+class UpdateListsRequest(BaseModel):
     """Request model for updateLists"""
 
     description: Optional[str] = None
     name: Optional[str] = None
     private: Optional[bool] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class UpdatelistsResponse(BaseModel):
+class UpdateListsResponse(BaseModel):
     """Response model for updateLists"""
 
-    data: Optional["UpdatelistsResponseData"] = None
+    data: Optional["UpdateListsResponseData"] = None
     errors: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class UpdatelistsResponseData(BaseModel):
-    """Nested model for UpdatelistsResponseData"""
+class UpdateListsResponseData(BaseModel):
+    """Nested model for UpdateListsResponseData"""
 
     updated: Optional[bool] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # Models for deleteLists
 
 
-class DeletelistsResponse(BaseModel):
+class DeleteListsResponse(BaseModel):
     """Response model for deleteLists"""
 
-    data: Optional["DeletelistsResponseData"] = None
+    data: Optional["DeleteListsResponseData"] = None
     errors: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class DeletelistsResponseData(BaseModel):
-    """Nested model for DeletelistsResponseData"""
+class DeleteListsResponseData(BaseModel):
+    """Nested model for DeleteListsResponseData"""
 
     deleted: Optional[bool] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for unfollowList
+# Models for getUsersPinnedLists
 
 
-class UnfollowlistResponse(BaseModel):
-    """Response model for unfollowList"""
+class GetUsersPinnedListsResponse(BaseModel):
+    """Response model for getUsersPinnedLists"""
 
-    data: Optional["UnfollowlistResponseData"] = None
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetUsersPinnedListsResponseIncludes"] = None
+    meta: Optional["GetUsersPinnedListsResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetUsersPinnedListsResponseIncludes(BaseModel):
+    """Nested model for GetUsersPinnedListsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetUsersPinnedListsResponseMeta(BaseModel):
+    """Nested model for GetUsersPinnedListsResponseMeta"""
+
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for pinList
+
+
+class PinListRequest(BaseModel):
+    """Request model for pinList"""
+
+    list_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PinListResponse(BaseModel):
+    """Response model for pinList"""
+
+    data: Optional["PinListResponseData"] = None
     errors: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class UnfollowlistResponseData(BaseModel):
-    """Nested model for UnfollowlistResponseData"""
+class PinListResponseData(BaseModel):
+    """Nested model for PinListResponseData"""
 
-    following: Optional[bool] = None
+    pinned: Optional[bool] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for removeListsMemberByUserId
-
-
-class RemovelistsmemberbyuseridResponse(BaseModel):
-    """Response model for removeListsMemberByUserId"""
-
-    data: Optional["RemovelistsmemberbyuseridResponseData"] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class RemovelistsmemberbyuseridResponseData(BaseModel):
-    """Nested model for RemovelistsmemberbyuseridResponseData"""
-
-    is_member: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # Models for unpinList
 
 
-class UnpinlistResponse(BaseModel):
+class UnpinListResponse(BaseModel):
     """Response model for unpinList"""
 
-    data: Optional["UnpinlistResponseData"] = None
+    data: Optional["UnpinListResponseData"] = None
     errors: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class UnpinlistResponseData(BaseModel):
-    """Nested model for UnpinlistResponseData"""
+class UnpinListResponseData(BaseModel):
+    """Nested model for UnpinListResponseData"""
 
     pinned: Optional[bool] = None
 
-    class Config:
-        """Pydantic model configuration"""
+    model_config = ConfigDict(populate_by_name=True)
 
-        populate_by_name = True
+
+# Models for removeListsMemberByUserId
+
+
+class RemoveListsMemberByUserIdResponse(BaseModel):
+    """Response model for removeListsMemberByUserId"""
+
+    data: Optional["RemoveListsMemberByUserIdResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class RemoveListsMemberByUserIdResponseData(BaseModel):
+    """Nested model for RemoveListsMemberByUserIdResponseData"""
+
+    is_member: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for getUsersOwnedLists
+
+
+class GetUsersOwnedListsResponse(BaseModel):
+    """Response model for getUsersOwnedLists"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetUsersOwnedListsResponseIncludes"] = None
+    meta: Optional["GetUsersOwnedListsResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetUsersOwnedListsResponseIncludes(BaseModel):
+    """Nested model for GetUsersOwnedListsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetUsersOwnedListsResponseMeta(BaseModel):
+    """Nested model for GetUsersOwnedListsResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for createLists
+
+
+class CreateListsRequest(BaseModel):
+    """Request model for createLists"""
+
+    description: Optional[str] = None
+    name: Optional[str] = None
+    private: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateListsResponse(BaseModel):
+    """Response model for createLists"""
+
+    data: Optional["CreateListsResponseData"] = Field(
+        description="A X List is a curated group of accounts.", default_factory=dict
+    )
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateListsResponseData(BaseModel):
+    """Nested model for CreateListsResponseData"""
+
+    id: Optional[str] = None
+    name: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for addListsMember
+
+
+class AddListsMemberRequest(BaseModel):
+    """Request model for addListsMember"""
+
+    user_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class AddListsMemberResponse(BaseModel):
+    """Response model for addListsMember"""
+
+    data: Optional["AddListsMemberResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class AddListsMemberResponseData(BaseModel):
+    """Nested model for AddListsMemberResponseData"""
+
+    is_member: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for unfollowList
+
+
+class UnfollowListResponse(BaseModel):
+    """Response model for unfollowList"""
+
+    data: Optional["UnfollowListResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class UnfollowListResponseData(BaseModel):
+    """Nested model for UnfollowListResponseData"""
+
+    following: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)

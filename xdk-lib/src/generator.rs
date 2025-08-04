@@ -309,16 +309,36 @@ macro_rules! language {
                             }
                         }
 
-                        // Generate pagination tests if template exists
-                        match env.get_template("test_pagination") {
+                        // Generate pagination tests only if there are valid pagination tests to generate
+                        let has_valid_pagination_tests = !context.test_spec.pagination_tests.is_empty()
+                            && context.test_spec.pagination_tests.iter().any(|test|
+                                !test.method_name.is_empty() && !test.operation_id.is_empty()
+                            );
+
+                        if has_valid_pagination_tests {
+                            match env.get_template("test_pagination") {
+                                Ok(template) => {
+                                    let content = template.render(&context).map_err(|e| $crate::SdkGeneratorError::TemplateError(e))?;
+                                    let path = tag_folder.join("test_pagination.py");
+                                    std::fs::create_dir_all(tag_folder.clone())?;
+                                    std::fs::write(&path, content)?;
+                                }
+                                Err(e) => {
+                                    eprintln!("Debug: test_pagination template not found: {}", e);
+                                }
+                            }
+                        }
+
+                        // Generate generic tests if template exists
+                        match env.get_template("test_generic") {
                             Ok(template) => {
                                 let content = template.render(&context).map_err(|e| $crate::SdkGeneratorError::TemplateError(e))?;
-                                let path = tag_folder.join("test_pagination.py");
+                                let path = tag_folder.join("test_generic.py");
                                 std::fs::create_dir_all(tag_folder.clone())?;
                                 std::fs::write(&path, content)?;
                             }
                             Err(e) => {
-                                eprintln!("Debug: test_pagination template not found: {}", e);
+                                eprintln!("Debug: test_generic template not found: {}", e);
                             }
                         }
 

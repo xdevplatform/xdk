@@ -19,8 +19,10 @@ from .models import (
 class ConnectionClient:
     """Client for Connection operations"""
 
+
     def __init__(self, client: Client):
         self.client = client
+
 
     def delete_all_connections(
         self,

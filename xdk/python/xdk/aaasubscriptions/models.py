@@ -5,40 +5,31 @@ This module provides models for the AAASubscriptions endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
 # Models for createAccountActivitySubscription
 
 
-class CreateaccountactivitysubscriptionRequest(BaseModel):
+class CreateAccountActivitySubscriptionRequest(BaseModel):
     """Request model for createAccountActivitySubscription"""
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class CreateaccountactivitysubscriptionResponse(BaseModel):
+class CreateAccountActivitySubscriptionResponse(BaseModel):
     """Response model for createAccountActivitySubscription"""
 
-    data: Optional["CreateaccountactivitysubscriptionResponseData"] = None
+    data: Optional["CreateAccountActivitySubscriptionResponseData"] = None
     errors: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class CreateaccountactivitysubscriptionResponseData(BaseModel):
-    """Nested model for CreateaccountactivitysubscriptionResponseData"""
+class CreateAccountActivitySubscriptionResponseData(BaseModel):
+    """Nested model for CreateAccountActivitySubscriptionResponseData"""
 
     subscribed: Optional[bool] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)

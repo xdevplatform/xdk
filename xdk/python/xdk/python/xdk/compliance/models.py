@@ -9,66 +9,6 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for streamPostsCompliance
-
-
-class StreampostscomplianceResponse(BaseModel):
-    """Response model for streamPostsCompliance"""
-
-    data: Optional[Any] = Field(default=None, description="Tweet compliance data.")
-    errors: Optional[List] = Field(default=None)
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for streamUsersCompliance
-
-
-class StreamuserscomplianceResponse(BaseModel):
-    """Response model for streamUsersCompliance"""
-
-    data: Optional[Any] = Field(default=None, description="User compliance data.")
-    errors: Optional[List] = Field(default=None)
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for streamLabelsCompliance
-
-
-class StreamlabelscomplianceResponse(BaseModel):
-    """Response model for streamLabelsCompliance"""
-
-    data: Optional[Any] = Field(default=None, description="Tweet label data.")
-    errors: Optional[List] = Field(default=None)
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for streamLikesCompliance
-
-
-class StreamlikescomplianceResponse(BaseModel):
-    """Response model for streamLikesCompliance"""
-
-    data: Optional[Dict[str, Any]] = Field(default=None)
-    errors: Optional[List] = Field(default=None)
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
 # Models for getComplianceJobs
 
 
@@ -170,6 +110,66 @@ class GetcompliancejobsbyidResponseData(BaseModel):
     type: Optional[str] = None
     upload_expires_at: Optional[str] = None
     upload_url: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for streamLikesCompliance
+
+
+class StreamlikescomplianceResponse(BaseModel):
+    """Response model for streamLikesCompliance"""
+
+    data: Optional[Dict[str, Any]] = Field(default=None)
+    errors: Optional[List] = Field(default=None)
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for streamUsersCompliance
+
+
+class StreamuserscomplianceResponse(BaseModel):
+    """Response model for streamUsersCompliance"""
+
+    data: Optional[Any] = Field(default=None, description="User compliance data.")
+    errors: Optional[List] = Field(default=None)
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for streamLabelsCompliance
+
+
+class StreamlabelscomplianceResponse(BaseModel):
+    """Response model for streamLabelsCompliance"""
+
+    data: Optional[Any] = Field(default=None, description="Tweet label data.")
+    errors: Optional[List] = Field(default=None)
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for streamPostsCompliance
+
+
+class StreampostscomplianceResponse(BaseModel):
+    """Response model for streamPostsCompliance"""
+
+    data: Optional[Any] = Field(default=None, description="Tweet compliance data.")
+    errors: Optional[List] = Field(default=None)
 
     class Config:
         """Pydantic model configuration"""

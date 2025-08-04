@@ -9,3 +9,4 @@ minijinja = "2.11.0"
 serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }
+colored = { workspace = true }

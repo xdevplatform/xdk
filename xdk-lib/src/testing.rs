@@ -541,22 +541,35 @@ fn extract_security_requirements(operation: &OperationInfo) -> Vec<String> {
 }
 
 /// Detect if operation supports pagination
+/// Requires both a pagination token parameter AND a limit parameter for true pagination
 fn detect_pagination_support(operation: &OperationInfo) -> bool {
     if let Some(parameters) = &operation.parameters {
-        parameters.iter().any(|param| {
+        let has_token = parameters.iter().any(|param| {
             if let RefOrValue::Value(param) = param {
                 if let Some(name) = &param.name {
-                    matches!(
-                        name.as_str(),
-                        "pagination_token" | "next_token" | "cursor" | "max_results" | "limit"
-                    )
+                    matches!(name.as_str(), "pagination_token" | "next_token" | "cursor")
                 } else {
                     false
                 }
             } else {
                 false
             }
-        })
+        });
+
+        let has_limit = parameters.iter().any(|param| {
+            if let RefOrValue::Value(param) = param {
+                if let Some(name) = &param.name {
+                    matches!(name.as_str(), "max_results" | "limit" | "count")
+                } else {
+                    false
+                }
+            } else {
+                false
+            }
+        });
+
+        // Require BOTH token and limit parameters for true pagination support
+        has_token && has_limit
     } else {
         false
     }

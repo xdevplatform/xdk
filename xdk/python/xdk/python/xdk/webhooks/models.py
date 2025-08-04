@@ -9,6 +9,58 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
+# Models for validateWebhooks
+
+
+class ValidatewebhooksResponse(BaseModel):
+    """Response model for validateWebhooks"""
+
+    data: Optional["ValidatewebhooksResponseData"] = None
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class ValidatewebhooksResponseData(BaseModel):
+    """Nested model for ValidatewebhooksResponseData"""
+
+    attempted: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for deleteWebhooks
+
+
+class DeletewebhooksResponse(BaseModel):
+    """Response model for deleteWebhooks"""
+
+    data: Optional["DeletewebhooksResponseData"] = None
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class DeletewebhooksResponseData(BaseModel):
+    """Nested model for DeletewebhooksResponseData"""
+
+    deleted: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
 # Models for getWebhooks
 
 
@@ -57,58 +109,6 @@ class CreatewebhooksResponse(BaseModel):
     id: Optional[str] = None
     url: Optional[str] = None
     valid: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for validateWebhooks
-
-
-class ValidatewebhooksResponse(BaseModel):
-    """Response model for validateWebhooks"""
-
-    data: Optional["ValidatewebhooksResponseData"] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class ValidatewebhooksResponseData(BaseModel):
-    """Nested model for ValidatewebhooksResponseData"""
-
-    attempted: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for deleteWebhooks
-
-
-class DeletewebhooksResponse(BaseModel):
-    """Response model for deleteWebhooks"""
-
-    data: Optional["DeletewebhooksResponseData"] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class DeletewebhooksResponseData(BaseModel):
-    """Nested model for DeletewebhooksResponseData"""
-
-    deleted: Optional[bool] = None
 
     class Config:
         """Pydantic model configuration"""

@@ -19,8 +19,10 @@ from .models import (
 class UsageClient:
     """Client for Usage operations"""
 
+
     def __init__(self, client: Client):
         self.client = client
+
 
     def get_usage(
         self,

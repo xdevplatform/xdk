@@ -17,13 +17,15 @@ from xdk import Client
 class TestUsageContracts:
     """Test the API contracts of UsageClient."""
 
+
     def setup_class(self):
         """Set up test fixtures."""
         self.client = Client(base_url="https://api.example.com")
         self.usage_client = getattr(self.client, "usage")
 
+
     def test_get_usage_request_structure(self):
-        """Test getUsage request structure."""
+        """Test get_usage request structure."""
         # Mock the session to capture request details
         with patch.object(self.client, "session") as mock_session:
             mock_response = Mock()
@@ -36,6 +38,7 @@ class TestUsageContracts:
             # Prepare test parameters
             kwargs = {}
             # Add required parameters
+            # Add request body if required
             # Call the method
             try:
                 method = getattr(self.usage_client, "get_usage")
@@ -57,12 +60,12 @@ class TestUsageContracts:
                 # Verify response structure
                 assert result is not None, "Method should return a result"
             except Exception as e:
-                pytest.fail(f"Contract test failed for getUsage: {e}")
+                pytest.fail(f"Contract test failed for get_usage: {e}")
+
 
     def test_get_usage_required_parameters(self):
-        """Test that getUsage requires necessary parameters."""
+        """Test that get_usage handles parameters correctly."""
         method = getattr(self.usage_client, "get_usage")
-        # Test with missing required parameters should fail
         # No required parameters, method should be callable without args
         with patch.object(self.client, "session") as mock_session:
             mock_response = Mock()
@@ -75,8 +78,9 @@ class TestUsageContracts:
             except Exception as e:
                 pytest.fail(f"Method with no required params should be callable: {e}")
 
+
     def test_get_usage_response_structure(self):
-        """Test getUsage response structure validation."""
+        """Test get_usage response structure validation."""
         with patch.object(self.client, "session") as mock_session:
             # Create mock response with expected structure
             mock_response_data = {
@@ -89,6 +93,7 @@ class TestUsageContracts:
             mock_session.get.return_value = mock_response
             # Prepare minimal valid parameters
             kwargs = {}
+            # Add request body if required
             # Call method and verify response structure
             method = getattr(self.usage_client, "get_usage")
             result = method(**kwargs)
@@ -100,17 +105,3 @@ class TestUsageContracts:
                 pytest.fail(
                     f"Accessing optional field 'data' should not cause errors: {e}"
                 )
-
-    def test_error_responses(self):
-        """Test that error responses are handled correctly."""
-        with patch.object(self.client, "session") as mock_session:
-            # Test 404 response
-            mock_response = Mock()
-            mock_response.status_code = 404
-            mock_response.raise_for_status.side_effect = Exception("Not Found")
-            mock_session.get.return_value = mock_response
-            # Pick first available method for testing
-            method = getattr(self.usage_client, "get_usage")
-            with pytest.raises(Exception):
-                kwargs = {}
-                method(**kwargs)

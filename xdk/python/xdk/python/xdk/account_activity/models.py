@@ -9,6 +9,38 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
+# Models for getAccountActivitySubscriptionCount
+
+
+class GetaccountactivitysubscriptioncountResponse(BaseModel):
+    """Response model for getAccountActivitySubscriptionCount"""
+
+    data: Optional["GetaccountactivitysubscriptioncountResponseData"] = Field(
+        description="The count of active subscriptions across all webhooks",
+        default_factory=dict,
+    )
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetaccountactivitysubscriptioncountResponseData(BaseModel):
+    """Nested model for GetaccountactivitysubscriptioncountResponseData"""
+
+    account_name: Optional[str] = None
+    provisioned_count: Optional[str] = None
+    subscriptions_count_all: Optional[str] = None
+    subscriptions_count_direct_messages: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
 # Models for validateAccountActivitySubscription
 
 
@@ -101,38 +133,6 @@ class CreateaccountactivityreplayjobResponse(BaseModel):
 
     created_at: Optional[str] = None
     job_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getAccountActivitySubscriptionCount
-
-
-class GetaccountactivitysubscriptioncountResponse(BaseModel):
-    """Response model for getAccountActivitySubscriptionCount"""
-
-    data: Optional["GetaccountactivitysubscriptioncountResponseData"] = Field(
-        description="The count of active subscriptions across all webhooks",
-        default_factory=dict,
-    )
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetaccountactivitysubscriptioncountResponseData(BaseModel):
-    """Nested model for GetaccountactivitysubscriptioncountResponseData"""
-
-    account_name: Optional[str] = None
-    provisioned_count: Optional[str] = None
-    subscriptions_count_all: Optional[str] = None
-    subscriptions_count_direct_messages: Optional[str] = None
 
     class Config:
         """Pydantic model configuration"""

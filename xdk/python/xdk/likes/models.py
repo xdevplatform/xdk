@@ -5,28 +5,25 @@ This module provides models for the Likes endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
 # Models for streamLikesFirehose
 
 
-class StreamlikesfirehoseResponse(BaseModel):
+class StreamLikesFirehoseResponse(BaseModel):
     """Response model for streamLikesFirehose"""
 
-    data: Optional["StreamlikesfirehoseResponseData"] = None
+    data: Optional["StreamLikesFirehoseResponseData"] = None
     errors: Optional[List] = None
-    includes: Optional["StreamlikesfirehoseResponseIncludes"] = None
+    includes: Optional["StreamLikesFirehoseResponseIncludes"] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class StreamlikesfirehoseResponseData(BaseModel):
-    """Nested model for StreamlikesfirehoseResponseData"""
+class StreamLikesFirehoseResponseData(BaseModel):
+    """Nested model for StreamLikesFirehoseResponseData"""
 
     created_at: Optional[str] = None
     id: Optional[str] = None
@@ -34,14 +31,11 @@ class StreamlikesfirehoseResponseData(BaseModel):
     timestamp_ms: Optional[int] = None
     tweet_author_id: Optional[str] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class StreamlikesfirehoseResponseIncludes(BaseModel):
-    """Nested model for StreamlikesfirehoseResponseIncludes"""
+class StreamLikesFirehoseResponseIncludes(BaseModel):
+    """Nested model for StreamLikesFirehoseResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -50,30 +44,24 @@ class StreamlikesfirehoseResponseIncludes(BaseModel):
     tweets: Optional[List] = None
     users: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # Models for streamLikesSample10
 
 
-class Streamlikessample10Response(BaseModel):
+class StreamLikesSample10Response(BaseModel):
     """Response model for streamLikesSample10"""
 
-    data: Optional["Streamlikessample10ResponseData"] = None
+    data: Optional["StreamLikesSample10ResponseData"] = None
     errors: Optional[List] = None
-    includes: Optional["Streamlikessample10ResponseIncludes"] = None
+    includes: Optional["StreamLikesSample10ResponseIncludes"] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class Streamlikessample10ResponseData(BaseModel):
-    """Nested model for Streamlikessample10ResponseData"""
+class StreamLikesSample10ResponseData(BaseModel):
+    """Nested model for StreamLikesSample10ResponseData"""
 
     created_at: Optional[str] = None
     id: Optional[str] = None
@@ -81,14 +69,11 @@ class Streamlikessample10ResponseData(BaseModel):
     timestamp_ms: Optional[int] = None
     tweet_author_id: Optional[str] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class Streamlikessample10ResponseIncludes(BaseModel):
-    """Nested model for Streamlikessample10ResponseIncludes"""
+class StreamLikesSample10ResponseIncludes(BaseModel):
+    """Nested model for StreamLikesSample10ResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -97,7 +82,4 @@ class Streamlikessample10ResponseIncludes(BaseModel):
     tweets: Optional[List] = None
     users: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)

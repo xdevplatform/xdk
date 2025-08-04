@@ -20,8 +20,10 @@ from .models import (
 class TrendsClient:
     """Client for Trends operations"""
 
+
     def __init__(self, client: Client):
         self.client = client
+
 
     def get_users_personalized_trends(
         self,
@@ -66,6 +68,7 @@ class TrendsClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return GetuserspersonalizedtrendsResponse.model_validate(response_data)
+
 
     def get_trends_by_woeid(
         self,

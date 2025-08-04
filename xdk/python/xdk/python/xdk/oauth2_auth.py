@@ -16,6 +16,7 @@ from requests_oauthlib import OAuth2Session
 class OAuth2PKCEAuth:
     """OAuth2 PKCE authentication for the X API."""
 
+
     def __init__(
         self,
         base_url: str = "https://api.twitter.com",
@@ -47,6 +48,7 @@ class OAuth2PKCEAuth:
         if token and client_id:
             self._setup_oauth_session()
 
+
     def _setup_oauth_session(self):
         """Set up the OAuth2 session with existing token."""
         self.oauth2_session = OAuth2Session(
@@ -55,6 +57,7 @@ class OAuth2PKCEAuth:
             redirect_uri=self.redirect_uri,
             scope=self.scope,
         )
+
 
     def _generate_code_verifier(self, length: int = 128) -> str:
         """Generate a code verifier for PKCE.
@@ -66,6 +69,7 @@ class OAuth2PKCEAuth:
         code_verifier = secrets.token_urlsafe(96)[:length]
         return code_verifier
 
+
     def _generate_code_challenge(self, code_verifier: str) -> str:
         """Generate a code challenge from the code verifier.
         Args:
@@ -76,6 +80,7 @@ class OAuth2PKCEAuth:
         code_challenge = hashlib.sha256(code_verifier.encode()).digest()
         code_challenge = base64.urlsafe_b64encode(code_challenge).decode().rstrip("=")
         return code_challenge
+
 
     def get_authorization_url(self) -> Tuple[str, str]:
         """Get the authorization URL for the OAuth2 PKCE flow.
@@ -93,6 +98,7 @@ class OAuth2PKCEAuth:
             code_challenge_method="S256",
         )
         return auth_url, state
+
 
     def fetch_token(self, authorization_response: str) -> Dict[str, Any]:
         """Fetch token using authorization response and code verifier.
@@ -114,6 +120,7 @@ class OAuth2PKCEAuth:
         )
         return self.token
 
+
     def refresh_token(self) -> Dict[str, Any]:
         """Refresh the access token.
         Returns:
@@ -128,6 +135,8 @@ class OAuth2PKCEAuth:
         return self.token
 
     @property
+
+
     def access_token(self) -> Optional[str]:
         """Get the current access token.
         Returns:
@@ -136,6 +145,7 @@ class OAuth2PKCEAuth:
         if self.token:
             return self.token.get("access_token")
         return None
+
 
     def is_token_expired(self) -> bool:
         """Check if the token is expired.

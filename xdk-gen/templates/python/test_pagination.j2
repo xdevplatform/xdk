@@ -204,16 +204,34 @@ class Test{{ tag|pascal_case }}Pagination:
     
     {% endfor %}
     
+    def test_pagination_edge_cases(self):
+        """Test pagination edge cases."""
+        
+        with patch.object(self.client, "session") as mock_session:
+            # Test empty response
+            empty_response = Mock()
+            empty_response.status_code = 200
+            empty_response.json.return_value = {"data": [], "meta": {"result_count": 0}}
+            empty_response.raise_for_status.return_value = None
+            mock_session.get.return_value = empty_response
+            
+            # Pick first paginatable method for testing
+            {% if test_spec.pagination_tests %}
+            {% set pagination_test = test_spec.pagination_tests[0] %}
+            method = getattr(self.{{ tag|lower }}_client, "{{ pagination_test.method_name|snake_case }}")
+            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=10)
+            
+            # Should handle empty responses gracefully
+            pages = list(test_cursor.pages(1))
+            assert len(pages) == 1, "Should get one page even if empty"
+            items = list(test_cursor.items(10))
+            assert len(items) == 0, "Should get no items from empty response"
+            {% endif %}
+    
     def test_non_paginatable_method_raises_error(self):
         """Test that non-paginatable methods raise PaginationError."""
         
         # Create a mock method that doesn't support pagination
-        def non_paginatable_method(id: str) -> dict:
-            return {"id": id}
-        
-        with pytest.raises(PaginationError):
-            cursor(non_paginatable_method)
-        
         def non_paginatable_method(id: str) -> dict:
             return {"id": id}
         
@@ -230,27 +248,3 @@ class Test{{ tag|pascal_case }}Pagination:
         # Test cursor factory function
         from xdk.paginator import cursor as cursor_factory
         assert cursor_factory is not None
-    
-    {% if test_spec.pagination_tests %}
-    def test_pagination_edge_cases(self):
-        """Test pagination edge cases."""
-        
-        with patch.object(self.client, "session") as mock_session:
-            # Test empty response
-            empty_response = Mock()
-            empty_response.status_code = 200
-            empty_response.json.return_value = {"data": [], "meta": {"result_count": 0}}
-            empty_response.raise_for_status.return_value = None
-            mock_session.get.return_value = empty_response
-            
-            # Pick first paginatable method for testing
-            {% set pagination_test = test_spec.pagination_tests[0] %}
-            method = getattr(self.{{ tag|lower }}_client, "{{ pagination_test.method_name|snake_case }}")
-            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=10)
-            
-            # Should handle empty responses gracefully
-            pages = list(test_cursor.pages(1))
-            assert len(pages) == 1, "Should get one page even if empty"
-            items = list(test_cursor.items(10))
-            assert len(items) == 0, "Should get no items from empty response"
-    {% endif %}

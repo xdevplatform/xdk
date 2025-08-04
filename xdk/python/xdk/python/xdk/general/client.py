@@ -19,8 +19,10 @@ from .models import (
 class GeneralClient:
     """Client for General operations"""
 
+
     def __init__(self, client: Client):
         self.client = client
+
 
     def get_open_api_spec(
         self,

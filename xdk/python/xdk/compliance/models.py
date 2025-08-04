@@ -5,57 +5,24 @@ This module provides models for the Compliance endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
-
-
-# Models for streamPostsCompliance
-
-
-class StreampostscomplianceResponse(BaseModel):
-    """Response model for streamPostsCompliance"""
-
-    data: Optional[Any] = Field(default=None, description="Tweet compliance data.")
-    errors: Optional[List] = Field(default=None)
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for streamLikesCompliance
-
-
-class StreamlikescomplianceResponse(BaseModel):
-    """Response model for streamLikesCompliance"""
-
-    data: Optional[Dict[str, Any]] = Field(default=None)
-    errors: Optional[List] = Field(default=None)
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
 
 
 # Models for getComplianceJobsById
 
 
-class GetcompliancejobsbyidResponse(BaseModel):
+class GetComplianceJobsByIdResponse(BaseModel):
     """Response model for getComplianceJobsById"""
 
-    data: Optional["GetcompliancejobsbyidResponseData"] = Field(default_factory=dict)
+    data: Optional["GetComplianceJobsByIdResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class GetcompliancejobsbyidResponseData(BaseModel):
-    """Nested model for GetcompliancejobsbyidResponseData"""
+class GetComplianceJobsByIdResponseData(BaseModel):
+    """Nested model for GetComplianceJobsByIdResponseData"""
 
     created_at: Optional[str] = None
     download_expires_at: Optional[str] = None
@@ -67,99 +34,78 @@ class GetcompliancejobsbyidResponseData(BaseModel):
     upload_expires_at: Optional[str] = None
     upload_url: Optional[str] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for streamLabelsCompliance
+# Models for streamLikesCompliance
 
 
-class StreamlabelscomplianceResponse(BaseModel):
-    """Response model for streamLabelsCompliance"""
+class StreamLikesComplianceResponse(BaseModel):
+    """Response model for streamLikesCompliance"""
 
-    data: Optional[Any] = Field(default=None, description="Tweet label data.")
+    data: Optional[Dict[str, Any]] = Field(default=None)
     errors: Optional[List] = Field(default=None)
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for streamUsersCompliance
+# Models for streamPostsCompliance
 
 
-class StreamuserscomplianceResponse(BaseModel):
-    """Response model for streamUsersCompliance"""
+class StreamPostsComplianceResponse(BaseModel):
+    """Response model for streamPostsCompliance"""
 
-    data: Optional[Any] = Field(default=None, description="User compliance data.")
+    data: Optional[Any] = Field(default=None, description="Tweet compliance data.")
     errors: Optional[List] = Field(default=None)
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # Models for getComplianceJobs
 
 
-class GetcompliancejobsResponse(BaseModel):
+class GetComplianceJobsResponse(BaseModel):
     """Response model for getComplianceJobs"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    meta: Optional["GetcompliancejobsResponseMeta"] = None
+    meta: Optional["GetComplianceJobsResponseMeta"] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class GetcompliancejobsResponseMeta(BaseModel):
-    """Nested model for GetcompliancejobsResponseMeta"""
+class GetComplianceJobsResponseMeta(BaseModel):
+    """Nested model for GetComplianceJobsResponseMeta"""
 
     result_count: Optional[int] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # Models for createComplianceJobs
 
 
-class CreatecompliancejobsRequest(BaseModel):
+class CreateComplianceJobsRequest(BaseModel):
     """Request model for createComplianceJobs"""
 
     name: Optional[str] = None
     resumable: Optional[bool] = None
     type: Optional[str] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class CreatecompliancejobsResponse(BaseModel):
+class CreateComplianceJobsResponse(BaseModel):
     """Response model for createComplianceJobs"""
 
-    data: Optional["CreatecompliancejobsResponseData"] = Field(default_factory=dict)
+    data: Optional["CreateComplianceJobsResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
-class CreatecompliancejobsResponseData(BaseModel):
-    """Nested model for CreatecompliancejobsResponseData"""
+class CreateComplianceJobsResponseData(BaseModel):
+    """Nested model for CreateComplianceJobsResponseData"""
 
     created_at: Optional[str] = None
     download_expires_at: Optional[str] = None
@@ -171,7 +117,28 @@ class CreatecompliancejobsResponseData(BaseModel):
     upload_expires_at: Optional[str] = None
     upload_url: Optional[str] = None
 
-    class Config:
-        """Pydantic model configuration"""
+    model_config = ConfigDict(populate_by_name=True)
 
-        populate_by_name = True
+
+# Models for streamUsersCompliance
+
+
+class StreamUsersComplianceResponse(BaseModel):
+    """Response model for streamUsersCompliance"""
+
+    data: Optional[Any] = Field(default=None, description="User compliance data.")
+    errors: Optional[List] = Field(default=None)
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for streamLabelsCompliance
+
+
+class StreamLabelsComplianceResponse(BaseModel):
+    """Response model for streamLabelsCompliance"""
+
+    data: Optional[Any] = Field(default=None, description="Tweet label data.")
+    errors: Optional[List] = Field(default=None)
+
+    model_config = ConfigDict(populate_by_name=True)

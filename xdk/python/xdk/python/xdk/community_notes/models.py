@@ -9,6 +9,61 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
+# Models for createNotes
+
+
+class CreatenotesRequest(BaseModel):
+    """Request model for createNotes"""
+
+    info: Optional["CreatenotesRequestInfo"] = Field(
+        description="A X Community Note is a note on a Post.", default_factory=dict
+    )
+    post_id: Optional[str] = None
+    test_mode: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatenotesResponse(BaseModel):
+    """Response model for createNotes"""
+
+    data: Optional["CreatenotesResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatenotesRequestInfo(BaseModel):
+    """Nested model for CreatenotesRequestInfo"""
+
+    classification: Optional[str] = None
+    misleading_tags: Optional[List] = None
+    text: Optional[str] = None
+    trustworthy_sources: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatenotesResponseData(BaseModel):
+    """Nested model for CreatenotesResponseData"""
+
+    deleted: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
 # Models for searchNotesWritten
 
 
@@ -75,61 +130,6 @@ class SearchforeligiblepostsResponseMeta(BaseModel):
 
     next_token: Optional[str] = None
     result_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for createNotes
-
-
-class CreatenotesRequest(BaseModel):
-    """Request model for createNotes"""
-
-    info: Optional["CreatenotesRequestInfo"] = Field(
-        description="A X Community Note is a note on a Post.", default_factory=dict
-    )
-    post_id: Optional[str] = None
-    test_mode: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreatenotesResponse(BaseModel):
-    """Response model for createNotes"""
-
-    data: Optional["CreatenotesResponseData"] = Field(default_factory=dict)
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreatenotesRequestInfo(BaseModel):
-    """Nested model for CreatenotesRequestInfo"""
-
-    classification: Optional[str] = None
-    misleading_tags: Optional[List] = None
-    text: Optional[str] = None
-    trustworthy_sources: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreatenotesResponseData(BaseModel):
-    """Nested model for CreatenotesResponseData"""
-
-    deleted: Optional[bool] = None
 
     class Config:
         """Pydantic model configuration"""

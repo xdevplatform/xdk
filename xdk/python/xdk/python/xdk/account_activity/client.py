@@ -12,19 +12,55 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
+    GetaccountactivitysubscriptioncountResponse,
     ValidateaccountactivitysubscriptionResponse,
     GetaccountactivitysubscriptionsResponse,
     DeleteaccountactivitysubscriptionResponse,
     CreateaccountactivityreplayjobResponse,
-    GetaccountactivitysubscriptioncountResponse,
 )
 
 
 class AccountActivityClient:
     """Client for Account_Activity operations"""
 
+
     def __init__(self, client: Client):
         self.client = client
+
+
+    def get_account_activity_subscription_count(
+        self,
+    ) -> GetaccountactivitysubscriptioncountResponse:
+        """
+        Get subscription count
+        Retrieves a count of currently active Account Activity subscriptions.
+        Returns:
+            GetaccountactivitysubscriptioncountResponse: Response data
+        """
+        url = self.client.base_url + "/2/account_activity/subscriptions/count"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetaccountactivitysubscriptioncountResponse.model_validate(response_data)
+
 
     def validate_account_activity_subscription(
         self,
@@ -70,6 +106,7 @@ class AccountActivityClient:
         # Convert to Pydantic model if applicable
         return ValidateaccountactivitysubscriptionResponse.model_validate(response_data)
 
+
     def get_account_activity_subscriptions(
         self,
         webhook_id: str,
@@ -109,6 +146,7 @@ class AccountActivityClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return GetaccountactivitysubscriptionsResponse.model_validate(response_data)
+
 
     def delete_account_activity_subscription(
         self,
@@ -153,6 +191,7 @@ class AccountActivityClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return DeleteaccountactivitysubscriptionResponse.model_validate(response_data)
+
 
     def create_account_activity_replay_job(
         self,
@@ -203,36 +242,3 @@ class AccountActivityClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return CreateaccountactivityreplayjobResponse.model_validate(response_data)
-
-    def get_account_activity_subscription_count(
-        self,
-    ) -> GetaccountactivitysubscriptioncountResponse:
-        """
-        Get subscription count
-        Retrieves a count of currently active Account Activity subscriptions.
-        Returns:
-            GetaccountactivitysubscriptioncountResponse: Response data
-        """
-        url = self.client.base_url + "/2/account_activity/subscriptions/count"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetaccountactivitysubscriptioncountResponse.model_validate(response_data)

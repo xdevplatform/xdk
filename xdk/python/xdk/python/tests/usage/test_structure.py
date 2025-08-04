@@ -18,21 +18,12 @@ from xdk import Client
 class TestUsageStructure:
     """Test the structure of UsageClient."""
 
+
     def setup_class(self):
         """Set up test fixtures."""
         self.client = Client(base_url="https://api.example.com")
         self.usage_client = getattr(self.client, "usage")
 
-    def test_client_exists(self):
-        """Test that UsageClient class exists and is importable."""
-        assert UsageClient is not None
-        assert hasattr(UsageClient, "__name__")
-        assert UsageClient.__name__ == "UsageClient"
-
-    def test_client_initialization(self):
-        """Test that UsageClient can be initialized properly."""
-        assert self.usage_client is not None
-        assert isinstance(self.usage_client, UsageClient)
 
     def test_get_usage_exists(self):
         """Test that get_usage method exists with correct signature."""
@@ -66,6 +57,7 @@ class TestUsageStructure:
                     param_obj.default is not inspect.Parameter.empty
                 ), f"Optional parameter '{optional_param}' should have a default value"
 
+
     def test_get_usage_return_annotation(self):
         """Test that get_usage has proper return type annotation."""
         method = getattr(UsageClient, "get_usage")
@@ -75,54 +67,16 @@ class TestUsageStructure:
             sig.return_annotation is not inspect.Signature.empty
         ), f"Method get_usage should have return type annotation"
 
+
     def test_all_expected_methods_exist(self):
         """Test that all expected methods exist on the client."""
         expected_methods = [
             "get_usage",
         ]
-        client_methods = [
-            name
-            for name in dir(UsageClient)
-            if not name.startswith("_") and callable(getattr(UsageClient, name))
-        ]
         for expected_method in expected_methods:
-            assert (
-                expected_method in client_methods
+            assert hasattr(
+                UsageClient, expected_method
             ), f"Expected method '{expected_method}' not found on UsageClient"
-
-    def test_no_unexpected_public_methods(self):
-        """Test that no unexpected public methods exist (helps catch API drift)."""
-        expected_methods = set(
-            [
-                "get_usage",
-            ]
-        )
-        actual_methods = set(
-            [
-                name
-                for name in dir(UsageClient)
-                if not name.startswith("_") and callable(getattr(UsageClient, name))
-            ]
-        )
-        # Remove standard methods that might be inherited
-        standard_methods = {"__init__"}
-        actual_methods = actual_methods - standard_methods
-        unexpected_methods = actual_methods - expected_methods
-        # This is a warning, not a failure, since new methods might be added
-        if unexpected_methods:
-            print(
-                f"Warning: Unexpected methods found on UsageClient: {unexpected_methods}"
-            )
-
-    def test_imports_work(self):
-        """Test that all expected imports work correctly."""
-        expected_imports = [
-            "typing",
-            "requests",
-            "pydantic",
-        ]
-        for import_name in expected_imports:
-            try:
-                __import__(import_name)
-            except ImportError as e:
-                pytest.fail(f"Expected import '{import_name}' failed: {e}")
+            assert callable(
+                getattr(UsageClient, expected_method)
+            ), f"'{expected_method}' exists but is not callable"

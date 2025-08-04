@@ -30,6 +30,7 @@ class PaginatableMethod(Protocol[ResponseType]):
     and/or max_results parameters.
     """
 
+
     def __call__(
         self,
         *args,
@@ -84,6 +85,7 @@ class Cursor(Generic[ResponseType]):
             print(f"Got {len(page.data)} tweets")
     """
 
+
     def __init__(
         self, method: PaginatableMethod[ResponseType], *args: Any, **kwargs: Any
     ):
@@ -102,6 +104,7 @@ class Cursor(Generic[ResponseType]):
         self.args = args
         self.params = kwargs.copy()
 
+
     def items(self, limit: Optional[int] = None) -> Iterator[Any]:
         """
         Iterate over individual items from paginated responses.
@@ -111,6 +114,7 @@ class Cursor(Generic[ResponseType]):
             Individual items from the API responses
         """
         return _ItemIterator(self, limit)
+
 
     def pages(self, limit: Optional[int] = None) -> Iterator[ResponseType]:
         """
@@ -127,6 +131,8 @@ class Cursor(Generic[ResponseType]):
 
 
 @overload
+
+
 def cursor(
     method: PaginatableMethod[ResponseType], *args: Any, **kwargs: Any
 ) -> Cursor[ResponseType]: ...
@@ -165,6 +171,7 @@ def cursor(
 class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
     """Internal iterator for pages."""
 
+
     def __init__(self, cursor: Cursor[ResponseType], limit: Optional[int]):
         self.cursor = cursor
         self.limit = limit
@@ -172,8 +179,10 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
         self.exhausted = False
         self._next_token: Optional[str] = None
 
+
     def __iter__(self) -> Iterator[ResponseType]:
         return self
+
 
     def __next__(self) -> ResponseType:
         if self.exhausted or (self.limit is not None and self.count >= self.limit):
@@ -196,15 +205,18 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
         self.count += 1
         return response
 
+
     def _supports_pagination_token(self) -> bool:
         """Check if the method supports pagination_token parameter."""
         sig = inspect.signature(self.cursor.method)
         return "pagination_token" in sig.parameters
 
+
     def _supports_next_token(self) -> bool:
         """Check if the method supports next_token parameter."""
         sig = inspect.signature(self.cursor.method)
         return "next_token" in sig.parameters
+
 
     def _extract_next_token(self, response: ResponseType) -> Optional[str]:
         """Extract the next_token from the response."""
@@ -218,6 +230,7 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
 class _ItemIterator(Iterator[Any]):
     """Internal iterator for individual items."""
 
+
     def __init__(self, cursor: Cursor, limit: Optional[int]):
         self.page_iterator = _PageIterator(cursor, None)  # No page limit for items
         self.limit = limit
@@ -225,8 +238,10 @@ class _ItemIterator(Iterator[Any]):
         self._current_items = []
         self._current_index = 0
 
+
     def __iter__(self) -> Iterator[Any]:
         return self
+
 
     def __next__(self) -> Any:
         if self.limit is not None and self.count >= self.limit:
@@ -249,6 +264,7 @@ class _ItemIterator(Iterator[Any]):
         self._current_index += 1
         self.count += 1
         return item
+
 
     def _extract_items(self, response: Any) -> Optional[list]:
         """Extract items from response, trying common field names."""

@@ -29,9 +29,13 @@ pub fn pascal_case(value: &str) -> String {
     let mut capitalize_next = true;
 
     for c in value.chars() {
-        if c == '_' {
-            // Skip underscores and capitalize the next character
+        if c == '_' || c == '-' || c == ' ' {
+            // Skip separators and capitalize the next character
             capitalize_next = true;
+        } else if c.is_uppercase() {
+            // Uppercase letters indicate word boundaries
+            result.push(c);
+            capitalize_next = false;
         } else if c.is_alphanumeric() {
             if capitalize_next {
                 result.push(c.to_ascii_uppercase());
@@ -40,7 +44,7 @@ pub fn pascal_case(value: &str) -> String {
                 result.push(c.to_ascii_lowercase());
             }
         }
-        // Skip non-alphanumeric characters (except underscores handled above)
+        // Skip non-alphanumeric characters (except separators handled above)
     }
 
     result
