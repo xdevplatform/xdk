@@ -9,6 +9,55 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
+# Models for streamUsersCompliance
+
+
+class StreamUsersComplianceResponse(BaseModel):
+    """Response model for streamUsersCompliance"""
+
+    data: Optional[Any] = Field(default=None, description="User compliance data.")
+    errors: Optional[List] = Field(default=None)
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getComplianceJobsById
+
+
+class GetComplianceJobsByIdResponse(BaseModel):
+    """Response model for getComplianceJobsById"""
+
+    data: Optional["GetComplianceJobsByIdResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetComplianceJobsByIdResponseData(BaseModel):
+    """Nested model for GetComplianceJobsByIdResponseData"""
+
+    created_at: Optional[str] = None
+    download_expires_at: Optional[str] = None
+    download_url: Optional[str] = None
+    id: Optional[str] = None
+    name: Optional[str] = None
+    status: Optional[str] = None
+    type: Optional[str] = None
+    upload_expires_at: Optional[str] = None
+    upload_url: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
 # Models for streamLabelsCompliance
 
 
@@ -39,13 +88,13 @@ class StreamPostsComplianceResponse(BaseModel):
         populate_by_name = True
 
 
-# Models for streamUsersCompliance
+# Models for streamLikesCompliance
 
 
-class StreamUsersComplianceResponse(BaseModel):
-    """Response model for streamUsersCompliance"""
+class StreamLikesComplianceResponse(BaseModel):
+    """Response model for streamLikesCompliance"""
 
-    data: Optional[Any] = Field(default=None, description="User compliance data.")
+    data: Optional[Dict[str, Any]] = Field(default=None)
     errors: Optional[List] = Field(default=None)
 
     class Config:
@@ -111,55 +160,6 @@ class CreateComplianceJobsResponse(BaseModel):
 
 class CreateComplianceJobsResponseData(BaseModel):
     """Nested model for CreateComplianceJobsResponseData"""
-
-    created_at: Optional[str] = None
-    download_expires_at: Optional[str] = None
-    download_url: Optional[str] = None
-    id: Optional[str] = None
-    name: Optional[str] = None
-    status: Optional[str] = None
-    type: Optional[str] = None
-    upload_expires_at: Optional[str] = None
-    upload_url: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for streamLikesCompliance
-
-
-class StreamLikesComplianceResponse(BaseModel):
-    """Response model for streamLikesCompliance"""
-
-    data: Optional[Dict[str, Any]] = Field(default=None)
-    errors: Optional[List] = Field(default=None)
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getComplianceJobsById
-
-
-class GetComplianceJobsByIdResponse(BaseModel):
-    """Response model for getComplianceJobsById"""
-
-    data: Optional["GetComplianceJobsByIdResponseData"] = Field(default_factory=dict)
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetComplianceJobsByIdResponseData(BaseModel):
-    """Nested model for GetComplianceJobsByIdResponseData"""
 
     created_at: Optional[str] = None
     download_expires_at: Optional[str] = None

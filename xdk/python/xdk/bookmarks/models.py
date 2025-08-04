@@ -9,32 +9,6 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for deleteUsersBookmark
-
-
-class DeleteUsersBookmarkResponse(BaseModel):
-    """Response model for deleteUsersBookmark"""
-
-    data: Optional["DeleteUsersBookmarkResponseData"] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class DeleteUsersBookmarkResponseData(BaseModel):
-    """Nested model for DeleteUsersBookmarkResponseData"""
-
-    bookmarked: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
 # Models for getUsersBookmarkFolders
 
 
@@ -54,31 +28,6 @@ class GetUsersBookmarkFoldersResponseData(BaseModel):
 
     id: Optional[str] = None
     name: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getUsersBookmarksByFolderId
-
-
-class GetUsersBookmarksByFolderIdResponse(BaseModel):
-    """Response model for getUsersBookmarksByFolderId"""
-
-    data: Optional["GetUsersBookmarksByFolderIdResponseData"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetUsersBookmarksByFolderIdResponseData(BaseModel):
-    """Nested model for GetUsersBookmarksByFolderIdResponseData"""
-
-    id: Optional[str] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -162,6 +111,57 @@ class CreateUsersBookmarkResponseData(BaseModel):
     """Nested model for CreateUsersBookmarkResponseData"""
 
     bookmarked: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for deleteUsersBookmark
+
+
+class DeleteUsersBookmarkResponse(BaseModel):
+    """Response model for deleteUsersBookmark"""
+
+    data: Optional["DeleteUsersBookmarkResponseData"] = None
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class DeleteUsersBookmarkResponseData(BaseModel):
+    """Nested model for DeleteUsersBookmarkResponseData"""
+
+    bookmarked: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getUsersBookmarksByFolderId
+
+
+class GetUsersBookmarksByFolderIdResponse(BaseModel):
+    """Response model for getUsersBookmarksByFolderId"""
+
+    data: Optional["GetUsersBookmarksByFolderIdResponseData"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetUsersBookmarksByFolderIdResponseData(BaseModel):
+    """Nested model for GetUsersBookmarksByFolderIdResponseData"""
+
+    id: Optional[str] = None
 
     class Config:
         """Pydantic model configuration"""

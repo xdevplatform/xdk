@@ -9,6 +9,49 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
+# Models for finalizeMediaUpload
+
+
+class FinalizeMediaUploadResponse(BaseModel):
+    """Response model for finalizeMediaUpload"""
+
+    data: Optional["FinalizeMediaUploadResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class FinalizeMediaUploadResponseData(BaseModel):
+    """Nested model for FinalizeMediaUploadResponseData"""
+
+    expires_after_secs: Optional[int] = None
+    id: Optional[str] = None
+    media_key: Optional[str] = None
+    processing_info: Optional["FinalizeMediaUploadResponseDataProcessing_info"] = None
+    size: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class FinalizeMediaUploadResponseDataProcessing_info(BaseModel):
+    """Nested model for FinalizeMediaUploadResponseDataProcessing_info"""
+
+    check_after_secs: Optional[int] = None
+    progress_percent: Optional[int] = None
+    state: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
 # Models for appendMediaUpload
 
 
@@ -49,6 +92,21 @@ class AppendMediaUploadResponseData(BaseModel):
         populate_by_name = True
 
 
+# Models for getMediaByMediaKeys
+
+
+class GetMediaByMediaKeysResponse(BaseModel):
+    """Response model for getMediaByMediaKeys"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
 # Models for getMediaByMediaKey
 
 
@@ -78,26 +136,13 @@ class GetMediaByMediaKeyResponseData(BaseModel):
         populate_by_name = True
 
 
-# Models for createMediaSubtitles
+# Models for getMediaAnalytics
 
 
-class CreateMediaSubtitlesRequest(BaseModel):
-    """Request model for createMediaSubtitles"""
+class GetMediaAnalyticsResponse(BaseModel):
+    """Response model for getMediaAnalytics"""
 
-    id: Optional[str] = None
-    media_category: Optional[str] = None
-    subtitles: Optional["CreateMediaSubtitlesRequestSubtitles"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaSubtitlesResponse(BaseModel):
-    """Response model for createMediaSubtitles"""
-
-    data: Optional["CreateMediaSubtitlesResponseData"] = Field(default_factory=dict)
+    data: Optional[List] = None
     errors: Optional[List] = None
 
     class Config:
@@ -106,52 +151,13 @@ class CreateMediaSubtitlesResponse(BaseModel):
         populate_by_name = True
 
 
-class CreateMediaSubtitlesRequestSubtitles(BaseModel):
-    """Nested model for CreateMediaSubtitlesRequestSubtitles"""
-
-    display_name: Optional[str] = None
-    id: Optional[str] = None
-    language_code: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+# Models for getMediaUploadStatus
 
 
-class CreateMediaSubtitlesResponseData(BaseModel):
-    """Nested model for CreateMediaSubtitlesResponseData"""
+class GetMediaUploadStatusResponse(BaseModel):
+    """Response model for getMediaUploadStatus"""
 
-    associated_subtitles: Optional[List] = None
-    id: Optional[str] = None
-    media_category: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for deleteMediaSubtitles
-
-
-class DeleteMediaSubtitlesRequest(BaseModel):
-    """Request model for deleteMediaSubtitles"""
-
-    id: Optional[str] = None
-    language_code: Optional[str] = None
-    media_category: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class DeleteMediaSubtitlesResponse(BaseModel):
-    """Response model for deleteMediaSubtitles"""
-
-    data: Optional["DeleteMediaSubtitlesResponseData"] = Field(default_factory=dict)
+    data: Optional["GetMediaUploadStatusResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     class Config:
@@ -160,54 +166,13 @@ class DeleteMediaSubtitlesResponse(BaseModel):
         populate_by_name = True
 
 
-class DeleteMediaSubtitlesResponseData(BaseModel):
-    """Nested model for DeleteMediaSubtitlesResponseData"""
-
-    deleted: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for initializeMediaUpload
-
-
-class InitializeMediaUploadRequest(BaseModel):
-    """Request model for initializeMediaUpload"""
-
-    additional_owners: Optional[List] = None
-    media_category: Optional[str] = None
-    media_type: Optional[str] = None
-    shared: Optional[bool] = None
-    total_bytes: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class InitializeMediaUploadResponse(BaseModel):
-    """Response model for initializeMediaUpload"""
-
-    data: Optional["InitializeMediaUploadResponseData"] = Field(default_factory=dict)
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class InitializeMediaUploadResponseData(BaseModel):
-    """Nested model for InitializeMediaUploadResponseData"""
+class GetMediaUploadStatusResponseData(BaseModel):
+    """Nested model for GetMediaUploadStatusResponseData"""
 
     expires_after_secs: Optional[int] = None
     id: Optional[str] = None
     media_key: Optional[str] = None
-    processing_info: Optional["InitializeMediaUploadResponseDataProcessing_info"] = None
+    processing_info: Optional["GetMediaUploadStatusResponseDataProcessing_info"] = None
     size: Optional[int] = None
 
     class Config:
@@ -216,8 +181,8 @@ class InitializeMediaUploadResponseData(BaseModel):
         populate_by_name = True
 
 
-class InitializeMediaUploadResponseDataProcessing_info(BaseModel):
-    """Nested model for InitializeMediaUploadResponseDataProcessing_info"""
+class GetMediaUploadStatusResponseDataProcessing_info(BaseModel):
+    """Nested model for GetMediaUploadStatusResponseDataProcessing_info"""
 
     check_after_secs: Optional[int] = None
     progress_percent: Optional[int] = None
@@ -229,14 +194,57 @@ class InitializeMediaUploadResponseDataProcessing_info(BaseModel):
         populate_by_name = True
 
 
-# Models for getMediaByMediaKeys
+# Models for mediaUpload
 
 
-class GetMediaByMediaKeysResponse(BaseModel):
-    """Response model for getMediaByMediaKeys"""
+class MediaUploadRequest(BaseModel):
+    """Request model for mediaUpload"""
 
-    data: Optional[List] = None
+    additional_owners: Optional[List] = None
+    media: Any = None
+    media_category: Optional[str] = None
+    media_type: Optional[str] = None
+    shared: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class MediaUploadResponse(BaseModel):
+    """Response model for mediaUpload"""
+
+    data: Optional["MediaUploadResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class MediaUploadResponseData(BaseModel):
+    """Nested model for MediaUploadResponseData"""
+
+    expires_after_secs: Optional[int] = None
+    id: Optional[str] = None
+    media_key: Optional[str] = None
+    processing_info: Optional["MediaUploadResponseDataProcessing_info"] = None
+    size: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class MediaUploadResponseDataProcessing_info(BaseModel):
+    """Nested model for MediaUploadResponseDataProcessing_info"""
+
+    check_after_secs: Optional[int] = None
+    progress_percent: Optional[int] = None
+    state: Optional[str] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -675,75 +683,17 @@ class CreateMediaMetadataResponseDataAssociated_metadataUpload_source(BaseModel)
         populate_by_name = True
 
 
-# Models for getMediaAnalytics
+# Models for initializeMediaUpload
 
 
-class GetMediaAnalyticsResponse(BaseModel):
-    """Response model for getMediaAnalytics"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getMediaUploadStatus
-
-
-class GetMediaUploadStatusResponse(BaseModel):
-    """Response model for getMediaUploadStatus"""
-
-    data: Optional["GetMediaUploadStatusResponseData"] = Field(default_factory=dict)
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetMediaUploadStatusResponseData(BaseModel):
-    """Nested model for GetMediaUploadStatusResponseData"""
-
-    expires_after_secs: Optional[int] = None
-    id: Optional[str] = None
-    media_key: Optional[str] = None
-    processing_info: Optional["GetMediaUploadStatusResponseDataProcessing_info"] = None
-    size: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetMediaUploadStatusResponseDataProcessing_info(BaseModel):
-    """Nested model for GetMediaUploadStatusResponseDataProcessing_info"""
-
-    check_after_secs: Optional[int] = None
-    progress_percent: Optional[int] = None
-    state: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for mediaUpload
-
-
-class MediaUploadRequest(BaseModel):
-    """Request model for mediaUpload"""
+class InitializeMediaUploadRequest(BaseModel):
+    """Request model for initializeMediaUpload"""
 
     additional_owners: Optional[List] = None
-    media: Any = None
     media_category: Optional[str] = None
     media_type: Optional[str] = None
     shared: Optional[bool] = None
+    total_bytes: Optional[int] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -751,10 +701,10 @@ class MediaUploadRequest(BaseModel):
         populate_by_name = True
 
 
-class MediaUploadResponse(BaseModel):
-    """Response model for mediaUpload"""
+class InitializeMediaUploadResponse(BaseModel):
+    """Response model for initializeMediaUpload"""
 
-    data: Optional["MediaUploadResponseData"] = Field(default_factory=dict)
+    data: Optional["InitializeMediaUploadResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     class Config:
@@ -763,13 +713,13 @@ class MediaUploadResponse(BaseModel):
         populate_by_name = True
 
 
-class MediaUploadResponseData(BaseModel):
-    """Nested model for MediaUploadResponseData"""
+class InitializeMediaUploadResponseData(BaseModel):
+    """Nested model for InitializeMediaUploadResponseData"""
 
     expires_after_secs: Optional[int] = None
     id: Optional[str] = None
     media_key: Optional[str] = None
-    processing_info: Optional["MediaUploadResponseDataProcessing_info"] = None
+    processing_info: Optional["InitializeMediaUploadResponseDataProcessing_info"] = None
     size: Optional[int] = None
 
     class Config:
@@ -778,8 +728,8 @@ class MediaUploadResponseData(BaseModel):
         populate_by_name = True
 
 
-class MediaUploadResponseDataProcessing_info(BaseModel):
-    """Nested model for MediaUploadResponseDataProcessing_info"""
+class InitializeMediaUploadResponseDataProcessing_info(BaseModel):
+    """Nested model for InitializeMediaUploadResponseDataProcessing_info"""
 
     check_after_secs: Optional[int] = None
     progress_percent: Optional[int] = None
@@ -791,13 +741,26 @@ class MediaUploadResponseDataProcessing_info(BaseModel):
         populate_by_name = True
 
 
-# Models for finalizeMediaUpload
+# Models for createMediaSubtitles
 
 
-class FinalizeMediaUploadResponse(BaseModel):
-    """Response model for finalizeMediaUpload"""
+class CreateMediaSubtitlesRequest(BaseModel):
+    """Request model for createMediaSubtitles"""
 
-    data: Optional["FinalizeMediaUploadResponseData"] = Field(default_factory=dict)
+    id: Optional[str] = None
+    media_category: Optional[str] = None
+    subtitles: Optional["CreateMediaSubtitlesRequestSubtitles"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreateMediaSubtitlesResponse(BaseModel):
+    """Response model for createMediaSubtitles"""
+
+    data: Optional["CreateMediaSubtitlesResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     class Config:
@@ -806,14 +769,12 @@ class FinalizeMediaUploadResponse(BaseModel):
         populate_by_name = True
 
 
-class FinalizeMediaUploadResponseData(BaseModel):
-    """Nested model for FinalizeMediaUploadResponseData"""
+class CreateMediaSubtitlesRequestSubtitles(BaseModel):
+    """Nested model for CreateMediaSubtitlesRequestSubtitles"""
 
-    expires_after_secs: Optional[int] = None
+    display_name: Optional[str] = None
     id: Optional[str] = None
-    media_key: Optional[str] = None
-    processing_info: Optional["FinalizeMediaUploadResponseDataProcessing_info"] = None
-    size: Optional[int] = None
+    language_code: Optional[str] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -821,12 +782,51 @@ class FinalizeMediaUploadResponseData(BaseModel):
         populate_by_name = True
 
 
-class FinalizeMediaUploadResponseDataProcessing_info(BaseModel):
-    """Nested model for FinalizeMediaUploadResponseDataProcessing_info"""
+class CreateMediaSubtitlesResponseData(BaseModel):
+    """Nested model for CreateMediaSubtitlesResponseData"""
 
-    check_after_secs: Optional[int] = None
-    progress_percent: Optional[int] = None
-    state: Optional[str] = None
+    associated_subtitles: Optional[List] = None
+    id: Optional[str] = None
+    media_category: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for deleteMediaSubtitles
+
+
+class DeleteMediaSubtitlesRequest(BaseModel):
+    """Request model for deleteMediaSubtitles"""
+
+    id: Optional[str] = None
+    language_code: Optional[str] = None
+    media_category: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class DeleteMediaSubtitlesResponse(BaseModel):
+    """Response model for deleteMediaSubtitles"""
+
+    data: Optional["DeleteMediaSubtitlesResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class DeleteMediaSubtitlesResponseData(BaseModel):
+    """Nested model for DeleteMediaSubtitlesResponseData"""
+
+    deleted: Optional[bool] = None
 
     class Config:
         """Pydantic model configuration"""

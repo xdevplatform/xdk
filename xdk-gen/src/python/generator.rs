@@ -38,6 +38,7 @@ language! {
         },
         render "main_client" => "xdk/client.py",
         render "oauth2_auth" => "xdk/oauth2_auth.py",
+        render "paginator" => "xdk/paginator.py",
         render "init_py" => "xdk/__init__.py",
         render "setup_py" => "setup.py",
         render "readme" => "README.md",

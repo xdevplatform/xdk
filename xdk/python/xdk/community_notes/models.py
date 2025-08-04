@@ -9,13 +9,28 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for deleteNotes
+# Models for createNotes
 
 
-class DeleteNotesResponse(BaseModel):
-    """Response model for deleteNotes"""
+class CreateNotesRequest(BaseModel):
+    """Request model for createNotes"""
 
-    data: Optional["DeleteNotesResponseData"] = None
+    info: Optional["CreateNotesRequestInfo"] = Field(
+        description="A X Community Note is a note on a Post.", default_factory=dict
+    )
+    post_id: Optional[str] = None
+    test_mode: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreateNotesResponse(BaseModel):
+    """Response model for createNotes"""
+
+    data: Optional["CreateNotesResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     class Config:
@@ -24,26 +39,13 @@ class DeleteNotesResponse(BaseModel):
         populate_by_name = True
 
 
-class DeleteNotesResponseData(BaseModel):
-    """Nested model for DeleteNotesResponseData"""
+class CreateNotesRequestInfo(BaseModel):
+    """Nested model for CreateNotesRequestInfo"""
 
-    id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for searchNotesWritten
-
-
-class SearchNotesWrittenResponse(BaseModel):
-    """Response model for searchNotesWritten"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    meta: Optional["SearchNotesWrittenResponseMeta"] = None
+    classification: Optional[str] = None
+    misleading_tags: Optional[List] = None
+    text: Optional[str] = None
+    trustworthy_sources: Optional[bool] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -51,11 +53,10 @@ class SearchNotesWrittenResponse(BaseModel):
         populate_by_name = True
 
 
-class SearchNotesWrittenResponseMeta(BaseModel):
-    """Nested model for SearchNotesWrittenResponseMeta"""
+class CreateNotesResponseData(BaseModel):
+    """Nested model for CreateNotesResponseData"""
 
-    next_token: Optional[str] = None
-    result_count: Optional[int] = None
+    deleted: Optional[bool] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -108,28 +109,13 @@ class SearchForEligiblePostsResponseMeta(BaseModel):
         populate_by_name = True
 
 
-# Models for createNotes
+# Models for deleteNotes
 
 
-class CreateNotesRequest(BaseModel):
-    """Request model for createNotes"""
+class DeleteNotesResponse(BaseModel):
+    """Response model for deleteNotes"""
 
-    info: Optional["CreateNotesRequestInfo"] = Field(
-        description="A X Community Note is a note on a Post.", default_factory=dict
-    )
-    post_id: Optional[str] = None
-    test_mode: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateNotesResponse(BaseModel):
-    """Response model for createNotes"""
-
-    data: Optional["CreateNotesResponseData"] = Field(default_factory=dict)
+    data: Optional["DeleteNotesResponseData"] = None
     errors: Optional[List] = None
 
     class Config:
@@ -138,13 +124,10 @@ class CreateNotesResponse(BaseModel):
         populate_by_name = True
 
 
-class CreateNotesRequestInfo(BaseModel):
-    """Nested model for CreateNotesRequestInfo"""
+class DeleteNotesResponseData(BaseModel):
+    """Nested model for DeleteNotesResponseData"""
 
-    classification: Optional[str] = None
-    misleading_tags: Optional[List] = None
-    text: Optional[str] = None
-    trustworthy_sources: Optional[bool] = None
+    id: Optional[str] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -152,10 +135,27 @@ class CreateNotesRequestInfo(BaseModel):
         populate_by_name = True
 
 
-class CreateNotesResponseData(BaseModel):
-    """Nested model for CreateNotesResponseData"""
+# Models for searchNotesWritten
 
-    deleted: Optional[bool] = None
+
+class SearchNotesWrittenResponse(BaseModel):
+    """Response model for searchNotesWritten"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    meta: Optional["SearchNotesWrittenResponseMeta"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class SearchNotesWrittenResponseMeta(BaseModel):
+    """Nested model for SearchNotesWrittenResponseMeta"""
+
+    next_token: Optional[str] = None
+    result_count: Optional[int] = None
 
     class Config:
         """Pydantic model configuration"""

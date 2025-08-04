@@ -8,6 +8,7 @@ import requests
 from typing import Dict, List, Optional, Union, Any, Callable
 
 from .oauth2_auth import OAuth2PKCEAuth
+from .paginator import Cursor, cursor, PaginationError
 {% for tag in tags %}
 from .{{ tag|replace(" ", "_")|lower }}.client import {{ tag }}Client
 {% endfor %}
