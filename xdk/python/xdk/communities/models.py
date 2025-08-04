@@ -9,6 +9,33 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
+# Models for searchCommunities
+
+
+class SearchCommunitiesResponse(BaseModel):
+    """Response model for searchCommunities"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    meta: Optional["SearchCommunitiesResponseMeta"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class SearchCommunitiesResponseMeta(BaseModel):
+    """Nested model for SearchCommunitiesResponseMeta"""
+
+    next_token: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
 # Models for getCommunitiesById
 
 
@@ -32,33 +59,6 @@ class GetCommunitiesByIdResponseData(BaseModel):
     created_at: Optional[str] = None
     id: Optional[str] = None
     name: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for searchCommunities
-
-
-class SearchCommunitiesResponse(BaseModel):
-    """Response model for searchCommunities"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    meta: Optional["SearchCommunitiesResponseMeta"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class SearchCommunitiesResponseMeta(BaseModel):
-    """Nested model for SearchCommunitiesResponseMeta"""
-
-    next_token: Optional[str] = None
 
     class Config:
         """Pydantic model configuration"""

@@ -9,11 +9,11 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for getUsersPersonalizedTrends
+# Models for getTrendsByWoeid
 
 
-class GetUsersPersonalizedTrendsResponse(BaseModel):
-    """Response model for getUsersPersonalizedTrends"""
+class GetTrendsByWoeidResponse(BaseModel):
+    """Response model for getTrendsByWoeid"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
@@ -24,11 +24,11 @@ class GetUsersPersonalizedTrendsResponse(BaseModel):
         populate_by_name = True
 
 
-# Models for getTrendsByWoeid
+# Models for getUsersPersonalizedTrends
 
 
-class GetTrendsByWoeidResponse(BaseModel):
-    """Response model for getTrendsByWoeid"""
+class GetUsersPersonalizedTrendsResponse(BaseModel):
+    """Response model for getUsersPersonalizedTrends"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
