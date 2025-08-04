@@ -1,125 +1,127 @@
-/// Language-agnostic test generation for SDK code
-///
-/// This module provides functionality to generate comprehensive test suites
-/// for any language by analyzing OpenAPI specifications and generating
-/// language-neutral test specifications that can be rendered using templates.
-///
-/// # Overview
-///
-/// The `testing.rs` module is a **language-agnostic test generation system** that analyzes
-/// OpenAPI specifications and produces comprehensive test specifications that can be rendered
-/// into any target language using templates.
-///
-/// ## Architecture Overview
-///
-/// ```text
-/// OpenAPI Spec → testing.rs → TestSpecification → Templates → Language-specific tests
-/// ```
-///
-/// ## Core Components
-///
-/// ### Main Entry Point
-/// - `generate_test_specifications()` - Analyzes OpenAPI operations grouped by tags and produces a complete test specification
-///
-/// ### Four Test Categories Generated
-///
-/// #### Structural Tests (`StructuralTest`)
-/// - **Purpose**: Validate that generated SDK has correct structure and API surface
-/// - **Contains**: Client class names, method signatures, expected imports
-/// - **Example**: Ensures `UsersClient` has `get_user()` method with correct parameters
-///
-/// #### Contract Tests (`ContractTest`)
-/// - **Purpose**: Validate request/response contracts match OpenAPI specification
-/// - **Contains**: HTTP methods, paths, parameters, response schemas, security requirements
-/// - **Example**: Ensures `GET /users/{id}` returns expected JSON structure with required fields
-///
-/// #### Pagination Tests (`PaginationTest`)
-/// - **Purpose**: Test pagination functionality using cursor-based patterns
-/// - **Contains**: Token parameters, max results parameters, data field mappings
-/// - **Example**: Tests that `get_tweets()` works with `next_token` and `max_results`
-///
-/// #### Mock Scenarios (`MockScenario`)
-/// - **Purpose**: Integration testing with various HTTP response scenarios
-/// - **Contains**: Success (200), Not Found (404), Rate Limit (429) scenarios with mock data
-/// - **Example**: Tests how SDK handles rate limiting responses
-///
-/// ## Key Analysis Functions
-///
-/// ### Parameter Extraction
-/// ```rust
-/// extract_parameters() → (required_params, optional_params)
-/// ```
-/// - Analyzes OpenAPI parameter definitions
-/// - Categorizes by required/optional status
-/// - Extracts types, locations (query/path/header), descriptions
-///
-/// ### Pagination Detection
-/// ```rust
-/// detect_pagination_support() → bool
-/// ```
-/// - Scans for pagination indicators: `pagination_token`, `next_token`, `cursor`, `max_results`, `limit`
-/// - Automatically identifies which operations support pagination
-///
-/// ### Response Schema Analysis
-/// ```rust
-/// generate_response_schema() → ResponseSchema
-/// ```
-/// - Extracts expected response fields from OpenAPI schemas
-/// - Handles nested objects, arrays, required fields
-/// - Supports schema references and complex types
-///
-/// ### Smart Mock Data Generation
-/// ```rust
-/// generate_mock_from_schema() → serde_json::Value
-/// ```
-/// - Creates realistic mock data from OpenAPI schemas
-/// - Uses schema examples when available
-/// - Handles complex types: objects, arrays, oneOf, allOf, anyOf
-/// - Falls back to type-appropriate defaults
-///
-/// ## Language-Agnostic Design
-///
-/// The system generates **language-neutral specifications** that templates can consume:
-///
-/// ```rust
-/// // Language-neutral parameter representation
-/// TestParameter {
-///     name: "user_id",
-///     param_type: "string",     // Not Python-specific
-///     location: "path",
-///     required: true,
-/// }
-/// ```
-///
-/// Templates then convert this to language-specific code:
-/// - **Python**: `def get_user(self, user_id: str) -> UserResponse:`
-/// - **JavaScript**: `getUserId(userId: string): Promise<UserResponse>`
-/// - **Go**: `func (c *Client) GetUser(userID string) (*UserResponse, error)`
-///
-/// ## Integration with Generator
-///
-/// Used by the main generator at `generator.rs:128-140`:
-///
-/// ```rust
-/// let test_spec = generate_test_specifications(&operations_by_tag)?;
-/// let context = TestTemplateContext { tag, test_spec };
-///
-/// // Render language-specific tests using templates
-/// render_template("test_structure.j2", &context)?;
-/// render_template("test_contracts.j2", &context)?;
-/// render_template("test_pagination.j2", &context)?;
-/// ```
-///
-/// ## Smart Features
-///
-/// 1. **Schema-Aware Mock Generation**: Uses actual OpenAPI schemas to generate realistic test data
-/// 2. **Automatic Pagination Detection**: Identifies paginated endpoints without manual configuration
-/// 3. **Comprehensive Coverage**: Generates 3 test types per API tag (structure, contracts, pagination)
-/// 4. **Fallback Handling**: Graceful degradation when schema information is incomplete
-/// 5. **Security Context**: Extracts and includes security requirements in contract tests
-///
-/// This system enables the XDK generator to produce comprehensive, realistic test suites for any
-/// target language while maintaining consistency and leveraging the full OpenAPI specification.
+//! Language-agnostic test generation for SDK code
+//!
+//! This module provides functionality to generate comprehensive test suites
+//! for any language by analyzing OpenAPI specifications and generating
+//! language-neutral test specifications that can be rendered using templates.
+//!
+//! # Overview
+//!
+//! The `testing.rs` module is a **language-agnostic test generation system** that analyzes
+//! OpenAPI specifications and produces comprehensive test specifications that can be rendered
+//! into any target language using templates.
+//!
+//! ## Architecture Overview
+//!
+//! ```text
+//! OpenAPI Spec -> testing.rs -> TestSpecification -> Templates -> Language-specific tests
+//! ```
+//!
+//! ## Core Components
+//!
+//! ### Main Entry Point
+//! - `generate_test_specifications()` - Analyzes OpenAPI operations grouped by tags and produces a complete test specification
+//!
+//! ### Four Test Categories Generated
+//!
+//! #### Structural Tests (`StructuralTest`)
+//! - **Purpose**: Validate that generated SDK has correct structure and API surface
+//! - **Contains**: Client class names, method signatures, expected imports
+//! - **Example**: Ensures `UsersClient` has `get_user()` method with correct parameters
+//!
+//! #### Contract Tests (`ContractTest`)
+//! - **Purpose**: Validate request/response contracts match OpenAPI specification
+//! - **Contains**: HTTP methods, paths, parameters, response schemas, security requirements
+//! - **Example**: Ensures `GET /users/{id}` returns expected JSON structure with required fields
+//!
+//! #### Pagination Tests (`PaginationTest`)
+//! - **Purpose**: Test pagination functionality using cursor-based patterns
+//! - **Contains**: Token parameters, max results parameters, data field mappings
+//! - **Example**: Tests that `get_tweets()` works with `next_token` and `max_results`
+//!
+//! #### Mock Scenarios (`MockScenario`)
+//! - **Purpose**: Integration testing with various HTTP response scenarios
+//! - **Contains**: Success (200), Not Found (404), Rate Limit (429) scenarios with mock data
+//! - **Example**: Tests how SDK handles rate limiting responses
+//!
+//! ## Key Analysis Functions
+//!
+//! ### Parameter Extraction
+//! ```ignore
+//! extract_parameters() -> (required_params, optional_params)
+//! ```
+//! - Analyzes OpenAPI parameter definitions
+//! - Categorizes by required/optional status
+//! - Extracts types, locations (query/path/header), descriptions
+//!
+//! ### Pagination Detection
+//! ```ignore
+//! detect_pagination_support() -> bool
+//! ```
+//! - Scans for pagination indicators: `pagination_token`, `next_token`, `cursor`, `max_results`, `limit`
+//! - Automatically identifies which operations support pagination
+//!
+//! ### Response Schema Analysis
+//! ```ignore
+//! generate_response_schema() -> ResponseSchema
+//! ```
+//! - Extracts expected response fields from OpenAPI schemas
+//! - Handles nested objects, arrays, required fields
+//! - Supports schema references and complex types
+//!
+//! ### Smart Mock Data Generation
+//! ```ignore
+//! generate_mock_from_schema() -> serde_json::Value
+//! ```
+//! - Creates realistic mock data from OpenAPI schemas
+//! - Uses schema examples when available
+//! - Handles complex types: objects, arrays, oneOf, allOf, anyOf
+//! - Falls back to type-appropriate defaults
+//!
+//! ## Language-Agnostic Design
+//!
+//! The system generates **language-neutral specifications** that templates can consume:
+//!
+//! ```ignore
+//! // Language-neutral parameter representation
+//! TestParameter {
+//!     name: "user_id",
+//!     param_type: "string",
+//!     location: "path",
+//!     required: true,
+//! }
+//! ```
+//!
+//! Templates then convert this to language-specific code:
+//! - **Python**: `def get_user(self, user_id: str) -> UserResponse:`
+//! - **JavaScript**: `getUserId(userId: string): Promise<UserResponse>`
+//! - **Go**: `func (c *Client) GetUser(userID string) (*UserResponse, error)`
+//!
+//! ## Integration with Generator
+//!
+//! Used by the main generator at `generator.rs:128-140`:
+//!
+//! ```ignore
+//! use xdk_lib::utils::render_template;
+//!
+//! let test_spec = generate_test_specifications(&operations_by_tag)?;
+//! let context = TestTemplateContext { tag, test_spec };
+//!
+//! // Render language-specific tests using templates
+//! render_template("test_structure.j2", &context)?;
+//! render_template("test_contracts.j2", &context)?;
+//! render_template("test_pagination.j2", &context)?;
+//! ```
+//!
+//! ## Smart Features
+//!
+//! 1. **Schema-Aware Mock Generation**: Uses actual OpenAPI schemas to generate realistic test data
+//! 2. **Automatic Pagination Detection**: Identifies paginated endpoints without manual configuration
+//! 3. **Comprehensive Coverage**: Generates 3 test types per API tag (structure, contracts, pagination)
+//! 4. **Fallback Handling**: Graceful degradation when schema information is incomplete
+//! 5. **Security Context**: Extracts and includes security requirements in contract tests
+//!
+//! This system enables the XDK generator to produce comprehensive, realistic test suites for any
+//! target language while maintaining consistency and leveraging the full OpenAPI specification.
 use crate::models::OperationInfo;
 use openapi::{Parameter, RefOrValue, RequestBody, Schema, TypedSchema};
 use serde::Serialize;
@@ -310,10 +312,7 @@ pub fn generate_test_specifications(
 
 /// Generate structural test for a tag/client
 fn generate_structural_test(tag: &str, operations: &[OperationInfo]) -> StructuralTest {
-    let methods: Vec<MethodSignature> = operations
-        .iter()
-        .map(|op| generate_method_signature(op))
-        .collect();
+    let methods: Vec<MethodSignature> = operations.iter().map(generate_method_signature).collect();
 
     StructuralTest {
         client_name: format!("{}Client", tag),
@@ -385,21 +384,17 @@ fn extract_parameters(operation: &OperationInfo) -> (Vec<TestParameter>, Vec<Tes
 
 /// Extract parameter type from parameter schema
 fn extract_param_type(param: &Parameter) -> String {
-    if let Some(schema) = &param.schema {
-        match schema {
-            RefOrValue::Value(schema) => match schema {
-                Schema::Typed(typed) => match typed.as_ref() {
-                    TypedSchema::String(_) => "string".to_string(),
-                    TypedSchema::Integer(_) => "integer".to_string(),
-                    TypedSchema::Number(_) => "number".to_string(),
-                    TypedSchema::Boolean(_) => "boolean".to_string(),
-                    TypedSchema::Array(_) => "array".to_string(),
-                    TypedSchema::Object(_) => "object".to_string(),
-                },
-                _ => "any".to_string(),
-            },
-            RefOrValue::Reference { .. } => "reference".to_string(),
+    if let Some(RefOrValue::Value(Schema::Typed(typed))) = &param.schema {
+        match typed.as_ref() {
+            TypedSchema::String(_) => "string".to_string(),
+            TypedSchema::Integer(_) => "integer".to_string(),
+            TypedSchema::Number(_) => "number".to_string(),
+            TypedSchema::Boolean(_) => "boolean".to_string(),
+            TypedSchema::Array(_) => "array".to_string(),
+            TypedSchema::Object(_) => "object".to_string(),
         }
+    } else if let Some(RefOrValue::Reference { .. }) = &param.schema {
+        "reference".to_string()
     } else {
         "any".to_string()
     }
@@ -474,26 +469,24 @@ fn extract_fields_from_schema(schema: &RefOrValue<Schema>) -> Vec<ResponseField>
     let mut fields = Vec::new();
 
     match schema {
-        RefOrValue::Value(schema) => match schema {
-            Schema::Typed(typed) => match typed.as_ref() {
-                TypedSchema::Object(obj) => {
+        RefOrValue::Value(schema) => {
+            if let Schema::Typed(typed) = schema {
+                if let TypedSchema::Object(obj) = typed.as_ref() {
                     if let Some(properties) = &obj.properties {
                         for (name, prop_schema) in properties {
                             fields.push(ResponseField {
-                                        name: name.clone(),
-                                        field_type: get_schema_type(prop_schema),
-                                        required: obj.required.as_ref()
-                                            .map(|req| req.contains(name))
-                                            .unwrap_or(false),
-                                        is_array: matches!(prop_schema, RefOrValue::Value(Schema::Typed(t)) if matches!(t.as_ref(), TypedSchema::Array(_))),
-                                    });
+                                name: name.clone(),
+                                field_type: get_schema_type(prop_schema),
+                                required: obj.required.as_ref()
+                                    .map(|req| req.contains(name))
+                                    .unwrap_or(false),
+                                is_array: matches!(prop_schema, RefOrValue::Value(Schema::Typed(t)) if matches!(t.as_ref(), TypedSchema::Array(_))),
+                            });
                         }
                     }
                 }
-                _ => {}
-            },
-            _ => {}
-        },
+            }
+        }
         RefOrValue::Reference { .. } => {
             // For references, we'd need to resolve them from components
             // For now, add a generic field

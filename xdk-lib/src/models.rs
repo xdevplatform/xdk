@@ -1,3 +1,4 @@
+use crate::testing::TestSpecification;
 /// Common data models for SDK generation
 ///
 /// This file contains the core data models that are used across different language generators.
@@ -7,7 +8,6 @@
 use openapi::{Parameter, RefOrValue, RequestBody, Response, SecurityRequirement, StatusCode};
 use serde::Serialize;
 use std::collections::HashMap;
-use crate::testing::TestSpecification;
 /// Information about an operation in the OpenAPI spec
 #[derive(Debug, Serialize, Clone)]
 pub struct OperationInfo {
