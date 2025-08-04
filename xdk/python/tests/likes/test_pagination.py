@@ -1,0 +1,51 @@
+"""
+Auto-generated pagination tests for Likes client.
+
+This module contains tests that validate pagination functionality
+using the Cursor class for methods that support pagination.
+
+Generated automatically - do not edit manually.
+"""
+
+import pytest
+from unittest.mock import Mock, patch
+from xdk.likes.client import LikesClient
+from xdk import Client, Cursor, cursor, PaginationError
+
+
+class TestLikesPagination:
+    """Test pagination functionality for LikesClient."""
+
+    def setup_class(self):
+        """Set up test fixtures."""
+        self.client = Client(base_url="https://api.example.com")
+        self.likes_client = getattr(self.client, "likes")
+
+    def test_non_paginatable_method_raises_error(self):
+        """Test that non-paginatable methods raise PaginationError."""
+
+        # Create a mock method that doesn't support pagination
+        def non_paginatable_method(id: str) -> dict:
+            return {"id": id}
+
+        with pytest.raises(PaginationError):
+            cursor(non_paginatable_method)
+
+        def non_paginatable_method(id: str) -> dict:
+            return {"id": id}
+
+        with pytest.raises(PaginationError):
+            cursor(non_paginatable_method)
+
+    def test_cursor_class_functionality(self):
+        """Test basic Cursor class functionality."""
+
+        # Test that Cursor can be imported and instantiated
+        from xdk.paginator import Cursor
+
+        assert Cursor is not None
+
+        # Test cursor factory function
+        from xdk.paginator import cursor as cursor_factory
+
+        assert cursor_factory is not None

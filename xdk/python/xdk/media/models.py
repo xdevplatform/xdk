@@ -9,93 +9,10 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for finalizeMediaUpload
-
-
-class FinalizeMediaUploadResponse(BaseModel):
-    """Response model for finalizeMediaUpload"""
-
-    data: Optional["FinalizeMediaUploadResponseData"] = Field(default_factory=dict)
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class FinalizeMediaUploadResponseData(BaseModel):
-    """Nested model for FinalizeMediaUploadResponseData"""
-
-    expires_after_secs: Optional[int] = None
-    id: Optional[str] = None
-    media_key: Optional[str] = None
-    processing_info: Optional["FinalizeMediaUploadResponseDataProcessing_info"] = None
-    size: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class FinalizeMediaUploadResponseDataProcessing_info(BaseModel):
-    """Nested model for FinalizeMediaUploadResponseDataProcessing_info"""
-
-    check_after_secs: Optional[int] = None
-    progress_percent: Optional[int] = None
-    state: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for appendMediaUpload
-
-
-class AppendMediaUploadRequest(BaseModel):
-    """Request model for appendMediaUpload"""
-
-    media: Optional[str] = Field(default=None, description="The file to upload.")
-    segment_index: Optional[Any] = Field(default=None)
-    media: Optional[str] = Field(default=None, description="The file to upload.")
-    segment_index: Optional[Any] = Field(default=None)
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class AppendMediaUploadResponse(BaseModel):
-    """Response model for appendMediaUpload"""
-
-    data: Optional["AppendMediaUploadResponseData"] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class AppendMediaUploadResponseData(BaseModel):
-    """Nested model for AppendMediaUploadResponseData"""
-
-    expires_at: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
 # Models for getMediaByMediaKeys
 
 
-class GetMediaByMediaKeysResponse(BaseModel):
+class GetmediabymediakeysResponse(BaseModel):
     """Response model for getMediaByMediaKeys"""
 
     data: Optional[List] = None
@@ -107,13 +24,13 @@ class GetMediaByMediaKeysResponse(BaseModel):
         populate_by_name = True
 
 
-# Models for getMediaByMediaKey
+# Models for finalizeMediaUpload
 
 
-class GetMediaByMediaKeyResponse(BaseModel):
-    """Response model for getMediaByMediaKey"""
+class FinalizemediauploadResponse(BaseModel):
+    """Response model for finalizeMediaUpload"""
 
-    data: Optional["GetMediaByMediaKeyResponseData"] = Field(default_factory=dict)
+    data: Optional["FinalizemediauploadResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     class Config:
@@ -122,8 +39,51 @@ class GetMediaByMediaKeyResponse(BaseModel):
         populate_by_name = True
 
 
-class GetMediaByMediaKeyResponseData(BaseModel):
-    """Nested model for GetMediaByMediaKeyResponseData"""
+class FinalizemediauploadResponseData(BaseModel):
+    """Nested model for FinalizemediauploadResponseData"""
+
+    expires_after_secs: Optional[int] = None
+    id: Optional[str] = None
+    media_key: Optional[str] = None
+    processing_info: Optional["FinalizemediauploadResponseDataProcessingInfo"] = None
+    size: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class FinalizemediauploadResponseDataProcessingInfo(BaseModel):
+    """Nested model for FinalizemediauploadResponseDataProcessingInfo"""
+
+    check_after_secs: Optional[int] = None
+    progress_percent: Optional[int] = None
+    state: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getMediaByMediaKey
+
+
+class GetmediabymediakeyResponse(BaseModel):
+    """Response model for getMediaByMediaKey"""
+
+    data: Optional["GetmediabymediakeyResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetmediabymediakeyResponseData(BaseModel):
+    """Nested model for GetmediabymediakeyResponseData"""
 
     height: Optional[int] = None
     media_key: Optional[str] = None
@@ -136,28 +96,13 @@ class GetMediaByMediaKeyResponseData(BaseModel):
         populate_by_name = True
 
 
-# Models for getMediaAnalytics
-
-
-class GetMediaAnalyticsResponse(BaseModel):
-    """Response model for getMediaAnalytics"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
 # Models for getMediaUploadStatus
 
 
-class GetMediaUploadStatusResponse(BaseModel):
+class GetmediauploadstatusResponse(BaseModel):
     """Response model for getMediaUploadStatus"""
 
-    data: Optional["GetMediaUploadStatusResponseData"] = Field(default_factory=dict)
+    data: Optional["GetmediauploadstatusResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     class Config:
@@ -166,13 +111,13 @@ class GetMediaUploadStatusResponse(BaseModel):
         populate_by_name = True
 
 
-class GetMediaUploadStatusResponseData(BaseModel):
-    """Nested model for GetMediaUploadStatusResponseData"""
+class GetmediauploadstatusResponseData(BaseModel):
+    """Nested model for GetmediauploadstatusResponseData"""
 
     expires_after_secs: Optional[int] = None
     id: Optional[str] = None
     media_key: Optional[str] = None
-    processing_info: Optional["GetMediaUploadStatusResponseDataProcessing_info"] = None
+    processing_info: Optional["GetmediauploadstatusResponseDataProcessingInfo"] = None
     size: Optional[int] = None
 
     class Config:
@@ -181,8 +126,8 @@ class GetMediaUploadStatusResponseData(BaseModel):
         populate_by_name = True
 
 
-class GetMediaUploadStatusResponseDataProcessing_info(BaseModel):
-    """Nested model for GetMediaUploadStatusResponseDataProcessing_info"""
+class GetmediauploadstatusResponseDataProcessingInfo(BaseModel):
+    """Nested model for GetmediauploadstatusResponseDataProcessingInfo"""
 
     check_after_secs: Optional[int] = None
     progress_percent: Optional[int] = None
@@ -197,7 +142,7 @@ class GetMediaUploadStatusResponseDataProcessing_info(BaseModel):
 # Models for mediaUpload
 
 
-class MediaUploadRequest(BaseModel):
+class MediauploadRequest(BaseModel):
     """Request model for mediaUpload"""
 
     additional_owners: Optional[List] = None
@@ -212,10 +157,10 @@ class MediaUploadRequest(BaseModel):
         populate_by_name = True
 
 
-class MediaUploadResponse(BaseModel):
+class MediauploadResponse(BaseModel):
     """Response model for mediaUpload"""
 
-    data: Optional["MediaUploadResponseData"] = Field(default_factory=dict)
+    data: Optional["MediauploadResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     class Config:
@@ -224,13 +169,13 @@ class MediaUploadResponse(BaseModel):
         populate_by_name = True
 
 
-class MediaUploadResponseData(BaseModel):
-    """Nested model for MediaUploadResponseData"""
+class MediauploadResponseData(BaseModel):
+    """Nested model for MediauploadResponseData"""
 
     expires_after_secs: Optional[int] = None
     id: Optional[str] = None
     media_key: Optional[str] = None
-    processing_info: Optional["MediaUploadResponseDataProcessing_info"] = None
+    processing_info: Optional["MediauploadResponseDataProcessingInfo"] = None
     size: Optional[int] = None
 
     class Config:
@@ -239,497 +184,8 @@ class MediaUploadResponseData(BaseModel):
         populate_by_name = True
 
 
-class MediaUploadResponseDataProcessing_info(BaseModel):
-    """Nested model for MediaUploadResponseDataProcessing_info"""
-
-    check_after_secs: Optional[int] = None
-    progress_percent: Optional[int] = None
-    state: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for createMediaMetadata
-
-
-class CreateMediaMetadataRequest(BaseModel):
-    """Request model for createMediaMetadata"""
-
-    id: Optional[str] = None
-    metadata: Optional["CreateMediaMetadataRequestMetadata"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponse(BaseModel):
-    """Response model for createMediaMetadata"""
-
-    data: Optional["CreateMediaMetadataResponseData"] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadata(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadata"""
-
-    allow_download_status: Optional[
-        "CreateMediaMetadataRequestMetadataAllow_download_status"
-    ] = None
-    alt_text: Optional["CreateMediaMetadataRequestMetadataAlt_text"] = None
-    audience_policy: Optional["CreateMediaMetadataRequestMetadataAudience_policy"] = (
-        None
-    )
-    content_expiration: Optional[
-        "CreateMediaMetadataRequestMetadataContent_expiration"
-    ] = None
-    domain_restrictions: Optional[
-        "CreateMediaMetadataRequestMetadataDomain_restrictions"
-    ] = None
-    found_media_origin: Optional[
-        "CreateMediaMetadataRequestMetadataFound_media_origin"
-    ] = None
-    geo_restrictions: Any = None
-    management_info: Optional["CreateMediaMetadataRequestMetadataManagement_info"] = (
-        None
-    )
-    preview_image: Optional["CreateMediaMetadataRequestMetadataPreview_image"] = None
-    sensitive_media_warning: Optional[
-        "CreateMediaMetadataRequestMetadataSensitive_media_warning"
-    ] = None
-    shared_info: Optional["CreateMediaMetadataRequestMetadataShared_info"] = None
-    sticker_info: Optional["CreateMediaMetadataRequestMetadataSticker_info"] = None
-    upload_source: Optional["CreateMediaMetadataRequestMetadataUpload_source"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadataAllow_download_status(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadataAllow_download_status"""
-
-    allow_download: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadataAlt_text(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadataAlt_text"""
-
-    text: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadataAudience_policy(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadataAudience_policy"""
-
-    creator_subscriptions: Optional[List] = None
-    x_subscriptions: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadataContent_expiration(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadataContent_expiration"""
-
-    timestamp_sec: Optional[float] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadataDomain_restrictions(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadataDomain_restrictions"""
-
-    whitelist: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadataFound_media_origin(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadataFound_media_origin"""
-
-    id: Optional[str] = None
-    provider: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadataManagement_info(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadataManagement_info"""
-
-    managed: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadataPreview_image(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadataPreview_image"""
-
-    media_key: Optional["CreateMediaMetadataRequestMetadataPreview_imageMedia_key"] = (
-        None
-    )
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadataPreview_imageMedia_key(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadataPreview_imageMedia_key"""
-
-    media: Optional[str] = None
-    media_category: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadataSensitive_media_warning(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadataSensitive_media_warning"""
-
-    adult_content: Optional[bool] = None
-    graphic_violence: Optional[bool] = None
-    other: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadataShared_info(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadataShared_info"""
-
-    shared: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadataSticker_info(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadataSticker_info"""
-
-    stickers: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataRequestMetadataUpload_source(BaseModel):
-    """Nested model for CreateMediaMetadataRequestMetadataUpload_source"""
-
-    upload_source: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseData(BaseModel):
-    """Nested model for CreateMediaMetadataResponseData"""
-
-    associated_metadata: Optional[
-        "CreateMediaMetadataResponseDataAssociated_metadata"
-    ] = None
-    id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadata(BaseModel):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadata"""
-
-    allow_download_status: Optional[
-        "CreateMediaMetadataResponseDataAssociated_metadataAllow_download_status"
-    ] = None
-    alt_text: Optional["CreateMediaMetadataResponseDataAssociated_metadataAlt_text"] = (
-        None
-    )
-    audience_policy: Optional[
-        "CreateMediaMetadataResponseDataAssociated_metadataAudience_policy"
-    ] = None
-    content_expiration: Optional[
-        "CreateMediaMetadataResponseDataAssociated_metadataContent_expiration"
-    ] = None
-    domain_restrictions: Optional[
-        "CreateMediaMetadataResponseDataAssociated_metadataDomain_restrictions"
-    ] = None
-    found_media_origin: Optional[
-        "CreateMediaMetadataResponseDataAssociated_metadataFound_media_origin"
-    ] = None
-    geo_restrictions: Any = None
-    management_info: Optional[
-        "CreateMediaMetadataResponseDataAssociated_metadataManagement_info"
-    ] = None
-    preview_image: Optional[
-        "CreateMediaMetadataResponseDataAssociated_metadataPreview_image"
-    ] = None
-    sensitive_media_warning: Optional[
-        "CreateMediaMetadataResponseDataAssociated_metadataSensitive_media_warning"
-    ] = None
-    shared_info: Optional[
-        "CreateMediaMetadataResponseDataAssociated_metadataShared_info"
-    ] = None
-    sticker_info: Optional[
-        "CreateMediaMetadataResponseDataAssociated_metadataSticker_info"
-    ] = None
-    upload_source: Optional[
-        "CreateMediaMetadataResponseDataAssociated_metadataUpload_source"
-    ] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadataAllow_download_status(
-    BaseModel
-):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadataAllow_download_status"""
-
-    allow_download: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadataAlt_text(BaseModel):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadataAlt_text"""
-
-    text: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadataAudience_policy(BaseModel):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadataAudience_policy"""
-
-    creator_subscriptions: Optional[List] = None
-    x_subscriptions: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadataContent_expiration(BaseModel):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadataContent_expiration"""
-
-    timestamp_sec: Optional[float] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadataDomain_restrictions(BaseModel):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadataDomain_restrictions"""
-
-    whitelist: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadataFound_media_origin(BaseModel):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadataFound_media_origin"""
-
-    id: Optional[str] = None
-    provider: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadataManagement_info(BaseModel):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadataManagement_info"""
-
-    managed: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadataPreview_image(BaseModel):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadataPreview_image"""
-
-    media_key: Optional[
-        "CreateMediaMetadataResponseDataAssociated_metadataPreview_imageMedia_key"
-    ] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadataPreview_imageMedia_key(
-    BaseModel
-):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadataPreview_imageMedia_key"""
-
-    media: Optional[str] = None
-    media_category: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadataSensitive_media_warning(
-    BaseModel
-):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadataSensitive_media_warning"""
-
-    adult_content: Optional[bool] = None
-    graphic_violence: Optional[bool] = None
-    other: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadataShared_info(BaseModel):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadataShared_info"""
-
-    shared: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadataSticker_info(BaseModel):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadataSticker_info"""
-
-    stickers: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class CreateMediaMetadataResponseDataAssociated_metadataUpload_source(BaseModel):
-    """Nested model for CreateMediaMetadataResponseDataAssociated_metadataUpload_source"""
-
-    upload_source: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for initializeMediaUpload
-
-
-class InitializeMediaUploadRequest(BaseModel):
-    """Request model for initializeMediaUpload"""
-
-    additional_owners: Optional[List] = None
-    media_category: Optional[str] = None
-    media_type: Optional[str] = None
-    shared: Optional[bool] = None
-    total_bytes: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class InitializeMediaUploadResponse(BaseModel):
-    """Response model for initializeMediaUpload"""
-
-    data: Optional["InitializeMediaUploadResponseData"] = Field(default_factory=dict)
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class InitializeMediaUploadResponseData(BaseModel):
-    """Nested model for InitializeMediaUploadResponseData"""
-
-    expires_after_secs: Optional[int] = None
-    id: Optional[str] = None
-    media_key: Optional[str] = None
-    processing_info: Optional["InitializeMediaUploadResponseDataProcessing_info"] = None
-    size: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class InitializeMediaUploadResponseDataProcessing_info(BaseModel):
-    """Nested model for InitializeMediaUploadResponseDataProcessing_info"""
+class MediauploadResponseDataProcessingInfo(BaseModel):
+    """Nested model for MediauploadResponseDataProcessingInfo"""
 
     check_after_secs: Optional[int] = None
     progress_percent: Optional[int] = None
@@ -744,12 +200,12 @@ class InitializeMediaUploadResponseDataProcessing_info(BaseModel):
 # Models for createMediaSubtitles
 
 
-class CreateMediaSubtitlesRequest(BaseModel):
+class CreatemediasubtitlesRequest(BaseModel):
     """Request model for createMediaSubtitles"""
 
     id: Optional[str] = None
     media_category: Optional[str] = None
-    subtitles: Optional["CreateMediaSubtitlesRequestSubtitles"] = None
+    subtitles: Optional["CreatemediasubtitlesRequestSubtitles"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -757,10 +213,10 @@ class CreateMediaSubtitlesRequest(BaseModel):
         populate_by_name = True
 
 
-class CreateMediaSubtitlesResponse(BaseModel):
+class CreatemediasubtitlesResponse(BaseModel):
     """Response model for createMediaSubtitles"""
 
-    data: Optional["CreateMediaSubtitlesResponseData"] = Field(default_factory=dict)
+    data: Optional["CreatemediasubtitlesResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     class Config:
@@ -769,8 +225,8 @@ class CreateMediaSubtitlesResponse(BaseModel):
         populate_by_name = True
 
 
-class CreateMediaSubtitlesRequestSubtitles(BaseModel):
-    """Nested model for CreateMediaSubtitlesRequestSubtitles"""
+class CreatemediasubtitlesRequestSubtitles(BaseModel):
+    """Nested model for CreatemediasubtitlesRequestSubtitles"""
 
     display_name: Optional[str] = None
     id: Optional[str] = None
@@ -782,8 +238,8 @@ class CreateMediaSubtitlesRequestSubtitles(BaseModel):
         populate_by_name = True
 
 
-class CreateMediaSubtitlesResponseData(BaseModel):
-    """Nested model for CreateMediaSubtitlesResponseData"""
+class CreatemediasubtitlesResponseData(BaseModel):
+    """Nested model for CreatemediasubtitlesResponseData"""
 
     associated_subtitles: Optional[List] = None
     id: Optional[str] = None
@@ -798,7 +254,7 @@ class CreateMediaSubtitlesResponseData(BaseModel):
 # Models for deleteMediaSubtitles
 
 
-class DeleteMediaSubtitlesRequest(BaseModel):
+class DeletemediasubtitlesRequest(BaseModel):
     """Request model for deleteMediaSubtitles"""
 
     id: Optional[str] = None
@@ -811,10 +267,10 @@ class DeleteMediaSubtitlesRequest(BaseModel):
         populate_by_name = True
 
 
-class DeleteMediaSubtitlesResponse(BaseModel):
+class DeletemediasubtitlesResponse(BaseModel):
     """Response model for deleteMediaSubtitles"""
 
-    data: Optional["DeleteMediaSubtitlesResponseData"] = Field(default_factory=dict)
+    data: Optional["DeletemediasubtitlesResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     class Config:
@@ -823,10 +279,542 @@ class DeleteMediaSubtitlesResponse(BaseModel):
         populate_by_name = True
 
 
-class DeleteMediaSubtitlesResponseData(BaseModel):
-    """Nested model for DeleteMediaSubtitlesResponseData"""
+class DeletemediasubtitlesResponseData(BaseModel):
+    """Nested model for DeletemediasubtitlesResponseData"""
 
     deleted: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for createMediaMetadata
+
+
+class CreatemediametadataRequest(BaseModel):
+    """Request model for createMediaMetadata"""
+
+    id: Optional[str] = None
+    metadata: Optional["CreatemediametadataRequestMetadata"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponse(BaseModel):
+    """Response model for createMediaMetadata"""
+
+    data: Optional["CreatemediametadataResponseData"] = None
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadata(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadata"""
+
+    allow_download_status: Optional[
+        "CreatemediametadataRequestMetadataAllowDownloadStatus"
+    ] = None
+    alt_text: Optional["CreatemediametadataRequestMetadataAltText"] = None
+    audience_policy: Optional["CreatemediametadataRequestMetadataAudiencePolicy"] = None
+    content_expiration: Optional[
+        "CreatemediametadataRequestMetadataContentExpiration"
+    ] = None
+    domain_restrictions: Optional[
+        "CreatemediametadataRequestMetadataDomainRestrictions"
+    ] = None
+    found_media_origin: Optional[
+        "CreatemediametadataRequestMetadataFoundMediaOrigin"
+    ] = None
+    geo_restrictions: Any = None
+    management_info: Optional["CreatemediametadataRequestMetadataManagementInfo"] = None
+    preview_image: Optional["CreatemediametadataRequestMetadataPreviewImage"] = None
+    sensitive_media_warning: Optional[
+        "CreatemediametadataRequestMetadataSensitiveMediaWarning"
+    ] = None
+    shared_info: Optional["CreatemediametadataRequestMetadataSharedInfo"] = None
+    sticker_info: Optional["CreatemediametadataRequestMetadataStickerInfo"] = None
+    upload_source: Optional["CreatemediametadataRequestMetadataUploadSource"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadataAllowDownloadStatus(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadataAllowDownloadStatus"""
+
+    allow_download: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadataAltText(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadataAltText"""
+
+    text: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadataAudiencePolicy(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadataAudiencePolicy"""
+
+    creator_subscriptions: Optional[List] = None
+    x_subscriptions: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadataContentExpiration(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadataContentExpiration"""
+
+    timestamp_sec: Optional[float] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadataDomainRestrictions(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadataDomainRestrictions"""
+
+    whitelist: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadataFoundMediaOrigin(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadataFoundMediaOrigin"""
+
+    id: Optional[str] = None
+    provider: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadataManagementInfo(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadataManagementInfo"""
+
+    managed: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadataPreviewImage(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadataPreviewImage"""
+
+    media_key: Optional["CreatemediametadataRequestMetadataPreviewImageMediaKey"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadataPreviewImageMediaKey(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadataPreviewImageMediaKey"""
+
+    media: Optional[str] = None
+    media_category: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadataSensitiveMediaWarning(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadataSensitiveMediaWarning"""
+
+    adult_content: Optional[bool] = None
+    graphic_violence: Optional[bool] = None
+    other: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadataSharedInfo(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadataSharedInfo"""
+
+    shared: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadataStickerInfo(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadataStickerInfo"""
+
+    stickers: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataRequestMetadataUploadSource(BaseModel):
+    """Nested model for CreatemediametadataRequestMetadataUploadSource"""
+
+    upload_source: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseData(BaseModel):
+    """Nested model for CreatemediametadataResponseData"""
+
+    associated_metadata: Optional[
+        "CreatemediametadataResponseDataAssociatedMetadata"
+    ] = None
+    id: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadata(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadata"""
+
+    allow_download_status: Optional[
+        "CreatemediametadataResponseDataAssociatedMetadataAllowDownloadStatus"
+    ] = None
+    alt_text: Optional["CreatemediametadataResponseDataAssociatedMetadataAltText"] = (
+        None
+    )
+    audience_policy: Optional[
+        "CreatemediametadataResponseDataAssociatedMetadataAudiencePolicy"
+    ] = None
+    content_expiration: Optional[
+        "CreatemediametadataResponseDataAssociatedMetadataContentExpiration"
+    ] = None
+    domain_restrictions: Optional[
+        "CreatemediametadataResponseDataAssociatedMetadataDomainRestrictions"
+    ] = None
+    found_media_origin: Optional[
+        "CreatemediametadataResponseDataAssociatedMetadataFoundMediaOrigin"
+    ] = None
+    geo_restrictions: Any = None
+    management_info: Optional[
+        "CreatemediametadataResponseDataAssociatedMetadataManagementInfo"
+    ] = None
+    preview_image: Optional[
+        "CreatemediametadataResponseDataAssociatedMetadataPreviewImage"
+    ] = None
+    sensitive_media_warning: Optional[
+        "CreatemediametadataResponseDataAssociatedMetadataSensitiveMediaWarning"
+    ] = None
+    shared_info: Optional[
+        "CreatemediametadataResponseDataAssociatedMetadataSharedInfo"
+    ] = None
+    sticker_info: Optional[
+        "CreatemediametadataResponseDataAssociatedMetadataStickerInfo"
+    ] = None
+    upload_source: Optional[
+        "CreatemediametadataResponseDataAssociatedMetadataUploadSource"
+    ] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadataAllowDownloadStatus(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadataAllowDownloadStatus"""
+
+    allow_download: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadataAltText(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadataAltText"""
+
+    text: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadataAudiencePolicy(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadataAudiencePolicy"""
+
+    creator_subscriptions: Optional[List] = None
+    x_subscriptions: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadataContentExpiration(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadataContentExpiration"""
+
+    timestamp_sec: Optional[float] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadataDomainRestrictions(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadataDomainRestrictions"""
+
+    whitelist: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadataFoundMediaOrigin(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadataFoundMediaOrigin"""
+
+    id: Optional[str] = None
+    provider: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadataManagementInfo(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadataManagementInfo"""
+
+    managed: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadataPreviewImage(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadataPreviewImage"""
+
+    media_key: Optional[
+        "CreatemediametadataResponseDataAssociatedMetadataPreviewImageMediaKey"
+    ] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadataPreviewImageMediaKey(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadataPreviewImageMediaKey"""
+
+    media: Optional[str] = None
+    media_category: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadataSensitiveMediaWarning(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadataSensitiveMediaWarning"""
+
+    adult_content: Optional[bool] = None
+    graphic_violence: Optional[bool] = None
+    other: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadataSharedInfo(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadataSharedInfo"""
+
+    shared: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadataStickerInfo(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadataStickerInfo"""
+
+    stickers: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class CreatemediametadataResponseDataAssociatedMetadataUploadSource(BaseModel):
+    """Nested model for CreatemediametadataResponseDataAssociatedMetadataUploadSource"""
+
+    upload_source: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for initializeMediaUpload
+
+
+class InitializemediauploadRequest(BaseModel):
+    """Request model for initializeMediaUpload"""
+
+    additional_owners: Optional[List] = None
+    media_category: Optional[str] = None
+    media_type: Optional[str] = None
+    shared: Optional[bool] = None
+    total_bytes: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class InitializemediauploadResponse(BaseModel):
+    """Response model for initializeMediaUpload"""
+
+    data: Optional["InitializemediauploadResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class InitializemediauploadResponseData(BaseModel):
+    """Nested model for InitializemediauploadResponseData"""
+
+    expires_after_secs: Optional[int] = None
+    id: Optional[str] = None
+    media_key: Optional[str] = None
+    processing_info: Optional["InitializemediauploadResponseDataProcessingInfo"] = None
+    size: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class InitializemediauploadResponseDataProcessingInfo(BaseModel):
+    """Nested model for InitializemediauploadResponseDataProcessingInfo"""
+
+    check_after_secs: Optional[int] = None
+    progress_percent: Optional[int] = None
+    state: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for appendMediaUpload
+
+
+class AppendmediauploadRequest(BaseModel):
+    """Request model for appendMediaUpload"""
+
+    media: Optional[str] = Field(default=None, description="The file to upload.")
+    segment_index: Optional[Any] = Field(default=None)
+    media: Optional[str] = Field(default=None, description="The file to upload.")
+    segment_index: Optional[Any] = Field(default=None)
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class AppendmediauploadResponse(BaseModel):
+    """Response model for appendMediaUpload"""
+
+    data: Optional["AppendmediauploadResponseData"] = None
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class AppendmediauploadResponseData(BaseModel):
+    """Nested model for AppendmediauploadResponseData"""
+
+    expires_at: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getMediaAnalytics
+
+
+class GetmediaanalyticsResponse(BaseModel):
+    """Response model for getMediaAnalytics"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""

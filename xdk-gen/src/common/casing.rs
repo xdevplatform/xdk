@@ -26,16 +26,21 @@ pub fn snake_case(value: &str) -> String {
 /// MiniJinja filter for converting a string to PascalCase
 pub fn pascal_case(value: &str) -> String {
     let mut result = String::new();
-    let mut chars = value.chars();
+    let mut capitalize_next = true;
 
-    // Capitalize the first character
-    if let Some(first_char) = chars.next() {
-        result.push(first_char.to_ascii_uppercase());
-    }
-
-    // Keep the rest of the string as-is
-    for c in chars {
-        result.push(c);
+    for c in value.chars() {
+        if c == '_' {
+            // Skip underscores and capitalize the next character
+            capitalize_next = true;
+        } else if c.is_alphanumeric() {
+            if capitalize_next {
+                result.push(c.to_ascii_uppercase());
+                capitalize_next = false;
+            } else {
+                result.push(c.to_ascii_lowercase());
+            }
+        }
+        // Skip non-alphanumeric characters (except underscores handled above)
     }
 
     result

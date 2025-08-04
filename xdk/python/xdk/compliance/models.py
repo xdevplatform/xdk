@@ -9,13 +9,28 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for streamUsersCompliance
+# Models for streamPostsCompliance
 
 
-class StreamUsersComplianceResponse(BaseModel):
-    """Response model for streamUsersCompliance"""
+class StreampostscomplianceResponse(BaseModel):
+    """Response model for streamPostsCompliance"""
 
-    data: Optional[Any] = Field(default=None, description="User compliance data.")
+    data: Optional[Any] = Field(default=None, description="Tweet compliance data.")
+    errors: Optional[List] = Field(default=None)
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for streamLikesCompliance
+
+
+class StreamlikescomplianceResponse(BaseModel):
+    """Response model for streamLikesCompliance"""
+
+    data: Optional[Dict[str, Any]] = Field(default=None)
     errors: Optional[List] = Field(default=None)
 
     class Config:
@@ -27,10 +42,10 @@ class StreamUsersComplianceResponse(BaseModel):
 # Models for getComplianceJobsById
 
 
-class GetComplianceJobsByIdResponse(BaseModel):
+class GetcompliancejobsbyidResponse(BaseModel):
     """Response model for getComplianceJobsById"""
 
-    data: Optional["GetComplianceJobsByIdResponseData"] = Field(default_factory=dict)
+    data: Optional["GetcompliancejobsbyidResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     class Config:
@@ -39,8 +54,8 @@ class GetComplianceJobsByIdResponse(BaseModel):
         populate_by_name = True
 
 
-class GetComplianceJobsByIdResponseData(BaseModel):
-    """Nested model for GetComplianceJobsByIdResponseData"""
+class GetcompliancejobsbyidResponseData(BaseModel):
+    """Nested model for GetcompliancejobsbyidResponseData"""
 
     created_at: Optional[str] = None
     download_expires_at: Optional[str] = None
@@ -61,7 +76,7 @@ class GetComplianceJobsByIdResponseData(BaseModel):
 # Models for streamLabelsCompliance
 
 
-class StreamLabelsComplianceResponse(BaseModel):
+class StreamlabelscomplianceResponse(BaseModel):
     """Response model for streamLabelsCompliance"""
 
     data: Optional[Any] = Field(default=None, description="Tweet label data.")
@@ -73,28 +88,13 @@ class StreamLabelsComplianceResponse(BaseModel):
         populate_by_name = True
 
 
-# Models for streamPostsCompliance
+# Models for streamUsersCompliance
 
 
-class StreamPostsComplianceResponse(BaseModel):
-    """Response model for streamPostsCompliance"""
+class StreamuserscomplianceResponse(BaseModel):
+    """Response model for streamUsersCompliance"""
 
-    data: Optional[Any] = Field(default=None, description="Tweet compliance data.")
-    errors: Optional[List] = Field(default=None)
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for streamLikesCompliance
-
-
-class StreamLikesComplianceResponse(BaseModel):
-    """Response model for streamLikesCompliance"""
-
-    data: Optional[Dict[str, Any]] = Field(default=None)
+    data: Optional[Any] = Field(default=None, description="User compliance data.")
     errors: Optional[List] = Field(default=None)
 
     class Config:
@@ -106,12 +106,12 @@ class StreamLikesComplianceResponse(BaseModel):
 # Models for getComplianceJobs
 
 
-class GetComplianceJobsResponse(BaseModel):
+class GetcompliancejobsResponse(BaseModel):
     """Response model for getComplianceJobs"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    meta: Optional["GetComplianceJobsResponseMeta"] = None
+    meta: Optional["GetcompliancejobsResponseMeta"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -119,8 +119,8 @@ class GetComplianceJobsResponse(BaseModel):
         populate_by_name = True
 
 
-class GetComplianceJobsResponseMeta(BaseModel):
-    """Nested model for GetComplianceJobsResponseMeta"""
+class GetcompliancejobsResponseMeta(BaseModel):
+    """Nested model for GetcompliancejobsResponseMeta"""
 
     result_count: Optional[int] = None
 
@@ -133,7 +133,7 @@ class GetComplianceJobsResponseMeta(BaseModel):
 # Models for createComplianceJobs
 
 
-class CreateComplianceJobsRequest(BaseModel):
+class CreatecompliancejobsRequest(BaseModel):
     """Request model for createComplianceJobs"""
 
     name: Optional[str] = None
@@ -146,10 +146,10 @@ class CreateComplianceJobsRequest(BaseModel):
         populate_by_name = True
 
 
-class CreateComplianceJobsResponse(BaseModel):
+class CreatecompliancejobsResponse(BaseModel):
     """Response model for createComplianceJobs"""
 
-    data: Optional["CreateComplianceJobsResponseData"] = Field(default_factory=dict)
+    data: Optional["CreatecompliancejobsResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     class Config:
@@ -158,8 +158,8 @@ class CreateComplianceJobsResponse(BaseModel):
         populate_by_name = True
 
 
-class CreateComplianceJobsResponseData(BaseModel):
-    """Nested model for CreateComplianceJobsResponseData"""
+class CreatecompliancejobsResponseData(BaseModel):
+    """Nested model for CreatecompliancejobsResponseData"""
 
     created_at: Optional[str] = None
     download_expires_at: Optional[str] = None

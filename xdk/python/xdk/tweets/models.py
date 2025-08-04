@@ -9,13 +9,13 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for getRuleCounts
+# Models for unlikePost
 
 
-class GetRuleCountsResponse(BaseModel):
-    """Response model for getRuleCounts"""
+class UnlikepostResponse(BaseModel):
+    """Response model for unlikePost"""
 
-    data: Optional["GetRuleCountsResponseData"] = None
+    data: Optional["UnlikepostResponseData"] = None
     errors: Optional[List] = None
 
     class Config:
@@ -24,16 +24,10 @@ class GetRuleCountsResponse(BaseModel):
         populate_by_name = True
 
 
-class GetRuleCountsResponseData(BaseModel):
-    """Nested model for GetRuleCountsResponseData"""
+class UnlikepostResponseData(BaseModel):
+    """Nested model for UnlikepostResponseData"""
 
-    all_project_client_apps: Optional[List] = None
-    cap_per_client_app: Optional[int] = None
-    cap_per_project: Optional[int] = None
-    client_app_rules_count: Optional[
-        "GetRuleCountsResponseDataClient_app_rules_count"
-    ] = None
-    project_rules_count: Optional[int] = None
+    liked: Optional[bool] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -41,28 +35,16 @@ class GetRuleCountsResponseData(BaseModel):
         populate_by_name = True
 
 
-class GetRuleCountsResponseDataClient_app_rules_count(BaseModel):
-    """Nested model for GetRuleCountsResponseDataClient_app_rules_count"""
-
-    client_app_id: Optional[str] = None
-    rule_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+# Models for getSpacesBuyers
 
 
-# Models for searchPostsRecent
-
-
-class SearchPostsRecentResponse(BaseModel):
-    """Response model for searchPostsRecent"""
+class GetspacesbuyersResponse(BaseModel):
+    """Response model for getSpacesBuyers"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["SearchPostsRecentResponseIncludes"] = None
-    meta: Optional["SearchPostsRecentResponseMeta"] = None
+    includes: Optional["GetspacesbuyersResponseIncludes"] = None
+    meta: Optional["GetspacesbuyersResponseMeta"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -70,8 +52,8 @@ class SearchPostsRecentResponse(BaseModel):
         populate_by_name = True
 
 
-class SearchPostsRecentResponseIncludes(BaseModel):
-    """Nested model for SearchPostsRecentResponseIncludes"""
+class GetspacesbuyersResponseIncludes(BaseModel):
+    """Nested model for GetspacesbuyersResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -86,1711 +68,8 @@ class SearchPostsRecentResponseIncludes(BaseModel):
         populate_by_name = True
 
 
-class SearchPostsRecentResponseMeta(BaseModel):
-    """Nested model for SearchPostsRecentResponseMeta"""
-
-    newest_id: Optional[str] = None
-    next_token: Optional[str] = None
-    oldest_id: Optional[str] = None
-    result_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for streamPostsSample
-
-
-class StreamPostsSampleResponse(BaseModel):
-    """Response model for streamPostsSample"""
-
-    data: Optional["StreamPostsSampleResponseData"] = None
-    errors: Optional[List] = None
-    includes: Optional["StreamPostsSampleResponseIncludes"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseData(BaseModel):
-    """Nested model for StreamPostsSampleResponseData"""
-
-    attachments: Optional["StreamPostsSampleResponseDataAttachments"] = None
-    author_id: Optional[str] = None
-    community_id: Optional[str] = None
-    context_annotations: Optional[List] = None
-    conversation_id: Optional[str] = None
-    created_at: Optional[str] = None
-    display_text_range: Optional[List] = None
-    edit_controls: Optional["StreamPostsSampleResponseDataEdit_controls"] = None
-    edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["StreamPostsSampleResponseDataEntities"] = None
-    geo: Optional["StreamPostsSampleResponseDataGeo"] = None
-    id: Optional[str] = None
-    in_reply_to_user_id: Optional[str] = None
-    lang: Optional[str] = None
-    non_public_metrics: Optional["StreamPostsSampleResponseDataNon_public_metrics"] = (
-        None
-    )
-    note_tweet: Optional["StreamPostsSampleResponseDataNote_tweet"] = None
-    organic_metrics: Optional["StreamPostsSampleResponseDataOrganic_metrics"] = None
-    possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["StreamPostsSampleResponseDataPromoted_metrics"] = None
-    public_metrics: Optional["StreamPostsSampleResponseDataPublic_metrics"] = None
-    referenced_tweets: Optional[List] = None
-    reply_settings: Optional[str] = None
-    scopes: Optional["StreamPostsSampleResponseDataScopes"] = None
-    source: Optional[str] = None
-    text: Optional[str] = None
-    username: Optional[str] = None
-    withheld: Optional["StreamPostsSampleResponseDataWithheld"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseDataAttachments(BaseModel):
-    """Nested model for StreamPostsSampleResponseDataAttachments"""
-
-    media_keys: Optional[List] = None
-    media_source_tweet_id: Optional[List] = None
-    poll_ids: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseDataEdit_controls(BaseModel):
-    """Nested model for StreamPostsSampleResponseDataEdit_controls"""
-
-    editable_until: Optional[str] = None
-    edits_remaining: Optional[int] = None
-    is_edit_eligible: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseDataEntities(BaseModel):
-    """Nested model for StreamPostsSampleResponseDataEntities"""
-
-    annotations: Optional[List] = None
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseDataGeo(BaseModel):
-    """Nested model for StreamPostsSampleResponseDataGeo"""
-
-    coordinates: Optional["StreamPostsSampleResponseDataGeoCoordinates"] = None
-    place_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseDataGeoCoordinates(BaseModel):
-    """Nested model for StreamPostsSampleResponseDataGeoCoordinates"""
-
-    coordinates: Optional[List] = None
-    type: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseDataNon_public_metrics(BaseModel):
-    """Nested model for StreamPostsSampleResponseDataNon_public_metrics"""
-
-    impression_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseDataNote_tweet(BaseModel):
-    """Nested model for StreamPostsSampleResponseDataNote_tweet"""
-
-    entities: Optional["StreamPostsSampleResponseDataNote_tweetEntities"] = None
-    text: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseDataNote_tweetEntities(BaseModel):
-    """Nested model for StreamPostsSampleResponseDataNote_tweetEntities"""
-
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseDataOrganic_metrics(BaseModel):
-    """Nested model for StreamPostsSampleResponseDataOrganic_metrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseDataPromoted_metrics(BaseModel):
-    """Nested model for StreamPostsSampleResponseDataPromoted_metrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseDataPublic_metrics(BaseModel):
-    """Nested model for StreamPostsSampleResponseDataPublic_metrics"""
-
-    bookmark_count: Optional[int] = None
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    quote_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseDataScopes(BaseModel):
-    """Nested model for StreamPostsSampleResponseDataScopes"""
-
-    followers: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseDataWithheld(BaseModel):
-    """Nested model for StreamPostsSampleResponseDataWithheld"""
-
-    copyright: Optional[bool] = None
-    country_codes: Optional[List] = None
-    scope: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsSampleResponseIncludes(BaseModel):
-    """Nested model for StreamPostsSampleResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getInsightsHistorical
-
-
-class GetInsightsHistoricalResponse(BaseModel):
-    """Response model for getInsightsHistorical"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for streamPosts
-
-
-class StreamPostsResponse(BaseModel):
-    """Response model for streamPosts"""
-
-    data: Optional["StreamPostsResponseData"] = None
-    errors: Optional[List] = None
-    includes: Optional["StreamPostsResponseIncludes"] = None
-    matching_rules: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseData(BaseModel):
-    """Nested model for StreamPostsResponseData"""
-
-    attachments: Optional["StreamPostsResponseDataAttachments"] = None
-    author_id: Optional[str] = None
-    community_id: Optional[str] = None
-    context_annotations: Optional[List] = None
-    conversation_id: Optional[str] = None
-    created_at: Optional[str] = None
-    display_text_range: Optional[List] = None
-    edit_controls: Optional["StreamPostsResponseDataEdit_controls"] = None
-    edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["StreamPostsResponseDataEntities"] = None
-    geo: Optional["StreamPostsResponseDataGeo"] = None
-    id: Optional[str] = None
-    in_reply_to_user_id: Optional[str] = None
-    lang: Optional[str] = None
-    non_public_metrics: Optional["StreamPostsResponseDataNon_public_metrics"] = None
-    note_tweet: Optional["StreamPostsResponseDataNote_tweet"] = None
-    organic_metrics: Optional["StreamPostsResponseDataOrganic_metrics"] = None
-    possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["StreamPostsResponseDataPromoted_metrics"] = None
-    public_metrics: Optional["StreamPostsResponseDataPublic_metrics"] = None
-    referenced_tweets: Optional[List] = None
-    reply_settings: Optional[str] = None
-    scopes: Optional["StreamPostsResponseDataScopes"] = None
-    source: Optional[str] = None
-    text: Optional[str] = None
-    username: Optional[str] = None
-    withheld: Optional["StreamPostsResponseDataWithheld"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseDataAttachments(BaseModel):
-    """Nested model for StreamPostsResponseDataAttachments"""
-
-    media_keys: Optional[List] = None
-    media_source_tweet_id: Optional[List] = None
-    poll_ids: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseDataEdit_controls(BaseModel):
-    """Nested model for StreamPostsResponseDataEdit_controls"""
-
-    editable_until: Optional[str] = None
-    edits_remaining: Optional[int] = None
-    is_edit_eligible: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseDataEntities(BaseModel):
-    """Nested model for StreamPostsResponseDataEntities"""
-
-    annotations: Optional[List] = None
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseDataGeo(BaseModel):
-    """Nested model for StreamPostsResponseDataGeo"""
-
-    coordinates: Optional["StreamPostsResponseDataGeoCoordinates"] = None
-    place_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseDataGeoCoordinates(BaseModel):
-    """Nested model for StreamPostsResponseDataGeoCoordinates"""
-
-    coordinates: Optional[List] = None
-    type: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseDataNon_public_metrics(BaseModel):
-    """Nested model for StreamPostsResponseDataNon_public_metrics"""
-
-    impression_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseDataNote_tweet(BaseModel):
-    """Nested model for StreamPostsResponseDataNote_tweet"""
-
-    entities: Optional["StreamPostsResponseDataNote_tweetEntities"] = None
-    text: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseDataNote_tweetEntities(BaseModel):
-    """Nested model for StreamPostsResponseDataNote_tweetEntities"""
-
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseDataOrganic_metrics(BaseModel):
-    """Nested model for StreamPostsResponseDataOrganic_metrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseDataPromoted_metrics(BaseModel):
-    """Nested model for StreamPostsResponseDataPromoted_metrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseDataPublic_metrics(BaseModel):
-    """Nested model for StreamPostsResponseDataPublic_metrics"""
-
-    bookmark_count: Optional[int] = None
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    quote_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseDataScopes(BaseModel):
-    """Nested model for StreamPostsResponseDataScopes"""
-
-    followers: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseDataWithheld(BaseModel):
-    """Nested model for StreamPostsResponseDataWithheld"""
-
-    copyright: Optional[bool] = None
-    country_codes: Optional[List] = None
-    scope: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsResponseIncludes(BaseModel):
-    """Nested model for StreamPostsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for streamPostsFirehosePt
-
-
-class StreamPostsFirehosePtResponse(BaseModel):
-    """Response model for streamPostsFirehosePt"""
-
-    data: Optional["StreamPostsFirehosePtResponseData"] = None
-    errors: Optional[List] = None
-    includes: Optional["StreamPostsFirehosePtResponseIncludes"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseData(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseData"""
-
-    attachments: Optional["StreamPostsFirehosePtResponseDataAttachments"] = None
-    author_id: Optional[str] = None
-    community_id: Optional[str] = None
-    context_annotations: Optional[List] = None
-    conversation_id: Optional[str] = None
-    created_at: Optional[str] = None
-    display_text_range: Optional[List] = None
-    edit_controls: Optional["StreamPostsFirehosePtResponseDataEdit_controls"] = None
-    edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["StreamPostsFirehosePtResponseDataEntities"] = None
-    geo: Optional["StreamPostsFirehosePtResponseDataGeo"] = None
-    id: Optional[str] = None
-    in_reply_to_user_id: Optional[str] = None
-    lang: Optional[str] = None
-    non_public_metrics: Optional[
-        "StreamPostsFirehosePtResponseDataNon_public_metrics"
-    ] = None
-    note_tweet: Optional["StreamPostsFirehosePtResponseDataNote_tweet"] = None
-    organic_metrics: Optional["StreamPostsFirehosePtResponseDataOrganic_metrics"] = None
-    possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["StreamPostsFirehosePtResponseDataPromoted_metrics"] = (
-        None
-    )
-    public_metrics: Optional["StreamPostsFirehosePtResponseDataPublic_metrics"] = None
-    referenced_tweets: Optional[List] = None
-    reply_settings: Optional[str] = None
-    scopes: Optional["StreamPostsFirehosePtResponseDataScopes"] = None
-    source: Optional[str] = None
-    text: Optional[str] = None
-    username: Optional[str] = None
-    withheld: Optional["StreamPostsFirehosePtResponseDataWithheld"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseDataAttachments(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseDataAttachments"""
-
-    media_keys: Optional[List] = None
-    media_source_tweet_id: Optional[List] = None
-    poll_ids: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseDataEdit_controls(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseDataEdit_controls"""
-
-    editable_until: Optional[str] = None
-    edits_remaining: Optional[int] = None
-    is_edit_eligible: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseDataEntities(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseDataEntities"""
-
-    annotations: Optional[List] = None
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseDataGeo(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseDataGeo"""
-
-    coordinates: Optional["StreamPostsFirehosePtResponseDataGeoCoordinates"] = None
-    place_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseDataGeoCoordinates(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseDataGeoCoordinates"""
-
-    coordinates: Optional[List] = None
-    type: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseDataNon_public_metrics(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseDataNon_public_metrics"""
-
-    impression_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseDataNote_tweet(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseDataNote_tweet"""
-
-    entities: Optional["StreamPostsFirehosePtResponseDataNote_tweetEntities"] = None
-    text: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseDataNote_tweetEntities(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseDataNote_tweetEntities"""
-
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseDataOrganic_metrics(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseDataOrganic_metrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseDataPromoted_metrics(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseDataPromoted_metrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseDataPublic_metrics(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseDataPublic_metrics"""
-
-    bookmark_count: Optional[int] = None
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    quote_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseDataScopes(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseDataScopes"""
-
-    followers: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseDataWithheld(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseDataWithheld"""
-
-    copyright: Optional[bool] = None
-    country_codes: Optional[List] = None
-    scope: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehosePtResponseIncludes(BaseModel):
-    """Nested model for StreamPostsFirehosePtResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getUsersLikedPosts
-
-
-class GetUsersLikedPostsResponse(BaseModel):
-    """Response model for getUsersLikedPosts"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetUsersLikedPostsResponseIncludes"] = None
-    meta: Optional["GetUsersLikedPostsResponseMeta"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetUsersLikedPostsResponseIncludes(BaseModel):
-    """Nested model for GetUsersLikedPostsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetUsersLikedPostsResponseMeta(BaseModel):
-    """Nested model for GetUsersLikedPostsResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getUsersPosts
-
-
-class GetUsersPostsResponse(BaseModel):
-    """Response model for getUsersPosts"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetUsersPostsResponseIncludes"] = None
-    meta: Optional["GetUsersPostsResponseMeta"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetUsersPostsResponseIncludes(BaseModel):
-    """Nested model for GetUsersPostsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetUsersPostsResponseMeta(BaseModel):
-    """Nested model for GetUsersPostsResponseMeta"""
-
-    newest_id: Optional[str] = None
-    next_token: Optional[str] = None
-    oldest_id: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for streamPostsFirehoseJa
-
-
-class StreamPostsFirehoseJaResponse(BaseModel):
-    """Response model for streamPostsFirehoseJa"""
-
-    data: Optional["StreamPostsFirehoseJaResponseData"] = None
-    errors: Optional[List] = None
-    includes: Optional["StreamPostsFirehoseJaResponseIncludes"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseData(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseData"""
-
-    attachments: Optional["StreamPostsFirehoseJaResponseDataAttachments"] = None
-    author_id: Optional[str] = None
-    community_id: Optional[str] = None
-    context_annotations: Optional[List] = None
-    conversation_id: Optional[str] = None
-    created_at: Optional[str] = None
-    display_text_range: Optional[List] = None
-    edit_controls: Optional["StreamPostsFirehoseJaResponseDataEdit_controls"] = None
-    edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["StreamPostsFirehoseJaResponseDataEntities"] = None
-    geo: Optional["StreamPostsFirehoseJaResponseDataGeo"] = None
-    id: Optional[str] = None
-    in_reply_to_user_id: Optional[str] = None
-    lang: Optional[str] = None
-    non_public_metrics: Optional[
-        "StreamPostsFirehoseJaResponseDataNon_public_metrics"
-    ] = None
-    note_tweet: Optional["StreamPostsFirehoseJaResponseDataNote_tweet"] = None
-    organic_metrics: Optional["StreamPostsFirehoseJaResponseDataOrganic_metrics"] = None
-    possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["StreamPostsFirehoseJaResponseDataPromoted_metrics"] = (
-        None
-    )
-    public_metrics: Optional["StreamPostsFirehoseJaResponseDataPublic_metrics"] = None
-    referenced_tweets: Optional[List] = None
-    reply_settings: Optional[str] = None
-    scopes: Optional["StreamPostsFirehoseJaResponseDataScopes"] = None
-    source: Optional[str] = None
-    text: Optional[str] = None
-    username: Optional[str] = None
-    withheld: Optional["StreamPostsFirehoseJaResponseDataWithheld"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseDataAttachments(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseDataAttachments"""
-
-    media_keys: Optional[List] = None
-    media_source_tweet_id: Optional[List] = None
-    poll_ids: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseDataEdit_controls(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseDataEdit_controls"""
-
-    editable_until: Optional[str] = None
-    edits_remaining: Optional[int] = None
-    is_edit_eligible: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseDataEntities(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseDataEntities"""
-
-    annotations: Optional[List] = None
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseDataGeo(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseDataGeo"""
-
-    coordinates: Optional["StreamPostsFirehoseJaResponseDataGeoCoordinates"] = None
-    place_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseDataGeoCoordinates(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseDataGeoCoordinates"""
-
-    coordinates: Optional[List] = None
-    type: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseDataNon_public_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseDataNon_public_metrics"""
-
-    impression_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseDataNote_tweet(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseDataNote_tweet"""
-
-    entities: Optional["StreamPostsFirehoseJaResponseDataNote_tweetEntities"] = None
-    text: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseDataNote_tweetEntities(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseDataNote_tweetEntities"""
-
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseDataOrganic_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseDataOrganic_metrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseDataPromoted_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseDataPromoted_metrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseDataPublic_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseDataPublic_metrics"""
-
-    bookmark_count: Optional[int] = None
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    quote_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseDataScopes(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseDataScopes"""
-
-    followers: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseDataWithheld(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseDataWithheld"""
-
-    copyright: Optional[bool] = None
-    country_codes: Optional[List] = None
-    scope: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseJaResponseIncludes(BaseModel):
-    """Nested model for StreamPostsFirehoseJaResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getRules
-
-
-class GetRulesResponse(BaseModel):
-    """Response model for getRules"""
-
-    data: Optional[List] = None
-    meta: Optional["GetRulesResponseMeta"] = Field(default_factory=dict)
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetRulesResponseMeta(BaseModel):
-    """Nested model for GetRulesResponseMeta"""
-
-    next_token: Optional[str] = None
-    result_count: Optional[int] = None
-    sent: Optional[str] = None
-    summary: Any = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for updateRules
-
-
-class UpdateRulesRequest(BaseModel):
-    """Request model for updateRules"""
-
-    add: Optional[List] = Field(default=None)
-    delete: Optional[Dict[str, Any]] = Field(
-        default=None,
-        description="IDs and values of all deleted user-specified stream filtering rules.",
-    )
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class UpdateRulesResponse(BaseModel):
-    """Response model for updateRules"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    meta: Optional["UpdateRulesResponseMeta"] = Field(default_factory=dict)
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class UpdateRulesResponseMeta(BaseModel):
-    """Nested model for UpdateRulesResponseMeta"""
-
-    next_token: Optional[str] = None
-    result_count: Optional[int] = None
-    sent: Optional[str] = None
-    summary: Any = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getPostsById
-
-
-class GetPostsByIdResponse(BaseModel):
-    """Response model for getPostsById"""
-
-    data: Optional["GetPostsByIdResponseData"] = None
-    errors: Optional[List] = None
-    includes: Optional["GetPostsByIdResponseIncludes"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseData(BaseModel):
-    """Nested model for GetPostsByIdResponseData"""
-
-    attachments: Optional["GetPostsByIdResponseDataAttachments"] = None
-    author_id: Optional[str] = None
-    community_id: Optional[str] = None
-    context_annotations: Optional[List] = None
-    conversation_id: Optional[str] = None
-    created_at: Optional[str] = None
-    display_text_range: Optional[List] = None
-    edit_controls: Optional["GetPostsByIdResponseDataEdit_controls"] = None
-    edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["GetPostsByIdResponseDataEntities"] = None
-    geo: Optional["GetPostsByIdResponseDataGeo"] = None
-    id: Optional[str] = None
-    in_reply_to_user_id: Optional[str] = None
-    lang: Optional[str] = None
-    non_public_metrics: Optional["GetPostsByIdResponseDataNon_public_metrics"] = None
-    note_tweet: Optional["GetPostsByIdResponseDataNote_tweet"] = None
-    organic_metrics: Optional["GetPostsByIdResponseDataOrganic_metrics"] = None
-    possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["GetPostsByIdResponseDataPromoted_metrics"] = None
-    public_metrics: Optional["GetPostsByIdResponseDataPublic_metrics"] = None
-    referenced_tweets: Optional[List] = None
-    reply_settings: Optional[str] = None
-    scopes: Optional["GetPostsByIdResponseDataScopes"] = None
-    source: Optional[str] = None
-    text: Optional[str] = None
-    username: Optional[str] = None
-    withheld: Optional["GetPostsByIdResponseDataWithheld"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseDataAttachments(BaseModel):
-    """Nested model for GetPostsByIdResponseDataAttachments"""
-
-    media_keys: Optional[List] = None
-    media_source_tweet_id: Optional[List] = None
-    poll_ids: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseDataEdit_controls(BaseModel):
-    """Nested model for GetPostsByIdResponseDataEdit_controls"""
-
-    editable_until: Optional[str] = None
-    edits_remaining: Optional[int] = None
-    is_edit_eligible: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseDataEntities(BaseModel):
-    """Nested model for GetPostsByIdResponseDataEntities"""
-
-    annotations: Optional[List] = None
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseDataGeo(BaseModel):
-    """Nested model for GetPostsByIdResponseDataGeo"""
-
-    coordinates: Optional["GetPostsByIdResponseDataGeoCoordinates"] = None
-    place_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseDataGeoCoordinates(BaseModel):
-    """Nested model for GetPostsByIdResponseDataGeoCoordinates"""
-
-    coordinates: Optional[List] = None
-    type: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseDataNon_public_metrics(BaseModel):
-    """Nested model for GetPostsByIdResponseDataNon_public_metrics"""
-
-    impression_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseDataNote_tweet(BaseModel):
-    """Nested model for GetPostsByIdResponseDataNote_tweet"""
-
-    entities: Optional["GetPostsByIdResponseDataNote_tweetEntities"] = None
-    text: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseDataNote_tweetEntities(BaseModel):
-    """Nested model for GetPostsByIdResponseDataNote_tweetEntities"""
-
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseDataOrganic_metrics(BaseModel):
-    """Nested model for GetPostsByIdResponseDataOrganic_metrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseDataPromoted_metrics(BaseModel):
-    """Nested model for GetPostsByIdResponseDataPromoted_metrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseDataPublic_metrics(BaseModel):
-    """Nested model for GetPostsByIdResponseDataPublic_metrics"""
-
-    bookmark_count: Optional[int] = None
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    quote_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseDataScopes(BaseModel):
-    """Nested model for GetPostsByIdResponseDataScopes"""
-
-    followers: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseDataWithheld(BaseModel):
-    """Nested model for GetPostsByIdResponseDataWithheld"""
-
-    copyright: Optional[bool] = None
-    country_codes: Optional[List] = None
-    scope: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsByIdResponseIncludes(BaseModel):
-    """Nested model for GetPostsByIdResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for deletePosts
-
-
-class DeletePostsResponse(BaseModel):
-    """Response model for deletePosts"""
-
-    data: Optional["DeletePostsResponseData"] = Field(default_factory=dict)
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class DeletePostsResponseData(BaseModel):
-    """Nested model for DeletePostsResponseData"""
-
-    deleted: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for streamPostsFirehose
-
-
-class StreamPostsFirehoseResponse(BaseModel):
-    """Response model for streamPostsFirehose"""
-
-    data: Optional["StreamPostsFirehoseResponseData"] = None
-    errors: Optional[List] = None
-    includes: Optional["StreamPostsFirehoseResponseIncludes"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseData(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseData"""
-
-    attachments: Optional["StreamPostsFirehoseResponseDataAttachments"] = None
-    author_id: Optional[str] = None
-    community_id: Optional[str] = None
-    context_annotations: Optional[List] = None
-    conversation_id: Optional[str] = None
-    created_at: Optional[str] = None
-    display_text_range: Optional[List] = None
-    edit_controls: Optional["StreamPostsFirehoseResponseDataEdit_controls"] = None
-    edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["StreamPostsFirehoseResponseDataEntities"] = None
-    geo: Optional["StreamPostsFirehoseResponseDataGeo"] = None
-    id: Optional[str] = None
-    in_reply_to_user_id: Optional[str] = None
-    lang: Optional[str] = None
-    non_public_metrics: Optional[
-        "StreamPostsFirehoseResponseDataNon_public_metrics"
-    ] = None
-    note_tweet: Optional["StreamPostsFirehoseResponseDataNote_tweet"] = None
-    organic_metrics: Optional["StreamPostsFirehoseResponseDataOrganic_metrics"] = None
-    possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["StreamPostsFirehoseResponseDataPromoted_metrics"] = None
-    public_metrics: Optional["StreamPostsFirehoseResponseDataPublic_metrics"] = None
-    referenced_tweets: Optional[List] = None
-    reply_settings: Optional[str] = None
-    scopes: Optional["StreamPostsFirehoseResponseDataScopes"] = None
-    source: Optional[str] = None
-    text: Optional[str] = None
-    username: Optional[str] = None
-    withheld: Optional["StreamPostsFirehoseResponseDataWithheld"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseDataAttachments(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseDataAttachments"""
-
-    media_keys: Optional[List] = None
-    media_source_tweet_id: Optional[List] = None
-    poll_ids: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseDataEdit_controls(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseDataEdit_controls"""
-
-    editable_until: Optional[str] = None
-    edits_remaining: Optional[int] = None
-    is_edit_eligible: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseDataEntities(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseDataEntities"""
-
-    annotations: Optional[List] = None
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseDataGeo(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseDataGeo"""
-
-    coordinates: Optional["StreamPostsFirehoseResponseDataGeoCoordinates"] = None
-    place_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseDataGeoCoordinates(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseDataGeoCoordinates"""
-
-    coordinates: Optional[List] = None
-    type: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseDataNon_public_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseDataNon_public_metrics"""
-
-    impression_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseDataNote_tweet(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseDataNote_tweet"""
-
-    entities: Optional["StreamPostsFirehoseResponseDataNote_tweetEntities"] = None
-    text: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseDataNote_tweetEntities(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseDataNote_tweetEntities"""
-
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseDataOrganic_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseDataOrganic_metrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseDataPromoted_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseDataPromoted_metrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseDataPublic_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseDataPublic_metrics"""
-
-    bookmark_count: Optional[int] = None
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    quote_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseDataScopes(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseDataScopes"""
-
-    followers: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseDataWithheld(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseDataWithheld"""
-
-    copyright: Optional[bool] = None
-    country_codes: Optional[List] = None
-    scope: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseResponseIncludes(BaseModel):
-    """Nested model for StreamPostsFirehoseResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getPostsReposts
-
-
-class GetPostsRepostsResponse(BaseModel):
-    """Response model for getPostsReposts"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetPostsRepostsResponseIncludes"] = None
-    meta: Optional["GetPostsRepostsResponseMeta"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsRepostsResponseIncludes(BaseModel):
-    """Nested model for GetPostsRepostsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsRepostsResponseMeta(BaseModel):
-    """Nested model for GetPostsRepostsResponseMeta"""
+class GetspacesbuyersResponseMeta(BaseModel):
+    """Nested model for GetspacesbuyersResponseMeta"""
 
     next_token: Optional[str] = None
     previous_token: Optional[str] = None
@@ -1805,7 +84,7 @@ class GetPostsRepostsResponseMeta(BaseModel):
 # Models for getPostsAnalytics
 
 
-class GetPostsAnalyticsResponse(BaseModel):
+class GetpostsanalyticsResponse(BaseModel):
     """Response model for getPostsAnalytics"""
 
     data: Optional[List] = None
@@ -1817,54 +96,16 @@ class GetPostsAnalyticsResponse(BaseModel):
         populate_by_name = True
 
 
-# Models for repostPost
+# Models for getPostsQuotedPosts
 
 
-class RepostPostRequest(BaseModel):
-    """Request model for repostPost"""
-
-    tweet_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class RepostPostResponse(BaseModel):
-    """Response model for repostPost"""
-
-    data: Optional["RepostPostResponseData"] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class RepostPostResponseData(BaseModel):
-    """Nested model for RepostPostResponseData"""
-
-    id: Optional[str] = None
-    retweeted: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getSpacesPosts
-
-
-class GetSpacesPostsResponse(BaseModel):
-    """Response model for getSpacesPosts"""
+class GetpostsquotedpostsResponse(BaseModel):
+    """Response model for getPostsQuotedPosts"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["GetSpacesPostsResponseIncludes"] = None
-    meta: Optional["GetSpacesPostsResponseMeta"] = None
+    includes: Optional["GetpostsquotedpostsResponseIncludes"] = None
+    meta: Optional["GetpostsquotedpostsResponseMeta"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -1872,8 +113,8 @@ class GetSpacesPostsResponse(BaseModel):
         populate_by_name = True
 
 
-class GetSpacesPostsResponseIncludes(BaseModel):
-    """Nested model for GetSpacesPostsResponseIncludes"""
+class GetpostsquotedpostsResponseIncludes(BaseModel):
+    """Nested model for GetpostsquotedpostsResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -1888,11 +129,10 @@ class GetSpacesPostsResponseIncludes(BaseModel):
         populate_by_name = True
 
 
-class GetSpacesPostsResponseMeta(BaseModel):
-    """Nested model for GetSpacesPostsResponseMeta"""
+class GetpostsquotedpostsResponseMeta(BaseModel):
+    """Nested model for GetpostsquotedpostsResponseMeta"""
 
     next_token: Optional[str] = None
-    previous_token: Optional[str] = None
     result_count: Optional[int] = None
 
     class Config:
@@ -1901,72 +141,16 @@ class GetSpacesPostsResponseMeta(BaseModel):
         populate_by_name = True
 
 
-# Models for getPostsCountsRecent
+# Models for getUsersLikedPosts
 
 
-class GetPostsCountsRecentResponse(BaseModel):
-    """Response model for getPostsCountsRecent"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    meta: Optional["GetPostsCountsRecentResponseMeta"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetPostsCountsRecentResponseMeta(BaseModel):
-    """Nested model for GetPostsCountsRecentResponseMeta"""
-
-    newest_id: Optional[str] = None
-    next_token: Optional[str] = None
-    oldest_id: Optional[str] = None
-    total_tweet_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for unrepostPost
-
-
-class UnrepostPostResponse(BaseModel):
-    """Response model for unrepostPost"""
-
-    data: Optional["UnrepostPostResponseData"] = None
-    errors: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class UnrepostPostResponseData(BaseModel):
-    """Nested model for UnrepostPostResponseData"""
-
-    retweeted: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getListsPosts
-
-
-class GetListsPostsResponse(BaseModel):
-    """Response model for getListsPosts"""
+class GetuserslikedpostsResponse(BaseModel):
+    """Response model for getUsersLikedPosts"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["GetListsPostsResponseIncludes"] = None
-    meta: Optional["GetListsPostsResponseMeta"] = None
+    includes: Optional["GetuserslikedpostsResponseIncludes"] = None
+    meta: Optional["GetuserslikedpostsResponseMeta"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -1974,8 +158,8 @@ class GetListsPostsResponse(BaseModel):
         populate_by_name = True
 
 
-class GetListsPostsResponseIncludes(BaseModel):
-    """Nested model for GetListsPostsResponseIncludes"""
+class GetuserslikedpostsResponseIncludes(BaseModel):
+    """Nested model for GetuserslikedpostsResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -1990,8 +174,8 @@ class GetListsPostsResponseIncludes(BaseModel):
         populate_by_name = True
 
 
-class GetListsPostsResponseMeta(BaseModel):
-    """Nested model for GetListsPostsResponseMeta"""
+class GetuserslikedpostsResponseMeta(BaseModel):
+    """Nested model for GetuserslikedpostsResponseMeta"""
 
     next_token: Optional[str] = None
     previous_token: Optional[str] = None
@@ -2003,15 +187,16 @@ class GetListsPostsResponseMeta(BaseModel):
         populate_by_name = True
 
 
-# Models for getPostsCountsAll
+# Models for searchPostsRecent
 
 
-class GetPostsCountsAllResponse(BaseModel):
-    """Response model for getPostsCountsAll"""
+class SearchpostsrecentResponse(BaseModel):
+    """Response model for searchPostsRecent"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    meta: Optional["GetPostsCountsAllResponseMeta"] = None
+    includes: Optional["SearchpostsrecentResponseIncludes"] = None
+    meta: Optional["SearchpostsrecentResponseMeta"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2019,13 +204,29 @@ class GetPostsCountsAllResponse(BaseModel):
         populate_by_name = True
 
 
-class GetPostsCountsAllResponseMeta(BaseModel):
-    """Nested model for GetPostsCountsAllResponseMeta"""
+class SearchpostsrecentResponseIncludes(BaseModel):
+    """Nested model for SearchpostsrecentResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class SearchpostsrecentResponseMeta(BaseModel):
+    """Nested model for SearchpostsrecentResponseMeta"""
 
     newest_id: Optional[str] = None
     next_token: Optional[str] = None
     oldest_id: Optional[str] = None
-    total_tweet_count: Optional[int] = None
+    result_count: Optional[int] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2033,15 +234,16 @@ class GetPostsCountsAllResponseMeta(BaseModel):
         populate_by_name = True
 
 
-# Models for streamPostsSample10
+# Models for getPostsReposts
 
 
-class StreamPostsSample10Response(BaseModel):
-    """Response model for streamPostsSample10"""
+class GetpostsrepostsResponse(BaseModel):
+    """Response model for getPostsReposts"""
 
-    data: Optional["StreamPostsSample10ResponseData"] = None
+    data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["StreamPostsSample10ResponseIncludes"] = None
+    includes: Optional["GetpostsrepostsResponseIncludes"] = None
+    meta: Optional["GetpostsrepostsResponseMeta"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2049,38 +251,133 @@ class StreamPostsSample10Response(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseData(BaseModel):
-    """Nested model for StreamPostsSample10ResponseData"""
+class GetpostsrepostsResponseIncludes(BaseModel):
+    """Nested model for GetpostsrepostsResponseIncludes"""
 
-    attachments: Optional["StreamPostsSample10ResponseDataAttachments"] = None
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsrepostsResponseMeta(BaseModel):
+    """Nested model for GetpostsrepostsResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getUsersPosts
+
+
+class GetuserspostsResponse(BaseModel):
+    """Response model for getUsersPosts"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetuserspostsResponseIncludes"] = None
+    meta: Optional["GetuserspostsResponseMeta"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetuserspostsResponseIncludes(BaseModel):
+    """Nested model for GetuserspostsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetuserspostsResponseMeta(BaseModel):
+    """Nested model for GetuserspostsResponseMeta"""
+
+    newest_id: Optional[str] = None
+    next_token: Optional[str] = None
+    oldest_id: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for streamPostsFirehosePt
+
+
+class StreampostsfirehoseptResponse(BaseModel):
+    """Response model for streamPostsFirehosePt"""
+
+    data: Optional["StreampostsfirehoseptResponseData"] = None
+    errors: Optional[List] = None
+    includes: Optional["StreampostsfirehoseptResponseIncludes"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseptResponseData(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseData"""
+
+    attachments: Optional["StreampostsfirehoseptResponseDataAttachments"] = None
     author_id: Optional[str] = None
     community_id: Optional[str] = None
     context_annotations: Optional[List] = None
     conversation_id: Optional[str] = None
     created_at: Optional[str] = None
     display_text_range: Optional[List] = None
-    edit_controls: Optional["StreamPostsSample10ResponseDataEdit_controls"] = None
+    edit_controls: Optional["StreampostsfirehoseptResponseDataEditControls"] = None
     edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["StreamPostsSample10ResponseDataEntities"] = None
-    geo: Optional["StreamPostsSample10ResponseDataGeo"] = None
+    entities: Optional["StreampostsfirehoseptResponseDataEntities"] = None
+    geo: Optional["StreampostsfirehoseptResponseDataGeo"] = None
     id: Optional[str] = None
     in_reply_to_user_id: Optional[str] = None
     lang: Optional[str] = None
     non_public_metrics: Optional[
-        "StreamPostsSample10ResponseDataNon_public_metrics"
+        "StreampostsfirehoseptResponseDataNonPublicMetrics"
     ] = None
-    note_tweet: Optional["StreamPostsSample10ResponseDataNote_tweet"] = None
-    organic_metrics: Optional["StreamPostsSample10ResponseDataOrganic_metrics"] = None
+    note_tweet: Optional["StreampostsfirehoseptResponseDataNoteTweet"] = None
+    organic_metrics: Optional["StreampostsfirehoseptResponseDataOrganicMetrics"] = None
     possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["StreamPostsSample10ResponseDataPromoted_metrics"] = None
-    public_metrics: Optional["StreamPostsSample10ResponseDataPublic_metrics"] = None
+    promoted_metrics: Optional["StreampostsfirehoseptResponseDataPromotedMetrics"] = (
+        None
+    )
+    public_metrics: Optional["StreampostsfirehoseptResponseDataPublicMetrics"] = None
     referenced_tweets: Optional[List] = None
     reply_settings: Optional[str] = None
-    scopes: Optional["StreamPostsSample10ResponseDataScopes"] = None
+    scopes: Optional["StreampostsfirehoseptResponseDataScopes"] = None
     source: Optional[str] = None
     text: Optional[str] = None
     username: Optional[str] = None
-    withheld: Optional["StreamPostsSample10ResponseDataWithheld"] = None
+    withheld: Optional["StreampostsfirehoseptResponseDataWithheld"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2088,8 +385,8 @@ class StreamPostsSample10ResponseData(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseDataAttachments(BaseModel):
-    """Nested model for StreamPostsSample10ResponseDataAttachments"""
+class StreampostsfirehoseptResponseDataAttachments(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseDataAttachments"""
 
     media_keys: Optional[List] = None
     media_source_tweet_id: Optional[List] = None
@@ -2101,8 +398,8 @@ class StreamPostsSample10ResponseDataAttachments(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseDataEdit_controls(BaseModel):
-    """Nested model for StreamPostsSample10ResponseDataEdit_controls"""
+class StreampostsfirehoseptResponseDataEditControls(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseDataEditControls"""
 
     editable_until: Optional[str] = None
     edits_remaining: Optional[int] = None
@@ -2114,8 +411,8 @@ class StreamPostsSample10ResponseDataEdit_controls(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseDataEntities(BaseModel):
-    """Nested model for StreamPostsSample10ResponseDataEntities"""
+class StreampostsfirehoseptResponseDataEntities(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseDataEntities"""
 
     annotations: Optional[List] = None
     cashtags: Optional[List] = None
@@ -2129,10 +426,10 @@ class StreamPostsSample10ResponseDataEntities(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseDataGeo(BaseModel):
-    """Nested model for StreamPostsSample10ResponseDataGeo"""
+class StreampostsfirehoseptResponseDataGeo(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseDataGeo"""
 
-    coordinates: Optional["StreamPostsSample10ResponseDataGeoCoordinates"] = None
+    coordinates: Optional["StreampostsfirehoseptResponseDataGeoCoordinates"] = None
     place_id: Optional[str] = None
 
     class Config:
@@ -2141,8 +438,8 @@ class StreamPostsSample10ResponseDataGeo(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseDataGeoCoordinates(BaseModel):
-    """Nested model for StreamPostsSample10ResponseDataGeoCoordinates"""
+class StreampostsfirehoseptResponseDataGeoCoordinates(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseDataGeoCoordinates"""
 
     coordinates: Optional[List] = None
     type: Optional[str] = None
@@ -2153,8 +450,8 @@ class StreamPostsSample10ResponseDataGeoCoordinates(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseDataNon_public_metrics(BaseModel):
-    """Nested model for StreamPostsSample10ResponseDataNon_public_metrics"""
+class StreampostsfirehoseptResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseDataNonPublicMetrics"""
 
     impression_count: Optional[int] = None
 
@@ -2164,10 +461,10 @@ class StreamPostsSample10ResponseDataNon_public_metrics(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseDataNote_tweet(BaseModel):
-    """Nested model for StreamPostsSample10ResponseDataNote_tweet"""
+class StreampostsfirehoseptResponseDataNoteTweet(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseDataNoteTweet"""
 
-    entities: Optional["StreamPostsSample10ResponseDataNote_tweetEntities"] = None
+    entities: Optional["StreampostsfirehoseptResponseDataNoteTweetEntities"] = None
     text: Optional[str] = None
 
     class Config:
@@ -2176,8 +473,8 @@ class StreamPostsSample10ResponseDataNote_tweet(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseDataNote_tweetEntities(BaseModel):
-    """Nested model for StreamPostsSample10ResponseDataNote_tweetEntities"""
+class StreampostsfirehoseptResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseDataNoteTweetEntities"""
 
     cashtags: Optional[List] = None
     hashtags: Optional[List] = None
@@ -2190,8 +487,8 @@ class StreamPostsSample10ResponseDataNote_tweetEntities(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseDataOrganic_metrics(BaseModel):
-    """Nested model for StreamPostsSample10ResponseDataOrganic_metrics"""
+class StreampostsfirehoseptResponseDataOrganicMetrics(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseDataOrganicMetrics"""
 
     impression_count: Optional[int] = None
     like_count: Optional[int] = None
@@ -2204,8 +501,8 @@ class StreamPostsSample10ResponseDataOrganic_metrics(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseDataPromoted_metrics(BaseModel):
-    """Nested model for StreamPostsSample10ResponseDataPromoted_metrics"""
+class StreampostsfirehoseptResponseDataPromotedMetrics(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseDataPromotedMetrics"""
 
     impression_count: Optional[int] = None
     like_count: Optional[int] = None
@@ -2218,8 +515,8 @@ class StreamPostsSample10ResponseDataPromoted_metrics(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseDataPublic_metrics(BaseModel):
-    """Nested model for StreamPostsSample10ResponseDataPublic_metrics"""
+class StreampostsfirehoseptResponseDataPublicMetrics(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseDataPublicMetrics"""
 
     bookmark_count: Optional[int] = None
     impression_count: Optional[int] = None
@@ -2234,8 +531,8 @@ class StreamPostsSample10ResponseDataPublic_metrics(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseDataScopes(BaseModel):
-    """Nested model for StreamPostsSample10ResponseDataScopes"""
+class StreampostsfirehoseptResponseDataScopes(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseDataScopes"""
 
     followers: Optional[bool] = None
 
@@ -2245,8 +542,8 @@ class StreamPostsSample10ResponseDataScopes(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseDataWithheld(BaseModel):
-    """Nested model for StreamPostsSample10ResponseDataWithheld"""
+class StreampostsfirehoseptResponseDataWithheld(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseDataWithheld"""
 
     copyright: Optional[bool] = None
     country_codes: Optional[List] = None
@@ -2258,8 +555,8 @@ class StreamPostsSample10ResponseDataWithheld(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsSample10ResponseIncludes(BaseModel):
-    """Nested model for StreamPostsSample10ResponseIncludes"""
+class StreampostsfirehoseptResponseIncludes(BaseModel):
+    """Nested model for StreampostsfirehoseptResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -2277,13 +574,13 @@ class StreamPostsSample10ResponseIncludes(BaseModel):
 # Models for searchPostsAll
 
 
-class SearchPostsAllResponse(BaseModel):
+class SearchpostsallResponse(BaseModel):
     """Response model for searchPostsAll"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["SearchPostsAllResponseIncludes"] = None
-    meta: Optional["SearchPostsAllResponseMeta"] = None
+    includes: Optional["SearchpostsallResponseIncludes"] = None
+    meta: Optional["SearchpostsallResponseMeta"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2291,8 +588,8 @@ class SearchPostsAllResponse(BaseModel):
         populate_by_name = True
 
 
-class SearchPostsAllResponseIncludes(BaseModel):
-    """Nested model for SearchPostsAllResponseIncludes"""
+class SearchpostsallResponseIncludes(BaseModel):
+    """Nested model for SearchpostsallResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -2307,8 +604,8 @@ class SearchPostsAllResponseIncludes(BaseModel):
         populate_by_name = True
 
 
-class SearchPostsAllResponseMeta(BaseModel):
-    """Nested model for SearchPostsAllResponseMeta"""
+class SearchpostsallResponseMeta(BaseModel):
+    """Nested model for SearchpostsallResponseMeta"""
 
     newest_id: Optional[str] = None
     next_token: Optional[str] = None
@@ -2321,15 +618,15 @@ class SearchPostsAllResponseMeta(BaseModel):
         populate_by_name = True
 
 
-# Models for streamPostsFirehoseEn
+# Models for getPostsCountsRecent
 
 
-class StreamPostsFirehoseEnResponse(BaseModel):
-    """Response model for streamPostsFirehoseEn"""
+class GetpostscountsrecentResponse(BaseModel):
+    """Response model for getPostsCountsRecent"""
 
-    data: Optional["StreamPostsFirehoseEnResponseData"] = None
+    data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["StreamPostsFirehoseEnResponseIncludes"] = None
+    meta: Optional["GetpostscountsrecentResponseMeta"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2337,40 +634,70 @@ class StreamPostsFirehoseEnResponse(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseData(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseData"""
+class GetpostscountsrecentResponseMeta(BaseModel):
+    """Nested model for GetpostscountsrecentResponseMeta"""
 
-    attachments: Optional["StreamPostsFirehoseEnResponseDataAttachments"] = None
+    newest_id: Optional[str] = None
+    next_token: Optional[str] = None
+    oldest_id: Optional[str] = None
+    total_tweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for streamPostsFirehoseEn
+
+
+class StreampostsfirehoseenResponse(BaseModel):
+    """Response model for streamPostsFirehoseEn"""
+
+    data: Optional["StreampostsfirehoseenResponseData"] = None
+    errors: Optional[List] = None
+    includes: Optional["StreampostsfirehoseenResponseIncludes"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseenResponseData(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseData"""
+
+    attachments: Optional["StreampostsfirehoseenResponseDataAttachments"] = None
     author_id: Optional[str] = None
     community_id: Optional[str] = None
     context_annotations: Optional[List] = None
     conversation_id: Optional[str] = None
     created_at: Optional[str] = None
     display_text_range: Optional[List] = None
-    edit_controls: Optional["StreamPostsFirehoseEnResponseDataEdit_controls"] = None
+    edit_controls: Optional["StreampostsfirehoseenResponseDataEditControls"] = None
     edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["StreamPostsFirehoseEnResponseDataEntities"] = None
-    geo: Optional["StreamPostsFirehoseEnResponseDataGeo"] = None
+    entities: Optional["StreampostsfirehoseenResponseDataEntities"] = None
+    geo: Optional["StreampostsfirehoseenResponseDataGeo"] = None
     id: Optional[str] = None
     in_reply_to_user_id: Optional[str] = None
     lang: Optional[str] = None
     non_public_metrics: Optional[
-        "StreamPostsFirehoseEnResponseDataNon_public_metrics"
+        "StreampostsfirehoseenResponseDataNonPublicMetrics"
     ] = None
-    note_tweet: Optional["StreamPostsFirehoseEnResponseDataNote_tweet"] = None
-    organic_metrics: Optional["StreamPostsFirehoseEnResponseDataOrganic_metrics"] = None
+    note_tweet: Optional["StreampostsfirehoseenResponseDataNoteTweet"] = None
+    organic_metrics: Optional["StreampostsfirehoseenResponseDataOrganicMetrics"] = None
     possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["StreamPostsFirehoseEnResponseDataPromoted_metrics"] = (
+    promoted_metrics: Optional["StreampostsfirehoseenResponseDataPromotedMetrics"] = (
         None
     )
-    public_metrics: Optional["StreamPostsFirehoseEnResponseDataPublic_metrics"] = None
+    public_metrics: Optional["StreampostsfirehoseenResponseDataPublicMetrics"] = None
     referenced_tweets: Optional[List] = None
     reply_settings: Optional[str] = None
-    scopes: Optional["StreamPostsFirehoseEnResponseDataScopes"] = None
+    scopes: Optional["StreampostsfirehoseenResponseDataScopes"] = None
     source: Optional[str] = None
     text: Optional[str] = None
     username: Optional[str] = None
-    withheld: Optional["StreamPostsFirehoseEnResponseDataWithheld"] = None
+    withheld: Optional["StreampostsfirehoseenResponseDataWithheld"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2378,8 +705,8 @@ class StreamPostsFirehoseEnResponseData(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseDataAttachments(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseDataAttachments"""
+class StreampostsfirehoseenResponseDataAttachments(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseDataAttachments"""
 
     media_keys: Optional[List] = None
     media_source_tweet_id: Optional[List] = None
@@ -2391,8 +718,8 @@ class StreamPostsFirehoseEnResponseDataAttachments(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseDataEdit_controls(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseDataEdit_controls"""
+class StreampostsfirehoseenResponseDataEditControls(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseDataEditControls"""
 
     editable_until: Optional[str] = None
     edits_remaining: Optional[int] = None
@@ -2404,8 +731,8 @@ class StreamPostsFirehoseEnResponseDataEdit_controls(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseDataEntities(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseDataEntities"""
+class StreampostsfirehoseenResponseDataEntities(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseDataEntities"""
 
     annotations: Optional[List] = None
     cashtags: Optional[List] = None
@@ -2419,10 +746,10 @@ class StreamPostsFirehoseEnResponseDataEntities(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseDataGeo(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseDataGeo"""
+class StreampostsfirehoseenResponseDataGeo(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseDataGeo"""
 
-    coordinates: Optional["StreamPostsFirehoseEnResponseDataGeoCoordinates"] = None
+    coordinates: Optional["StreampostsfirehoseenResponseDataGeoCoordinates"] = None
     place_id: Optional[str] = None
 
     class Config:
@@ -2431,8 +758,8 @@ class StreamPostsFirehoseEnResponseDataGeo(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseDataGeoCoordinates(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseDataGeoCoordinates"""
+class StreampostsfirehoseenResponseDataGeoCoordinates(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseDataGeoCoordinates"""
 
     coordinates: Optional[List] = None
     type: Optional[str] = None
@@ -2443,8 +770,8 @@ class StreamPostsFirehoseEnResponseDataGeoCoordinates(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseDataNon_public_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseDataNon_public_metrics"""
+class StreampostsfirehoseenResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseDataNonPublicMetrics"""
 
     impression_count: Optional[int] = None
 
@@ -2454,10 +781,10 @@ class StreamPostsFirehoseEnResponseDataNon_public_metrics(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseDataNote_tweet(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseDataNote_tweet"""
+class StreampostsfirehoseenResponseDataNoteTweet(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseDataNoteTweet"""
 
-    entities: Optional["StreamPostsFirehoseEnResponseDataNote_tweetEntities"] = None
+    entities: Optional["StreampostsfirehoseenResponseDataNoteTweetEntities"] = None
     text: Optional[str] = None
 
     class Config:
@@ -2466,8 +793,8 @@ class StreamPostsFirehoseEnResponseDataNote_tweet(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseDataNote_tweetEntities(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseDataNote_tweetEntities"""
+class StreampostsfirehoseenResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseDataNoteTweetEntities"""
 
     cashtags: Optional[List] = None
     hashtags: Optional[List] = None
@@ -2480,8 +807,8 @@ class StreamPostsFirehoseEnResponseDataNote_tweetEntities(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseDataOrganic_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseDataOrganic_metrics"""
+class StreampostsfirehoseenResponseDataOrganicMetrics(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseDataOrganicMetrics"""
 
     impression_count: Optional[int] = None
     like_count: Optional[int] = None
@@ -2494,8 +821,8 @@ class StreamPostsFirehoseEnResponseDataOrganic_metrics(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseDataPromoted_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseDataPromoted_metrics"""
+class StreampostsfirehoseenResponseDataPromotedMetrics(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseDataPromotedMetrics"""
 
     impression_count: Optional[int] = None
     like_count: Optional[int] = None
@@ -2508,8 +835,8 @@ class StreamPostsFirehoseEnResponseDataPromoted_metrics(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseDataPublic_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseDataPublic_metrics"""
+class StreampostsfirehoseenResponseDataPublicMetrics(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseDataPublicMetrics"""
 
     bookmark_count: Optional[int] = None
     impression_count: Optional[int] = None
@@ -2524,8 +851,8 @@ class StreamPostsFirehoseEnResponseDataPublic_metrics(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseDataScopes(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseDataScopes"""
+class StreampostsfirehoseenResponseDataScopes(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseDataScopes"""
 
     followers: Optional[bool] = None
 
@@ -2535,8 +862,8 @@ class StreamPostsFirehoseEnResponseDataScopes(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseDataWithheld(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseDataWithheld"""
+class StreampostsfirehoseenResponseDataWithheld(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseDataWithheld"""
 
     copyright: Optional[bool] = None
     country_codes: Optional[List] = None
@@ -2548,8 +875,8 @@ class StreamPostsFirehoseEnResponseDataWithheld(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseEnResponseIncludes(BaseModel):
-    """Nested model for StreamPostsFirehoseEnResponseIncludes"""
+class StreampostsfirehoseenResponseIncludes(BaseModel):
+    """Nested model for StreampostsfirehoseenResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -2564,59 +891,13 @@ class StreamPostsFirehoseEnResponseIncludes(BaseModel):
         populate_by_name = True
 
 
-# Models for getSpacesBuyers
+# Models for getRuleCounts
 
 
-class GetSpacesBuyersResponse(BaseModel):
-    """Response model for getSpacesBuyers"""
+class GetrulecountsResponse(BaseModel):
+    """Response model for getRuleCounts"""
 
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetSpacesBuyersResponseIncludes"] = None
-    meta: Optional["GetSpacesBuyersResponseMeta"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetSpacesBuyersResponseIncludes(BaseModel):
-    """Nested model for GetSpacesBuyersResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetSpacesBuyersResponseMeta(BaseModel):
-    """Nested model for GetSpacesBuyersResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for unlikePost
-
-
-class UnlikePostResponse(BaseModel):
-    """Response model for unlikePost"""
-
-    data: Optional["UnlikePostResponseData"] = None
+    data: Optional["GetrulecountsResponseData"] = None
     errors: Optional[List] = None
 
     class Config:
@@ -2625,10 +906,28 @@ class UnlikePostResponse(BaseModel):
         populate_by_name = True
 
 
-class UnlikePostResponseData(BaseModel):
-    """Nested model for UnlikePostResponseData"""
+class GetrulecountsResponseData(BaseModel):
+    """Nested model for GetrulecountsResponseData"""
 
-    liked: Optional[bool] = None
+    all_project_client_apps: Optional[List] = None
+    cap_per_client_app: Optional[int] = None
+    cap_per_project: Optional[int] = None
+    client_app_rules_count: Optional["GetrulecountsResponseDataClientAppRulesCount"] = (
+        None
+    )
+    project_rules_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetrulecountsResponseDataClientAppRulesCount(BaseModel):
+    """Nested model for GetrulecountsResponseDataClientAppRulesCount"""
+
+    client_app_id: Optional[str] = None
+    rule_count: Optional[int] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2639,13 +938,13 @@ class UnlikePostResponseData(BaseModel):
 # Models for getUsersTimeline
 
 
-class GetUsersTimelineResponse(BaseModel):
+class GetuserstimelineResponse(BaseModel):
     """Response model for getUsersTimeline"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["GetUsersTimelineResponseIncludes"] = None
-    meta: Optional["GetUsersTimelineResponseMeta"] = None
+    includes: Optional["GetuserstimelineResponseIncludes"] = None
+    meta: Optional["GetuserstimelineResponseMeta"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2653,8 +952,8 @@ class GetUsersTimelineResponse(BaseModel):
         populate_by_name = True
 
 
-class GetUsersTimelineResponseIncludes(BaseModel):
-    """Nested model for GetUsersTimelineResponseIncludes"""
+class GetuserstimelineResponseIncludes(BaseModel):
+    """Nested model for GetuserstimelineResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -2669,8 +968,8 @@ class GetUsersTimelineResponseIncludes(BaseModel):
         populate_by_name = True
 
 
-class GetUsersTimelineResponseMeta(BaseModel):
-    """Nested model for GetUsersTimelineResponseMeta"""
+class GetuserstimelineResponseMeta(BaseModel):
+    """Nested model for GetuserstimelineResponseMeta"""
 
     newest_id: Optional[str] = None
     next_token: Optional[str] = None
@@ -2684,25 +983,15 @@ class GetUsersTimelineResponseMeta(BaseModel):
         populate_by_name = True
 
 
-# Models for likePost
+# Models for streamPostsFirehoseJa
 
 
-class LikePostRequest(BaseModel):
-    """Request model for likePost"""
+class StreampostsfirehosejaResponse(BaseModel):
+    """Response model for streamPostsFirehoseJa"""
 
-    tweet_id: Optional[str] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class LikePostResponse(BaseModel):
-    """Response model for likePost"""
-
-    data: Optional["LikePostResponseData"] = None
+    data: Optional["StreampostsfirehosejaResponseData"] = None
     errors: Optional[List] = None
+    includes: Optional["StreampostsfirehosejaResponseIncludes"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2710,10 +999,40 @@ class LikePostResponse(BaseModel):
         populate_by_name = True
 
 
-class LikePostResponseData(BaseModel):
-    """Nested model for LikePostResponseData"""
+class StreampostsfirehosejaResponseData(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseData"""
 
-    liked: Optional[bool] = None
+    attachments: Optional["StreampostsfirehosejaResponseDataAttachments"] = None
+    author_id: Optional[str] = None
+    community_id: Optional[str] = None
+    context_annotations: Optional[List] = None
+    conversation_id: Optional[str] = None
+    created_at: Optional[str] = None
+    display_text_range: Optional[List] = None
+    edit_controls: Optional["StreampostsfirehosejaResponseDataEditControls"] = None
+    edit_history_tweet_ids: Optional[List] = None
+    entities: Optional["StreampostsfirehosejaResponseDataEntities"] = None
+    geo: Optional["StreampostsfirehosejaResponseDataGeo"] = None
+    id: Optional[str] = None
+    in_reply_to_user_id: Optional[str] = None
+    lang: Optional[str] = None
+    non_public_metrics: Optional[
+        "StreampostsfirehosejaResponseDataNonPublicMetrics"
+    ] = None
+    note_tweet: Optional["StreampostsfirehosejaResponseDataNoteTweet"] = None
+    organic_metrics: Optional["StreampostsfirehosejaResponseDataOrganicMetrics"] = None
+    possibly_sensitive: Optional[bool] = None
+    promoted_metrics: Optional["StreampostsfirehosejaResponseDataPromotedMetrics"] = (
+        None
+    )
+    public_metrics: Optional["StreampostsfirehosejaResponseDataPublicMetrics"] = None
+    referenced_tweets: Optional[List] = None
+    reply_settings: Optional[str] = None
+    scopes: Optional["StreampostsfirehosejaResponseDataScopes"] = None
+    source: Optional[str] = None
+    text: Optional[str] = None
+    username: Optional[str] = None
+    withheld: Optional["StreampostsfirehosejaResponseDataWithheld"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2721,16 +1040,12 @@ class LikePostResponseData(BaseModel):
         populate_by_name = True
 
 
-# Models for getPostsQuotedPosts
+class StreampostsfirehosejaResponseDataAttachments(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseDataAttachments"""
 
-
-class GetPostsQuotedPostsResponse(BaseModel):
-    """Response model for getPostsQuotedPosts"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetPostsQuotedPostsResponseIncludes"] = None
-    meta: Optional["GetPostsQuotedPostsResponseMeta"] = None
+    media_keys: Optional[List] = None
+    media_source_tweet_id: Optional[List] = None
+    poll_ids: Optional[List] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2738,8 +1053,165 @@ class GetPostsQuotedPostsResponse(BaseModel):
         populate_by_name = True
 
 
-class GetPostsQuotedPostsResponseIncludes(BaseModel):
-    """Nested model for GetPostsQuotedPostsResponseIncludes"""
+class StreampostsfirehosejaResponseDataEditControls(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseDataEditControls"""
+
+    editable_until: Optional[str] = None
+    edits_remaining: Optional[int] = None
+    is_edit_eligible: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosejaResponseDataEntities(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseDataEntities"""
+
+    annotations: Optional[List] = None
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosejaResponseDataGeo(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseDataGeo"""
+
+    coordinates: Optional["StreampostsfirehosejaResponseDataGeoCoordinates"] = None
+    place_id: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosejaResponseDataGeoCoordinates(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseDataGeoCoordinates"""
+
+    coordinates: Optional[List] = None
+    type: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosejaResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseDataNonPublicMetrics"""
+
+    impression_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosejaResponseDataNoteTweet(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseDataNoteTweet"""
+
+    entities: Optional["StreampostsfirehosejaResponseDataNoteTweetEntities"] = None
+    text: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosejaResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseDataNoteTweetEntities"""
+
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosejaResponseDataOrganicMetrics(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseDataOrganicMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosejaResponseDataPromotedMetrics(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseDataPromotedMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosejaResponseDataPublicMetrics(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseDataPublicMetrics"""
+
+    bookmark_count: Optional[int] = None
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    quote_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosejaResponseDataScopes(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseDataScopes"""
+
+    followers: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosejaResponseDataWithheld(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseDataWithheld"""
+
+    copyright: Optional[bool] = None
+    country_codes: Optional[List] = None
+    scope: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosejaResponseIncludes(BaseModel):
+    """Nested model for StreampostsfirehosejaResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -2754,10 +1226,768 @@ class GetPostsQuotedPostsResponseIncludes(BaseModel):
         populate_by_name = True
 
 
-class GetPostsQuotedPostsResponseMeta(BaseModel):
-    """Nested model for GetPostsQuotedPostsResponseMeta"""
+# Models for getInsights28Hr
+
+
+class Getinsights28hrResponse(BaseModel):
+    """Response model for getInsights28Hr"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for streamPosts
+
+
+class StreampostsResponse(BaseModel):
+    """Response model for streamPosts"""
+
+    data: Optional["StreampostsResponseData"] = None
+    errors: Optional[List] = None
+    includes: Optional["StreampostsResponseIncludes"] = None
+    matching_rules: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseData(BaseModel):
+    """Nested model for StreampostsResponseData"""
+
+    attachments: Optional["StreampostsResponseDataAttachments"] = None
+    author_id: Optional[str] = None
+    community_id: Optional[str] = None
+    context_annotations: Optional[List] = None
+    conversation_id: Optional[str] = None
+    created_at: Optional[str] = None
+    display_text_range: Optional[List] = None
+    edit_controls: Optional["StreampostsResponseDataEditControls"] = None
+    edit_history_tweet_ids: Optional[List] = None
+    entities: Optional["StreampostsResponseDataEntities"] = None
+    geo: Optional["StreampostsResponseDataGeo"] = None
+    id: Optional[str] = None
+    in_reply_to_user_id: Optional[str] = None
+    lang: Optional[str] = None
+    non_public_metrics: Optional["StreampostsResponseDataNonPublicMetrics"] = None
+    note_tweet: Optional["StreampostsResponseDataNoteTweet"] = None
+    organic_metrics: Optional["StreampostsResponseDataOrganicMetrics"] = None
+    possibly_sensitive: Optional[bool] = None
+    promoted_metrics: Optional["StreampostsResponseDataPromotedMetrics"] = None
+    public_metrics: Optional["StreampostsResponseDataPublicMetrics"] = None
+    referenced_tweets: Optional[List] = None
+    reply_settings: Optional[str] = None
+    scopes: Optional["StreampostsResponseDataScopes"] = None
+    source: Optional[str] = None
+    text: Optional[str] = None
+    username: Optional[str] = None
+    withheld: Optional["StreampostsResponseDataWithheld"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseDataAttachments(BaseModel):
+    """Nested model for StreampostsResponseDataAttachments"""
+
+    media_keys: Optional[List] = None
+    media_source_tweet_id: Optional[List] = None
+    poll_ids: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseDataEditControls(BaseModel):
+    """Nested model for StreampostsResponseDataEditControls"""
+
+    editable_until: Optional[str] = None
+    edits_remaining: Optional[int] = None
+    is_edit_eligible: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseDataEntities(BaseModel):
+    """Nested model for StreampostsResponseDataEntities"""
+
+    annotations: Optional[List] = None
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseDataGeo(BaseModel):
+    """Nested model for StreampostsResponseDataGeo"""
+
+    coordinates: Optional["StreampostsResponseDataGeoCoordinates"] = None
+    place_id: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseDataGeoCoordinates(BaseModel):
+    """Nested model for StreampostsResponseDataGeoCoordinates"""
+
+    coordinates: Optional[List] = None
+    type: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for StreampostsResponseDataNonPublicMetrics"""
+
+    impression_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseDataNoteTweet(BaseModel):
+    """Nested model for StreampostsResponseDataNoteTweet"""
+
+    entities: Optional["StreampostsResponseDataNoteTweetEntities"] = None
+    text: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for StreampostsResponseDataNoteTweetEntities"""
+
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseDataOrganicMetrics(BaseModel):
+    """Nested model for StreampostsResponseDataOrganicMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseDataPromotedMetrics(BaseModel):
+    """Nested model for StreampostsResponseDataPromotedMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseDataPublicMetrics(BaseModel):
+    """Nested model for StreampostsResponseDataPublicMetrics"""
+
+    bookmark_count: Optional[int] = None
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    quote_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseDataScopes(BaseModel):
+    """Nested model for StreampostsResponseDataScopes"""
+
+    followers: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseDataWithheld(BaseModel):
+    """Nested model for StreampostsResponseDataWithheld"""
+
+    copyright: Optional[bool] = None
+    country_codes: Optional[List] = None
+    scope: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsResponseIncludes(BaseModel):
+    """Nested model for StreampostsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getRules
+
+
+class GetrulesResponse(BaseModel):
+    """Response model for getRules"""
+
+    data: Optional[List] = None
+    meta: Optional["GetrulesResponseMeta"] = Field(default_factory=dict)
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetrulesResponseMeta(BaseModel):
+    """Nested model for GetrulesResponseMeta"""
 
     next_token: Optional[str] = None
+    result_count: Optional[int] = None
+    sent: Optional[str] = None
+    summary: Any = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for updateRules
+
+
+class UpdaterulesRequest(BaseModel):
+    """Request model for updateRules"""
+
+    add: Optional[List] = Field(default=None)
+    delete: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="IDs and values of all deleted user-specified stream filtering rules.",
+    )
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class UpdaterulesResponse(BaseModel):
+    """Response model for updateRules"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    meta: Optional["UpdaterulesResponseMeta"] = Field(default_factory=dict)
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class UpdaterulesResponseMeta(BaseModel):
+    """Nested model for UpdaterulesResponseMeta"""
+
+    next_token: Optional[str] = None
+    result_count: Optional[int] = None
+    sent: Optional[str] = None
+    summary: Any = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for hidePostsReply
+
+
+class HidepostsreplyRequest(BaseModel):
+    """Request model for hidePostsReply"""
+
+    hidden: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class HidepostsreplyResponse(BaseModel):
+    """Response model for hidePostsReply"""
+
+    data: Optional["HidepostsreplyResponseData"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class HidepostsreplyResponseData(BaseModel):
+    """Nested model for HidepostsreplyResponseData"""
+
+    hidden: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getListsPosts
+
+
+class GetlistspostsResponse(BaseModel):
+    """Response model for getListsPosts"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetlistspostsResponseIncludes"] = None
+    meta: Optional["GetlistspostsResponseMeta"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetlistspostsResponseIncludes(BaseModel):
+    """Nested model for GetlistspostsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetlistspostsResponseMeta(BaseModel):
+    """Nested model for GetlistspostsResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getSpacesPosts
+
+
+class GetspacespostsResponse(BaseModel):
+    """Response model for getSpacesPosts"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetspacespostsResponseIncludes"] = None
+    meta: Optional["GetspacespostsResponseMeta"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetspacespostsResponseIncludes(BaseModel):
+    """Nested model for GetspacespostsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetspacespostsResponseMeta(BaseModel):
+    """Nested model for GetspacespostsResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getPostsById
+
+
+class GetpostsbyidResponse(BaseModel):
+    """Response model for getPostsById"""
+
+    data: Optional["GetpostsbyidResponseData"] = None
+    errors: Optional[List] = None
+    includes: Optional["GetpostsbyidResponseIncludes"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseData(BaseModel):
+    """Nested model for GetpostsbyidResponseData"""
+
+    attachments: Optional["GetpostsbyidResponseDataAttachments"] = None
+    author_id: Optional[str] = None
+    community_id: Optional[str] = None
+    context_annotations: Optional[List] = None
+    conversation_id: Optional[str] = None
+    created_at: Optional[str] = None
+    display_text_range: Optional[List] = None
+    edit_controls: Optional["GetpostsbyidResponseDataEditControls"] = None
+    edit_history_tweet_ids: Optional[List] = None
+    entities: Optional["GetpostsbyidResponseDataEntities"] = None
+    geo: Optional["GetpostsbyidResponseDataGeo"] = None
+    id: Optional[str] = None
+    in_reply_to_user_id: Optional[str] = None
+    lang: Optional[str] = None
+    non_public_metrics: Optional["GetpostsbyidResponseDataNonPublicMetrics"] = None
+    note_tweet: Optional["GetpostsbyidResponseDataNoteTweet"] = None
+    organic_metrics: Optional["GetpostsbyidResponseDataOrganicMetrics"] = None
+    possibly_sensitive: Optional[bool] = None
+    promoted_metrics: Optional["GetpostsbyidResponseDataPromotedMetrics"] = None
+    public_metrics: Optional["GetpostsbyidResponseDataPublicMetrics"] = None
+    referenced_tweets: Optional[List] = None
+    reply_settings: Optional[str] = None
+    scopes: Optional["GetpostsbyidResponseDataScopes"] = None
+    source: Optional[str] = None
+    text: Optional[str] = None
+    username: Optional[str] = None
+    withheld: Optional["GetpostsbyidResponseDataWithheld"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseDataAttachments(BaseModel):
+    """Nested model for GetpostsbyidResponseDataAttachments"""
+
+    media_keys: Optional[List] = None
+    media_source_tweet_id: Optional[List] = None
+    poll_ids: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseDataEditControls(BaseModel):
+    """Nested model for GetpostsbyidResponseDataEditControls"""
+
+    editable_until: Optional[str] = None
+    edits_remaining: Optional[int] = None
+    is_edit_eligible: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseDataEntities(BaseModel):
+    """Nested model for GetpostsbyidResponseDataEntities"""
+
+    annotations: Optional[List] = None
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseDataGeo(BaseModel):
+    """Nested model for GetpostsbyidResponseDataGeo"""
+
+    coordinates: Optional["GetpostsbyidResponseDataGeoCoordinates"] = None
+    place_id: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseDataGeoCoordinates(BaseModel):
+    """Nested model for GetpostsbyidResponseDataGeoCoordinates"""
+
+    coordinates: Optional[List] = None
+    type: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for GetpostsbyidResponseDataNonPublicMetrics"""
+
+    impression_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseDataNoteTweet(BaseModel):
+    """Nested model for GetpostsbyidResponseDataNoteTweet"""
+
+    entities: Optional["GetpostsbyidResponseDataNoteTweetEntities"] = None
+    text: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for GetpostsbyidResponseDataNoteTweetEntities"""
+
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseDataOrganicMetrics(BaseModel):
+    """Nested model for GetpostsbyidResponseDataOrganicMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseDataPromotedMetrics(BaseModel):
+    """Nested model for GetpostsbyidResponseDataPromotedMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseDataPublicMetrics(BaseModel):
+    """Nested model for GetpostsbyidResponseDataPublicMetrics"""
+
+    bookmark_count: Optional[int] = None
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    quote_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseDataScopes(BaseModel):
+    """Nested model for GetpostsbyidResponseDataScopes"""
+
+    followers: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseDataWithheld(BaseModel):
+    """Nested model for GetpostsbyidResponseDataWithheld"""
+
+    copyright: Optional[bool] = None
+    country_codes: Optional[List] = None
+    scope: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostsbyidResponseIncludes(BaseModel):
+    """Nested model for GetpostsbyidResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for deletePosts
+
+
+class DeletepostsResponse(BaseModel):
+    """Response model for deletePosts"""
+
+    data: Optional["DeletepostsResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class DeletepostsResponseData(BaseModel):
+    """Nested model for DeletepostsResponseData"""
+
+    deleted: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getUsersMentions
+
+
+class GetusersmentionsResponse(BaseModel):
+    """Response model for getUsersMentions"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetusersmentionsResponseIncludes"] = None
+    meta: Optional["GetusersmentionsResponseMeta"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetusersmentionsResponseIncludes(BaseModel):
+    """Nested model for GetusersmentionsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetusersmentionsResponseMeta(BaseModel):
+    """Nested model for GetusersmentionsResponseMeta"""
+
+    newest_id: Optional[str] = None
+    next_token: Optional[str] = None
+    oldest_id: Optional[str] = None
+    previous_token: Optional[str] = None
     result_count: Optional[int] = None
 
     class Config:
@@ -2769,12 +1999,12 @@ class GetPostsQuotedPostsResponseMeta(BaseModel):
 # Models for getPostsByIds
 
 
-class GetPostsByIdsResponse(BaseModel):
+class GetpostsbyidsResponse(BaseModel):
     """Response model for getPostsByIds"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["GetPostsByIdsResponseIncludes"] = None
+    includes: Optional["GetpostsbyidsResponseIncludes"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2782,8 +2012,8 @@ class GetPostsByIdsResponse(BaseModel):
         populate_by_name = True
 
 
-class GetPostsByIdsResponseIncludes(BaseModel):
-    """Nested model for GetPostsByIdsResponseIncludes"""
+class GetpostsbyidsResponseIncludes(BaseModel):
+    """Nested model for GetpostsbyidsResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -2801,25 +2031,25 @@ class GetPostsByIdsResponseIncludes(BaseModel):
 # Models for createPosts
 
 
-class CreatePostsRequest(BaseModel):
+class CreatepostsRequest(BaseModel):
     """Request model for createPosts"""
 
     card_uri: Optional[str] = None
     community_id: Optional[str] = None
     direct_message_deep_link: Optional[str] = None
     for_super_followers_only: Optional[bool] = None
-    geo: Optional["CreatePostsRequestGeo"] = None
-    media: Optional["CreatePostsRequestMedia"] = Field(
+    geo: Optional["CreatepostsRequestGeo"] = None
+    media: Optional["CreatepostsRequestMedia"] = Field(
         description="Media information being attached to created Tweet. This is mutually exclusive from Quote Tweet Id, Poll, and Card URI.",
         default_factory=dict,
     )
     nullcast: Optional[bool] = None
-    poll: Optional["CreatePostsRequestPoll"] = Field(
+    poll: Optional["CreatepostsRequestPoll"] = Field(
         description="Poll options for a Tweet with a poll. This is mutually exclusive from Media, Quote Tweet Id, and Card URI.",
         default_factory=dict,
     )
     quote_tweet_id: Optional[str] = None
-    reply: Optional["CreatePostsRequestReply"] = Field(
+    reply: Optional["CreatepostsRequestReply"] = Field(
         description="Tweet information of the Tweet being replied to.",
         default_factory=dict,
     )
@@ -2833,10 +2063,10 @@ class CreatePostsRequest(BaseModel):
         populate_by_name = True
 
 
-class CreatePostsResponse(BaseModel):
+class CreatepostsResponse(BaseModel):
     """Response model for createPosts"""
 
-    data: Optional["CreatePostsResponseData"] = Field(default_factory=dict)
+    data: Optional["CreatepostsResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     class Config:
@@ -2845,8 +2075,8 @@ class CreatePostsResponse(BaseModel):
         populate_by_name = True
 
 
-class CreatePostsRequestGeo(BaseModel):
-    """Nested model for CreatePostsRequestGeo"""
+class CreatepostsRequestGeo(BaseModel):
+    """Nested model for CreatepostsRequestGeo"""
 
     place_id: Optional[str] = None
 
@@ -2856,8 +2086,8 @@ class CreatePostsRequestGeo(BaseModel):
         populate_by_name = True
 
 
-class CreatePostsRequestMedia(BaseModel):
-    """Nested model for CreatePostsRequestMedia"""
+class CreatepostsRequestMedia(BaseModel):
+    """Nested model for CreatepostsRequestMedia"""
 
     media_ids: Optional[List] = None
     tagged_user_ids: Optional[List] = None
@@ -2868,8 +2098,8 @@ class CreatePostsRequestMedia(BaseModel):
         populate_by_name = True
 
 
-class CreatePostsRequestPoll(BaseModel):
-    """Nested model for CreatePostsRequestPoll"""
+class CreatepostsRequestPoll(BaseModel):
+    """Nested model for CreatepostsRequestPoll"""
 
     duration_minutes: Optional[int] = None
     options: Optional[List] = None
@@ -2881,8 +2111,8 @@ class CreatePostsRequestPoll(BaseModel):
         populate_by_name = True
 
 
-class CreatePostsRequestReply(BaseModel):
-    """Nested model for CreatePostsRequestReply"""
+class CreatepostsRequestReply(BaseModel):
+    """Nested model for CreatepostsRequestReply"""
 
     exclude_reply_user_ids: Optional[List] = None
     in_reply_to_tweet_id: Optional[str] = None
@@ -2893,8 +2123,8 @@ class CreatePostsRequestReply(BaseModel):
         populate_by_name = True
 
 
-class CreatePostsResponseData(BaseModel):
-    """Nested model for CreatePostsResponseData"""
+class CreatepostsResponseData(BaseModel):
+    """Nested model for CreatepostsResponseData"""
 
     id: Optional[str] = None
     text: Optional[str] = None
@@ -2905,49 +2135,13 @@ class CreatePostsResponseData(BaseModel):
         populate_by_name = True
 
 
-# Models for hidePostsReply
+# Models for unrepostPost
 
 
-class HidePostsReplyRequest(BaseModel):
-    """Request model for hidePostsReply"""
+class UnrepostpostResponse(BaseModel):
+    """Response model for unrepostPost"""
 
-    hidden: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class HidePostsReplyResponse(BaseModel):
-    """Response model for hidePostsReply"""
-
-    data: Optional["HidePostsReplyResponseData"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class HidePostsReplyResponseData(BaseModel):
-    """Nested model for HidePostsReplyResponseData"""
-
-    hidden: Optional[bool] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for getInsights28Hr
-
-
-class GetInsights28HrResponse(BaseModel):
-    """Response model for getInsights28Hr"""
-
-    data: Optional[List] = None
+    data: Optional["UnrepostpostResponseData"] = None
     errors: Optional[List] = None
 
     class Config:
@@ -2956,16 +2150,26 @@ class GetInsights28HrResponse(BaseModel):
         populate_by_name = True
 
 
-# Models for getUsersMentions
+class UnrepostpostResponseData(BaseModel):
+    """Nested model for UnrepostpostResponseData"""
+
+    retweeted: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
 
 
-class GetUsersMentionsResponse(BaseModel):
-    """Response model for getUsersMentions"""
+# Models for streamPostsSample
 
-    data: Optional[List] = None
+
+class StreampostssampleResponse(BaseModel):
+    """Response model for streamPostsSample"""
+
+    data: Optional["StreampostssampleResponseData"] = None
     errors: Optional[List] = None
-    includes: Optional["GetUsersMentionsResponseIncludes"] = None
-    meta: Optional["GetUsersMentionsResponseMeta"] = None
+    includes: Optional["StreampostssampleResponseIncludes"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -2973,87 +2177,36 @@ class GetUsersMentionsResponse(BaseModel):
         populate_by_name = True
 
 
-class GetUsersMentionsResponseIncludes(BaseModel):
-    """Nested model for GetUsersMentionsResponseIncludes"""
+class StreampostssampleResponseData(BaseModel):
+    """Nested model for StreampostssampleResponseData"""
 
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class GetUsersMentionsResponseMeta(BaseModel):
-    """Nested model for GetUsersMentionsResponseMeta"""
-
-    newest_id: Optional[str] = None
-    next_token: Optional[str] = None
-    oldest_id: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-# Models for streamPostsFirehoseKo
-
-
-class StreamPostsFirehoseKoResponse(BaseModel):
-    """Response model for streamPostsFirehoseKo"""
-
-    data: Optional["StreamPostsFirehoseKoResponseData"] = None
-    errors: Optional[List] = None
-    includes: Optional["StreamPostsFirehoseKoResponseIncludes"] = None
-
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
-
-
-class StreamPostsFirehoseKoResponseData(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseData"""
-
-    attachments: Optional["StreamPostsFirehoseKoResponseDataAttachments"] = None
+    attachments: Optional["StreampostssampleResponseDataAttachments"] = None
     author_id: Optional[str] = None
     community_id: Optional[str] = None
     context_annotations: Optional[List] = None
     conversation_id: Optional[str] = None
     created_at: Optional[str] = None
     display_text_range: Optional[List] = None
-    edit_controls: Optional["StreamPostsFirehoseKoResponseDataEdit_controls"] = None
+    edit_controls: Optional["StreampostssampleResponseDataEditControls"] = None
     edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["StreamPostsFirehoseKoResponseDataEntities"] = None
-    geo: Optional["StreamPostsFirehoseKoResponseDataGeo"] = None
+    entities: Optional["StreampostssampleResponseDataEntities"] = None
+    geo: Optional["StreampostssampleResponseDataGeo"] = None
     id: Optional[str] = None
     in_reply_to_user_id: Optional[str] = None
     lang: Optional[str] = None
-    non_public_metrics: Optional[
-        "StreamPostsFirehoseKoResponseDataNon_public_metrics"
-    ] = None
-    note_tweet: Optional["StreamPostsFirehoseKoResponseDataNote_tweet"] = None
-    organic_metrics: Optional["StreamPostsFirehoseKoResponseDataOrganic_metrics"] = None
+    non_public_metrics: Optional["StreampostssampleResponseDataNonPublicMetrics"] = None
+    note_tweet: Optional["StreampostssampleResponseDataNoteTweet"] = None
+    organic_metrics: Optional["StreampostssampleResponseDataOrganicMetrics"] = None
     possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["StreamPostsFirehoseKoResponseDataPromoted_metrics"] = (
-        None
-    )
-    public_metrics: Optional["StreamPostsFirehoseKoResponseDataPublic_metrics"] = None
+    promoted_metrics: Optional["StreampostssampleResponseDataPromotedMetrics"] = None
+    public_metrics: Optional["StreampostssampleResponseDataPublicMetrics"] = None
     referenced_tweets: Optional[List] = None
     reply_settings: Optional[str] = None
-    scopes: Optional["StreamPostsFirehoseKoResponseDataScopes"] = None
+    scopes: Optional["StreampostssampleResponseDataScopes"] = None
     source: Optional[str] = None
     text: Optional[str] = None
     username: Optional[str] = None
-    withheld: Optional["StreamPostsFirehoseKoResponseDataWithheld"] = None
+    withheld: Optional["StreampostssampleResponseDataWithheld"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -3061,8 +2214,8 @@ class StreamPostsFirehoseKoResponseData(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseDataAttachments(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseDataAttachments"""
+class StreampostssampleResponseDataAttachments(BaseModel):
+    """Nested model for StreampostssampleResponseDataAttachments"""
 
     media_keys: Optional[List] = None
     media_source_tweet_id: Optional[List] = None
@@ -3074,8 +2227,8 @@ class StreamPostsFirehoseKoResponseDataAttachments(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseDataEdit_controls(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseDataEdit_controls"""
+class StreampostssampleResponseDataEditControls(BaseModel):
+    """Nested model for StreampostssampleResponseDataEditControls"""
 
     editable_until: Optional[str] = None
     edits_remaining: Optional[int] = None
@@ -3087,8 +2240,8 @@ class StreamPostsFirehoseKoResponseDataEdit_controls(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseDataEntities(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseDataEntities"""
+class StreampostssampleResponseDataEntities(BaseModel):
+    """Nested model for StreampostssampleResponseDataEntities"""
 
     annotations: Optional[List] = None
     cashtags: Optional[List] = None
@@ -3102,10 +2255,10 @@ class StreamPostsFirehoseKoResponseDataEntities(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseDataGeo(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseDataGeo"""
+class StreampostssampleResponseDataGeo(BaseModel):
+    """Nested model for StreampostssampleResponseDataGeo"""
 
-    coordinates: Optional["StreamPostsFirehoseKoResponseDataGeoCoordinates"] = None
+    coordinates: Optional["StreampostssampleResponseDataGeoCoordinates"] = None
     place_id: Optional[str] = None
 
     class Config:
@@ -3114,8 +2267,8 @@ class StreamPostsFirehoseKoResponseDataGeo(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseDataGeoCoordinates(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseDataGeoCoordinates"""
+class StreampostssampleResponseDataGeoCoordinates(BaseModel):
+    """Nested model for StreampostssampleResponseDataGeoCoordinates"""
 
     coordinates: Optional[List] = None
     type: Optional[str] = None
@@ -3126,8 +2279,8 @@ class StreamPostsFirehoseKoResponseDataGeoCoordinates(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseDataNon_public_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseDataNon_public_metrics"""
+class StreampostssampleResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for StreampostssampleResponseDataNonPublicMetrics"""
 
     impression_count: Optional[int] = None
 
@@ -3137,10 +2290,10 @@ class StreamPostsFirehoseKoResponseDataNon_public_metrics(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseDataNote_tweet(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseDataNote_tweet"""
+class StreampostssampleResponseDataNoteTweet(BaseModel):
+    """Nested model for StreampostssampleResponseDataNoteTweet"""
 
-    entities: Optional["StreamPostsFirehoseKoResponseDataNote_tweetEntities"] = None
+    entities: Optional["StreampostssampleResponseDataNoteTweetEntities"] = None
     text: Optional[str] = None
 
     class Config:
@@ -3149,8 +2302,8 @@ class StreamPostsFirehoseKoResponseDataNote_tweet(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseDataNote_tweetEntities(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseDataNote_tweetEntities"""
+class StreampostssampleResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for StreampostssampleResponseDataNoteTweetEntities"""
 
     cashtags: Optional[List] = None
     hashtags: Optional[List] = None
@@ -3163,8 +2316,8 @@ class StreamPostsFirehoseKoResponseDataNote_tweetEntities(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseDataOrganic_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseDataOrganic_metrics"""
+class StreampostssampleResponseDataOrganicMetrics(BaseModel):
+    """Nested model for StreampostssampleResponseDataOrganicMetrics"""
 
     impression_count: Optional[int] = None
     like_count: Optional[int] = None
@@ -3177,8 +2330,8 @@ class StreamPostsFirehoseKoResponseDataOrganic_metrics(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseDataPromoted_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseDataPromoted_metrics"""
+class StreampostssampleResponseDataPromotedMetrics(BaseModel):
+    """Nested model for StreampostssampleResponseDataPromotedMetrics"""
 
     impression_count: Optional[int] = None
     like_count: Optional[int] = None
@@ -3191,8 +2344,8 @@ class StreamPostsFirehoseKoResponseDataPromoted_metrics(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseDataPublic_metrics(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseDataPublic_metrics"""
+class StreampostssampleResponseDataPublicMetrics(BaseModel):
+    """Nested model for StreampostssampleResponseDataPublicMetrics"""
 
     bookmark_count: Optional[int] = None
     impression_count: Optional[int] = None
@@ -3207,8 +2360,8 @@ class StreamPostsFirehoseKoResponseDataPublic_metrics(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseDataScopes(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseDataScopes"""
+class StreampostssampleResponseDataScopes(BaseModel):
+    """Nested model for StreampostssampleResponseDataScopes"""
 
     followers: Optional[bool] = None
 
@@ -3218,8 +2371,8 @@ class StreamPostsFirehoseKoResponseDataScopes(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseDataWithheld(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseDataWithheld"""
+class StreampostssampleResponseDataWithheld(BaseModel):
+    """Nested model for StreampostssampleResponseDataWithheld"""
 
     copyright: Optional[bool] = None
     country_codes: Optional[List] = None
@@ -3231,8 +2384,853 @@ class StreamPostsFirehoseKoResponseDataWithheld(BaseModel):
         populate_by_name = True
 
 
-class StreamPostsFirehoseKoResponseIncludes(BaseModel):
-    """Nested model for StreamPostsFirehoseKoResponseIncludes"""
+class StreampostssampleResponseIncludes(BaseModel):
+    """Nested model for StreampostssampleResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getInsightsHistorical
+
+
+class GetinsightshistoricalResponse(BaseModel):
+    """Response model for getInsightsHistorical"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for repostPost
+
+
+class RepostpostRequest(BaseModel):
+    """Request model for repostPost"""
+
+    tweet_id: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class RepostpostResponse(BaseModel):
+    """Response model for repostPost"""
+
+    data: Optional["RepostpostResponseData"] = None
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class RepostpostResponseData(BaseModel):
+    """Nested model for RepostpostResponseData"""
+
+    id: Optional[str] = None
+    retweeted: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for getPostsCountsAll
+
+
+class GetpostscountsallResponse(BaseModel):
+    """Response model for getPostsCountsAll"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    meta: Optional["GetpostscountsallResponseMeta"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class GetpostscountsallResponseMeta(BaseModel):
+    """Nested model for GetpostscountsallResponseMeta"""
+
+    newest_id: Optional[str] = None
+    next_token: Optional[str] = None
+    oldest_id: Optional[str] = None
+    total_tweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for streamPostsFirehose
+
+
+class StreampostsfirehoseResponse(BaseModel):
+    """Response model for streamPostsFirehose"""
+
+    data: Optional["StreampostsfirehoseResponseData"] = None
+    errors: Optional[List] = None
+    includes: Optional["StreampostsfirehoseResponseIncludes"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseData(BaseModel):
+    """Nested model for StreampostsfirehoseResponseData"""
+
+    attachments: Optional["StreampostsfirehoseResponseDataAttachments"] = None
+    author_id: Optional[str] = None
+    community_id: Optional[str] = None
+    context_annotations: Optional[List] = None
+    conversation_id: Optional[str] = None
+    created_at: Optional[str] = None
+    display_text_range: Optional[List] = None
+    edit_controls: Optional["StreampostsfirehoseResponseDataEditControls"] = None
+    edit_history_tweet_ids: Optional[List] = None
+    entities: Optional["StreampostsfirehoseResponseDataEntities"] = None
+    geo: Optional["StreampostsfirehoseResponseDataGeo"] = None
+    id: Optional[str] = None
+    in_reply_to_user_id: Optional[str] = None
+    lang: Optional[str] = None
+    non_public_metrics: Optional["StreampostsfirehoseResponseDataNonPublicMetrics"] = (
+        None
+    )
+    note_tweet: Optional["StreampostsfirehoseResponseDataNoteTweet"] = None
+    organic_metrics: Optional["StreampostsfirehoseResponseDataOrganicMetrics"] = None
+    possibly_sensitive: Optional[bool] = None
+    promoted_metrics: Optional["StreampostsfirehoseResponseDataPromotedMetrics"] = None
+    public_metrics: Optional["StreampostsfirehoseResponseDataPublicMetrics"] = None
+    referenced_tweets: Optional[List] = None
+    reply_settings: Optional[str] = None
+    scopes: Optional["StreampostsfirehoseResponseDataScopes"] = None
+    source: Optional[str] = None
+    text: Optional[str] = None
+    username: Optional[str] = None
+    withheld: Optional["StreampostsfirehoseResponseDataWithheld"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseDataAttachments(BaseModel):
+    """Nested model for StreampostsfirehoseResponseDataAttachments"""
+
+    media_keys: Optional[List] = None
+    media_source_tweet_id: Optional[List] = None
+    poll_ids: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseDataEditControls(BaseModel):
+    """Nested model for StreampostsfirehoseResponseDataEditControls"""
+
+    editable_until: Optional[str] = None
+    edits_remaining: Optional[int] = None
+    is_edit_eligible: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseDataEntities(BaseModel):
+    """Nested model for StreampostsfirehoseResponseDataEntities"""
+
+    annotations: Optional[List] = None
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseDataGeo(BaseModel):
+    """Nested model for StreampostsfirehoseResponseDataGeo"""
+
+    coordinates: Optional["StreampostsfirehoseResponseDataGeoCoordinates"] = None
+    place_id: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseDataGeoCoordinates(BaseModel):
+    """Nested model for StreampostsfirehoseResponseDataGeoCoordinates"""
+
+    coordinates: Optional[List] = None
+    type: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for StreampostsfirehoseResponseDataNonPublicMetrics"""
+
+    impression_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseDataNoteTweet(BaseModel):
+    """Nested model for StreampostsfirehoseResponseDataNoteTweet"""
+
+    entities: Optional["StreampostsfirehoseResponseDataNoteTweetEntities"] = None
+    text: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for StreampostsfirehoseResponseDataNoteTweetEntities"""
+
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseDataOrganicMetrics(BaseModel):
+    """Nested model for StreampostsfirehoseResponseDataOrganicMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseDataPromotedMetrics(BaseModel):
+    """Nested model for StreampostsfirehoseResponseDataPromotedMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseDataPublicMetrics(BaseModel):
+    """Nested model for StreampostsfirehoseResponseDataPublicMetrics"""
+
+    bookmark_count: Optional[int] = None
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    quote_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseDataScopes(BaseModel):
+    """Nested model for StreampostsfirehoseResponseDataScopes"""
+
+    followers: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseDataWithheld(BaseModel):
+    """Nested model for StreampostsfirehoseResponseDataWithheld"""
+
+    copyright: Optional[bool] = None
+    country_codes: Optional[List] = None
+    scope: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehoseResponseIncludes(BaseModel):
+    """Nested model for StreampostsfirehoseResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for likePost
+
+
+class LikepostRequest(BaseModel):
+    """Request model for likePost"""
+
+    tweet_id: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class LikepostResponse(BaseModel):
+    """Response model for likePost"""
+
+    data: Optional["LikepostResponseData"] = None
+    errors: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class LikepostResponseData(BaseModel):
+    """Nested model for LikepostResponseData"""
+
+    liked: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for streamPostsFirehoseKo
+
+
+class StreampostsfirehosekoResponse(BaseModel):
+    """Response model for streamPostsFirehoseKo"""
+
+    data: Optional["StreampostsfirehosekoResponseData"] = None
+    errors: Optional[List] = None
+    includes: Optional["StreampostsfirehosekoResponseIncludes"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseData(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseData"""
+
+    attachments: Optional["StreampostsfirehosekoResponseDataAttachments"] = None
+    author_id: Optional[str] = None
+    community_id: Optional[str] = None
+    context_annotations: Optional[List] = None
+    conversation_id: Optional[str] = None
+    created_at: Optional[str] = None
+    display_text_range: Optional[List] = None
+    edit_controls: Optional["StreampostsfirehosekoResponseDataEditControls"] = None
+    edit_history_tweet_ids: Optional[List] = None
+    entities: Optional["StreampostsfirehosekoResponseDataEntities"] = None
+    geo: Optional["StreampostsfirehosekoResponseDataGeo"] = None
+    id: Optional[str] = None
+    in_reply_to_user_id: Optional[str] = None
+    lang: Optional[str] = None
+    non_public_metrics: Optional[
+        "StreampostsfirehosekoResponseDataNonPublicMetrics"
+    ] = None
+    note_tweet: Optional["StreampostsfirehosekoResponseDataNoteTweet"] = None
+    organic_metrics: Optional["StreampostsfirehosekoResponseDataOrganicMetrics"] = None
+    possibly_sensitive: Optional[bool] = None
+    promoted_metrics: Optional["StreampostsfirehosekoResponseDataPromotedMetrics"] = (
+        None
+    )
+    public_metrics: Optional["StreampostsfirehosekoResponseDataPublicMetrics"] = None
+    referenced_tweets: Optional[List] = None
+    reply_settings: Optional[str] = None
+    scopes: Optional["StreampostsfirehosekoResponseDataScopes"] = None
+    source: Optional[str] = None
+    text: Optional[str] = None
+    username: Optional[str] = None
+    withheld: Optional["StreampostsfirehosekoResponseDataWithheld"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseDataAttachments(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseDataAttachments"""
+
+    media_keys: Optional[List] = None
+    media_source_tweet_id: Optional[List] = None
+    poll_ids: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseDataEditControls(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseDataEditControls"""
+
+    editable_until: Optional[str] = None
+    edits_remaining: Optional[int] = None
+    is_edit_eligible: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseDataEntities(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseDataEntities"""
+
+    annotations: Optional[List] = None
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseDataGeo(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseDataGeo"""
+
+    coordinates: Optional["StreampostsfirehosekoResponseDataGeoCoordinates"] = None
+    place_id: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseDataGeoCoordinates(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseDataGeoCoordinates"""
+
+    coordinates: Optional[List] = None
+    type: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseDataNonPublicMetrics"""
+
+    impression_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseDataNoteTweet(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseDataNoteTweet"""
+
+    entities: Optional["StreampostsfirehosekoResponseDataNoteTweetEntities"] = None
+    text: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseDataNoteTweetEntities"""
+
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseDataOrganicMetrics(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseDataOrganicMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseDataPromotedMetrics(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseDataPromotedMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseDataPublicMetrics(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseDataPublicMetrics"""
+
+    bookmark_count: Optional[int] = None
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    quote_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseDataScopes(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseDataScopes"""
+
+    followers: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseDataWithheld(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseDataWithheld"""
+
+    copyright: Optional[bool] = None
+    country_codes: Optional[List] = None
+    scope: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class StreampostsfirehosekoResponseIncludes(BaseModel):
+    """Nested model for StreampostsfirehosekoResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+# Models for streamPostsSample10
+
+
+class Streampostssample10Response(BaseModel):
+    """Response model for streamPostsSample10"""
+
+    data: Optional["Streampostssample10ResponseData"] = None
+    errors: Optional[List] = None
+    includes: Optional["Streampostssample10ResponseIncludes"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseData(BaseModel):
+    """Nested model for Streampostssample10ResponseData"""
+
+    attachments: Optional["Streampostssample10ResponseDataAttachments"] = None
+    author_id: Optional[str] = None
+    community_id: Optional[str] = None
+    context_annotations: Optional[List] = None
+    conversation_id: Optional[str] = None
+    created_at: Optional[str] = None
+    display_text_range: Optional[List] = None
+    edit_controls: Optional["Streampostssample10ResponseDataEditControls"] = None
+    edit_history_tweet_ids: Optional[List] = None
+    entities: Optional["Streampostssample10ResponseDataEntities"] = None
+    geo: Optional["Streampostssample10ResponseDataGeo"] = None
+    id: Optional[str] = None
+    in_reply_to_user_id: Optional[str] = None
+    lang: Optional[str] = None
+    non_public_metrics: Optional["Streampostssample10ResponseDataNonPublicMetrics"] = (
+        None
+    )
+    note_tweet: Optional["Streampostssample10ResponseDataNoteTweet"] = None
+    organic_metrics: Optional["Streampostssample10ResponseDataOrganicMetrics"] = None
+    possibly_sensitive: Optional[bool] = None
+    promoted_metrics: Optional["Streampostssample10ResponseDataPromotedMetrics"] = None
+    public_metrics: Optional["Streampostssample10ResponseDataPublicMetrics"] = None
+    referenced_tweets: Optional[List] = None
+    reply_settings: Optional[str] = None
+    scopes: Optional["Streampostssample10ResponseDataScopes"] = None
+    source: Optional[str] = None
+    text: Optional[str] = None
+    username: Optional[str] = None
+    withheld: Optional["Streampostssample10ResponseDataWithheld"] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseDataAttachments(BaseModel):
+    """Nested model for Streampostssample10ResponseDataAttachments"""
+
+    media_keys: Optional[List] = None
+    media_source_tweet_id: Optional[List] = None
+    poll_ids: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseDataEditControls(BaseModel):
+    """Nested model for Streampostssample10ResponseDataEditControls"""
+
+    editable_until: Optional[str] = None
+    edits_remaining: Optional[int] = None
+    is_edit_eligible: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseDataEntities(BaseModel):
+    """Nested model for Streampostssample10ResponseDataEntities"""
+
+    annotations: Optional[List] = None
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseDataGeo(BaseModel):
+    """Nested model for Streampostssample10ResponseDataGeo"""
+
+    coordinates: Optional["Streampostssample10ResponseDataGeoCoordinates"] = None
+    place_id: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseDataGeoCoordinates(BaseModel):
+    """Nested model for Streampostssample10ResponseDataGeoCoordinates"""
+
+    coordinates: Optional[List] = None
+    type: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for Streampostssample10ResponseDataNonPublicMetrics"""
+
+    impression_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseDataNoteTweet(BaseModel):
+    """Nested model for Streampostssample10ResponseDataNoteTweet"""
+
+    entities: Optional["Streampostssample10ResponseDataNoteTweetEntities"] = None
+    text: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for Streampostssample10ResponseDataNoteTweetEntities"""
+
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseDataOrganicMetrics(BaseModel):
+    """Nested model for Streampostssample10ResponseDataOrganicMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseDataPromotedMetrics(BaseModel):
+    """Nested model for Streampostssample10ResponseDataPromotedMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseDataPublicMetrics(BaseModel):
+    """Nested model for Streampostssample10ResponseDataPublicMetrics"""
+
+    bookmark_count: Optional[int] = None
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    quote_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseDataScopes(BaseModel):
+    """Nested model for Streampostssample10ResponseDataScopes"""
+
+    followers: Optional[bool] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseDataWithheld(BaseModel):
+    """Nested model for Streampostssample10ResponseDataWithheld"""
+
+    copyright: Optional[bool] = None
+    country_codes: Optional[List] = None
+    scope: Optional[str] = None
+
+    class Config:
+        """Pydantic model configuration"""
+
+        populate_by_name = True
+
+
+class Streampostssample10ResponseIncludes(BaseModel):
+    """Nested model for Streampostssample10ResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None

@@ -9,15 +9,15 @@ from pydantic import BaseModel, Field
 from datetime import datetime
 
 
-# Models for streamLikesSample10
+# Models for streamLikesFirehose
 
 
-class StreamLikesSample10Response(BaseModel):
-    """Response model for streamLikesSample10"""
+class StreamlikesfirehoseResponse(BaseModel):
+    """Response model for streamLikesFirehose"""
 
-    data: Optional["StreamLikesSample10ResponseData"] = None
+    data: Optional["StreamlikesfirehoseResponseData"] = None
     errors: Optional[List] = None
-    includes: Optional["StreamLikesSample10ResponseIncludes"] = None
+    includes: Optional["StreamlikesfirehoseResponseIncludes"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -25,8 +25,8 @@ class StreamLikesSample10Response(BaseModel):
         populate_by_name = True
 
 
-class StreamLikesSample10ResponseData(BaseModel):
-    """Nested model for StreamLikesSample10ResponseData"""
+class StreamlikesfirehoseResponseData(BaseModel):
+    """Nested model for StreamlikesfirehoseResponseData"""
 
     created_at: Optional[str] = None
     id: Optional[str] = None
@@ -40,8 +40,8 @@ class StreamLikesSample10ResponseData(BaseModel):
         populate_by_name = True
 
 
-class StreamLikesSample10ResponseIncludes(BaseModel):
-    """Nested model for StreamLikesSample10ResponseIncludes"""
+class StreamlikesfirehoseResponseIncludes(BaseModel):
+    """Nested model for StreamlikesfirehoseResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -56,15 +56,15 @@ class StreamLikesSample10ResponseIncludes(BaseModel):
         populate_by_name = True
 
 
-# Models for streamLikesFirehose
+# Models for streamLikesSample10
 
 
-class StreamLikesFirehoseResponse(BaseModel):
-    """Response model for streamLikesFirehose"""
+class Streamlikessample10Response(BaseModel):
+    """Response model for streamLikesSample10"""
 
-    data: Optional["StreamLikesFirehoseResponseData"] = None
+    data: Optional["Streamlikessample10ResponseData"] = None
     errors: Optional[List] = None
-    includes: Optional["StreamLikesFirehoseResponseIncludes"] = None
+    includes: Optional["Streamlikessample10ResponseIncludes"] = None
 
     class Config:
         """Pydantic model configuration"""
@@ -72,8 +72,8 @@ class StreamLikesFirehoseResponse(BaseModel):
         populate_by_name = True
 
 
-class StreamLikesFirehoseResponseData(BaseModel):
-    """Nested model for StreamLikesFirehoseResponseData"""
+class Streamlikessample10ResponseData(BaseModel):
+    """Nested model for Streamlikessample10ResponseData"""
 
     created_at: Optional[str] = None
     id: Optional[str] = None
@@ -87,8 +87,8 @@ class StreamLikesFirehoseResponseData(BaseModel):
         populate_by_name = True
 
 
-class StreamLikesFirehoseResponseIncludes(BaseModel):
-    """Nested model for StreamLikesFirehoseResponseIncludes"""
+class Streamlikessample10ResponseIncludes(BaseModel):
+    """Nested model for Streamlikessample10ResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None

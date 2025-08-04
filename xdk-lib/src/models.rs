@@ -7,6 +7,7 @@
 use openapi::{Parameter, RefOrValue, RequestBody, Response, SecurityRequirement, StatusCode};
 use serde::Serialize;
 use std::collections::HashMap;
+use crate::testing::TestSpecification;
 /// Information about an operation in the OpenAPI spec
 #[derive(Debug, Serialize, Clone)]
 pub struct OperationInfo {
@@ -41,4 +42,11 @@ pub struct OperationContext {
 #[derive(Debug, Serialize)]
 pub struct TagsContext {
     pub tags: Vec<String>,
+}
+
+/// Context for rendering test templates
+#[derive(Debug, Serialize)]
+pub struct TestContext {
+    pub tag: String,
+    pub test_spec: TestSpecification,
 }
