@@ -5,7 +5,7 @@ This module provides models for the General endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
@@ -15,7 +15,4 @@ from datetime import datetime
 class GetOpenApiSpecResponse(BaseModel):
     """Response model for getOpenApiSpec"""
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)

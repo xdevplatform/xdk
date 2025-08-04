@@ -5,12 +5,15 @@ This module provides a client for interacting with the Trends endpoints of the X
 """
 
 from __future__ import annotations
-from typing import Dict, List, Optional, Any, Union, cast
+from typing import Dict, List, Optional, Any, Union, cast, TYPE_CHECKING
 import requests
 import time
+
+if TYPE_CHECKING:
+    from ..client import Client
 from .models import (
-    GetTrendsByWoeidResponse,
     GetUsersPersonalizedTrendsResponse,
+    GetTrendsByWoeidResponse,
 )
 
 
@@ -20,6 +23,51 @@ class TrendsClient:
 
     def __init__(self, client: Client):
         self.client = client
+
+
+    def get_users_personalized_trends(
+        self,
+        personalized_trend_fields: List = None,
+    ) -> GetUsersPersonalizedTrendsResponse:
+        """
+        Get personalized Trends
+        Retrieves personalized trending topics for the authenticated user.
+        Args:
+            personalized_trend_fields: A comma separated list of PersonalizedTrend fields to display.
+        Returns:
+            GetUsersPersonalizedTrendsResponse: Response data
+        """
+        url = self.client.base_url + "/2/users/personalized_trends"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        if personalized_trend_fields is not None:
+            params["personalized_trend.fields"] = ",".join(
+                str(item) for item in personalized_trend_fields
+            )
+        headers = {}
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.get(
+                url,
+                params=params,
+                headers=headers,
+            )
+        else:
+            response = self.client.session.get(
+                url,
+                params=params,
+                headers=headers,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetUsersPersonalizedTrendsResponse.model_validate(response_data)
 
 
     def get_trends_by_woeid(
@@ -68,48 +116,3 @@ class TrendsClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return GetTrendsByWoeidResponse.model_validate(response_data)
-
-
-    def get_users_personalized_trends(
-        self,
-        personalized_trend_fields: List = None,
-    ) -> GetUsersPersonalizedTrendsResponse:
-        """
-        Get personalized Trends
-        Retrieves personalized trending topics for the authenticated user.
-        Args:
-            personalized_trend_fields: A comma separated list of PersonalizedTrend fields to display.
-        Returns:
-            GetUsersPersonalizedTrendsResponse: Response data
-        """
-        url = self.client.base_url + "/2/users/personalized_trends"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        if personalized_trend_fields is not None:
-            params["personalized_trend.fields"] = ",".join(
-                str(item) for item in personalized_trend_fields
-            )
-        headers = {}
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.get(
-                url,
-                params=params,
-                headers=headers,
-            )
-        else:
-            response = self.client.session.get(
-                url,
-                params=params,
-                headers=headers,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetUsersPersonalizedTrendsResponse.model_validate(response_data)

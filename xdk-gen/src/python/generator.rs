@@ -23,13 +23,18 @@ fn python_type(value: &str) -> String {
     };
     python_type.to_string()
 }
+
+/// MiniJinja filter for getting the last part of a dot-separated path
+fn last_part(value: &str) -> String {
+    value.split('.').last().unwrap_or(value).to_string()
+}
 /*
     This is the main generator for the Python SDK
     It declares the templates and filters used as well as the rendering logic
 */
 language! {
     name: Python,
-    filters: [snake_case, pascal_case, python_type],
+    filters: [snake_case, pascal_case, python_type, last_part],
     render: [
         multiple {
             render "models" => "xdk/{}/models.py",
@@ -40,8 +45,7 @@ language! {
         render "oauth2_auth" => "xdk/oauth2_auth.py",
         render "paginator" => "xdk/paginator.py",
         render "init_py" => "xdk/__init__.py",
-        render "setup_py" => "setup.py",
-        render "readme" => "README.md",
-        render "requirements_txt" => "requirements.txt"
+        render "pyproject_toml" => "pyproject.toml",
+        render "readme" => "README.md"
     ]
 }

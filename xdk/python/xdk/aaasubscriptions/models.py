@@ -5,7 +5,7 @@ This module provides models for the AAASubscriptions endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
@@ -15,10 +15,7 @@ from datetime import datetime
 class CreateAccountActivitySubscriptionRequest(BaseModel):
     """Request model for createAccountActivitySubscription"""
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class CreateAccountActivitySubscriptionResponse(BaseModel):
@@ -27,10 +24,7 @@ class CreateAccountActivitySubscriptionResponse(BaseModel):
     data: Optional["CreateAccountActivitySubscriptionResponseData"] = None
     errors: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class CreateAccountActivitySubscriptionResponseData(BaseModel):
@@ -38,7 +32,4 @@ class CreateAccountActivitySubscriptionResponseData(BaseModel):
 
     subscribed: Optional[bool] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)

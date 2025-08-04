@@ -1,3 +1,4 @@
+use crate::testing::TestSpecification;
 /// Common data models for SDK generation
 ///
 /// This file contains the core data models that are used across different language generators.
@@ -41,4 +42,11 @@ pub struct OperationContext {
 #[derive(Debug, Serialize)]
 pub struct TagsContext {
     pub tags: Vec<String>,
+}
+
+/// Context for rendering test templates
+#[derive(Debug, Serialize)]
+pub struct TestContext {
+    pub tag: String,
+    pub test_spec: TestSpecification,
 }

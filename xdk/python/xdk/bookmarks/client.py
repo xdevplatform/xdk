@@ -5,16 +5,19 @@ This module provides a client for interacting with the Bookmarks endpoints of th
 """
 
 from __future__ import annotations
-from typing import Dict, List, Optional, Any, Union, cast
+from typing import Dict, List, Optional, Any, Union, cast, TYPE_CHECKING
 import requests
 import time
+
+if TYPE_CHECKING:
+    from ..client import Client
 from .models import (
-    GetUsersBookmarkFoldersResponse,
+    GetUsersBookmarksByFolderIdResponse,
     GetUsersBookmarksResponse,
     CreateUsersBookmarkRequest,
     CreateUsersBookmarkResponse,
     DeleteUsersBookmarkResponse,
-    GetUsersBookmarksByFolderIdResponse,
+    GetUsersBookmarkFoldersResponse,
 )
 
 
@@ -26,36 +29,30 @@ class BookmarksClient:
         self.client = client
 
 
-    def get_users_bookmark_folders(
+    def get_users_bookmarks_by_folder_id(
         self,
         id: str,
-        max_results: int = None,
-        pagination_token: str = None,
-    ) -> GetUsersBookmarkFoldersResponse:
+        folder_id: str,
+    ) -> GetUsersBookmarksByFolderIdResponse:
         """
-        Get Bookmark folders
-        Retrieves a list of Bookmark folders created by the authenticated user.
+        Get Bookmarks by folder ID
+        Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
         Args:
             id: The ID of the authenticated source User for whom to return results.
         Args:
-            max_results: The maximum number of results.
-        Args:
-            pagination_token: This parameter is used to get the next 'page' of results.
+            folder_id: The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.
         Returns:
-            GetUsersBookmarkFoldersResponse: Response data
+            GetUsersBookmarksByFolderIdResponse: Response data
         """
-        url = self.client.base_url + "/2/users/{id}/bookmarks/folders"
+        url = self.client.base_url + "/2/users/{id}/bookmarks/folders/{folder_id}"
         # Ensure we have a valid access token
         if self.client.oauth2_auth and self.client.token:
             # Check if token needs refresh
             if self.client.is_token_expired():
                 self.client.refresh_token()
         params = {}
-        if max_results is not None:
-            params["max_results"] = max_results
-        if pagination_token is not None:
-            params["pagination_token"] = pagination_token
         url = url.replace("{id}", str(id))
+        url = url.replace("{folder_id}", str(folder_id))
         headers = {}
         # Make the request
         if self.client.oauth2_session:
@@ -75,7 +72,7 @@ class BookmarksClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return GetUsersBookmarkFoldersResponse.model_validate(response_data)
+        return GetUsersBookmarksByFolderIdResponse.model_validate(response_data)
 
 
     def get_users_bookmarks(
@@ -253,30 +250,36 @@ class BookmarksClient:
         return DeleteUsersBookmarkResponse.model_validate(response_data)
 
 
-    def get_users_bookmarks_by_folder_id(
+    def get_users_bookmark_folders(
         self,
         id: str,
-        folder_id: str,
-    ) -> GetUsersBookmarksByFolderIdResponse:
+        max_results: int = None,
+        pagination_token: str = None,
+    ) -> GetUsersBookmarkFoldersResponse:
         """
-        Get Bookmarks by folder ID
-        Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
+        Get Bookmark folders
+        Retrieves a list of Bookmark folders created by the authenticated user.
         Args:
             id: The ID of the authenticated source User for whom to return results.
         Args:
-            folder_id: The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.
+            max_results: The maximum number of results.
+        Args:
+            pagination_token: This parameter is used to get the next 'page' of results.
         Returns:
-            GetUsersBookmarksByFolderIdResponse: Response data
+            GetUsersBookmarkFoldersResponse: Response data
         """
-        url = self.client.base_url + "/2/users/{id}/bookmarks/folders/{folder_id}"
+        url = self.client.base_url + "/2/users/{id}/bookmarks/folders"
         # Ensure we have a valid access token
         if self.client.oauth2_auth and self.client.token:
             # Check if token needs refresh
             if self.client.is_token_expired():
                 self.client.refresh_token()
         params = {}
+        if max_results is not None:
+            params["max_results"] = max_results
+        if pagination_token is not None:
+            params["pagination_token"] = pagination_token
         url = url.replace("{id}", str(id))
-        url = url.replace("{folder_id}", str(folder_id))
         headers = {}
         # Make the request
         if self.client.oauth2_session:
@@ -296,4 +299,4 @@ class BookmarksClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return GetUsersBookmarksByFolderIdResponse.model_validate(response_data)
+        return GetUsersBookmarkFoldersResponse.model_validate(response_data)

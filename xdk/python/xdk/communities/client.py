@@ -5,9 +5,12 @@ This module provides a client for interacting with the Communities endpoints of 
 """
 
 from __future__ import annotations
-from typing import Dict, List, Optional, Any, Union, cast
+from typing import Dict, List, Optional, Any, Union, cast, TYPE_CHECKING
 import requests
 import time
+
+if TYPE_CHECKING:
+    from ..client import Client
 from .models import (
     SearchCommunitiesResponse,
     GetCommunitiesByIdResponse,

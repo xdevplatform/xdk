@@ -3,7 +3,6 @@
 
 // Declare modules
 mod error;
-mod logging;
 mod python;
 mod utils;
 
@@ -11,7 +10,7 @@ use crate::error::{BuildError, Result};
 
 use clap::{Parser, Subcommand};
 use std::path::{Path, PathBuf};
-use xdk_lib::SdkGeneratorError;
+use xdk_lib::{SdkGeneratorError, log_info};
 use xdk_openapi::{OpenApiContextGuard, parse_json, parse_json_file, parse_yaml_file};
 
 #[derive(Parser)]
@@ -41,15 +40,12 @@ enum Commands {
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    // Initialize logging
-    // logging::setup_logger().map_err(|e| BuildError::Other(format!("Failed to setup logger: {}", e)))?;
-
     let cli = Cli::parse();
 
     // Initialize OpenApi context once
     let _guard = OpenApiContextGuard::new();
 
-    match cli.command {
+    let result = match cli.command {
         Commands::Python {
             spec,
             output,
@@ -97,12 +93,45 @@ async fn main() -> Result<()> {
                 }
             };
 
-            // log_info!("Specification parsed successfully.");
+            log_info!("Specification parsed successfully.");
 
             // Call the generate method - `?` handles the Result conversion
-            python::generate(&openapi, &output)?;
+            python::generate(&openapi, &output)
         }
+    };
+
+    // Handle the result with better error messaging
+    if let Err(ref error) = result {
+        use xdk_lib::log_error;
+        match error {
+            BuildError::IoError(io_error) => match io_error.kind() {
+                std::io::ErrorKind::NotFound => {
+                    log_error!("Command or file not found. This might be because:");
+                    log_error!("  • 'uv' is not installed (install with: pip install uv)");
+                    log_error!("  • A required file was not generated properly");
+                    log_error!("  • Path does not exist");
+                    log_error!("Original error: {}", io_error);
+                }
+                std::io::ErrorKind::PermissionDenied => {
+                    log_error!("Permission denied. Please check file/directory permissions.");
+                    log_error!("Original error: {}", io_error);
+                }
+                _ => {
+                    log_error!("File system error occurred: {}", io_error);
+                }
+            },
+            BuildError::CommandFailed(msg) => {
+                log_error!("Command execution failed: {}", msg);
+            }
+            BuildError::FormatterFailed(msg) => {
+                log_error!("Code formatting failed: {}", msg);
+            }
+            BuildError::SdkGenError(msg) => {
+                log_error!("SDK generation failed: {}", msg);
+            }
+        }
+        std::process::exit(1);
     }
 
-    Ok(())
+    result
 }

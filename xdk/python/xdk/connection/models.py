@@ -5,7 +5,7 @@ This module provides models for the Connection endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
@@ -18,10 +18,7 @@ class DeleteAllConnectionsResponse(BaseModel):
     data: Optional["DeleteAllConnectionsResponseData"] = None
     errors: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class DeleteAllConnectionsResponseData(BaseModel):
@@ -29,7 +26,4 @@ class DeleteAllConnectionsResponseData(BaseModel):
 
     killed_connections: Optional[bool] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
