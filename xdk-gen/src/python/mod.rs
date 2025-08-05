@@ -53,16 +53,12 @@ mod tests {
 
         // Verify basic files exist
         assert!(
-            output_dir.join("setup.py").exists(),
-            "setup.py should exist"
+            output_dir.join("pyproject.toml").exists(),
+            "pyproject.toml should exist"
         );
         assert!(
             output_dir.join("README.md").exists(),
             "README.md should exist"
-        );
-        assert!(
-            output_dir.join("requirements.txt").exists(),
-            "requirements.txt should exist"
         );
     }
 

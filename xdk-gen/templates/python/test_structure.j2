@@ -1,0 +1,110 @@
+"""
+Auto-generated structural tests for {{ tag }} client.
+
+This module contains tests that validate the structure and API surface
+of the {{ tag }} client. These tests ensure that all expected methods
+exist and have the correct signatures.
+
+Generated automatically - do not edit manually.
+"""
+
+import pytest
+import inspect
+from typing import get_type_hints
+from xdk.{{ tag|lower }}.client import {{ tag|pascal_case }}Client
+from xdk import Client
+
+
+class Test{{ tag|pascal_case }}Structure:
+    """Test the structure of {{ tag|pascal_case }}Client."""
+    
+    def setup_class(self):
+        """Set up test fixtures."""
+        self.client = Client(base_url="https://api.example.com")
+        self.{{ tag|lower }}_client = getattr(self.client, "{{ tag|lower }}")
+    
+
+    
+    {% for structural_test in test_spec.structural_tests %}
+    {% for method in structural_test.methods %}
+    def test_{{ method.method_name|snake_case }}_exists(self):
+        """Test that {{ method.method_name|snake_case }} method exists with correct signature."""
+        # Check method exists
+        method = getattr({{ tag|pascal_case }}Client, "{{ method.method_name|snake_case }}", None)
+        assert method is not None, f"Method {{ method.method_name|snake_case }} does not exist on {{ tag|pascal_case }}Client"
+        
+        # Check method is callable
+        assert callable(method), f"{{ method.method_name|snake_case }} is not callable"
+        
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        
+        # Should have 'self' as first parameter
+        assert len(params) >= 1, f"{{ method.method_name|snake_case }} should have at least 'self' parameter"
+        assert params[0] == 'self', f"First parameter should be 'self', got '{params[0]}'"
+        
+        # Check required parameters exist (excluding 'self')
+        required_params = [
+            {% for param in method.required_params %}
+            "{{ param.name }}",
+            {% endfor %}
+        ]
+        
+        for required_param in required_params:
+            assert required_param in params, f"Required parameter '{required_param}' missing from {{ method.method_name|snake_case }}"
+        
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = [
+            {% for param in method.optional_params %}
+            "{{ param.name }}",
+            {% endfor %}
+        ]
+        
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert param_obj.default is not inspect.Parameter.empty, \
+                    f"Optional parameter '{optional_param}' should have a default value"
+    
+    def test_{{ method.method_name|snake_case }}_return_annotation(self):
+        """Test that {{ method.method_name|snake_case }} has proper return type annotation."""
+        method = getattr({{ tag|pascal_case }}Client, "{{ method.method_name|snake_case }}")
+        sig = inspect.signature(method)
+        
+        # Check return annotation exists
+        assert sig.return_annotation is not inspect.Signature.empty, \
+            f"Method {{ method.method_name|snake_case }} should have return type annotation"
+    
+    {% if method.supports_pagination %}
+    def test_{{ method.method_name|snake_case }}_pagination_params(self):
+        """Test that {{ method.method_name|snake_case }} has pagination parameters."""
+        method = getattr({{ tag|pascal_case }}Client, "{{ method.method_name|snake_case }}")
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        
+        # Should have pagination-related parameters
+        pagination_params = ['pagination_token', 'max_results', 'next_token', 'cursor', 'limit']
+        has_pagination_param = any(param in params for param in pagination_params)
+        assert has_pagination_param, \
+            f"Paginated method {{ method.method_name|snake_case }} should have pagination parameters"
+    {% endif %}
+    
+    {% endfor %}
+    
+    def test_all_expected_methods_exist(self):
+        """Test that all expected methods exist on the client."""
+        expected_methods = [
+            {% for method in structural_test.methods %}
+            "{{ method.method_name|snake_case }}",
+            {% endfor %}
+        ]
+        
+        for expected_method in expected_methods:
+            assert hasattr({{ tag|pascal_case }}Client, expected_method), \
+                f"Expected method '{expected_method}' not found on {{ tag|pascal_case }}Client"
+            assert callable(getattr({{ tag|pascal_case }}Client, expected_method)), \
+                f"'{expected_method}' exists but is not callable"
+    
+    {% endfor %}
+    

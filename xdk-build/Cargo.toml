@@ -8,7 +8,7 @@ xdk-gen = { path = "../xdk-gen" }
 xdk-openapi = { path = "../xdk-openapi" }
 xdk-lib = { path = "../xdk-lib" }
 clap = { version = "4.5.42", features = ["derive"] }
-colored = "2.2"
+colored = { workspace = true }
 thiserror = { workspace = true }
 serde_json = { workspace = true }
 reqwest = { version = "0.11", features = ["json"] }

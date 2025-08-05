@@ -5,9 +5,12 @@ This module provides a client for interacting with the {{ tag }} endpoints of th
 """
 
 from __future__ import annotations
-from typing import Dict, List, Optional, Any, Union, cast
+from typing import Dict, List, Optional, Any, Union, cast, TYPE_CHECKING
 import requests
 import time
+
+if TYPE_CHECKING:
+    from ..client import Client
 from .models import (
     {% for operation in operations %}
     {% if operation.request_body %}
@@ -21,7 +24,7 @@ from .models import (
     {% endfor %}
 )
 
-class {{ tag }}Client:
+class {{ tag|pascal_case }}Client:
     """Client for {{ tag }} operations"""
     
     def __init__(self, client: Client):

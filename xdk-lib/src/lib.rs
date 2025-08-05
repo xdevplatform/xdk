@@ -13,13 +13,17 @@
 /// - `generator`: The SDK generator interface and implementation
 /// - `models`: Common data models for SDK generation
 /// - `utils`: Utility functions for SDK generation
+/// - `testing`: Test generation for SDK generation
 pub mod error;
 pub mod generator;
+pub mod logging;
 pub mod models;
+pub mod testing;
 pub mod utils;
 
 pub use error::*;
 pub use generator::*;
+pub use logging::*;
 
 /// Result type for SDK generator operations
 pub type Result<T> = std::result::Result<T, SdkGeneratorError>;

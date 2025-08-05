@@ -25,14 +25,27 @@ pub fn snake_case(value: &str) -> String {
 
 /// MiniJinja filter for converting a string to PascalCase
 pub fn pascal_case(value: &str) -> String {
-    value
-        .split('_')
-        .map(|word| {
-            let mut chars = word.chars();
-            match chars.next() {
-                None => String::new(),
-                Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
+    let mut result = String::new();
+    let mut capitalize_next = true;
+
+    for c in value.chars() {
+        if c == '_' || c == '-' || c == ' ' {
+            // Skip separators and capitalize the next character
+            capitalize_next = true;
+        } else if c.is_uppercase() {
+            // Uppercase letters indicate word boundaries
+            result.push(c);
+            capitalize_next = false;
+        } else if c.is_alphanumeric() {
+            if capitalize_next {
+                result.push(c.to_ascii_uppercase());
+                capitalize_next = false;
+            } else {
+                result.push(c.to_ascii_lowercase());
             }
-        })
-        .collect::<String>()
+        }
+        // Skip non-alphanumeric characters (except separators handled above)
+    }
+
+    result
 }

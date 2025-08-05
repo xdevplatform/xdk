@@ -5,6 +5,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use super::models::OperationInfo;
+use super::testing::generate_test_specifications;
 use super::utils::extract_operations_by_tag;
 use minijinja::Environment;
 
@@ -89,6 +90,23 @@ pub trait LanguageGenerator {
         operations: &HashMap<String, Vec<OperationInfo>>,
         output_dir: &Path,
     ) -> crate::Result<()>;
+
+    /// Generates test code for the language (optional)
+    ///
+    /// # Parameters
+    /// * `env` - The MiniJinja environment with templates and filters
+    /// * `test_spec` - The test specification containing all test scenarios
+    /// * `output_dir` - The directory where the generated test code will be written
+    fn generate_tests(
+        &self,
+        _env: &Environment,
+        _test_specs: &HashMap<String, crate::testing::TestSpecification>,
+        _output_dir: &Path,
+    ) -> crate::Result<()> {
+        // Default implementation - no test generation
+        // Languages can override this to implement test generation
+        Ok(())
+    }
 }
 
 /// SDK generation function that takes a language generator and an OpenAPI specification
@@ -106,7 +124,22 @@ where
     }
 
     let operations_by_tag = extract_operations_by_tag(openapi)?;
-    language.generate(&env, &operations_by_tag, output_dir)
+
+    // Generate test specifications
+    let test_specs = generate_test_specifications(&operations_by_tag)?;
+
+    // Generate SDK code
+    language.generate(&env, &operations_by_tag, output_dir)?;
+
+    // Generate tests if test templates are available
+    language
+        .generate_tests(&env, &test_specs, output_dir)
+        .unwrap_or_else(|e| {
+            // If test generation fails, it's not critical - just log and continue
+            eprintln!("Warning: Test generation failed: {}", e);
+        });
+
+    Ok(())
 }
 
 /// Macro for creating a language-specific SDK generator.
@@ -167,7 +200,7 @@ macro_rules! language {
         use $crate::models::OperationInfo;
         use $crate::generator::LanguageGenerator;
         use $crate::Result;
-        use $crate::models::{OperationContext, TagsContext};
+        use $crate::models::{OperationContext, TagsContext, TestContext};
 
         /// Generator implementation for the specified language
         pub struct $name;
@@ -227,6 +260,123 @@ macro_rules! language {
                     std::fs::create_dir_all(full_path.parent().unwrap_or(output_dir))?;
                     std::fs::write(&full_path, content)?;
                 )*
+
+                Ok(())
+            }
+
+            /// TODO: Can we make this more generic/a default implementation?
+            /// Generate test code - can be overridden by specific implementations
+            fn generate_tests(
+                &self,
+                env: &minijinja::Environment,
+                test_specs: &HashMap<String, $crate::testing::TestSpecification>,
+                output_dir: &Path,
+            ) -> Result<()> {
+                // Check if language has test templates available
+                if env.get_template("test_structure").is_ok() ||
+                   env.get_template("test_contracts").is_ok() ||
+                   env.get_template("test_pagination").is_ok() {
+
+                    // Use the same tag iteration as the main generate function
+                    let tags: Vec<String> = test_specs.keys().cloned().collect();
+
+                    for tag in tags {
+                        let context = TestContext {
+                            tag: tag.clone(),
+                            test_spec: test_specs[&tag].clone(),
+                        };
+
+                        let tag_folder = output_dir.join("tests").join(tag.replace(" ", "_").to_lowercase());
+
+                        // Generate structural tests if template exists
+                        if let Ok(template) = env.get_template("test_structure") {
+                            let content = template.render(&context).map_err(|e| $crate::SdkGeneratorError::TemplateError(e))?;
+                            let path = tag_folder.join("test_structure.py");
+                            std::fs::create_dir_all(tag_folder.clone())?;
+                            std::fs::write(&path, content)?;
+                        }
+
+                        // Generate contract tests if template exists
+                        match env.get_template("test_contracts") {
+                            Ok(template) => {
+                                let content = template.render(&context).map_err(|e| $crate::SdkGeneratorError::TemplateError(e))?;
+                                let path = tag_folder.join("test_contracts.py");
+                                std::fs::create_dir_all(tag_folder.clone())?;
+                                std::fs::write(&path, content)?;
+                            }
+                            Err(e) => {
+                                eprintln!("Debug: test_contracts template not found: {}", e);
+                            }
+                        }
+
+                        // Generate pagination tests only if there are valid pagination tests to generate
+                        let has_valid_pagination_tests = !context.test_spec.pagination_tests.is_empty()
+                            && context.test_spec.pagination_tests.iter().any(|test|
+                                !test.method_name.is_empty() && !test.operation_id.is_empty()
+                            );
+
+                        if has_valid_pagination_tests {
+                            match env.get_template("test_pagination") {
+                                Ok(template) => {
+                                    let content = template.render(&context).map_err(|e| $crate::SdkGeneratorError::TemplateError(e))?;
+                                    let path = tag_folder.join("test_pagination.py");
+                                    std::fs::create_dir_all(tag_folder.clone())?;
+                                    std::fs::write(&path, content)?;
+                                }
+                                Err(e) => {
+                                    eprintln!("Debug: test_pagination template not found: {}", e);
+                                }
+                            }
+                        }
+
+                        // Generate generic tests if template exists
+                        match env.get_template("test_generic") {
+                            Ok(template) => {
+                                let content = template.render(&context).map_err(|e| $crate::SdkGeneratorError::TemplateError(e))?;
+                                let path = tag_folder.join("test_generic.py");
+                                std::fs::create_dir_all(tag_folder.clone())?;
+                                std::fs::write(&path, content)?;
+                            }
+                            Err(e) => {
+                                eprintln!("Debug: test_generic template not found: {}", e);
+                            }
+                        }
+
+                        // Generate __init__.py for each tag folder
+                        let tag_init_path = tag_folder.join("__init__.py");
+                        std::fs::write(&tag_init_path, "")?;
+                    }
+
+                    // Generate test configuration files for Python
+                    if stringify!($name).to_lowercase() == "python" {
+                        let conftest_content = r#""""Test configuration and fixtures."""
+
+import pytest
+from unittest.mock import Mock
+from xdk import Client
+
+
+@pytest.fixture
+def mock_client():
+    """Provide a mock client for testing."""
+    return Client(base_url="https://api.example.com")
+
+
+@pytest.fixture  
+def mock_session():
+    """Provide a mock session for HTTP requests."""
+    return Mock()
+"#;
+
+                        let conftest_path = output_dir.join("tests").join("conftest.py");
+                        std::fs::create_dir_all(conftest_path.parent().unwrap_or(output_dir))?;
+                        std::fs::write(&conftest_path, conftest_content)?;
+
+                        // Generate __init__.py for tests package
+                        let tests_init_path = output_dir.join("tests").join("__init__.py");
+                        std::fs::write(&tests_init_path, "")?;
+                    }
+                }
 
                 Ok(())
             }

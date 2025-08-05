@@ -5,7 +5,7 @@ This module provides models for the {{ tag }} endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 {# Helper macro to generate nested model classes recursively #}
@@ -23,9 +23,7 @@ class {{ class_name }}(BaseModel):
     {%- endfor %}
     {%- endif %}
 
-    class Config:
-        """Pydantic model configuration"""
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 {# Recursively generate nested classes for object properties #}
 {%- if schema.properties %}
@@ -104,9 +102,7 @@ class {{ operation.operation_id | pascal_case }}Request(BaseModel):
     {%- endif %}
     {%- endif %}
 
-    class Config:
-        """Pydantic model configuration"""
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 {% endif %}
 
 {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}
@@ -160,9 +156,7 @@ class {{ operation.operation_id | pascal_case }}Response(BaseModel):
     {%- endif %}
     {%- endif %}
 
-    class Config:
-        """Pydantic model configuration"""
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 {% endif %}
 {% endif %}
 {% endif %}

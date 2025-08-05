@@ -5,7 +5,7 @@ This module provides models for the Communities endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
@@ -19,10 +19,7 @@ class SearchCommunitiesResponse(BaseModel):
     errors: Optional[List] = None
     meta: Optional["SearchCommunitiesResponseMeta"] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class SearchCommunitiesResponseMeta(BaseModel):
@@ -30,10 +27,7 @@ class SearchCommunitiesResponseMeta(BaseModel):
 
     next_token: Optional[str] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # Models for getCommunitiesById
@@ -47,10 +41,7 @@ class GetCommunitiesByIdResponse(BaseModel):
     )
     errors: Optional[List] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)
 
 
 class GetCommunitiesByIdResponseData(BaseModel):
@@ -60,7 +51,4 @@ class GetCommunitiesByIdResponseData(BaseModel):
     id: Optional[str] = None
     name: Optional[str] = None
 
-    class Config:
-        """Pydantic model configuration"""
-
-        populate_by_name = True
+    model_config = ConfigDict(populate_by_name=True)

@@ -1686,6 +1686,7 @@ dependencies = [
 name = "xdk-lib"
 version = "0.1.0"
 dependencies = [
+ "colored",
  "minijinja",
  "serde",
  "serde_json",
