@@ -233,11 +233,7 @@ mod tests {
 
         let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
-        assert_file_contains_text!(
-            output_dir,
-            "xdk/communities/client.py",
-            "search"
-        );
+        assert_file_contains_text!(output_dir, "xdk/communities/client.py", "search");
 
         verify_sdk_structure(&output_dir);
     }
