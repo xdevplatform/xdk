@@ -12,7 +12,6 @@ pub fn normalize_tag(tag: &str) -> String {
     // Handle special cases for better naming
     match transformed.to_lowercase().as_str() {
         "tweets" => "posts".to_string(),
-        "aaasubscriptions" | "aaa subscriptions" => "account_activity".to_string(),
         _ => {
             // Apply general transformations
             transformed = transformed
@@ -365,9 +364,8 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
 
                     let operation_info = OperationInfo {
                         path: path.to_string(),
-                        normalized_operation_id: normalized_operation_id,
                         method: method.to_string(),
-                        operation_id: op.operation_id.clone(),
+                        operation_id: normalized_operation_id,
                         summary: op.summary.clone(),
                         description: op.description.clone(),
                         parameters: op.parameters.clone(),
@@ -411,7 +409,7 @@ pub fn generate_client_method_list(openapi: &OpenApi) -> Result<String> {
         for operation in operations {
             output.push_str(&format!(
                 "- `{}` ({} {})\n",
-                operation.normalized_operation_id,
+                operation.operation_id,
                 operation.method.to_uppercase(),
                 operation.path
             ));
@@ -439,9 +437,8 @@ pub fn generate_detailed_client_method_list(openapi: &OpenApi) -> Result<String>
 
         for operation in operations {
             output.push_str(&format!(
-                "- `{}` → `{}` ({} {})\n",
+                "- `{}` ({} {})\n",
                 operation.operation_id,
-                operation.normalized_operation_id,
                 operation.method.to_uppercase(),
                 operation.path
             ));
