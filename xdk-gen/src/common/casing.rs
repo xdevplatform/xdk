@@ -25,18 +25,14 @@ pub fn snake_case(value: &str) -> String {
 
 /// MiniJinja filter for converting a string to PascalCase
 pub fn pascal_case(value: &str) -> String {
-    let mut result = String::new();
-    let mut chars = value.chars();
-
-    // Capitalize the first character
-    if let Some(first_char) = chars.next() {
-        result.push(first_char.to_ascii_uppercase());
-    }
-
-    // Keep the rest of the string as-is
-    for c in chars {
-        result.push(c);
-    }
-
-    result
+    value
+        .split('_')
+        .map(|word| {
+            let mut chars = word.chars();
+            match chars.next() {
+                None => String::new(),
+                Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
+            }
+        })
+        .collect::<String>()
 }

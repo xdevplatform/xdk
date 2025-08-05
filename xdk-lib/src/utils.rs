@@ -25,6 +25,23 @@ pub fn normalize_tag(tag: &str) -> String {
     }
 }
 
+/// Convert normalized tag to PascalCase for class names
+pub fn normalize_tag_to_pascal_case(tag: &str) -> String {
+    let normalized = normalize_tag(tag);
+    
+    // Convert snake_case to PascalCase
+    normalized
+        .split('_')
+        .map(|word| {
+            let mut chars = word.chars();
+            match chars.next() {
+                None => String::new(),
+                Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
+            }
+        })
+        .collect::<String>()
+}
+
 /// Generate resource name variants for stripping
 fn generate_resource_variants(resource_name: &str, mapped_resource: &str) -> Vec<String> {
     let mut variants = Vec::new();

@@ -28,7 +28,7 @@ class {{ tag }}Client:
         self.client = client
     
     {% for operation in operations %}
-    def {{ operation.operation_id | snake_case }}(self, 
+    def {{ operation.normalized_operation_id | snake_case }}(self, 
         {# Required parameters #}
         {% for param in operation.parameters | selectattr('required') %}
         {% if param.name %}
