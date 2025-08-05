@@ -104,11 +104,13 @@ fn generate_tag_variations(tag: &str) -> Vec<String> {
 
 /// Find the starting index of a tag sequence in the words vector
 fn find_tag_sequence(words: &[String], tag: &str) -> Option<usize> {
-    let tag_words: Vec<&str> = tag.split('_').collect();
+    // Split by both underscore and space
+    let tag_words: Vec<&str> = tag.split(&['_', ' '][..]).collect();
 
     for (i, window) in words.windows(tag_words.len()).enumerate() {
         let window_lower: Vec<String> = window.iter().map(|w| w.to_lowercase()).collect();
-        if window_lower == tag_words {
+        let tag_words_string: Vec<String> = tag_words.iter().map(|&w| w.to_string()).collect();
+        if window_lower == tag_words_string {
             return Some(i);
         }
     }
@@ -118,7 +120,8 @@ fn find_tag_sequence(words: &[String], tag: &str) -> Option<usize> {
 
 /// Remove a tag sequence from the words vector starting at the given index
 fn remove_tag_sequence(words: &mut Vec<String>, start_index: usize, tag: &str) {
-    let tag_words: Vec<&str> = tag.split('_').collect();
+    // Split by both underscore and space
+    let tag_words: Vec<&str> = tag.split(&['_', ' '][..]).collect();
 
     // Remove the sequence of words
     for _ in 0..tag_words.len() {
