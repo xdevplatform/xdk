@@ -7,11 +7,25 @@
 use openapi::{Parameter, RefOrValue, RequestBody, Response, SecurityRequirement, StatusCode};
 use serde::Serialize;
 use std::collections::HashMap;
+
+/// Transformation rules for improving client and method names
+#[derive(Debug, Clone)]
+pub struct NameTransformation {
+    /// Original tag name from OpenAPI spec
+    pub original_tag: String,
+    /// Improved client name
+    pub normalized_tag: String,
+    /// Mapping of original operation IDs to improved method names
+    pub operation_mappings: HashMap<String, String>,
+}
+
 /// Information about an operation in the OpenAPI spec
 #[derive(Debug, Serialize, Clone)]
 pub struct OperationInfo {
-    /// Operation ID from the OpenAPI spec
+    /// Original operation ID from the OpenAPI spec
     pub operation_id: String,
+    /// Transformed method name (if transformation applied)
+    pub normalized_operation_id: String,
     /// HTTP method (GET, POST, etc.)
     pub method: String,
     /// Path for the operation
