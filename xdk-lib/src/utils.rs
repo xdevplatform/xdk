@@ -7,19 +7,12 @@ use std::collections::HashMap;
 
 /// Transform tag names to better client names based on common patterns
 pub fn normalize_tag(tag: &str) -> String {
-    let mut transformed = tag.to_string();
-
     // Handle special cases for better naming
-    match transformed.to_lowercase().as_str() {
+    match tag.to_lowercase().as_str() {
         "tweets" => "posts".to_string(),
         _ => {
             // Apply general transformations
-            transformed = transformed
-                .replace(" ", "_")
-                .replace("-", "_")
-                .to_lowercase();
-
-            transformed
+            tag.replace(" ", "_").replace("-", "_").to_lowercase()
         }
     }
 }
@@ -41,303 +34,130 @@ pub fn normalize_tag_to_pascal_case(tag: &str) -> String {
         .collect::<String>()
 }
 
-/// Generate resource name variants for stripping
-fn generate_resource_variants(resource_name: &str, mapped_resource: &str) -> Vec<String> {
-    let mut variants = Vec::new();
+pub fn normalize_operation_id(operation_id: &str, _path: &str, _method: &str, tag: &str) -> String {
+    let mut words = split_into_words(operation_id);
 
-    // PascalCase: "account_activity" -> "AccountActivity"
-    let pascal = resource_name
-        .split('_')
-        .map(|w| {
-            let mut c = w.chars();
-            match c.next() {
-                None => String::new(),
-                Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
-            }
-        })
-        .collect::<String>();
-    variants.push(pascal.clone());
+    // Normalize tag to lowercase for case-insensitive comparison
+    let normalized_tag = tag.to_lowercase();
 
-    // PascalCase for mapped resource
-    if mapped_resource != resource_name {
-        let pascal_mapped = mapped_resource
-            .split('_')
-            .map(|w| {
-                let mut c = w.chars();
-                match c.next() {
-                    None => String::new(),
-                    Some(f) => f.to_uppercase().collect::<String>() + c.as_str(),
-                }
-            })
-            .collect::<String>();
-        variants.push(pascal_mapped);
-    }
-
-    // Capitalize first letter only
-    if let Some(first) = resource_name.chars().next() {
-        let mut cap = first.to_uppercase().collect::<String>();
-        cap.push_str(&resource_name[1..]);
-        variants.push(cap);
-    }
-
-    if mapped_resource != resource_name {
-        if let Some(first) = mapped_resource.chars().next() {
-            let mut cap = first.to_uppercase().collect::<String>();
-            cap.push_str(&mapped_resource[1..]);
-            variants.push(cap);
-        }
-    }
-
-    // Add singular/plural variations
-    if resource_name.ends_with('s') {
-        // Remove 's' for singular form
-        let singular = &resource_name[..resource_name.len() - 1];
-        if let Some(first) = singular.chars().next() {
-            let mut cap = first.to_uppercase().collect::<String>();
-            cap.push_str(&singular[1..]);
-            variants.push(cap);
-        }
-    } else {
-        // Add 's' for plural form
-        let plural = format!("{}s", resource_name);
-        if let Some(first) = plural.chars().next() {
-            let mut cap = first.to_uppercase().collect::<String>();
-            cap.push_str(&plural[1..]);
-            variants.push(cap);
-        }
-    }
-
-    // Add singular/plural variations for mapped resource
-    if mapped_resource != resource_name {
-        if mapped_resource.ends_with('s') {
-            let singular = &mapped_resource[..mapped_resource.len() - 1];
-            if let Some(first) = singular.chars().next() {
-                let mut cap = first.to_uppercase().collect::<String>();
-                cap.push_str(&singular[1..]);
-                variants.push(cap);
-            }
-        } else {
-            let plural = format!("{}s", mapped_resource);
-            if let Some(first) = plural.chars().next() {
-                let mut cap = first.to_uppercase().collect::<String>();
-                cap.push_str(&plural[1..]);
-                variants.push(cap);
-            }
-        }
-    }
-
-    variants
-}
-
-/// Strip resource name variants from operation ID
-fn strip_resource_variants(operation_id: &str, variants: &[String]) -> (String, bool) {
-    let mut result = operation_id.to_string();
-    let mut changed = false;
-
-    for variant in variants {
-        // Try to strip at the start (case-insensitive)
-        if result.len() >= variant.len() && result[..variant.len()].eq_ignore_ascii_case(&variant) {
-            result = result[variant.len()..].to_string();
-            changed = true;
-            break;
-        }
-
-        // Try to strip after a lowercase prefix (e.g., searchCommunities)
-        if let Some(idx) = result.find(&*variant) {
-            // For PascalCase, ensure the match is at a segment boundary
-            let before = if idx == 0 {
-                None
-            } else {
-                result[..idx].chars().last()
-            };
-            let after = result[idx + variant.len()..].chars().next();
-            let is_boundary = (before.map(|c| c.is_lowercase()).unwrap_or(true))
-                && (after.map(|c| c.is_uppercase()).unwrap_or(true) || after.is_none());
-
-            // Special case: don't strip if the variant appears as part of a larger word
-            // For example, in "getPostsReposts", "posts" is part of "PostsReposts", so don't strip it
-            let is_part_of_larger_word = if idx > 0 && idx + variant.len() < result.len() {
-                let before_char = result[..idx].chars().last().unwrap();
-                let after_char = result[idx + variant.len()..].chars().next().unwrap();
-                // If both before and after are uppercase, it's likely part of a larger word
-                before_char.is_uppercase() && after_char.is_uppercase()
-            } else {
-                false
-            };
-
-            if is_boundary && !is_part_of_larger_word {
-                result = format!("{}{}", &result[..idx], &result[idx + variant.len()..]);
-                changed = true;
-                break;
-            }
-        }
-    }
-
-    (result.trim_matches('_').to_string(), changed)
-}
-
-/// Handle special tag operations (e.g., "stream")
-fn handle_special_tag(transformed: &str, tag: &str) -> Option<String> {
-    let special_tags = ["stream"];
-
-    if special_tags.contains(&tag) {
-        let tag_lower = tag.to_lowercase();
-        let mut result = transformed.to_string();
-
-        if result.starts_with(&tag_lower) {
-            result = result[tag_lower.len()..].trim_matches('_').to_string();
-        }
-
-        let final_result = if result.contains('_') {
-            snake_case_to_camel_case(&result)
-        } else {
-            result.to_ascii_lowercase()
-        };
-
-        Some(final_result)
-    } else {
-        None
-    }
-}
-
-/// Strip common prefixes from non-special operations
-fn strip_common_prefixes(transformed: &str) -> String {
-    let special_tags = ["stream"];
-    let mut result = transformed.to_string();
-
-    for prefix in &special_tags {
-        if result.to_lowercase().starts_with(&prefix.to_lowercase()) {
-            result = result[prefix.len()..].trim_matches('_').to_string();
-            // If the result is a single word after stripping "stream", lowercase it
-            if !result.contains('_') && result.len() > 0 {
-                result = result.to_ascii_lowercase();
-            }
-            break;
-        }
-    }
-
-    result
-}
-
-/// Get resource name from path
-fn get_resource_name_from_path(path: &str) -> Option<&str> {
-    let path_segments: Vec<&str> = path.split('/').collect();
-    if path_segments.len() > 2 {
-        Some(path_segments[2])
-    } else {
-        None
-    }
-}
-
-/// Map resource names (e.g., "tweets" -> "posts")
-fn map_resource_name(resource_name: &str) -> &str {
-    match resource_name.to_lowercase().as_str() {
+    let mapped_tag = match normalized_tag.as_str() {
         "tweets" => "posts",
-        _ => resource_name,
-    }
-}
-
-pub fn normalize_operation_id(operation_id: &str, path: &str, _method: &str, tag: &str) -> String {
-    let mut transformed = operation_id.to_string();
-
-    // Convert camelCase to snake_case first and always lowercase
-    transformed = camel_case_to_snake_case(&transformed).to_ascii_lowercase();
-
-    // Apply general transformations
-    transformed = transformed
-        .replace(" ", "_")
-        .replace("-", "_")
-        .to_lowercase();
-
-    // Handle special tag operations
-    if let Some(result) = handle_special_tag(&transformed, tag) {
-        return result;
-    }
-
-    // Strip common prefixes for non-special operations
-    transformed = strip_common_prefixes(&transformed);
-
-    // Get resource name from path
-    let resource_name = match get_resource_name_from_path(path) {
-        Some(name) => name,
-        None => return snake_case_to_camel_case(&transformed),
+        "community_notes" => "notes",
+        "direct_messages" => "dm_conversations",
+        _ => &normalized_tag,
     };
 
-    // Map resource names
-    let mapped_resource = map_resource_name(resource_name);
+    // Generate singular/plural variations of the tag
+    let tag_variations = generate_tag_variations(mapped_tag);
 
-    // Generate resource variants and strip them
-    let variants = generate_resource_variants(resource_name, mapped_resource);
-    let (result, changed) = strip_resource_variants(operation_id, &variants);
-
-    // Apply final transformations
-    if changed && !result.is_empty() {
-        // Convert the cleaned result to snake_case, then back to camelCase
-        let snake_result = camel_case_to_snake_case(&result);
-        let camel_result = snake_case_to_camel_case(&snake_result);
-        // If the result is a single word after resource stripping, lowercase it
-        if !camel_result.contains('_')
-            && camel_result.len() > 0
-            && camel_result.chars().next().unwrap().is_uppercase()
-        {
-            camel_result.to_ascii_lowercase()
-        } else {
-            camel_result
-        }
-    } else {
-        // Convert the transformed result back to camelCase
-        snake_case_to_camel_case(&transformed)
-    }
-}
-
-/// Convert camelCase to snake_case, handling various input formats
-fn camel_case_to_snake_case(s: &str) -> String {
-    // If already snake_case, return as is
-    if s.contains('_') && !s.chars().any(|c| c.is_uppercase()) {
-        return s.to_string();
-    }
-
-    let mut result = String::new();
-    let chars: Vec<char> = s.chars().collect();
-
-    for &ch in chars.iter() {
-        if ch.is_uppercase() {
-            // Add underscore before uppercase letter (except at the beginning)
-            if !result.is_empty() {
-                result.push('_');
-            }
-            result.push(ch.to_lowercase().next().unwrap());
-        } else {
-            result.push(ch);
+    // Remove the first occurrence of any tag variation
+    for variation in tag_variations {
+        if let Some(start_index) = find_tag_sequence(&words, &variation) {
+            remove_tag_sequence(&mut words, start_index, &variation);
+            break; // Only remove the first occurrence
         }
     }
 
-    result.to_ascii_lowercase()
+    // Convert words back to camelCase
+    words_to_camel_case(&words)
 }
 
-/// Convert snake_case to camelCase
-fn snake_case_to_camel_case(s: &str) -> String {
-    if s.is_empty() {
-        return s.to_string();
+/// Convert a vector of words to camelCase
+fn words_to_camel_case(words: &[String]) -> String {
+    if words.is_empty() {
+        return String::new();
     }
 
     let mut result = String::new();
-    let mut capitalize_next = false;
 
-    for ch in s.chars() {
-        if ch == '_' {
-            capitalize_next = true;
+    for (i, word) in words.iter().enumerate() {
+        if i == 0 {
+            // First word should be lowercase
+            result.push_str(&word.to_lowercase());
         } else {
-            if capitalize_next {
-                result.push(ch.to_uppercase().next().unwrap());
-                capitalize_next = false;
-            } else {
-                result.push(ch);
+            // Subsequent words should be capitalized
+            let mut chars = word.chars();
+            if let Some(first) = chars.next() {
+                result.push(first.to_uppercase().next().unwrap());
+                result.push_str(&chars.as_str().to_lowercase());
             }
         }
     }
 
     result
+}
+
+/// Generate singular and plural variations of a tag for matching
+fn generate_tag_variations(tag: &str) -> Vec<String> {
+    let mut variations = vec![tag.to_string()];
+
+    // Add singular version if tag is plural
+    if tag.ends_with('s') {
+        variations.push(tag[..tag.len() - 1].to_string());
+    } else {
+        // Add plural version if tag is singular
+        variations.push(format!("{}s", tag));
+    }
+
+    variations
+}
+
+/// Find the starting index of a tag sequence in the words vector
+fn find_tag_sequence(words: &[String], tag: &str) -> Option<usize> {
+    let tag_words: Vec<&str> = tag.split('_').collect();
+
+    for (i, window) in words.windows(tag_words.len()).enumerate() {
+        let window_lower: Vec<String> = window.iter().map(|w| w.to_lowercase()).collect();
+        if window_lower == tag_words {
+            return Some(i);
+        }
+    }
+
+    None
+}
+
+/// Remove a tag sequence from the words vector starting at the given index
+fn remove_tag_sequence(words: &mut Vec<String>, start_index: usize, tag: &str) {
+    let tag_words: Vec<&str> = tag.split('_').collect();
+
+    // Remove the sequence of words
+    for _ in 0..tag_words.len() {
+        if start_index < words.len() {
+            words.remove(start_index);
+        }
+    }
+}
+
+/// Split a camelCase string into words based on uppercase boundaries
+fn split_into_words(s: &str) -> Vec<String> {
+    if s.is_empty() {
+        return vec![];
+    }
+
+    let mut words = Vec::new();
+    let mut current_word = String::new();
+    let chars: Vec<char> = s.chars().collect();
+
+    for (i, &ch) in chars.iter().enumerate() {
+        if ch.is_uppercase() && i > 0 {
+            // If we have a current word and encounter an uppercase letter, start a new word
+            if !current_word.is_empty() {
+                words.push(current_word.clone());
+                current_word.clear();
+            }
+            current_word.push(ch.to_lowercase().next().unwrap());
+        } else {
+            current_word.push(ch);
+        }
+    }
+
+    // Add the last word if it's not empty
+    if !current_word.is_empty() {
+        words.push(current_word);
+    }
+
+    // Filter out empty strings
+    words.into_iter().filter(|word| !word.is_empty()).collect()
 }
 
 /// Extract operations by tag from the OpenAPI specification with automatic name transformations
@@ -392,61 +212,6 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
     }
 
     Ok(operations_by_tag)
-}
-
-/// Generate a comprehensive list of client and method names from an OpenAPI spec
-pub fn generate_client_method_list(openapi: &OpenApi) -> Result<String> {
-    let operations_by_tag = extract_operations_by_tag(openapi)?;
-
-    let mut output = String::new();
-    output.push_str("# Generated Client and Method Names\n\n");
-
-    for (tag, operations) in operations_by_tag.iter() {
-        output.push_str(&format!("## {}\n", tag));
-        output.push_str(&format!("**Client Class**: `{}Client`\n\n", tag));
-        output.push_str("**Methods**:\n");
-
-        for operation in operations {
-            output.push_str(&format!(
-                "- `{}` ({} {})\n",
-                operation.operation_id,
-                operation.method.to_uppercase(),
-                operation.path
-            ));
-        }
-        output.push_str("\n");
-    }
-
-    Ok(output)
-}
-
-/// Generate a detailed list showing original vs normalized operation IDs
-pub fn generate_detailed_client_method_list(openapi: &OpenApi) -> Result<String> {
-    let operations_by_tag = extract_operations_by_tag(openapi)?;
-
-    let mut output = String::new();
-    output.push_str("# Detailed Client and Method Names\n\n");
-    output.push_str(
-        "This shows the transformation from original operation IDs to normalized method names.\n\n",
-    );
-
-    for (tag, operations) in operations_by_tag.iter() {
-        output.push_str(&format!("## {}\n", tag));
-        output.push_str(&format!("**Client Class**: `{}Client`\n\n", tag));
-        output.push_str("**Methods**:\n");
-
-        for operation in operations {
-            output.push_str(&format!(
-                "- `{}` ({} {})\n",
-                operation.operation_id,
-                operation.method.to_uppercase(),
-                operation.path
-            ));
-        }
-        output.push_str("\n");
-    }
-
-    Ok(output)
 }
 
 pub fn render_template<C: Serialize>(
