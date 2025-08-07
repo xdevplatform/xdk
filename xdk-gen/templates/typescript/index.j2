@@ -1,0 +1,13 @@
+/**
+ * X API TypeScript SDK
+ *
+ * This module provides a TypeScript client for interacting with the X API.
+ */
+
+export * from './client';
+export * from './oauth2_auth';
+export * from './paginator';
+
+{% for tag in tags %}
+export * from './{{ tag|snake_case }}';
+{% endfor %} 
