@@ -173,7 +173,7 @@ fn list_clients_and_methods(openapi: &xdk_openapi::OpenApi) -> Result<()> {
     println!();
 
     for (tag, operations) in operations_by_tag.iter() {
-        println!("📦 {}Client", tag);
+        println!("📦 {}Client", xdk_lib::utils::normalize_tag_to_pascal_case(tag));
         println!("   Methods:");
         
         for operation in operations {
