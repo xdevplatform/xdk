@@ -10,11 +10,10 @@ pub fn normalize_tag(tag: &str) -> String {
     // Normalize tag to lowercase for case-insensitive comparison
     let normalized_tag = tag.to_lowercase();
 
-    // Handle special cases for better naming 
+    // Handle special cases for better naming
     match normalized_tag.as_str() {
         "tweets" => "posts".to_string(),
-        _ => normalized_tag
-            .to_lowercase()
+        _ => normalized_tag.to_lowercase(),
     }
 }
 
