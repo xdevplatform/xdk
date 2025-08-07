@@ -42,8 +42,6 @@ pub fn normalize_operation_id(operation_id: &str, _path: &str, _method: &str, ta
 
     let mapped_tag = match normalized_tag.as_str() {
         "tweets" => "posts",
-        "community_notes" => "notes",
-        "direct_messages" => "dm_conversations",
         _ => &normalized_tag,
     };
 
