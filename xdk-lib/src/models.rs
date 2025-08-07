@@ -8,11 +8,10 @@ use crate::testing::TestSpecification;
 use openapi::{Parameter, RefOrValue, RequestBody, Response, SecurityRequirement, StatusCode};
 use serde::Serialize;
 use std::collections::HashMap;
-
 /// Information about an operation in the OpenAPI spec
 #[derive(Debug, Serialize, Clone)]
 pub struct OperationInfo {
-    /// Original operation ID from the OpenAPI spec
+    /// Operation ID from the OpenAPI spec
     pub operation_id: String,
     /// HTTP method (GET, POST, etc.)
     pub method: String,
