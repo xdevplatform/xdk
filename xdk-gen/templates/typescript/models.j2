@@ -1,0 +1,48 @@
+/**
+ * Models for {{ tag }} operations
+ */
+
+{% for operation in operations %}
+{% if operation.request_body %}
+{% set content_type = "application/json" %}
+{% if operation.request_body.content and operation.request_body.content[content_type] %}
+{% set schema = operation.request_body.content[content_type].schema %}
+/**
+ * Request body for {{ operation.operation_id }}
+ * {% if schema and schema.description %}
+ * {{ schema.description }}
+ * {% endif %}
+ */
+export interface {{ operation.operation_id | pascal_case }}Request {
+    {% for prop_name, prop in schema.properties.items() %}
+    {% if prop.description %}
+    /** {{ prop.description }} */
+    {% endif %}
+    {{ prop_name | camel_case }}{% if prop_name not in schema.required %}?{% endif %}: {% if prop.type %}{{ prop.type | typescript_type }}{% else %}any{% endif %};
+    {% endfor %}
+}
+
+{% endif %}
+{% endif %}
+{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
+{% set response = operation.responses["200"] if "200" in operation.responses else operation.responses["201"] %}
+{% if response.content and "application/json" in response.content %}
+{% set schema = response.content["application/json"].schema %}
+/**
+ * Response for {{ operation.operation_id }}
+ * {% if schema and schema.description %}
+ * {{ schema.description }}
+ * {% endif %}
+ */
+export interface {{ operation.operation_id | pascal_case }}Response {
+    {% for prop_name, prop in schema.properties.items() %}
+    {% if prop.description %}
+    /** {{ prop.description }} */
+    {% endif %}
+    {{ prop_name | camel_case }}{% if prop_name not in schema.required %}?{% endif %}: {% if prop.type %}{{ prop.type | typescript_type }}{% else %}any{% endif %};
+    {% endfor %}
+}
+
+{% endif %}
+{% endif %}
+{% endfor %} 
