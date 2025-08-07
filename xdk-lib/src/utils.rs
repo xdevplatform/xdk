@@ -7,15 +7,15 @@ use std::collections::HashMap;
 
 /// Transform tag names to better client names based on common patterns
 pub fn normalize_tag(tag: &str) -> String {
-
     // Normalize tag to lowercase for case-insensitive comparison
     let normalized_tag = tag.to_lowercase();
 
     // Handle special cases for better naming 
-    let mapped_tag = match normalized_tag.as_str() {
-        "tweets" => "posts",
-        _ => &normalized_tag,
-    };
+    match normalized_tag.as_str() {
+        "tweets" => "posts".to_string(),
+        _ => normalized_tag
+            .to_lowercase()
+    }
 }
 
 /// Convert normalized tag to PascalCase for class names
@@ -174,7 +174,7 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
 
                     // Normalize operation ID
                     let normalized_operation_id =
-                        normalize_operation_id(&op.operation_id, path, method, normalized_tag);
+                        normalize_operation_id(&op.operation_id, path, method, &normalized_tag);
 
                     let operation_info = OperationInfo {
                         path: path.to_string(),
