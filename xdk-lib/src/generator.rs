@@ -237,7 +237,7 @@ macro_rules! language {
                     for tag in &tags {
                         $(
                             let context = OperationContext {
-                                tag: tag.to_string(),
+                                tag: $crate::utils::normalize_tag_to_pascal_case(tag),
                                 operations: operations[tag].clone()
                             };
                             let output_path = PathBuf::from(format!($path, tag.replace(" ", "_").to_lowercase()));
