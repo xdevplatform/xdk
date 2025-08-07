@@ -7,14 +7,15 @@ use std::collections::HashMap;
 
 /// Transform tag names to better client names based on common patterns
 pub fn normalize_tag(tag: &str) -> String {
-    // Handle special cases for better naming
-    match tag.to_lowercase().as_str() {
-        "tweets" => "posts".to_string(),
-        _ => {
-            // Apply general transformations
-            tag.replace(" ", "_").replace("-", "_").to_lowercase()
-        }
-    }
+
+    // Normalize tag to lowercase for case-insensitive comparison
+    let normalized_tag = tag.to_lowercase();
+
+    // Handle special cases for better naming 
+    let mapped_tag = match normalized_tag.as_str() {
+        "tweets" => "posts",
+        _ => &normalized_tag,
+    };
 }
 
 /// Convert normalized tag to PascalCase for class names
@@ -37,16 +38,8 @@ pub fn normalize_tag_to_pascal_case(tag: &str) -> String {
 pub fn normalize_operation_id(operation_id: &str, _path: &str, _method: &str, tag: &str) -> String {
     let mut words = split_into_words(operation_id);
 
-    // Normalize tag to lowercase for case-insensitive comparison
-    let normalized_tag = tag.to_lowercase();
-
-    let mapped_tag = match normalized_tag.as_str() {
-        "tweets" => "posts",
-        _ => &normalized_tag,
-    };
-
     // Generate singular/plural variations of the tag
-    let tag_variations = generate_tag_variations(mapped_tag);
+    let tag_variations = generate_tag_variations(tag);
 
     // Remove the first occurrence of any tag variation
     for variation in tag_variations {
@@ -181,7 +174,7 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
 
                     // Normalize operation ID
                     let normalized_operation_id =
-                        normalize_operation_id(&op.operation_id, path, method, first_tag);
+                        normalize_operation_id(&op.operation_id, path, method, normalized_tag);
 
                     let operation_info = OperationInfo {
                         path: path.to_string(),
