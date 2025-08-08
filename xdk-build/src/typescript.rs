@@ -1,7 +1,7 @@
 use crate::error::{BuildError, Result};
 use std::path::Path;
 use xdk_gen::TypeScript;
-use xdk_lib::{log_info, generate};
+use xdk_lib::{log_info, generate as generate_sdk};
 use xdk_openapi::OpenApi;
 
 /// Generate TypeScript SDK from OpenAPI spec
@@ -13,7 +13,7 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     let generator = TypeScript;
 
     // Generate the SDK
-    generate(generator, openapi, output_dir).map_err(BuildError::SdkGenError)?;
+    generate_sdk(generator, openapi, output_dir).map_err(|e| BuildError::SdkGenError(e))?;
 
     // Format generated TypeScript files with Prettier
     log_info!("Formatting generated TypeScript files with Prettier...");
