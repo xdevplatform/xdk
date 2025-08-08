@@ -3,9 +3,9 @@
  */
 
 /**
- * Response for search
+ * Response for getByCreatorIds
  */
-export interface SpacesSearchResponse {
+export interface SpacesGetByCreatorIdsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -51,9 +51,9 @@ export interface SpacesGetByIdsResponse {
 }
 
 /**
- * Response for getByCreatorIds
+ * Response for search
  */
-export interface SpacesGetByCreatorIdsResponse {
+export interface SpacesSearchResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;

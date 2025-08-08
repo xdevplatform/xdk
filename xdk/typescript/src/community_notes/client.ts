@@ -7,10 +7,10 @@
 import { Client } from "../client.js";
 import {
   CommunityNotesSearchForEligiblePostsResponse,
-  CommunityNotesCreateNotesRequest,
-  CommunityNotesCreateNotesResponse,
   CommunityNotesDeleteNotesResponse,
-  CommunityNotesSearchNotesWrittenResponse
+  CommunityNotesSearchNotesWrittenResponse,
+  CommunityNotesCreateNotesRequest,
+  CommunityNotesCreateNotesResponse
 } from "./models.js";
 
 /**
@@ -94,7 +94,10 @@ export class CommunityNotesClient {
       params.set("place.fields", placefields.map(String).join(","));
     }
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
 
     // Make the request
 
@@ -118,51 +121,6 @@ export class CommunityNotesClient {
   }
 
   /**
-     * Create a Community Note
-     * Creates a community note endpoint for LLM use case.* @param body Request body* @returns CommunityNotesCreateNotesResponse Response data
-     */
-  async createNotes(
-    body?: CommunityNotesCreateNotesRequest
-  ): Promise<CommunityNotesCreateNotesResponse> {
-    let url = this.client.baseUrl + "/2/notes";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    const headers = new Headers();
-
-    headers.set("Content-Type", "application/json");
-
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as CommunityNotesCreateNotesResponse;
-  }
-
-  /**
      * Delete a Community Note
      * Deletes a community note.
      * @param id The community note id to delete.* @returns CommunityNotesDeleteNotesResponse Response data
@@ -181,7 +139,10 @@ export class CommunityNotesClient {
 
     url = url.replace("{id}", String(id));
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
 
     // Make the request
 
@@ -245,7 +206,10 @@ export class CommunityNotesClient {
       params.set("note.fields", notefields.map(String).join(","));
     }
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
 
     // Make the request
 
@@ -266,5 +230,53 @@ export class CommunityNotesClient {
     const responseData = await response.json();
 
     return responseData as CommunityNotesSearchNotesWrittenResponse;
+  }
+
+  /**
+     * Create a Community Note
+     * Creates a community note endpoint for LLM use case.* @param body Request body* @returns CommunityNotesCreateNotesResponse Response data
+     */
+  async createNotes(
+    body?: CommunityNotesCreateNotesRequest
+  ): Promise<CommunityNotesCreateNotesResponse> {
+    let url = this.client.baseUrl + "/2/notes";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+    const params = new URLSearchParams();
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    headers.set("Content-Type", "application/json");
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "POST",
+        headers,
+
+        body: body ? JSON.stringify(body) : undefined
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as CommunityNotesCreateNotesResponse;
   }
 }

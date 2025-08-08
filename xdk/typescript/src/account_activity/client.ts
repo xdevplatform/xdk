@@ -7,10 +7,10 @@
 import { Client } from "../client.js";
 import {
   AccountActivityGetSubscriptionCountResponse,
+  AccountActivityGetSubscriptionsResponse,
   AccountActivityValidateSubscriptionResponse,
-  AccountActivityDeleteSubscriptionResponse,
   AccountActivityCreateReplayJobResponse,
-  AccountActivityGetSubscriptionsResponse
+  AccountActivityDeleteSubscriptionResponse
 } from "./models.js";
 
 /**
@@ -32,20 +32,18 @@ export class AccountActivityClient {
   > {
     let url = this.client.baseUrl + "/2/account_activity/subscriptions/count";
 
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
     const params = new URLSearchParams();
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
 
     // Make the request
 
@@ -66,6 +64,54 @@ export class AccountActivityClient {
     const responseData = await response.json();
 
     return responseData as AccountActivityGetSubscriptionCountResponse;
+  }
+
+  /**
+     * Get subscriptions
+     * Retrieves a list of all active subscriptions for a given webhook.
+     * @param webhookId The webhook ID to pull subscriptions for.* @returns AccountActivityGetSubscriptionsResponse Response data
+     */
+  async getSubscriptions(
+    webhookId: string
+  ): Promise<AccountActivityGetSubscriptionsResponse> {
+    let url =
+      this.client.baseUrl +
+      "/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list";
+
+    const params = new URLSearchParams();
+
+    url = url.replace("{webhook_id}", String(webhookId));
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as AccountActivityGetSubscriptionsResponse;
   }
 
   /**
@@ -91,7 +137,10 @@ export class AccountActivityClient {
 
     url = url.replace("{webhook_id}", String(webhookId));
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
 
     // Make the request
 
@@ -115,60 +164,6 @@ export class AccountActivityClient {
   }
 
   /**
-     * Delete subscription
-     * Deletes an Account Activity subscription for the given webhook and user ID.
-     * @param webhookId The webhook ID to check subscription against.
-     * @param userId User ID to unsubscribe from.* @returns AccountActivityDeleteSubscriptionResponse Response data
-     */
-  async deleteSubscription(
-    webhookId: string,
-    userId: string
-  ): Promise<AccountActivityDeleteSubscriptionResponse> {
-    let url =
-      this.client.baseUrl +
-      "/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all";
-
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
-    const params = new URLSearchParams();
-
-    url = url.replace("{webhook_id}", String(webhookId));
-
-    url = url.replace("{user_id}", String(userId));
-
-    const headers = new Headers();
-
-    // Make the request
-
-    const response = await fetch(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "DELETE",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as AccountActivityDeleteSubscriptionResponse;
-  }
-
-  /**
      * Create replay job
      * Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
      * @param webhookId The unique identifier for the webhook configuration.
@@ -184,17 +179,6 @@ export class AccountActivityClient {
       this.client.baseUrl +
       "/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all";
 
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
     const params = new URLSearchParams();
 
     if (fromDate !== undefined) {
@@ -207,7 +191,16 @@ export class AccountActivityClient {
 
     url = url.replace("{webhook_id}", String(webhookId));
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
 
     // Make the request
 
@@ -231,40 +224,42 @@ export class AccountActivityClient {
   }
 
   /**
-     * Get subscriptions
-     * Retrieves a list of all active subscriptions for a given webhook.
-     * @param webhookId The webhook ID to pull subscriptions for.* @returns AccountActivityGetSubscriptionsResponse Response data
+     * Delete subscription
+     * Deletes an Account Activity subscription for the given webhook and user ID.
+     * @param webhookId The webhook ID to check subscription against.
+     * @param userId User ID to unsubscribe from.* @returns AccountActivityDeleteSubscriptionResponse Response data
      */
-  async getSubscriptions(
-    webhookId: string
-  ): Promise<AccountActivityGetSubscriptionsResponse> {
+  async deleteSubscription(
+    webhookId: string,
+    userId: string
+  ): Promise<AccountActivityDeleteSubscriptionResponse> {
     let url =
       this.client.baseUrl +
-      "/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list";
+      "/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all";
 
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
     const params = new URLSearchParams();
 
     url = url.replace("{webhook_id}", String(webhookId));
 
-    const headers = new Headers();
+    url = url.replace("{user_id}", String(userId));
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
 
     // Make the request
 
     const response = await fetch(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
-        method: "GET",
+        method: "DELETE",
         headers
       }
     );
@@ -277,6 +272,6 @@ export class AccountActivityClient {
     // Parse the response data
     const responseData = await response.json();
 
-    return responseData as AccountActivityGetSubscriptionsResponse;
+    return responseData as AccountActivityDeleteSubscriptionResponse;
   }
 }

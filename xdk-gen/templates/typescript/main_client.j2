@@ -47,7 +47,7 @@ export class Client {
     {% endfor %}
 
     constructor(config: ClientConfig = {}) {
-        this.baseUrl = config.baseUrl || 'https://api.twitter.com/2';
+        this.baseUrl = config.baseUrl || 'https://api.x.com';
         this.bearerToken = config.bearerToken;
         this.accessToken = config.accessToken;
         this.headers = new Headers(config.headers);

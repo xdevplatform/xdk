@@ -26,7 +26,10 @@ export class GeneralClient {
 
     const params = new URLSearchParams();
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
 
     // Make the request
 
