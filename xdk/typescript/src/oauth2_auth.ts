@@ -1,10 +1,10 @@
 /**
  * OAuth2 authentication utilities for the X API.
  */
-
 /**
  * OAuth2 configuration options
  */
+
 export interface OAuth2Config {
     /** Client ID */
     clientId: string;
@@ -23,6 +23,7 @@ export interface OAuth2Config {
 /**
  * OAuth2 token response
  */
+
 export interface OAuth2Token {
     /** Access token */
     accessToken: string;
@@ -39,10 +40,10 @@ export interface OAuth2Token {
 /**
  * OAuth2 authentication handler
  */
+
 export class OAuth2Auth {
     private config: OAuth2Config;
     private token?: OAuth2Token;
-
     constructor(config: OAuth2Config) {
         this.config = {
             authUrl: 'https://twitter.com/i/oauth2/authorize',
@@ -51,7 +52,6 @@ export class OAuth2Auth {
             ...config
         };
     }
-
     /**
      * Get the authorization URL
      */
@@ -63,13 +63,12 @@ export class OAuth2Auth {
             scope: this.config.scopes?.join(' ') || '',
             state: state || ''
         });
-
         return `${this.config.authUrl}?${params.toString()}`;
     }
-
     /**
      * Exchange authorization code for tokens
      */
+
     async exchangeCode(code: string): Promise<OAuth2Token> {
         const params = new URLSearchParams({
             grant_type: 'authorization_code',
@@ -78,7 +77,6 @@ export class OAuth2Auth {
             client_id: this.config.clientId,
             client_secret: this.config.clientSecret
         });
-
         const response = await fetch(this.config.tokenUrl!, {
             method: 'POST',
             headers: {
@@ -86,11 +84,9 @@ export class OAuth2Auth {
             },
             body: params.toString()
         });
-
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-
         const data = await response.json();
         this.token = {
             accessToken: data.access_token,
@@ -99,25 +95,22 @@ export class OAuth2Auth {
             refreshToken: data.refresh_token,
             scope: data.scope
         };
-
         return this.token;
     }
-
     /**
      * Refresh the access token
      */
+
     async refreshToken(): Promise<OAuth2Token> {
         if (!this.token?.refreshToken) {
             throw new Error('No refresh token available');
         }
-
         const params = new URLSearchParams({
             grant_type: 'refresh_token',
             refresh_token: this.token.refreshToken,
             client_id: this.config.clientId,
             client_secret: this.config.clientSecret
         });
-
         const response = await fetch(this.config.tokenUrl!, {
             method: 'POST',
             headers: {
@@ -125,11 +118,9 @@ export class OAuth2Auth {
             },
             body: params.toString()
         });
-
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-
         const data = await response.json();
         this.token = {
             accessToken: data.access_token,
@@ -138,10 +129,8 @@ export class OAuth2Auth {
             refreshToken: data.refresh_token || this.token.refreshToken,
             scope: data.scope
         };
-
         return this.token;
     }
-
     /**
      * Get the current token
      */
