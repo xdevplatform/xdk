@@ -1,12 +1,7 @@
 /// TypeScript SDK Generator Implementation
 ///
-/// This file demonstrates how to implement a language-specific generator using the `language!` macro.
+/// This file implements the TypeScript generator using the `language!` macro.
 /// It defines filters for TypeScript-specific formatting and implements the generator.
-///
-/// When creating a generator for a new language, follow this pattern:
-/// 1. Define language-specific filters (e.g., type conversion, naming conventions)
-/// 2. Use the language! macro to create the generator struct
-/// 3. Implement the rendering logic in the generate field
 use crate::common::casing::{pascal_case, camel_case, snake_case};
 use xdk_lib::language;
 

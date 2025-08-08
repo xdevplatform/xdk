@@ -9,20 +9,20 @@
 {% set schema = operation.request_body.content[content_type].schema %}
 /**
  * Request body for {{ operation.operation_id }}
- * {% if schema and schema.description %}
+{% if schema and schema.description %}
  * {{ schema.description }}
- * {% endif %}
+{% endif %}
  */
 export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request {
-    {% if schema and schema.properties %}
-    {% for key in schema.properties %}
-    {% set prop = schema.properties[key] %}
-    {% if prop.description %}
+{% if schema and schema.properties %}
+{% for key in schema.properties %}
+{% set prop = schema.properties[key] %}
+{% if prop.description %}
     /** {{ prop.description }} */
-    {% endif %}
+{% endif %}
     {{ key | camel_case }}{% if not prop.required %}?{% endif %}: {% if prop.type %}{{ prop.type | typescript_type }}{% else %}any{% endif %};
-    {% endfor %}
-    {% endif %}
+{% endfor %}
+{% endif %}
 }
 
 {% endif %}
@@ -33,20 +33,20 @@ export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}
 {% set schema = response.content["application/json"].schema %}
 /**
  * Response for {{ operation.operation_id }}
- * {% if schema and schema.description %}
+{% if schema and schema.description %}
  * {{ schema.description }}
- * {% endif %}
+{% endif %}
  */
 export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response {
-    {% if schema and schema.properties %}
-    {% for key in schema.properties %}
-    {% set prop = schema.properties[key] %}
-    {% if prop.description %}
+{% if schema and schema.properties %}
+{% for key in schema.properties %}
+{% set prop = schema.properties[key] %}
+{% if prop.description %}
     /** {{ prop.description }} */
-    {% endif %}
+{% endif %}
     {{ key | camel_case }}{% if not prop.required %}?{% endif %}: {% if prop.type %}{{ prop.type | typescript_type }}{% else %}any{% endif %};
-    {% endfor %}
-    {% endif %}
+{% endfor %}
+{% endif %}
 }
 
 {% endif %}
