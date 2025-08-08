@@ -4,6 +4,5 @@
 
 /**
  * Response for getOpenApiSpec
-
  */
 export interface GeneralGetOpenApiSpecResponse {}

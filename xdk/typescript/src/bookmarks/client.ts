@@ -6,11 +6,11 @@
 
 import { Client } from "../client.js";
 import {
+  BookmarksGetUsersByFolderIdResponse,
   BookmarksGetUsersResponse,
   BookmarksCreateUsersRequest,
   BookmarksCreateUsersResponse,
   BookmarksGetUsersFoldersResponse,
-  BookmarksGetUsersByFolderIdResponse,
   BookmarksDeleteUsersResponse
 } from "./models.js";
 
@@ -25,50 +25,66 @@ export class BookmarksClient {
   }
 
   /**
-     * Get Bookmarks
-     * 
-
-     * Retrieves a list of Posts bookmarked by the authenticated user.
-
-
-
+     * Get Bookmarks by folder ID
+     * Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
      * @param id The ID of the authenticated source User for whom to return results.
+     * @param folderId The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.* @returns BookmarksGetUsersByFolderIdResponse Response data
+     */
+  async getUsersByFolderId(
+    id: string,
+    folderId: string
+  ): Promise<BookmarksGetUsersByFolderIdResponse> {
+    let url =
+      this.client.baseUrl + "/2/users/{id}/bookmarks/folders/{folder_id}";
 
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+    const params = new URLSearchParams();
 
+    url = url.replace("{id}", String(id));
 
+    url = url.replace("{folder_id}", String(folderId));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as BookmarksGetUsersByFolderIdResponse;
+  }
+
+  /**
+     * Get Bookmarks
+     * Retrieves a list of Posts bookmarked by the authenticated user.
+     * @param id The ID of the authenticated source User for whom to return results.
      * @param maxResults The maximum number of results.
-
-
-
      * @param paginationToken This parameter is used to get the next 'page' of results.
-
-
-
      * @param tweetfields A comma separated list of Tweet fields to display.
-
-
-
      * @param expansions A comma separated list of fields to expand.
-
-
-
      * @param mediafields A comma separated list of Media fields to display.
-
-
-
      * @param pollfields A comma separated list of Poll fields to display.
-
-
-
      * @param userfields A comma separated list of User fields to display.
-
-
-
-     * @param placefields A comma separated list of Place fields to display.
-
-
-
-     * @returns BookmarksGetUsersResponse Response data
+     * @param placefields A comma separated list of Place fields to display.* @returns BookmarksGetUsersResponse Response data
      */
   async getUsers(
     id: string,
@@ -90,7 +106,6 @@ export class BookmarksClient {
         await this.client.refreshToken();
       }
     }
-
     const params = new URLSearchParams();
 
     if (maxResults !== undefined) {
@@ -152,25 +167,8 @@ export class BookmarksClient {
 
   /**
      * Create Bookmark
-     * 
-
      * Adds a post to the authenticated user’s bookmarks.
-
-
-
-     * @param id The ID of the authenticated source User for whom to add bookmarks.
-
-
-
-
-
-
-
-     * @param body Request body
-
-
-
-     * @returns BookmarksCreateUsersResponse Response data
+     * @param id The ID of the authenticated source User for whom to add bookmarks.* @param body Request body* @returns BookmarksCreateUsersResponse Response data
      */
   async createUsers(
     id: string,
@@ -185,7 +183,6 @@ export class BookmarksClient {
         await this.client.refreshToken();
       }
     }
-
     const params = new URLSearchParams();
 
     url = url.replace("{id}", String(id));
@@ -219,25 +216,10 @@ export class BookmarksClient {
 
   /**
      * Get Bookmark folders
-     * 
-
      * Retrieves a list of Bookmark folders created by the authenticated user.
-
-
-
      * @param id The ID of the authenticated source User for whom to return results.
-
-
-
      * @param maxResults The maximum number of results.
-
-
-
-     * @param paginationToken This parameter is used to get the next 'page' of results.
-
-
-
-     * @returns BookmarksGetUsersFoldersResponse Response data
+     * @param paginationToken This parameter is used to get the next 'page' of results.* @returns BookmarksGetUsersFoldersResponse Response data
      */
   async getUsersFolders(
     id: string,
@@ -253,7 +235,6 @@ export class BookmarksClient {
         await this.client.refreshToken();
       }
     }
-
     const params = new URLSearchParams();
 
     if (maxResults !== undefined) {
@@ -290,84 +271,10 @@ export class BookmarksClient {
   }
 
   /**
-     * Get Bookmarks by folder ID
-     * 
-
-     * Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
-
-
-
-     * @param id The ID of the authenticated source User for whom to return results.
-
-
-
-     * @param folderId The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.
-
-
-
-     * @returns BookmarksGetUsersByFolderIdResponse Response data
-     */
-  async getUsersByFolderId(
-    id: string,
-    folderId: string
-  ): Promise<BookmarksGetUsersByFolderIdResponse> {
-    let url =
-      this.client.baseUrl + "/2/users/{id}/bookmarks/folders/{folder_id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-
-    const params = new URLSearchParams();
-
-    url = url.replace("{id}", String(id));
-
-    url = url.replace("{folder_id}", String(folderId));
-
-    const headers = new Headers();
-
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as BookmarksGetUsersByFolderIdResponse;
-  }
-
-  /**
      * Delete Bookmark
-     * 
-
      * Removes a Post from the authenticated user’s Bookmarks by its ID.
-
-
-
      * @param id The ID of the authenticated source User whose bookmark is to be removed.
-
-
-
-     * @param tweetId The ID of the Post that the source User is removing from bookmarks.
-
-
-
-     * @returns BookmarksDeleteUsersResponse Response data
+     * @param tweetId The ID of the Post that the source User is removing from bookmarks.* @returns BookmarksDeleteUsersResponse Response data
      */
   async deleteUsers(
     id: string,
@@ -382,7 +289,6 @@ export class BookmarksClient {
         await this.client.refreshToken();
       }
     }
-
     const params = new URLSearchParams();
 
     url = url.replace("{id}", String(id));

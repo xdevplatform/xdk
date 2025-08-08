@@ -22,25 +22,10 @@ export class TrendsClient {
 
   /**
      * Get Trends by WOEID
-     * 
-
      * Retrieves trending topics for a specific location identified by its WOEID.
-
-
-
      * @param woeid The WOEID of the place to lookup a trend for.
-
-
-
      * @param maxTrends The maximum number of results.
-
-
-
-     * @param trendfields A comma separated list of Trend fields to display.
-
-
-
-     * @returns TrendsGetByWoeidResponse Response data
+     * @param trendfields A comma separated list of Trend fields to display.* @returns TrendsGetByWoeidResponse Response data
      */
   async getByWoeid(
     woeid: number,
@@ -60,7 +45,6 @@ export class TrendsClient {
         `Bearer ${this.client.accessToken}`
       );
     }
-
     const params = new URLSearchParams();
 
     if (maxTrends !== undefined) {
@@ -98,17 +82,8 @@ export class TrendsClient {
 
   /**
      * Get personalized Trends
-     * 
-
      * Retrieves personalized trending topics for the authenticated user.
-
-
-
-     * @param personalizedTrendfields A comma separated list of PersonalizedTrend fields to display.
-
-
-
-     * @returns TrendsGetUsersPersonalizedResponse Response data
+     * @param personalizedTrendfields A comma separated list of PersonalizedTrend fields to display.* @returns TrendsGetUsersPersonalizedResponse Response data
      */
   async getUsersPersonalized(
     personalizedTrendfields?: Array<any>
@@ -122,7 +97,6 @@ export class TrendsClient {
         await this.client.refreshToken();
       }
     }
-
     const params = new URLSearchParams();
 
     if (personalizedTrendfields !== undefined) {
