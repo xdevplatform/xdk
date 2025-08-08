@@ -72,11 +72,6 @@ export class {{ tag|pascal_case }}Client {
 {% for scheme_name in security_requirement -%}
 {% if scheme_name == "BearerToken" -%}
 {% set ns.has_bearer_token = true -%}
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
 {% endif -%}
 {% if scheme_name == "OAuth2UserToken" -%}
 {% set ns.has_oauth2_token = true -%}
@@ -115,7 +110,20 @@ export class {{ tag|pascal_case }}Client {
 {% endif %}
 {% endfor %}
 
-        const headers = new Headers();
+        // Create headers by copying the client's headers
+        const headers = new Headers(this.client.headers);
+        
+        // Set authentication headers
+{% if operation.security %}
+{% if ns.has_bearer_token %}
+        if (this.client.bearerToken) {
+            headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+        } else if (this.client.accessToken) {
+            headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+        }
+{% endif -%}
+{% endif -%}
+
 {% for param in operation.parameters %}
 {% if param.name %}
 {% if param.in == "header" %}
