@@ -19,21 +19,9 @@ export class UsageClient {
 
   /**
      * Get usage
-     * 
-
      * Retrieves usage statistics for Posts over a specified number of days.
-
-
-
      * @param days The number of days for which you need usage for.
-
-
-
-     * @param usagefields A comma separated list of Usage fields to display.
-
-
-
-     * @returns UsageGetResponse Response data
+     * @param usagefields A comma separated list of Usage fields to display.* @returns UsageGetResponse Response data
      */
   async get(
     days?: number,
@@ -52,7 +40,6 @@ export class UsageClient {
         `Bearer ${this.client.accessToken}`
       );
     }
-
     const params = new URLSearchParams();
 
     if (days !== undefined) {

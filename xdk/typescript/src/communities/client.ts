@@ -22,21 +22,9 @@ export class CommunitiesClient {
 
   /**
      * Get Community by ID
-     * 
-
      * Retrieves details of a specific Community by its ID.
-
-
-
      * @param id The ID of the Community.
-
-
-
-     * @param communityfields A comma separated list of Community fields to display.
-
-
-
-     * @returns CommunitiesGetByIdResponse Response data
+     * @param communityfields A comma separated list of Community fields to display.* @returns CommunitiesGetByIdResponse Response data
      */
   async getById(
     id: string,
@@ -55,7 +43,6 @@ export class CommunitiesClient {
         `Bearer ${this.client.accessToken}`
       );
     }
-
     // Ensure we have a valid access token
     if (this.client.oauth2Auth && this.client.token) {
       // Check if token needs refresh
@@ -63,7 +50,6 @@ export class CommunitiesClient {
         await this.client.refreshToken();
       }
     }
-
     const params = new URLSearchParams();
 
     if (communityfields !== undefined) {
@@ -97,33 +83,12 @@ export class CommunitiesClient {
 
   /**
      * Search Communities
-     * 
-
      * Retrieves a list of Communities matching the specified search query.
-
-
-
      * @param query Query to search communities.
-
-
-
      * @param maxResults The maximum number of search results to be returned by a request.
-
-
-
      * @param nextToken This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
-
-
-
      * @param paginationToken This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
-
-
-
-     * @param communityfields A comma separated list of Community fields to display.
-
-
-
-     * @returns CommunitiesSearchResponse Response data
+     * @param communityfields A comma separated list of Community fields to display.* @returns CommunitiesSearchResponse Response data
      */
   async search(
     query: string,
@@ -141,7 +106,6 @@ export class CommunitiesClient {
         await this.client.refreshToken();
       }
     }
-
     const params = new URLSearchParams();
 
     if (query !== undefined) {

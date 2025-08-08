@@ -19,13 +19,7 @@ export class GeneralClient {
 
   /**
      * Get OpenAPI Spec.
-     * 
-
-     * Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)
-
-
-
-     * @returns GeneralGetOpenApiSpecResponse Response data
+     * Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)* @returns GeneralGetOpenApiSpecResponse Response data
      */
   async getOpenApiSpec(): Promise<GeneralGetOpenApiSpecResponse> {
     let url = this.client.baseUrl + "/2/openapi.json";

@@ -25,17 +25,8 @@ export class WebhooksClient {
 
   /**
      * Validate webhook
-     * 
-
      * Triggers a CRC check for a given webhook.
-
-
-
-     * @param webhookId The ID of the webhook to check.
-
-
-
-     * @returns WebhooksValidateResponse Response data
+     * @param webhookId The ID of the webhook to check.* @returns WebhooksValidateResponse Response data
      */
   async validate(webhookId: string): Promise<WebhooksValidateResponse> {
     let url = this.client.baseUrl + "/2/webhooks/{webhook_id}";
@@ -51,7 +42,6 @@ export class WebhooksClient {
         `Bearer ${this.client.accessToken}`
       );
     }
-
     const params = new URLSearchParams();
 
     url = url.replace("{webhook_id}", String(webhookId));
@@ -81,17 +71,8 @@ export class WebhooksClient {
 
   /**
      * Delete webhook
-     * 
-
      * Deletes an existing webhook configuration.
-
-
-
-     * @param webhookId The ID of the webhook to delete.
-
-
-
-     * @returns WebhooksDeleteResponse Response data
+     * @param webhookId The ID of the webhook to delete.* @returns WebhooksDeleteResponse Response data
      */
   async delete(webhookId: string): Promise<WebhooksDeleteResponse> {
     let url = this.client.baseUrl + "/2/webhooks/{webhook_id}";
@@ -107,7 +88,6 @@ export class WebhooksClient {
         `Bearer ${this.client.accessToken}`
       );
     }
-
     const params = new URLSearchParams();
 
     url = url.replace("{webhook_id}", String(webhookId));
@@ -137,17 +117,8 @@ export class WebhooksClient {
 
   /**
      * Get webhook
-     * 
-
      * Get a list of webhook configs associated with a client app.
-
-
-
-     * @param webhookConfigfields A comma separated list of WebhookConfig fields to display.
-
-
-
-     * @returns WebhooksGetResponse Response data
+     * @param webhookConfigfields A comma separated list of WebhookConfig fields to display.* @returns WebhooksGetResponse Response data
      */
   async get(webhookConfigfields?: Array<any>): Promise<WebhooksGetResponse> {
     let url = this.client.baseUrl + "/2/webhooks";
@@ -163,7 +134,6 @@ export class WebhooksClient {
         `Bearer ${this.client.accessToken}`
       );
     }
-
     const params = new URLSearchParams();
 
     if (webhookConfigfields !== undefined) {
@@ -198,21 +168,7 @@ export class WebhooksClient {
 
   /**
      * Create webhook
-     * 
-
-     * Creates a new webhook configuration.
-
-
-
-
-
-
-
-     * @param body Request body
-
-
-
-     * @returns WebhooksCreateResponse Response data
+     * Creates a new webhook configuration.* @param body Request body* @returns WebhooksCreateResponse Response data
      */
   async create(body?: WebhooksCreateRequest): Promise<WebhooksCreateResponse> {
     let url = this.client.baseUrl + "/2/webhooks";
@@ -228,7 +184,6 @@ export class WebhooksClient {
         `Bearer ${this.client.accessToken}`
       );
     }
-
     const params = new URLSearchParams();
 
     const headers = new Headers();

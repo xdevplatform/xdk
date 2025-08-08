@@ -6,11 +6,11 @@
 
 import { Client } from "../client.js";
 import {
-  AccountActivityValidateSubscriptionResponse,
-  AccountActivityGetSubscriptionsResponse,
-  AccountActivityDeleteSubscriptionResponse,
   AccountActivityGetSubscriptionCountResponse,
-  AccountActivityCreateReplayJobResponse
+  AccountActivityValidateSubscriptionResponse,
+  AccountActivityDeleteSubscriptionResponse,
+  AccountActivityCreateReplayJobResponse,
+  AccountActivityGetSubscriptionsResponse
 } from "./models.js";
 
 /**
@@ -24,18 +24,54 @@ export class AccountActivityClient {
   }
 
   /**
+     * Get subscription count
+     * Retrieves a count of currently active Account Activity subscriptions.* @returns AccountActivityGetSubscriptionCountResponse Response data
+     */
+  async getSubscriptionCount(): Promise<
+    AccountActivityGetSubscriptionCountResponse
+  > {
+    let url = this.client.baseUrl + "/2/account_activity/subscriptions/count";
+
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
+    }
+    const params = new URLSearchParams();
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as AccountActivityGetSubscriptionCountResponse;
+  }
+
+  /**
      * Validate subscription
-     * 
-
      * Checks a user’s Account Activity subscription for a given webhook.
-
-
-
-     * @param webhookId The webhook ID to check subscription against.
-
-
-
-     * @returns AccountActivityValidateSubscriptionResponse Response data
+     * @param webhookId The webhook ID to check subscription against.* @returns AccountActivityValidateSubscriptionResponse Response data
      */
   async validateSubscription(
     webhookId: string
@@ -51,7 +87,6 @@ export class AccountActivityClient {
         await this.client.refreshToken();
       }
     }
-
     const params = new URLSearchParams();
 
     url = url.replace("{webhook_id}", String(webhookId));
@@ -80,82 +115,10 @@ export class AccountActivityClient {
   }
 
   /**
-     * Get subscriptions
-     * 
-
-     * Retrieves a list of all active subscriptions for a given webhook.
-
-
-
-     * @param webhookId The webhook ID to pull subscriptions for.
-
-
-
-     * @returns AccountActivityGetSubscriptionsResponse Response data
-     */
-  async getSubscriptions(
-    webhookId: string
-  ): Promise<AccountActivityGetSubscriptionsResponse> {
-    let url =
-      this.client.baseUrl +
-      "/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list";
-
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
-
-    const params = new URLSearchParams();
-
-    url = url.replace("{webhook_id}", String(webhookId));
-
-    const headers = new Headers();
-
-    // Make the request
-
-    const response = await fetch(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as AccountActivityGetSubscriptionsResponse;
-  }
-
-  /**
      * Delete subscription
-     * 
-
      * Deletes an Account Activity subscription for the given webhook and user ID.
-
-
-
      * @param webhookId The webhook ID to check subscription against.
-
-
-
-     * @param userId User ID to unsubscribe from.
-
-
-
-     * @returns AccountActivityDeleteSubscriptionResponse Response data
+     * @param userId User ID to unsubscribe from.* @returns AccountActivityDeleteSubscriptionResponse Response data
      */
   async deleteSubscription(
     webhookId: string,
@@ -176,7 +139,6 @@ export class AccountActivityClient {
         `Bearer ${this.client.accessToken}`
       );
     }
-
     const params = new URLSearchParams();
 
     url = url.replace("{webhook_id}", String(webhookId));
@@ -207,78 +169,11 @@ export class AccountActivityClient {
   }
 
   /**
-     * Get subscription count
-     * 
-
-     * Retrieves a count of currently active Account Activity subscriptions.
-
-
-
-     * @returns AccountActivityGetSubscriptionCountResponse Response data
-     */
-  async getSubscriptionCount(): Promise<
-    AccountActivityGetSubscriptionCountResponse
-  > {
-    let url = this.client.baseUrl + "/2/account_activity/subscriptions/count";
-
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
-
-    const params = new URLSearchParams();
-
-    const headers = new Headers();
-
-    // Make the request
-
-    const response = await fetch(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as AccountActivityGetSubscriptionCountResponse;
-  }
-
-  /**
      * Create replay job
-     * 
-
      * Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
-
-
-
      * @param webhookId The unique identifier for the webhook configuration.
-
-
-
      * @param fromDate The oldest (starting) UTC timestamp (inclusive) from which events will be provided, in `yyyymmddhhmm` format.
-
-
-
-     * @param toDate The latest (ending) UTC timestamp (exclusive) up to which events will be provided, in `yyyymmddhhmm` format.
-
-
-
-     * @returns AccountActivityCreateReplayJobResponse Response data
+     * @param toDate The latest (ending) UTC timestamp (exclusive) up to which events will be provided, in `yyyymmddhhmm` format.* @returns AccountActivityCreateReplayJobResponse Response data
      */
   async createReplayJob(
     webhookId: string,
@@ -300,7 +195,6 @@ export class AccountActivityClient {
         `Bearer ${this.client.accessToken}`
       );
     }
-
     const params = new URLSearchParams();
 
     if (fromDate !== undefined) {
@@ -334,5 +228,55 @@ export class AccountActivityClient {
     const responseData = await response.json();
 
     return responseData as AccountActivityCreateReplayJobResponse;
+  }
+
+  /**
+     * Get subscriptions
+     * Retrieves a list of all active subscriptions for a given webhook.
+     * @param webhookId The webhook ID to pull subscriptions for.* @returns AccountActivityGetSubscriptionsResponse Response data
+     */
+  async getSubscriptions(
+    webhookId: string
+  ): Promise<AccountActivityGetSubscriptionsResponse> {
+    let url =
+      this.client.baseUrl +
+      "/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list";
+
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
+    }
+    const params = new URLSearchParams();
+
+    url = url.replace("{webhook_id}", String(webhookId));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as AccountActivityGetSubscriptionsResponse;
   }
 }

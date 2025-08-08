@@ -22,25 +22,8 @@ export class AaasubscriptionsClient {
 
   /**
      * Create subscription
-     * 
-
      * Creates an Account Activity subscription for the user and the given webhook.
-
-
-
-     * @param webhookId The webhook ID to check subscription against.
-
-
-
-
-
-
-
-     * @param body Request body
-
-
-
-     * @returns AaasubscriptionsCreateAccountActivitySubscriptionResponse Response data
+     * @param webhookId The webhook ID to check subscription against.* @param body Request body* @returns AaasubscriptionsCreateAccountActivitySubscriptionResponse Response data
      */
   async createAccountActivitySubscription(
     webhookId: string,
@@ -57,7 +40,6 @@ export class AaasubscriptionsClient {
         await this.client.refreshToken();
       }
     }
-
     const params = new URLSearchParams();
 
     url = url.replace("{webhook_id}", String(webhookId));

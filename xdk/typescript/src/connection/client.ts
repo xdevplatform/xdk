@@ -19,13 +19,7 @@ export class ConnectionClient {
 
   /**
      * Terminate all connections
-     * 
-
-     * Terminates all active streaming connections for the authenticated application.
-
-
-
-     * @returns ConnectionDeleteAllResponse Response data
+     * Terminates all active streaming connections for the authenticated application.* @returns ConnectionDeleteAllResponse Response data
      */
   async deleteAll(): Promise<ConnectionDeleteAllResponse> {
     let url = this.client.baseUrl + "/2/connections/all";
@@ -41,7 +35,6 @@ export class ConnectionClient {
         `Bearer ${this.client.accessToken}`
       );
     }
-
     const params = new URLSearchParams();
 
     const headers = new Headers();
