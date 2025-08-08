@@ -1,368 +1,361 @@
 /**
  * Models for Posts operations
  */
-/**
- * Request body for like
-
- */
-
-export interface PostsLikeRequest {
-    /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-
-    tweetId?: string;
-
-
-}
-
-
-
-
-
-
 
 /**
- * Response for like
+ * Response for getCountsRecent
 
  */
+export interface PostsGetCountsRecentResponse {
+  data?: Array<any>;
 
-export interface PostsLikeResponse {
-    data?: Record<string, any>;
-    errors?: Array<any>;
+  errors?: Array<any>;
+
+  meta?: Record<string, any>;
 }
-/**
- * Response for getCountsAll
-
- */
-
-export interface PostsGetCountsAllResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
-    meta?: Record<string, any>;
-}
-/**
- * Response for searchAll
-
- */
-
-export interface PostsSearchAllResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
-    includes?: Record<string, any>;
-    meta?: Record<string, any>;
-}
-/**
- * Response for getReposts
-
- */
-
-export interface PostsGetRepostsResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
-    includes?: Record<string, any>;
-    meta?: Record<string, any>;
-}
-/**
- * Response for getUsersMentions
-
- */
-
-export interface PostsGetUsersMentionsResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
-    includes?: Record<string, any>;
-    meta?: Record<string, any>;
-}
-/**
- * Response for getLists
-
- */
-
-export interface PostsGetListsResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
-    includes?: Record<string, any>;
-    meta?: Record<string, any>;
-}
-/**
- * Response for unlike
-
- */
-
-export interface PostsUnlikeResponse {
-    data?: Record<string, any>;
-    errors?: Array<any>;
-}
-/**
- * Request body for repost
-
- */
-
-export interface PostsRepostRequest {
-    /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-
-    tweetId?: string;
-
-
-}
-
-
-
-
-
-
 
 /**
- * Response for repost
+ * Response for getAnalytics
 
  */
+export interface PostsGetAnalyticsResponse {
+  data?: Array<any>;
 
-export interface PostsRepostResponse {
-    data?: Record<string, any>;
-    errors?: Array<any>;
+  errors?: Array<any>;
 }
+
 /**
  * Response for getUsersTimeline
 
  */
-
 export interface PostsGetUsersTimelineResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
-    includes?: Record<string, any>;
-    meta?: Record<string, any>;
+  data?: Array<any>;
+
+  errors?: Array<any>;
+
+  includes?: Record<string, any>;
+
+  meta?: Record<string, any>;
 }
+
 /**
  * Response for getByIds
 
  */
-
 export interface PostsGetByIdsResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
-    includes?: Record<string, any>;
+  data?: Array<any>;
+
+  errors?: Array<any>;
+
+  includes?: Record<string, any>;
 }
+
 /**
  * Request body for create
 
  */
-
 export interface PostsCreateRequest {
-    /** Card Uri Parameter. This is mutually exclusive from Quote Tweet Id, Poll, Media, and Direct Message Deep Link. */
+  /** Card Uri Parameter. This is mutually exclusive from Quote Tweet Id, Poll, Media, and Direct Message Deep Link. */
 
-    cardUri?: string;
+  cardUri?: string;
 
+  /** The unique identifier of this Community. */
 
+  communityId?: string;
 
-    /** The unique identifier of this Community. */
+  /** Link to take the conversation from the public timeline to a private Direct Message. */
 
-    communityId?: string;
+  directMessageDeepLink?: string;
 
+  /** Exclusive Tweet for super followers. */
 
+  forSuperFollowersOnly?: boolean;
 
-    /** Link to take the conversation from the public timeline to a private Direct Message. */
+  /** Place ID being attached to the Tweet for geo location. */
 
-    directMessageDeepLink?: string;
+  geo?: Record<string, any>;
 
+  /** Media information being attached to created Tweet. This is mutually exclusive from Quote Tweet Id, Poll, and Card URI. */
 
+  media: Record<string, any>;
 
-    /** Exclusive Tweet for super followers. */
+  /** Nullcasted (promoted-only) Posts do not appear in the public timeline and are not served to followers. */
 
-    forSuperFollowersOnly?: boolean;
+  nullcast?: boolean;
 
+  /** Poll options for a Tweet with a poll. This is mutually exclusive from Media, Quote Tweet Id, and Card URI. */
 
+  poll: Record<string, any>;
 
-    /** Place ID being attached to the Tweet for geo location. */
+  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
 
-    geo?: Record<string, any>;
+  quoteTweetId?: string;
 
+  /** Tweet information of the Tweet being replied to. */
 
+  reply: Record<string, any>;
 
-    /** Media information being attached to created Tweet. This is mutually exclusive from Quote Tweet Id, Poll, and Card URI. */
+  /** Settings to indicate who can reply to the Tweet. */
 
-    media: Record<string, any>;
+  replySettings?: string;
 
+  /** Share community post with followers too. */
 
+  shareWithFollowers?: boolean;
 
-    /** Nullcasted (promoted-only) Posts do not appear in the public timeline and are not served to followers. */
+  /** The content of the Tweet. */
 
-    nullcast?: boolean;
-
-
-
-    /** Poll options for a Tweet with a poll. This is mutually exclusive from Media, Quote Tweet Id, and Card URI. */
-
-    poll: Record<string, any>;
-
-
-
-    /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-
-    quoteTweetId?: string;
-
-
-
-    /** Tweet information of the Tweet being replied to. */
-
-    reply: Record<string, any>;
-
-
-
-    /** Settings to indicate who can reply to the Tweet. */
-
-    replySettings?: string;
-
-
-
-    /** Share community post with followers too. */
-
-    shareWithFollowers?: boolean;
-
-
-
-    /** The content of the Tweet. */
-
-    text?: string;
-
-
+  text?: string;
 }
-
-
-
-
-
-
 
 /**
  * Response for create
 
  */
-
 export interface PostsCreateResponse {
-    data: Record<string, any>;
-    errors?: Array<any>;
+  data: Record<string, any>;
+
+  errors?: Array<any>;
 }
-/**
- * Response for unrepost
 
- */
-
-export interface PostsUnrepostResponse {
-    data?: Record<string, any>;
-    errors?: Array<any>;
-}
-/**
- * Request body for hideReply
-
- */
-
-export interface PostsHideReplyRequest {
-    hidden?: boolean;
-}
-/**
- * Response for hideReply
-
- */
-
-export interface PostsHideReplyResponse {
-    data?: Record<string, any>;
-}
 /**
  * Response for getUsersLiked
 
  */
-
 export interface PostsGetUsersLikedResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
-    includes?: Record<string, any>;
-    meta?: Record<string, any>;
+  data?: Array<any>;
+
+  errors?: Array<any>;
+
+  includes?: Record<string, any>;
+
+  meta?: Record<string, any>;
 }
+
 /**
- * Response for getInsights28Hr
+ * Response for getCountsAll
 
  */
+export interface PostsGetCountsAllResponse {
+  data?: Array<any>;
 
-export interface PostsGetInsights28HrResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
+  errors?: Array<any>;
+
+  meta?: Record<string, any>;
 }
-/**
- * Response for getCountsRecent
 
- */
-
-export interface PostsGetCountsRecentResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
-    meta?: Record<string, any>;
-}
 /**
  * Response for searchRecent
 
  */
-
 export interface PostsSearchRecentResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
-    includes?: Record<string, any>;
-    meta?: Record<string, any>;
+  data?: Array<any>;
+
+  errors?: Array<any>;
+
+  includes?: Record<string, any>;
+
+  meta?: Record<string, any>;
 }
+
 /**
- * Response for getAnalytics
+ * Response for getReposts
 
  */
+export interface PostsGetRepostsResponse {
+  data?: Array<any>;
 
-export interface PostsGetAnalyticsResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
+  errors?: Array<any>;
+
+  includes?: Record<string, any>;
+
+  meta?: Record<string, any>;
 }
+
 /**
- * Response for getById
+ * Response for searchAll
 
  */
+export interface PostsSearchAllResponse {
+  data?: Array<any>;
 
-export interface PostsGetByIdResponse {
-    data?: Record<string, any>;
-    errors?: Array<any>;
-    includes?: Record<string, any>;
+  errors?: Array<any>;
+
+  includes?: Record<string, any>;
+
+  meta?: Record<string, any>;
 }
+
 /**
- * Response for delete
+ * Response for unrepost
 
  */
+export interface PostsUnrepostResponse {
+  data?: Record<string, any>;
 
-export interface PostsDeleteResponse {
-    data: Record<string, any>;
-    errors?: Array<any>;
+  errors?: Array<any>;
 }
+
 /**
- * Response for getInsightsHistorical
+ * Request body for like
 
  */
+export interface PostsLikeRequest {
+  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
 
-export interface PostsGetInsightsHistoricalResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
+  tweetId?: string;
 }
+
+/**
+ * Response for like
+
+ */
+export interface PostsLikeResponse {
+  data?: Record<string, any>;
+
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getUsersMentions
+
+ */
+export interface PostsGetUsersMentionsResponse {
+  data?: Array<any>;
+
+  errors?: Array<any>;
+
+  includes?: Record<string, any>;
+
+  meta?: Record<string, any>;
+}
+
 /**
  * Response for getUsers
 
  */
-
 export interface PostsGetUsersResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
-    includes?: Record<string, any>;
-    meta?: Record<string, any>;
+  data?: Array<any>;
+
+  errors?: Array<any>;
+
+  includes?: Record<string, any>;
+
+  meta?: Record<string, any>;
 }
+
+/**
+ * Request body for hideReply
+
+ */
+export interface PostsHideReplyRequest {
+  hidden?: boolean;
+}
+
+/**
+ * Response for hideReply
+
+ */
+export interface PostsHideReplyResponse {
+  data?: Record<string, any>;
+}
+
+/**
+ * Response for getInsightsHistorical
+
+ */
+export interface PostsGetInsightsHistoricalResponse {
+  data?: Array<any>;
+
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getLists
+
+ */
+export interface PostsGetListsResponse {
+  data?: Array<any>;
+
+  errors?: Array<any>;
+
+  includes?: Record<string, any>;
+
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for unlike
+
+ */
+export interface PostsUnlikeResponse {
+  data?: Record<string, any>;
+
+  errors?: Array<any>;
+}
+
+/**
+ * Request body for repost
+
+ */
+export interface PostsRepostRequest {
+  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
+
+  tweetId?: string;
+}
+
+/**
+ * Response for repost
+
+ */
+export interface PostsRepostResponse {
+  data?: Record<string, any>;
+
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getInsights28Hr
+
+ */
+export interface PostsGetInsights28HrResponse {
+  data?: Array<any>;
+
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getById
+
+ */
+export interface PostsGetByIdResponse {
+  data?: Record<string, any>;
+
+  errors?: Array<any>;
+
+  includes?: Record<string, any>;
+}
+
+/**
+ * Response for delete
+
+ */
+export interface PostsDeleteResponse {
+  data: Record<string, any>;
+
+  errors?: Array<any>;
+}
+
 /**
  * Response for getQuotedPosts
 
  */
-
 export interface PostsGetQuotedPostsResponse {
-    data?: Array<any>;
-    errors?: Array<any>;
-    includes?: Record<string, any>;
-    meta?: Record<string, any>;
+  data?: Array<any>;
+
+  errors?: Array<any>;
+
+  includes?: Record<string, any>;
+
+  meta?: Record<string, any>;
 }

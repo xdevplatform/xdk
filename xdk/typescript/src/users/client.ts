@@ -4,299 +4,96 @@
  * This module provides a client for interacting with the Users endpoints of the X API.
  */
 
-import { Client } from '../client.js';
-
+import { Client } from "../client.js";
 import {
-    UsersGetByIdsResponse,
-    UsersUnfollowResponse,
-    UsersGetMutingResponse,
-    UsersMuteRequest,
-    UsersMuteResponse,
-    UsersGetFollowersResponse,
-    UsersSearchResponse,
-    UsersGetByIdResponse,
-    UsersGetBlockingResponse,
-    UsersUnmuteResponse,
-    UsersGetRepostsOfMeResponse,
-    UsersGetListsFollowersResponse,
-    UsersGetPostsLikingResponse,
-    UsersGetFollowingResponse,
-    UsersFollowRequest,
-    UsersFollowResponse,
-    UsersGetByUsernamesResponse,
-    UsersGetPostsRepostedByResponse,
-    UsersGetListsMembersResponse,
-    UsersBlockDmsResponse,
-    UsersGetByUsernameResponse,
-    UsersUnblockDmsResponse,
-    UsersGetMyResponse,
-} from './models.js';
+  UsersBlockDmsResponse,
+  UsersGetFollowersResponse,
+  UsersGetRepostsOfMeResponse,
+  UsersGetByIdResponse,
+  UsersUnfollowResponse,
+  UsersGetListsFollowersResponse,
+  UsersUnmuteResponse,
+  UsersGetPostsLikingResponse,
+  UsersGetFollowingResponse,
+  UsersFollowRequest,
+  UsersFollowResponse,
+  UsersGetByUsernameResponse,
+  UsersGetListsMembersResponse,
+  UsersGetMutingResponse,
+  UsersMuteRequest,
+  UsersMuteResponse,
+  UsersUnblockDmsResponse,
+  UsersGetBlockingResponse,
+  UsersGetMyResponse,
+  UsersGetPostsRepostedByResponse,
+  UsersGetByUsernamesResponse,
+  UsersSearchResponse,
+  UsersGetByIdsResponse
+} from "./models.js";
+
 /**
  * Client for Users operations
  */
-
 export class UsersClient {
-    private client: Client;
-    constructor(client: Client) {
-        this.client = client;
-    }
-    /**
-     * Get Users by IDs
+  private client: Client;
+
+  constructor(client: Client) {
+    this.client = client;
+  }
+
+  /**
+     * Block DMs
      * 
 
-     * Retrieves details of multiple Users by their IDs.
+     * Blocks direct messages to or from a specific User by their ID for the authenticated user.
 
 
 
-     * @param ids A list of User IDs, comma-separated. You can specify up to 100 IDs.
+     * @param id The ID of the target User that the authenticated user requesting to block dms for.
 
 
 
-     * @param userfields A comma separated list of User fields to display.
-
-
-
-     * @param expansions A comma separated list of fields to expand.
-
-
-
-     * @param tweetfields A comma separated list of Tweet fields to display.
-
-
-
-     * @returns UsersGetByIdsResponse Response data
+     * @returns UsersBlockDmsResponse Response data
      */
+  async blockDms(id: string): Promise<UsersBlockDmsResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/dm/block";
 
-    async getByIds(
-        ids: Array<any>,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersGetByIdsResponse> {
-        let url = this.client.baseUrl + "/2/users";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (ids !== undefined) {
-            params.set("ids", ids.map(String).join(","));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetByIdsResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
-     * Unfollow User
-     * 
 
-     * Causes the authenticated user to unfollow a specific user by their ID.
+    const params = new URLSearchParams();
 
+    url = url.replace("{id}", String(id));
 
+    const headers = new Headers();
 
-     * @param sourceUserId The ID of the authenticated source User that is requesting to unfollow the target User.
+    // Make the request
 
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "POST",
+        headers
+      }
+    );
 
-
-     * @param targetUserId The ID of the User that the source User is requesting to unfollow.
-
-
-
-     * @returns UsersUnfollowResponse Response data
-     */
-
-    async unfollow(
-        sourceUserId: string,
-        targetUserId: string,
-    ): Promise<UsersUnfollowResponse> {
-        let url = this.client.baseUrl + "/2/users/{source_user_id}/following/{target_user_id}";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        url = url.replace("{source_user_id}", String(sourceUserId));
-        url = url.replace("{target_user_id}", String(targetUserId));
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "DELETE",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersUnfollowResponse;
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-    /**
-     * Get muting
-     * 
 
-     * Retrieves a list of Users muted by the authenticated user.
+    // Parse the response data
+    const responseData = await response.json();
 
+    return responseData as UsersBlockDmsResponse;
+  }
 
-
-     * @param id The ID of the authenticated source User for whom to return results.
-
-
-
-     * @param maxResults The maximum number of results.
-
-
-
-     * @param paginationToken This parameter is used to get the next 'page' of results.
-
-
-
-     * @param userfields A comma separated list of User fields to display.
-
-
-
-     * @param expansions A comma separated list of fields to expand.
-
-
-
-     * @param tweetfields A comma separated list of Tweet fields to display.
-
-
-
-     * @returns UsersGetMutingResponse Response data
-     */
-
-    async getMuting(
-        id: string,
-        maxResults?: number,
-        paginationToken?: string,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersGetMutingResponse> {
-        let url = this.client.baseUrl + "/2/users/{id}/muting";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (paginationToken !== undefined) {
-            params.set("pagination_token", String(paginationToken));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetMutingResponse;
-    }
-    /**
-     * Mute User
-     * 
-
-     * Causes the authenticated user to mute a specific User by their ID.
-
-
-
-     * @param id The ID of the authenticated source User that is requesting to mute the target User.
-
-
-
-
-
-
-
-     * @param body Request body
-
-
-
-     * @returns UsersMuteResponse Response data
-     */
-
-    async mute(
-        id: string,
-        body?: UsersMuteRequest,
-    ): Promise<UsersMuteResponse> {
-        let url = this.client.baseUrl + "/2/users/{id}/muting";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        headers.set("Content-Type", "application/json");
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "POST",
-            headers,
-            body: body ? JSON.stringify(body) : undefined,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersMuteResponse;
-    }
-    /**
+  /**
      * Get followers
      * 
 
@@ -330,345 +127,84 @@ export class UsersClient {
 
      * @returns UsersGetFollowersResponse Response data
      */
+  async getFollowers(
+    id: string,
+    maxResults?: number,
+    paginationToken?: string,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersGetFollowersResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/followers";
 
-    async getFollowers(
-        id: string,
-        maxResults?: number,
-        paginationToken?: string,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersGetFollowersResponse> {
-        let url = this.client.baseUrl + "/2/users/{id}/followers";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (paginationToken !== undefined) {
-            params.set("pagination_token", String(paginationToken));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetFollowersResponse;
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
     }
-    /**
-     * Search Users
-     * 
 
-     * Retrieves a list of Users matching a search query.
-
-
-
-     * @param query TThe the query string by which to query for users.
-
-
-
-     * @param maxResults The maximum number of results.
-
-
-
-     * @param nextToken This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
-
-
-
-     * @param userfields A comma separated list of User fields to display.
-
-
-
-     * @param expansions A comma separated list of fields to expand.
-
-
-
-     * @param tweetfields A comma separated list of Tweet fields to display.
-
-
-
-     * @returns UsersSearchResponse Response data
-     */
-
-    async search(
-        query: string,
-        maxResults?: number,
-        nextToken?: string,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersSearchResponse> {
-        let url = this.client.baseUrl + "/2/users/search";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (query !== undefined) {
-            params.set("query", String(query));
-        }
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (nextToken !== undefined) {
-            params.set("next_token", String(nextToken));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersSearchResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
-     * Get User by ID
-     * 
 
-     * Retrieves details of a specific User by their ID.
+    const params = new URLSearchParams();
 
-
-
-     * @param id The ID of the User to lookup.
-
-
-
-     * @param userfields A comma separated list of User fields to display.
-
-
-
-     * @param expansions A comma separated list of fields to expand.
-
-
-
-     * @param tweetfields A comma separated list of Tweet fields to display.
-
-
-
-     * @returns UsersGetByIdResponse Response data
-     */
-
-    async getById(
-        id: string,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersGetByIdResponse> {
-        let url = this.client.baseUrl + "/2/users/{id}";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetByIdResponse;
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
     }
-    /**
-     * Get blocking
-     * 
 
-     * Retrieves a list of Users blocked by the specified User ID.
-
-
-
-     * @param id The ID of the authenticated source User for whom to return results.
-
-
-
-     * @param maxResults The maximum number of results.
-
-
-
-     * @param paginationToken This parameter is used to get a specified 'page' of results.
-
-
-
-     * @param userfields A comma separated list of User fields to display.
-
-
-
-     * @param expansions A comma separated list of fields to expand.
-
-
-
-     * @param tweetfields A comma separated list of Tweet fields to display.
-
-
-
-     * @returns UsersGetBlockingResponse Response data
-     */
-
-    async getBlocking(
-        id: string,
-        maxResults?: number,
-        paginationToken?: string,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersGetBlockingResponse> {
-        let url = this.client.baseUrl + "/2/users/{id}/blocking";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (paginationToken !== undefined) {
-            params.set("pagination_token", String(paginationToken));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetBlockingResponse;
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
     }
-    /**
-     * Unmute User
-     * 
 
-     * Causes the authenticated user to unmute a specific user by their ID.
-
-
-
-     * @param sourceUserId The ID of the authenticated source User that is requesting to unmute the target User.
-
-
-
-     * @param targetUserId The ID of the User that the source User is requesting to unmute.
-
-
-
-     * @returns UsersUnmuteResponse Response data
-     */
-
-    async unmute(
-        sourceUserId: string,
-        targetUserId: string,
-    ): Promise<UsersUnmuteResponse> {
-        let url = this.client.baseUrl + "/2/users/{source_user_id}/muting/{target_user_id}";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        url = url.replace("{source_user_id}", String(sourceUserId));
-        url = url.replace("{target_user_id}", String(targetUserId));
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "DELETE",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersUnmuteResponse;
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
     }
-    /**
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetFollowersResponse;
+  }
+
+  /**
      * Get Reposts of me
      * 
 
@@ -710,65 +246,240 @@ export class UsersClient {
 
      * @returns UsersGetRepostsOfMeResponse Response data
      */
+  async getRepostsOfMe(
+    maxResults?: number,
+    paginationToken?: string,
+    tweetfields?: Array<any>,
+    expansions?: Array<any>,
+    mediafields?: Array<any>,
+    pollfields?: Array<any>,
+    userfields?: Array<any>,
+    placefields?: Array<any>
+  ): Promise<UsersGetRepostsOfMeResponse> {
+    let url = this.client.baseUrl + "/2/users/reposts_of_me";
 
-    async getRepostsOfMe(
-        maxResults?: number,
-        paginationToken?: string,
-        tweetfields?: Array<any>,
-        expansions?: Array<any>,
-        mediafields?: Array<any>,
-        pollfields?: Array<any>,
-        userfields?: Array<any>,
-        placefields?: Array<any>,
-    ): Promise<UsersGetRepostsOfMeResponse> {
-        let url = this.client.baseUrl + "/2/users/reposts_of_me";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (paginationToken !== undefined) {
-            params.set("pagination_token", String(paginationToken));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (mediafields !== undefined) {
-            params.set("media.fields", mediafields.map(String).join(","));
-        }
-        if (pollfields !== undefined) {
-            params.set("poll.fields", pollfields.map(String).join(","));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (placefields !== undefined) {
-            params.set("place.fields", placefields.map(String).join(","));
-        }
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetRepostsOfMeResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
+
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (mediafields !== undefined) {
+      params.set("media.fields", mediafields.map(String).join(","));
+    }
+
+    if (pollfields !== undefined) {
+      params.set("poll.fields", pollfields.map(String).join(","));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (placefields !== undefined) {
+      params.set("place.fields", placefields.map(String).join(","));
+    }
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetRepostsOfMeResponse;
+  }
+
+  /**
+     * Get User by ID
+     * 
+
+     * Retrieves details of a specific User by their ID.
+
+
+
+     * @param id The ID of the User to lookup.
+
+
+
+     * @param userfields A comma separated list of User fields to display.
+
+
+
+     * @param expansions A comma separated list of fields to expand.
+
+
+
+     * @param tweetfields A comma separated list of Tweet fields to display.
+
+
+
+     * @returns UsersGetByIdResponse Response data
+     */
+  async getById(
+    id: string,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersGetByIdResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}";
+
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
+    }
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetByIdResponse;
+  }
+
+  /**
+     * Unfollow User
+     * 
+
+     * Causes the authenticated user to unfollow a specific user by their ID.
+
+
+
+     * @param sourceUserId The ID of the authenticated source User that is requesting to unfollow the target User.
+
+
+
+     * @param targetUserId The ID of the User that the source User is requesting to unfollow.
+
+
+
+     * @returns UsersUnfollowResponse Response data
+     */
+  async unfollow(
+    sourceUserId: string,
+    targetUserId: string
+  ): Promise<UsersUnfollowResponse> {
+    let url =
+      this.client.baseUrl +
+      "/2/users/{source_user_id}/following/{target_user_id}";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    url = url.replace("{source_user_id}", String(sourceUserId));
+
+    url = url.replace("{target_user_id}", String(targetUserId));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "DELETE",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersUnfollowResponse;
+  }
+
+  /**
      * Get List followers
      * 
 
@@ -802,60 +513,146 @@ export class UsersClient {
 
      * @returns UsersGetListsFollowersResponse Response data
      */
+  async getListsFollowers(
+    id: string,
+    maxResults?: number,
+    paginationToken?: string,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersGetListsFollowersResponse> {
+    let url = this.client.baseUrl + "/2/lists/{id}/followers";
 
-    async getListsFollowers(
-        id: string,
-        maxResults?: number,
-        paginationToken?: string,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersGetListsFollowersResponse> {
-        let url = this.client.baseUrl + "/2/lists/{id}/followers";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (paginationToken !== undefined) {
-            params.set("pagination_token", String(paginationToken));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetListsFollowersResponse;
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
     }
-    /**
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetListsFollowersResponse;
+  }
+
+  /**
+     * Unmute User
+     * 
+
+     * Causes the authenticated user to unmute a specific user by their ID.
+
+
+
+     * @param sourceUserId The ID of the authenticated source User that is requesting to unmute the target User.
+
+
+
+     * @param targetUserId The ID of the User that the source User is requesting to unmute.
+
+
+
+     * @returns UsersUnmuteResponse Response data
+     */
+  async unmute(
+    sourceUserId: string,
+    targetUserId: string
+  ): Promise<UsersUnmuteResponse> {
+    let url =
+      this.client.baseUrl + "/2/users/{source_user_id}/muting/{target_user_id}";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    url = url.replace("{source_user_id}", String(sourceUserId));
+
+    url = url.replace("{target_user_id}", String(targetUserId));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "DELETE",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersUnmuteResponse;
+  }
+
+  /**
      * Get Liking Users
      * 
 
@@ -889,55 +686,72 @@ export class UsersClient {
 
      * @returns UsersGetPostsLikingResponse Response data
      */
+  async getPostsLiking(
+    id: string,
+    maxResults?: number,
+    paginationToken?: string,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersGetPostsLikingResponse> {
+    let url = this.client.baseUrl + "/2/tweets/{id}/liking_users";
 
-    async getPostsLiking(
-        id: string,
-        maxResults?: number,
-        paginationToken?: string,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersGetPostsLikingResponse> {
-        let url = this.client.baseUrl + "/2/tweets/{id}/liking_users";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (paginationToken !== undefined) {
-            params.set("pagination_token", String(paginationToken));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetPostsLikingResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
+
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetPostsLikingResponse;
+  }
+
+  /**
      * Get following
      * 
 
@@ -971,60 +785,84 @@ export class UsersClient {
 
      * @returns UsersGetFollowingResponse Response data
      */
+  async getFollowing(
+    id: string,
+    maxResults?: number,
+    paginationToken?: string,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersGetFollowingResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/following";
 
-    async getFollowing(
-        id: string,
-        maxResults?: number,
-        paginationToken?: string,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersGetFollowingResponse> {
-        let url = this.client.baseUrl + "/2/users/{id}/following";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (paginationToken !== undefined) {
-            params.set("pagination_token", String(paginationToken));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetFollowingResponse;
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
     }
-    /**
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetFollowingResponse;
+  }
+
+  /**
      * Follow User
      * 
 
@@ -1046,46 +884,60 @@ export class UsersClient {
 
      * @returns UsersFollowResponse Response data
      */
+  async follow(
+    id: string,
+    body?: UsersFollowRequest
+  ): Promise<UsersFollowResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/following";
 
-    async follow(
-        id: string,
-        body?: UsersFollowRequest,
-    ): Promise<UsersFollowResponse> {
-        let url = this.client.baseUrl + "/2/users/{id}/following";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        headers.set("Content-Type", "application/json");
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "POST",
-            headers,
-            body: body ? JSON.stringify(body) : undefined,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersFollowResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
-     * Get Users by usernames
+
+    const params = new URLSearchParams();
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    headers.set("Content-Type", "application/json");
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "POST",
+        headers,
+
+        body: body ? JSON.stringify(body) : undefined
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersFollowResponse;
+  }
+
+  /**
+     * Get User by username
      * 
 
-     * Retrieves details of multiple Users by their usernames.
+     * Retrieves details of a specific User by their username.
 
 
 
-     * @param usernames A list of usernames, comma-separated.
+     * @param username A username.
 
 
 
@@ -1101,143 +953,76 @@ export class UsersClient {
 
 
 
-     * @returns UsersGetByUsernamesResponse Response data
+     * @returns UsersGetByUsernameResponse Response data
      */
+  async getByUsername(
+    username: string,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersGetByUsernameResponse> {
+    let url = this.client.baseUrl + "/2/users/by/username/{username}";
 
-    async getByUsernames(
-        usernames: Array<any>,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersGetByUsernamesResponse> {
-        let url = this.client.baseUrl + "/2/users/by";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (usernames !== undefined) {
-            params.set("usernames", usernames.map(String).join(","));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetByUsernamesResponse;
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
     }
-    /**
-     * Get Reposted by
-     * 
 
-     * Retrieves a list of Users who reposted a specific Post by its ID.
-
-
-
-     * @param id A single Post ID.
-
-
-
-     * @param maxResults The maximum number of results.
-
-
-
-     * @param paginationToken This parameter is used to get the next 'page' of results.
-
-
-
-     * @param userfields A comma separated list of User fields to display.
-
-
-
-     * @param expansions A comma separated list of fields to expand.
-
-
-
-     * @param tweetfields A comma separated list of Tweet fields to display.
-
-
-
-     * @returns UsersGetPostsRepostedByResponse Response data
-     */
-
-    async getPostsRepostedBy(
-        id: string,
-        maxResults?: number,
-        paginationToken?: string,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersGetPostsRepostedByResponse> {
-        let url = this.client.baseUrl + "/2/tweets/{id}/retweeted_by";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (paginationToken !== undefined) {
-            params.set("pagination_token", String(paginationToken));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetPostsRepostedByResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
+
+    const params = new URLSearchParams();
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{username}", String(username));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetByUsernameResponse;
+  }
+
+  /**
      * Get List members
      * 
 
@@ -1271,110 +1056,100 @@ export class UsersClient {
 
      * @returns UsersGetListsMembersResponse Response data
      */
+  async getListsMembers(
+    id: string,
+    maxResults?: number,
+    paginationToken?: string,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersGetListsMembersResponse> {
+    let url = this.client.baseUrl + "/2/lists/{id}/members";
 
-    async getListsMembers(
-        id: string,
-        maxResults?: number,
-        paginationToken?: string,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersGetListsMembersResponse> {
-        let url = this.client.baseUrl + "/2/lists/{id}/members";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (paginationToken !== undefined) {
-            params.set("pagination_token", String(paginationToken));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetListsMembersResponse;
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
     }
-    /**
-     * Block DMs
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetListsMembersResponse;
+  }
+
+  /**
+     * Get muting
      * 
 
-     * Blocks direct messages to or from a specific User by their ID for the authenticated user.
+     * Retrieves a list of Users muted by the authenticated user.
 
 
 
-     * @param id The ID of the target User that the authenticated user requesting to block dms for.
+     * @param id The ID of the authenticated source User for whom to return results.
 
 
 
-     * @returns UsersBlockDmsResponse Response data
-     */
-
-    async blockDms(
-        id: string,
-    ): Promise<UsersBlockDmsResponse> {
-        let url = this.client.baseUrl + "/2/users/{id}/dm/block";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "POST",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersBlockDmsResponse;
-    }
-    /**
-     * Get User by username
-     * 
-
-     * Retrieves details of a specific User by their username.
+     * @param maxResults The maximum number of results.
 
 
 
-     * @param username A username.
+     * @param paginationToken This parameter is used to get the next 'page' of results.
 
 
 
@@ -1390,54 +1165,138 @@ export class UsersClient {
 
 
 
-     * @returns UsersGetByUsernameResponse Response data
+     * @returns UsersGetMutingResponse Response data
      */
+  async getMuting(
+    id: string,
+    maxResults?: number,
+    paginationToken?: string,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersGetMutingResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/muting";
 
-    async getByUsername(
-        username: string,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersGetByUsernameResponse> {
-        let url = this.client.baseUrl + "/2/users/by/username/{username}";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{username}", String(username));
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetByUsernameResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
+
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetMutingResponse;
+  }
+
+  /**
+     * Mute User
+     * 
+
+     * Causes the authenticated user to mute a specific User by their ID.
+
+
+
+     * @param id The ID of the authenticated source User that is requesting to mute the target User.
+
+
+
+
+
+
+
+     * @param body Request body
+
+
+
+     * @returns UsersMuteResponse Response data
+     */
+  async mute(id: string, body?: UsersMuteRequest): Promise<UsersMuteResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/muting";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    headers.set("Content-Type", "application/json");
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "POST",
+        headers,
+
+        body: body ? JSON.stringify(body) : undefined
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersMuteResponse;
+  }
+
+  /**
      * Unblock DMs
      * 
 
@@ -1451,35 +1310,144 @@ export class UsersClient {
 
      * @returns UsersUnblockDmsResponse Response data
      */
+  async unblockDms(id: string): Promise<UsersUnblockDmsResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/dm/unblock";
 
-    async unblockDms(
-        id: string,
-    ): Promise<UsersUnblockDmsResponse> {
-        let url = this.client.baseUrl + "/2/users/{id}/dm/unblock";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "POST",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersUnblockDmsResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
+
+    const params = new URLSearchParams();
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "POST",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersUnblockDmsResponse;
+  }
+
+  /**
+     * Get blocking
+     * 
+
+     * Retrieves a list of Users blocked by the specified User ID.
+
+
+
+     * @param id The ID of the authenticated source User for whom to return results.
+
+
+
+     * @param maxResults The maximum number of results.
+
+
+
+     * @param paginationToken This parameter is used to get a specified 'page' of results.
+
+
+
+     * @param userfields A comma separated list of User fields to display.
+
+
+
+     * @param expansions A comma separated list of fields to expand.
+
+
+
+     * @param tweetfields A comma separated list of Tweet fields to display.
+
+
+
+     * @returns UsersGetBlockingResponse Response data
+     */
+  async getBlocking(
+    id: string,
+    maxResults?: number,
+    paginationToken?: string,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersGetBlockingResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/blocking";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetBlockingResponse;
+  }
+
+  /**
      * Get my User
      * 
 
@@ -1501,42 +1469,457 @@ export class UsersClient {
 
      * @returns UsersGetMyResponse Response data
      */
+  async getMy(
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersGetMyResponse> {
+    let url = this.client.baseUrl + "/2/users/me";
 
-    async getMy(
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<UsersGetMyResponse> {
-        let url = this.client.baseUrl + "/2/users/me";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as UsersGetMyResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-} 
+
+    const params = new URLSearchParams();
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetMyResponse;
+  }
+
+  /**
+     * Get Reposted by
+     * 
+
+     * Retrieves a list of Users who reposted a specific Post by its ID.
+
+
+
+     * @param id A single Post ID.
+
+
+
+     * @param maxResults The maximum number of results.
+
+
+
+     * @param paginationToken This parameter is used to get the next 'page' of results.
+
+
+
+     * @param userfields A comma separated list of User fields to display.
+
+
+
+     * @param expansions A comma separated list of fields to expand.
+
+
+
+     * @param tweetfields A comma separated list of Tweet fields to display.
+
+
+
+     * @returns UsersGetPostsRepostedByResponse Response data
+     */
+  async getPostsRepostedBy(
+    id: string,
+    maxResults?: number,
+    paginationToken?: string,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersGetPostsRepostedByResponse> {
+    let url = this.client.baseUrl + "/2/tweets/{id}/retweeted_by";
+
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
+    }
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetPostsRepostedByResponse;
+  }
+
+  /**
+     * Get Users by usernames
+     * 
+
+     * Retrieves details of multiple Users by their usernames.
+
+
+
+     * @param usernames A list of usernames, comma-separated.
+
+
+
+     * @param userfields A comma separated list of User fields to display.
+
+
+
+     * @param expansions A comma separated list of fields to expand.
+
+
+
+     * @param tweetfields A comma separated list of Tweet fields to display.
+
+
+
+     * @returns UsersGetByUsernamesResponse Response data
+     */
+  async getByUsernames(
+    usernames: Array<any>,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersGetByUsernamesResponse> {
+    let url = this.client.baseUrl + "/2/users/by";
+
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
+    }
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    if (usernames !== undefined) {
+      params.set("usernames", usernames.map(String).join(","));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetByUsernamesResponse;
+  }
+
+  /**
+     * Search Users
+     * 
+
+     * Retrieves a list of Users matching a search query.
+
+
+
+     * @param query TThe the query string by which to query for users.
+
+
+
+     * @param maxResults The maximum number of results.
+
+
+
+     * @param nextToken This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
+
+
+
+     * @param userfields A comma separated list of User fields to display.
+
+
+
+     * @param expansions A comma separated list of fields to expand.
+
+
+
+     * @param tweetfields A comma separated list of Tweet fields to display.
+
+
+
+     * @returns UsersSearchResponse Response data
+     */
+  async search(
+    query: string,
+    maxResults?: number,
+    nextToken?: string,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersSearchResponse> {
+    let url = this.client.baseUrl + "/2/users/search";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    if (query !== undefined) {
+      params.set("query", String(query));
+    }
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (nextToken !== undefined) {
+      params.set("next_token", String(nextToken));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersSearchResponse;
+  }
+
+  /**
+     * Get Users by IDs
+     * 
+
+     * Retrieves details of multiple Users by their IDs.
+
+
+
+     * @param ids A list of User IDs, comma-separated. You can specify up to 100 IDs.
+
+
+
+     * @param userfields A comma separated list of User fields to display.
+
+
+
+     * @param expansions A comma separated list of fields to expand.
+
+
+
+     * @param tweetfields A comma separated list of Tweet fields to display.
+
+
+
+     * @returns UsersGetByIdsResponse Response data
+     */
+  async getByIds(
+    ids: Array<any>,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<UsersGetByIdsResponse> {
+    let url = this.client.baseUrl + "/2/users";
+
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
+    }
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    if (ids !== undefined) {
+      params.set("ids", ids.map(String).join(","));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as UsersGetByIdsResponse;
+  }
+}
