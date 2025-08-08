@@ -44,7 +44,10 @@ export class AaasubscriptionsClient {
 
     url = url.replace("{webhook_id}", String(webhookId));
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
 
     headers.set("Content-Type", "application/json");
 

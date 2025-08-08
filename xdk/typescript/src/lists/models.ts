@@ -3,14 +3,6 @@
  */
 
 /**
- * Response for unpin
- */
-export interface ListsUnpinResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
  * Response for getUsersOwned
  */
 export interface ListsGetUsersOwnedResponse {
@@ -56,10 +48,28 @@ export interface ListsDeleteResponse {
 }
 
 /**
- * Response for unfollow
+ * Response for removeMemberByUserId
  */
-export interface ListsUnfollowResponse {
+export interface ListsRemoveMemberByUserIdResponse {
   data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Request body for create
+ */
+export interface ListsCreateRequest {
+  description?: string;
+  name?: string;
+  private?: boolean;
+}
+
+/**
+ * Response for create
+ */
+export interface ListsCreateResponse {
+  /** A X List is a curated group of accounts. */
+  data: Record<string, any>;
   errors?: Array<any>;
 }
 
@@ -71,6 +81,14 @@ export interface ListsGetUsersMembershipsResponse {
   errors?: Array<any>;
   includes?: Record<string, any>;
   meta?: Record<string, any>;
+}
+
+/**
+ * Response for unpin
+ */
+export interface ListsUnpinResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
 }
 
 /**
@@ -100,14 +118,6 @@ export interface ListsPinResponse {
 }
 
 /**
- * Response for removeMemberByUserId
- */
-export interface ListsRemoveMemberByUserIdResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
  * Request body for addMember
  */
 export interface ListsAddMemberRequest {
@@ -120,24 +130,6 @@ export interface ListsAddMemberRequest {
  */
 export interface ListsAddMemberResponse {
   data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Request body for create
- */
-export interface ListsCreateRequest {
-  description?: string;
-  name?: string;
-  private?: boolean;
-}
-
-/**
- * Response for create
- */
-export interface ListsCreateResponse {
-  /** A X List is a curated group of accounts. */
-  data: Record<string, any>;
   errors?: Array<any>;
 }
 
@@ -163,6 +155,14 @@ export interface ListsFollowRequest {
  * Response for follow
  */
 export interface ListsFollowResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for unfollow
+ */
+export interface ListsUnfollowResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }

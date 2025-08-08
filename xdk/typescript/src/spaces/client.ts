@@ -6,12 +6,12 @@
 
 import { Client } from "../client.js";
 import {
-  SpacesSearchResponse,
+  SpacesGetByCreatorIdsResponse,
   SpacesGetPostsResponse,
   SpacesGetByIdResponse,
   SpacesGetBuyersResponse,
   SpacesGetByIdsResponse,
-  SpacesGetByCreatorIdsResponse
+  SpacesSearchResponse
 } from "./models.js";
 
 /**
@@ -25,38 +25,23 @@ export class SpacesClient {
   }
 
   /**
-     * Search Spaces
-     * Retrieves a list of Spaces matching the specified search query.
-     * @param query The search query.
-     * @param state The state of Spaces to search for.
-     * @param maxResults The number of results to return.
+     * Get Spaces by creator IDs
+     * Retrieves details of Spaces created by specified User IDs.
+     * @param userIds The IDs of Users to search through.
      * @param spacefields A comma separated list of Space fields to display.
      * @param expansions A comma separated list of fields to expand.
      * @param userfields A comma separated list of User fields to display.
-     * @param topicfields A comma separated list of Topic fields to display.* @returns SpacesSearchResponse Response data
+     * @param topicfields A comma separated list of Topic fields to display.* @returns SpacesGetByCreatorIdsResponse Response data
      */
-  async search(
-    query: string,
-    state?: string,
-    maxResults?: number,
+  async getByCreatorIds(
+    userIds: Array<any>,
     spacefields?: Array<any>,
     expansions?: Array<any>,
     userfields?: Array<any>,
     topicfields?: Array<any>
-  ): Promise<SpacesSearchResponse> {
-    let url = this.client.baseUrl + "/2/spaces/search";
+  ): Promise<SpacesGetByCreatorIdsResponse> {
+    let url = this.client.baseUrl + "/2/spaces/by/creator_ids";
 
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
     // Ensure we have a valid access token
     if (this.client.oauth2Auth && this.client.token) {
       // Check if token needs refresh
@@ -66,16 +51,8 @@ export class SpacesClient {
     }
     const params = new URLSearchParams();
 
-    if (query !== undefined) {
-      params.set("query", String(query));
-    }
-
-    if (state !== undefined) {
-      params.set("state", String(state));
-    }
-
-    if (maxResults !== undefined) {
-      params.set("max_results", String(maxResults));
+    if (userIds !== undefined) {
+      params.set("user_ids", userIds.map(String).join(","));
     }
 
     if (spacefields !== undefined) {
@@ -94,7 +71,16 @@ export class SpacesClient {
       params.set("topic.fields", topicfields.map(String).join(","));
     }
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
 
     // Make the request
 
@@ -114,7 +100,7 @@ export class SpacesClient {
     // Parse the response data
     const responseData = await response.json();
 
-    return responseData as SpacesSearchResponse;
+    return responseData as SpacesGetByCreatorIdsResponse;
   }
 
   /**
@@ -141,17 +127,6 @@ export class SpacesClient {
   ): Promise<SpacesGetPostsResponse> {
     let url = this.client.baseUrl + "/2/spaces/{id}/tweets";
 
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
     // Ensure we have a valid access token
     if (this.client.oauth2Auth && this.client.token) {
       // Check if token needs refresh
@@ -191,7 +166,16 @@ export class SpacesClient {
 
     url = url.replace("{id}", String(id));
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
 
     // Make the request
 
@@ -232,17 +216,6 @@ export class SpacesClient {
   ): Promise<SpacesGetByIdResponse> {
     let url = this.client.baseUrl + "/2/spaces/{id}";
 
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
     // Ensure we have a valid access token
     if (this.client.oauth2Auth && this.client.token) {
       // Check if token needs refresh
@@ -270,7 +243,16 @@ export class SpacesClient {
 
     url = url.replace("{id}", String(id));
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
 
     // Make the request
 
@@ -344,7 +326,10 @@ export class SpacesClient {
 
     url = url.replace("{id}", String(id));
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
 
     // Make the request
 
@@ -385,17 +370,6 @@ export class SpacesClient {
   ): Promise<SpacesGetByIdsResponse> {
     let url = this.client.baseUrl + "/2/spaces";
 
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
     // Ensure we have a valid access token
     if (this.client.oauth2Auth && this.client.token) {
       // Check if token needs refresh
@@ -425,7 +399,16 @@ export class SpacesClient {
       params.set("topic.fields", topicfields.map(String).join(","));
     }
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
 
     // Make the request
 
@@ -449,34 +432,27 @@ export class SpacesClient {
   }
 
   /**
-     * Get Spaces by creator IDs
-     * Retrieves details of Spaces created by specified User IDs.
-     * @param userIds The IDs of Users to search through.
+     * Search Spaces
+     * Retrieves a list of Spaces matching the specified search query.
+     * @param query The search query.
+     * @param state The state of Spaces to search for.
+     * @param maxResults The number of results to return.
      * @param spacefields A comma separated list of Space fields to display.
      * @param expansions A comma separated list of fields to expand.
      * @param userfields A comma separated list of User fields to display.
-     * @param topicfields A comma separated list of Topic fields to display.* @returns SpacesGetByCreatorIdsResponse Response data
+     * @param topicfields A comma separated list of Topic fields to display.* @returns SpacesSearchResponse Response data
      */
-  async getByCreatorIds(
-    userIds: Array<any>,
+  async search(
+    query: string,
+    state?: string,
+    maxResults?: number,
     spacefields?: Array<any>,
     expansions?: Array<any>,
     userfields?: Array<any>,
     topicfields?: Array<any>
-  ): Promise<SpacesGetByCreatorIdsResponse> {
-    let url = this.client.baseUrl + "/2/spaces/by/creator_ids";
+  ): Promise<SpacesSearchResponse> {
+    let url = this.client.baseUrl + "/2/spaces/search";
 
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
     // Ensure we have a valid access token
     if (this.client.oauth2Auth && this.client.token) {
       // Check if token needs refresh
@@ -486,8 +462,16 @@ export class SpacesClient {
     }
     const params = new URLSearchParams();
 
-    if (userIds !== undefined) {
-      params.set("user_ids", userIds.map(String).join(","));
+    if (query !== undefined) {
+      params.set("query", String(query));
+    }
+
+    if (state !== undefined) {
+      params.set("state", String(state));
+    }
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
     }
 
     if (spacefields !== undefined) {
@@ -506,7 +490,16 @@ export class SpacesClient {
       params.set("topic.fields", topicfields.map(String).join(","));
     }
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
 
     // Make the request
 
@@ -526,6 +519,6 @@ export class SpacesClient {
     // Parse the response data
     const responseData = await response.json();
 
-    return responseData as SpacesGetByCreatorIdsResponse;
+    return responseData as SpacesSearchResponse;
   }
 }

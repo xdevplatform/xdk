@@ -10,8 +10,8 @@ import {
   BookmarksGetUsersResponse,
   BookmarksCreateUsersRequest,
   BookmarksCreateUsersResponse,
-  BookmarksGetUsersFoldersResponse,
-  BookmarksDeleteUsersResponse
+  BookmarksDeleteUsersResponse,
+  BookmarksGetUsersFoldersResponse
 } from "./models.js";
 
 /**
@@ -50,7 +50,10 @@ export class BookmarksClient {
 
     url = url.replace("{folder_id}", String(folderId));
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
 
     // Make the request
 
@@ -142,7 +145,10 @@ export class BookmarksClient {
 
     url = url.replace("{id}", String(id));
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
 
     // Make the request
 
@@ -187,7 +193,10 @@ export class BookmarksClient {
 
     url = url.replace("{id}", String(id));
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
 
     headers.set("Content-Type", "application/json");
 
@@ -212,6 +221,57 @@ export class BookmarksClient {
     const responseData = await response.json();
 
     return responseData as BookmarksCreateUsersResponse;
+  }
+
+  /**
+     * Delete Bookmark
+     * Removes a Post from the authenticated user’s Bookmarks by its ID.
+     * @param id The ID of the authenticated source User whose bookmark is to be removed.
+     * @param tweetId The ID of the Post that the source User is removing from bookmarks.* @returns BookmarksDeleteUsersResponse Response data
+     */
+  async deleteUsers(
+    id: string,
+    tweetId: string
+  ): Promise<BookmarksDeleteUsersResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/bookmarks/{tweet_id}";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+    const params = new URLSearchParams();
+
+    url = url.replace("{id}", String(id));
+
+    url = url.replace("{tweet_id}", String(tweetId));
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "DELETE",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as BookmarksDeleteUsersResponse;
   }
 
   /**
@@ -247,7 +307,10 @@ export class BookmarksClient {
 
     url = url.replace("{id}", String(id));
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
 
     // Make the request
 
@@ -268,53 +331,5 @@ export class BookmarksClient {
     const responseData = await response.json();
 
     return responseData as BookmarksGetUsersFoldersResponse;
-  }
-
-  /**
-     * Delete Bookmark
-     * Removes a Post from the authenticated user’s Bookmarks by its ID.
-     * @param id The ID of the authenticated source User whose bookmark is to be removed.
-     * @param tweetId The ID of the Post that the source User is removing from bookmarks.* @returns BookmarksDeleteUsersResponse Response data
-     */
-  async deleteUsers(
-    id: string,
-    tweetId: string
-  ): Promise<BookmarksDeleteUsersResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/bookmarks/{tweet_id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    url = url.replace("{id}", String(id));
-
-    url = url.replace("{tweet_id}", String(tweetId));
-
-    const headers = new Headers();
-
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "DELETE",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as BookmarksDeleteUsersResponse;
   }
 }

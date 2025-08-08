@@ -3,10 +3,10 @@
  */
 
 /**
- * Response for labelsCompliance
- * Tweet label stream events.
+ * Response for postsCompliance
+ * Tweet compliance stream events.
  */
-export interface StreamLabelsComplianceResponse {}
+export interface StreamPostsComplianceResponse {}
 
 /**
  * Response for postsFirehose
@@ -18,10 +18,13 @@ export interface StreamPostsFirehoseResponse {
 }
 
 /**
- * Response for usersCompliance
- * User compliance stream events.
+ * Response for postsFirehoseJa
  */
-export interface StreamUsersComplianceResponse {}
+export interface StreamPostsFirehoseJaResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+}
 
 /**
  * Response for postsFirehosePt
@@ -33,9 +36,25 @@ export interface StreamPostsFirehosePtResponse {
 }
 
 /**
- * Response for postsFirehoseEn
+ * Response for getRuleCounts
  */
-export interface StreamPostsFirehoseEnResponse {
+export interface StreamGetRuleCountsResponse {
+  /** A count of user-provided stream filtering rules at the application and project levels. */
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for labelsCompliance
+ * Tweet label stream events.
+ */
+export interface StreamLabelsComplianceResponse {}
+
+/**
+ * Response for likesFirehose
+ */
+export interface StreamLikesFirehoseResponse {
+  /** A Like event, with the tweet author user and the tweet being liked */
   data?: Record<string, any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -54,34 +73,28 @@ export interface StreamPostsResponse {
 }
 
 /**
- * Response for postsFirehoseJa
+ * Response for likesCompliance
+ * Likes compliance stream events.
  */
-export interface StreamPostsFirehoseJaResponse {
+export interface StreamLikesComplianceResponse {}
+
+/**
+ * Response for postsFirehoseKo
+ */
+export interface StreamPostsFirehoseKoResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
 }
 
 /**
- * Response for getRuleCounts
+ * Response for postsFirehoseEn
  */
-export interface StreamGetRuleCountsResponse {
-  /** A count of user-provided stream filtering rules at the application and project levels. */
+export interface StreamPostsFirehoseEnResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
+  includes?: Record<string, any>;
 }
-
-/**
- * Response for postsCompliance
- * Tweet compliance stream events.
- */
-export interface StreamPostsComplianceResponse {}
-
-/**
- * Response for likesCompliance
- * Likes compliance stream events.
- */
-export interface StreamLikesComplianceResponse {}
 
 /**
  * Response for postsSample10
@@ -93,23 +106,20 @@ export interface StreamPostsSample10Response {
 }
 
 /**
- * Response for postsSample
+ * Response for likesSample10
  */
-export interface StreamPostsSampleResponse {
+export interface StreamLikesSample10Response {
+  /** A Like event, with the tweet author user and the tweet being liked */
   data?: Record<string, any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
 }
 
 /**
- * Response for likesFirehose
+ * Response for usersCompliance
+ * User compliance stream events.
  */
-export interface StreamLikesFirehoseResponse {
-  /** A Like event, with the tweet author user and the tweet being liked */
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
+export interface StreamUsersComplianceResponse {}
 
 /**
  * Response for getRules
@@ -136,19 +146,9 @@ export interface StreamUpdateRulesResponse {
 }
 
 /**
- * Response for postsFirehoseKo
+ * Response for postsSample
  */
-export interface StreamPostsFirehoseKoResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for likesSample10
- */
-export interface StreamLikesSample10Response {
-  /** A Like event, with the tweet author user and the tweet being liked */
+export interface StreamPostsSampleResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
   includes?: Record<string, any>;

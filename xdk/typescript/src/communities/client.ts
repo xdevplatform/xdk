@@ -6,8 +6,8 @@
 
 import { Client } from "../client.js";
 import {
-  CommunitiesGetByIdResponse,
-  CommunitiesSearchResponse
+  CommunitiesSearchResponse,
+  CommunitiesGetByIdResponse
 } from "./models.js";
 
 /**
@@ -18,67 +18,6 @@ export class CommunitiesClient {
 
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-     * Get Community by ID
-     * Retrieves details of a specific Community by its ID.
-     * @param id The ID of the Community.
-     * @param communityfields A comma separated list of Community fields to display.* @returns CommunitiesGetByIdResponse Response data
-     */
-  async getById(
-    id: string,
-    communityfields?: Array<any>
-  ): Promise<CommunitiesGetByIdResponse> {
-    let url = this.client.baseUrl + "/2/communities/{id}";
-
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    if (communityfields !== undefined) {
-      params.set("community.fields", communityfields.map(String).join(","));
-    }
-
-    url = url.replace("{id}", String(id));
-
-    const headers = new Headers();
-
-    // Make the request
-
-    const response = await fetch(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as CommunitiesGetByIdResponse;
   }
 
   /**
@@ -128,7 +67,10 @@ export class CommunitiesClient {
       params.set("community.fields", communityfields.map(String).join(","));
     }
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
 
     // Make the request
 
@@ -149,5 +91,64 @@ export class CommunitiesClient {
     const responseData = await response.json();
 
     return responseData as CommunitiesSearchResponse;
+  }
+
+  /**
+     * Get Community by ID
+     * Retrieves details of a specific Community by its ID.
+     * @param id The ID of the Community.
+     * @param communityfields A comma separated list of Community fields to display.* @returns CommunitiesGetByIdResponse Response data
+     */
+  async getById(
+    id: string,
+    communityfields?: Array<any>
+  ): Promise<CommunitiesGetByIdResponse> {
+    let url = this.client.baseUrl + "/2/communities/{id}";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+    const params = new URLSearchParams();
+
+    if (communityfields !== undefined) {
+      params.set("community.fields", communityfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as CommunitiesGetByIdResponse;
   }
 }

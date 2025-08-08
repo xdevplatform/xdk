@@ -6,10 +6,10 @@
 
 import { Client } from "../client.js";
 import {
-  ComplianceGetJobsByIdResponse,
   ComplianceGetJobsResponse,
   ComplianceCreateJobsRequest,
-  ComplianceCreateJobsResponse
+  ComplianceCreateJobsResponse,
+  ComplianceGetJobsByIdResponse
 } from "./models.js";
 
 /**
@@ -20,63 +20,6 @@ export class ComplianceClient {
 
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-     * Get Compliance Job by ID
-     * Retrieves details of a specific Compliance Job by its ID.
-     * @param id The ID of the Compliance Job to retrieve.
-     * @param complianceJobfields A comma separated list of ComplianceJob fields to display.* @returns ComplianceGetJobsByIdResponse Response data
-     */
-  async getJobsById(
-    id: string,
-    complianceJobfields?: Array<any>
-  ): Promise<ComplianceGetJobsByIdResponse> {
-    let url = this.client.baseUrl + "/2/compliance/jobs/{id}";
-
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
-    const params = new URLSearchParams();
-
-    if (complianceJobfields !== undefined) {
-      params.set(
-        "compliance_job.fields",
-        complianceJobfields.map(String).join(",")
-      );
-    }
-
-    url = url.replace("{id}", String(id));
-
-    const headers = new Headers();
-
-    // Make the request
-
-    const response = await fetch(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ComplianceGetJobsByIdResponse;
   }
 
   /**
@@ -93,17 +36,6 @@ export class ComplianceClient {
   ): Promise<ComplianceGetJobsResponse> {
     let url = this.client.baseUrl + "/2/compliance/jobs";
 
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
     const params = new URLSearchParams();
 
     if (type !== undefined) {
@@ -121,7 +53,16 @@ export class ComplianceClient {
       );
     }
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
 
     // Make the request
 
@@ -153,20 +94,18 @@ export class ComplianceClient {
   ): Promise<ComplianceCreateJobsResponse> {
     let url = this.client.baseUrl + "/2/compliance/jobs";
 
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
     const params = new URLSearchParams();
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
 
     headers.set("Content-Type", "application/json");
 
@@ -191,5 +130,60 @@ export class ComplianceClient {
     const responseData = await response.json();
 
     return responseData as ComplianceCreateJobsResponse;
+  }
+
+  /**
+     * Get Compliance Job by ID
+     * Retrieves details of a specific Compliance Job by its ID.
+     * @param id The ID of the Compliance Job to retrieve.
+     * @param complianceJobfields A comma separated list of ComplianceJob fields to display.* @returns ComplianceGetJobsByIdResponse Response data
+     */
+  async getJobsById(
+    id: string,
+    complianceJobfields?: Array<any>
+  ): Promise<ComplianceGetJobsByIdResponse> {
+    let url = this.client.baseUrl + "/2/compliance/jobs/{id}";
+
+    const params = new URLSearchParams();
+
+    if (complianceJobfields !== undefined) {
+      params.set(
+        "compliance_job.fields",
+        complianceJobfields.map(String).join(",")
+      );
+    }
+
+    url = url.replace("{id}", String(id));
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as ComplianceGetJobsByIdResponse;
   }
 }

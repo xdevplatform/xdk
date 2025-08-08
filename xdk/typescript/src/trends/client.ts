@@ -6,8 +6,8 @@
 
 import { Client } from "../client.js";
 import {
-  TrendsGetByWoeidResponse,
-  TrendsGetUsersPersonalizedResponse
+  TrendsGetUsersPersonalizedResponse,
+  TrendsGetByWoeidResponse
 } from "./models.js";
 
 /**
@@ -18,66 +18,6 @@ export class TrendsClient {
 
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-     * Get Trends by WOEID
-     * Retrieves trending topics for a specific location identified by its WOEID.
-     * @param woeid The WOEID of the place to lookup a trend for.
-     * @param maxTrends The maximum number of results.
-     * @param trendfields A comma separated list of Trend fields to display.* @returns TrendsGetByWoeidResponse Response data
-     */
-  async getByWoeid(
-    woeid: number,
-    maxTrends?: number,
-    trendfields?: Array<any>
-  ): Promise<TrendsGetByWoeidResponse> {
-    let url = this.client.baseUrl + "/2/trends/by/woeid/{woeid}";
-
-    if (this.client.bearerToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.bearerToken}`
-      );
-    } else if (this.client.accessToken) {
-      this.client.headers.set(
-        "Authorization",
-        `Bearer ${this.client.accessToken}`
-      );
-    }
-    const params = new URLSearchParams();
-
-    if (maxTrends !== undefined) {
-      params.set("max_trends", String(maxTrends));
-    }
-
-    if (trendfields !== undefined) {
-      params.set("trend.fields", trendfields.map(String).join(","));
-    }
-
-    url = url.replace("{woeid}", String(woeid));
-
-    const headers = new Headers();
-
-    // Make the request
-
-    const response = await fetch(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as TrendsGetByWoeidResponse;
   }
 
   /**
@@ -106,7 +46,10 @@ export class TrendsClient {
       );
     }
 
-    const headers = new Headers();
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
 
     // Make the request
 
@@ -127,5 +70,63 @@ export class TrendsClient {
     const responseData = await response.json();
 
     return responseData as TrendsGetUsersPersonalizedResponse;
+  }
+
+  /**
+     * Get Trends by WOEID
+     * Retrieves trending topics for a specific location identified by its WOEID.
+     * @param woeid The WOEID of the place to lookup a trend for.
+     * @param maxTrends The maximum number of results.
+     * @param trendfields A comma separated list of Trend fields to display.* @returns TrendsGetByWoeidResponse Response data
+     */
+  async getByWoeid(
+    woeid: number,
+    maxTrends?: number,
+    trendfields?: Array<any>
+  ): Promise<TrendsGetByWoeidResponse> {
+    let url = this.client.baseUrl + "/2/trends/by/woeid/{woeid}";
+
+    const params = new URLSearchParams();
+
+    if (maxTrends !== undefined) {
+      params.set("max_trends", String(maxTrends));
+    }
+
+    if (trendfields !== undefined) {
+      params.set("trend.fields", trendfields.map(String).join(","));
+    }
+
+    url = url.replace("{woeid}", String(woeid));
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as TrendsGetByWoeidResponse;
   }
 }

@@ -38,18 +38,18 @@ export interface BookmarksCreateUsersResponse {
 }
 
 /**
+ * Response for deleteUsers
+ */
+export interface BookmarksDeleteUsersResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
  * Response for getUsersFolders
  */
 export interface BookmarksGetUsersFoldersResponse {
   data?: Array<any>;
   errors?: Array<any>;
   meta?: Record<string, any>;
-}
-
-/**
- * Response for deleteUsers
- */
-export interface BookmarksDeleteUsersResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
 }
