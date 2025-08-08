@@ -5,7 +5,7 @@ use xdk_lib::{log_info, generate};
 use xdk_openapi::OpenApi;
 
 /// Generate TypeScript SDK from OpenAPI spec
-pub fn generate_typescript(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
+pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     log_info!("Generating TypeScript SDK...");
     std::fs::create_dir_all(output_dir).map_err(BuildError::IoError)?;
 

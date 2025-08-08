@@ -110,7 +110,7 @@ async fn main() -> Result<()> {
             log_info!("Specification parsed successfully.");
 
             // Call the generate method - `?` handles the Result conversion
-            python::generate_python(&openapi, &output)
+            python::generate(&openapi, &output)
         }
         Commands::TypeScript {
             spec,
@@ -162,7 +162,7 @@ async fn main() -> Result<()> {
             log_info!("Specification parsed successfully.");
 
             // Call the generate method - `?` handles the Result conversion
-            typescript::generate_typescript(&openapi, &output)
+            typescript::generate(&openapi, &output)
         }
     };
 
