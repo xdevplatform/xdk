@@ -7,7 +7,7 @@
 /// 1. Define language-specific filters (e.g., type conversion, naming conventions)
 /// 2. Use the language! macro to create the generator struct
 /// 3. Implement the rendering logic in the generate field
-use crate::common::casing::{pascal_case, camel_case};
+use crate::common::casing::{pascal_case, camel_case, snake_case};
 use xdk_lib::language;
 
 /// MiniJinja filter for converting to TypeScript types
@@ -35,7 +35,7 @@ fn last_part(value: &str) -> String {
 */
 language! {
     name: TypeScript,
-    filters: [camel_case, pascal_case, typescript_type, last_part],
+    filters: [camel_case, pascal_case, snake_case, typescript_type, last_part],
     render: [
         multiple {
             render "models" => "src/{}/models.ts",
@@ -48,6 +48,7 @@ language! {
         render "index" => "src/index.ts",
         render "package_json" => "package.json",
         render "tsconfig" => "tsconfig.json",
+        render "tsup.config" => "tsup.config.ts",
         render "readme" => "README.md"
     ]
 } 

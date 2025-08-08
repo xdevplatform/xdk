@@ -13,13 +13,16 @@
  * {{ schema.description }}
  * {% endif %}
  */
-export interface {{ operation.operation_id | pascal_case }}Request {
-    {% for prop_name, prop in schema.properties.items() %}
+export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request {
+    {% if schema and schema.properties %}
+    {% for key in schema.properties %}
+    {% set prop = schema.properties[key] %}
     {% if prop.description %}
     /** {{ prop.description }} */
     {% endif %}
-    {{ prop_name | camel_case }}{% if prop_name not in schema.required %}?{% endif %}: {% if prop.type %}{{ prop.type | typescript_type }}{% else %}any{% endif %};
+    {{ key | camel_case }}{% if not prop.required %}?{% endif %}: {% if prop.type %}{{ prop.type | typescript_type }}{% else %}any{% endif %};
     {% endfor %}
+    {% endif %}
 }
 
 {% endif %}
@@ -34,13 +37,16 @@ export interface {{ operation.operation_id | pascal_case }}Request {
  * {{ schema.description }}
  * {% endif %}
  */
-export interface {{ operation.operation_id | pascal_case }}Response {
-    {% for prop_name, prop in schema.properties.items() %}
+export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response {
+    {% if schema and schema.properties %}
+    {% for key in schema.properties %}
+    {% set prop = schema.properties[key] %}
     {% if prop.description %}
     /** {{ prop.description }} */
     {% endif %}
-    {{ prop_name | camel_case }}{% if prop_name not in schema.required %}?{% endif %}: {% if prop.type %}{{ prop.type | typescript_type }}{% else %}any{% endif %};
+    {{ key | camel_case }}{% if not prop.required %}?{% endif %}: {% if prop.type %}{{ prop.type | typescript_type }}{% else %}any{% endif %};
     {% endfor %}
+    {% endif %}
 }
 
 {% endif %}

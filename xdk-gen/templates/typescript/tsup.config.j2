@@ -1,59 +1,20 @@
 import { defineConfig } from 'tsup';
 
-export default defineConfig([
-    // Main SDK
-    {
-        entry: ['src/index.ts'],
-        format: ['esm', 'cjs'],
-        target: 'es2022',
-        splitting: false,
-        sourcemap: true,
-        clean: true,
-        dts: true,
-        minify: true,
-        treeshake: true,
-        metafile: true,
-        outDir: 'dist',
-        outExtension({ format }) {
-            return {
-                js: format === 'cjs' ? '.cjs' : '.js',
-            };
-        },
+export default defineConfig({
+    entry: ['src/index.ts'],
+    format: ['esm', 'cjs'],
+    target: 'es2022',
+    splitting: false,
+    sourcemap: true,
+    clean: true,
+    dts: true,
+    minify: true,
+    treeshake: true,
+    metafile: true,
+    outDir: 'dist',
+    outExtension({ format }) {
+        return {
+            js: format === 'cjs' ? '.cjs' : '.js',
+        };
     },
-    // React hooks
-    {
-        entry: ['src/react/index.ts'],
-        format: ['esm', 'cjs'],
-        target: 'es2022',
-        splitting: false,
-        sourcemap: true,
-        dts: true,
-        minify: true,
-        treeshake: true,
-        external: ['react'],
-        outDir: 'dist/react',
-        outExtension({ format }) {
-            return {
-                js: format === 'cjs' ? '.cjs' : '.js',
-            };
-        },
-    },
-    // Next.js utilities
-    {
-        entry: ['src/next/index.ts'],
-        format: ['esm', 'cjs'],
-        target: 'es2022',
-        splitting: false,
-        sourcemap: true,
-        dts: true,
-        minify: true,
-        treeshake: true,
-        external: ['next', 'react'],
-        outDir: 'dist/next',
-        outExtension({ format }) {
-            return {
-                js: format === 'cjs' ? '.cjs' : '.js',
-            };
-        },
-    },
-]); 
+}); 
