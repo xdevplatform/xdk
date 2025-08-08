@@ -5,7 +5,7 @@
  */
 
 {% for tag in tags %}
-import { {{ tag|pascal_case }}Client } from './{{ tag|snake_case }}';
+import { {{ tag|pascal_case }}Client } from './{{ tag|snake_case }}/index.js';
 {% endfor %}
 
 /**
@@ -36,6 +36,10 @@ export class Client {
     readonly headers: Headers;
     /** OAuth2 session for requests */
     readonly oauth2Session?: typeof fetch;
+    /** OAuth2 authentication instance */
+    readonly oauth2Auth?: any;
+    /** OAuth2 token */
+    readonly token?: any;
 
     {% for tag in tags %}
     /** {{ tag }} operations */

@@ -4,19 +4,19 @@
  * This module provides a client for interacting with the {{ tag }} endpoints of the X API.
  */
 
-import { Client } from '../client';
+import { Client } from '../client.js';
 import {
     {% for operation in operations %}
     {% if operation.request_body %}
-    {{ operation.operation_id | pascal_case }}Request,
+    {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request,
     {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
-    {{ operation.operation_id | pascal_case }}Response,
+    {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response,
     {% endif %}
     {% elif operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
-    {{ operation.operation_id | pascal_case }}Response,
+    {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response,
     {% endif %}
     {% endfor %}
-} from './models';
+} from './models.js';
 
 /**
  * Client for {{ tag }} operations
@@ -54,7 +54,7 @@ export class {{ tag|pascal_case }}Client {
      * @param body Request body
      * {% endif %}
      * {% endif %}
-     * @returns {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.operation_id | pascal_case }}Response{% else %}Record<string, any>{% endif %} Response data
+     * @returns {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}Record<string, any>{% endif %} Response data
      */
     async {{ operation.operation_id | camel_case }}(
         {# Required parameters #}
@@ -65,7 +65,7 @@ export class {{ tag|pascal_case }}Client {
         {% endfor %}
         {# Required body #}
         {% if operation.request_body and operation.request_body.required %}
-        body: {{ operation.operation_id | pascal_case }}Request,
+        body: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request,
         {% endif %}
         {# Optional parameters #}
         {% for param in operation.parameters | rejectattr('required') %}
@@ -75,10 +75,10 @@ export class {{ tag|pascal_case }}Client {
         {% endfor %}
         {# Optional body #}
         {% if operation.request_body and not operation.request_body.required %}
-        body?: {{ operation.operation_id | pascal_case }}Request,
+        body?: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request,
         {% endif %}
-    ): Promise<{% if operation.responses and "200" in operation.responses %}{{ operation.operation_id | pascal_case }}Response{% else %}Record<string, any>{% endif %}> {
-        const url = this.client.baseUrl + "{{ operation.path }}";
+    ): Promise<{% if operation.responses and "200" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}Record<string, any>{% endif %}> {
+        let url = this.client.baseUrl + "{{ operation.path }}";
 
         {% set ns = namespace(has_bearer_token = false, has_oauth2_token = false) %}
 
@@ -192,7 +192,7 @@ export class {{ tag|pascal_case }}Client {
         const responseData = await response.json();
 
         {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
-        return responseData as {{ operation.operation_id | pascal_case }}Response;
+        return responseData as {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response;
         {% else %}
         return responseData;
         {% endif %}
