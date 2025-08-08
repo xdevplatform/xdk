@@ -4,25 +4,138 @@
  * This module provides a client for interacting with the Webhooks endpoints of the X API.
  */
 
-import { Client } from '../client.js';
-
+import { Client } from "../client.js";
 import {
-    WebhooksGetResponse,
-    WebhooksCreateRequest,
-    WebhooksCreateResponse,
-    WebhooksValidateResponse,
-    WebhooksDeleteResponse,
-} from './models.js';
+  WebhooksValidateResponse,
+  WebhooksDeleteResponse,
+  WebhooksGetResponse,
+  WebhooksCreateRequest,
+  WebhooksCreateResponse
+} from "./models.js";
+
 /**
  * Client for Webhooks operations
  */
-
 export class WebhooksClient {
-    private client: Client;
-    constructor(client: Client) {
-        this.client = client;
+  private client: Client;
+
+  constructor(client: Client) {
+    this.client = client;
+  }
+
+  /**
+     * Validate webhook
+     * 
+
+     * Triggers a CRC check for a given webhook.
+
+
+
+     * @param webhookId The ID of the webhook to check.
+
+
+
+     * @returns WebhooksValidateResponse Response data
+     */
+  async validate(webhookId: string): Promise<WebhooksValidateResponse> {
+    let url = this.client.baseUrl + "/2/webhooks/{webhook_id}";
+
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
     }
-    /**
+
+    const params = new URLSearchParams();
+
+    url = url.replace("{webhook_id}", String(webhookId));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "PUT",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as WebhooksValidateResponse;
+  }
+
+  /**
+     * Delete webhook
+     * 
+
+     * Deletes an existing webhook configuration.
+
+
+
+     * @param webhookId The ID of the webhook to delete.
+
+
+
+     * @returns WebhooksDeleteResponse Response data
+     */
+  async delete(webhookId: string): Promise<WebhooksDeleteResponse> {
+    let url = this.client.baseUrl + "/2/webhooks/{webhook_id}";
+
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
+    }
+
+    const params = new URLSearchParams();
+
+    url = url.replace("{webhook_id}", String(webhookId));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "DELETE",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as WebhooksDeleteResponse;
+  }
+
+  /**
      * Get webhook
      * 
 
@@ -36,35 +149,54 @@ export class WebhooksClient {
 
      * @returns WebhooksGetResponse Response data
      */
+  async get(webhookConfigfields?: Array<any>): Promise<WebhooksGetResponse> {
+    let url = this.client.baseUrl + "/2/webhooks";
 
-    async get(
-        webhookConfigfields?: Array<any>,
-    ): Promise<WebhooksGetResponse> {
-        let url = this.client.baseUrl + "/2/webhooks";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        const params = new URLSearchParams();
-        if (webhookConfigfields !== undefined) {
-            params.set("webhook_config.fields", webhookConfigfields.map(String).join(","));
-        }
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as WebhooksGetResponse;
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
     }
-    /**
+
+    const params = new URLSearchParams();
+
+    if (webhookConfigfields !== undefined) {
+      params.set(
+        "webhook_config.fields",
+        webhookConfigfields.map(String).join(",")
+      );
+    }
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as WebhooksGetResponse;
+  }
+
+  /**
      * Create webhook
      * 
 
@@ -82,111 +214,47 @@ export class WebhooksClient {
 
      * @returns WebhooksCreateResponse Response data
      */
+  async create(body?: WebhooksCreateRequest): Promise<WebhooksCreateResponse> {
+    let url = this.client.baseUrl + "/2/webhooks";
 
-    async create(
-        body?: WebhooksCreateRequest,
-    ): Promise<WebhooksCreateResponse> {
-        let url = this.client.baseUrl + "/2/webhooks";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        const params = new URLSearchParams();
-        const headers = new Headers();
-        headers.set("Content-Type", "application/json");
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "POST",
-            headers,
-            body: body ? JSON.stringify(body) : undefined,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as WebhooksCreateResponse;
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
     }
-    /**
-     * Validate webhook
-     * 
 
-     * Triggers a CRC check for a given webhook.
+    const params = new URLSearchParams();
 
+    const headers = new Headers();
 
+    headers.set("Content-Type", "application/json");
 
-     * @param webhookId The ID of the webhook to check.
+    // Make the request
 
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "POST",
+        headers,
 
+        body: body ? JSON.stringify(body) : undefined
+      }
+    );
 
-     * @returns WebhooksValidateResponse Response data
-     */
-
-    async validate(
-        webhookId: string,
-    ): Promise<WebhooksValidateResponse> {
-        let url = this.client.baseUrl + "/2/webhooks/{webhook_id}";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        const params = new URLSearchParams();
-        url = url.replace("{webhook_id}", String(webhookId));
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "PUT",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as WebhooksValidateResponse;
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-    /**
-     * Delete webhook
-     * 
 
-     * Deletes an existing webhook configuration.
+    // Parse the response data
+    const responseData = await response.json();
 
-
-
-     * @param webhookId The ID of the webhook to delete.
-
-
-
-     * @returns WebhooksDeleteResponse Response data
-     */
-
-    async delete(
-        webhookId: string,
-    ): Promise<WebhooksDeleteResponse> {
-        let url = this.client.baseUrl + "/2/webhooks/{webhook_id}";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        const params = new URLSearchParams();
-        url = url.replace("{webhook_id}", String(webhookId));
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "DELETE",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as WebhooksDeleteResponse;
-    }
-} 
+    return responseData as WebhooksCreateResponse;
+  }
+}

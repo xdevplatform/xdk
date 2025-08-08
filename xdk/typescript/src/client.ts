@@ -4,189 +4,184 @@
  * This module provides the main client class for interacting with the X API.
  */
 
-import { AaasubscriptionsClient } from './aaasubscriptions/index.js';
+import { CommunitiesClient } from "./communities/index.js";
 
-import { ComplianceClient } from './compliance/index.js';
+import { BookmarksClient } from "./bookmarks/index.js";
 
-import { GeneralClient } from './general/index.js';
+import { AaasubscriptionsClient } from "./aaasubscriptions/index.js";
 
-import { MediaClient } from './media/index.js';
+import { WebhooksClient } from "./webhooks/index.js";
 
-import { CommunityNotesClient } from './community_notes/index.js';
+import { StreamClient } from "./stream/index.js";
 
-import { BookmarksClient } from './bookmarks/index.js';
+import { AccountActivityClient } from "./account_activity/index.js";
 
-import { UsageClient } from './usage/index.js';
+import { ComplianceClient } from "./compliance/index.js";
 
-import { WebhooksClient } from './webhooks/index.js';
+import { DirectMessagesClient } from "./direct_messages/index.js";
 
-import { PostsClient } from './posts/index.js';
+import { MediaClient } from "./media/index.js";
 
-import { ListsClient } from './lists/index.js';
+import { TrendsClient } from "./trends/index.js";
 
-import { SpacesClient } from './spaces/index.js';
+import { UsersClient } from "./users/index.js";
 
-import { ConnectionClient } from './connection/index.js';
+import { ListsClient } from "./lists/index.js";
 
-import { CommunitiesClient } from './communities/index.js';
+import { CommunityNotesClient } from "./community_notes/index.js";
 
-import { AccountActivityClient } from './account_activity/index.js';
+import { PostsClient } from "./posts/index.js";
 
-import { TrendsClient } from './trends/index.js';
+import { SpacesClient } from "./spaces/index.js";
 
-import { StreamClient } from './stream/index.js';
+import { GeneralClient } from "./general/index.js";
 
-import { UsersClient } from './users/index.js';
+import { ConnectionClient } from "./connection/index.js";
 
-import { DirectMessagesClient } from './direct_messages/index.js';
+import { UsageClient } from "./usage/index.js";
+
 /**
  * Configuration options for the X API client
  */
-
 export interface ClientConfig {
-    /** Base URL for API requests */
-    baseUrl?: string;
-    /** Bearer token for authentication */
-    bearerToken?: string;
-    /** OAuth2 access token */
-    accessToken?: string;
-    /** Custom headers to include in requests */
-    headers?: Record<string, string>;
+  /** Base URL for API requests */
+  baseUrl?: string;
+  /** Bearer token for authentication */
+  bearerToken?: string;
+  /** OAuth2 access token */
+  accessToken?: string;
+  /** Custom headers to include in requests */
+  headers?: Record<string, string>;
 }
 
 /**
  * Main client class for the X API
  */
-
 export class Client {
-    /** Base URL for API requests */
-    readonly baseUrl: string;
-    /** Bearer token for authentication */
-    readonly bearerToken?: string;
-    /** OAuth2 access token */
-    readonly accessToken?: string;
-    /** Headers for requests */
-    readonly headers: Headers;
-    /** OAuth2 session for requests */
-    readonly oauth2Session?: typeof fetch;
-    /** OAuth2 authentication instance */
-    readonly oauth2Auth?: any;
-    /** OAuth2 token */
-    readonly token?: any;
+  /** Base URL for API requests */
+  readonly baseUrl: string;
+  /** Bearer token for authentication */
+  readonly bearerToken?: string;
+  /** OAuth2 access token */
+  readonly accessToken?: string;
+  /** Headers for requests */
+  readonly headers: Headers;
+  /** OAuth2 session for requests */
+  readonly oauth2Session?: typeof fetch;
+  /** OAuth2 authentication instance */
+  readonly oauth2Auth?: any;
+  /** OAuth2 token */
+  readonly token?: any;
 
+  /** communities operations */
+  readonly communities: CommunitiesClient;
 
-    /** aaasubscriptions operations */
-    readonly aaasubscriptions: AaasubscriptionsClient;
+  /** bookmarks operations */
+  readonly bookmarks: BookmarksClient;
 
-    /** compliance operations */
-    readonly compliance: ComplianceClient;
+  /** aaasubscriptions operations */
+  readonly aaasubscriptions: AaasubscriptionsClient;
 
-    /** general operations */
-    readonly general: GeneralClient;
+  /** webhooks operations */
+  readonly webhooks: WebhooksClient;
 
-    /** media operations */
-    readonly media: MediaClient;
+  /** stream operations */
+  readonly stream: StreamClient;
 
-    /** community notes operations */
-    readonly communityNotes: CommunityNotesClient;
+  /** account activity operations */
+  readonly accountActivity: AccountActivityClient;
 
-    /** bookmarks operations */
-    readonly bookmarks: BookmarksClient;
+  /** compliance operations */
+  readonly compliance: ComplianceClient;
 
-    /** usage operations */
-    readonly usage: UsageClient;
+  /** direct messages operations */
+  readonly directMessages: DirectMessagesClient;
 
-    /** webhooks operations */
-    readonly webhooks: WebhooksClient;
+  /** media operations */
+  readonly media: MediaClient;
 
-    /** posts operations */
-    readonly posts: PostsClient;
+  /** trends operations */
+  readonly trends: TrendsClient;
 
-    /** lists operations */
-    readonly lists: ListsClient;
+  /** users operations */
+  readonly users: UsersClient;
 
-    /** spaces operations */
-    readonly spaces: SpacesClient;
+  /** lists operations */
+  readonly lists: ListsClient;
 
-    /** connection operations */
-    readonly connection: ConnectionClient;
+  /** community notes operations */
+  readonly communityNotes: CommunityNotesClient;
 
-    /** communities operations */
-    readonly communities: CommunitiesClient;
+  /** posts operations */
+  readonly posts: PostsClient;
 
-    /** account activity operations */
-    readonly accountActivity: AccountActivityClient;
+  /** spaces operations */
+  readonly spaces: SpacesClient;
 
-    /** trends operations */
-    readonly trends: TrendsClient;
+  /** general operations */
+  readonly general: GeneralClient;
 
-    /** stream operations */
-    readonly stream: StreamClient;
+  /** connection operations */
+  readonly connection: ConnectionClient;
 
-    /** users operations */
-    readonly users: UsersClient;
+  /** usage operations */
+  readonly usage: UsageClient;
 
-    /** direct messages operations */
-    readonly directMessages: DirectMessagesClient;
+  constructor(config: ClientConfig = {}) {
+    this.baseUrl = config.baseUrl || "https://api.twitter.com/2";
+    this.bearerToken = config.bearerToken;
+    this.accessToken = config.accessToken;
+    this.headers = new Headers(config.headers);
 
+    this.communities = new CommunitiesClient(this);
 
-    constructor(config: ClientConfig = {}) {
-        this.baseUrl = config.baseUrl || 'https://api.twitter.com/2';
-        this.bearerToken = config.bearerToken;
-        this.accessToken = config.accessToken;
-        this.headers = new Headers(config.headers);
+    this.bookmarks = new BookmarksClient(this);
 
+    this.aaasubscriptions = new AaasubscriptionsClient(this);
 
-        this.aaasubscriptions = new AaasubscriptionsClient(this);
+    this.webhooks = new WebhooksClient(this);
 
-        this.compliance = new ComplianceClient(this);
+    this.stream = new StreamClient(this);
 
-        this.general = new GeneralClient(this);
+    this.accountActivity = new AccountActivityClient(this);
 
-        this.media = new MediaClient(this);
+    this.compliance = new ComplianceClient(this);
 
-        this.communityNotes = new CommunityNotesClient(this);
+    this.directMessages = new DirectMessagesClient(this);
 
-        this.bookmarks = new BookmarksClient(this);
+    this.media = new MediaClient(this);
 
-        this.usage = new UsageClient(this);
+    this.trends = new TrendsClient(this);
 
-        this.webhooks = new WebhooksClient(this);
+    this.users = new UsersClient(this);
 
-        this.posts = new PostsClient(this);
+    this.lists = new ListsClient(this);
 
-        this.lists = new ListsClient(this);
+    this.communityNotes = new CommunityNotesClient(this);
 
-        this.spaces = new SpacesClient(this);
+    this.posts = new PostsClient(this);
 
-        this.connection = new ConnectionClient(this);
+    this.spaces = new SpacesClient(this);
 
-        this.communities = new CommunitiesClient(this);
+    this.general = new GeneralClient(this);
 
-        this.accountActivity = new AccountActivityClient(this);
+    this.connection = new ConnectionClient(this);
 
-        this.trends = new TrendsClient(this);
+    this.usage = new UsageClient(this);
+  }
 
-        this.stream = new StreamClient(this);
-
-        this.users = new UsersClient(this);
-
-        this.directMessages = new DirectMessagesClient(this);
-
-    }
-
-    /**
+  /**
      * Check if the OAuth2 token is expired
      */
-    isTokenExpired(): boolean {
-        // TODO: Implement token expiration check
-        return false;
-    }
-    /**
+  isTokenExpired(): boolean {
+    // TODO: Implement token expiration check
+    return false;
+  }
+
+  /**
      * Refresh the OAuth2 token
      */
-
-    async refreshToken(): Promise<void> {
-        // TODO: Implement token refresh
-    }
-} 
+  async refreshToken(): Promise<void> {
+    // TODO: Implement token refresh
+  }
+}

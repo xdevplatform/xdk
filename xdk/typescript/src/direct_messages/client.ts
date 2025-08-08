@@ -4,39 +4,36 @@
  * This module provides a client for interacting with the Direct messages endpoints of the X API.
  */
 
-import { Client } from '../client.js';
-
+import { Client } from "../client.js";
 import {
-    DirectMessagesCreateDmByConversationIdRequest,
-    DirectMessagesCreateDmByConversationIdResponse,
-    DirectMessagesCreateDmByParticipantIdRequest,
-    DirectMessagesCreateDmByParticipantIdResponse,
-    DirectMessagesGetDmConversationsIdDmEventsResponse,
-    DirectMessagesGetDmEventsByParticipantIdResponse,
-    DirectMessagesGetDmEventsByIdResponse,
-    DirectMessagesDeleteDmEventsResponse,
-    DirectMessagesGetDmEventsResponse,
-    DirectMessagesCreateDmConversationsRequest,
-    DirectMessagesCreateDmConversationsResponse,
-} from './models.js';
+  DirectMessagesCreateDmConversationsRequest,
+  DirectMessagesCreateDmConversationsResponse,
+  DirectMessagesGetDmConversationsIdDmEventsResponse,
+  DirectMessagesCreateDmByConversationIdRequest,
+  DirectMessagesCreateDmByConversationIdResponse,
+  DirectMessagesGetDmEventsByParticipantIdResponse,
+  DirectMessagesGetDmEventsByIdResponse,
+  DirectMessagesDeleteDmEventsResponse,
+  DirectMessagesCreateDmByParticipantIdRequest,
+  DirectMessagesCreateDmByParticipantIdResponse,
+  DirectMessagesGetDmEventsResponse
+} from "./models.js";
+
 /**
  * Client for Direct messages operations
  */
-
 export class DirectMessagesClient {
-    private client: Client;
-    constructor(client: Client) {
-        this.client = client;
-    }
-    /**
-     * Create DM message by conversation ID
+  private client: Client;
+
+  constructor(client: Client) {
+    this.client = client;
+  }
+
+  /**
+     * Create DM conversation
      * 
 
-     * Sends a new direct message to a specific conversation by its ID.
-
-
-
-     * @param dmConversationId The DM Conversation ID.
+     * Initiates a new direct message conversation with specified participants.
 
 
 
@@ -48,93 +45,51 @@ export class DirectMessagesClient {
 
 
 
-     * @returns DirectMessagesCreateDmByConversationIdResponse Response data
+     * @returns DirectMessagesCreateDmConversationsResponse Response data
      */
+  async createDmConversations(
+    body?: DirectMessagesCreateDmConversationsRequest
+  ): Promise<Record<string, any>> {
+    let url = this.client.baseUrl + "/2/dm_conversations";
 
-    async createDmByConversationId(
-        dmConversationId: string,
-        body?: DirectMessagesCreateDmByConversationIdRequest,
-    ): Promise<Record<string, any>> {
-        let url = this.client.baseUrl + "/2/dm_conversations/{dm_conversation_id}/messages";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        url = url.replace("{dm_conversation_id}", String(dmConversationId));
-        const headers = new Headers();
-        headers.set("Content-Type", "application/json");
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "POST",
-            headers,
-            body: body ? JSON.stringify(body) : undefined,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as DirectMessagesCreateDmByConversationIdResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
-     * Create DM message by participant ID
-     * 
 
-     * Sends a new direct message to a specific participant by their ID.
+    const params = new URLSearchParams();
 
+    const headers = new Headers();
 
+    headers.set("Content-Type", "application/json");
 
-     * @param participantId The ID of the recipient user that will receive the DM.
+    // Make the request
 
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "POST",
+        headers,
 
+        body: body ? JSON.stringify(body) : undefined
+      }
+    );
 
-
-
-
-
-     * @param body Request body
-
-
-
-     * @returns DirectMessagesCreateDmByParticipantIdResponse Response data
-     */
-
-    async createDmByParticipantId(
-        participantId: string,
-        body?: DirectMessagesCreateDmByParticipantIdRequest,
-    ): Promise<Record<string, any>> {
-        let url = this.client.baseUrl + "/2/dm_conversations/with/{participant_id}/messages";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        url = url.replace("{participant_id}", String(participantId));
-        const headers = new Headers();
-        headers.set("Content-Type", "application/json");
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "POST",
-            headers,
-            body: body ? JSON.stringify(body) : undefined,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as DirectMessagesCreateDmByParticipantIdResponse;
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-    /**
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as DirectMessagesCreateDmConversationsResponse;
+  }
+
+  /**
      * Get DM events for a DM conversation
      * 
 
@@ -180,67 +135,155 @@ export class DirectMessagesClient {
 
      * @returns DirectMessagesGetDmConversationsIdDmEventsResponse Response data
      */
+  async getDmConversationsIdDmEvents(
+    id: string,
+    maxResults?: number,
+    paginationToken?: string,
+    eventTypes?: Array<any>,
+    dmEventfields?: Array<any>,
+    expansions?: Array<any>,
+    mediafields?: Array<any>,
+    userfields?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<DirectMessagesGetDmConversationsIdDmEventsResponse> {
+    let url = this.client.baseUrl + "/2/dm_conversations/{id}/dm_events";
 
-    async getDmConversationsIdDmEvents(
-        id: string,
-        maxResults?: number,
-        paginationToken?: string,
-        eventTypes?: Array<any>,
-        dmEventfields?: Array<any>,
-        expansions?: Array<any>,
-        mediafields?: Array<any>,
-        userfields?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<DirectMessagesGetDmConversationsIdDmEventsResponse> {
-        let url = this.client.baseUrl + "/2/dm_conversations/{id}/dm_events";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (paginationToken !== undefined) {
-            params.set("pagination_token", String(paginationToken));
-        }
-        if (eventTypes !== undefined) {
-            params.set("event_types", eventTypes.map(String).join(","));
-        }
-        if (dmEventfields !== undefined) {
-            params.set("dm_event.fields", dmEventfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (mediafields !== undefined) {
-            params.set("media.fields", mediafields.map(String).join(","));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as DirectMessagesGetDmConversationsIdDmEventsResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
+
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    if (eventTypes !== undefined) {
+      params.set("event_types", eventTypes.map(String).join(","));
+    }
+
+    if (dmEventfields !== undefined) {
+      params.set("dm_event.fields", dmEventfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (mediafields !== undefined) {
+      params.set("media.fields", mediafields.map(String).join(","));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as DirectMessagesGetDmConversationsIdDmEventsResponse;
+  }
+
+  /**
+     * Create DM message by conversation ID
+     * 
+
+     * Sends a new direct message to a specific conversation by its ID.
+
+
+
+     * @param dmConversationId The DM Conversation ID.
+
+
+
+
+
+
+
+     * @param body Request body
+
+
+
+     * @returns DirectMessagesCreateDmByConversationIdResponse Response data
+     */
+  async createDmByConversationId(
+    dmConversationId: string,
+    body?: DirectMessagesCreateDmByConversationIdRequest
+  ): Promise<Record<string, any>> {
+    let url =
+      this.client.baseUrl + "/2/dm_conversations/{dm_conversation_id}/messages";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    url = url.replace("{dm_conversation_id}", String(dmConversationId));
+
+    const headers = new Headers();
+
+    headers.set("Content-Type", "application/json");
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "POST",
+        headers,
+
+        body: body ? JSON.stringify(body) : undefined
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as DirectMessagesCreateDmByConversationIdResponse;
+  }
+
+  /**
      * Get DM events for a DM conversation
      * 
 
@@ -286,67 +329,89 @@ export class DirectMessagesClient {
 
      * @returns DirectMessagesGetDmEventsByParticipantIdResponse Response data
      */
+  async getDmEventsByParticipantId(
+    participantId: string,
+    maxResults?: number,
+    paginationToken?: string,
+    eventTypes?: Array<any>,
+    dmEventfields?: Array<any>,
+    expansions?: Array<any>,
+    mediafields?: Array<any>,
+    userfields?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<DirectMessagesGetDmEventsByParticipantIdResponse> {
+    let url =
+      this.client.baseUrl +
+      "/2/dm_conversations/with/{participant_id}/dm_events";
 
-    async getDmEventsByParticipantId(
-        participantId: string,
-        maxResults?: number,
-        paginationToken?: string,
-        eventTypes?: Array<any>,
-        dmEventfields?: Array<any>,
-        expansions?: Array<any>,
-        mediafields?: Array<any>,
-        userfields?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<DirectMessagesGetDmEventsByParticipantIdResponse> {
-        let url = this.client.baseUrl + "/2/dm_conversations/with/{participant_id}/dm_events";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (paginationToken !== undefined) {
-            params.set("pagination_token", String(paginationToken));
-        }
-        if (eventTypes !== undefined) {
-            params.set("event_types", eventTypes.map(String).join(","));
-        }
-        if (dmEventfields !== undefined) {
-            params.set("dm_event.fields", dmEventfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (mediafields !== undefined) {
-            params.set("media.fields", mediafields.map(String).join(","));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{participant_id}", String(participantId));
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as DirectMessagesGetDmEventsByParticipantIdResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
+
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    if (eventTypes !== undefined) {
+      params.set("event_types", eventTypes.map(String).join(","));
+    }
+
+    if (dmEventfields !== undefined) {
+      params.set("dm_event.fields", dmEventfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (mediafields !== undefined) {
+      params.set("media.fields", mediafields.map(String).join(","));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{participant_id}", String(participantId));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as DirectMessagesGetDmEventsByParticipantIdResponse;
+  }
+
+  /**
      * Get DM event by ID
      * 
 
@@ -380,55 +445,72 @@ export class DirectMessagesClient {
 
      * @returns DirectMessagesGetDmEventsByIdResponse Response data
      */
+  async getDmEventsById(
+    eventId: string,
+    dmEventfields?: Array<any>,
+    expansions?: Array<any>,
+    mediafields?: Array<any>,
+    userfields?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<DirectMessagesGetDmEventsByIdResponse> {
+    let url = this.client.baseUrl + "/2/dm_events/{event_id}";
 
-    async getDmEventsById(
-        eventId: string,
-        dmEventfields?: Array<any>,
-        expansions?: Array<any>,
-        mediafields?: Array<any>,
-        userfields?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<DirectMessagesGetDmEventsByIdResponse> {
-        let url = this.client.baseUrl + "/2/dm_events/{event_id}";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (dmEventfields !== undefined) {
-            params.set("dm_event.fields", dmEventfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (mediafields !== undefined) {
-            params.set("media.fields", mediafields.map(String).join(","));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{event_id}", String(eventId));
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as DirectMessagesGetDmEventsByIdResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
+
+    const params = new URLSearchParams();
+
+    if (dmEventfields !== undefined) {
+      params.set("dm_event.fields", dmEventfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (mediafields !== undefined) {
+      params.set("media.fields", mediafields.map(String).join(","));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{event_id}", String(eventId));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as DirectMessagesGetDmEventsByIdResponse;
+  }
+
+  /**
      * Delete DM event
      * 
 
@@ -442,35 +524,116 @@ export class DirectMessagesClient {
 
      * @returns DirectMessagesDeleteDmEventsResponse Response data
      */
+  async deleteDmEvents(
+    eventId: string
+  ): Promise<DirectMessagesDeleteDmEventsResponse> {
+    let url = this.client.baseUrl + "/2/dm_events/{event_id}";
 
-    async deleteDmEvents(
-        eventId: string,
-    ): Promise<DirectMessagesDeleteDmEventsResponse> {
-        let url = this.client.baseUrl + "/2/dm_events/{event_id}";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        url = url.replace("{event_id}", String(eventId));
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "DELETE",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as DirectMessagesDeleteDmEventsResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
+
+    const params = new URLSearchParams();
+
+    url = url.replace("{event_id}", String(eventId));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "DELETE",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as DirectMessagesDeleteDmEventsResponse;
+  }
+
+  /**
+     * Create DM message by participant ID
+     * 
+
+     * Sends a new direct message to a specific participant by their ID.
+
+
+
+     * @param participantId The ID of the recipient user that will receive the DM.
+
+
+
+
+
+
+
+     * @param body Request body
+
+
+
+     * @returns DirectMessagesCreateDmByParticipantIdResponse Response data
+     */
+  async createDmByParticipantId(
+    participantId: string,
+    body?: DirectMessagesCreateDmByParticipantIdRequest
+  ): Promise<Record<string, any>> {
+    let url =
+      this.client.baseUrl +
+      "/2/dm_conversations/with/{participant_id}/messages";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    url = url.replace("{participant_id}", String(participantId));
+
+    const headers = new Headers();
+
+    headers.set("Content-Type", "application/json");
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "POST",
+        headers,
+
+        body: body ? JSON.stringify(body) : undefined
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as DirectMessagesCreateDmByParticipantIdResponse;
+  }
+
+  /**
      * Get DM events
      * 
 
@@ -512,109 +675,80 @@ export class DirectMessagesClient {
 
      * @returns DirectMessagesGetDmEventsResponse Response data
      */
+  async getDmEvents(
+    maxResults?: number,
+    paginationToken?: string,
+    eventTypes?: Array<any>,
+    dmEventfields?: Array<any>,
+    expansions?: Array<any>,
+    mediafields?: Array<any>,
+    userfields?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<DirectMessagesGetDmEventsResponse> {
+    let url = this.client.baseUrl + "/2/dm_events";
 
-    async getDmEvents(
-        maxResults?: number,
-        paginationToken?: string,
-        eventTypes?: Array<any>,
-        dmEventfields?: Array<any>,
-        expansions?: Array<any>,
-        mediafields?: Array<any>,
-        userfields?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<DirectMessagesGetDmEventsResponse> {
-        let url = this.client.baseUrl + "/2/dm_events";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (paginationToken !== undefined) {
-            params.set("pagination_token", String(paginationToken));
-        }
-        if (eventTypes !== undefined) {
-            params.set("event_types", eventTypes.map(String).join(","));
-        }
-        if (dmEventfields !== undefined) {
-            params.set("dm_event.fields", dmEventfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (mediafields !== undefined) {
-            params.set("media.fields", mediafields.map(String).join(","));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as DirectMessagesGetDmEventsResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
-     * Create DM conversation
-     * 
 
-     * Initiates a new direct message conversation with specified participants.
+    const params = new URLSearchParams();
 
-
-
-
-
-
-
-     * @param body Request body
-
-
-
-     * @returns DirectMessagesCreateDmConversationsResponse Response data
-     */
-
-    async createDmConversations(
-        body?: DirectMessagesCreateDmConversationsRequest,
-    ): Promise<Record<string, any>> {
-        let url = this.client.baseUrl + "/2/dm_conversations";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        const headers = new Headers();
-        headers.set("Content-Type", "application/json");
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "POST",
-            headers,
-            body: body ? JSON.stringify(body) : undefined,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as DirectMessagesCreateDmConversationsResponse;
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
     }
-} 
+
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    if (eventTypes !== undefined) {
+      params.set("event_types", eventTypes.map(String).join(","));
+    }
+
+    if (dmEventfields !== undefined) {
+      params.set("dm_event.fields", dmEventfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (mediafields !== undefined) {
+      params.set("media.fields", mediafields.map(String).join(","));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as DirectMessagesGetDmEventsResponse;
+  }
+}

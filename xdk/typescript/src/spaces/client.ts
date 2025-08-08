@@ -4,34 +4,43 @@
  * This module provides a client for interacting with the Spaces endpoints of the X API.
  */
 
-import { Client } from '../client.js';
-
+import { Client } from "../client.js";
 import {
-    SpacesGetByCreatorIdsResponse,
-    SpacesGetByIdsResponse,
-    SpacesGetByIdResponse,
-    SpacesGetPostsResponse,
-    SpacesSearchResponse,
-    SpacesGetBuyersResponse,
-} from './models.js';
+  SpacesSearchResponse,
+  SpacesGetByIdsResponse,
+  SpacesGetByIdResponse,
+  SpacesGetPostsResponse,
+  SpacesGetBuyersResponse,
+  SpacesGetByCreatorIdsResponse
+} from "./models.js";
+
 /**
  * Client for Spaces operations
  */
-
 export class SpacesClient {
-    private client: Client;
-    constructor(client: Client) {
-        this.client = client;
-    }
-    /**
-     * Get Spaces by creator IDs
+  private client: Client;
+
+  constructor(client: Client) {
+    this.client = client;
+  }
+
+  /**
+     * Search Spaces
      * 
 
-     * Retrieves details of Spaces created by specified User IDs.
+     * Retrieves a list of Spaces matching the specified search query.
 
 
 
-     * @param userIds The IDs of Users to search through.
+     * @param query The search query.
+
+
+
+     * @param state The state of Spaces to search for.
+
+
+
+     * @param maxResults The number of results to return.
 
 
 
@@ -51,60 +60,93 @@ export class SpacesClient {
 
 
 
-     * @returns SpacesGetByCreatorIdsResponse Response data
+     * @returns SpacesSearchResponse Response data
      */
+  async search(
+    query: string,
+    state?: string,
+    maxResults?: number,
+    spacefields?: Array<any>,
+    expansions?: Array<any>,
+    userfields?: Array<any>,
+    topicfields?: Array<any>
+  ): Promise<SpacesSearchResponse> {
+    let url = this.client.baseUrl + "/2/spaces/search";
 
-    async getByCreatorIds(
-        userIds: Array<any>,
-        spacefields?: Array<any>,
-        expansions?: Array<any>,
-        userfields?: Array<any>,
-        topicfields?: Array<any>,
-    ): Promise<SpacesGetByCreatorIdsResponse> {
-        let url = this.client.baseUrl + "/2/spaces/by/creator_ids";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (userIds !== undefined) {
-            params.set("user_ids", userIds.map(String).join(","));
-        }
-        if (spacefields !== undefined) {
-            params.set("space.fields", spacefields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (topicfields !== undefined) {
-            params.set("topic.fields", topicfields.map(String).join(","));
-        }
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as SpacesGetByCreatorIdsResponse;
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
     }
-    /**
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    if (query !== undefined) {
+      params.set("query", String(query));
+    }
+
+    if (state !== undefined) {
+      params.set("state", String(state));
+    }
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (spacefields !== undefined) {
+      params.set("space.fields", spacefields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (topicfields !== undefined) {
+      params.set("topic.fields", topicfields.map(String).join(","));
+    }
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as SpacesSearchResponse;
+  }
+
+  /**
      * Get Spaces by IDs
      * 
 
@@ -134,58 +176,81 @@ export class SpacesClient {
 
      * @returns SpacesGetByIdsResponse Response data
      */
+  async getByIds(
+    ids: Array<any>,
+    spacefields?: Array<any>,
+    expansions?: Array<any>,
+    userfields?: Array<any>,
+    topicfields?: Array<any>
+  ): Promise<SpacesGetByIdsResponse> {
+    let url = this.client.baseUrl + "/2/spaces";
 
-    async getByIds(
-        ids: Array<any>,
-        spacefields?: Array<any>,
-        expansions?: Array<any>,
-        userfields?: Array<any>,
-        topicfields?: Array<any>,
-    ): Promise<SpacesGetByIdsResponse> {
-        let url = this.client.baseUrl + "/2/spaces";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (ids !== undefined) {
-            params.set("ids", ids.map(String).join(","));
-        }
-        if (spacefields !== undefined) {
-            params.set("space.fields", spacefields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (topicfields !== undefined) {
-            params.set("topic.fields", topicfields.map(String).join(","));
-        }
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as SpacesGetByIdsResponse;
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
     }
-    /**
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    if (ids !== undefined) {
+      params.set("ids", ids.map(String).join(","));
+    }
+
+    if (spacefields !== undefined) {
+      params.set("space.fields", spacefields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (topicfields !== undefined) {
+      params.set("topic.fields", topicfields.map(String).join(","));
+    }
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as SpacesGetByIdsResponse;
+  }
+
+  /**
      * Get space by ID
      * 
 
@@ -215,56 +280,79 @@ export class SpacesClient {
 
      * @returns SpacesGetByIdResponse Response data
      */
+  async getById(
+    id: string,
+    spacefields?: Array<any>,
+    expansions?: Array<any>,
+    userfields?: Array<any>,
+    topicfields?: Array<any>
+  ): Promise<SpacesGetByIdResponse> {
+    let url = this.client.baseUrl + "/2/spaces/{id}";
 
-    async getById(
-        id: string,
-        spacefields?: Array<any>,
-        expansions?: Array<any>,
-        userfields?: Array<any>,
-        topicfields?: Array<any>,
-    ): Promise<SpacesGetByIdResponse> {
-        let url = this.client.baseUrl + "/2/spaces/{id}";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (spacefields !== undefined) {
-            params.set("space.fields", spacefields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (topicfields !== undefined) {
-            params.set("topic.fields", topicfields.map(String).join(","));
-        }
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as SpacesGetByIdResponse;
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
     }
-    /**
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    if (spacefields !== undefined) {
+      params.set("space.fields", spacefields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (topicfields !== undefined) {
+      params.set("topic.fields", topicfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as SpacesGetByIdResponse;
+  }
+
+  /**
      * Get Space Posts
      * 
 
@@ -306,165 +394,94 @@ export class SpacesClient {
 
      * @returns SpacesGetPostsResponse Response data
      */
+  async getPosts(
+    id: string,
+    maxResults?: number,
+    tweetfields?: Array<any>,
+    expansions?: Array<any>,
+    mediafields?: Array<any>,
+    pollfields?: Array<any>,
+    userfields?: Array<any>,
+    placefields?: Array<any>
+  ): Promise<SpacesGetPostsResponse> {
+    let url = this.client.baseUrl + "/2/spaces/{id}/tweets";
 
-    async getPosts(
-        id: string,
-        maxResults?: number,
-        tweetfields?: Array<any>,
-        expansions?: Array<any>,
-        mediafields?: Array<any>,
-        pollfields?: Array<any>,
-        userfields?: Array<any>,
-        placefields?: Array<any>,
-    ): Promise<SpacesGetPostsResponse> {
-        let url = this.client.baseUrl + "/2/spaces/{id}/tweets";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (mediafields !== undefined) {
-            params.set("media.fields", mediafields.map(String).join(","));
-        }
-        if (pollfields !== undefined) {
-            params.set("poll.fields", pollfields.map(String).join(","));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (placefields !== undefined) {
-            params.set("place.fields", placefields.map(String).join(","));
-        }
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as SpacesGetPostsResponse;
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
     }
-    /**
-     * Search Spaces
-     * 
 
-     * Retrieves a list of Spaces matching the specified search query.
-
-
-
-     * @param query The search query.
-
-
-
-     * @param state The state of Spaces to search for.
-
-
-
-     * @param maxResults The number of results to return.
-
-
-
-     * @param spacefields A comma separated list of Space fields to display.
-
-
-
-     * @param expansions A comma separated list of fields to expand.
-
-
-
-     * @param userfields A comma separated list of User fields to display.
-
-
-
-     * @param topicfields A comma separated list of Topic fields to display.
-
-
-
-     * @returns SpacesSearchResponse Response data
-     */
-
-    async search(
-        query: string,
-        state?: string,
-        maxResults?: number,
-        spacefields?: Array<any>,
-        expansions?: Array<any>,
-        userfields?: Array<any>,
-        topicfields?: Array<any>,
-    ): Promise<SpacesSearchResponse> {
-        let url = this.client.baseUrl + "/2/spaces/search";
-        if (this.client.bearerToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            this.client.headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-        }
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (query !== undefined) {
-            params.set("query", String(query));
-        }
-        if (state !== undefined) {
-            params.set("state", String(state));
-        }
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (spacefields !== undefined) {
-            params.set("space.fields", spacefields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (topicfields !== undefined) {
-            params.set("topic.fields", topicfields.map(String).join(","));
-        }
-        const headers = new Headers();
-        // Make the request
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as SpacesSearchResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-    /**
+
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (mediafields !== undefined) {
+      params.set("media.fields", mediafields.map(String).join(","));
+    }
+
+    if (pollfields !== undefined) {
+      params.set("poll.fields", pollfields.map(String).join(","));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (placefields !== undefined) {
+      params.set("place.fields", placefields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as SpacesGetPostsResponse;
+  }
+
+  /**
      * Get Space ticket buyers
      * 
 
@@ -498,52 +515,172 @@ export class SpacesClient {
 
      * @returns SpacesGetBuyersResponse Response data
      */
+  async getBuyers(
+    id: string,
+    paginationToken?: string,
+    maxResults?: number,
+    userfields?: Array<any>,
+    expansions?: Array<any>,
+    tweetfields?: Array<any>
+  ): Promise<SpacesGetBuyersResponse> {
+    let url = this.client.baseUrl + "/2/spaces/{id}/buyers";
 
-    async getBuyers(
-        id: string,
-        paginationToken?: string,
-        maxResults?: number,
-        userfields?: Array<any>,
-        expansions?: Array<any>,
-        tweetfields?: Array<any>,
-    ): Promise<SpacesGetBuyersResponse> {
-        let url = this.client.baseUrl + "/2/spaces/{id}/buyers";
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-        const params = new URLSearchParams();
-        if (paginationToken !== undefined) {
-            params.set("pagination_token", String(paginationToken));
-        }
-        if (maxResults !== undefined) {
-            params.set("max_results", String(maxResults));
-        }
-        if (userfields !== undefined) {
-            params.set("user.fields", userfields.map(String).join(","));
-        }
-        if (expansions !== undefined) {
-            params.set("expansions", expansions.map(String).join(","));
-        }
-        if (tweetfields !== undefined) {
-            params.set("tweet.fields", tweetfields.map(String).join(","));
-        }
-        url = url.replace("{id}", String(id));
-        const headers = new Headers();
-        // Make the request
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "GET",
-            headers,
-        });
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        // Parse the response data
-        const responseData = await response.json();
-        return responseData as SpacesGetBuyersResponse;
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
     }
-} 
+
+    const params = new URLSearchParams();
+
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (tweetfields !== undefined) {
+      params.set("tweet.fields", tweetfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await (this.client.oauth2Session || fetch)(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as SpacesGetBuyersResponse;
+  }
+
+  /**
+     * Get Spaces by creator IDs
+     * 
+
+     * Retrieves details of Spaces created by specified User IDs.
+
+
+
+     * @param userIds The IDs of Users to search through.
+
+
+
+     * @param spacefields A comma separated list of Space fields to display.
+
+
+
+     * @param expansions A comma separated list of fields to expand.
+
+
+
+     * @param userfields A comma separated list of User fields to display.
+
+
+
+     * @param topicfields A comma separated list of Topic fields to display.
+
+
+
+     * @returns SpacesGetByCreatorIdsResponse Response data
+     */
+  async getByCreatorIds(
+    userIds: Array<any>,
+    spacefields?: Array<any>,
+    expansions?: Array<any>,
+    userfields?: Array<any>,
+    topicfields?: Array<any>
+  ): Promise<SpacesGetByCreatorIdsResponse> {
+    let url = this.client.baseUrl + "/2/spaces/by/creator_ids";
+
+    if (this.client.bearerToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.bearerToken}`
+      );
+    } else if (this.client.accessToken) {
+      this.client.headers.set(
+        "Authorization",
+        `Bearer ${this.client.accessToken}`
+      );
+    }
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+
+    const params = new URLSearchParams();
+
+    if (userIds !== undefined) {
+      params.set("user_ids", userIds.map(String).join(","));
+    }
+
+    if (spacefields !== undefined) {
+      params.set("space.fields", spacefields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    if (topicfields !== undefined) {
+      params.set("topic.fields", topicfields.map(String).join(","));
+    }
+
+    const headers = new Headers();
+
+    // Make the request
+
+    const response = await fetch(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as SpacesGetByCreatorIdsResponse;
+  }
+}
