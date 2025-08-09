@@ -6,25 +6,25 @@
 
 import { Client } from "../client.js";
 import {
+  ListsUnpinResponse,
   ListsGetUsersOwnedResponse,
+  ListsGetUsersPinnedResponse,
+  ListsPinRequest,
+  ListsPinResponse,
+  ListsGetUsersFollowedResponse,
+  ListsFollowRequest,
+  ListsFollowResponse,
+  ListsAddMemberRequest,
+  ListsAddMemberResponse,
+  ListsCreateRequest,
+  ListsCreateResponse,
+  ListsGetUsersMembershipsResponse,
   ListsGetByIdResponse,
   ListsUpdateRequest,
   ListsUpdateResponse,
   ListsDeleteResponse,
-  ListsRemoveMemberByUserIdResponse,
-  ListsCreateRequest,
-  ListsCreateResponse,
-  ListsGetUsersMembershipsResponse,
-  ListsUnpinResponse,
-  ListsGetUsersPinnedResponse,
-  ListsPinRequest,
-  ListsPinResponse,
-  ListsAddMemberRequest,
-  ListsAddMemberResponse,
-  ListsGetUsersFollowedResponse,
-  ListsFollowRequest,
-  ListsFollowResponse,
-  ListsUnfollowResponse
+  ListsUnfollowResponse,
+  ListsRemoveMemberByUserIdResponse
 } from "./models.js";
 
 /**
@@ -35,6 +35,53 @@ export class ListsClient {
 
   constructor(client: Client) {
     this.client = client;
+  }
+
+  /**
+     * Unpin List
+     * Causes the authenticated user to unpin a specific List by its ID.
+     * @param id The ID of the authenticated source User for whom to return results.
+     * @param listId The ID of the List to unpin.* @returns ListsUnpinResponse Response data
+     */
+  async unpin(id: string, listId: string): Promise<ListsUnpinResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/pinned_lists/{list_id}";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+    const params = new URLSearchParams();
+
+    url = url.replace("{id}", String(id));
+
+    url = url.replace("{list_id}", String(listId));
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "DELETE",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as ListsUnpinResponse;
   }
 
   /**
@@ -99,9 +146,8 @@ export class ListsClient {
       headers.set("Authorization", `Bearer ${this.client.accessToken}`);
     }
 
-    // Make the request
-
-    const response = await fetch(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "GET",
@@ -121,20 +167,20 @@ export class ListsClient {
   }
 
   /**
-     * Get List by ID
-     * Retrieves details of a specific List by its ID.
-     * @param id The ID of the List.
+     * Get pinned Lists
+     * Retrieves a list of Lists pinned by the authenticated user.
+     * @param id The ID of the authenticated source User for whom to return results.
      * @param listfields A comma separated list of List fields to display.
      * @param expansions A comma separated list of fields to expand.
-     * @param userfields A comma separated list of User fields to display.* @returns ListsGetByIdResponse Response data
+     * @param userfields A comma separated list of User fields to display.* @returns ListsGetUsersPinnedResponse Response data
      */
-  async getById(
+  async getUsersPinned(
     id: string,
     listfields?: Array<any>,
     expansions?: Array<any>,
     userfields?: Array<any>
-  ): Promise<ListsGetByIdResponse> {
-    let url = this.client.baseUrl + "/2/lists/{id}";
+  ): Promise<ListsGetUsersPinnedResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/pinned_lists";
 
     // Ensure we have a valid access token
     if (this.client.oauth2Auth && this.client.token) {
@@ -164,15 +210,8 @@ export class ListsClient {
 
     // Set authentication headers
 
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request
-
-    const response = await fetch(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "GET",
@@ -188,19 +227,16 @@ export class ListsClient {
     // Parse the response data
     const responseData = await response.json();
 
-    return responseData as ListsGetByIdResponse;
+    return responseData as ListsGetUsersPinnedResponse;
   }
 
   /**
-     * Update List
-     * Updates the details of a specific List owned by the authenticated user by its ID.
-     * @param id The ID of the List to modify.* @param body Request body* @returns ListsUpdateResponse Response data
+     * Pin List
+     * Causes the authenticated user to pin a specific List by its ID.
+     * @param id The ID of the authenticated source User that will pin the List.* @param body Request body* @returns ListsPinResponse Response data
      */
-  async update(
-    id: string,
-    body?: ListsUpdateRequest
-  ): Promise<ListsUpdateResponse> {
-    let url = this.client.baseUrl + "/2/lists/{id}";
+  async pin(id: string, body: ListsPinRequest): Promise<ListsPinResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/pinned_lists";
 
     // Ensure we have a valid access token
     if (this.client.oauth2Auth && this.client.token) {
@@ -220,12 +256,11 @@ export class ListsClient {
 
     headers.set("Content-Type", "application/json");
 
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
-        method: "PUT",
+        method: "POST",
         headers,
 
         body: body ? JSON.stringify(body) : undefined
@@ -240,65 +275,28 @@ export class ListsClient {
     // Parse the response data
     const responseData = await response.json();
 
-    return responseData as ListsUpdateResponse;
+    return responseData as ListsPinResponse;
   }
 
   /**
-     * Delete List
-     * Deletes a specific List owned by the authenticated user by its ID.
-     * @param id The ID of the List to delete.* @returns ListsDeleteResponse Response data
+     * Get followed Lists
+     * Retrieves a list of Lists followed by a specific User by their ID.
+     * @param id The ID of the User to lookup.
+     * @param maxResults The maximum number of results.
+     * @param paginationToken This parameter is used to get a specified 'page' of results.
+     * @param listfields A comma separated list of List fields to display.
+     * @param expansions A comma separated list of fields to expand.
+     * @param userfields A comma separated list of User fields to display.* @returns ListsGetUsersFollowedResponse Response data
      */
-  async delete(id: string): Promise<ListsDeleteResponse> {
-    let url = this.client.baseUrl + "/2/lists/{id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    url = url.replace("{id}", String(id));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "DELETE",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsDeleteResponse;
-  }
-
-  /**
-     * Remove List member
-     * Removes a User from a specific List by its ID and the User’s ID.
-     * @param id The ID of the List to remove a member.
-     * @param userId The ID of User that will be removed from the List.* @returns ListsRemoveMemberByUserIdResponse Response data
-     */
-  async removeMemberByUserId(
+  async getUsersFollowed(
     id: string,
-    userId: string
-  ): Promise<ListsRemoveMemberByUserIdResponse> {
-    let url = this.client.baseUrl + "/2/lists/{id}/members/{user_id}";
+    maxResults?: number,
+    paginationToken?: string,
+    listfields?: Array<any>,
+    expansions?: Array<any>,
+    userfields?: Array<any>
+  ): Promise<ListsGetUsersFollowedResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/followed_lists";
 
     // Ensure we have a valid access token
     if (this.client.oauth2Auth && this.client.token) {
@@ -309,21 +307,44 @@ export class ListsClient {
     }
     const params = new URLSearchParams();
 
-    url = url.replace("{id}", String(id));
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
 
-    url = url.replace("{user_id}", String(userId));
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    if (listfields !== undefined) {
+      params.set("list.fields", listfields.map(String).join(","));
+    }
+
+    if (expansions !== undefined) {
+      params.set("expansions", expansions.map(String).join(","));
+    }
+
+    if (userfields !== undefined) {
+      params.set("user.fields", userfields.map(String).join(","));
+    }
+
+    url = url.replace("{id}", String(id));
 
     // Create headers by copying the client's headers
     const headers = new Headers(this.client.headers);
 
     // Set authentication headers
 
-    // Make the request
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
 
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
-        method: "DELETE",
+        method: "GET",
         headers
       }
     );
@@ -336,7 +357,109 @@ export class ListsClient {
     // Parse the response data
     const responseData = await response.json();
 
-    return responseData as ListsRemoveMemberByUserIdResponse;
+    return responseData as ListsGetUsersFollowedResponse;
+  }
+
+  /**
+     * Follow List
+     * Causes the authenticated user to follow a specific List by its ID.
+     * @param id The ID of the authenticated source User that will follow the List.* @param body Request body* @returns ListsFollowResponse Response data
+     */
+  async follow(
+    id: string,
+    body?: ListsFollowRequest
+  ): Promise<ListsFollowResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/followed_lists";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+    const params = new URLSearchParams();
+
+    url = url.replace("{id}", String(id));
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    headers.set("Content-Type", "application/json");
+
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "POST",
+        headers,
+
+        body: body ? JSON.stringify(body) : undefined
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as ListsFollowResponse;
+  }
+
+  /**
+     * Add List member
+     * Adds a User to a specific List by its ID.
+     * @param id The ID of the List for which to add a member.* @param body Request body* @returns ListsAddMemberResponse Response data
+     */
+  async addMember(
+    id: string,
+    body?: ListsAddMemberRequest
+  ): Promise<ListsAddMemberResponse> {
+    let url = this.client.baseUrl + "/2/lists/{id}/members";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+    const params = new URLSearchParams();
+
+    url = url.replace("{id}", String(id));
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    headers.set("Content-Type", "application/json");
+
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "POST",
+        headers,
+
+        body: body ? JSON.stringify(body) : undefined
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as ListsAddMemberResponse;
   }
 
   /**
@@ -362,9 +485,8 @@ export class ListsClient {
 
     headers.set("Content-Type", "application/json");
 
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "POST",
@@ -447,9 +569,8 @@ export class ListsClient {
       headers.set("Authorization", `Bearer ${this.client.accessToken}`);
     }
 
-    // Make the request
-
-    const response = await fetch(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "GET",
@@ -469,68 +590,20 @@ export class ListsClient {
   }
 
   /**
-     * Unpin List
-     * Causes the authenticated user to unpin a specific List by its ID.
-     * @param id The ID of the authenticated source User for whom to return results.
-     * @param listId The ID of the List to unpin.* @returns ListsUnpinResponse Response data
-     */
-  async unpin(id: string, listId: string): Promise<ListsUnpinResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/pinned_lists/{list_id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    url = url.replace("{id}", String(id));
-
-    url = url.replace("{list_id}", String(listId));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "DELETE",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsUnpinResponse;
-  }
-
-  /**
-     * Get pinned Lists
-     * Retrieves a list of Lists pinned by the authenticated user.
-     * @param id The ID of the authenticated source User for whom to return results.
+     * Get List by ID
+     * Retrieves details of a specific List by its ID.
+     * @param id The ID of the List.
      * @param listfields A comma separated list of List fields to display.
      * @param expansions A comma separated list of fields to expand.
-     * @param userfields A comma separated list of User fields to display.* @returns ListsGetUsersPinnedResponse Response data
+     * @param userfields A comma separated list of User fields to display.* @returns ListsGetByIdResponse Response data
      */
-  async getUsersPinned(
+  async getById(
     id: string,
     listfields?: Array<any>,
     expansions?: Array<any>,
     userfields?: Array<any>
-  ): Promise<ListsGetUsersPinnedResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/pinned_lists";
+  ): Promise<ListsGetByIdResponse> {
+    let url = this.client.baseUrl + "/2/lists/{id}";
 
     // Ensure we have a valid access token
     if (this.client.oauth2Auth && this.client.token) {
@@ -540,184 +613,6 @@ export class ListsClient {
       }
     }
     const params = new URLSearchParams();
-
-    if (listfields !== undefined) {
-      params.set("list.fields", listfields.map(String).join(","));
-    }
-
-    if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
-    }
-
-    if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
-    }
-
-    url = url.replace("{id}", String(id));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsGetUsersPinnedResponse;
-  }
-
-  /**
-     * Pin List
-     * Causes the authenticated user to pin a specific List by its ID.
-     * @param id The ID of the authenticated source User that will pin the List.* @param body Request body* @returns ListsPinResponse Response data
-     */
-  async pin(id: string, body: ListsPinRequest): Promise<ListsPinResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/pinned_lists";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    url = url.replace("{id}", String(id));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    headers.set("Content-Type", "application/json");
-
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsPinResponse;
-  }
-
-  /**
-     * Add List member
-     * Adds a User to a specific List by its ID.
-     * @param id The ID of the List for which to add a member.* @param body Request body* @returns ListsAddMemberResponse Response data
-     */
-  async addMember(
-    id: string,
-    body?: ListsAddMemberRequest
-  ): Promise<ListsAddMemberResponse> {
-    let url = this.client.baseUrl + "/2/lists/{id}/members";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    url = url.replace("{id}", String(id));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    headers.set("Content-Type", "application/json");
-
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsAddMemberResponse;
-  }
-
-  /**
-     * Get followed Lists
-     * Retrieves a list of Lists followed by a specific User by their ID.
-     * @param id The ID of the User to lookup.
-     * @param maxResults The maximum number of results.
-     * @param paginationToken This parameter is used to get a specified 'page' of results.
-     * @param listfields A comma separated list of List fields to display.
-     * @param expansions A comma separated list of fields to expand.
-     * @param userfields A comma separated list of User fields to display.* @returns ListsGetUsersFollowedResponse Response data
-     */
-  async getUsersFollowed(
-    id: string,
-    maxResults?: number,
-    paginationToken?: string,
-    listfields?: Array<any>,
-    expansions?: Array<any>,
-    userfields?: Array<any>
-  ): Promise<ListsGetUsersFollowedResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/followed_lists";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.set("max_results", String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.set("pagination_token", String(paginationToken));
-    }
 
     if (listfields !== undefined) {
       params.set("list.fields", listfields.map(String).join(","));
@@ -744,9 +639,8 @@ export class ListsClient {
       headers.set("Authorization", `Bearer ${this.client.accessToken}`);
     }
 
-    // Make the request
-
-    const response = await fetch(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "GET",
@@ -762,19 +656,19 @@ export class ListsClient {
     // Parse the response data
     const responseData = await response.json();
 
-    return responseData as ListsGetUsersFollowedResponse;
+    return responseData as ListsGetByIdResponse;
   }
 
   /**
-     * Follow List
-     * Causes the authenticated user to follow a specific List by its ID.
-     * @param id The ID of the authenticated source User that will follow the List.* @param body Request body* @returns ListsFollowResponse Response data
+     * Update List
+     * Updates the details of a specific List owned by the authenticated user by its ID.
+     * @param id The ID of the List to modify.* @param body Request body* @returns ListsUpdateResponse Response data
      */
-  async follow(
+  async update(
     id: string,
-    body?: ListsFollowRequest
-  ): Promise<ListsFollowResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/followed_lists";
+    body?: ListsUpdateRequest
+  ): Promise<ListsUpdateResponse> {
+    let url = this.client.baseUrl + "/2/lists/{id}";
 
     // Ensure we have a valid access token
     if (this.client.oauth2Auth && this.client.token) {
@@ -794,12 +688,11 @@ export class ListsClient {
 
     headers.set("Content-Type", "application/json");
 
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
-        method: "POST",
+        method: "PUT",
         headers,
 
         body: body ? JSON.stringify(body) : undefined
@@ -814,7 +707,51 @@ export class ListsClient {
     // Parse the response data
     const responseData = await response.json();
 
-    return responseData as ListsFollowResponse;
+    return responseData as ListsUpdateResponse;
+  }
+
+  /**
+     * Delete List
+     * Deletes a specific List owned by the authenticated user by its ID.
+     * @param id The ID of the List to delete.* @returns ListsDeleteResponse Response data
+     */
+  async delete(id: string): Promise<ListsDeleteResponse> {
+    let url = this.client.baseUrl + "/2/lists/{id}";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+    const params = new URLSearchParams();
+
+    url = url.replace("{id}", String(id));
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "DELETE",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as ListsDeleteResponse;
   }
 
   /**
@@ -844,9 +781,8 @@ export class ListsClient {
 
     // Set authentication headers
 
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "DELETE",
@@ -863,5 +799,55 @@ export class ListsClient {
     const responseData = await response.json();
 
     return responseData as ListsUnfollowResponse;
+  }
+
+  /**
+     * Remove List member
+     * Removes a User from a specific List by its ID and the User’s ID.
+     * @param id The ID of the List to remove a member.
+     * @param userId The ID of User that will be removed from the List.* @returns ListsRemoveMemberByUserIdResponse Response data
+     */
+  async removeMemberByUserId(
+    id: string,
+    userId: string
+  ): Promise<ListsRemoveMemberByUserIdResponse> {
+    let url = this.client.baseUrl + "/2/lists/{id}/members/{user_id}";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+    const params = new URLSearchParams();
+
+    url = url.replace("{id}", String(id));
+
+    url = url.replace("{user_id}", String(userId));
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "DELETE",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as ListsRemoveMemberByUserIdResponse;
   }
 }

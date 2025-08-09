@@ -7,10 +7,10 @@
 import { Client } from "../client.js";
 import {
   CommunityNotesSearchForEligiblePostsResponse,
-  CommunityNotesDeleteNotesResponse,
-  CommunityNotesSearchNotesWrittenResponse,
   CommunityNotesCreateNotesRequest,
-  CommunityNotesCreateNotesResponse
+  CommunityNotesCreateNotesResponse,
+  CommunityNotesDeleteNotesResponse,
+  CommunityNotesSearchNotesWrittenResponse
 } from "./models.js";
 
 /**
@@ -99,9 +99,8 @@ export class CommunityNotesClient {
 
     // Set authentication headers
 
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "GET",
@@ -118,6 +117,53 @@ export class CommunityNotesClient {
     const responseData = await response.json();
 
     return responseData as CommunityNotesSearchForEligiblePostsResponse;
+  }
+
+  /**
+     * Create a Community Note
+     * Creates a community note endpoint for LLM use case.* @param body Request body* @returns CommunityNotesCreateNotesResponse Response data
+     */
+  async createNotes(
+    body?: CommunityNotesCreateNotesRequest
+  ): Promise<CommunityNotesCreateNotesResponse> {
+    let url = this.client.baseUrl + "/2/notes";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+    const params = new URLSearchParams();
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    headers.set("Content-Type", "application/json");
+
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "POST",
+        headers,
+
+        body: body ? JSON.stringify(body) : undefined
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as CommunityNotesCreateNotesResponse;
   }
 
   /**
@@ -144,9 +190,8 @@ export class CommunityNotesClient {
 
     // Set authentication headers
 
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "DELETE",
@@ -211,9 +256,8 @@ export class CommunityNotesClient {
 
     // Set authentication headers
 
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "GET",
@@ -230,53 +274,5 @@ export class CommunityNotesClient {
     const responseData = await response.json();
 
     return responseData as CommunityNotesSearchNotesWrittenResponse;
-  }
-
-  /**
-     * Create a Community Note
-     * Creates a community note endpoint for LLM use case.* @param body Request body* @returns CommunityNotesCreateNotesResponse Response data
-     */
-  async createNotes(
-    body?: CommunityNotesCreateNotesRequest
-  ): Promise<CommunityNotesCreateNotesResponse> {
-    let url = this.client.baseUrl + "/2/notes";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    headers.set("Content-Type", "application/json");
-
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as CommunityNotesCreateNotesResponse;
   }
 }

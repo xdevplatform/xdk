@@ -4,41 +4,7 @@
  * This module provides the main client class for interacting with the X API.
  */
 
-import { PostsClient } from "./posts/index.js";
-
-import { TrendsClient } from "./trends/index.js";
-
-import { StreamClient } from "./stream/index.js";
-
-import { ListsClient } from "./lists/index.js";
-
-import { CommunityNotesClient } from "./community_notes/index.js";
-
-import { AccountActivityClient } from "./account_activity/index.js";
-
-import { CommunitiesClient } from "./communities/index.js";
-
-import { UsersClient } from "./users/index.js";
-
-import { GeneralClient } from "./general/index.js";
-
-import { AaasubscriptionsClient } from "./aaasubscriptions/index.js";
-
-import { UsageClient } from "./usage/index.js";
-
-import { BookmarksClient } from "./bookmarks/index.js";
-
-import { MediaClient } from "./media/index.js";
-
-import { ComplianceClient } from "./compliance/index.js";
-
-import { DirectMessagesClient } from "./direct_messages/index.js";
-
-import { WebhooksClient } from "./webhooks/index.js";
-
-import { SpacesClient } from "./spaces/index.js";
-
-import { ConnectionClient } from "./connection/index.js";
+import { httpClient, Headers } from "./http-client.js";
 
 /**
  * Configuration options for the X API client
@@ -73,101 +39,14 @@ export class Client {
   /** OAuth2 token */
   readonly token?: any;
 
-  /** posts operations */
-  readonly posts: PostsClient;
-
-  /** trends operations */
-  readonly trends: TrendsClient;
-
-  /** stream operations */
-  readonly stream: StreamClient;
-
-  /** lists operations */
-  readonly lists: ListsClient;
-
-  /** community notes operations */
-  readonly communityNotes: CommunityNotesClient;
-
-  /** account activity operations */
-  readonly accountActivity: AccountActivityClient;
-
-  /** communities operations */
-  readonly communities: CommunitiesClient;
-
-  /** users operations */
-  readonly users: UsersClient;
-
-  /** general operations */
-  readonly general: GeneralClient;
-
-  /** aaasubscriptions operations */
-  readonly aaasubscriptions: AaasubscriptionsClient;
-
-  /** usage operations */
-  readonly usage: UsageClient;
-
-  /** bookmarks operations */
-  readonly bookmarks: BookmarksClient;
-
-  /** media operations */
-  readonly media: MediaClient;
-
-  /** compliance operations */
-  readonly compliance: ComplianceClient;
-
-  /** direct messages operations */
-  readonly directMessages: DirectMessagesClient;
-
-  /** webhooks operations */
-  readonly webhooks: WebhooksClient;
-
-  /** spaces operations */
-  readonly spaces: SpacesClient;
-
-  /** connection operations */
-  readonly connection: ConnectionClient;
+  /** HTTP client for making requests */
+  readonly httpClient = httpClient;
 
   constructor(config: ClientConfig = {}) {
     this.baseUrl = config.baseUrl || "https://api.x.com";
     this.bearerToken = config.bearerToken;
     this.accessToken = config.accessToken;
-    this.headers = new Headers(config.headers);
-
-    this.posts = new PostsClient(this);
-
-    this.trends = new TrendsClient(this);
-
-    this.stream = new StreamClient(this);
-
-    this.lists = new ListsClient(this);
-
-    this.communityNotes = new CommunityNotesClient(this);
-
-    this.accountActivity = new AccountActivityClient(this);
-
-    this.communities = new CommunitiesClient(this);
-
-    this.users = new UsersClient(this);
-
-    this.general = new GeneralClient(this);
-
-    this.aaasubscriptions = new AaasubscriptionsClient(this);
-
-    this.usage = new UsageClient(this);
-
-    this.bookmarks = new BookmarksClient(this);
-
-    this.media = new MediaClient(this);
-
-    this.compliance = new ComplianceClient(this);
-
-    this.directMessages = new DirectMessagesClient(this);
-
-    this.webhooks = new WebhooksClient(this);
-
-    this.spaces = new SpacesClient(this);
-
-    this.connection = new ConnectionClient(this);
+    this.headers = httpClient.createHeaders(config.headers);
   }
 
   /**

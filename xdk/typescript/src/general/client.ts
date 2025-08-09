@@ -31,9 +31,8 @@ export class GeneralClient {
 
     // Set authentication headers
 
-    // Make the request
-
-    const response = await fetch(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "GET",

@@ -72,9 +72,8 @@ export class CommunitiesClient {
 
     // Set authentication headers
 
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "GET",
@@ -131,9 +130,8 @@ export class CommunitiesClient {
       headers.set("Authorization", `Bearer ${this.client.accessToken}`);
     }
 
-    // Make the request
-
-    const response = await fetch(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "GET",

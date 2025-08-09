@@ -51,9 +51,8 @@ export class AaasubscriptionsClient {
 
     headers.set("Content-Type", "application/json");
 
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "POST",

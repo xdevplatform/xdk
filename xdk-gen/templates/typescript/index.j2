@@ -1,13 +1,26 @@
 /**
- * X API TypeScript SDK
+ * X API SDK
  *
- * This module provides a TypeScript client for interacting with the X API.
+ * A modern TypeScript/JavaScript SDK for interacting with the X API.
+ * Built with full TypeScript support, React hooks, and Next.js integration.
  */
 
-export * from './client.js';
-export * from './oauth2_auth.js';
-export * from './paginator.js';
+// Main client
+export { Client } from './client.js';
+export type { ClientConfig } from './client.js';
 
-{% for tag in tags %}
-export * from './{{ tag|snake_case }}/index.js';
-{% endfor %} 
+// HTTP client
+export { httpClient, HttpClient } from './http-client.js';
+export type { RequestOptions, HttpResponse, Headers } from './http-client.js';
+
+// Authentication
+export { OAuth2Auth } from './oauth2_auth.js';
+export type { OAuth2Config } from './oauth2_auth.js';
+
+// Client modules
+{% for export in exports %}
+export { {{ export.class }} } from './{{ export.module }}/index.js';
+{% endfor %}
+
+// Utilities
+export * from './paginator.js'; 

@@ -138,42 +138,14 @@ export class {{ tag|pascal_case }}Client {
         headers.set("Content-Type", "{{ content_type }}");
 {% endif %}
 
-        // Make the request
-{% if operation.security %}
-{% if ns.has_bearer_token %}
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
+        // Make the request using the HTTP client
+        const response = await this.client.httpClient.request(url + (params.toString() ? `?${params.toString()}` : ""), {
             method: "{{ operation.method | upper }}",
             headers,
 {% if operation.request_body %}
             body: body ? JSON.stringify(body) : undefined,
 {% endif %}
         });
-{% elif ns.has_oauth2_token %}
-        const response = await (this.client.oauth2Session || fetch)(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "{{ operation.method | upper }}",
-            headers,
-{% if operation.request_body %}
-            body: body ? JSON.stringify(body) : undefined,
-{% endif %}
-        });
-{% else %}
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "{{ operation.method | upper }}",
-            headers,
-{% if operation.request_body %}
-            body: body ? JSON.stringify(body) : undefined,
-{% endif %}
-        });
-{% endif %}
-{% else %}
-        const response = await fetch(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "{{ operation.method | upper }}",
-            headers,
-{% if operation.request_body %}
-            body: body ? JSON.stringify(body) : undefined,
-{% endif %}
-        });
-{% endif %}
 
         // Check for errors
         if (!response.ok) {

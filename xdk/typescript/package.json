@@ -105,7 +105,9 @@
         "typescript": "^5.0.0",
         "vitest": "^0.34.0"
     },
-    "dependencies": {},
+    "dependencies": {
+        "node-fetch": "^3.3.0"
+    },
     "publishConfig": {
         "access": "public"
     }
