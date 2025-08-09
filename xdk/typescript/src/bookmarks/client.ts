@@ -6,12 +6,12 @@
 
 import { Client } from "../client.js";
 import {
+  BookmarksGetUsersFoldersResponse,
   BookmarksGetUsersByFolderIdResponse,
   BookmarksGetUsersResponse,
   BookmarksCreateUsersRequest,
   BookmarksCreateUsersResponse,
-  BookmarksDeleteUsersResponse,
-  BookmarksGetUsersFoldersResponse
+  BookmarksDeleteUsersResponse
 } from "./models.js";
 
 /**
@@ -22,6 +22,64 @@ export class BookmarksClient {
 
   constructor(client: Client) {
     this.client = client;
+  }
+
+  /**
+     * Get Bookmark folders
+     * Retrieves a list of Bookmark folders created by the authenticated user.
+     * @param id The ID of the authenticated source User for whom to return results.
+     * @param maxResults The maximum number of results.
+     * @param paginationToken This parameter is used to get the next 'page' of results.* @returns BookmarksGetUsersFoldersResponse Response data
+     */
+  async getUsersFolders(
+    id: string,
+    maxResults?: number,
+    paginationToken?: string
+  ): Promise<BookmarksGetUsersFoldersResponse> {
+    let url = this.client.baseUrl + "/2/users/{id}/bookmarks/folders";
+
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.set("max_results", String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.set("pagination_token", String(paginationToken));
+    }
+
+    url = url.replace("{id}", String(id));
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as BookmarksGetUsersFoldersResponse;
   }
 
   /**
@@ -55,9 +113,8 @@ export class BookmarksClient {
 
     // Set authentication headers
 
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "GET",
@@ -150,9 +207,8 @@ export class BookmarksClient {
 
     // Set authentication headers
 
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "GET",
@@ -200,9 +256,8 @@ export class BookmarksClient {
 
     headers.set("Content-Type", "application/json");
 
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "POST",
@@ -253,9 +308,8 @@ export class BookmarksClient {
 
     // Set authentication headers
 
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "DELETE",
@@ -272,64 +326,5 @@ export class BookmarksClient {
     const responseData = await response.json();
 
     return responseData as BookmarksDeleteUsersResponse;
-  }
-
-  /**
-     * Get Bookmark folders
-     * Retrieves a list of Bookmark folders created by the authenticated user.
-     * @param id The ID of the authenticated source User for whom to return results.
-     * @param maxResults The maximum number of results.
-     * @param paginationToken This parameter is used to get the next 'page' of results.* @returns BookmarksGetUsersFoldersResponse Response data
-     */
-  async getUsersFolders(
-    id: string,
-    maxResults?: number,
-    paginationToken?: string
-  ): Promise<BookmarksGetUsersFoldersResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/bookmarks/folders";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.set("max_results", String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.set("pagination_token", String(paginationToken));
-    }
-
-    url = url.replace("{id}", String(id));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request
-
-    const response = await (this.client.oauth2Session || fetch)(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as BookmarksGetUsersFoldersResponse;
   }
 }

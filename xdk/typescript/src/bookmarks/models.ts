@@ -3,6 +3,15 @@
  */
 
 /**
+ * Response for getUsersFolders
+ */
+export interface BookmarksGetUsersFoldersResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  meta?: Record<string, any>;
+}
+
+/**
  * Response for getUsersByFolderId
  */
 export interface BookmarksGetUsersByFolderIdResponse {
@@ -43,13 +52,4 @@ export interface BookmarksCreateUsersResponse {
 export interface BookmarksDeleteUsersResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
-}
-
-/**
- * Response for getUsersFolders
- */
-export interface BookmarksGetUsersFoldersResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
 }

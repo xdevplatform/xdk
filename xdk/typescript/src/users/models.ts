@@ -3,75 +3,13 @@
  */
 
 /**
- * Response for unfollow
+ * Response for getListsFollowers
  */
-export interface UsersUnfollowResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for unblockDms
- */
-export interface UsersUnblockDmsResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getBlocking
- */
-export interface UsersGetBlockingResponse {
+export interface UsersGetListsFollowersResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
   meta?: Record<string, any>;
-}
-
-/**
- * Response for getByUsername
- */
-export interface UsersGetByUsernameResponse {
-  /** The X User object. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for getByIds
- */
-export interface UsersGetByIdsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for getByUsernames
- */
-export interface UsersGetByUsernamesResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for getById
- */
-export interface UsersGetByIdResponse {
-  /** The X User object. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for unmute
- */
-export interface UsersUnmuteResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
 }
 
 /**
@@ -101,21 +39,10 @@ export interface UsersMuteResponse {
 }
 
 /**
- * Response for getFollowers
+ * Response for getByIds
  */
-export interface UsersGetFollowersResponse {
+export interface UsersGetByIdsResponse {
   data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getMy
- */
-export interface UsersGetMyResponse {
-  /** The X User object. */
-  data: Record<string, any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
 }
@@ -128,6 +55,34 @@ export interface UsersSearchResponse {
   errors?: Array<any>;
   includes?: Record<string, any>;
   meta?: Record<string, any>;
+}
+
+/**
+ * Response for getBlocking
+ */
+export interface UsersGetBlockingResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getListsMembers
+ */
+export interface UsersGetListsMembersResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for unmute
+ */
+export interface UsersUnmuteResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
 }
 
 /**
@@ -157,43 +112,20 @@ export interface UsersFollowResponse {
 }
 
 /**
- * Response for getPostsLiking
+ * Response for getByUsernames
  */
-export interface UsersGetPostsLikingResponse {
+export interface UsersGetByUsernamesResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
-  meta?: Record<string, any>;
 }
 
 /**
- * Response for getListsMembers
+ * Response for unblockDms
  */
-export interface UsersGetListsMembersResponse {
-  data?: Array<any>;
+export interface UsersUnblockDmsResponse {
+  data?: Record<string, any>;
   errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getListsFollowers
- */
-export interface UsersGetListsFollowersResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getPostsRepostedBy
- */
-export interface UsersGetPostsRepostedByResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
 }
 
 /**
@@ -207,9 +139,77 @@ export interface UsersGetRepostsOfMeResponse {
 }
 
 /**
+ * Response for getFollowers
+ */
+export interface UsersGetFollowersResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
  * Response for blockDms
  */
 export interface UsersBlockDmsResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
+}
+
+/**
+ * Response for getPostsLiking
+ */
+export interface UsersGetPostsLikingResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for unfollow
+ */
+export interface UsersUnfollowResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getById
+ */
+export interface UsersGetByIdResponse {
+  /** The X User object. */
+  data: Record<string, any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+}
+
+/**
+ * Response for getPostsRepostedBy
+ */
+export interface UsersGetPostsRepostedByResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getByUsername
+ */
+export interface UsersGetByUsernameResponse {
+  /** The X User object. */
+  data: Record<string, any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+}
+
+/**
+ * Response for getMy
+ */
+export interface UsersGetMyResponse {
+  /** The X User object. */
+  data: Record<string, any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
 }

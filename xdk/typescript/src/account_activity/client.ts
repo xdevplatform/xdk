@@ -6,11 +6,11 @@
 
 import { Client } from "../client.js";
 import {
-  AccountActivityGetSubscriptionCountResponse,
   AccountActivityGetSubscriptionsResponse,
-  AccountActivityValidateSubscriptionResponse,
+  AccountActivityGetSubscriptionCountResponse,
+  AccountActivityDeleteSubscriptionResponse,
   AccountActivityCreateReplayJobResponse,
-  AccountActivityDeleteSubscriptionResponse
+  AccountActivityValidateSubscriptionResponse
 } from "./models.js";
 
 /**
@@ -21,49 +21,6 @@ export class AccountActivityClient {
 
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-     * Get subscription count
-     * Retrieves a count of currently active Account Activity subscriptions.* @returns AccountActivityGetSubscriptionCountResponse Response data
-     */
-  async getSubscriptionCount(): Promise<
-    AccountActivityGetSubscriptionCountResponse
-  > {
-    let url = this.client.baseUrl + "/2/account_activity/subscriptions/count";
-
-    const params = new URLSearchParams();
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request
-
-    const response = await fetch(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as AccountActivityGetSubscriptionCountResponse;
   }
 
   /**
@@ -93,9 +50,8 @@ export class AccountActivityClient {
       headers.set("Authorization", `Bearer ${this.client.accessToken}`);
     }
 
-    // Make the request
-
-    const response = await fetch(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "GET",
@@ -115,36 +71,29 @@ export class AccountActivityClient {
   }
 
   /**
-     * Validate subscription
-     * Checks a user’s Account Activity subscription for a given webhook.
-     * @param webhookId The webhook ID to check subscription against.* @returns AccountActivityValidateSubscriptionResponse Response data
+     * Get subscription count
+     * Retrieves a count of currently active Account Activity subscriptions.* @returns AccountActivityGetSubscriptionCountResponse Response data
      */
-  async validateSubscription(
-    webhookId: string
-  ): Promise<AccountActivityValidateSubscriptionResponse> {
-    let url =
-      this.client.baseUrl +
-      "/2/account_activity/webhooks/{webhook_id}/subscriptions/all";
+  async getSubscriptionCount(): Promise<
+    AccountActivityGetSubscriptionCountResponse
+  > {
+    let url = this.client.baseUrl + "/2/account_activity/subscriptions/count";
 
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
     const params = new URLSearchParams();
-
-    url = url.replace("{webhook_id}", String(webhookId));
 
     // Create headers by copying the client's headers
     const headers = new Headers(this.client.headers);
 
     // Set authentication headers
 
-    // Make the request
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
 
-    const response = await (this.client.oauth2Session || fetch)(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "GET",
@@ -160,7 +109,58 @@ export class AccountActivityClient {
     // Parse the response data
     const responseData = await response.json();
 
-    return responseData as AccountActivityValidateSubscriptionResponse;
+    return responseData as AccountActivityGetSubscriptionCountResponse;
+  }
+
+  /**
+     * Delete subscription
+     * Deletes an Account Activity subscription for the given webhook and user ID.
+     * @param webhookId The webhook ID to check subscription against.
+     * @param userId User ID to unsubscribe from.* @returns AccountActivityDeleteSubscriptionResponse Response data
+     */
+  async deleteSubscription(
+    webhookId: string,
+    userId: string
+  ): Promise<AccountActivityDeleteSubscriptionResponse> {
+    let url =
+      this.client.baseUrl +
+      "/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all";
+
+    const params = new URLSearchParams();
+
+    url = url.replace("{webhook_id}", String(webhookId));
+
+    url = url.replace("{user_id}", String(userId));
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
+
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "DELETE",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as AccountActivityDeleteSubscriptionResponse;
   }
 
   /**
@@ -202,9 +202,8 @@ export class AccountActivityClient {
       headers.set("Authorization", `Bearer ${this.client.accessToken}`);
     }
 
-    // Make the request
-
-    const response = await fetch(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "POST",
@@ -224,42 +223,38 @@ export class AccountActivityClient {
   }
 
   /**
-     * Delete subscription
-     * Deletes an Account Activity subscription for the given webhook and user ID.
-     * @param webhookId The webhook ID to check subscription against.
-     * @param userId User ID to unsubscribe from.* @returns AccountActivityDeleteSubscriptionResponse Response data
+     * Validate subscription
+     * Checks a user’s Account Activity subscription for a given webhook.
+     * @param webhookId The webhook ID to check subscription against.* @returns AccountActivityValidateSubscriptionResponse Response data
      */
-  async deleteSubscription(
-    webhookId: string,
-    userId: string
-  ): Promise<AccountActivityDeleteSubscriptionResponse> {
+  async validateSubscription(
+    webhookId: string
+  ): Promise<AccountActivityValidateSubscriptionResponse> {
     let url =
       this.client.baseUrl +
-      "/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all";
+      "/2/account_activity/webhooks/{webhook_id}/subscriptions/all";
 
+    // Ensure we have a valid access token
+    if (this.client.oauth2Auth && this.client.token) {
+      // Check if token needs refresh
+      if (this.client.isTokenExpired()) {
+        await this.client.refreshToken();
+      }
+    }
     const params = new URLSearchParams();
 
     url = url.replace("{webhook_id}", String(webhookId));
-
-    url = url.replace("{user_id}", String(userId));
 
     // Create headers by copying the client's headers
     const headers = new Headers(this.client.headers);
 
     // Set authentication headers
 
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request
-
-    const response = await fetch(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
-        method: "DELETE",
+        method: "GET",
         headers
       }
     );
@@ -272,6 +267,6 @@ export class AccountActivityClient {
     // Parse the response data
     const responseData = await response.json();
 
-    return responseData as AccountActivityDeleteSubscriptionResponse;
+    return responseData as AccountActivityValidateSubscriptionResponse;
   }
 }

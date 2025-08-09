@@ -6,11 +6,11 @@
 
 import { Client } from "../client.js";
 import {
+  WebhooksValidateResponse,
+  WebhooksDeleteResponse,
   WebhooksGetResponse,
   WebhooksCreateRequest,
-  WebhooksCreateResponse,
-  WebhooksValidateResponse,
-  WebhooksDeleteResponse
+  WebhooksCreateResponse
 } from "./models.js";
 
 /**
@@ -21,100 +21,6 @@ export class WebhooksClient {
 
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-     * Get webhook
-     * Get a list of webhook configs associated with a client app.
-     * @param webhookConfigfields A comma separated list of WebhookConfig fields to display.* @returns WebhooksGetResponse Response data
-     */
-  async get(webhookConfigfields?: Array<any>): Promise<WebhooksGetResponse> {
-    let url = this.client.baseUrl + "/2/webhooks";
-
-    const params = new URLSearchParams();
-
-    if (webhookConfigfields !== undefined) {
-      params.set(
-        "webhook_config.fields",
-        webhookConfigfields.map(String).join(",")
-      );
-    }
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request
-
-    const response = await fetch(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as WebhooksGetResponse;
-  }
-
-  /**
-     * Create webhook
-     * Creates a new webhook configuration.* @param body Request body* @returns WebhooksCreateResponse Response data
-     */
-  async create(body?: WebhooksCreateRequest): Promise<WebhooksCreateResponse> {
-    let url = this.client.baseUrl + "/2/webhooks";
-
-    const params = new URLSearchParams();
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    headers.set("Content-Type", "application/json");
-
-    // Make the request
-
-    const response = await fetch(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as WebhooksCreateResponse;
   }
 
   /**
@@ -140,9 +46,8 @@ export class WebhooksClient {
       headers.set("Authorization", `Bearer ${this.client.accessToken}`);
     }
 
-    // Make the request
-
-    const response = await fetch(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "PUT",
@@ -184,9 +89,8 @@ export class WebhooksClient {
       headers.set("Authorization", `Bearer ${this.client.accessToken}`);
     }
 
-    // Make the request
-
-    const response = await fetch(
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
       url + (params.toString() ? `?${params.toString()}` : ""),
       {
         method: "DELETE",
@@ -203,5 +107,97 @@ export class WebhooksClient {
     const responseData = await response.json();
 
     return responseData as WebhooksDeleteResponse;
+  }
+
+  /**
+     * Get webhook
+     * Get a list of webhook configs associated with a client app.
+     * @param webhookConfigfields A comma separated list of WebhookConfig fields to display.* @returns WebhooksGetResponse Response data
+     */
+  async get(webhookConfigfields?: Array<any>): Promise<WebhooksGetResponse> {
+    let url = this.client.baseUrl + "/2/webhooks";
+
+    const params = new URLSearchParams();
+
+    if (webhookConfigfields !== undefined) {
+      params.set(
+        "webhook_config.fields",
+        webhookConfigfields.map(String).join(",")
+      );
+    }
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
+
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "GET",
+        headers
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as WebhooksGetResponse;
+  }
+
+  /**
+     * Create webhook
+     * Creates a new webhook configuration.* @param body Request body* @returns WebhooksCreateResponse Response data
+     */
+  async create(body?: WebhooksCreateRequest): Promise<WebhooksCreateResponse> {
+    let url = this.client.baseUrl + "/2/webhooks";
+
+    const params = new URLSearchParams();
+
+    // Create headers by copying the client's headers
+    const headers = new Headers(this.client.headers);
+
+    // Set authentication headers
+
+    if (this.client.bearerToken) {
+      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
+    } else if (this.client.accessToken) {
+      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    }
+
+    headers.set("Content-Type", "application/json");
+
+    // Make the request using the HTTP client
+    const response = await this.client.httpClient.request(
+      url + (params.toString() ? `?${params.toString()}` : ""),
+      {
+        method: "POST",
+        headers,
+
+        body: body ? JSON.stringify(body) : undefined
+      }
+    );
+
+    // Check for errors
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    // Parse the response data
+    const responseData = await response.json();
+
+    return responseData as WebhooksCreateResponse;
   }
 }

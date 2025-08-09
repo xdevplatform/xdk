@@ -3,20 +3,13 @@
  */
 
 /**
- * Response for getDmEventsById
+ * Response for getDmEvents
  */
-export interface DirectMessagesGetDmEventsByIdResponse {
-  data: Record<string, any>;
+export interface DirectMessagesGetDmEventsResponse {
+  data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
-}
-
-/**
- * Response for deleteDmEvents
- */
-export interface DirectMessagesDeleteDmEventsResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
+  meta?: Record<string, any>;
 }
 
 /**
@@ -30,16 +23,6 @@ export interface DirectMessagesCreateDmByConversationIdRequest {}
 export interface DirectMessagesCreateDmByConversationIdResponse {
   data: Record<string, any>;
   errors?: Array<any>;
-}
-
-/**
- * Response for getDmEventsByParticipantId
- */
-export interface DirectMessagesGetDmEventsByParticipantIdResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
 }
 
 /**
@@ -62,6 +45,29 @@ export interface DirectMessagesCreateDmConversationsResponse {
 }
 
 /**
+ * Request body for createDmByParticipantId
+ */
+export interface DirectMessagesCreateDmByParticipantIdRequest {}
+
+/**
+ * Response for createDmByParticipantId
+ */
+export interface DirectMessagesCreateDmByParticipantIdResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getDmEventsByParticipantId
+ */
+export interface DirectMessagesGetDmEventsByParticipantIdResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
  * Response for getDmConversationsIdDmEvents
  */
 export interface DirectMessagesGetDmConversationsIdDmEventsResponse {
@@ -72,24 +78,18 @@ export interface DirectMessagesGetDmConversationsIdDmEventsResponse {
 }
 
 /**
- * Response for getDmEvents
+ * Response for getDmEventsById
  */
-export interface DirectMessagesGetDmEventsResponse {
-  data?: Array<any>;
+export interface DirectMessagesGetDmEventsByIdResponse {
+  data: Record<string, any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
-  meta?: Record<string, any>;
 }
 
 /**
- * Request body for createDmByParticipantId
+ * Response for deleteDmEvents
  */
-export interface DirectMessagesCreateDmByParticipantIdRequest {}
-
-/**
- * Response for createDmByParticipantId
- */
-export interface DirectMessagesCreateDmByParticipantIdResponse {
-  data: Record<string, any>;
+export interface DirectMessagesDeleteDmEventsResponse {
+  data?: Record<string, any>;
   errors?: Array<any>;
 }

@@ -3,15 +3,6 @@
  */
 
 /**
- * Response for getSubscriptionCount
- */
-export interface AccountActivityGetSubscriptionCountResponse {
-  /** The count of active subscriptions across all webhooks */
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
  * Response for getSubscriptions
  */
 export interface AccountActivityGetSubscriptionsResponse {
@@ -21,9 +12,18 @@ export interface AccountActivityGetSubscriptionsResponse {
 }
 
 /**
- * Response for validateSubscription
+ * Response for getSubscriptionCount
  */
-export interface AccountActivityValidateSubscriptionResponse {
+export interface AccountActivityGetSubscriptionCountResponse {
+  /** The count of active subscriptions across all webhooks */
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for deleteSubscription
+ */
+export interface AccountActivityDeleteSubscriptionResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
@@ -40,9 +40,9 @@ export interface AccountActivityCreateReplayJobResponse {
 }
 
 /**
- * Response for deleteSubscription
+ * Response for validateSubscription
  */
-export interface AccountActivityDeleteSubscriptionResponse {
+export interface AccountActivityValidateSubscriptionResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
