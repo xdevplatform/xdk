@@ -4,8 +4,8 @@
  * This module provides a client for interacting with the Usage endpoints of the X API.
  */
 
-import { Client } from "../client.js";
-import { UsageGetResponse } from "./models.js";
+import { Client, ApiResponse, RequestOptions } from '../client.js';
+import { UsageGetResponse } from './models.js';
 
 /**
  * Client for Usage operations
@@ -21,52 +21,37 @@ export class UsageClient {
      * Get usage
      * Retrieves usage statistics for Posts over a specified number of days.
      * @param days The number of days for which you need usage for.
-     * @param usagefields A comma separated list of Usage fields to display.* @returns UsageGetResponse Response data
+     * @param usagefields A comma separated list of Usage fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async get(
+    usagefields?: Array<any>,
     days?: number,
-    usagefields?: Array<any>
-  ): Promise<UsageGetResponse> {
-    let url = this.client.baseUrl + "/2/usage/tweets";
-
+    options?: RequestOptions
+  ): Promise<ApiResponse<UsageGetResponse>> {
     const params = new URLSearchParams();
 
     if (days !== undefined) {
-      params.set("days", String(days));
+      params.set('days', String(days));
     }
 
     if (usagefields !== undefined) {
-      params.set("usage.fields", usagefields.map(String).join(","));
+      params.set('usage.fields', String(usagefields));
     }
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/usage/tweets`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<UsageGetResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as UsageGetResponse;
   }
 }

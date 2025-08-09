@@ -1,53 +1,47 @@
 {
-    "compilerOptions": {
-        // Latest ECMAScript target
-        "target": "ES2022",
-        // Use Node.js module resolution
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
-        // Include all modern APIs
-        "lib": ["ES2022", "DOM", "DOM.Iterable"],
-        // Generate .d.ts files
-        "declaration": true,
-        "declarationMap": true,
-        // Source maps for debugging
-        "sourceMap": true,
-        // Output directory
-        "outDir": "./dist",
-        "rootDir": "./src",
-        // Strict type checking
-        "strict": true,
-        "noImplicitAny": true,
-        "strictNullChecks": true,
-        "strictFunctionTypes": true,
-        "strictBindCallApply": true,
-        "strictPropertyInitialization": true,
-        "noImplicitThis": true,
-        "useUnknownInCatchVariables": true,
-        "alwaysStrict": true,
-        // Module features
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        // Additional checks
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true,
-        "noUncheckedIndexedAccess": true,
-        // Latest features
-        "useDefineForClassFields": true,
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
-        // Path aliases for cleaner imports
-        "baseUrl": "./src",
-        "paths": {
-            "@/*": ["*"]
-        },
-        // Other
-        "skipLibCheck": true,
-        "forceConsistentCasingInFileNames": true,
-        "isolatedModules": true
-    },
-    "include": ["src/**/*"],
-    "exclude": ["node_modules", "dist", "**/*.test.ts", "**/*.spec.ts"]
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "strictFunctionTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": false,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "exactOptionalPropertyTypes": false,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": false,
+    "noEmit": false,
+    "incremental": true,
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "**/*.test.ts",
+    "**/*.spec.ts"
+  ],
+  "ts-node": {
+    "esm": true
+  }
 } 

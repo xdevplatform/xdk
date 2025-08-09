@@ -9,18 +9,205 @@
 export { Client } from './client.js';
 export type { ClientConfig } from './client.js';
 
+// Error handling
+export { ApiError } from './client.js';
+export type { RequestOptions, ApiResponse, PaginatedResponse, PaginationMeta } from './client.js';
+
 // HTTP client
 export { httpClient, HttpClient } from './http-client.js';
-export type { RequestOptions, HttpResponse, Headers } from './http-client.js';
+export type { RequestOptions as HttpClientRequestOptions, HttpResponse } from './http-client.js';
 
 // Authentication
 export { OAuth2Auth } from './oauth2_auth.js';
 export type { OAuth2Config } from './oauth2_auth.js';
 
-// Client modules
-{% for export in exports %}
-export { {{ export.class }} } from './{{ export.module }}/index.js';
+// Client modules and their types
+{% for tag in tags %}
+export * from './{{ tag | snake_case }}/index.js';
 {% endfor %}
 
 // Utilities
-export * from './paginator.js'; 
+export * from './paginator.js';
+
+// Re-export commonly used types with better names
+export type {
+  // Posts types
+  PostResponse,
+  PostsResponse,
+  CreatePostRequest,
+  CreatePostResponse,
+  LikePostRequest,
+  LikePostResponse,
+  UnlikePostResponse,
+  RepostRequest,
+  RepostResponse,
+  DeletePostResponse,
+  SearchPostsResponse,
+  UserTimelineResponse,
+  LikedPostsResponse,
+  RepostsResponse,
+  QuotedPostsResponse,
+  MentionsResponse,
+  PostCountsResponse,
+  AllPostCountsResponse,
+  PostInsightsResponse,
+  HistoricalPostInsightsResponse,
+  PostAnalyticsResponse,
+  HideReplyRequest,
+  HideReplyResponse,
+  UnrepostResponse,
+  
+  // Users types
+  UserResponse,
+  UsersResponse,
+  CurrentUserResponse,
+  UserByUsernameResponse,
+  UsersByUsernameResponse,
+  UserFollowersResponse,
+  UserFollowingResponse,
+  UserPostsResponse,
+  UserLikedPostsResponse,
+  UserRetweetedPostsResponse,
+  UserMentionsResponse,
+  UserTimelinePostsResponse,
+  FollowUserRequest,
+  FollowUserResponse,
+  UnfollowUserRequest,
+  UnfollowUserResponse,
+  BlockUserRequest,
+  BlockUserResponse,
+  UnblockUserRequest,
+  UnblockUserResponse,
+  MuteUserRequest,
+  MuteUserResponse,
+  UnmuteUserRequest,
+  UnmuteUserResponse,
+  
+  // Lists types
+  ListResponse,
+  ListsResponse,
+  ListUsersResponse,
+  UserListsResponse,
+  ListFollowersResponse,
+  ListMembersResponse,
+  CreateListRequest,
+  CreateListResponse,
+  UpdateListRequest,
+  UpdateListResponse,
+  DeleteListResponse,
+  AddListMemberRequest,
+  AddListMemberResponse,
+  RemoveListMemberRequest,
+  RemoveListMemberResponse,
+  FollowListRequest,
+  FollowListResponse,
+  UnfollowListRequest,
+  UnfollowListResponse,
+  
+  // Spaces types
+  SpaceResponse,
+  SpacesResponse,
+  CreatorSpacesResponse,
+  SearchSpacesResponse,
+  SpaceBuyersResponse,
+  SpaceTweetsResponse,
+  
+  // Media types
+  MediaResponse,
+  MediaListResponse,
+  UploadMediaRequest,
+  UploadMediaResponse,
+  InitializeMediaUploadRequest,
+  InitializeMediaUploadResponse,
+  AppendMediaUploadRequest,
+  AppendMediaUploadResponse,
+  CreateMediaSubtitlesRequest,
+  CreateMediaSubtitlesResponse,
+  DeleteMediaSubtitlesRequest,
+  DeleteMediaSubtitlesResponse,
+  CreateMediaMetadataRequest,
+  CreateMediaMetadataResponse,
+  
+  // Bookmarks types
+  BookmarkedPostsResponse,
+  CreateBookmarkRequest,
+  CreateBookmarkResponse,
+  DeleteBookmarkRequest,
+  DeleteBookmarkResponse,
+  
+  // Direct Messages types
+  DirectMessagesResponse,
+  CreateDirectMessageRequest,
+  CreateDirectMessageResponse,
+  CreateDmConversationRequest,
+  CreateDmConversationResponse,
+  CreateDmByParticipantRequest,
+  CreateDmByParticipantResponse,
+  
+  // Communities types
+  CommunityResponse,
+  CommunitiesResponse,
+  CommunityRulesResponse,
+  CommunityBannedUsersResponse,
+  CommunityMembersResponse,
+  CommunityModeratorsResponse,
+  CommunityPendingFollowersResponse,
+  CommunityFollowersResponse,
+  CommunityAdminsResponse,
+  
+  // Trends types
+  PersonalizedTrendsResponse,
+  AvailableTrendsResponse,
+  
+  // Usage types
+  UsageResponse,
+  
+  // Compliance types
+  ComplianceJobsResponse,
+  ComplianceJobResponse,
+  CreateComplianceJobRequest,
+  CreateComplianceJobResponse,
+  
+  // Webhooks types
+  WebhooksResponse,
+  CreateWebhookRequest,
+  CreateWebhookResponse,
+  DeleteWebhookResponse,
+  
+  // Account Activity types
+  AccountActivitySubscriptionsResponse,
+  CreateAccountActivitySubscriptionRequest,
+  CreateAccountActivitySubscriptionResponse,
+  DeleteAccountActivitySubscriptionResponse,
+  
+  // AAA Subscriptions types
+  CreateAaaSubscriptionRequest,
+  CreateAaaSubscriptionResponse,
+  
+  // Connection types
+  ConnectionResponse,
+  
+  // General types
+  SettingsResponse,
+  
+  // Community Notes types
+  CommunityNotesResponse,
+  CreateCommunityNoteRequest,
+  CreateCommunityNoteResponse,
+  CommunityNotesListResponse,
+  
+  // Stream types
+  StreamRulesResponse,
+  UpdateStreamRulesRequest,
+  UpdateStreamRulesResponse,
+  StreamRuleCountsResponse,
+  StreamPostsResponse,
+  StreamPostsFirehoseResponse,
+  StreamPostsSampleResponse,
+  StreamPostsComplianceResponse,
+  StreamLikesFirehoseResponse,
+  StreamLikesSampleResponse,
+  StreamLikesComplianceResponse,
+  StreamUsersComplianceResponse,
+  StreamLabelsComplianceResponse
+} from './posts/index.js'; 

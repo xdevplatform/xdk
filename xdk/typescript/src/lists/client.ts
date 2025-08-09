@@ -4,28 +4,28 @@
  * This module provides a client for interacting with the Lists endpoints of the X API.
  */
 
-import { Client } from "../client.js";
+import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
   ListsUnpinResponse,
-  ListsGetUsersOwnedResponse,
-  ListsGetUsersPinnedResponse,
-  ListsPinRequest,
-  ListsPinResponse,
-  ListsGetUsersFollowedResponse,
-  ListsFollowRequest,
-  ListsFollowResponse,
   ListsAddMemberRequest,
   ListsAddMemberResponse,
   ListsCreateRequest,
   ListsCreateResponse,
+  ListsGetUsersFollowedResponse,
+  ListsFollowRequest,
+  ListsFollowResponse,
   ListsGetUsersMembershipsResponse,
+  ListsGetUsersPinnedResponse,
+  ListsPinRequest,
+  ListsPinResponse,
+  ListsRemoveMemberByUserIdResponse,
   ListsGetByIdResponse,
   ListsUpdateRequest,
   ListsUpdateResponse,
   ListsDeleteResponse,
   ListsUnfollowResponse,
-  ListsRemoveMemberByUserIdResponse
-} from "./models.js";
+  ListsGetUsersOwnedResponse,
+} from './models.js';
 
 /**
  * Client for Lists operations
@@ -41,241 +41,100 @@ export class ListsClient {
      * Unpin List
      * Causes the authenticated user to unpin a specific List by its ID.
      * @param id The ID of the authenticated source User for whom to return results.
-     * @param listId The ID of the List to unpin.* @returns ListsUnpinResponse Response data
+     * @param listId The ID of the List to unpin.* @param options Additional request options
+     * @returns Promise with the API response
      */
-  async unpin(id: string, listId: string): Promise<ListsUnpinResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/pinned_lists/{list_id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    url = url.replace("{id}", String(id));
-
-    url = url.replace("{list_id}", String(listId));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "DELETE",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsUnpinResponse;
-  }
-
-  /**
-     * Get owned Lists
-     * Retrieves a list of Lists owned by a specific User by their ID.
-     * @param id The ID of the User to lookup.
-     * @param maxResults The maximum number of results.
-     * @param paginationToken This parameter is used to get a specified 'page' of results.
-     * @param listfields A comma separated list of List fields to display.
-     * @param expansions A comma separated list of fields to expand.
-     * @param userfields A comma separated list of User fields to display.* @returns ListsGetUsersOwnedResponse Response data
-     */
-  async getUsersOwned(
+  async unpin(
+    listId: string,
     id: string,
-    maxResults?: number,
-    paginationToken?: string,
-    listfields?: Array<any>,
-    expansions?: Array<any>,
-    userfields?: Array<any>
-  ): Promise<ListsGetUsersOwnedResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/owned_lists";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsUnpinResponse>> {
     const params = new URLSearchParams();
 
-    if (maxResults !== undefined) {
-      params.set("max_results", String(maxResults));
-    }
+    const path = `/2/users/{id}/pinned_lists/{list_id}`
+      .replace('{id}', String(id))
+      .replace('{list_id}', String(listId));
 
-    if (paginationToken !== undefined) {
-      params.set("pagination_token", String(paginationToken));
-    }
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    if (listfields !== undefined) {
-      params.set("list.fields", listfields.map(String).join(","));
-    }
-
-    if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
-    }
-
-    if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
-    }
-
-    url = url.replace("{id}", String(id));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<ListsUnpinResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsGetUsersOwnedResponse;
   }
 
   /**
-     * Get pinned Lists
-     * Retrieves a list of Lists pinned by the authenticated user.
-     * @param id The ID of the authenticated source User for whom to return results.
-     * @param listfields A comma separated list of List fields to display.
-     * @param expansions A comma separated list of fields to expand.
-     * @param userfields A comma separated list of User fields to display.* @returns ListsGetUsersPinnedResponse Response data
+     * Add List member
+     * Adds a User to a specific List by its ID.
+     * @param id The ID of the List for which to add a member.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
      */
-  async getUsersPinned(
+  async addMember(
     id: string,
-    listfields?: Array<any>,
-    expansions?: Array<any>,
-    userfields?: Array<any>
-  ): Promise<ListsGetUsersPinnedResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/pinned_lists";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    body?: ListsAddMemberRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsAddMemberResponse>> {
     const params = new URLSearchParams();
 
-    if (listfields !== undefined) {
-      params.set("list.fields", listfields.map(String).join(","));
+    const path = `/2/lists/{id}/members`.replace('{id}', String(id));
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+
+        'Content-Type': 'application/json',
+      },
+    };
+
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
     }
 
-    if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
-    }
-
-    if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
-    }
-
-    url = url.replace("{id}", String(id));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<ListsAddMemberResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsGetUsersPinnedResponse;
   }
 
   /**
-     * Pin List
-     * Causes the authenticated user to pin a specific List by its ID.
-     * @param id The ID of the authenticated source User that will pin the List.* @param body Request body* @returns ListsPinResponse Response data
+     * Create List
+     * Creates a new List for the authenticated user.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
      */
-  async pin(id: string, body: ListsPinRequest): Promise<ListsPinResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/pinned_lists";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+  async create(
+    body?: ListsCreateRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsCreateResponse>> {
     const params = new URLSearchParams();
 
-    url = url.replace("{id}", String(id));
+    const path = `/2/lists`;
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
 
-    // Set authentication headers
+        'Content-Type': 'application/json',
+      },
+    };
 
-    headers.set("Content-Type", "application/json");
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
     }
 
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsPinResponse;
+    return this.client.request<ListsCreateResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
   }
 
   /**
@@ -286,225 +145,89 @@ export class ListsClient {
      * @param paginationToken This parameter is used to get a specified 'page' of results.
      * @param listfields A comma separated list of List fields to display.
      * @param expansions A comma separated list of fields to expand.
-     * @param userfields A comma separated list of User fields to display.* @returns ListsGetUsersFollowedResponse Response data
+     * @param userfields A comma separated list of User fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async getUsersFollowed(
     id: string,
-    maxResults?: number,
-    paginationToken?: string,
+    userfields?: Array<any>,
     listfields?: Array<any>,
+    paginationToken?: string,
+    maxResults?: number,
     expansions?: Array<any>,
-    userfields?: Array<any>
-  ): Promise<ListsGetUsersFollowedResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/followed_lists";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsGetUsersFollowedResponse>> {
     const params = new URLSearchParams();
 
     if (maxResults !== undefined) {
-      params.set("max_results", String(maxResults));
+      params.set('max_results', String(maxResults));
     }
 
     if (paginationToken !== undefined) {
-      params.set("pagination_token", String(paginationToken));
+      params.set('pagination_token', String(paginationToken));
     }
 
     if (listfields !== undefined) {
-      params.set("list.fields", listfields.map(String).join(","));
+      params.set('list.fields', String(listfields));
     }
 
     if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
+      params.set('expansions', String(expansions));
     }
 
     if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
+      params.set('user.fields', String(userfields));
     }
 
-    url = url.replace("{id}", String(id));
+    const path = `/2/users/{id}/followed_lists`.replace('{id}', String(id));
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<ListsGetUsersFollowedResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsGetUsersFollowedResponse;
   }
 
   /**
      * Follow List
      * Causes the authenticated user to follow a specific List by its ID.
-     * @param id The ID of the authenticated source User that will follow the List.* @param body Request body* @returns ListsFollowResponse Response data
+     * @param id The ID of the authenticated source User that will follow the List.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
      */
   async follow(
     id: string,
-    body?: ListsFollowRequest
-  ): Promise<ListsFollowResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/followed_lists";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    body?: ListsFollowRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsFollowResponse>> {
     const params = new URLSearchParams();
 
-    url = url.replace("{id}", String(id));
+    const path = `/2/users/{id}/followed_lists`.replace('{id}', String(id));
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
 
-    // Set authentication headers
+        'Content-Type': 'application/json',
+      },
+    };
 
-    headers.set("Content-Type", "application/json");
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
+    }
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
+    return this.client.request<ListsFollowResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsFollowResponse;
-  }
-
-  /**
-     * Add List member
-     * Adds a User to a specific List by its ID.
-     * @param id The ID of the List for which to add a member.* @param body Request body* @returns ListsAddMemberResponse Response data
-     */
-  async addMember(
-    id: string,
-    body?: ListsAddMemberRequest
-  ): Promise<ListsAddMemberResponse> {
-    let url = this.client.baseUrl + "/2/lists/{id}/members";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    url = url.replace("{id}", String(id));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    headers.set("Content-Type", "application/json");
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsAddMemberResponse;
-  }
-
-  /**
-     * Create List
-     * Creates a new List for the authenticated user.* @param body Request body* @returns ListsCreateResponse Response data
-     */
-  async create(body?: ListsCreateRequest): Promise<ListsCreateResponse> {
-    let url = this.client.baseUrl + "/2/lists";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    headers.set("Content-Type", "application/json");
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsCreateResponse;
   }
 
   /**
@@ -515,78 +238,167 @@ export class ListsClient {
      * @param paginationToken This parameter is used to get a specified 'page' of results.
      * @param listfields A comma separated list of List fields to display.
      * @param expansions A comma separated list of fields to expand.
-     * @param userfields A comma separated list of User fields to display.* @returns ListsGetUsersMembershipsResponse Response data
+     * @param userfields A comma separated list of User fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async getUsersMemberships(
     id: string,
-    maxResults?: number,
-    paginationToken?: string,
+    userfields?: Array<any>,
     listfields?: Array<any>,
+    paginationToken?: string,
+    maxResults?: number,
     expansions?: Array<any>,
-    userfields?: Array<any>
-  ): Promise<ListsGetUsersMembershipsResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/list_memberships";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsGetUsersMembershipsResponse>> {
     const params = new URLSearchParams();
 
     if (maxResults !== undefined) {
-      params.set("max_results", String(maxResults));
+      params.set('max_results', String(maxResults));
     }
 
     if (paginationToken !== undefined) {
-      params.set("pagination_token", String(paginationToken));
+      params.set('pagination_token', String(paginationToken));
     }
 
     if (listfields !== undefined) {
-      params.set("list.fields", listfields.map(String).join(","));
+      params.set('list.fields', String(listfields));
     }
 
     if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
+      params.set('expansions', String(expansions));
     }
 
     if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
+      params.set('user.fields', String(userfields));
     }
 
-    url = url.replace("{id}", String(id));
+    const path = `/2/users/{id}/list_memberships`.replace('{id}', String(id));
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<ListsGetUsersMembershipsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
+  }
 
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+  /**
+     * Get pinned Lists
+     * Retrieves a list of Lists pinned by the authenticated user.
+     * @param id The ID of the authenticated source User for whom to return results.
+     * @param listfields A comma separated list of List fields to display.
+     * @param expansions A comma separated list of fields to expand.
+     * @param userfields A comma separated list of User fields to display.* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async getUsersPinned(
+    id: string,
+    userfields?: Array<any>,
+    listfields?: Array<any>,
+    expansions?: Array<any>,
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsGetUsersPinnedResponse>> {
+    const params = new URLSearchParams();
+
+    if (listfields !== undefined) {
+      params.set('list.fields', String(listfields));
     }
 
-    // Parse the response data
-    const responseData = await response.json();
+    if (expansions !== undefined) {
+      params.set('expansions', String(expansions));
+    }
 
-    return responseData as ListsGetUsersMembershipsResponse;
+    if (userfields !== undefined) {
+      params.set('user.fields', String(userfields));
+    }
+
+    const path = `/2/users/{id}/pinned_lists`.replace('{id}', String(id));
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<ListsGetUsersPinnedResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
+
+  /**
+     * Pin List
+     * Causes the authenticated user to pin a specific List by its ID.
+     * @param id The ID of the authenticated source User that will pin the List.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async pin(
+    id: string,
+    body: ListsPinRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsPinResponse>> {
+    const params = new URLSearchParams();
+
+    const path = `/2/users/{id}/pinned_lists`.replace('{id}', String(id));
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+
+        'Content-Type': 'application/json',
+      },
+    };
+
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
+    }
+
+    return this.client.request<ListsPinResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
+
+  /**
+     * Remove List member
+     * Removes a User from a specific List by its ID and the User’s ID.
+     * @param id The ID of the List to remove a member.
+     * @param userId The ID of User that will be removed from the List.* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async removeMemberByUserId(
+    userId: string,
+    id: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsRemoveMemberByUserIdResponse>> {
+    const params = new URLSearchParams();
+
+    const path = `/2/lists/{id}/members/{user_id}`
+      .replace('{id}', String(id))
+      .replace('{user_id}', String(userId));
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<ListsRemoveMemberByUserIdResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
   }
 
   /**
@@ -595,259 +407,196 @@ export class ListsClient {
      * @param id The ID of the List.
      * @param listfields A comma separated list of List fields to display.
      * @param expansions A comma separated list of fields to expand.
-     * @param userfields A comma separated list of User fields to display.* @returns ListsGetByIdResponse Response data
+     * @param userfields A comma separated list of User fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async getById(
     id: string,
+    userfields?: Array<any>,
     listfields?: Array<any>,
     expansions?: Array<any>,
-    userfields?: Array<any>
-  ): Promise<ListsGetByIdResponse> {
-    let url = this.client.baseUrl + "/2/lists/{id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsGetByIdResponse>> {
     const params = new URLSearchParams();
 
     if (listfields !== undefined) {
-      params.set("list.fields", listfields.map(String).join(","));
+      params.set('list.fields', String(listfields));
     }
 
     if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
+      params.set('expansions', String(expansions));
     }
 
     if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
+      params.set('user.fields', String(userfields));
     }
 
-    url = url.replace("{id}", String(id));
+    const path = `/2/lists/{id}`.replace('{id}', String(id));
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<ListsGetByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsGetByIdResponse;
   }
 
   /**
      * Update List
      * Updates the details of a specific List owned by the authenticated user by its ID.
-     * @param id The ID of the List to modify.* @param body Request body* @returns ListsUpdateResponse Response data
+     * @param id The ID of the List to modify.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
      */
   async update(
     id: string,
-    body?: ListsUpdateRequest
-  ): Promise<ListsUpdateResponse> {
-    let url = this.client.baseUrl + "/2/lists/{id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    body?: ListsUpdateRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsUpdateResponse>> {
     const params = new URLSearchParams();
 
-    url = url.replace("{id}", String(id));
+    const path = `/2/lists/{id}`.replace('{id}', String(id));
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
 
-    // Set authentication headers
+        'Content-Type': 'application/json',
+      },
+    };
 
-    headers.set("Content-Type", "application/json");
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "PUT",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
     }
 
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsUpdateResponse;
+    return this.client.request<ListsUpdateResponse>(
+      'PUT',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
   }
 
   /**
      * Delete List
      * Deletes a specific List owned by the authenticated user by its ID.
-     * @param id The ID of the List to delete.* @returns ListsDeleteResponse Response data
+     * @param id The ID of the List to delete.* @param options Additional request options
+     * @returns Promise with the API response
      */
-  async delete(id: string): Promise<ListsDeleteResponse> {
-    let url = this.client.baseUrl + "/2/lists/{id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+  async delete(
+    id: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsDeleteResponse>> {
     const params = new URLSearchParams();
 
-    url = url.replace("{id}", String(id));
+    const path = `/2/lists/{id}`.replace('{id}', String(id));
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Set authentication headers
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "DELETE",
-        headers
-      }
+    return this.client.request<ListsDeleteResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsDeleteResponse;
   }
 
   /**
      * Unfollow List
      * Causes the authenticated user to unfollow a specific List by its ID.
      * @param id The ID of the authenticated source User that will unfollow the List.
-     * @param listId The ID of the List to unfollow.* @returns ListsUnfollowResponse Response data
+     * @param listId The ID of the List to unfollow.* @param options Additional request options
+     * @returns Promise with the API response
      */
-  async unfollow(id: string, listId: string): Promise<ListsUnfollowResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/followed_lists/{list_id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+  async unfollow(
+    listId: string,
+    id: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsUnfollowResponse>> {
     const params = new URLSearchParams();
 
-    url = url.replace("{id}", String(id));
+    const path = `/2/users/{id}/followed_lists/{list_id}`
+      .replace('{id}', String(id))
+      .replace('{list_id}', String(listId));
 
-    url = url.replace("{list_id}", String(listId));
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "DELETE",
-        headers
-      }
+    return this.client.request<ListsUnfollowResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ListsUnfollowResponse;
   }
 
   /**
-     * Remove List member
-     * Removes a User from a specific List by its ID and the User’s ID.
-     * @param id The ID of the List to remove a member.
-     * @param userId The ID of User that will be removed from the List.* @returns ListsRemoveMemberByUserIdResponse Response data
+     * Get owned Lists
+     * Retrieves a list of Lists owned by a specific User by their ID.
+     * @param id The ID of the User to lookup.
+     * @param maxResults The maximum number of results.
+     * @param paginationToken This parameter is used to get a specified 'page' of results.
+     * @param listfields A comma separated list of List fields to display.
+     * @param expansions A comma separated list of fields to expand.
+     * @param userfields A comma separated list of User fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
-  async removeMemberByUserId(
+  async getUsersOwned(
     id: string,
-    userId: string
-  ): Promise<ListsRemoveMemberByUserIdResponse> {
-    let url = this.client.baseUrl + "/2/lists/{id}/members/{user_id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    userfields?: Array<any>,
+    listfields?: Array<any>,
+    paginationToken?: string,
+    maxResults?: number,
+    expansions?: Array<any>,
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsGetUsersOwnedResponse>> {
     const params = new URLSearchParams();
 
-    url = url.replace("{id}", String(id));
-
-    url = url.replace("{user_id}", String(userId));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "DELETE",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (maxResults !== undefined) {
+      params.set('max_results', String(maxResults));
     }
 
-    // Parse the response data
-    const responseData = await response.json();
+    if (paginationToken !== undefined) {
+      params.set('pagination_token', String(paginationToken));
+    }
 
-    return responseData as ListsRemoveMemberByUserIdResponse;
+    if (listfields !== undefined) {
+      params.set('list.fields', String(listfields));
+    }
+
+    if (expansions !== undefined) {
+      params.set('expansions', String(expansions));
+    }
+
+    if (userfields !== undefined) {
+      params.set('user.fields', String(userfields));
+    }
+
+    const path = `/2/users/{id}/owned_lists`.replace('{id}', String(id));
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<ListsGetUsersOwnedResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
   }
 }

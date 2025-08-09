@@ -3,12 +3,13 @@
  */
 
 /**
- * Response for getById
+ * Response for getBuyers
  */
-export interface SpacesGetByIdResponse {
-  data: Record<string, any>;
+export interface SpacesGetBuyersResponse {
+  data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
+  meta?: Record<string, any>;
 }
 
 /**
@@ -22,13 +23,12 @@ export interface SpacesGetPostsResponse {
 }
 
 /**
- * Response for getBuyers
+ * Response for getById
  */
-export interface SpacesGetBuyersResponse {
-  data?: Array<any>;
+export interface SpacesGetByIdResponse {
+  data: Record<string, any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
-  meta?: Record<string, any>;
 }
 
 /**

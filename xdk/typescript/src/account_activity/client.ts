@@ -4,14 +4,14 @@
  * This module provides a client for interacting with the Account activity endpoints of the X API.
  */
 
-import { Client } from "../client.js";
+import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
-  AccountActivityGetSubscriptionsResponse,
   AccountActivityGetSubscriptionCountResponse,
   AccountActivityDeleteSubscriptionResponse,
   AccountActivityCreateReplayJobResponse,
-  AccountActivityValidateSubscriptionResponse
-} from "./models.js";
+  AccountActivityGetSubscriptionsResponse,
+  AccountActivityValidateSubscriptionResponse,
+} from './models.js';
 
 /**
  * Client for Account activity operations
@@ -24,143 +24,61 @@ export class AccountActivityClient {
   }
 
   /**
-     * Get subscriptions
-     * Retrieves a list of all active subscriptions for a given webhook.
-     * @param webhookId The webhook ID to pull subscriptions for.* @returns AccountActivityGetSubscriptionsResponse Response data
-     */
-  async getSubscriptions(
-    webhookId: string
-  ): Promise<AccountActivityGetSubscriptionsResponse> {
-    let url =
-      this.client.baseUrl +
-      "/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list";
-
-    const params = new URLSearchParams();
-
-    url = url.replace("{webhook_id}", String(webhookId));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as AccountActivityGetSubscriptionsResponse;
-  }
-
-  /**
      * Get subscription count
-     * Retrieves a count of currently active Account Activity subscriptions.* @returns AccountActivityGetSubscriptionCountResponse Response data
+     * Retrieves a count of currently active Account Activity subscriptions.* @param options Additional request options
+     * @returns Promise with the API response
      */
-  async getSubscriptionCount(): Promise<
-    AccountActivityGetSubscriptionCountResponse
-  > {
-    let url = this.client.baseUrl + "/2/account_activity/subscriptions/count";
-
+  async getSubscriptionCount(
+    options?: RequestOptions
+  ): Promise<ApiResponse<AccountActivityGetSubscriptionCountResponse>> {
     const params = new URLSearchParams();
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/account_activity/subscriptions/count`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<AccountActivityGetSubscriptionCountResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as AccountActivityGetSubscriptionCountResponse;
   }
 
   /**
      * Delete subscription
      * Deletes an Account Activity subscription for the given webhook and user ID.
      * @param webhookId The webhook ID to check subscription against.
-     * @param userId User ID to unsubscribe from.* @returns AccountActivityDeleteSubscriptionResponse Response data
+     * @param userId User ID to unsubscribe from.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async deleteSubscription(
+    userId: string,
     webhookId: string,
-    userId: string
-  ): Promise<AccountActivityDeleteSubscriptionResponse> {
-    let url =
-      this.client.baseUrl +
-      "/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all";
-
+    options?: RequestOptions
+  ): Promise<ApiResponse<AccountActivityDeleteSubscriptionResponse>> {
     const params = new URLSearchParams();
 
-    url = url.replace("{webhook_id}", String(webhookId));
+    const path = `/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all`
+      .replace('{webhook_id}', String(webhookId))
+      .replace('{user_id}', String(userId));
 
-    url = url.replace("{user_id}", String(userId));
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "DELETE",
-        headers
-      }
+    return this.client.request<AccountActivityDeleteSubscriptionResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as AccountActivityDeleteSubscriptionResponse;
   }
 
   /**
@@ -168,105 +86,103 @@ export class AccountActivityClient {
      * Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
      * @param webhookId The unique identifier for the webhook configuration.
      * @param fromDate The oldest (starting) UTC timestamp (inclusive) from which events will be provided, in `yyyymmddhhmm` format.
-     * @param toDate The latest (ending) UTC timestamp (exclusive) up to which events will be provided, in `yyyymmddhhmm` format.* @returns AccountActivityCreateReplayJobResponse Response data
+     * @param toDate The latest (ending) UTC timestamp (exclusive) up to which events will be provided, in `yyyymmddhhmm` format.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async createReplayJob(
-    webhookId: string,
+    toDate: string,
     fromDate: string,
-    toDate: string
-  ): Promise<AccountActivityCreateReplayJobResponse> {
-    let url =
-      this.client.baseUrl +
-      "/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all";
-
+    webhookId: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<AccountActivityCreateReplayJobResponse>> {
     const params = new URLSearchParams();
 
     if (fromDate !== undefined) {
-      params.set("from_date", String(fromDate));
+      params.set('from_date', String(fromDate));
     }
 
     if (toDate !== undefined) {
-      params.set("to_date", String(toDate));
+      params.set('to_date', String(toDate));
     }
 
-    url = url.replace("{webhook_id}", String(webhookId));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers
-      }
+    const path = `/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all`.replace(
+      '{webhook_id}',
+      String(webhookId)
     );
 
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Parse the response data
-    const responseData = await response.json();
+    return this.client.request<AccountActivityCreateReplayJobResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
 
-    return responseData as AccountActivityCreateReplayJobResponse;
+  /**
+     * Get subscriptions
+     * Retrieves a list of all active subscriptions for a given webhook.
+     * @param webhookId The webhook ID to pull subscriptions for.* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async getSubscriptions(
+    webhookId: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<AccountActivityGetSubscriptionsResponse>> {
+    const params = new URLSearchParams();
+
+    const path = `/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list`.replace(
+      '{webhook_id}',
+      String(webhookId)
+    );
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<AccountActivityGetSubscriptionsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
   }
 
   /**
      * Validate subscription
      * Checks a user’s Account Activity subscription for a given webhook.
-     * @param webhookId The webhook ID to check subscription against.* @returns AccountActivityValidateSubscriptionResponse Response data
+     * @param webhookId The webhook ID to check subscription against.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async validateSubscription(
-    webhookId: string
-  ): Promise<AccountActivityValidateSubscriptionResponse> {
-    let url =
-      this.client.baseUrl +
-      "/2/account_activity/webhooks/{webhook_id}/subscriptions/all";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    webhookId: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<AccountActivityValidateSubscriptionResponse>> {
     const params = new URLSearchParams();
 
-    url = url.replace("{webhook_id}", String(webhookId));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    const path = `/2/account_activity/webhooks/{webhook_id}/subscriptions/all`.replace(
+      '{webhook_id}',
+      String(webhookId)
     );
 
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as AccountActivityValidateSubscriptionResponse;
+    return this.client.request<AccountActivityValidateSubscriptionResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
   }
 }

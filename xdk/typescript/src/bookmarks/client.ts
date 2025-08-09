@@ -4,15 +4,15 @@
  * This module provides a client for interacting with the Bookmarks endpoints of the X API.
  */
 
-import { Client } from "../client.js";
+import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
   BookmarksGetUsersFoldersResponse,
+  BookmarksDeleteUsersResponse,
   BookmarksGetUsersByFolderIdResponse,
   BookmarksGetUsersResponse,
   BookmarksCreateUsersRequest,
   BookmarksCreateUsersResponse,
-  BookmarksDeleteUsersResponse
-} from "./models.js";
+} from './models.js';
 
 /**
  * Client for Bookmarks operations
@@ -29,108 +29,103 @@ export class BookmarksClient {
      * Retrieves a list of Bookmark folders created by the authenticated user.
      * @param id The ID of the authenticated source User for whom to return results.
      * @param maxResults The maximum number of results.
-     * @param paginationToken This parameter is used to get the next 'page' of results.* @returns BookmarksGetUsersFoldersResponse Response data
+     * @param paginationToken This parameter is used to get the next 'page' of results.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async getUsersFolders(
     id: string,
+    paginationToken?: string,
     maxResults?: number,
-    paginationToken?: string
-  ): Promise<BookmarksGetUsersFoldersResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/bookmarks/folders";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    options?: RequestOptions
+  ): Promise<ApiResponse<BookmarksGetUsersFoldersResponse>> {
     const params = new URLSearchParams();
 
     if (maxResults !== undefined) {
-      params.set("max_results", String(maxResults));
+      params.set('max_results', String(maxResults));
     }
 
     if (paginationToken !== undefined) {
-      params.set("pagination_token", String(paginationToken));
+      params.set('pagination_token', String(paginationToken));
     }
 
-    url = url.replace("{id}", String(id));
+    const path = `/2/users/{id}/bookmarks/folders`.replace('{id}', String(id));
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Set authentication headers
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<BookmarksGetUsersFoldersResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
+  }
 
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+  /**
+     * Delete Bookmark
+     * Removes a Post from the authenticated user’s Bookmarks by its ID.
+     * @param id The ID of the authenticated source User whose bookmark is to be removed.
+     * @param tweetId The ID of the Post that the source User is removing from bookmarks.* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async deleteUsers(
+    tweetId: string,
+    id: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<BookmarksDeleteUsersResponse>> {
+    const params = new URLSearchParams();
 
-    // Parse the response data
-    const responseData = await response.json();
+    const path = `/2/users/{id}/bookmarks/{tweet_id}`
+      .replace('{id}', String(id))
+      .replace('{tweet_id}', String(tweetId));
 
-    return responseData as BookmarksGetUsersFoldersResponse;
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<BookmarksDeleteUsersResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
   }
 
   /**
      * Get Bookmarks by folder ID
      * Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
      * @param id The ID of the authenticated source User for whom to return results.
-     * @param folderId The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.* @returns BookmarksGetUsersByFolderIdResponse Response data
+     * @param folderId The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async getUsersByFolderId(
+    folderId: string,
     id: string,
-    folderId: string
-  ): Promise<BookmarksGetUsersByFolderIdResponse> {
-    let url =
-      this.client.baseUrl + "/2/users/{id}/bookmarks/folders/{folder_id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    options?: RequestOptions
+  ): Promise<ApiResponse<BookmarksGetUsersByFolderIdResponse>> {
     const params = new URLSearchParams();
 
-    url = url.replace("{id}", String(id));
+    const path = `/2/users/{id}/bookmarks/folders/{folder_id}`
+      .replace('{id}', String(id))
+      .replace('{folder_id}', String(folderId));
 
-    url = url.replace("{folder_id}", String(folderId));
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<BookmarksGetUsersByFolderIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as BookmarksGetUsersByFolderIdResponse;
   }
 
   /**
@@ -144,187 +139,103 @@ export class BookmarksClient {
      * @param mediafields A comma separated list of Media fields to display.
      * @param pollfields A comma separated list of Poll fields to display.
      * @param userfields A comma separated list of User fields to display.
-     * @param placefields A comma separated list of Place fields to display.* @returns BookmarksGetUsersResponse Response data
+     * @param placefields A comma separated list of Place fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async getUsers(
     id: string,
-    maxResults?: number,
-    paginationToken?: string,
-    tweetfields?: Array<any>,
-    expansions?: Array<any>,
-    mediafields?: Array<any>,
-    pollfields?: Array<any>,
+    placefields?: Array<any>,
     userfields?: Array<any>,
-    placefields?: Array<any>
-  ): Promise<BookmarksGetUsersResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/bookmarks";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    pollfields?: Array<any>,
+    mediafields?: Array<any>,
+    tweetfields?: Array<any>,
+    paginationToken?: string,
+    maxResults?: number,
+    expansions?: Array<any>,
+    options?: RequestOptions
+  ): Promise<ApiResponse<BookmarksGetUsersResponse>> {
     const params = new URLSearchParams();
 
     if (maxResults !== undefined) {
-      params.set("max_results", String(maxResults));
+      params.set('max_results', String(maxResults));
     }
 
     if (paginationToken !== undefined) {
-      params.set("pagination_token", String(paginationToken));
+      params.set('pagination_token', String(paginationToken));
     }
 
     if (tweetfields !== undefined) {
-      params.set("tweet.fields", tweetfields.map(String).join(","));
+      params.set('tweet.fields', String(tweetfields));
     }
 
     if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
+      params.set('expansions', String(expansions));
     }
 
     if (mediafields !== undefined) {
-      params.set("media.fields", mediafields.map(String).join(","));
+      params.set('media.fields', String(mediafields));
     }
 
     if (pollfields !== undefined) {
-      params.set("poll.fields", pollfields.map(String).join(","));
+      params.set('poll.fields', String(pollfields));
     }
 
     if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
+      params.set('user.fields', String(userfields));
     }
 
     if (placefields !== undefined) {
-      params.set("place.fields", placefields.map(String).join(","));
+      params.set('place.fields', String(placefields));
     }
 
-    url = url.replace("{id}", String(id));
+    const path = `/2/users/{id}/bookmarks`.replace('{id}', String(id));
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Set authentication headers
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<BookmarksGetUsersResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as BookmarksGetUsersResponse;
   }
 
   /**
      * Create Bookmark
      * Adds a post to the authenticated user’s bookmarks.
-     * @param id The ID of the authenticated source User for whom to add bookmarks.* @param body Request body* @returns BookmarksCreateUsersResponse Response data
+     * @param id The ID of the authenticated source User for whom to add bookmarks.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
      */
   async createUsers(
     id: string,
-    body: BookmarksCreateUsersRequest
-  ): Promise<BookmarksCreateUsersResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/bookmarks";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    body: BookmarksCreateUsersRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<BookmarksCreateUsersResponse>> {
     const params = new URLSearchParams();
 
-    url = url.replace("{id}", String(id));
+    const path = `/2/users/{id}/bookmarks`.replace('{id}', String(id));
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
 
-    // Set authentication headers
+        'Content-Type': 'application/json',
+      },
+    };
 
-    headers.set("Content-Type", "application/json");
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
+    }
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
+    return this.client.request<BookmarksCreateUsersResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as BookmarksCreateUsersResponse;
-  }
-
-  /**
-     * Delete Bookmark
-     * Removes a Post from the authenticated user’s Bookmarks by its ID.
-     * @param id The ID of the authenticated source User whose bookmark is to be removed.
-     * @param tweetId The ID of the Post that the source User is removing from bookmarks.* @returns BookmarksDeleteUsersResponse Response data
-     */
-  async deleteUsers(
-    id: string,
-    tweetId: string
-  ): Promise<BookmarksDeleteUsersResponse> {
-    let url = this.client.baseUrl + "/2/users/{id}/bookmarks/{tweet_id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    url = url.replace("{id}", String(id));
-
-    url = url.replace("{tweet_id}", String(tweetId));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "DELETE",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as BookmarksDeleteUsersResponse;
   }
 }

@@ -4,8 +4,8 @@
  * This module provides a client for interacting with the General endpoints of the X API.
  */
 
-import { Client } from "../client.js";
-import { GeneralGetOpenApiSpecResponse } from "./models.js";
+import { Client, ApiResponse, RequestOptions } from '../client.js';
+import { GeneralGetOpenApiSpecResponse } from './models.js';
 
 /**
  * Client for General operations
@@ -19,35 +19,27 @@ export class GeneralClient {
 
   /**
      * Get OpenAPI Spec.
-     * Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)* @returns GeneralGetOpenApiSpecResponse Response data
+     * Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)* @param options Additional request options
+     * @returns Promise with the API response
      */
-  async getOpenApiSpec(): Promise<GeneralGetOpenApiSpecResponse> {
-    let url = this.client.baseUrl + "/2/openapi.json";
-
+  async getOpenApiSpec(
+    options?: RequestOptions
+  ): Promise<ApiResponse<GeneralGetOpenApiSpecResponse>> {
     const params = new URLSearchParams();
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/openapi.json`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<GeneralGetOpenApiSpecResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as GeneralGetOpenApiSpecResponse;
   }
 }

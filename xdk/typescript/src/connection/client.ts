@@ -4,8 +4,8 @@
  * This module provides a client for interacting with the Connection endpoints of the X API.
  */
 
-import { Client } from "../client.js";
-import { ConnectionDeleteAllResponse } from "./models.js";
+import { Client, ApiResponse, RequestOptions } from '../client.js';
+import { ConnectionDeleteAllResponse } from './models.js';
 
 /**
  * Client for Connection operations
@@ -19,41 +19,27 @@ export class ConnectionClient {
 
   /**
      * Terminate all connections
-     * Terminates all active streaming connections for the authenticated application.* @returns ConnectionDeleteAllResponse Response data
+     * Terminates all active streaming connections for the authenticated application.* @param options Additional request options
+     * @returns Promise with the API response
      */
-  async deleteAll(): Promise<ConnectionDeleteAllResponse> {
-    let url = this.client.baseUrl + "/2/connections/all";
-
+  async deleteAll(
+    options?: RequestOptions
+  ): Promise<ApiResponse<ConnectionDeleteAllResponse>> {
     const params = new URLSearchParams();
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/connections/all`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "DELETE",
-        headers
-      }
+    return this.client.request<ConnectionDeleteAllResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as ConnectionDeleteAllResponse;
   }
 }

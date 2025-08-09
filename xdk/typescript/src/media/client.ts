@@ -4,26 +4,26 @@
  * This module provides a client for interacting with the Media endpoints of the X API.
  */
 
-import { Client } from "../client.js";
+import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
+  MediaAppendUploadRequest,
+  MediaAppendUploadResponse,
   MediaInitializeUploadRequest,
   MediaInitializeUploadResponse,
   MediaCreateMetadataRequest,
   MediaCreateMetadataResponse,
+  MediaFinalizeUploadResponse,
+  MediaGetByMediaKeysResponse,
   MediaGetAnalyticsResponse,
   MediaGetByMediaKeyResponse,
-  MediaGetByMediaKeysResponse,
   MediaCreateSubtitlesRequest,
   MediaCreateSubtitlesResponse,
   MediaDeleteSubtitlesRequest,
   MediaDeleteSubtitlesResponse,
-  MediaAppendUploadRequest,
-  MediaAppendUploadResponse,
-  MediaFinalizeUploadResponse,
   MediaGetUploadStatusResponse,
   MediaUploadRequest,
-  MediaUploadResponse
-} from "./models.js";
+  MediaUploadResponse,
+} from './models.js';
 
 /**
  * Client for Media operations
@@ -36,97 +36,170 @@ export class MediaClient {
   }
 
   /**
-     * Initialize media upload
-     * Initializes a media upload.* @param body Request body* @returns MediaInitializeUploadResponse Response data
+     * Append Media upload
+     * Appends data to a Media upload request.
+     * @param id The media identifier for the media to perform the append operation.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
      */
-  async initializeUpload(
-    body?: MediaInitializeUploadRequest
-  ): Promise<MediaInitializeUploadResponse> {
-    let url = this.client.baseUrl + "/2/media/upload/initialize";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+  async appendUpload(
+    id: string,
+    body?: MediaAppendUploadRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<MediaAppendUploadResponse>> {
     const params = new URLSearchParams();
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/media/upload/{id}/append`.replace('{id}', String(id));
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
 
-    headers.set("Content-Type", "application/json");
+        'Content-Type': 'application/json',
+      },
+    };
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
     }
 
-    // Parse the response data
-    const responseData = await response.json();
+    return this.client.request<MediaAppendUploadResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
 
-    return responseData as MediaInitializeUploadResponse;
+  /**
+     * Initialize media upload
+     * Initializes a media upload.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async initializeUpload(
+    body?: MediaInitializeUploadRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<MediaInitializeUploadResponse>> {
+    const params = new URLSearchParams();
+
+    const path = `/2/media/upload/initialize`;
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+
+        'Content-Type': 'application/json',
+      },
+    };
+
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
+    }
+
+    return this.client.request<MediaInitializeUploadResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
   }
 
   /**
      * Create Media metadata
-     * Creates metadata for a Media file.* @param body Request body* @returns MediaCreateMetadataResponse Response data
+     * Creates metadata for a Media file.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
      */
   async createMetadata(
-    body?: MediaCreateMetadataRequest
-  ): Promise<MediaCreateMetadataResponse> {
-    let url = this.client.baseUrl + "/2/media/metadata";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    body?: MediaCreateMetadataRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<MediaCreateMetadataResponse>> {
     const params = new URLSearchParams();
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/media/metadata`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
 
-    headers.set("Content-Type", "application/json");
+        'Content-Type': 'application/json',
+      },
+    };
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
     }
 
-    // Parse the response data
-    const responseData = await response.json();
+    return this.client.request<MediaCreateMetadataResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
 
-    return responseData as MediaCreateMetadataResponse;
+  /**
+     * Finalize Media upload
+     * Finalizes a Media upload request.
+     * @param id The media id of the targeted media to finalize.* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async finalizeUpload(
+    id: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<MediaFinalizeUploadResponse>> {
+    const params = new URLSearchParams();
+
+    const path = `/2/media/upload/{id}/finalize`.replace('{id}', String(id));
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<MediaFinalizeUploadResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
+
+  /**
+     * Get Media by media keys
+     * Retrieves details of Media files by their media keys.
+     * @param mediaKeys A comma separated list of Media Keys. Up to 100 are allowed in a single request.
+     * @param mediafields A comma separated list of Media fields to display.* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async getByMediaKeys(
+    mediaKeys: Array<any>,
+    mediafields?: Array<any>,
+    options?: RequestOptions
+  ): Promise<ApiResponse<MediaGetByMediaKeysResponse>> {
+    const params = new URLSearchParams();
+
+    if (mediaKeys !== undefined) {
+      params.set('media_keys', String(mediaKeys));
+    }
+
+    if (mediafields !== undefined) {
+      params.set('media.fields', String(mediafields));
+    }
+
+    const path = `/2/media`;
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<MediaGetByMediaKeysResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
   }
 
   /**
@@ -136,477 +209,226 @@ export class MediaClient {
      * @param endTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
      * @param startTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
      * @param granularity The granularity for the search counts results.
-     * @param mediaAnalyticsfields A comma separated list of MediaAnalytics fields to display.* @returns MediaGetAnalyticsResponse Response data
+     * @param mediaAnalyticsfields A comma separated list of MediaAnalytics fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async getAnalytics(
-    mediaKeys: Array<any>,
-    endTime: string,
-    startTime: string,
     granularity: string,
-    mediaAnalyticsfields?: Array<any>
-  ): Promise<MediaGetAnalyticsResponse> {
-    let url = this.client.baseUrl + "/2/media/analytics";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    startTime: string,
+    endTime: string,
+    mediaKeys: Array<any>,
+    mediaAnalyticsfields?: Array<any>,
+    options?: RequestOptions
+  ): Promise<ApiResponse<MediaGetAnalyticsResponse>> {
     const params = new URLSearchParams();
 
     if (mediaKeys !== undefined) {
-      params.set("media_keys", mediaKeys.map(String).join(","));
+      params.set('media_keys', String(mediaKeys));
     }
 
     if (endTime !== undefined) {
-      params.set("end_time", String(endTime));
+      params.set('end_time', String(endTime));
     }
 
     if (startTime !== undefined) {
-      params.set("start_time", String(startTime));
+      params.set('start_time', String(startTime));
     }
 
     if (granularity !== undefined) {
-      params.set("granularity", String(granularity));
+      params.set('granularity', String(granularity));
     }
 
     if (mediaAnalyticsfields !== undefined) {
-      params.set(
-        "media_analytics.fields",
-        mediaAnalyticsfields.map(String).join(",")
-      );
+      params.set('media_analytics.fields', String(mediaAnalyticsfields));
     }
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/media/analytics`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<MediaGetAnalyticsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as MediaGetAnalyticsResponse;
   }
 
   /**
      * Get Media by media key
      * Retrieves details of a specific Media file by its media key.
      * @param mediaKey A single Media Key.
-     * @param mediafields A comma separated list of Media fields to display.* @returns MediaGetByMediaKeyResponse Response data
+     * @param mediafields A comma separated list of Media fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async getByMediaKey(
     mediaKey: string,
-    mediafields?: Array<any>
-  ): Promise<MediaGetByMediaKeyResponse> {
-    let url = this.client.baseUrl + "/2/media/{media_key}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    mediafields?: Array<any>,
+    options?: RequestOptions
+  ): Promise<ApiResponse<MediaGetByMediaKeyResponse>> {
     const params = new URLSearchParams();
 
     if (mediafields !== undefined) {
-      params.set("media.fields", mediafields.map(String).join(","));
+      params.set('media.fields', String(mediafields));
     }
 
-    url = url.replace("{media_key}", String(mediaKey));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    const path = `/2/media/{media_key}`.replace(
+      '{media_key}',
+      String(mediaKey)
     );
 
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as MediaGetByMediaKeyResponse;
-  }
-
-  /**
-     * Get Media by media keys
-     * Retrieves details of Media files by their media keys.
-     * @param mediaKeys A comma separated list of Media Keys. Up to 100 are allowed in a single request.
-     * @param mediafields A comma separated list of Media fields to display.* @returns MediaGetByMediaKeysResponse Response data
-     */
-  async getByMediaKeys(
-    mediaKeys: Array<any>,
-    mediafields?: Array<any>
-  ): Promise<MediaGetByMediaKeysResponse> {
-    let url = this.client.baseUrl + "/2/media";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    if (mediaKeys !== undefined) {
-      params.set("media_keys", mediaKeys.map(String).join(","));
-    }
-
-    if (mediafields !== undefined) {
-      params.set("media.fields", mediafields.map(String).join(","));
-    }
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<MediaGetByMediaKeyResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as MediaGetByMediaKeysResponse;
   }
 
   /**
      * Create Media subtitles
-     * Creates subtitles for a specific Media file.* @param body Request body* @returns MediaCreateSubtitlesResponse Response data
+     * Creates subtitles for a specific Media file.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
      */
   async createSubtitles(
-    body?: MediaCreateSubtitlesRequest
-  ): Promise<MediaCreateSubtitlesResponse> {
-    let url = this.client.baseUrl + "/2/media/subtitles";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    body?: MediaCreateSubtitlesRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<MediaCreateSubtitlesResponse>> {
     const params = new URLSearchParams();
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/media/subtitles`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
 
-    headers.set("Content-Type", "application/json");
+        'Content-Type': 'application/json',
+      },
+    };
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
     }
 
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as MediaCreateSubtitlesResponse;
+    return this.client.request<MediaCreateSubtitlesResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
   }
 
   /**
      * Delete Media subtitles
-     * Deletes subtitles for a specific Media file.* @param body Request body* @returns MediaDeleteSubtitlesResponse Response data
+     * Deletes subtitles for a specific Media file.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
      */
   async deleteSubtitles(
-    body?: MediaDeleteSubtitlesRequest
-  ): Promise<MediaDeleteSubtitlesResponse> {
-    let url = this.client.baseUrl + "/2/media/subtitles";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    body?: MediaDeleteSubtitlesRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<MediaDeleteSubtitlesResponse>> {
     const params = new URLSearchParams();
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/media/subtitles`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
 
-    headers.set("Content-Type", "application/json");
+        'Content-Type': 'application/json',
+      },
+    };
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "DELETE",
-        headers,
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
+    }
 
-        body: body ? JSON.stringify(body) : undefined
-      }
+    return this.client.request<MediaDeleteSubtitlesResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as MediaDeleteSubtitlesResponse;
-  }
-
-  /**
-     * Append Media upload
-     * Appends data to a Media upload request.
-     * @param id The media identifier for the media to perform the append operation.* @param body Request body* @returns MediaAppendUploadResponse Response data
-     */
-  async appendUpload(
-    id: string,
-    body?: MediaAppendUploadRequest
-  ): Promise<MediaAppendUploadResponse> {
-    let url = this.client.baseUrl + "/2/media/upload/{id}/append";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    url = url.replace("{id}", String(id));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    headers.set("Content-Type", "application/json");
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as MediaAppendUploadResponse;
-  }
-
-  /**
-     * Finalize Media upload
-     * Finalizes a Media upload request.
-     * @param id The media id of the targeted media to finalize.* @returns MediaFinalizeUploadResponse Response data
-     */
-  async finalizeUpload(id: string): Promise<MediaFinalizeUploadResponse> {
-    let url = this.client.baseUrl + "/2/media/upload/{id}/finalize";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    url = url.replace("{id}", String(id));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as MediaFinalizeUploadResponse;
   }
 
   /**
      * Get Media upload status
      * Retrieves the status of a Media upload by its ID.
      * @param mediaId Media id for the requested media upload status.
-     * @param command The command for the media upload request.* @returns MediaGetUploadStatusResponse Response data
+     * @param command The command for the media upload request.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async getUploadStatus(
     mediaId: string,
-    command?: string
-  ): Promise<MediaGetUploadStatusResponse> {
-    let url = this.client.baseUrl + "/2/media/upload";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    command?: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<MediaGetUploadStatusResponse>> {
     const params = new URLSearchParams();
 
     if (mediaId !== undefined) {
-      params.set("media_id", String(mediaId));
+      params.set('media_id', String(mediaId));
     }
 
     if (command !== undefined) {
-      params.set("command", String(command));
+      params.set('command', String(command));
     }
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/media/upload`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<MediaGetUploadStatusResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as MediaGetUploadStatusResponse;
   }
 
   /**
      * Upload media
-     * Uploads a media file for use in posts or other content.* @param body Request body* @returns MediaUploadResponse Response data
+     * Uploads a media file for use in posts or other content.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
      */
-  async upload(body?: MediaUploadRequest): Promise<MediaUploadResponse> {
-    let url = this.client.baseUrl + "/2/media/upload";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+  async upload(
+    body?: MediaUploadRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<MediaUploadResponse>> {
     const params = new URLSearchParams();
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/media/upload`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
 
-    headers.set("Content-Type", "application/json");
+        'Content-Type': 'application/json',
+      },
+    };
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
-
-        body: body ? JSON.stringify(body) : undefined
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
     }
 
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as MediaUploadResponse;
+    return this.client.request<MediaUploadResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
   }
 }

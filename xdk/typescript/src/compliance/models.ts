@@ -3,6 +3,14 @@
  */
 
 /**
+ * Response for getJobsById
+ */
+export interface ComplianceGetJobsByIdResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
  * Response for getJobs
  */
 export interface ComplianceGetJobsResponse {
@@ -28,14 +36,6 @@ export interface ComplianceCreateJobsRequest {
  * Response for createJobs
  */
 export interface ComplianceCreateJobsResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getJobsById
- */
-export interface ComplianceGetJobsByIdResponse {
   data: Record<string, any>;
   errors?: Array<any>;
 }
