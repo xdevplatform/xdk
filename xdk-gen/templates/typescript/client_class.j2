@@ -4,7 +4,7 @@
  * This module provides a client for interacting with the {{ tag }} endpoints of the X API.
  */
 
-import { Client } from '../client.js';
+import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
 {% for operation in operations -%}
 {% if operation.request_body -%}
@@ -44,122 +44,43 @@ export class {{ tag|pascal_case }}Client {
 {% else -%}
      * @param body Request body{% endif -%}
 {% endif -%}
-     * @returns {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}Record<string, any>{% endif %} Response data
+     * @param options Additional request options
+     * @returns Promise with the API response
      */
-    async {{ operation.operation_id | camel_case }}(
-{% for param in operation.parameters | selectattr('required') -%}
-{% if param.name -%}
-        {{ param.name | camel_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
-{% endif -%}
-{% endfor -%}
-{% if operation.request_body and operation.request_body.required -%}
-        body: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request,
-{% endif -%}
-{% for param in operation.parameters | rejectattr('required') -%}
-{% if param.name -%}
-        {{ param.name | camel_case }}?: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
-{% endif -%}
-{% endfor -%}
-{% if operation.request_body and not operation.request_body.required -%}
-        body?: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request,
-{% endif -%}
-    ): Promise<{% if operation.responses and "200" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}Record<string, any>{% endif %}> {
-        let url = this.client.baseUrl + "{{ operation.path }}";
-
-{% set ns = namespace(has_bearer_token = false, has_oauth2_token = false) -%}
-{% if operation.security -%}
-{% for security_requirement in operation.security -%}
-{% for scheme_name in security_requirement -%}
-{% if scheme_name == "BearerToken" -%}
-{% set ns.has_bearer_token = true -%}
-{% endif -%}
-{% if scheme_name == "OAuth2UserToken" -%}
-{% set ns.has_oauth2_token = true -%}
-        // Ensure we have a valid access token
-        if (this.client.oauth2Auth && this.client.token) {
-            // Check if token needs refresh
-            if (this.client.isTokenExpired()) {
-                await this.client.refreshToken();
-            }
-        }
-{% endif -%}
-{% endfor -%}
-{% endfor -%}
-{% endif -%}
-
+    async {{ operation.operation_id | camel_case }}({% for param in operation.parameters | sort(attribute='required', reverse=true) %}{{ param.name | camel_case }}{% if param.required %}{% else %}?{% endif %}: {{ param.schema.type | typescript_type }}{% if not loop.last %}, {% endif %}{% endfor %}{% if operation.parameters and operation.request_body %}, {% endif %}{% if operation.request_body %}{% if operation.request_body.required %}body{% else %}body?{% endif %}: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request{% endif %}{% if operation.parameters or operation.request_body %}, {% endif %}options?: RequestOptions): Promise<ApiResponse<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}any{% endif %}>> {
         const params = new URLSearchParams();
-{% for param in operation.parameters %}
-{% if param.name %}
-{% if param.in == "query" %}
+        {% for param in operation.parameters %}
+        {% if param.in == "query" %}
         if ({{ param.name | camel_case }} !== undefined) {
-{% if param.schema and param.schema.type == "array" and not param.explode %}
-            params.set("{{ param.name }}", {{ param.name | camel_case }}.map(String).join(","));
-{% else %}
-            params.set("{{ param.name }}", String({{ param.name | camel_case }}));
-{% endif %}
+            params.set('{{ param.name }}', String({{ param.name | camel_case }}));
         }
-{% endif %}
-{% endif %}
-{% endfor %}
+        {% endif %}
+        {% endfor %}
 
-{% for param in operation.parameters %}
-{% if param.name %}
-{% if param.in == "path" %}
-        url = url.replace("{{ '{' + param.name + '}' }}", String({{ param.name | camel_case }}));
-{% endif %}
-{% endif %}
-{% endfor %}
+        const path = `{{ operation.path }}`{% for param in operation.parameters %}{% if param.in == "path" %}.replace('{{ '{' }}{{ param.name }}{{ '}' }}', String({{ param.name | camel_case }})){% endif %}{% endfor %};
 
-        // Create headers by copying the client's headers
-        const headers = new Headers(this.client.headers);
-        
-        // Set authentication headers
-{% if operation.security %}
-{% if ns.has_bearer_token %}
-        if (this.client.bearerToken) {
-            headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-        } else if (this.client.accessToken) {
-            headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+        const requestOptions: RequestOptions = {
+            ...options,
+            headers: {
+                ...(options && options.headers ? options.headers : {}),
+                {% if operation.request_body %}
+                'Content-Type': 'application/json',
+                {% endif %}
+            },
+        };
+
+        {% if operation.request_body %}
+        if (body) {
+            requestOptions.body = JSON.stringify(body);
         }
-{% endif -%}
-{% endif -%}
+        {% endif %}
 
-{% for param in operation.parameters %}
-{% if param.name %}
-{% if param.in == "header" %}
-        if ({{ param.name | camel_case }} !== undefined) {
-            headers.set("{{ param.name }}", String({{ param.name | camel_case }}));
-        }
-{% endif %}
-{% endif %}
-{% endfor %}
-{% if operation.request_body and operation.request_body.content %}
-{% set content_type = "application/json" %}
-        headers.set("Content-Type", "{{ content_type }}");
-{% endif %}
-
-        // Make the request using the HTTP client
-        const response = await this.client.httpClient.request(url + (params.toString() ? `?${params.toString()}` : ""), {
-            method: "{{ operation.method | upper }}",
-            headers,
-{% if operation.request_body %}
-            body: body ? JSON.stringify(body) : undefined,
-{% endif %}
-        });
-
-        // Check for errors
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        // Parse the response data
-        const responseData = await response.json();
-
-{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
-        return responseData as {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response;
-{% else %}
-        return responseData;
-{% endif %}
+        return this.client.request<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}any{% endif %}>(
+            '{{ operation.method | upper }}',
+            path + (params.toString() ? `?${params.toString()}` : ''),
+            requestOptions
+        );
     }
+
 {% endfor %}
 } 

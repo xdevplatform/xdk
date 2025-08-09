@@ -11,68 +11,6 @@ export interface ListsUnpinResponse {
 }
 
 /**
- * Response for getUsersOwned
- */
-export interface ListsGetUsersOwnedResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getUsersPinned
- */
-export interface ListsGetUsersPinnedResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for pin
- */
-export interface ListsPinRequest {
-  /** The unique identifier of this List. */
-  listId?: string;
-}
-
-/**
- * Response for pin
- */
-export interface ListsPinResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getUsersFollowed
- */
-export interface ListsGetUsersFollowedResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for follow
- */
-export interface ListsFollowRequest {
-  /** The unique identifier of this List. */
-  listId?: string;
-}
-
-/**
- * Response for follow
- */
-export interface ListsFollowResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
  * Request body for addMember
  */
 export interface ListsAddMemberRequest {
@@ -107,6 +45,32 @@ export interface ListsCreateResponse {
 }
 
 /**
+ * Response for getUsersFollowed
+ */
+export interface ListsGetUsersFollowedResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Request body for follow
+ */
+export interface ListsFollowRequest {
+  /** The unique identifier of this List. */
+  listId?: string;
+}
+
+/**
+ * Response for follow
+ */
+export interface ListsFollowResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
  * Response for getUsersMemberships
  */
 export interface ListsGetUsersMembershipsResponse {
@@ -114,6 +78,40 @@ export interface ListsGetUsersMembershipsResponse {
   errors?: Array<any>;
   includes?: Record<string, any>;
   meta?: Record<string, any>;
+}
+
+/**
+ * Response for getUsersPinned
+ */
+export interface ListsGetUsersPinnedResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Request body for pin
+ */
+export interface ListsPinRequest {
+  /** The unique identifier of this List. */
+  listId?: string;
+}
+
+/**
+ * Response for pin
+ */
+export interface ListsPinResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for removeMemberByUserId
+ */
+export interface ListsRemoveMemberByUserIdResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
 }
 
 /**
@@ -160,9 +158,11 @@ export interface ListsUnfollowResponse {
 }
 
 /**
- * Response for removeMemberByUserId
+ * Response for getUsersOwned
  */
-export interface ListsRemoveMemberByUserIdResponse {
-  data?: Record<string, any>;
+export interface ListsGetUsersOwnedResponse {
+  data?: Array<any>;
   errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
 }

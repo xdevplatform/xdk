@@ -4,14 +4,14 @@
  * This module provides a client for interacting with the Community notes endpoints of the X API.
  */
 
-import { Client } from "../client.js";
+import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
+  CommunityNotesDeleteNotesResponse,
+  CommunityNotesSearchNotesWrittenResponse,
   CommunityNotesSearchForEligiblePostsResponse,
   CommunityNotesCreateNotesRequest,
   CommunityNotesCreateNotesResponse,
-  CommunityNotesDeleteNotesResponse,
-  CommunityNotesSearchNotesWrittenResponse
-} from "./models.js";
+} from './models.js';
 
 /**
  * Client for Community notes operations
@@ -21,6 +21,84 @@ export class CommunityNotesClient {
 
   constructor(client: Client) {
     this.client = client;
+  }
+
+  /**
+     * Delete a Community Note
+     * Deletes a community note.
+     * @param id The community note id to delete.* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async deleteNotes(
+    id: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<CommunityNotesDeleteNotesResponse>> {
+    const params = new URLSearchParams();
+
+    const path = `/2/notes/{id}`.replace('{id}', String(id));
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<CommunityNotesDeleteNotesResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
+
+  /**
+     * Search for Community Notes Written
+     * Returns all the community notes written by the user.
+     * @param testMode If true, return the notes the caller wrote for the test. If false, return the notes the caller wrote on the product.
+     * @param paginationToken Pagination token to get next set of posts eligible for notes.
+     * @param maxResults Max results to return.
+     * @param notefields A comma separated list of Note fields to display.* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async searchNotesWritten(
+    testMode: boolean,
+    notefields?: Array<any>,
+    maxResults?: number,
+    paginationToken?: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<CommunityNotesSearchNotesWrittenResponse>> {
+    const params = new URLSearchParams();
+
+    if (testMode !== undefined) {
+      params.set('test_mode', String(testMode));
+    }
+
+    if (paginationToken !== undefined) {
+      params.set('pagination_token', String(paginationToken));
+    }
+
+    if (maxResults !== undefined) {
+      params.set('max_results', String(maxResults));
+    }
+
+    if (notefields !== undefined) {
+      params.set('note.fields', String(notefields));
+    }
+
+    const path = `/2/notes/search/notes_written`;
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<CommunityNotesSearchNotesWrittenResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
   }
 
   /**
@@ -34,245 +112,105 @@ export class CommunityNotesClient {
      * @param mediafields A comma separated list of Media fields to display.
      * @param pollfields A comma separated list of Poll fields to display.
      * @param userfields A comma separated list of User fields to display.
-     * @param placefields A comma separated list of Place fields to display.* @returns CommunityNotesSearchForEligiblePostsResponse Response data
+     * @param placefields A comma separated list of Place fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async searchForEligiblePosts(
     testMode: boolean,
-    paginationToken?: string,
-    maxResults?: number,
-    tweetfields?: Array<any>,
-    expansions?: Array<any>,
-    mediafields?: Array<any>,
-    pollfields?: Array<any>,
+    placefields?: Array<any>,
     userfields?: Array<any>,
-    placefields?: Array<any>
-  ): Promise<CommunityNotesSearchForEligiblePostsResponse> {
-    let url = this.client.baseUrl + "/2/notes/search/posts_eligible_for_notes";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    pollfields?: Array<any>,
+    mediafields?: Array<any>,
+    tweetfields?: Array<any>,
+    maxResults?: number,
+    paginationToken?: string,
+    expansions?: Array<any>,
+    options?: RequestOptions
+  ): Promise<ApiResponse<CommunityNotesSearchForEligiblePostsResponse>> {
     const params = new URLSearchParams();
 
     if (testMode !== undefined) {
-      params.set("test_mode", String(testMode));
+      params.set('test_mode', String(testMode));
     }
 
     if (paginationToken !== undefined) {
-      params.set("pagination_token", String(paginationToken));
+      params.set('pagination_token', String(paginationToken));
     }
 
     if (maxResults !== undefined) {
-      params.set("max_results", String(maxResults));
+      params.set('max_results', String(maxResults));
     }
 
     if (tweetfields !== undefined) {
-      params.set("tweet.fields", tweetfields.map(String).join(","));
+      params.set('tweet.fields', String(tweetfields));
     }
 
     if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
+      params.set('expansions', String(expansions));
     }
 
     if (mediafields !== undefined) {
-      params.set("media.fields", mediafields.map(String).join(","));
+      params.set('media.fields', String(mediafields));
     }
 
     if (pollfields !== undefined) {
-      params.set("poll.fields", pollfields.map(String).join(","));
+      params.set('poll.fields', String(pollfields));
     }
 
     if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
+      params.set('user.fields', String(userfields));
     }
 
     if (placefields !== undefined) {
-      params.set("place.fields", placefields.map(String).join(","));
+      params.set('place.fields', String(placefields));
     }
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/notes/search/posts_eligible_for_notes`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<CommunityNotesSearchForEligiblePostsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as CommunityNotesSearchForEligiblePostsResponse;
   }
 
   /**
      * Create a Community Note
-     * Creates a community note endpoint for LLM use case.* @param body Request body* @returns CommunityNotesCreateNotesResponse Response data
+     * Creates a community note endpoint for LLM use case.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
      */
   async createNotes(
-    body?: CommunityNotesCreateNotesRequest
-  ): Promise<CommunityNotesCreateNotesResponse> {
-    let url = this.client.baseUrl + "/2/notes";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    body?: CommunityNotesCreateNotesRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<CommunityNotesCreateNotesResponse>> {
     const params = new URLSearchParams();
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/notes`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
 
-    headers.set("Content-Type", "application/json");
+        'Content-Type': 'application/json',
+      },
+    };
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "POST",
-        headers,
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
+    }
 
-        body: body ? JSON.stringify(body) : undefined
-      }
+    return this.client.request<CommunityNotesCreateNotesResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as CommunityNotesCreateNotesResponse;
-  }
-
-  /**
-     * Delete a Community Note
-     * Deletes a community note.
-     * @param id The community note id to delete.* @returns CommunityNotesDeleteNotesResponse Response data
-     */
-  async deleteNotes(id: string): Promise<CommunityNotesDeleteNotesResponse> {
-    let url = this.client.baseUrl + "/2/notes/{id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    url = url.replace("{id}", String(id));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "DELETE",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as CommunityNotesDeleteNotesResponse;
-  }
-
-  /**
-     * Search for Community Notes Written
-     * Returns all the community notes written by the user.
-     * @param testMode If true, return the notes the caller wrote for the test. If false, return the notes the caller wrote on the product.
-     * @param paginationToken Pagination token to get next set of posts eligible for notes.
-     * @param maxResults Max results to return.
-     * @param notefields A comma separated list of Note fields to display.* @returns CommunityNotesSearchNotesWrittenResponse Response data
-     */
-  async searchNotesWritten(
-    testMode: boolean,
-    paginationToken?: string,
-    maxResults?: number,
-    notefields?: Array<any>
-  ): Promise<CommunityNotesSearchNotesWrittenResponse> {
-    let url = this.client.baseUrl + "/2/notes/search/notes_written";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
-    const params = new URLSearchParams();
-
-    if (testMode !== undefined) {
-      params.set("test_mode", String(testMode));
-    }
-
-    if (paginationToken !== undefined) {
-      params.set("pagination_token", String(paginationToken));
-    }
-
-    if (maxResults !== undefined) {
-      params.set("max_results", String(maxResults));
-    }
-
-    if (notefields !== undefined) {
-      params.set("note.fields", notefields.map(String).join(","));
-    }
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
-    );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as CommunityNotesSearchNotesWrittenResponse;
   }
 }

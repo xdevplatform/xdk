@@ -4,15 +4,15 @@
  * This module provides a client for interacting with the Spaces endpoints of the X API.
  */
 
-import { Client } from "../client.js";
+import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
-  SpacesGetByIdResponse,
-  SpacesGetPostsResponse,
   SpacesGetBuyersResponse,
+  SpacesGetPostsResponse,
+  SpacesGetByIdResponse,
   SpacesGetByIdsResponse,
   SpacesSearchResponse,
-  SpacesGetByCreatorIdsResponse
-} from "./models.js";
+  SpacesGetByCreatorIdsResponse,
+} from './models.js';
 
 /**
  * Client for Spaces operations
@@ -25,79 +25,61 @@ export class SpacesClient {
   }
 
   /**
-     * Get space by ID
-     * Retrieves details of a specific space by its ID.
+     * Get Space ticket buyers
+     * Retrieves a list of Users who purchased tickets to a specific Space by its ID.
      * @param id The ID of the Space to be retrieved.
-     * @param spacefields A comma separated list of Space fields to display.
-     * @param expansions A comma separated list of fields to expand.
+     * @param paginationToken This parameter is used to get a specified 'page' of results.
+     * @param maxResults The maximum number of results.
      * @param userfields A comma separated list of User fields to display.
-     * @param topicfields A comma separated list of Topic fields to display.* @returns SpacesGetByIdResponse Response data
+     * @param expansions A comma separated list of fields to expand.
+     * @param tweetfields A comma separated list of Tweet fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
-  async getById(
+  async getBuyers(
     id: string,
-    spacefields?: Array<any>,
-    expansions?: Array<any>,
+    tweetfields?: Array<any>,
     userfields?: Array<any>,
-    topicfields?: Array<any>
-  ): Promise<SpacesGetByIdResponse> {
-    let url = this.client.baseUrl + "/2/spaces/{id}";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    maxResults?: number,
+    paginationToken?: string,
+    expansions?: Array<any>,
+    options?: RequestOptions
+  ): Promise<ApiResponse<SpacesGetBuyersResponse>> {
     const params = new URLSearchParams();
 
-    if (spacefields !== undefined) {
-      params.set("space.fields", spacefields.map(String).join(","));
+    if (paginationToken !== undefined) {
+      params.set('pagination_token', String(paginationToken));
     }
 
-    if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
+    if (maxResults !== undefined) {
+      params.set('max_results', String(maxResults));
     }
 
     if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
+      params.set('user.fields', String(userfields));
     }
 
-    if (topicfields !== undefined) {
-      params.set("topic.fields", topicfields.map(String).join(","));
+    if (expansions !== undefined) {
+      params.set('expansions', String(expansions));
     }
 
-    url = url.replace("{id}", String(id));
-
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
-
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
+    if (tweetfields !== undefined) {
+      params.set('tweet.fields', String(tweetfields));
     }
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    const path = `/2/spaces/{id}/buyers`.replace('{id}', String(id));
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<SpacesGetBuyersResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as SpacesGetByIdResponse;
   }
 
   /**
@@ -110,164 +92,116 @@ export class SpacesClient {
      * @param mediafields A comma separated list of Media fields to display.
      * @param pollfields A comma separated list of Poll fields to display.
      * @param userfields A comma separated list of User fields to display.
-     * @param placefields A comma separated list of Place fields to display.* @returns SpacesGetPostsResponse Response data
+     * @param placefields A comma separated list of Place fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async getPosts(
     id: string,
-    maxResults?: number,
-    tweetfields?: Array<any>,
-    expansions?: Array<any>,
-    mediafields?: Array<any>,
-    pollfields?: Array<any>,
+    placefields?: Array<any>,
     userfields?: Array<any>,
-    placefields?: Array<any>
-  ): Promise<SpacesGetPostsResponse> {
-    let url = this.client.baseUrl + "/2/spaces/{id}/tweets";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    pollfields?: Array<any>,
+    mediafields?: Array<any>,
+    tweetfields?: Array<any>,
+    maxResults?: number,
+    expansions?: Array<any>,
+    options?: RequestOptions
+  ): Promise<ApiResponse<SpacesGetPostsResponse>> {
     const params = new URLSearchParams();
 
     if (maxResults !== undefined) {
-      params.set("max_results", String(maxResults));
+      params.set('max_results', String(maxResults));
     }
 
     if (tweetfields !== undefined) {
-      params.set("tweet.fields", tweetfields.map(String).join(","));
+      params.set('tweet.fields', String(tweetfields));
     }
 
     if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
+      params.set('expansions', String(expansions));
     }
 
     if (mediafields !== undefined) {
-      params.set("media.fields", mediafields.map(String).join(","));
+      params.set('media.fields', String(mediafields));
     }
 
     if (pollfields !== undefined) {
-      params.set("poll.fields", pollfields.map(String).join(","));
+      params.set('poll.fields', String(pollfields));
     }
 
     if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
+      params.set('user.fields', String(userfields));
     }
 
     if (placefields !== undefined) {
-      params.set("place.fields", placefields.map(String).join(","));
+      params.set('place.fields', String(placefields));
     }
 
-    url = url.replace("{id}", String(id));
+    const path = `/2/spaces/{id}/tweets`.replace('{id}', String(id));
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Set authentication headers
-
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<SpacesGetPostsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as SpacesGetPostsResponse;
   }
 
   /**
-     * Get Space ticket buyers
-     * Retrieves a list of Users who purchased tickets to a specific Space by its ID.
+     * Get space by ID
+     * Retrieves details of a specific space by its ID.
      * @param id The ID of the Space to be retrieved.
-     * @param paginationToken This parameter is used to get a specified 'page' of results.
-     * @param maxResults The maximum number of results.
-     * @param userfields A comma separated list of User fields to display.
+     * @param spacefields A comma separated list of Space fields to display.
      * @param expansions A comma separated list of fields to expand.
-     * @param tweetfields A comma separated list of Tweet fields to display.* @returns SpacesGetBuyersResponse Response data
+     * @param userfields A comma separated list of User fields to display.
+     * @param topicfields A comma separated list of Topic fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
-  async getBuyers(
+  async getById(
     id: string,
-    paginationToken?: string,
-    maxResults?: number,
+    topicfields?: Array<any>,
     userfields?: Array<any>,
+    spacefields?: Array<any>,
     expansions?: Array<any>,
-    tweetfields?: Array<any>
-  ): Promise<SpacesGetBuyersResponse> {
-    let url = this.client.baseUrl + "/2/spaces/{id}/buyers";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    options?: RequestOptions
+  ): Promise<ApiResponse<SpacesGetByIdResponse>> {
     const params = new URLSearchParams();
 
-    if (paginationToken !== undefined) {
-      params.set("pagination_token", String(paginationToken));
-    }
-
-    if (maxResults !== undefined) {
-      params.set("max_results", String(maxResults));
-    }
-
-    if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
+    if (spacefields !== undefined) {
+      params.set('space.fields', String(spacefields));
     }
 
     if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
+      params.set('expansions', String(expansions));
     }
 
-    if (tweetfields !== undefined) {
-      params.set("tweet.fields", tweetfields.map(String).join(","));
+    if (userfields !== undefined) {
+      params.set('user.fields', String(userfields));
     }
 
-    url = url.replace("{id}", String(id));
+    if (topicfields !== undefined) {
+      params.set('topic.fields', String(topicfields));
+    }
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/spaces/{id}`.replace('{id}', String(id));
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<SpacesGetByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as SpacesGetBuyersResponse;
   }
 
   /**
@@ -277,75 +211,53 @@ export class SpacesClient {
      * @param spacefields A comma separated list of Space fields to display.
      * @param expansions A comma separated list of fields to expand.
      * @param userfields A comma separated list of User fields to display.
-     * @param topicfields A comma separated list of Topic fields to display.* @returns SpacesGetByIdsResponse Response data
+     * @param topicfields A comma separated list of Topic fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async getByIds(
     ids: Array<any>,
+    topicfields?: Array<any>,
+    userfields?: Array<any>,
     spacefields?: Array<any>,
     expansions?: Array<any>,
-    userfields?: Array<any>,
-    topicfields?: Array<any>
-  ): Promise<SpacesGetByIdsResponse> {
-    let url = this.client.baseUrl + "/2/spaces";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    options?: RequestOptions
+  ): Promise<ApiResponse<SpacesGetByIdsResponse>> {
     const params = new URLSearchParams();
 
     if (ids !== undefined) {
-      params.set("ids", ids.map(String).join(","));
+      params.set('ids', String(ids));
     }
 
     if (spacefields !== undefined) {
-      params.set("space.fields", spacefields.map(String).join(","));
+      params.set('space.fields', String(spacefields));
     }
 
     if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
+      params.set('expansions', String(expansions));
     }
 
     if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
+      params.set('user.fields', String(userfields));
     }
 
     if (topicfields !== undefined) {
-      params.set("topic.fields", topicfields.map(String).join(","));
+      params.set('topic.fields', String(topicfields));
     }
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/spaces`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<SpacesGetByIdsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as SpacesGetByIdsResponse;
   }
 
   /**
@@ -357,85 +269,63 @@ export class SpacesClient {
      * @param spacefields A comma separated list of Space fields to display.
      * @param expansions A comma separated list of fields to expand.
      * @param userfields A comma separated list of User fields to display.
-     * @param topicfields A comma separated list of Topic fields to display.* @returns SpacesSearchResponse Response data
+     * @param topicfields A comma separated list of Topic fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async search(
     query: string,
-    state?: string,
-    maxResults?: number,
-    spacefields?: Array<any>,
-    expansions?: Array<any>,
+    topicfields?: Array<any>,
     userfields?: Array<any>,
-    topicfields?: Array<any>
-  ): Promise<SpacesSearchResponse> {
-    let url = this.client.baseUrl + "/2/spaces/search";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    spacefields?: Array<any>,
+    maxResults?: number,
+    state?: string,
+    expansions?: Array<any>,
+    options?: RequestOptions
+  ): Promise<ApiResponse<SpacesSearchResponse>> {
     const params = new URLSearchParams();
 
     if (query !== undefined) {
-      params.set("query", String(query));
+      params.set('query', String(query));
     }
 
     if (state !== undefined) {
-      params.set("state", String(state));
+      params.set('state', String(state));
     }
 
     if (maxResults !== undefined) {
-      params.set("max_results", String(maxResults));
+      params.set('max_results', String(maxResults));
     }
 
     if (spacefields !== undefined) {
-      params.set("space.fields", spacefields.map(String).join(","));
+      params.set('space.fields', String(spacefields));
     }
 
     if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
+      params.set('expansions', String(expansions));
     }
 
     if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
+      params.set('user.fields', String(userfields));
     }
 
     if (topicfields !== undefined) {
-      params.set("topic.fields", topicfields.map(String).join(","));
+      params.set('topic.fields', String(topicfields));
     }
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/spaces/search`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<SpacesSearchResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as SpacesSearchResponse;
   }
 
   /**
@@ -445,74 +335,52 @@ export class SpacesClient {
      * @param spacefields A comma separated list of Space fields to display.
      * @param expansions A comma separated list of fields to expand.
      * @param userfields A comma separated list of User fields to display.
-     * @param topicfields A comma separated list of Topic fields to display.* @returns SpacesGetByCreatorIdsResponse Response data
+     * @param topicfields A comma separated list of Topic fields to display.* @param options Additional request options
+     * @returns Promise with the API response
      */
   async getByCreatorIds(
     userIds: Array<any>,
+    topicfields?: Array<any>,
+    userfields?: Array<any>,
     spacefields?: Array<any>,
     expansions?: Array<any>,
-    userfields?: Array<any>,
-    topicfields?: Array<any>
-  ): Promise<SpacesGetByCreatorIdsResponse> {
-    let url = this.client.baseUrl + "/2/spaces/by/creator_ids";
-
-    // Ensure we have a valid access token
-    if (this.client.oauth2Auth && this.client.token) {
-      // Check if token needs refresh
-      if (this.client.isTokenExpired()) {
-        await this.client.refreshToken();
-      }
-    }
+    options?: RequestOptions
+  ): Promise<ApiResponse<SpacesGetByCreatorIdsResponse>> {
     const params = new URLSearchParams();
 
     if (userIds !== undefined) {
-      params.set("user_ids", userIds.map(String).join(","));
+      params.set('user_ids', String(userIds));
     }
 
     if (spacefields !== undefined) {
-      params.set("space.fields", spacefields.map(String).join(","));
+      params.set('space.fields', String(spacefields));
     }
 
     if (expansions !== undefined) {
-      params.set("expansions", expansions.map(String).join(","));
+      params.set('expansions', String(expansions));
     }
 
     if (userfields !== undefined) {
-      params.set("user.fields", userfields.map(String).join(","));
+      params.set('user.fields', String(userfields));
     }
 
     if (topicfields !== undefined) {
-      params.set("topic.fields", topicfields.map(String).join(","));
+      params.set('topic.fields', String(topicfields));
     }
 
-    // Create headers by copying the client's headers
-    const headers = new Headers(this.client.headers);
+    const path = `/2/spaces/by/creator_ids`;
 
-    // Set authentication headers
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
 
-    if (this.client.bearerToken) {
-      headers.set("Authorization", `Bearer ${this.client.bearerToken}`);
-    } else if (this.client.accessToken) {
-      headers.set("Authorization", `Bearer ${this.client.accessToken}`);
-    }
-
-    // Make the request using the HTTP client
-    const response = await this.client.httpClient.request(
-      url + (params.toString() ? `?${params.toString()}` : ""),
-      {
-        method: "GET",
-        headers
-      }
+    return this.client.request<SpacesGetByCreatorIdsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
     );
-
-    // Check for errors
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Parse the response data
-    const responseData = await response.json();
-
-    return responseData as SpacesGetByCreatorIdsResponse;
   }
 }

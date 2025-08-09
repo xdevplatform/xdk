@@ -38,6 +38,7 @@ language! {
             render "client_class" => "src/{}/client.ts"
         },
         render "main_client" => "src/client.ts",
+        render "http_client" => "src/http-client.ts",
         render "oauth2_auth" => "src/oauth2_auth.ts",
         render "paginator" => "src/paginator.ts",
         render "index" => "src/index.ts",

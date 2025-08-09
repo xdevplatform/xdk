@@ -3,6 +3,20 @@
  */
 
 /**
+ * Request body for appendUpload
+ */
+export interface MediaAppendUploadRequest {}
+
+/**
+ * Response for appendUpload
+ * A response from getting a media upload request status.
+ */
+export interface MediaAppendUploadResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
  * Request body for initializeUpload
  */
 export interface MediaInitializeUploadRequest {
@@ -44,6 +58,23 @@ export interface MediaCreateMetadataResponse {
 }
 
 /**
+ * Response for finalizeUpload
+ * A response from getting a media upload request status.
+ */
+export interface MediaFinalizeUploadResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getByMediaKeys
+ */
+export interface MediaGetByMediaKeysResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+}
+
+/**
  * Response for getAnalytics
  */
 export interface MediaGetAnalyticsResponse {
@@ -56,14 +87,6 @@ export interface MediaGetAnalyticsResponse {
  */
 export interface MediaGetByMediaKeyResponse {
   data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getByMediaKeys
- */
-export interface MediaGetByMediaKeysResponse {
-  data?: Array<any>;
   errors?: Array<any>;
 }
 
@@ -102,29 +125,6 @@ export interface MediaDeleteSubtitlesRequest {
  * Response for deleteSubtitles
  */
 export interface MediaDeleteSubtitlesResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Request body for appendUpload
- */
-export interface MediaAppendUploadRequest {}
-
-/**
- * Response for appendUpload
- * A response from getting a media upload request status.
- */
-export interface MediaAppendUploadResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for finalizeUpload
- * A response from getting a media upload request status.
- */
-export interface MediaFinalizeUploadResponse {
   data: Record<string, any>;
   errors?: Array<any>;
 }

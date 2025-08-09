@@ -5,4 +5,222 @@
  */
 
 export * from './client.js';
-export * from './models.js'; 
+export * from './models.js';
+
+// Re-export commonly used types with better names
+{% if tag == "Posts" %}
+export type {
+  PostsGetByIdResponse as PostResponse,
+  PostsGetByIdsResponse as PostsResponse,
+  PostsCreateRequest as CreatePostRequest,
+  PostsCreateResponse as CreatePostResponse,
+  PostsLikeRequest as LikePostRequest,
+  PostsLikeResponse as LikePostResponse,
+  PostsUnlikeResponse as UnlikePostResponse,
+  PostsRepostRequest as RepostRequest,
+  PostsRepostResponse as RepostResponse,
+  PostsDeleteResponse as DeletePostResponse,
+  PostsSearchRecentResponse as SearchPostsResponse,
+  PostsGetUsersTimelineResponse as UserTimelineResponse,
+  PostsGetUsersLikedResponse as LikedPostsResponse,
+  PostsGetRepostsResponse as RepostsResponse,
+  PostsGetQuotedPostsResponse as QuotedPostsResponse,
+  PostsGetUsersMentionsResponse as MentionsResponse,
+  PostsGetCountsRecentResponse as PostCountsResponse,
+  PostsGetCountsAllResponse as AllPostCountsResponse,
+  PostsGetInsights28HrResponse as PostInsightsResponse,
+  PostsGetInsightsHistoricalResponse as HistoricalPostInsightsResponse,
+  PostsGetAnalyticsResponse as PostAnalyticsResponse,
+  PostsHideReplyRequest as HideReplyRequest,
+  PostsHideReplyResponse as HideReplyResponse,
+  PostsUnrepostResponse as UnrepostResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Users" %}
+export type {
+  UsersGetByIdResponse as UserResponse,
+  UsersGetByIdsResponse as UsersResponse,
+  UsersGetMeResponse as CurrentUserResponse,
+  UsersGetByUsernameResponse as UserByUsernameResponse,
+  UsersGetByUsernamesResponse as UsersByUsernameResponse,
+  UsersGetFollowersResponse as UserFollowersResponse,
+  UsersGetFollowingResponse as UserFollowingResponse,
+  UsersGetPostsResponse as UserPostsResponse,
+  UsersGetPostsLikingResponse as UserLikedPostsResponse,
+  UsersGetPostsRetweetedResponse as UserRetweetedPostsResponse,
+  UsersGetPostsMentionsResponse as UserMentionsResponse,
+  UsersGetPostsTimelineResponse as UserTimelinePostsResponse,
+  UsersFollowRequest as FollowUserRequest,
+  UsersFollowResponse as FollowUserResponse,
+  UsersUnfollowRequest as UnfollowUserRequest,
+  UsersUnfollowResponse as UnfollowUserResponse,
+  UsersBlockRequest as BlockUserRequest,
+  UsersBlockResponse as BlockUserResponse,
+  UsersUnblockRequest as UnblockUserRequest,
+  UsersUnblockResponse as UnblockUserResponse,
+  UsersMuteRequest as MuteUserRequest,
+  UsersMuteResponse as MuteUserResponse,
+  UsersUnmuteRequest as UnmuteUserRequest,
+  UsersUnmuteResponse as UnmuteUserResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Lists" %}
+export type {
+  ListsGetByIdResponse as ListResponse,
+  ListsGetByIdsResponse as ListsResponse,
+  ListsGetUsersResponse as ListUsersResponse,
+  ListsGetUsersMembershipsResponse as UserListsResponse,
+  ListsGetFollowersResponse as ListFollowersResponse,
+  ListsGetMembersResponse as ListMembersResponse,
+  ListsCreateRequest as CreateListRequest,
+  ListsCreateResponse as CreateListResponse,
+  ListsUpdateRequest as UpdateListRequest,
+  ListsUpdateResponse as UpdateListResponse,
+  ListsDeleteResponse as DeleteListResponse,
+  ListsAddMemberRequest as AddListMemberRequest,
+  ListsAddMemberResponse as AddListMemberResponse,
+  ListsRemoveMemberRequest as RemoveListMemberRequest,
+  ListsRemoveMemberResponse as RemoveListMemberResponse,
+  ListsFollowRequest as FollowListRequest,
+  ListsFollowResponse as FollowListResponse,
+  ListsUnfollowRequest as UnfollowListRequest,
+  ListsUnfollowResponse as UnfollowListResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Spaces" %}
+export type {
+  SpacesGetByIdResponse as SpaceResponse,
+  SpacesGetByIdsResponse as SpacesResponse,
+  SpacesGetByCreatorIdsResponse as CreatorSpacesResponse,
+  SpacesSearchResponse as SearchSpacesResponse,
+  SpacesGetBuyersResponse as SpaceBuyersResponse,
+  SpacesGetTweetsResponse as SpaceTweetsResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Media" %}
+export type {
+  MediaGetByMediaKeyResponse as MediaResponse,
+  MediaGetByMediaKeysResponse as MediaListResponse,
+  MediaUploadRequest as UploadMediaRequest,
+  MediaUploadResponse as UploadMediaResponse,
+  MediaInitializeUploadRequest as InitializeMediaUploadRequest,
+  MediaInitializeUploadResponse as InitializeMediaUploadResponse,
+  MediaAppendUploadRequest as AppendMediaUploadRequest,
+  MediaAppendUploadResponse as AppendMediaUploadResponse,
+  MediaCreateSubtitlesRequest as CreateMediaSubtitlesRequest,
+  MediaCreateSubtitlesResponse as CreateMediaSubtitlesResponse,
+  MediaDeleteSubtitlesRequest as DeleteMediaSubtitlesRequest,
+  MediaDeleteSubtitlesResponse as DeleteMediaSubtitlesResponse,
+  MediaCreateMetadataRequest as CreateMediaMetadataRequest,
+  MediaCreateMetadataResponse as CreateMediaMetadataResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Bookmarks" %}
+export type {
+  BookmarksGetUsersResponse as BookmarkedPostsResponse,
+  BookmarksCreateRequest as CreateBookmarkRequest,
+  BookmarksCreateResponse as CreateBookmarkResponse,
+  BookmarksDeleteRequest as DeleteBookmarkRequest,
+  BookmarksDeleteResponse as DeleteBookmarkResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Direct Messages" %}
+export type {
+  DirectMessagesGetDmEventsResponse as DirectMessagesResponse,
+  DirectMessagesCreateDmByConversationIdRequest as CreateDirectMessageRequest,
+  DirectMessagesCreateDmByConversationIdResponse as CreateDirectMessageResponse,
+  DirectMessagesCreateDmConversationsRequest as CreateDmConversationRequest,
+  DirectMessagesCreateDmConversationsResponse as CreateDmConversationResponse,
+  DirectMessagesCreateDmByParticipantIdRequest as CreateDmByParticipantRequest,
+  DirectMessagesCreateDmByParticipantIdResponse as CreateDmByParticipantResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Communities" %}
+export type {
+  CommunitiesGetByIdResponse as CommunityResponse,
+  CommunitiesGetByIdsResponse as CommunitiesResponse,
+  CommunitiesGetRulesResponse as CommunityRulesResponse,
+  CommunitiesGetBannedUsersResponse as CommunityBannedUsersResponse,
+  CommunitiesGetMembersResponse as CommunityMembersResponse,
+  CommunitiesGetModeratorsResponse as CommunityModeratorsResponse,
+  CommunitiesGetPendingFollowersResponse as CommunityPendingFollowersResponse,
+  CommunitiesGetFollowersResponse as CommunityFollowersResponse,
+  CommunitiesGetAdminsResponse as CommunityAdminsResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Trends" %}
+export type {
+  TrendsGetUsersPersonalizedResponse as PersonalizedTrendsResponse,
+  TrendsGetUsersAvailableResponse as AvailableTrendsResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Usage" %}
+export type {
+  UsageGetResponse as UsageResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Compliance" %}
+export type {
+  ComplianceGetJobsResponse as ComplianceJobsResponse,
+  ComplianceGetJobByIdResponse as ComplianceJobResponse,
+  ComplianceCreateJobRequest as CreateComplianceJobRequest,
+  ComplianceCreateJobResponse as CreateComplianceJobResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Webhooks" %}
+export type {
+  WebhooksGetResponse as WebhooksResponse,
+  WebhooksCreateRequest as CreateWebhookRequest,
+  WebhooksCreateResponse as CreateWebhookResponse,
+  WebhooksDeleteResponse as DeleteWebhookResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Account Activity" %}
+export type {
+  AccountActivityGetSubscriptionsResponse as AccountActivitySubscriptionsResponse,
+  AccountActivityCreateSubscriptionRequest as CreateAccountActivitySubscriptionRequest,
+  AccountActivityCreateSubscriptionResponse as CreateAccountActivitySubscriptionResponse,
+  AccountActivityDeleteSubscriptionResponse as DeleteAccountActivitySubscriptionResponse
+} from './models.js';
+{% endif %}
+{% if tag == "AAA Subscriptions" %}
+export type {
+  AaasubscriptionsCreateAccountActivitySubscriptionRequest as CreateAaaSubscriptionRequest,
+  AaasubscriptionsCreateAccountActivitySubscriptionResponse as CreateAaaSubscriptionResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Connection" %}
+export type {
+  ConnectionGetResponse as ConnectionResponse
+} from './models.js';
+{% endif %}
+{% if tag == "General" %}
+export type {
+  GeneralGetSettingsResponse as SettingsResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Community Notes" %}
+export type {
+  CommunityNotesSearchNotesWrittenResponse as CommunityNotesResponse,
+  CommunityNotesCreateNotesRequest as CreateCommunityNoteRequest,
+  CommunityNotesCreateNotesResponse as CreateCommunityNoteResponse,
+  CommunityNotesGetNotesResponse as CommunityNotesListResponse
+} from './models.js';
+{% endif %}
+{% if tag == "Stream" %}
+export type {
+  StreamGetRulesResponse as StreamRulesResponse,
+  StreamUpdateRulesRequest as UpdateStreamRulesRequest,
+  StreamUpdateRulesResponse as UpdateStreamRulesResponse,
+  StreamGetRuleCountsResponse as StreamRuleCountsResponse,
+  StreamPostsResponse as StreamPostsResponse,
+  StreamPostsFirehoseResponse as StreamPostsFirehoseResponse,
+  StreamPostsSampleResponse as StreamPostsSampleResponse,
+  StreamPostsComplianceResponse as StreamPostsComplianceResponse,
+  StreamLikesFirehoseResponse as StreamLikesFirehoseResponse,
+  StreamLikesSampleResponse as StreamLikesSampleResponse,
+  StreamLikesComplianceResponse as StreamLikesComplianceResponse,
+  StreamUsersComplianceResponse as StreamUsersComplianceResponse,
+  StreamLabelsComplianceResponse as StreamLabelsComplianceResponse
+} from './models.js';
+{% endif %} 
