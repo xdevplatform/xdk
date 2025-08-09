@@ -1,0 +1,227 @@
+# X API SDK
+
+A modern TypeScript/JavaScript SDK for interacting with the X API. Built with full TypeScript support, React hooks, and Next.js integration.
+
+## Installation
+
+```bash
+# Using npm
+npm install x-api-sdk
+
+# Using yarn
+yarn add x-api-sdk
+
+# Using pnpm (recommended)
+pnpm add x-api-sdk
+```
+
+## Usage
+
+### TypeScript/JavaScript (ESM)
+
+```typescript
+import { Client } from 'x-api-sdk';
+
+// Create a client instance
+const client = new Client({
+    bearerToken: 'your-bearer-token'
+});
+
+// Example: Get a user's tweets using async/await
+const tweets = await client.tweets.getUserTweets({
+    userId: '12345',
+    maxResults: 10
+});
+
+// Example: Using the paginator with async iteration
+const paginator = client.tweets.getUserTweetsAll({ userId: '12345' });
+for await (const tweet of paginator) {
+    console.log(tweet);
+}
+```
+
+### React with Hooks
+
+```tsx
+import { XApiProvider, useTweets, useUserTweets } from 'x-api-sdk/react';
+
+// Wrap your app with the provider
+function App() {
+    return (
+        <XApiProvider bearerToken="your-bearer-token">
+            <Timeline userId="12345" />
+        </XApiProvider>
+    );
+}
+
+// Use hooks in your components
+function Timeline({ userId }: { userId: string }) {
+    // Hook with automatic data fetching and state management
+    const { data: tweets, isLoading, error, refetch } = useUserTweets(
+        { userId, maxResults: 10 },
+        { refetchInterval: 30000 } // Refetch every 30 seconds
+    );
+
+    // Direct access to the tweets client
+    const tweetsClient = useTweets();
+
+    // Handle loading and error states
+    if (isLoading) return <div>Loading...</div>;
+    if (error) return <div>Error: {error.message}</div>;
+
+    return (
+        <div>
+            {tweets?.map(tweet => (
+                <Tweet key={tweet.id} tweet={tweet} />
+            ))}
+            <button onClick={() => refetch()}>Refresh</button>
+        </div>
+    );
+}
+```
+
+### Next.js App Router
+
+```tsx
+// app/api/auth/[...nextauth]/route.ts
+import { OAuth2Auth } from 'x-api-sdk';
+
+const auth = new OAuth2Auth({
+    clientId: process.env.X_CLIENT_ID!,
+    clientSecret: process.env.X_CLIENT_SECRET!,
+    redirectUri: process.env.X_REDIRECT_URI!
+});
+
+export const authConfig = {
+    // ... your NextAuth config
+};
+
+// app/tweets/page.tsx
+import { createServerActions } from 'x-api-sdk/next';
+
+// Server Component
+export default async function TweetsPage() {
+    const actions = createServerActions({
+        bearerToken: process.env.X_BEARER_TOKEN
+    });
+
+    // Use server actions directly
+    const tweets = await actions.tweets.getUserTweets({
+        userId: '12345',
+        maxResults: 10
+    });
+
+    return (
+        <div>
+            {tweets.map(tweet => (
+                <Tweet key={tweet.id} tweet={tweet} />
+            ))}
+        </div>
+    );
+}
+
+// app/tweets/actions.ts
+'use server';
+
+import { createServerActions } from 'x-api-sdk/next';
+
+const actions = createServerActions({
+    bearerToken: process.env.X_BEARER_TOKEN
+});
+
+// Export server actions for client components
+export const createTweet = actions.tweets.createTweet;
+export const deleteTweet = actions.tweets.deleteTweet;
+
+// app/tweets/tweet-form.tsx
+'use client';
+
+import { createTweet } from './actions';
+
+export function TweetForm() {
+    async function handleSubmit(formData: FormData) {
+        const text = formData.get('text') as string;
+        await createTweet({ text });
+    }
+
+    return (
+        <form action={handleSubmit}>
+            <textarea name="text" />
+            <button type="submit">Tweet</button>
+        </form>
+    );
+}
+```
+
+## Features
+
+- ✨ Full TypeScript support with type definitions
+- 🔄 Dual ESM/CommonJS support
+- ⚛️ React hooks with automatic data fetching
+- 📱 Next.js App Router integration with Server Actions
+- 🔒 OAuth2 authentication
+- 📄 Pagination support with async iterators
+- 🚨 Comprehensive error handling
+- 📦 Tree-shakeable
+- 🌐 Works in Node.js 18+, browsers, and edge runtime
+- 📚 Auto-generated documentation
+- ⚡ Zero dependencies
+
+## Type Safety
+
+The SDK is written in TypeScript and provides full type safety:
+
+```typescript
+// All methods have full type definitions
+interface CreateTweetRequest {
+    text: string;
+    reply?: {
+        in_reply_to_tweet_id: string;
+    };
+    // ... other properties
+}
+
+// Autocomplete and type checking work out of the box
+const tweet = await client.tweets.createTweet({
+    text: 'Hello!',
+    reply: {
+        in_reply_to_tweet_id: '123' // Type checked!
+    }
+});
+```
+
+## Documentation
+
+For detailed documentation:
+
+- [API Reference](./docs/api.md)
+- [React Hooks Guide](./docs/react.md)
+- [Next.js Integration](./docs/nextjs.md)
+- [X API Documentation](https://developer.twitter.com/en/docs/twitter-api)
+- [TypeDoc Documentation](./docs/typedoc/index.html)
+
+## Development
+
+```bash
+# Install dependencies
+pnpm install
+
+# Build
+pnpm build
+
+# Test
+pnpm test
+
+# Lint
+pnpm lint
+
+# Format
+pnpm format
+
+# Generate docs
+pnpm docs
+```
+
+## License
+
+MIT 
