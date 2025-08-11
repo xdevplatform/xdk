@@ -3,6 +3,37 @@
  */
 
 /**
+ * Response for finalizeUpload
+ * A response from getting a media upload request status.
+ */
+export interface MediaFinalizeUploadResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getByMediaKey
+ */
+export interface MediaGetByMediaKeyResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Request body for appendUpload
+ */
+export interface MediaAppendUploadRequest {}
+
+/**
+ * Response for appendUpload
+ * A response from getting a media upload request status.
+ */
+export interface MediaAppendUploadResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
  * Request body for createMetadata
  */
 export interface MediaCreateMetadataRequest {
@@ -16,15 +47,6 @@ export interface MediaCreateMetadataRequest {
  */
 export interface MediaCreateMetadataResponse {
   data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for finalizeUpload
- * A response from getting a media upload request status.
- */
-export interface MediaFinalizeUploadResponse {
-  data: Record<string, any>;
   errors?: Array<any>;
 }
 
@@ -61,10 +83,34 @@ export interface MediaInitializeUploadResponse {
 }
 
 /**
- * Response for getByMediaKeys
+ * Response for getUploadStatus
+ * A response from getting a media upload request status.
  */
-export interface MediaGetByMediaKeysResponse {
-  data?: Array<any>;
+export interface MediaGetUploadStatusResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Request body for upload
+ */
+export interface MediaUploadRequest {
+  additionalOwners?: Array<any>;
+  media?: any;
+  /** A string enum value which identifies a media use-case. This identifier is used to enforce use-case specific constraints (e.g. file size) and enable advanced features. */
+  mediaCategory?: string;
+  /** The type of image or subtitle. */
+  mediaType?: string;
+  /** Whether this media is shared or not. */
+  shared?: boolean;
+}
+
+/**
+ * Response for upload
+ * A response from getting a media upload request status.
+ */
+export interface MediaUploadResponse {
+  data: Record<string, any>;
   errors?: Array<any>;
 }
 
@@ -108,55 +154,9 @@ export interface MediaDeleteSubtitlesResponse {
 }
 
 /**
- * Response for getByMediaKey
+ * Response for getByMediaKeys
  */
-export interface MediaGetByMediaKeyResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getUploadStatus
- * A response from getting a media upload request status.
- */
-export interface MediaGetUploadStatusResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Request body for upload
- */
-export interface MediaUploadRequest {
-  additionalOwners?: Array<any>;
-  media?: any;
-  /** A string enum value which identifies a media use-case. This identifier is used to enforce use-case specific constraints (e.g. file size) and enable advanced features. */
-  mediaCategory?: string;
-  /** The type of image or subtitle. */
-  mediaType?: string;
-  /** Whether this media is shared or not. */
-  shared?: boolean;
-}
-
-/**
- * Response for upload
- * A response from getting a media upload request status.
- */
-export interface MediaUploadResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Request body for appendUpload
- */
-export interface MediaAppendUploadRequest {}
-
-/**
- * Response for appendUpload
- * A response from getting a media upload request status.
- */
-export interface MediaAppendUploadResponse {
-  data?: Record<string, any>;
+export interface MediaGetByMediaKeysResponse {
+  data?: Array<any>;
   errors?: Array<any>;
 }

@@ -6,10 +6,10 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
+  ComplianceGetJobsByIdResponse,
   ComplianceGetJobsResponse,
   ComplianceCreateJobsRequest,
   ComplianceCreateJobsResponse,
-  ComplianceGetJobsByIdResponse,
 } from './models.js';
 
 /**
@@ -23,6 +23,34 @@ export class ComplianceClient {
   }
 
   /**
+     * Get Compliance Job by ID
+     * Retrieves details of a specific Compliance Job by its ID.
+     * @param id The ID of the Compliance Job to retrieve.
+     * @param complianceJobfields A comma separated list of ComplianceJob fields to display.* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async getJobsById(
+    options?: RequestOptions
+  ): Promise<ApiResponse<ComplianceGetJobsByIdResponse>> {
+    const params = new URLSearchParams();
+
+    const path = `/2/compliance/jobs/{id}`;
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<ComplianceGetJobsByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
+
+  /**
      * Get Compliance Jobs
      * Retrieves a list of Compliance Jobs filtered by job type and optional status.
      * @param type Type of Compliance Job to list.
@@ -31,24 +59,9 @@ export class ComplianceClient {
      * @returns Promise with the API response
      */
   async getJobs(
-    type: any,
-    status?: any,
-    complianceJobfields?: any,
     options?: RequestOptions
   ): Promise<ApiResponse<ComplianceGetJobsResponse>> {
     const params = new URLSearchParams();
-
-    if (type !== undefined) {
-      params.set('type', String(type));
-    }
-
-    if (status !== undefined) {
-      params.set('status', String(status));
-    }
-
-    if (complianceJobfields !== undefined) {
-      params.set('compliance_job.fields', String(complianceJobfields));
-    }
 
     const path = `/2/compliance/jobs`;
 
@@ -72,7 +85,7 @@ export class ComplianceClient {
      * @returns Promise with the API response
      */
   async createJobs(
-    body?: ComplianceCreateJobsRequest,
+    body: ComplianceCreateJobsRequest,
     options?: RequestOptions
   ): Promise<ApiResponse<ComplianceCreateJobsResponse>> {
     const params = new URLSearchParams();
@@ -94,40 +107,6 @@ export class ComplianceClient {
 
     return this.client.request<ComplianceCreateJobsResponse>(
       'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      requestOptions
-    );
-  }
-
-  /**
-     * Get Compliance Job by ID
-     * Retrieves details of a specific Compliance Job by its ID.
-     * @param id The ID of the Compliance Job to retrieve.
-     * @param complianceJobfields A comma separated list of ComplianceJob fields to display.* @param options Additional request options
-     * @returns Promise with the API response
-     */
-  async getJobsById(
-    id: any,
-    complianceJobfields?: any,
-    options?: RequestOptions
-  ): Promise<ApiResponse<ComplianceGetJobsByIdResponse>> {
-    const params = new URLSearchParams();
-
-    if (complianceJobfields !== undefined) {
-      params.set('compliance_job.fields', String(complianceJobfields));
-    }
-
-    const path = `/2/compliance/jobs/{id}`.replace('{id}', String(id));
-
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-      },
-    };
-
-    return this.client.request<ComplianceGetJobsByIdResponse>(
-      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       requestOptions
     );

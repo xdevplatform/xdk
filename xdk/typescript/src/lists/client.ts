@@ -6,15 +6,15 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
-  ListsGetUsersOwnedResponse,
-  ListsAddMemberRequest,
-  ListsAddMemberResponse,
   ListsGetUsersFollowedResponse,
   ListsFollowRequest,
   ListsFollowResponse,
-  ListsUnfollowResponse,
-  ListsUnpinResponse,
   ListsGetUsersMembershipsResponse,
+  ListsAddMemberRequest,
+  ListsAddMemberResponse,
+  ListsGetUsersPinnedResponse,
+  ListsPinRequest,
+  ListsPinResponse,
   ListsCreateRequest,
   ListsCreateResponse,
   ListsGetByIdResponse,
@@ -22,9 +22,9 @@ import {
   ListsUpdateResponse,
   ListsDeleteResponse,
   ListsRemoveMemberByUserIdResponse,
-  ListsGetUsersPinnedResponse,
-  ListsPinRequest,
-  ListsPinResponse,
+  ListsUnpinResponse,
+  ListsGetUsersOwnedResponse,
+  ListsUnfollowResponse,
 } from './models.js';
 
 /**
@@ -35,99 +35,6 @@ export class ListsClient {
 
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-     * Get owned Lists
-     * Retrieves a list of Lists owned by a specific User by their ID.
-     * @param id The ID of the User to lookup.
-     * @param maxResults The maximum number of results.
-     * @param paginationToken This parameter is used to get a specified 'page' of results.
-     * @param listfields A comma separated list of List fields to display.
-     * @param expansions A comma separated list of fields to expand.
-     * @param userfields A comma separated list of User fields to display.* @param options Additional request options
-     * @returns Promise with the API response
-     */
-  async getUsersOwned(
-    id: any,
-    maxResults?: any,
-    paginationToken?: any,
-    listfields?: any,
-    expansions?: any,
-    userfields?: any,
-    options?: RequestOptions
-  ): Promise<ApiResponse<ListsGetUsersOwnedResponse>> {
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.set('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.set('pagination_token', String(paginationToken));
-    }
-
-    if (listfields !== undefined) {
-      params.set('list.fields', String(listfields));
-    }
-
-    if (expansions !== undefined) {
-      params.set('expansions', String(expansions));
-    }
-
-    if (userfields !== undefined) {
-      params.set('user.fields', String(userfields));
-    }
-
-    const path = `/2/users/{id}/owned_lists`.replace('{id}', String(id));
-
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-      },
-    };
-
-    return this.client.request<ListsGetUsersOwnedResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      requestOptions
-    );
-  }
-
-  /**
-     * Add List member
-     * Adds a User to a specific List by its ID.
-     * @param id The ID of the List for which to add a member.* @param body Request body* @param options Additional request options
-     * @returns Promise with the API response
-     */
-  async addMember(
-    id: any,
-    body?: ListsAddMemberRequest,
-    options?: RequestOptions
-  ): Promise<ApiResponse<ListsAddMemberResponse>> {
-    const params = new URLSearchParams();
-
-    const path = `/2/lists/{id}/members`.replace('{id}', String(id));
-
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-
-        'Content-Type': 'application/json',
-      },
-    };
-
-    if (body) {
-      requestOptions.body = JSON.stringify(body);
-    }
-
-    return this.client.request<ListsAddMemberResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      requestOptions
-    );
   }
 
   /**
@@ -142,37 +49,11 @@ export class ListsClient {
      * @returns Promise with the API response
      */
   async getUsersFollowed(
-    id: any,
-    maxResults?: any,
-    paginationToken?: any,
-    listfields?: any,
-    expansions?: any,
-    userfields?: any,
     options?: RequestOptions
   ): Promise<ApiResponse<ListsGetUsersFollowedResponse>> {
     const params = new URLSearchParams();
 
-    if (maxResults !== undefined) {
-      params.set('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.set('pagination_token', String(paginationToken));
-    }
-
-    if (listfields !== undefined) {
-      params.set('list.fields', String(listfields));
-    }
-
-    if (expansions !== undefined) {
-      params.set('expansions', String(expansions));
-    }
-
-    if (userfields !== undefined) {
-      params.set('user.fields', String(userfields));
-    }
-
-    const path = `/2/users/{id}/followed_lists`.replace('{id}', String(id));
+    const path = `/2/users/{id}/followed_lists`;
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -195,13 +76,12 @@ export class ListsClient {
      * @returns Promise with the API response
      */
   async follow(
-    id: any,
     body?: ListsFollowRequest,
     options?: RequestOptions
   ): Promise<ApiResponse<ListsFollowResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/users/{id}/followed_lists`.replace('{id}', String(id));
+    const path = `/2/users/{id}/followed_lists`;
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -224,70 +104,6 @@ export class ListsClient {
   }
 
   /**
-     * Unfollow List
-     * Causes the authenticated user to unfollow a specific List by its ID.
-     * @param id The ID of the authenticated source User that will unfollow the List.
-     * @param listId The ID of the List to unfollow.* @param options Additional request options
-     * @returns Promise with the API response
-     */
-  async unfollow(
-    id: any,
-    listId: any,
-    options?: RequestOptions
-  ): Promise<ApiResponse<ListsUnfollowResponse>> {
-    const params = new URLSearchParams();
-
-    const path = `/2/users/{id}/followed_lists/{list_id}`
-      .replace('{id}', String(id))
-      .replace('{list_id}', String(listId));
-
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-      },
-    };
-
-    return this.client.request<ListsUnfollowResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      requestOptions
-    );
-  }
-
-  /**
-     * Unpin List
-     * Causes the authenticated user to unpin a specific List by its ID.
-     * @param id The ID of the authenticated source User for whom to return results.
-     * @param listId The ID of the List to unpin.* @param options Additional request options
-     * @returns Promise with the API response
-     */
-  async unpin(
-    id: any,
-    listId: any,
-    options?: RequestOptions
-  ): Promise<ApiResponse<ListsUnpinResponse>> {
-    const params = new URLSearchParams();
-
-    const path = `/2/users/{id}/pinned_lists/{list_id}`
-      .replace('{id}', String(id))
-      .replace('{list_id}', String(listId));
-
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-      },
-    };
-
-    return this.client.request<ListsUnpinResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      requestOptions
-    );
-  }
-
-  /**
      * Get List memberships
      * Retrieves a list of Lists that a specific User is a member of by their ID.
      * @param id The ID of the User to lookup.
@@ -299,37 +115,11 @@ export class ListsClient {
      * @returns Promise with the API response
      */
   async getUsersMemberships(
-    id: any,
-    maxResults?: any,
-    paginationToken?: any,
-    listfields?: any,
-    expansions?: any,
-    userfields?: any,
     options?: RequestOptions
   ): Promise<ApiResponse<ListsGetUsersMembershipsResponse>> {
     const params = new URLSearchParams();
 
-    if (maxResults !== undefined) {
-      params.set('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.set('pagination_token', String(paginationToken));
-    }
-
-    if (listfields !== undefined) {
-      params.set('list.fields', String(listfields));
-    }
-
-    if (expansions !== undefined) {
-      params.set('expansions', String(expansions));
-    }
-
-    if (userfields !== undefined) {
-      params.set('user.fields', String(userfields));
-    }
-
-    const path = `/2/users/{id}/list_memberships`.replace('{id}', String(id));
+    const path = `/2/users/{id}/list_memberships`;
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -340,6 +130,104 @@ export class ListsClient {
 
     return this.client.request<ListsGetUsersMembershipsResponse>(
       'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
+
+  /**
+     * Add List member
+     * Adds a User to a specific List by its ID.
+     * @param id The ID of the List for which to add a member.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async addMember(
+    body?: ListsAddMemberRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsAddMemberResponse>> {
+    const params = new URLSearchParams();
+
+    const path = `/2/lists/{id}/members`;
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+
+        'Content-Type': 'application/json',
+      },
+    };
+
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
+    }
+
+    return this.client.request<ListsAddMemberResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
+
+  /**
+     * Get pinned Lists
+     * Retrieves a list of Lists pinned by the authenticated user.
+     * @param id The ID of the authenticated source User for whom to return results.
+     * @param listfields A comma separated list of List fields to display.
+     * @param expansions A comma separated list of fields to expand.
+     * @param userfields A comma separated list of User fields to display.* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async getUsersPinned(
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsGetUsersPinnedResponse>> {
+    const params = new URLSearchParams();
+
+    const path = `/2/users/{id}/pinned_lists`;
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<ListsGetUsersPinnedResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
+
+  /**
+     * Pin List
+     * Causes the authenticated user to pin a specific List by its ID.
+     * @param id The ID of the authenticated source User that will pin the List.* @param body Request body* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async pin(
+    body: ListsPinRequest,
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsPinResponse>> {
+    const params = new URLSearchParams();
+
+    const path = `/2/users/{id}/pinned_lists`;
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+
+        'Content-Type': 'application/json',
+      },
+    };
+
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
+    }
+
+    return this.client.request<ListsPinResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       requestOptions
     );
@@ -388,27 +276,11 @@ export class ListsClient {
      * @returns Promise with the API response
      */
   async getById(
-    id: any,
-    listfields?: any,
-    expansions?: any,
-    userfields?: any,
     options?: RequestOptions
   ): Promise<ApiResponse<ListsGetByIdResponse>> {
     const params = new URLSearchParams();
 
-    if (listfields !== undefined) {
-      params.set('list.fields', String(listfields));
-    }
-
-    if (expansions !== undefined) {
-      params.set('expansions', String(expansions));
-    }
-
-    if (userfields !== undefined) {
-      params.set('user.fields', String(userfields));
-    }
-
-    const path = `/2/lists/{id}`.replace('{id}', String(id));
+    const path = `/2/lists/{id}`;
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -431,13 +303,12 @@ export class ListsClient {
      * @returns Promise with the API response
      */
   async update(
-    id: any,
     body?: ListsUpdateRequest,
     options?: RequestOptions
   ): Promise<ApiResponse<ListsUpdateResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/lists/{id}`.replace('{id}', String(id));
+    const path = `/2/lists/{id}`;
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -466,12 +337,11 @@ export class ListsClient {
      * @returns Promise with the API response
      */
   async delete(
-    id: any,
     options?: RequestOptions
   ): Promise<ApiResponse<ListsDeleteResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/lists/{id}`.replace('{id}', String(id));
+    const path = `/2/lists/{id}`;
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -495,15 +365,11 @@ export class ListsClient {
      * @returns Promise with the API response
      */
   async removeMemberByUserId(
-    id: any,
-    userId: any,
     options?: RequestOptions
   ): Promise<ApiResponse<ListsRemoveMemberByUserIdResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/lists/{id}/members/{user_id}`
-      .replace('{id}', String(id))
-      .replace('{user_id}', String(userId));
+    const path = `/2/lists/{id}/members/{user_id}`;
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -520,36 +386,18 @@ export class ListsClient {
   }
 
   /**
-     * Get pinned Lists
-     * Retrieves a list of Lists pinned by the authenticated user.
+     * Unpin List
+     * Causes the authenticated user to unpin a specific List by its ID.
      * @param id The ID of the authenticated source User for whom to return results.
-     * @param listfields A comma separated list of List fields to display.
-     * @param expansions A comma separated list of fields to expand.
-     * @param userfields A comma separated list of User fields to display.* @param options Additional request options
+     * @param listId The ID of the List to unpin.* @param options Additional request options
      * @returns Promise with the API response
      */
-  async getUsersPinned(
-    id: any,
-    listfields?: any,
-    expansions?: any,
-    userfields?: any,
+  async unpin(
     options?: RequestOptions
-  ): Promise<ApiResponse<ListsGetUsersPinnedResponse>> {
+  ): Promise<ApiResponse<ListsUnpinResponse>> {
     const params = new URLSearchParams();
 
-    if (listfields !== undefined) {
-      params.set('list.fields', String(listfields));
-    }
-
-    if (expansions !== undefined) {
-      params.set('expansions', String(expansions));
-    }
-
-    if (userfields !== undefined) {
-      params.set('user.fields', String(userfields));
-    }
-
-    const path = `/2/users/{id}/pinned_lists`.replace('{id}', String(id));
+    const path = `/2/users/{id}/pinned_lists/{list_id}`;
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -558,7 +406,39 @@ export class ListsClient {
       },
     };
 
-    return this.client.request<ListsGetUsersPinnedResponse>(
+    return this.client.request<ListsUnpinResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
+
+  /**
+     * Get owned Lists
+     * Retrieves a list of Lists owned by a specific User by their ID.
+     * @param id The ID of the User to lookup.
+     * @param maxResults The maximum number of results.
+     * @param paginationToken This parameter is used to get a specified 'page' of results.
+     * @param listfields A comma separated list of List fields to display.
+     * @param expansions A comma separated list of fields to expand.
+     * @param userfields A comma separated list of User fields to display.* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async getUsersOwned(
+    options?: RequestOptions
+  ): Promise<ApiResponse<ListsGetUsersOwnedResponse>> {
+    const params = new URLSearchParams();
+
+    const path = `/2/users/{id}/owned_lists`;
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<ListsGetUsersOwnedResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       requestOptions
@@ -566,35 +446,28 @@ export class ListsClient {
   }
 
   /**
-     * Pin List
-     * Causes the authenticated user to pin a specific List by its ID.
-     * @param id The ID of the authenticated source User that will pin the List.* @param body Request body* @param options Additional request options
+     * Unfollow List
+     * Causes the authenticated user to unfollow a specific List by its ID.
+     * @param id The ID of the authenticated source User that will unfollow the List.
+     * @param listId The ID of the List to unfollow.* @param options Additional request options
      * @returns Promise with the API response
      */
-  async pin(
-    id: any,
-    body?: ListsPinRequest,
+  async unfollow(
     options?: RequestOptions
-  ): Promise<ApiResponse<ListsPinResponse>> {
+  ): Promise<ApiResponse<ListsUnfollowResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/users/{id}/pinned_lists`.replace('{id}', String(id));
+    const path = `/2/users/{id}/followed_lists/{list_id}`;
 
     const requestOptions: RequestOptions = {
       ...options,
       headers: {
         ...options && options.headers ? options.headers : {},
-
-        'Content-Type': 'application/json',
       },
     };
 
-    if (body) {
-      requestOptions.body = JSON.stringify(body);
-    }
-
-    return this.client.request<ListsPinResponse>(
-      'POST',
+    return this.client.request<ListsUnfollowResponse>(
+      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       requestOptions
     );

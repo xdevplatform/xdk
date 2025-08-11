@@ -27,7 +27,6 @@ export class AaasubscriptionsClient {
      * @returns Promise with the API response
      */
   async createAccountActivitySubscription(
-    webhookId: any,
     body?: AaasubscriptionsCreateAccountActivitySubscriptionRequest,
     options?: RequestOptions
   ): Promise<
@@ -35,10 +34,7 @@ export class AaasubscriptionsClient {
   > {
     const params = new URLSearchParams();
 
-    const path = `/2/account_activity/webhooks/{webhook_id}/subscriptions/all`.replace(
-      '{webhook_id}',
-      String(webhookId)
-    );
+    const path = `/2/account_activity/webhooks/{webhook_id}/subscriptions/all`;
 
     const requestOptions: RequestOptions = {
       ...options,
