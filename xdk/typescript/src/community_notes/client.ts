@@ -30,12 +30,11 @@ export class CommunityNotesClient {
      * @returns Promise with the API response
      */
   async deleteNotes(
-    id: string,
     options?: RequestOptions
   ): Promise<ApiResponse<CommunityNotesDeleteNotesResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/notes/{id}`.replace('{id}', String(id));
+    const path = `/2/notes/{id}`;
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -61,29 +60,9 @@ export class CommunityNotesClient {
      * @returns Promise with the API response
      */
   async searchNotesWritten(
-    testMode: boolean,
-    notefields?: Array<any>,
-    maxResults?: number,
-    paginationToken?: string,
     options?: RequestOptions
   ): Promise<ApiResponse<CommunityNotesSearchNotesWrittenResponse>> {
     const params = new URLSearchParams();
-
-    if (testMode !== undefined) {
-      params.set('test_mode', String(testMode));
-    }
-
-    if (paginationToken !== undefined) {
-      params.set('pagination_token', String(paginationToken));
-    }
-
-    if (maxResults !== undefined) {
-      params.set('max_results', String(maxResults));
-    }
-
-    if (notefields !== undefined) {
-      params.set('note.fields', String(notefields));
-    }
 
     const path = `/2/notes/search/notes_written`;
 
@@ -116,54 +95,9 @@ export class CommunityNotesClient {
      * @returns Promise with the API response
      */
   async searchForEligiblePosts(
-    testMode: boolean,
-    placefields?: Array<any>,
-    userfields?: Array<any>,
-    pollfields?: Array<any>,
-    mediafields?: Array<any>,
-    tweetfields?: Array<any>,
-    maxResults?: number,
-    paginationToken?: string,
-    expansions?: Array<any>,
     options?: RequestOptions
   ): Promise<ApiResponse<CommunityNotesSearchForEligiblePostsResponse>> {
     const params = new URLSearchParams();
-
-    if (testMode !== undefined) {
-      params.set('test_mode', String(testMode));
-    }
-
-    if (paginationToken !== undefined) {
-      params.set('pagination_token', String(paginationToken));
-    }
-
-    if (maxResults !== undefined) {
-      params.set('max_results', String(maxResults));
-    }
-
-    if (tweetfields !== undefined) {
-      params.set('tweet.fields', String(tweetfields));
-    }
-
-    if (expansions !== undefined) {
-      params.set('expansions', String(expansions));
-    }
-
-    if (mediafields !== undefined) {
-      params.set('media.fields', String(mediafields));
-    }
-
-    if (pollfields !== undefined) {
-      params.set('poll.fields', String(pollfields));
-    }
-
-    if (userfields !== undefined) {
-      params.set('user.fields', String(userfields));
-    }
-
-    if (placefields !== undefined) {
-      params.set('place.fields', String(placefields));
-    }
 
     const path = `/2/notes/search/posts_eligible_for_notes`;
 

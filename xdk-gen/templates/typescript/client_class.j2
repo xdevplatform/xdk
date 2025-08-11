@@ -47,9 +47,9 @@ export class {{ tag|pascal_case }}Client {
      * @param options Additional request options
      * @returns Promise with the API response
      */
-    async {{ operation.operation_id | camel_case }}({% for param in operation.parameters | sort(attribute='required', reverse=true) %}{{ param.name | camel_case }}{% if param.required %}{% else %}?{% endif %}: {{ param.schema.type | typescript_type }}{% if not loop.last %}, {% endif %}{% endfor %}{% if operation.parameters and operation.request_body %}, {% endif %}{% if operation.request_body %}{% if operation.request_body.required %}body{% else %}body?{% endif %}: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request{% endif %}{% if operation.parameters or operation.request_body %}, {% endif %}options?: RequestOptions): Promise<ApiResponse<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}any{% endif %}>> {
+    async {{ operation.operation_id | camel_case }}({% for param in operation.sorted_parameters %}{{ param.name | camel_case }}{% if param.required %}{% else %}?{% endif %}: {{ param.schema.type | typescript_type }}{% if not loop.last %}, {% endif %}{% endfor %}{% if operation.sorted_parameters and operation.request_body %}, {% endif %}{% if operation.request_body %}{% if operation.request_body.required %}body{% else %}body?{% endif %}: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request{% endif %}{% if operation.sorted_parameters or operation.request_body %}, {% endif %}options?: RequestOptions): Promise<ApiResponse<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}any{% endif %}>> {
         const params = new URLSearchParams();
-        {% for param in operation.parameters %}
+        {% for param in operation.sorted_parameters %}
         {% if param.in == "query" %}
         if ({{ param.name | camel_case }} !== undefined) {
             params.set('{{ param.name }}', String({{ param.name | camel_case }}));
@@ -57,7 +57,7 @@ export class {{ tag|pascal_case }}Client {
         {% endif %}
         {% endfor %}
 
-        const path = `{{ operation.path }}`{% for param in operation.parameters %}{% if param.in == "path" %}.replace('{{ '{' }}{{ param.name }}{{ '}' }}', String({{ param.name | camel_case }})){% endif %}{% endfor %};
+        const path = `{{ operation.path }}`{% for param in operation.sorted_parameters %}{% if param.in == "path" %}.replace('{{ '{' }}{{ param.name }}{{ '}' }}', String({{ param.name | camel_case }})){% endif %}{% endfor %};
 
         const requestOptions: RequestOptions = {
             ...options,

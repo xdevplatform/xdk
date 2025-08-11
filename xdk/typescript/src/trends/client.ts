@@ -29,22 +29,11 @@ export class TrendsClient {
      * @returns Promise with the API response
      */
   async getByWoeid(
-    woeid: number,
-    trendfields?: Array<any>,
-    maxTrends?: number,
     options?: RequestOptions
   ): Promise<ApiResponse<TrendsGetByWoeidResponse>> {
     const params = new URLSearchParams();
 
-    if (maxTrends !== undefined) {
-      params.set('max_trends', String(maxTrends));
-    }
-
-    if (trendfields !== undefined) {
-      params.set('trend.fields', String(trendfields));
-    }
-
-    const path = `/2/trends/by/woeid/{woeid}`.replace('{woeid}', String(woeid));
+    const path = `/2/trends/by/woeid/{woeid}`;
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -67,14 +56,9 @@ export class TrendsClient {
      * @returns Promise with the API response
      */
   async getUsersPersonalized(
-    personalizedTrendfields?: Array<any>,
     options?: RequestOptions
   ): Promise<ApiResponse<TrendsGetUsersPersonalizedResponse>> {
     const params = new URLSearchParams();
-
-    if (personalizedTrendfields !== undefined) {
-      params.set('personalized_trend.fields', String(personalizedTrendfields));
-    }
 
     const path = `/2/users/personalized_trends`;
 
