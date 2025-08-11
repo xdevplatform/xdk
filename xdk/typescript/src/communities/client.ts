@@ -6,8 +6,8 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
-  CommunitiesSearchResponse,
   CommunitiesGetByIdResponse,
+  CommunitiesSearchResponse,
 } from './models.js';
 
 /**
@@ -21,6 +21,34 @@ export class CommunitiesClient {
   }
 
   /**
+     * Get Community by ID
+     * Retrieves details of a specific Community by its ID.
+     * @param id The ID of the Community.
+     * @param communityfields A comma separated list of Community fields to display.* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async getById(
+    options?: RequestOptions
+  ): Promise<ApiResponse<CommunitiesGetByIdResponse>> {
+    const params = new URLSearchParams();
+
+    const path = `/2/communities/{id}`;
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<CommunitiesGetByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
+
+  /**
      * Search Communities
      * Retrieves a list of Communities matching the specified search query.
      * @param query Query to search communities.
@@ -31,34 +59,9 @@ export class CommunitiesClient {
      * @returns Promise with the API response
      */
   async search(
-    query: any,
-    maxResults?: any,
-    nextToken?: any,
-    paginationToken?: any,
-    communityfields?: any,
     options?: RequestOptions
   ): Promise<ApiResponse<CommunitiesSearchResponse>> {
     const params = new URLSearchParams();
-
-    if (query !== undefined) {
-      params.set('query', String(query));
-    }
-
-    if (maxResults !== undefined) {
-      params.set('max_results', String(maxResults));
-    }
-
-    if (nextToken !== undefined) {
-      params.set('next_token', String(nextToken));
-    }
-
-    if (paginationToken !== undefined) {
-      params.set('pagination_token', String(paginationToken));
-    }
-
-    if (communityfields !== undefined) {
-      params.set('community.fields', String(communityfields));
-    }
 
     const path = `/2/communities/search`;
 
@@ -70,40 +73,6 @@ export class CommunitiesClient {
     };
 
     return this.client.request<CommunitiesSearchResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      requestOptions
-    );
-  }
-
-  /**
-     * Get Community by ID
-     * Retrieves details of a specific Community by its ID.
-     * @param id The ID of the Community.
-     * @param communityfields A comma separated list of Community fields to display.* @param options Additional request options
-     * @returns Promise with the API response
-     */
-  async getById(
-    id: any,
-    communityfields?: any,
-    options?: RequestOptions
-  ): Promise<ApiResponse<CommunitiesGetByIdResponse>> {
-    const params = new URLSearchParams();
-
-    if (communityfields !== undefined) {
-      params.set('community.fields', String(communityfields));
-    }
-
-    const path = `/2/communities/{id}`.replace('{id}', String(id));
-
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-      },
-    };
-
-    return this.client.request<CommunitiesGetByIdResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       requestOptions

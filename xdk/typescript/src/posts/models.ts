@@ -3,25 +3,33 @@
  */
 
 /**
- * Request body for repost
+ * Request body for hideReply
  */
-export interface PostsRepostRequest {
-  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  tweetId?: string;
+export interface PostsHideReplyRequest {
+  hidden?: boolean;
 }
 
 /**
- * Response for repost
+ * Response for hideReply
  */
-export interface PostsRepostResponse {
+export interface PostsHideReplyResponse {
   data?: Record<string, any>;
-  errors?: Array<any>;
 }
 
 /**
- * Response for getQuotedPosts
+ * Response for searchAll
  */
-export interface PostsGetQuotedPostsResponse {
+export interface PostsSearchAllResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getUsersTimeline
+ */
+export interface PostsGetUsersTimelineResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -34,6 +42,59 @@ export interface PostsGetQuotedPostsResponse {
 export interface PostsUnrepostResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
+}
+
+/**
+ * Response for getUsers
+ */
+export interface PostsGetUsersResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Request body for like
+ */
+export interface PostsLikeRequest {
+  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
+  tweetId?: string;
+}
+
+/**
+ * Response for like
+ */
+export interface PostsLikeResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getAnalytics
+ */
+export interface PostsGetAnalyticsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getCountsRecent
+ */
+export interface PostsGetCountsRecentResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getReposts
+ */
+export interface PostsGetRepostsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
 }
 
 /**
@@ -54,31 +115,9 @@ export interface PostsDeleteResponse {
 }
 
 /**
- * Request body for hideReply
+ * Response for getUsersMentions
  */
-export interface PostsHideReplyRequest {
-  hidden?: boolean;
-}
-
-/**
- * Response for hideReply
- */
-export interface PostsHideReplyResponse {
-  data?: Record<string, any>;
-}
-
-/**
- * Response for unlike
- */
-export interface PostsUnlikeResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getUsersLiked
- */
-export interface PostsGetUsersLikedResponse {
+export interface PostsGetUsersMentionsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -86,11 +125,22 @@ export interface PostsGetUsersLikedResponse {
 }
 
 /**
- * Response for getCountsAll
+ * Response for searchRecent
  */
-export interface PostsGetCountsAllResponse {
+export interface PostsSearchRecentResponse {
   data?: Array<any>;
   errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getQuotedPosts
+ */
+export interface PostsGetQuotedPostsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
   meta?: Record<string, any>;
 }
 
@@ -144,9 +194,26 @@ export interface PostsCreateResponse {
 }
 
 /**
- * Response for getLists
+ * Response for getCountsAll
  */
-export interface PostsGetListsResponse {
+export interface PostsGetCountsAllResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getInsightsHistorical
+ */
+export interface PostsGetInsightsHistoricalResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getUsersLiked
+ */
+export interface PostsGetUsersLikedResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -154,52 +221,25 @@ export interface PostsGetListsResponse {
 }
 
 /**
- * Response for getAnalytics
+ * Request body for repost
  */
-export interface PostsGetAnalyticsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getCountsRecent
- */
-export interface PostsGetCountsRecentResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for searchAll
- */
-export interface PostsSearchAllResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for like
- */
-export interface PostsLikeRequest {
+export interface PostsRepostRequest {
   /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
   tweetId?: string;
 }
 
 /**
- * Response for like
+ * Response for repost
  */
-export interface PostsLikeResponse {
+export interface PostsRepostResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
- * Response for getUsersTimeline
+ * Response for getLists
  */
-export interface PostsGetUsersTimelineResponse {
+export interface PostsGetListsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -215,49 +255,9 @@ export interface PostsGetInsights28HrResponse {
 }
 
 /**
- * Response for getUsers
+ * Response for unlike
  */
-export interface PostsGetUsersResponse {
-  data?: Array<any>;
+export interface PostsUnlikeResponse {
+  data?: Record<string, any>;
   errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getUsersMentions
- */
-export interface PostsGetUsersMentionsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getInsightsHistorical
- */
-export interface PostsGetInsightsHistoricalResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for searchRecent
- */
-export interface PostsSearchRecentResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getReposts
- */
-export interface PostsGetRepostsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
 }

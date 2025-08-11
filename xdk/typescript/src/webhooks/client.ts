@@ -30,15 +30,11 @@ export class WebhooksClient {
      * @returns Promise with the API response
      */
   async validate(
-    webhookId: any,
     options?: RequestOptions
   ): Promise<ApiResponse<WebhooksValidateResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/webhooks/{webhook_id}`.replace(
-      '{webhook_id}',
-      String(webhookId)
-    );
+    const path = `/2/webhooks/{webhook_id}`;
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -61,15 +57,11 @@ export class WebhooksClient {
      * @returns Promise with the API response
      */
   async delete(
-    webhookId: any,
     options?: RequestOptions
   ): Promise<ApiResponse<WebhooksDeleteResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/webhooks/{webhook_id}`.replace(
-      '{webhook_id}',
-      String(webhookId)
-    );
+    const path = `/2/webhooks/{webhook_id}`;
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -92,14 +84,9 @@ export class WebhooksClient {
      * @returns Promise with the API response
      */
   async get(
-    webhookConfigfields?: any,
     options?: RequestOptions
   ): Promise<ApiResponse<WebhooksGetResponse>> {
     const params = new URLSearchParams();
-
-    if (webhookConfigfields !== undefined) {
-      params.set('webhook_config.fields', String(webhookConfigfields));
-    }
 
     const path = `/2/webhooks`;
 
