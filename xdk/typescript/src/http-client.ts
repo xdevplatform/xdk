@@ -40,8 +40,6 @@ export class HttpClient {
   constructor() {
     if (isNode) {
       // Node.js environment - dynamically import node-fetch
-      this.fetch = globalThis.fetch;
-      this.HeadersClass = globalThis.Headers;
       this.initializeNodeEnvironment();
     } else if (isBrowser) {
       // Browser environment - use native APIs
