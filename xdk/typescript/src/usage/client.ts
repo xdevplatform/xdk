@@ -24,20 +24,8 @@ export class UsageClient {
      * @param usagefields A comma separated list of Usage fields to display.* @param options Additional request options
      * @returns Promise with the API response
      */
-  async get(
-    usagefields?: Array<any>,
-    days?: number,
-    options?: RequestOptions
-  ): Promise<ApiResponse<UsageGetResponse>> {
+  async get(options?: RequestOptions): Promise<ApiResponse<UsageGetResponse>> {
     const params = new URLSearchParams();
-
-    if (days !== undefined) {
-      params.set('days', String(days));
-    }
-
-    if (usagefields !== undefined) {
-      params.set('usage.fields', String(usagefields));
-    }
 
     const path = `/2/usage/tweets`;
 

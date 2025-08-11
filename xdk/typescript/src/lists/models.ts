@@ -3,48 +3,6 @@
  */
 
 /**
- * Response for unpin
- */
-export interface ListsUnpinResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Request body for addMember
- */
-export interface ListsAddMemberRequest {
-  /** Unique identifier of this User. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  userId?: string;
-}
-
-/**
- * Response for addMember
- */
-export interface ListsAddMemberResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Request body for create
- */
-export interface ListsCreateRequest {
-  description?: string;
-  name?: string;
-  private?: boolean;
-}
-
-/**
- * Response for create
- */
-export interface ListsCreateResponse {
-  /** A X List is a curated group of accounts. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
  * Response for getUsersFollowed
  */
 export interface ListsGetUsersFollowedResponse {
@@ -81,6 +39,22 @@ export interface ListsGetUsersMembershipsResponse {
 }
 
 /**
+ * Request body for addMember
+ */
+export interface ListsAddMemberRequest {
+  /** Unique identifier of this User. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
+  userId?: string;
+}
+
+/**
+ * Response for addMember
+ */
+export interface ListsAddMemberResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
  * Response for getUsersPinned
  */
 export interface ListsGetUsersPinnedResponse {
@@ -107,10 +81,20 @@ export interface ListsPinResponse {
 }
 
 /**
- * Response for removeMemberByUserId
+ * Request body for create
  */
-export interface ListsRemoveMemberByUserIdResponse {
-  data?: Record<string, any>;
+export interface ListsCreateRequest {
+  description?: string;
+  name?: string;
+  private?: boolean;
+}
+
+/**
+ * Response for create
+ */
+export interface ListsCreateResponse {
+  /** A X List is a curated group of accounts. */
+  data: Record<string, any>;
   errors?: Array<any>;
 }
 
@@ -150,9 +134,17 @@ export interface ListsDeleteResponse {
 }
 
 /**
- * Response for unfollow
+ * Response for removeMemberByUserId
  */
-export interface ListsUnfollowResponse {
+export interface ListsRemoveMemberByUserIdResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for unpin
+ */
+export interface ListsUnpinResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
@@ -165,4 +157,12 @@ export interface ListsGetUsersOwnedResponse {
   errors?: Array<any>;
   includes?: Record<string, any>;
   meta?: Record<string, any>;
+}
+
+/**
+ * Response for unfollow
+ */
+export interface ListsUnfollowResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
 }

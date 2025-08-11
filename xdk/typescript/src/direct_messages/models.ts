@@ -3,6 +3,23 @@
  */
 
 /**
+ * Response for getDmEventsById
+ */
+export interface DirectMessagesGetDmEventsByIdResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+}
+
+/**
+ * Response for deleteDmEvents
+ */
+export interface DirectMessagesDeleteDmEventsResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
  * Response for getDmEventsByParticipantId
  */
 export interface DirectMessagesGetDmEventsByParticipantIdResponse {
@@ -23,20 +40,26 @@ export interface DirectMessagesGetDmConversationsIdDmEventsResponse {
 }
 
 /**
- * Response for getDmEventsById
+ * Request body for createDmByConversationId
  */
-export interface DirectMessagesGetDmEventsByIdResponse {
+export interface DirectMessagesCreateDmByConversationIdRequest {}
+
+/**
+ * Response for createDmByConversationId
+ */
+export interface DirectMessagesCreateDmByConversationIdResponse {
   data: Record<string, any>;
   errors?: Array<any>;
-  includes?: Record<string, any>;
 }
 
 /**
- * Response for deleteDmEvents
+ * Response for getDmEvents
  */
-export interface DirectMessagesDeleteDmEventsResponse {
-  data?: Record<string, any>;
+export interface DirectMessagesGetDmEventsResponse {
+  data?: Array<any>;
   errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
 }
 
 /**
@@ -59,16 +82,6 @@ export interface DirectMessagesCreateDmConversationsResponse {
 }
 
 /**
- * Response for getDmEvents
- */
-export interface DirectMessagesGetDmEventsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
  * Request body for createDmByParticipantId
  */
 export interface DirectMessagesCreateDmByParticipantIdRequest {}
@@ -77,19 +90,6 @@ export interface DirectMessagesCreateDmByParticipantIdRequest {}
  * Response for createDmByParticipantId
  */
 export interface DirectMessagesCreateDmByParticipantIdResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Request body for createDmByConversationId
- */
-export interface DirectMessagesCreateDmByConversationIdRequest {}
-
-/**
- * Response for createDmByConversationId
- */
-export interface DirectMessagesCreateDmByConversationIdResponse {
   data: Record<string, any>;
   errors?: Array<any>;
 }

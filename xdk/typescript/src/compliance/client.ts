@@ -30,17 +30,11 @@ export class ComplianceClient {
      * @returns Promise with the API response
      */
   async getJobsById(
-    id: string,
-    complianceJobfields?: Array<any>,
     options?: RequestOptions
   ): Promise<ApiResponse<ComplianceGetJobsByIdResponse>> {
     const params = new URLSearchParams();
 
-    if (complianceJobfields !== undefined) {
-      params.set('compliance_job.fields', String(complianceJobfields));
-    }
-
-    const path = `/2/compliance/jobs/{id}`.replace('{id}', String(id));
+    const path = `/2/compliance/jobs/{id}`;
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -65,24 +59,9 @@ export class ComplianceClient {
      * @returns Promise with the API response
      */
   async getJobs(
-    type: string,
-    complianceJobfields?: Array<any>,
-    status?: string,
     options?: RequestOptions
   ): Promise<ApiResponse<ComplianceGetJobsResponse>> {
     const params = new URLSearchParams();
-
-    if (type !== undefined) {
-      params.set('type', String(type));
-    }
-
-    if (status !== undefined) {
-      params.set('status', String(status));
-    }
-
-    if (complianceJobfields !== undefined) {
-      params.set('compliance_job.fields', String(complianceJobfields));
-    }
 
     const path = `/2/compliance/jobs`;
 
