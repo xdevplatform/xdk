@@ -153,6 +153,90 @@ fn split_into_words(s: &str) -> Vec<String> {
     words.into_iter().filter(|word| !word.is_empty()).collect()
 }
 
+/// Extract parameter information from a reference path when resolution fails
+fn extract_param_from_reference(reference_path: &str) -> Option<openapi::Parameter> {
+    // Extract the parameter name from the reference path
+    // Reference paths are typically like "#/components/parameters/ParameterName"
+    if let Some(param_name) = reference_path.split('/').last() {
+        // Create a basic parameter with the extracted name
+        // We'll use common patterns to determine the type and location
+        let param_type = if param_name.to_lowercase().contains("id") {
+            "string"
+        } else if param_name.to_lowercase().contains("limit") || param_name.to_lowercase().contains("count") {
+            "integer"
+        } else if param_name.to_lowercase().contains("token") || param_name.to_lowercase().contains("cursor") {
+            "string"
+        } else {
+            "string" // Default to string for unknown types
+        };
+
+        let location = if param_name.to_lowercase().contains("id") {
+            "path"
+        } else {
+            "query"
+        };
+
+        let required = location == "path" || param_name.to_lowercase().contains("required");
+
+        Some(openapi::Parameter {
+            name: Some(param_name.to_string()),
+            r#in: Some(location.to_string()),
+            required: Some(required),
+            schema: Some(openapi::RefOrValue::Value(openapi::Schema::Typed(Box::new(
+                match param_type {
+                    "string" => openapi::TypedSchema::String(Box::new(openapi::StringSchema {
+                        base: openapi::BaseSchema {
+                            title: None,
+                            description: None,
+                            example: None,
+                            default: None,
+                            deprecated: None,
+                        },
+                        format: None,
+                        min_length: None,
+                        max_length: None,
+                        pattern: None,
+                        enum_values: None,
+                    })),
+                    "integer" => openapi::TypedSchema::Integer(Box::new(openapi::IntegerSchema {
+                        base: openapi::BaseSchema {
+                            title: None,
+                            description: None,
+                            example: None,
+                            default: None,
+                            deprecated: None,
+                        },
+                        format: None,
+                        minimum: None,
+                        maximum: None,
+                        exclusive_minimum: None,
+                        exclusive_maximum: None,
+                        multiple_of: None,
+                        enum_values: None,
+                    })),
+                    _ => openapi::TypedSchema::String(Box::new(openapi::StringSchema {
+                        base: openapi::BaseSchema {
+                            title: None,
+                            description: None,
+                            example: None,
+                            default: None,
+                            deprecated: None,
+                        },
+                        format: None,
+                        min_length: None,
+                        max_length: None,
+                        pattern: None,
+                        enum_values: None,
+                    })),
+                }
+            )))),
+            description: Some(format!("Parameter from reference: {}", param_name)),
+        })
+    } else {
+        None
+    }
+}
+
 /// Extract operations by tag from the OpenAPI specification with automatic name transformations
 pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Vec<OperationInfo>>> {
     let mut operations_by_tag: HashMap<String, Vec<OperationInfo>> = HashMap::new();
@@ -175,13 +259,43 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                     let normalized_operation_id =
                         normalize_operation_id(&op.operation_id, path, method, &normalized_tag);
 
+                    // Resolve parameters while context is available
+                    let resolved_parameters = op.parameters.as_ref().map(|params| {
+                        let mut resolved = Vec::new();
+                        for param_ref in params {
+                            match param_ref {
+                                openapi::RefOrValue::Value(param) => {
+                                    // Direct value parameters are always included
+                                    resolved.push(param.clone());
+                                },
+                                openapi::RefOrValue::Reference { path, .. } => {
+                                    // Try to resolve the reference
+                                    match param_ref.try_resolve() {
+                                        Ok(resolved_rc) => {
+                                            resolved.push((*resolved_rc).clone());
+                                        },
+                                        Err(_) => {
+                                            // If resolution fails, try to extract type from reference path
+                                            // This handles cases where the schema reference can't be resolved
+                                            // but we can still determine the type from the reference name
+                                            if let Some(param) = extract_param_from_reference(path) {
+                                                resolved.push(param);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        resolved
+                    });
+
                     let operation_info = OperationInfo {
                         path: path.to_string(),
                         method: method.to_string(),
                         operation_id: normalized_operation_id,
                         summary: op.summary.clone(),
                         description: op.description.clone(),
-                        parameters: op.parameters.clone(),
+                        parameters: resolved_parameters,
                         security: op.security.clone(),
                         request_body: op.request_body.clone(),
                         responses: op.responses.clone(),

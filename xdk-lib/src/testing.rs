@@ -345,16 +345,7 @@ fn extract_parameters(operation: &OperationInfo) -> (Vec<TestParameter>, Vec<Tes
     let mut optional_params = Vec::new();
 
     if let Some(parameters) = &operation.parameters {
-        for param_ref in parameters {
-            // Handle both direct parameters and parameter references
-            let param = match param_ref {
-                RefOrValue::Value(p) => p,
-                RefOrValue::Reference {
-                    path: _,
-                    resolved: _,
-                } => continue, // References are only used for components (requests/responses), not parameters
-            };
-
+        for param in parameters {
             if let (Some(name), Some(location)) = (&param.name, &param.r#in) {
                 // Only include path and query parameters for testing
                 if location == "path" || location == "query" {
@@ -538,24 +529,16 @@ fn extract_security_requirements(operation: &OperationInfo) -> Vec<String> {
 fn detect_pagination_support(operation: &OperationInfo) -> bool {
     if let Some(parameters) = &operation.parameters {
         let has_token = parameters.iter().any(|param| {
-            if let RefOrValue::Value(param) = param {
-                if let Some(name) = &param.name {
-                    matches!(name.as_str(), "pagination_token" | "next_token" | "cursor")
-                } else {
-                    false
-                }
+            if let Some(name) = &param.name {
+                matches!(name.as_str(), "pagination_token" | "next_token" | "cursor")
             } else {
                 false
             }
         });
 
         let has_limit = parameters.iter().any(|param| {
-            if let RefOrValue::Value(param) = param {
-                if let Some(name) = &param.name {
-                    matches!(name.as_str(), "max_results" | "limit" | "count")
-                } else {
-                    false
-                }
+            if let Some(name) = &param.name {
+                matches!(name.as_str(), "max_results" | "limit" | "count")
             } else {
                 false
             }
@@ -602,17 +585,15 @@ fn extract_pagination_params(operation: &OperationInfo) -> (Option<String>, Opti
 
     if let Some(parameters) = &operation.parameters {
         for param in parameters {
-            if let RefOrValue::Value(param) = param {
-                if let Some(name) = &param.name {
-                    match name.as_str() {
-                        "pagination_token" | "next_token" | "cursor" => {
-                            token_param = Some(name.clone());
-                        }
-                        "max_results" | "limit" | "count" => {
-                            max_results_param = Some(name.clone());
-                        }
-                        _ => {}
+            if let Some(name) = &param.name {
+                match name.as_str() {
+                    "pagination_token" | "next_token" | "cursor" => {
+                        token_param = Some(name.clone());
                     }
+                    "max_results" | "limit" | "count" => {
+                        max_results_param = Some(name.clone());
+                    }
+                    _ => {}
                 }
             }
         }
@@ -701,21 +682,19 @@ fn generate_request_params(operation: &OperationInfo) -> HashMap<String, serde_j
 
     if let Some(parameters) = &operation.parameters {
         for param in parameters {
-            if let RefOrValue::Value(param) = param {
-                if let Some(name) = &param.name {
-                    // Try to generate value from schema first
-                    let value = if let Some(schema) = &param.schema {
-                        generate_mock_from_schema(schema).unwrap_or_else(|| {
-                            // Fallback to simple type-based generation
-                            generate_simple_param_value(&extract_param_type(param))
-                        })
-                    } else {
+            if let Some(name) = &param.name {
+                // Try to generate value from schema first
+                let value = if let Some(schema) = &param.schema {
+                    generate_mock_from_schema(schema).unwrap_or_else(|| {
                         // Fallback to simple type-based generation
                         generate_simple_param_value(&extract_param_type(param))
-                    };
+                    })
+                } else {
+                    // Fallback to simple type-based generation
+                    generate_simple_param_value(&extract_param_type(param))
+                };
 
-                    params.insert(name.clone(), value);
-                }
+                params.insert(name.clone(), value);
             }
         }
     }

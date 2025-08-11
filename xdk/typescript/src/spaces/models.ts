@@ -13,15 +13,6 @@ export interface SpacesGetPostsResponse {
 }
 
 /**
- * Response for getById
- */
-export interface SpacesGetByIdResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
  * Response for getByCreatorIds
  */
 export interface SpacesGetByCreatorIdsResponse {
@@ -29,6 +20,15 @@ export interface SpacesGetByCreatorIdsResponse {
   errors?: Array<any>;
   includes?: Record<string, any>;
   meta?: Record<string, any>;
+}
+
+/**
+ * Response for getById
+ */
+export interface SpacesGetByIdResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
 }
 
 /**
@@ -42,15 +42,6 @@ export interface SpacesSearchResponse {
 }
 
 /**
- * Response for getByIds
- */
-export interface SpacesGetByIdsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
  * Response for getBuyers
  */
 export interface SpacesGetBuyersResponse {
@@ -58,4 +49,13 @@ export interface SpacesGetBuyersResponse {
   errors?: Array<any>;
   includes?: Record<string, any>;
   meta?: Record<string, any>;
+}
+
+/**
+ * Response for getByIds
+ */
+export interface SpacesGetByIdsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
 }

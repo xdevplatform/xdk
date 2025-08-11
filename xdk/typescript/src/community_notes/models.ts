@@ -3,23 +3,6 @@
  */
 
 /**
- * Response for deleteNotes
- */
-export interface CommunityNotesDeleteNotesResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for searchNotesWritten
- */
-export interface CommunityNotesSearchNotesWrittenResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
-/**
  * Response for searchForEligiblePosts
  */
 export interface CommunityNotesSearchForEligiblePostsResponse {
@@ -27,6 +10,14 @@ export interface CommunityNotesSearchForEligiblePostsResponse {
   errors?: Array<any>;
   includes?: Record<string, any>;
   meta?: Record<string, any>;
+}
+
+/**
+ * Response for deleteNotes
+ */
+export interface CommunityNotesDeleteNotesResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
 }
 
 /**
@@ -47,4 +38,13 @@ export interface CommunityNotesCreateNotesRequest {
 export interface CommunityNotesCreateNotesResponse {
   data: Record<string, any>;
   errors?: Array<any>;
+}
+
+/**
+ * Response for searchNotesWritten
+ */
+export interface CommunityNotesSearchNotesWrittenResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  meta?: Record<string, any>;
 }
