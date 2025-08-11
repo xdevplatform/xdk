@@ -94,15 +94,15 @@ mod tests {
         verify_sdk_structure(&output_dir);
 
         // Check for tag directories and their files
-        let tweets_dir = output_dir.join("xdk").join("tweets");
-        assert!(tweets_dir.exists(), "tweets directory should exist");
+        let posts_dir = output_dir.join("xdk").join("posts");
+        assert!(posts_dir.exists(), "posts directory should exist");
         assert!(
-            tweets_dir.join("__init__.py").exists(),
-            "tweets/__init__.py should exist"
+            posts_dir.join("__init__.py").exists(),
+            "posts/__init__.py should exist"
         );
         assert!(
-            tweets_dir.join("client.py").exists(),
-            "tweets/client.py should exist"
+            posts_dir.join("client.py").exists(),
+            "posts/client.py should exist"
         );
     }
 
@@ -233,11 +233,7 @@ mod tests {
 
         let result = setup_generator_and_generate(&openapi, &output_dir);
         assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
-        assert_file_contains_text!(
-            output_dir,
-            "xdk/communities/client.py",
-            "search_communities"
-        );
+        assert_file_contains_text!(output_dir, "xdk/communities/client.py", "search");
 
         verify_sdk_structure(&output_dir);
     }
