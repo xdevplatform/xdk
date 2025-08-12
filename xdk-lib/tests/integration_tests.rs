@@ -162,7 +162,7 @@ fn test_end_to_end_operation_processing() {
 fn test_end_to_end_template_rendering() {
     // Create test data
     let tag_info = TagInfo::new(
-        &vec!["user".to_string(), "profile".to_string()],
+        &["user".to_string(), "profile".to_string()],
         Casing::Pascal,
         Casing::Snake,
         Casing::Snake,
@@ -245,7 +245,7 @@ fn test_end_to_end_file_generation() {
 
     // Create test data
     let tag_info = TagInfo::new(
-        &vec!["users".to_string()],
+        &["users".to_string()],
         Casing::Pascal,
         Casing::Snake,
         Casing::Snake,
@@ -396,7 +396,7 @@ fn test_template_rendering_with_tag_info() {
     }
 
     let tag_info = TagInfo::new(
-        &vec!["user".to_string(), "profile".to_string()],
+        &["user".to_string(), "profile".to_string()],
         Casing::Pascal,
         Casing::Snake,
         Casing::Snake,

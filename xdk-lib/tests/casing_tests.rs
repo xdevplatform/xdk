@@ -142,7 +142,7 @@ fn test_casing_enum_real_world_examples() {
 fn test_casing_enum_copy_clone() {
     let casing = Casing::Pascal;
     let casing_copy = casing;
-    let casing_clone = casing.clone();
+    let casing_clone = casing;
 
     let words = vec!["test".to_string()];
 
@@ -158,14 +158,32 @@ fn test_casing_enum_convert_string() {
     assert_eq!(Casing::Pascal.convert_string("maxResults"), "MaxResults");
     assert_eq!(Casing::Camel.convert_string("maxResults"), "maxResults");
     assert_eq!(Casing::Kebab.convert_string("maxResults"), "max-results");
-    assert_eq!(Casing::ScreamingSnake.convert_string("maxResults"), "MAX_RESULTS");
+    assert_eq!(
+        Casing::ScreamingSnake.convert_string("maxResults"),
+        "MAX_RESULTS"
+    );
 
     // Test converting PascalCase strings
-    assert_eq!(Casing::Snake.convert_string("GetUserProfile"), "get_user_profile");
-    assert_eq!(Casing::Pascal.convert_string("GetUserProfile"), "GetUserProfile");
-    assert_eq!(Casing::Camel.convert_string("GetUserProfile"), "getUserProfile");
-    assert_eq!(Casing::Kebab.convert_string("GetUserProfile"), "get-user-profile");
-    assert_eq!(Casing::ScreamingSnake.convert_string("GetUserProfile"), "GET_USER_PROFILE");
+    assert_eq!(
+        Casing::Snake.convert_string("GetUserProfile"),
+        "get_user_profile"
+    );
+    assert_eq!(
+        Casing::Pascal.convert_string("GetUserProfile"),
+        "GetUserProfile"
+    );
+    assert_eq!(
+        Casing::Camel.convert_string("GetUserProfile"),
+        "getUserProfile"
+    );
+    assert_eq!(
+        Casing::Kebab.convert_string("GetUserProfile"),
+        "get-user-profile"
+    );
+    assert_eq!(
+        Casing::ScreamingSnake.convert_string("GetUserProfile"),
+        "GET_USER_PROFILE"
+    );
 
     // Test converting snake_case strings
     assert_eq!(Casing::Snake.convert_string("user_id"), "user_id");
@@ -174,12 +192,15 @@ fn test_casing_enum_convert_string() {
     assert_eq!(Casing::Kebab.convert_string("user_id"), "user-id");
     assert_eq!(Casing::ScreamingSnake.convert_string("user_id"), "USER_ID");
 
-    // Test converting kebab-case strings  
+    // Test converting kebab-case strings
     assert_eq!(Casing::Snake.convert_string("user-profile"), "user_profile");
     assert_eq!(Casing::Pascal.convert_string("user-profile"), "UserProfile");
     assert_eq!(Casing::Camel.convert_string("user-profile"), "userProfile");
     assert_eq!(Casing::Kebab.convert_string("user-profile"), "user-profile");
-    assert_eq!(Casing::ScreamingSnake.convert_string("user-profile"), "USER_PROFILE");
+    assert_eq!(
+        Casing::ScreamingSnake.convert_string("user-profile"),
+        "USER_PROFILE"
+    );
 }
 
 #[test]

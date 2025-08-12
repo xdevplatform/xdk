@@ -12,7 +12,6 @@
 /// - `error`: Error types and handling for SDK generation
 /// - `generator`: The SDK generator interface and implementation
 /// - `models`: Common data models for SDK generation
-
 /// - `testing`: Test generation for SDK generation
 /// - `casing`: Casing conversion utilities for different naming conventions
 pub mod casing;

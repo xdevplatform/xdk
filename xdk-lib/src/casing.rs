@@ -51,9 +51,9 @@ impl Casing {
 fn split_into_words(value: &str) -> Vec<String> {
     let mut words = Vec::new();
     let mut current_word = String::new();
-    let mut chars = value.chars().peekable();
+    let chars = value.chars().peekable();
 
-    while let Some(c) = chars.next() {
+    for c in chars {
         if c == '_' || c == '-' || c == ' ' {
             // Delimiter found, finish current word
             if !current_word.is_empty() {

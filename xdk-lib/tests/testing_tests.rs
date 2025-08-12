@@ -1,6 +1,9 @@
-use xdk_lib::testing::{generate_test_specifications, TestSpecification, TestParameter, MethodSignature, ContractTest, PaginationTest, MockScenario};
-use xdk_lib::models::{OperationInfo, ParameterInfo};
 use std::collections::HashMap;
+use xdk_lib::models::{OperationInfo, ParameterInfo};
+use xdk_lib::testing::{
+    ContractTest, MethodSignature, MockScenario, PaginationTest, TestParameter, TestSpecification,
+    generate_test_specifications,
+};
 
 fn create_test_operation(
     method_name: &str,
@@ -44,29 +47,33 @@ fn create_test_parameter(
 #[test]
 fn test_generate_test_specifications_basic() {
     let mut operations_by_tag = HashMap::new();
-    
+
     let operation = create_test_operation(
         "get_users",
-        "GetUsers", 
+        "GetUsers",
         "GET",
         "/users",
-        Some(vec![
-            create_test_parameter("maxResults", "max_results", "query", false, "integer"),
-        ]),
+        Some(vec![create_test_parameter(
+            "maxResults",
+            "max_results",
+            "query",
+            false,
+            "integer",
+        )]),
     );
 
     operations_by_tag.insert("users".to_string(), vec![operation]);
 
     let result = generate_test_specifications(&operations_by_tag).unwrap();
-    
+
     assert_eq!(result.len(), 1);
     let test_spec = result.get("users").unwrap();
-    
+
     // Check structural tests
     assert_eq!(test_spec.structural_tests.len(), 1);
     let structural_test = &test_spec.structural_tests[0];
     assert_eq!(structural_test.methods.len(), 1);
-    
+
     let method = &structural_test.methods[0];
     assert_eq!(method.method_name, "get_users");
     assert_eq!(method.class_name, "GetUsers");
@@ -83,7 +90,9 @@ fn test_generate_test_specifications_basic() {
 
     // Check mock scenarios
     assert_eq!(test_spec.mock_scenarios.len(), 3); // success, not_found, rate_limit
-    let success_scenario = test_spec.mock_scenarios.iter()
+    let success_scenario = test_spec
+        .mock_scenarios
+        .iter()
         .find(|s| s.scenario_name == "success")
         .unwrap();
     assert_eq!(success_scenario.method_name, "get_users");
@@ -93,14 +102,20 @@ fn test_generate_test_specifications_basic() {
 #[test]
 fn test_generate_test_specifications_with_pagination() {
     let mut operations_by_tag = HashMap::new();
-    
+
     let operation = create_test_operation(
         "get_tweets",
         "GetTweets",
-        "GET", 
+        "GET",
         "/tweets",
         Some(vec![
-            create_test_parameter("pagination_token", "pagination_token", "query", false, "string"),
+            create_test_parameter(
+                "pagination_token",
+                "pagination_token",
+                "query",
+                false,
+                "string",
+            ),
             create_test_parameter("max_results", "max_results", "query", false, "integer"),
             create_test_parameter("query", "query", "query", true, "string"),
         ]),
@@ -110,7 +125,7 @@ fn test_generate_test_specifications_with_pagination() {
 
     let result = generate_test_specifications(&operations_by_tag).unwrap();
     let test_spec = result.get("tweets").unwrap();
-    
+
     // Should detect pagination support
     let method = &test_spec.structural_tests[0].methods[0];
     assert!(method.supports_pagination);
@@ -119,43 +134,43 @@ fn test_generate_test_specifications_with_pagination() {
     assert_eq!(test_spec.pagination_tests.len(), 1);
     let pagination_test = &test_spec.pagination_tests[0];
     assert_eq!(pagination_test.method_name, "get_tweets");
-    assert_eq!(pagination_test.token_param, Some("pagination_token".to_string()));
-    assert_eq!(pagination_test.max_results_param, Some("max_results".to_string()));
+    assert_eq!(
+        pagination_test.token_param,
+        Some("pagination_token".to_string())
+    );
+    assert_eq!(
+        pagination_test.max_results_param,
+        Some("max_results".to_string())
+    );
 }
 
 #[test]
 fn test_generate_test_specifications_multiple_operations() {
     let mut operations_by_tag = HashMap::new();
-    
+
     let get_operation = create_test_operation(
         "get_user",
         "GetUser",
         "GET",
         "/users/{id}",
-        Some(vec![
-            create_test_parameter("id", "id", "path", true, "string"),
-        ]),
+        Some(vec![create_test_parameter(
+            "id", "id", "path", true, "string",
+        )]),
     );
 
-    let post_operation = create_test_operation(
-        "create_user",
-        "CreateUser", 
-        "POST",
-        "/users",
-        None,
-    );
+    let post_operation = create_test_operation("create_user", "CreateUser", "POST", "/users", None);
 
     operations_by_tag.insert("users".to_string(), vec![get_operation, post_operation]);
 
     let result = generate_test_specifications(&operations_by_tag).unwrap();
     let test_spec = result.get("users").unwrap();
-    
+
     // Should have 2 methods in structural tests
     assert_eq!(test_spec.structural_tests[0].methods.len(), 2);
-    
+
     // Should have 2 contract tests
     assert_eq!(test_spec.contract_tests.len(), 2);
-    
+
     // Should have 6 mock scenarios (3 per operation)
     assert_eq!(test_spec.mock_scenarios.len(), 6);
 }
@@ -163,28 +178,16 @@ fn test_generate_test_specifications_multiple_operations() {
 #[test]
 fn test_generate_test_specifications_multiple_tags() {
     let mut operations_by_tag = HashMap::new();
-    
-    let users_operation = create_test_operation(
-        "get_users",
-        "GetUsers",
-        "GET",
-        "/users",
-        None,
-    );
 
-    let tweets_operation = create_test_operation(
-        "get_tweets", 
-        "GetTweets",
-        "GET",
-        "/tweets",
-        None,
-    );
+    let users_operation = create_test_operation("get_users", "GetUsers", "GET", "/users", None);
+
+    let tweets_operation = create_test_operation("get_tweets", "GetTweets", "GET", "/tweets", None);
 
     operations_by_tag.insert("users".to_string(), vec![users_operation]);
     operations_by_tag.insert("tweets".to_string(), vec![tweets_operation]);
 
     let result = generate_test_specifications(&operations_by_tag).unwrap();
-    
+
     assert_eq!(result.len(), 2);
     assert!(result.contains_key("users"));
     assert!(result.contains_key("tweets"));
@@ -262,8 +265,14 @@ fn test_pagination_test_structure() {
     };
 
     assert_eq!(pagination_test.method_name, "get_tweets");
-    assert_eq!(pagination_test.token_param, Some("pagination_token".to_string()));
-    assert_eq!(pagination_test.max_results_param, Some("max_results".to_string()));
+    assert_eq!(
+        pagination_test.token_param,
+        Some("pagination_token".to_string())
+    );
+    assert_eq!(
+        pagination_test.max_results_param,
+        Some("max_results".to_string())
+    );
 }
 
 #[test]
@@ -309,24 +318,31 @@ fn test_pagination_detection_edge_cases() {
         "GetItems",
         "GET",
         "/items",
-        Some(vec![
-            create_test_parameter("next_token", "next_token", "query", false, "string"),
-        ]),
+        Some(vec![create_test_parameter(
+            "next_token",
+            "next_token",
+            "query",
+            false,
+            "string",
+        )]),
     );
 
-    // Test operation with only limit param (no token) - should not support pagination  
+    // Test operation with only limit param (no token) - should not support pagination
     let operation_limit_only = create_test_operation(
         "get_data",
         "GetData",
-        "GET", 
+        "GET",
         "/data",
-        Some(vec![
-            create_test_parameter("limit", "limit", "query", false, "integer"),
-        ]),
+        Some(vec![create_test_parameter(
+            "limit", "limit", "query", false, "integer",
+        )]),
     );
 
     let mut operations_by_tag = HashMap::new();
-    operations_by_tag.insert("test".to_string(), vec![operation_token_only, operation_limit_only]);
+    operations_by_tag.insert(
+        "test".to_string(),
+        vec![operation_token_only, operation_limit_only],
+    );
 
     let result = generate_test_specifications(&operations_by_tag).unwrap();
     let test_spec = result.get("test").unwrap();
