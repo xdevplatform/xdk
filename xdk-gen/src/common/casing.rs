@@ -49,3 +49,22 @@ pub fn pascal_case(value: &str) -> String {
 
     result
 }
+
+/// MiniJinja filter for converting a string to camelCase
+pub fn camel_case(value: &str) -> String {
+    let pascal = pascal_case(value);
+    if pascal.is_empty() {
+        return pascal;
+    }
+    
+    // Convert first character to lowercase
+    let mut result = String::with_capacity(pascal.len());
+    let mut chars = pascal.chars();
+    
+    if let Some(first) = chars.next() {
+        result.push(first.to_ascii_lowercase());
+    }
+    
+    result.extend(chars);
+    result
+}
