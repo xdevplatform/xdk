@@ -1,7 +1,7 @@
 """
-Spaces client for the X API.
+spaces client for the X API.
 
-This module provides a client for interacting with the Spaces endpoints of the X API.
+This module provides a client for interacting with the spaces endpoints of the X API.
 """
 
 from __future__ import annotations
@@ -12,237 +12,29 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    GetSpacesByIdResponse,
-    GetSpacesPostsResponse,
-    GetSpacesByCreatorIdsResponse,
-    GetSpacesBuyersResponse,
-    GetSpacesByIdsResponse,
-    SearchSpacesResponse,
+    GetBuyersResponse,
+    GetByIdResponse,
+    GetPostsResponse,
+    GetByIdsResponse,
+    SearchResponse,
+    GetByCreatorIdsResponse,
 )
 
 
 class SpacesClient:
-    """Client for Spaces operations"""
+    """Client for spaces operations"""
 
 
     def __init__(self, client: Client):
         self.client = client
 
 
-    def get_spaces_by_id(
+    def get_buyers(
         self,
         id: str,
-        space_fields: List = None,
-        expansions: List = None,
-        user_fields: List = None,
-        topic_fields: List = None,
-    ) -> GetSpacesByIdResponse:
-        """
-        Get space by ID
-        Retrieves details of a specific space by its ID.
-        Args:
-            id: The ID of the Space to be retrieved.
-        Args:
-            space_fields: A comma separated list of Space fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            topic_fields: A comma separated list of Topic fields to display.
-        Returns:
-            GetSpacesByIdResponse: Response data
-        """
-        url = self.client.base_url + "/2/spaces/{id}"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        if space_fields is not None:
-            params["space.fields"] = ",".join(str(item) for item in space_fields)
-        if expansions is not None:
-            params["expansions"] = ",".join(str(item) for item in expansions)
-        if user_fields is not None:
-            params["user.fields"] = ",".join(str(item) for item in user_fields)
-        if topic_fields is not None:
-            params["topic.fields"] = ",".join(str(item) for item in topic_fields)
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetSpacesByIdResponse.model_validate(response_data)
-
-
-    def get_spaces_posts(
-        self,
-        id: str,
+        pagination_token: Any = None,
         max_results: int = None,
-        tweet_fields: List = None,
-        expansions: List = None,
-        media_fields: List = None,
-        poll_fields: List = None,
-        user_fields: List = None,
-        place_fields: List = None,
-    ) -> GetSpacesPostsResponse:
-        """
-        Get Space Posts
-        Retrieves a list of Posts shared in a specific Space by its ID.
-        Args:
-            id: The ID of the Space to be retrieved.
-        Args:
-            max_results: The number of Posts to fetch from the provided space. If not provided, the value will default to the maximum of 100.
-        Args:
-            tweet_fields: A comma separated list of Tweet fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            media_fields: A comma separated list of Media fields to display.
-        Args:
-            poll_fields: A comma separated list of Poll fields to display.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            place_fields: A comma separated list of Place fields to display.
-        Returns:
-            GetSpacesPostsResponse: Response data
-        """
-        url = self.client.base_url + "/2/spaces/{id}/tweets"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        if max_results is not None:
-            params["max_results"] = max_results
-        if tweet_fields is not None:
-            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
-        if expansions is not None:
-            params["expansions"] = ",".join(str(item) for item in expansions)
-        if media_fields is not None:
-            params["media.fields"] = ",".join(str(item) for item in media_fields)
-        if poll_fields is not None:
-            params["poll.fields"] = ",".join(str(item) for item in poll_fields)
-        if user_fields is not None:
-            params["user.fields"] = ",".join(str(item) for item in user_fields)
-        if place_fields is not None:
-            params["place.fields"] = ",".join(str(item) for item in place_fields)
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetSpacesPostsResponse.model_validate(response_data)
-
-
-    def get_spaces_by_creator_ids(
-        self,
-        user_ids: List,
-        space_fields: List = None,
-        expansions: List = None,
-        user_fields: List = None,
-        topic_fields: List = None,
-    ) -> GetSpacesByCreatorIdsResponse:
-        """
-        Get Spaces by creator IDs
-        Retrieves details of Spaces created by specified User IDs.
-        Args:
-            user_ids: The IDs of Users to search through.
-        Args:
-            space_fields: A comma separated list of Space fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            topic_fields: A comma separated list of Topic fields to display.
-        Returns:
-            GetSpacesByCreatorIdsResponse: Response data
-        """
-        url = self.client.base_url + "/2/spaces/by/creator_ids"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        if user_ids is not None:
-            params["user_ids"] = ",".join(str(item) for item in user_ids)
-        if space_fields is not None:
-            params["space.fields"] = ",".join(str(item) for item in space_fields)
-        if expansions is not None:
-            params["expansions"] = ",".join(str(item) for item in expansions)
-        if user_fields is not None:
-            params["user.fields"] = ",".join(str(item) for item in user_fields)
-        if topic_fields is not None:
-            params["topic.fields"] = ",".join(str(item) for item in topic_fields)
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetSpacesByCreatorIdsResponse.model_validate(response_data)
-
-
-    def get_spaces_buyers(
-        self,
-        id: str,
-        pagination_token: str = None,
-        max_results: int = None,
-        user_fields: List = None,
-        expansions: List = None,
-        tweet_fields: List = None,
-    ) -> GetSpacesBuyersResponse:
+    ) -> GetBuyersResponse:
         """
         Get Space ticket buyers
         Retrieves a list of Users who purchased tickets to a specific Space by its ID.
@@ -252,14 +44,8 @@ class SpacesClient:
             pagination_token: This parameter is used to get a specified 'page' of results.
         Args:
             max_results: The maximum number of results.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            tweet_fields: A comma separated list of Tweet fields to display.
         Returns:
-            GetSpacesBuyersResponse: Response data
+            GetBuyersResponse: Response data
         """
         url = self.client.base_url + "/2/spaces/{id}/buyers"
         # Ensure we have a valid access token
@@ -272,12 +58,6 @@ class SpacesClient:
             params["pagination_token"] = pagination_token
         if max_results is not None:
             params["max_results"] = max_results
-        if user_fields is not None:
-            params["user.fields"] = ",".join(str(item) for item in user_fields)
-        if expansions is not None:
-            params["expansions"] = ",".join(str(item) for item in expansions)
-        if tweet_fields is not None:
-            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
         url = url.replace("{id}", str(id))
         headers = {}
         # Make the request
@@ -298,32 +78,111 @@ class SpacesClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return GetSpacesBuyersResponse.model_validate(response_data)
+        return GetBuyersResponse.model_validate(response_data)
 
 
-    def get_spaces_by_ids(
+    def get_by_id(
+        self,
+        id: str,
+    ) -> GetByIdResponse:
+        """
+        Get space by ID
+        Retrieves details of a specific space by its ID.
+        Args:
+            id: The ID of the Space to be retrieved.
+        Returns:
+            GetByIdResponse: Response data
+        """
+        url = self.client.base_url + "/2/spaces/{id}"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetByIdResponse.model_validate(response_data)
+
+
+    def get_posts(
+        self,
+        id: str,
+        max_results: int = None,
+    ) -> GetPostsResponse:
+        """
+        Get Space Posts
+        Retrieves a list of Posts shared in a specific Space by its ID.
+        Args:
+            id: The ID of the Space to be retrieved.
+        Args:
+            max_results: The number of Posts to fetch from the provided space. If not provided, the value will default to the maximum of 100.
+        Returns:
+            GetPostsResponse: Response data
+        """
+        url = self.client.base_url + "/2/spaces/{id}/tweets"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        if max_results is not None:
+            params["max_results"] = max_results
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetPostsResponse.model_validate(response_data)
+
+
+    def get_by_ids(
         self,
         ids: List,
-        space_fields: List = None,
-        expansions: List = None,
-        user_fields: List = None,
-        topic_fields: List = None,
-    ) -> GetSpacesByIdsResponse:
+    ) -> GetByIdsResponse:
         """
         Get Spaces by IDs
         Retrieves details of multiple Spaces by their IDs.
         Args:
             ids: The list of Space IDs to return.
-        Args:
-            space_fields: A comma separated list of Space fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            topic_fields: A comma separated list of Topic fields to display.
         Returns:
-            GetSpacesByIdsResponse: Response data
+            GetByIdsResponse: Response data
         """
         url = self.client.base_url + "/2/spaces"
         if self.client.bearer_token:
@@ -342,14 +201,6 @@ class SpacesClient:
         params = {}
         if ids is not None:
             params["ids"] = ",".join(str(item) for item in ids)
-        if space_fields is not None:
-            params["space.fields"] = ",".join(str(item) for item in space_fields)
-        if expansions is not None:
-            params["expansions"] = ",".join(str(item) for item in expansions)
-        if user_fields is not None:
-            params["user.fields"] = ",".join(str(item) for item in user_fields)
-        if topic_fields is not None:
-            params["topic.fields"] = ",".join(str(item) for item in topic_fields)
         headers = {}
         # Make the request
         response = self.client.session.get(
@@ -362,19 +213,15 @@ class SpacesClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return GetSpacesByIdsResponse.model_validate(response_data)
+        return GetByIdsResponse.model_validate(response_data)
 
 
-    def search_spaces(
+    def search(
         self,
         query: str,
         state: str = None,
         max_results: int = None,
-        space_fields: List = None,
-        expansions: List = None,
-        user_fields: List = None,
-        topic_fields: List = None,
-    ) -> SearchSpacesResponse:
+    ) -> SearchResponse:
         """
         Search Spaces
         Retrieves a list of Spaces matching the specified search query.
@@ -384,16 +231,8 @@ class SpacesClient:
             state: The state of Spaces to search for.
         Args:
             max_results: The number of results to return.
-        Args:
-            space_fields: A comma separated list of Space fields to display.
-        Args:
-            expansions: A comma separated list of fields to expand.
-        Args:
-            user_fields: A comma separated list of User fields to display.
-        Args:
-            topic_fields: A comma separated list of Topic fields to display.
         Returns:
-            SearchSpacesResponse: Response data
+            SearchResponse: Response data
         """
         url = self.client.base_url + "/2/spaces/search"
         if self.client.bearer_token:
@@ -416,14 +255,6 @@ class SpacesClient:
             params["state"] = state
         if max_results is not None:
             params["max_results"] = max_results
-        if space_fields is not None:
-            params["space.fields"] = ",".join(str(item) for item in space_fields)
-        if expansions is not None:
-            params["expansions"] = ",".join(str(item) for item in expansions)
-        if user_fields is not None:
-            params["user.fields"] = ",".join(str(item) for item in user_fields)
-        if topic_fields is not None:
-            params["topic.fields"] = ",".join(str(item) for item in topic_fields)
         headers = {}
         # Make the request
         response = self.client.session.get(
@@ -436,4 +267,48 @@ class SpacesClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return SearchSpacesResponse.model_validate(response_data)
+        return SearchResponse.model_validate(response_data)
+
+
+    def get_by_creator_ids(
+        self,
+        user_ids: List,
+    ) -> GetByCreatorIdsResponse:
+        """
+        Get Spaces by creator IDs
+        Retrieves details of Spaces created by specified User IDs.
+        Args:
+            user_ids: The IDs of Users to search through.
+        Returns:
+            GetByCreatorIdsResponse: Response data
+        """
+        url = self.client.base_url + "/2/spaces/by/creator_ids"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        if user_ids is not None:
+            params["user_ids"] = ",".join(str(item) for item in user_ids)
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetByCreatorIdsResponse.model_validate(response_data)

@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for Bookmarks client.
+Auto-generated generic tests for {"class_name": "Bookmarks", "display_name": "bookmarks", "import_name": "bookmarks", "original": ["bookmarks"], "property_name": "bookmarks"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be

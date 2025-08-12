@@ -1,5 +1,5 @@
 """
-Auto-generated pagination tests for Direct_Messages client.
+Auto-generated pagination tests for {"class_name": "DirectMessages", "display_name": "direct messages", "import_name": "direct_messages", "original": ["direct", "messages"], "property_name": "direct_messages"} client.
 
 This module contains tests that validate pagination functionality
 using the Cursor class for methods that support pagination.
@@ -35,7 +35,7 @@ class TestDirectMessagesPagination:
             assert isinstance(test_cursor, Cursor)
         except PaginationError:
             pytest.fail(
-                f"Method getDmConversationsIdDmEvents should support pagination"
+                f"Method get_dm_conversations_id_dm_events should support pagination"
             )
 
 
@@ -184,7 +184,9 @@ class TestDirectMessagesPagination:
             assert test_cursor is not None
             assert isinstance(test_cursor, Cursor)
         except PaginationError:
-            pytest.fail(f"Method getDmEventsByParticipantId should support pagination")
+            pytest.fail(
+                f"Method get_dm_events_by_participant_id should support pagination"
+            )
 
 
     def test_get_dm_events_by_participant_id_cursor_pages(self):
@@ -323,20 +325,20 @@ class TestDirectMessagesPagination:
                 ), "Pagination token should be passed correctly"
 
 
-    def test_get_dm_events_cursor_creation(self):
-        """Test that get_dm_events can be used with Cursor."""
-        method = getattr(self.direct_messages_client, "get_dm_events")
+    def test_get_events_cursor_creation(self):
+        """Test that get_events can be used with Cursor."""
+        method = getattr(self.direct_messages_client, "get_events")
         # Should be able to create cursor without error
         try:
             test_cursor = cursor(method, max_results=10)
             assert test_cursor is not None
             assert isinstance(test_cursor, Cursor)
         except PaginationError:
-            pytest.fail(f"Method getDmEvents should support pagination")
+            pytest.fail(f"Method get_events should support pagination")
 
 
-    def test_get_dm_events_cursor_pages(self):
-        """Test pagination with pages() for get_dm_events."""
+    def test_get_events_cursor_pages(self):
+        """Test pagination with pages() for get_events."""
         with patch.object(self.client, "session") as mock_session:
             # Mock first page response
             first_page_response = Mock()
@@ -357,7 +359,7 @@ class TestDirectMessagesPagination:
             # Return different responses for consecutive calls
             mock_session.get.side_effect = [first_page_response, second_page_response]
             # Test pagination
-            method = getattr(self.direct_messages_client, "get_dm_events")
+            method = getattr(self.direct_messages_client, "get_events")
             test_cursor = cursor(method, max_results=2)
             pages = list(test_cursor.pages(2))  # Limit to 2 pages
             assert len(pages) == 2, f"Should get 2 pages, got {len(pages)}"
@@ -373,8 +375,8 @@ class TestDirectMessagesPagination:
             assert len(second_data) == 1, "Second page should have 1 item"
 
 
-    def test_get_dm_events_cursor_items(self):
-        """Test pagination with items() for get_dm_events."""
+    def test_get_events_cursor_items(self):
+        """Test pagination with items() for get_events."""
         with patch.object(self.client, "session") as mock_session:
             # Mock response with paginated data
             mock_response = Mock()
@@ -393,7 +395,7 @@ class TestDirectMessagesPagination:
             mock_response.raise_for_status.return_value = None
             mock_session.get.return_value = mock_response
             # Test item iteration
-            method = getattr(self.direct_messages_client, "get_dm_events")
+            method = getattr(self.direct_messages_client, "get_events")
             test_cursor = cursor(method, max_results=10)
             items = list(test_cursor.items(5))  # Limit to 5 items
             assert len(items) == 3, f"Should get 3 items, got {len(items)}"
@@ -404,15 +406,15 @@ class TestDirectMessagesPagination:
                 ), "Items should have 'id' field"
 
 
-    def test_get_dm_events_pagination_parameters(self):
-        """Test that pagination parameters are handled correctly for get_dm_events."""
+    def test_get_events_pagination_parameters(self):
+        """Test that pagination parameters are handled correctly for get_events."""
         with patch.object(self.client, "session") as mock_session:
             mock_response = Mock()
             mock_response.status_code = 200
             mock_response.json.return_value = {"data": [], "meta": {"result_count": 0}}
             mock_response.raise_for_status.return_value = None
             mock_session.get.return_value = mock_response
-            method = getattr(self.direct_messages_client, "get_dm_events")
+            method = getattr(self.direct_messages_client, "get_events")
             # Test with max_results parameter
             test_cursor = cursor(method, max_results=5)
             list(test_cursor.pages(1))  # Trigger one request

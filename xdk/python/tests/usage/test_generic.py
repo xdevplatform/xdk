@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for Usage client.
+Auto-generated generic tests for {"class_name": "Usage", "display_name": "usage", "import_name": "usage", "original": ["usage"], "property_name": "usage"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be

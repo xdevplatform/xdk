@@ -1,5 +1,5 @@
 """
-Auto-generated pagination tests for Spaces client.
+Auto-generated pagination tests for {"class_name": "Spaces", "display_name": "spaces", "import_name": "spaces", "original": ["spaces"], "property_name": "spaces"} client.
 
 This module contains tests that validate pagination functionality
 using the Cursor class for methods that support pagination.
@@ -23,20 +23,20 @@ class TestSpacesPagination:
         self.spaces_client = getattr(self.client, "spaces")
 
 
-    def test_get_spaces_buyers_cursor_creation(self):
-        """Test that get_spaces_buyers can be used with Cursor."""
-        method = getattr(self.spaces_client, "get_spaces_buyers")
+    def test_get_buyers_cursor_creation(self):
+        """Test that get_buyers can be used with Cursor."""
+        method = getattr(self.spaces_client, "get_buyers")
         # Should be able to create cursor without error
         try:
             test_cursor = cursor(method, "test_id", max_results=10)
             assert test_cursor is not None
             assert isinstance(test_cursor, Cursor)
         except PaginationError:
-            pytest.fail(f"Method getSpacesBuyers should support pagination")
+            pytest.fail(f"Method get_buyers should support pagination")
 
 
-    def test_get_spaces_buyers_cursor_pages(self):
-        """Test pagination with pages() for get_spaces_buyers."""
+    def test_get_buyers_cursor_pages(self):
+        """Test pagination with pages() for get_buyers."""
         with patch.object(self.client, "session") as mock_session:
             # Mock first page response
             first_page_response = Mock()
@@ -57,7 +57,7 @@ class TestSpacesPagination:
             # Return different responses for consecutive calls
             mock_session.get.side_effect = [first_page_response, second_page_response]
             # Test pagination
-            method = getattr(self.spaces_client, "get_spaces_buyers")
+            method = getattr(self.spaces_client, "get_buyers")
             test_cursor = cursor(method, "test_id", max_results=2)
             pages = list(test_cursor.pages(2))  # Limit to 2 pages
             assert len(pages) == 2, f"Should get 2 pages, got {len(pages)}"
@@ -73,8 +73,8 @@ class TestSpacesPagination:
             assert len(second_data) == 1, "Second page should have 1 item"
 
 
-    def test_get_spaces_buyers_cursor_items(self):
-        """Test pagination with items() for get_spaces_buyers."""
+    def test_get_buyers_cursor_items(self):
+        """Test pagination with items() for get_buyers."""
         with patch.object(self.client, "session") as mock_session:
             # Mock response with paginated data
             mock_response = Mock()
@@ -93,7 +93,7 @@ class TestSpacesPagination:
             mock_response.raise_for_status.return_value = None
             mock_session.get.return_value = mock_response
             # Test item iteration
-            method = getattr(self.spaces_client, "get_spaces_buyers")
+            method = getattr(self.spaces_client, "get_buyers")
             test_cursor = cursor(method, "test_id", max_results=10)
             items = list(test_cursor.items(5))  # Limit to 5 items
             assert len(items) == 3, f"Should get 3 items, got {len(items)}"
@@ -104,15 +104,15 @@ class TestSpacesPagination:
                 ), "Items should have 'id' field"
 
 
-    def test_get_spaces_buyers_pagination_parameters(self):
-        """Test that pagination parameters are handled correctly for get_spaces_buyers."""
+    def test_get_buyers_pagination_parameters(self):
+        """Test that pagination parameters are handled correctly for get_buyers."""
         with patch.object(self.client, "session") as mock_session:
             mock_response = Mock()
             mock_response.status_code = 200
             mock_response.json.return_value = {"data": [], "meta": {"result_count": 0}}
             mock_response.raise_for_status.return_value = None
             mock_session.get.return_value = mock_response
-            method = getattr(self.spaces_client, "get_spaces_buyers")
+            method = getattr(self.spaces_client, "get_buyers")
             # Test with max_results parameter
             test_cursor = cursor(method, "test_id", max_results=5)
             list(test_cursor.pages(1))  # Trigger one request
@@ -175,7 +175,7 @@ class TestSpacesPagination:
             empty_response.raise_for_status.return_value = None
             mock_session.get.return_value = empty_response
             # Pick first paginatable method for testing
-            method = getattr(self.spaces_client, "get_spaces_buyers")
+            method = getattr(self.spaces_client, "get_buyers")
             test_cursor = cursor(method, "test_id", max_results=10)
             # Should handle empty responses gracefully
             pages = list(test_cursor.pages(1))

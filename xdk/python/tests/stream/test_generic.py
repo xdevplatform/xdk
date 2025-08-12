@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for Stream client.
+Auto-generated generic tests for {"class_name": "Stream", "display_name": "stream", "import_name": "stream", "original": ["stream"], "property_name": "stream"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be

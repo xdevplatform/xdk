@@ -1,7 +1,7 @@
 """
-Communities module for the X API.
+communities module for the X API.
 
-This module provides access to the Communities endpoints of the X API.
+This module provides access to the communities endpoints of the X API.
 """
 
 from .client import CommunitiesClient

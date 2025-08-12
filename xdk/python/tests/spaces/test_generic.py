@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for Spaces client.
+Auto-generated generic tests for {"class_name": "Spaces", "display_name": "spaces", "import_name": "spaces", "original": ["spaces"], "property_name": "spaces"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be

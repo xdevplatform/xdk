@@ -1,7 +1,7 @@
 """
-Connection client for the X API.
+connection client for the X API.
 
-This module provides a client for interacting with the Connection endpoints of the X API.
+This module provides a client for interacting with the connection endpoints of the X API.
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from .models import (
 
 
 class ConnectionClient:
-    """Client for Connection operations"""
+    """Client for connection operations"""
 
 
     def __init__(self, client: Client):

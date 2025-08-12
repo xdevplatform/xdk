@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Union, Any, Callable
 from .oauth2_auth import OAuth2PKCEAuth
 from .paginator import Cursor, cursor, PaginationError
 {% for tag in tags %}
-from .{{ tag|replace(" ", "_")|lower }}.client import {{ tag|pascal_case }}Client
+from .{{ tag.import_name }}.client import {{ tag.class_name }}Client
 {% endfor %}
 
 
@@ -54,7 +54,7 @@ class Client:
         
         # Initialize clients for each tag
         {% for tag in tags %}
-        self.{{ tag|replace(" ", "_")|lower }} = {{ tag|pascal_case }}Client(self)
+        self.{{ tag.property_name }} = {{ tag.class_name }}Client(self)
         {% endfor %}
     
     @property

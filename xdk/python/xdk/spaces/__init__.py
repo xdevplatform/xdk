@@ -1,7 +1,7 @@
 """
-Spaces module for the X API.
+spaces module for the X API.
 
-This module provides access to the Spaces endpoints of the X API.
+This module provides access to the spaces endpoints of the X API.
 """
 
 from .client import SpacesClient

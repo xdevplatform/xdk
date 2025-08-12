@@ -1,7 +1,7 @@
 """
-Lists module for the X API.
+lists module for the X API.
 
-This module provides access to the Lists endpoints of the X API.
+This module provides access to the lists endpoints of the X API.
 """
 
 from .client import ListsClient

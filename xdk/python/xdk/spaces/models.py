@@ -1,7 +1,7 @@
 """
-Spaces models for the X API.
+spaces models for the X API.
 
-This module provides models for the Spaces endpoints of the X API.
+This module provides models for the spaces endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
@@ -9,21 +9,58 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for getSpacesById
+# Models for get_buyers
 
 
-class GetSpacesByIdResponse(BaseModel):
-    """Response model for getSpacesById"""
+class GetBuyersResponse(BaseModel):
+    """Response model for get_buyers"""
 
-    data: Optional["GetSpacesByIdResponseData"] = Field(default_factory=dict)
+    data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["GetSpacesByIdResponseIncludes"] = None
+    includes: Optional["GetBuyersResponseIncludes"] = None
+    meta: Optional["GetBuyersResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetSpacesByIdResponseData(BaseModel):
-    """Nested model for GetSpacesByIdResponseData"""
+class GetBuyersResponseIncludes(BaseModel):
+    """Nested model for GetBuyersResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetBuyersResponseMeta(BaseModel):
+    """Nested model for GetBuyersResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_by_id
+
+
+class GetByIdResponse(BaseModel):
+    """Response model for get_by_id"""
+
+    data: Optional["GetByIdResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+    includes: Optional["GetByIdResponseIncludes"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetByIdResponseData(BaseModel):
+    """Nested model for GetByIdResponseData"""
 
     created_at: Optional[str] = None
     creator_id: Optional[str] = None
@@ -46,8 +83,8 @@ class GetSpacesByIdResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetSpacesByIdResponseIncludes(BaseModel):
-    """Nested model for GetSpacesByIdResponseIncludes"""
+class GetByIdResponseIncludes(BaseModel):
+    """Nested model for GetByIdResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -59,22 +96,22 @@ class GetSpacesByIdResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for getSpacesPosts
+# Models for get_posts
 
 
-class GetSpacesPostsResponse(BaseModel):
-    """Response model for getSpacesPosts"""
+class GetPostsResponse(BaseModel):
+    """Response model for get_posts"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["GetSpacesPostsResponseIncludes"] = None
-    meta: Optional["GetSpacesPostsResponseMeta"] = None
+    includes: Optional["GetPostsResponseIncludes"] = None
+    meta: Optional["GetPostsResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetSpacesPostsResponseIncludes(BaseModel):
-    """Nested model for GetSpacesPostsResponseIncludes"""
+class GetPostsResponseIncludes(BaseModel):
+    """Nested model for GetPostsResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -86,8 +123,8 @@ class GetSpacesPostsResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetSpacesPostsResponseMeta(BaseModel):
-    """Nested model for GetSpacesPostsResponseMeta"""
+class GetPostsResponseMeta(BaseModel):
+    """Nested model for GetPostsResponseMeta"""
 
     next_token: Optional[str] = None
     previous_token: Optional[str] = None
@@ -96,22 +133,21 @@ class GetSpacesPostsResponseMeta(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for getSpacesByCreatorIds
+# Models for get_by_ids
 
 
-class GetSpacesByCreatorIdsResponse(BaseModel):
-    """Response model for getSpacesByCreatorIds"""
+class GetByIdsResponse(BaseModel):
+    """Response model for get_by_ids"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["GetSpacesByCreatorIdsResponseIncludes"] = None
-    meta: Optional["GetSpacesByCreatorIdsResponseMeta"] = None
+    includes: Optional["GetByIdsResponseIncludes"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetSpacesByCreatorIdsResponseIncludes(BaseModel):
-    """Nested model for GetSpacesByCreatorIdsResponseIncludes"""
+class GetByIdsResponseIncludes(BaseModel):
+    """Nested model for GetByIdsResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -123,30 +159,57 @@ class GetSpacesByCreatorIdsResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetSpacesByCreatorIdsResponseMeta(BaseModel):
-    """Nested model for GetSpacesByCreatorIdsResponseMeta"""
+# Models for search
+
+
+class SearchResponse(BaseModel):
+    """Response model for search"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["SearchResponseIncludes"] = None
+    meta: Optional["SearchResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class SearchResponseIncludes(BaseModel):
+    """Nested model for SearchResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class SearchResponseMeta(BaseModel):
+    """Nested model for SearchResponseMeta"""
 
     result_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for getSpacesBuyers
+# Models for get_by_creator_ids
 
 
-class GetSpacesBuyersResponse(BaseModel):
-    """Response model for getSpacesBuyers"""
+class GetByCreatorIdsResponse(BaseModel):
+    """Response model for get_by_creator_ids"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["GetSpacesBuyersResponseIncludes"] = None
-    meta: Optional["GetSpacesBuyersResponseMeta"] = None
+    includes: Optional["GetByCreatorIdsResponseIncludes"] = None
+    meta: Optional["GetByCreatorIdsResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetSpacesBuyersResponseIncludes(BaseModel):
-    """Nested model for GetSpacesBuyersResponseIncludes"""
+class GetByCreatorIdsResponseIncludes(BaseModel):
+    """Nested model for GetByCreatorIdsResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -158,71 +221,8 @@ class GetSpacesBuyersResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetSpacesBuyersResponseMeta(BaseModel):
-    """Nested model for GetSpacesBuyersResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for getSpacesByIds
-
-
-class GetSpacesByIdsResponse(BaseModel):
-    """Response model for getSpacesByIds"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetSpacesByIdsResponseIncludes"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetSpacesByIdsResponseIncludes(BaseModel):
-    """Nested model for GetSpacesByIdsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for searchSpaces
-
-
-class SearchSpacesResponse(BaseModel):
-    """Response model for searchSpaces"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["SearchSpacesResponseIncludes"] = None
-    meta: Optional["SearchSpacesResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class SearchSpacesResponseIncludes(BaseModel):
-    """Nested model for SearchSpacesResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class SearchSpacesResponseMeta(BaseModel):
-    """Nested model for SearchSpacesResponseMeta"""
+class GetByCreatorIdsResponseMeta(BaseModel):
+    """Nested model for GetByCreatorIdsResponseMeta"""
 
     result_count: Optional[int] = None
 

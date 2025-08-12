@@ -32,5 +32,4 @@
 /// See the `python` module for a reference implementation of a language generator.
 pub use python::Python;
 
-mod common;
 mod python;

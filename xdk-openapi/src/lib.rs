@@ -161,23 +161,19 @@ mod tests {
         // Should be able to access anyOf schemas in components
         if let Some(components) = &openapi.components {
             if let Some(schemas) = &components.schemas {
-                if let Some(any_of_schema) = schemas.get("TestSchemaAnyOf") {
-                    if let Schema::AnyOf(any_of) = any_of_schema {
-                        assert_eq!(any_of.any_of.len(), 3);
-                        println!(
-                            "Successfully parsed anyOf schema with {} variants",
-                            any_of.any_of.len()
-                        );
-                    }
+                if let Some(Schema::AnyOf(any_of)) = schemas.get("TestSchemaAnyOf") {
+                    assert_eq!(any_of.any_of.len(), 3);
+                    println!(
+                        "Successfully parsed anyOf schema with {} variants",
+                        any_of.any_of.len()
+                    );
                 }
-                if let Some(all_of_schema) = schemas.get("TestSchemaAllOf") {
-                    if let Schema::AllOf(all_of) = all_of_schema {
-                        assert_eq!(all_of.all_of.len(), 3);
-                        println!(
-                            "Successfully parsed allOf schema with {} variants",
-                            all_of.all_of.len()
-                        );
-                    }
+                if let Some(Schema::AllOf(all_of)) = schemas.get("TestSchemaAllOf") {
+                    assert_eq!(all_of.all_of.len(), 3);
+                    println!(
+                        "Successfully parsed allOf schema with {} variants",
+                        all_of.all_of.len()
+                    );
                 }
             }
         }

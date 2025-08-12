@@ -11,28 +11,28 @@ Generated automatically - do not edit manually.
 import pytest
 import inspect
 from unittest.mock import Mock, patch
-from xdk.{{ tag|lower }}.client import {{ tag|pascal_case }}Client
+from xdk.{{ tag.import_name }}.client import {{ tag.class_name }}Client
 from xdk import Client
 
 
-class Test{{ tag|pascal_case }}Generic:
-    """Generic tests for {{ tag|pascal_case }}Client."""
+class Test{{ tag.class_name }}Generic:
+    """Generic tests for {{ tag.class_name }}Client."""
     
     def setup_class(self):
         """Set up test fixtures."""
         self.client = Client(base_url="https://api.example.com")
-        self.{{ tag|lower }}_client = getattr(self.client, "{{ tag|lower }}")
+        self.{{ tag.property_name }}_client = getattr(self.client, "{{ tag.property_name }}")
     
     def test_client_exists(self):
-        """Test that {{ tag|pascal_case }}Client class exists and is importable."""
-        assert {{ tag|pascal_case }}Client is not None
-        assert hasattr({{ tag|pascal_case }}Client, '__name__')
-        assert {{ tag|pascal_case }}Client.__name__ == "{{ tag|pascal_case }}Client"
+        """Test that {{ tag.class_name }}Client class exists and is importable."""
+        assert {{ tag.class_name }}Client is not None
+        assert hasattr({{ tag.class_name }}Client, '__name__')
+        assert {{ tag.class_name }}Client.__name__ == "{{ tag.class_name }}Client"
     
     def test_client_initialization(self):
-        """Test that {{ tag|pascal_case }}Client can be initialized properly."""
-        assert self.{{ tag|lower }}_client is not None
-        assert isinstance(self.{{ tag|lower }}_client, {{ tag|pascal_case }}Client)
+        """Test that {{ tag.class_name }}Client can be initialized properly."""
+        assert self.{{ tag.property_name }}_client is not None
+        assert isinstance(self.{{ tag.property_name }}_client, {{ tag.class_name }}Client)
     
     def test_imports_work(self):
         """Test that all expected imports work correctly."""
@@ -62,12 +62,12 @@ class Test{{ tag|pascal_case }}Generic:
             mock_session.delete.return_value = mock_response
             
             # Get first available method for testing error handling
-            client_methods = [name for name in dir({{ tag|pascal_case }}Client) 
-                            if not name.startswith('_') and callable(getattr({{ tag|pascal_case }}Client, name))]
+            client_methods = [name for name in dir({{ tag.class_name }}Client) 
+                            if not name.startswith('_') and callable(getattr({{ tag.class_name }}Client, name))]
             
             if client_methods:
                 method_name = client_methods[0]
-                method = getattr(self.{{ tag|lower }}_client, method_name)
+                method = getattr(self.{{ tag.property_name }}_client, method_name)
                 
                 # Try calling the method and expect an exception
                 with pytest.raises(Exception):
@@ -85,24 +85,24 @@ class Test{{ tag|pascal_case }}Generic:
     def test_client_has_expected_base_functionality(self):
         """Test that the client has expected base functionality."""
         # Should be able to access the client through main Client
-        assert hasattr(self.client, "{{ tag|lower }}")
+        assert hasattr(self.client, "{{ tag.property_name }}")
         
         # Client should have standard Python object features
-        assert hasattr(self.{{ tag|lower }}_client, '__class__')
-        assert hasattr(self.{{ tag|lower }}_client, '__dict__')
+        assert hasattr(self.{{ tag.property_name }}_client, '__class__')
+        assert hasattr(self.{{ tag.property_name }}_client, '__dict__')
         
         # Should have at least one public method
-        public_methods = [name for name in dir(self.{{ tag|lower }}_client) 
-                         if not name.startswith('_') and callable(getattr(self.{{ tag|lower }}_client, name))]
-        assert len(public_methods) > 0, f"{{ tag|pascal_case }}Client should have at least one public method"
+        public_methods = [name for name in dir(self.{{ tag.property_name }}_client) 
+                         if not name.startswith('_') and callable(getattr(self.{{ tag.property_name }}_client, name))]
+        assert len(public_methods) > 0, f"{{ tag.class_name }}Client should have at least one public method"
     
     def test_client_method_signatures_are_valid(self):
         """Test that all client methods have valid Python signatures."""
-        public_methods = [name for name in dir({{ tag|pascal_case }}Client) 
-                         if not name.startswith('_') and callable(getattr({{ tag|pascal_case }}Client, name))]
+        public_methods = [name for name in dir({{ tag.class_name }}Client) 
+                         if not name.startswith('_') and callable(getattr({{ tag.class_name }}Client, name))]
         
         for method_name in public_methods:
-            method = getattr({{ tag|pascal_case }}Client, method_name)
+            method = getattr({{ tag.class_name }}Client, method_name)
             
             # Should be able to get signature without error
             try:

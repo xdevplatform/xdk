@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for Communities client.
+Auto-generated generic tests for {"class_name": "Communities", "display_name": "communities", "import_name": "communities", "original": ["communities"], "property_name": "communities"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be

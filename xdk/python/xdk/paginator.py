@@ -80,9 +80,9 @@ class Cursor(Generic[ResponseType]):
             print(user.name)
 
         # For methods with query parameters
-        cursor = Cursor(client.tweets.search_posts_recent, "python", max_results=50)
+        cursor = Cursor(client.posts.search_posts_recent, "python", max_results=50)
         for page in cursor.pages(5):  # page is SearchResponse type
-            print(f"Got {len(page.data)} tweets")
+            print(f"Got {len(page.data)} posts")
     """
 
 
@@ -161,7 +161,7 @@ def cursor(
         for page in users_cursor.pages(5):
             print(len(page.data))
         # For search methods
-        search_cursor = cursor(client.tweets.search_posts_recent, "python", max_results=50)
+        search_cursor = cursor(client.posts.search_posts_recent, "python", max_results=50)
         for tweet in search_cursor.items(100):
             print(tweet.text)
     """

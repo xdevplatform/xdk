@@ -1,9 +1,9 @@
 """
-{{ tag }} module for the X API.
+{{ tag.display_name }} module for the X API.
 
-This module provides access to the {{ tag }} endpoints of the X API.
+This module provides access to the {{ tag.display_name }} endpoints of the X API.
 """
 
-from .client import {{ tag|pascal_case }}Client
+from .client import {{ tag.class_name }}Client
 
-__all__ = ["{{ tag|pascal_case }}Client"] 
+__all__ = ["{{ tag.class_name }}Client"] 

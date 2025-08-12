@@ -7,8 +7,7 @@
 /// 1. Define language-specific filters (e.g., type conversion, naming conventions)
 /// 2. Use the language! macro to create the generator struct
 /// 3. Implement the rendering logic in the generate field
-use crate::common::casing::{pascal_case, snake_case};
-use xdk_lib::language;
+use xdk_lib::{Casing, language, pascal_case};
 
 /// MiniJinja filter for converting to Python types
 fn python_type(value: &str) -> String {
@@ -34,7 +33,11 @@ fn last_part(value: &str) -> String {
 */
 language! {
     name: Python,
-    filters: [snake_case, pascal_case, python_type, last_part],
+    filters: [pascal_case, python_type, last_part],
+    class_casing: Casing::Pascal,
+    operation_casing: Casing::Snake,
+    import_casing: Casing::Snake,
+    variable_casing: Casing::Snake,
     render: [
         multiple {
             render "models" => "xdk/{}/models.py",
@@ -47,5 +50,14 @@ language! {
         render "init_py" => "xdk/__init__.py",
         render "pyproject_toml" => "pyproject.toml",
         render "readme" => "README.md"
+    ],
+    tests: [
+        multiple {
+            render "test_contracts" => "tests/{}/test_contracts.py",
+            render "test_generic" => "tests/{}/test_generic.py",
+            render "test_structure" => "tests/{}/test_structure.py",
+            render "test_pagination" => "tests/{}/test_pagination.py"
+        },
+        render "conftest" => "tests/conftest.py"
     ]
 }

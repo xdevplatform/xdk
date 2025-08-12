@@ -11,37 +11,37 @@ Generated automatically - do not edit manually.
 import pytest
 import inspect
 from typing import get_type_hints
-from xdk.{{ tag|lower }}.client import {{ tag|pascal_case }}Client
+from xdk.{{ tag.import_name }}.client import {{ tag.class_name }}Client
 from xdk import Client
 
 
-class Test{{ tag|pascal_case }}Structure:
-    """Test the structure of {{ tag|pascal_case }}Client."""
+class Test{{ tag.class_name }}Structure:
+    """Test the structure of {{ tag.class_name }}Client."""
     
     def setup_class(self):
         """Set up test fixtures."""
         self.client = Client(base_url="https://api.example.com")
-        self.{{ tag|lower }}_client = getattr(self.client, "{{ tag|lower }}")
+        self.{{ tag.property_name }}_client = getattr(self.client, "{{ tag.property_name }}")
     
 
     
     {% for structural_test in test_spec.structural_tests %}
     {% for method in structural_test.methods %}
-    def test_{{ method.method_name|snake_case }}_exists(self):
-        """Test that {{ method.method_name|snake_case }} method exists with correct signature."""
+    def test_{{ method.method_name }}_exists(self):
+        """Test that {{ method.method_name }} method exists with correct signature."""
         # Check method exists
-        method = getattr({{ tag|pascal_case }}Client, "{{ method.method_name|snake_case }}", None)
-        assert method is not None, f"Method {{ method.method_name|snake_case }} does not exist on {{ tag|pascal_case }}Client"
+        method = getattr({{ tag.class_name }}Client, "{{ method.method_name }}", None)
+        assert method is not None, f"Method {{ method.method_name }} does not exist on {{ tag.class_name }}Client"
         
         # Check method is callable
-        assert callable(method), f"{{ method.method_name|snake_case }} is not callable"
+        assert callable(method), f"{{ method.method_name }} is not callable"
         
         # Check method signature
         sig = inspect.signature(method)
         params = list(sig.parameters.keys())
         
         # Should have 'self' as first parameter
-        assert len(params) >= 1, f"{{ method.method_name|snake_case }} should have at least 'self' parameter"
+        assert len(params) >= 1, f"{{ method.method_name }} should have at least 'self' parameter"
         assert params[0] == 'self', f"First parameter should be 'self', got '{params[0]}'"
         
         # Check required parameters exist (excluding 'self')
@@ -52,7 +52,7 @@ class Test{{ tag|pascal_case }}Structure:
         ]
         
         for required_param in required_params:
-            assert required_param in params, f"Required parameter '{required_param}' missing from {{ method.method_name|snake_case }}"
+            assert required_param in params, f"Required parameter '{required_param}' missing from {{ method.method_name }}"
         
         # Check optional parameters have defaults (excluding 'self')
         optional_params = [
@@ -67,19 +67,19 @@ class Test{{ tag|pascal_case }}Structure:
                 assert param_obj.default is not inspect.Parameter.empty, \
                     f"Optional parameter '{optional_param}' should have a default value"
     
-    def test_{{ method.method_name|snake_case }}_return_annotation(self):
-        """Test that {{ method.method_name|snake_case }} has proper return type annotation."""
-        method = getattr({{ tag|pascal_case }}Client, "{{ method.method_name|snake_case }}")
+    def test_{{ method.method_name }}_return_annotation(self):
+        """Test that {{ method.method_name }} has proper return type annotation."""
+        method = getattr({{ tag.class_name }}Client, "{{ method.method_name }}")
         sig = inspect.signature(method)
         
         # Check return annotation exists
         assert sig.return_annotation is not inspect.Signature.empty, \
-            f"Method {{ method.method_name|snake_case }} should have return type annotation"
+            f"Method {{ method.method_name }} should have return type annotation"
     
     {% if method.supports_pagination %}
-    def test_{{ method.method_name|snake_case }}_pagination_params(self):
-        """Test that {{ method.method_name|snake_case }} has pagination parameters."""
-        method = getattr({{ tag|pascal_case }}Client, "{{ method.method_name|snake_case }}")
+    def test_{{ method.method_name }}_pagination_params(self):
+        """Test that {{ method.method_name }} has pagination parameters."""
+        method = getattr({{ tag.class_name }}Client, "{{ method.method_name }}")
         sig = inspect.signature(method)
         params = list(sig.parameters.keys())
         
@@ -87,7 +87,7 @@ class Test{{ tag|pascal_case }}Structure:
         pagination_params = ['pagination_token', 'max_results', 'next_token', 'cursor', 'limit']
         has_pagination_param = any(param in params for param in pagination_params)
         assert has_pagination_param, \
-            f"Paginated method {{ method.method_name|snake_case }} should have pagination parameters"
+            f"Paginated method {{ method.method_name }} should have pagination parameters"
     {% endif %}
     
     {% endfor %}
@@ -96,14 +96,14 @@ class Test{{ tag|pascal_case }}Structure:
         """Test that all expected methods exist on the client."""
         expected_methods = [
             {% for method in structural_test.methods %}
-            "{{ method.method_name|snake_case }}",
+            "{{ method.method_name }}",
             {% endfor %}
         ]
         
         for expected_method in expected_methods:
-            assert hasattr({{ tag|pascal_case }}Client, expected_method), \
-                f"Expected method '{expected_method}' not found on {{ tag|pascal_case }}Client"
-            assert callable(getattr({{ tag|pascal_case }}Client, expected_method)), \
+            assert hasattr({{ tag.class_name }}Client, expected_method), \
+                f"Expected method '{expected_method}' not found on {{ tag.class_name }}Client"
+            assert callable(getattr({{ tag.class_name }}Client, expected_method)), \
                 f"'{expected_method}' exists but is not callable"
     
     {% endfor %}

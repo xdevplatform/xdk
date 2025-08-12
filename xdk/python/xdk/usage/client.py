@@ -1,7 +1,7 @@
 """
-Usage client for the X API.
+usage client for the X API.
 
-This module provides a client for interacting with the Usage endpoints of the X API.
+This module provides a client for interacting with the usage endpoints of the X API.
 """
 
 from __future__ import annotations
@@ -12,32 +12,29 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    GetUsageResponse,
+    GetResponse,
 )
 
 
 class UsageClient:
-    """Client for Usage operations"""
+    """Client for usage operations"""
 
 
     def __init__(self, client: Client):
         self.client = client
 
 
-    def get_usage(
+    def get(
         self,
         days: int = None,
-        usage_fields: List = None,
-    ) -> GetUsageResponse:
+    ) -> GetResponse:
         """
         Get usage
         Retrieves usage statistics for Posts over a specified number of days.
         Args:
             days: The number of days for which you need usage for.
-        Args:
-            usage_fields: A comma separated list of Usage fields to display.
         Returns:
-            GetUsageResponse: Response data
+            GetResponse: Response data
         """
         url = self.client.base_url + "/2/usage/tweets"
         if self.client.bearer_token:
@@ -51,8 +48,6 @@ class UsageClient:
         params = {}
         if days is not None:
             params["days"] = days
-        if usage_fields is not None:
-            params["usage.fields"] = ",".join(str(item) for item in usage_fields)
         headers = {}
         # Make the request
         response = self.client.session.get(
@@ -65,4 +60,4 @@ class UsageClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return GetUsageResponse.model_validate(response_data)
+        return GetResponse.model_validate(response_data)

@@ -9,34 +9,34 @@ Generated automatically - do not edit manually.
 
 import pytest
 from unittest.mock import Mock, patch
-from xdk.{{ tag|lower }}.client import {{ tag|pascal_case }}Client
+from xdk.{{ tag.import_name }}.client import {{ tag.class_name }}Client
 from xdk import Client, Cursor, cursor, PaginationError
 
 
-class Test{{ tag|pascal_case }}Pagination:
-    """Test pagination functionality for {{ tag|pascal_case }}Client."""
+class Test{{ tag.class_name }}Pagination:
+    """Test pagination functionality for {{ tag.class_name }}Client."""
     
     def setup_class(self):
         """Set up test fixtures."""
         self.client = Client(base_url="https://api.example.com")
-        self.{{ tag|lower }}_client = getattr(self.client, "{{ tag|lower }}")
+        self.{{ tag.property_name }}_client = getattr(self.client, "{{ tag.property_name }}")
     
     {% for pagination_test in test_spec.pagination_tests %}
     
-    def test_{{ pagination_test.method_name|snake_case }}_cursor_creation(self):
-        """Test that {{ pagination_test.method_name|snake_case }} can be used with Cursor."""
-        method = getattr(self.{{ tag|lower }}_client, "{{ pagination_test.method_name|snake_case }}")
+    def test_{{ pagination_test.method_name }}_cursor_creation(self):
+        """Test that {{ pagination_test.method_name }} can be used with Cursor."""
+        method = getattr(self.{{ tag.property_name }}_client, "{{ pagination_test.method_name }}")
         
         # Should be able to create cursor without error
         try:
-            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=10)
+            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=10)
             assert test_cursor is not None
             assert isinstance(test_cursor, Cursor)
         except PaginationError:
-            pytest.fail(f"Method {{ pagination_test.operation_id }} should support pagination")
+            pytest.fail(f"Method {{ pagination_test.method_name }} should support pagination")
     
-    def test_{{ pagination_test.method_name|snake_case }}_cursor_pages(self):
-        """Test pagination with pages() for {{ pagination_test.method_name|snake_case }}."""
+    def test_{{ pagination_test.method_name }}_cursor_pages(self):
+        """Test pagination with pages() for {{ pagination_test.method_name }}."""
         
         with patch.object(self.client, 'session') as mock_session:
             # Mock first page response
@@ -73,8 +73,8 @@ class Test{{ tag|pascal_case }}Pagination:
             mock_session.get.side_effect = [first_page_response, second_page_response]
             
             # Test pagination
-            method = getattr(self.{{ tag|lower }}_client, "{{ pagination_test.method_name|snake_case }}")
-            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=2)
+            method = getattr(self.{{ tag.property_name }}_client, "{{ pagination_test.method_name }}")
+            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=2)
             
             pages = list(test_cursor.pages(2))  # Limit to 2 pages
             
@@ -92,8 +92,8 @@ class Test{{ tag|pascal_case }}Pagination:
             second_data = getattr(second_page, "{{ pagination_test.data_field }}")
             assert len(second_data) == 1, "Second page should have 1 item"
     
-    def test_{{ pagination_test.method_name|snake_case }}_cursor_items(self):
-        """Test pagination with items() for {{ pagination_test.method_name|snake_case }}."""
+    def test_{{ pagination_test.method_name }}_cursor_items(self):
+        """Test pagination with items() for {{ pagination_test.method_name }}."""
         
         with patch.object(self.client, 'session') as mock_session:
             # Mock response with paginated data
@@ -114,8 +114,8 @@ class Test{{ tag|pascal_case }}Pagination:
             mock_session.get.return_value = mock_response
             
             # Test item iteration
-            method = getattr(self.{{ tag|lower }}_client, "{{ pagination_test.method_name|snake_case }}")
-            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=10)
+            method = getattr(self.{{ tag.property_name }}_client, "{{ pagination_test.method_name }}")
+            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=10)
             
             items = list(test_cursor.items(5))  # Limit to 5 items
             
@@ -125,8 +125,8 @@ class Test{{ tag|pascal_case }}Pagination:
             for item in items:
                 assert "id" in item or hasattr(item, "id"), "Items should have 'id' field"
     
-    def test_{{ pagination_test.method_name|snake_case }}_pagination_parameters(self):
-        """Test that pagination parameters are handled correctly for {{ pagination_test.method_name|snake_case }}."""
+    def test_{{ pagination_test.method_name }}_pagination_parameters(self):
+        """Test that pagination parameters are handled correctly for {{ pagination_test.method_name }}."""
         
         with patch.object(self.client, 'session') as mock_session:
             mock_response = Mock()
@@ -138,11 +138,11 @@ class Test{{ tag|pascal_case }}Pagination:
             mock_response.raise_for_status.return_value = None
             mock_session.get.return_value = mock_response
             
-            method = getattr(self.{{ tag|lower }}_client, "{{ pagination_test.method_name|snake_case }}")
+            method = getattr(self.{{ tag.property_name }}_client, "{{ pagination_test.method_name }}")
             
             # Test with max_results parameter
             {% if pagination_test.max_results_param %}
-            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, {{ pagination_test.max_results_param }}=5)
+            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, {{ pagination_test.max_results_param }}=5)
             list(test_cursor.pages(1))  # Trigger one request
             
             # Verify max_results was passed in request
@@ -152,7 +152,7 @@ class Test{{ tag|pascal_case }}Pagination:
                 assert "{{ pagination_test.max_results_param }}" in params, \
                     "{{ pagination_test.max_results_param }} should be in request parameters"
             {% else %}
-            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=5)
+            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=5)
             list(test_cursor.pages(1))  # Trigger one request
             
             # Verify max_results was passed in request
@@ -186,7 +186,7 @@ class Test{{ tag|pascal_case }}Pagination:
             
             mock_session.get.side_effect = [mock_response_with_token, second_page_response]
             
-            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=1)
+            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=1)
             pages = list(test_cursor.pages(2))
             
             # Should have made 2 requests
@@ -218,8 +218,8 @@ class Test{{ tag|pascal_case }}Pagination:
             # Pick first paginatable method for testing
             {% if test_spec.pagination_tests %}
             {% set pagination_test = test_spec.pagination_tests[0] %}
-            method = getattr(self.{{ tag|lower }}_client, "{{ pagination_test.method_name|snake_case }}")
-            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.name|snake_case %}, "test_query"{% elif "id" in param.name|snake_case %}, "test_id"{% elif "participant" in param.name|snake_case %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=10)
+            method = getattr(self.{{ tag.property_name }}_client, "{{ pagination_test.method_name }}")
+            test_cursor = cursor(method{% for param in pagination_test.required_params %}{% if param.param_type == "string" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% elif param.param_type == "boolean" %}, {{ param.name }}=True{% elif param.param_type == "integer" %}, {{ param.name }}=1{% elif param.param_type == "reference" %}{% if "query" in param.variable_name %}, "test_query"{% elif "id" in param.variable_name %}, "test_id"{% elif "participant" in param.variable_name %}, participant_id="test_participant_id"{% else %}, "test_{{ param.name }}"{% endif %}{% else %}, "test_value"{% endif %}{% endfor %}, max_results=10)
             
             # Should handle empty responses gracefully
             pages = list(test_cursor.pages(1))

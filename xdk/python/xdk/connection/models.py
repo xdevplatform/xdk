@@ -1,7 +1,7 @@
 """
-Connection models for the X API.
+connection models for the X API.
 
-This module provides models for the Connection endpoints of the X API.
+This module provides models for the connection endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
@@ -9,11 +9,11 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for deleteAllConnections
+# Models for delete_all_connections
 
 
 class DeleteAllConnectionsResponse(BaseModel):
-    """Response model for deleteAllConnections"""
+    """Response model for delete_all_connections"""
 
     data: Optional["DeleteAllConnectionsResponseData"] = None
     errors: Optional[List] = None

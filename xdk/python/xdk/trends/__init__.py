@@ -1,7 +1,7 @@
 """
-Trends module for the X API.
+trends module for the X API.
 
-This module provides access to the Trends endpoints of the X API.
+This module provides access to the trends endpoints of the X API.
 """
 
 from .client import TrendsClient

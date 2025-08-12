@@ -1,8 +1,8 @@
 """
-Auto-generated contract tests for AAASubscriptions client.
+Auto-generated contract tests for {"class_name": "Aaasubscriptions", "display_name": "aaasubscriptions", "import_name": "aaasubscriptions", "original": ["aaasubscriptions"], "property_name": "aaasubscriptions"} client.
 
 This module contains tests that validate the request/response contracts
-of the AAASubscriptions client against the OpenAPI specification.
+of the {"class_name": "Aaasubscriptions", "display_name": "aaasubscriptions", "import_name": "aaasubscriptions", "original": ["aaasubscriptions"], "property_name": "aaasubscriptions"} client against the OpenAPI specification.
 
 Generated automatically - do not edit manually.
 """
@@ -10,12 +10,12 @@ Generated automatically - do not edit manually.
 import pytest
 import json
 from unittest.mock import Mock, patch
-from xdk.aaasubscriptions.client import AAASubscriptionsClient
+from xdk.aaasubscriptions.client import AaasubscriptionsClient
 from xdk import Client
 
 
-class TestAAASubscriptionsContracts:
-    """Test the API contracts of AAASubscriptionsClient."""
+class TestAaasubscriptionsContracts:
+    """Test the API contracts of AaasubscriptionsClient."""
 
 
     def setup_class(self):

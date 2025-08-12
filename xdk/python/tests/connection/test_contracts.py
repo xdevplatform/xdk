@@ -1,8 +1,8 @@
 """
-Auto-generated contract tests for Connection client.
+Auto-generated contract tests for {"class_name": "Connection", "display_name": "connection", "import_name": "connection", "original": ["connection"], "property_name": "connection"} client.
 
 This module contains tests that validate the request/response contracts
-of the Connection client against the OpenAPI specification.
+of the {"class_name": "Connection", "display_name": "connection", "import_name": "connection", "original": ["connection"], "property_name": "connection"} client against the OpenAPI specification.
 
 Generated automatically - do not edit manually.
 """

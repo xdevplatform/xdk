@@ -1,7 +1,7 @@
 """
-Direct_Messages module for the X API.
+direct messages module for the X API.
 
-This module provides access to the Direct_Messages endpoints of the X API.
+This module provides access to the direct messages endpoints of the X API.
 """
 
 from .client import DirectMessagesClient

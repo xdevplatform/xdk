@@ -1,7 +1,7 @@
 """
-Compliance module for the X API.
+compliance module for the X API.
 
-This module provides access to the Compliance endpoints of the X API.
+This module provides access to the compliance endpoints of the X API.
 """
 
 from .client import ComplianceClient

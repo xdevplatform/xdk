@@ -1,8 +1,8 @@
 """
-Auto-generated contract tests for Account_Activity client.
+Auto-generated contract tests for {"class_name": "AccountActivity", "display_name": "account activity", "import_name": "account_activity", "original": ["account", "activity"], "property_name": "account_activity"} client.
 
 This module contains tests that validate the request/response contracts
-of the Account_Activity client against the OpenAPI specification.
+of the {"class_name": "AccountActivity", "display_name": "account activity", "import_name": "account_activity", "original": ["account", "activity"], "property_name": "account_activity"} client against the OpenAPI specification.
 
 Generated automatically - do not edit manually.
 """
@@ -24,8 +24,8 @@ class TestAccountActivityContracts:
         self.account_activity_client = getattr(self.client, "account_activity")
 
 
-    def test_get_account_activity_subscriptions_request_structure(self):
-        """Test get_account_activity_subscriptions request structure."""
+    def test_get_subscriptions_request_structure(self):
+        """Test get_subscriptions request structure."""
         # Mock the session to capture request details
         with patch.object(self.client, "session") as mock_session:
             mock_response = Mock()
@@ -42,9 +42,7 @@ class TestAccountActivityContracts:
             # Add request body if required
             # Call the method
             try:
-                method = getattr(
-                    self.account_activity_client, "get_account_activity_subscriptions"
-                )
+                method = getattr(self.account_activity_client, "get_subscriptions")
                 result = method(**kwargs)
                 # Verify the request was made
                 mock_session.get.assert_called_once()
@@ -65,16 +63,12 @@ class TestAccountActivityContracts:
                 # Verify response structure
                 assert result is not None, "Method should return a result"
             except Exception as e:
-                pytest.fail(
-                    f"Contract test failed for get_account_activity_subscriptions: {e}"
-                )
+                pytest.fail(f"Contract test failed for get_subscriptions: {e}")
 
 
-    def test_get_account_activity_subscriptions_required_parameters(self):
-        """Test that get_account_activity_subscriptions handles parameters correctly."""
-        method = getattr(
-            self.account_activity_client, "get_account_activity_subscriptions"
-        )
+    def test_get_subscriptions_required_parameters(self):
+        """Test that get_subscriptions handles parameters correctly."""
+        method = getattr(self.account_activity_client, "get_subscriptions")
         # Test with missing required parameters - mock the request to avoid network calls
         with patch.object(self.client, "session") as mock_session:
             # Mock a 400 response (typical for missing required parameters)
@@ -88,8 +82,8 @@ class TestAccountActivityContracts:
                 method()
 
 
-    def test_get_account_activity_subscriptions_response_structure(self):
-        """Test get_account_activity_subscriptions response structure validation."""
+    def test_get_subscriptions_response_structure(self):
+        """Test get_subscriptions response structure validation."""
         with patch.object(self.client, "session") as mock_session:
             # Create mock response with expected structure
             mock_response_data = {
@@ -105,9 +99,7 @@ class TestAccountActivityContracts:
             kwargs["webhook_id"] = "test"
             # Add request body if required
             # Call method and verify response structure
-            method = getattr(
-                self.account_activity_client, "get_account_activity_subscriptions"
-            )
+            method = getattr(self.account_activity_client, "get_subscriptions")
             result = method(**kwargs)
             # Verify response object has expected attributes
             # Optional field - just check it doesn't cause errors if accessed
@@ -119,8 +111,8 @@ class TestAccountActivityContracts:
                 )
 
 
-    def test_validate_account_activity_subscription_request_structure(self):
-        """Test validate_account_activity_subscription request structure."""
+    def test_validate_subscription_request_structure(self):
+        """Test validate_subscription request structure."""
         # Mock the session to capture request details
         with patch.object(self.client, "session") as mock_session:
             mock_response = Mock()
@@ -137,10 +129,7 @@ class TestAccountActivityContracts:
             # Add request body if required
             # Call the method
             try:
-                method = getattr(
-                    self.account_activity_client,
-                    "validate_account_activity_subscription",
-                )
+                method = getattr(self.account_activity_client, "validate_subscription")
                 result = method(**kwargs)
                 # Verify the request was made
                 mock_session.get.assert_called_once()
@@ -161,16 +150,12 @@ class TestAccountActivityContracts:
                 # Verify response structure
                 assert result is not None, "Method should return a result"
             except Exception as e:
-                pytest.fail(
-                    f"Contract test failed for validate_account_activity_subscription: {e}"
-                )
+                pytest.fail(f"Contract test failed for validate_subscription: {e}")
 
 
-    def test_validate_account_activity_subscription_required_parameters(self):
-        """Test that validate_account_activity_subscription handles parameters correctly."""
-        method = getattr(
-            self.account_activity_client, "validate_account_activity_subscription"
-        )
+    def test_validate_subscription_required_parameters(self):
+        """Test that validate_subscription handles parameters correctly."""
+        method = getattr(self.account_activity_client, "validate_subscription")
         # Test with missing required parameters - mock the request to avoid network calls
         with patch.object(self.client, "session") as mock_session:
             # Mock a 400 response (typical for missing required parameters)
@@ -184,8 +169,8 @@ class TestAccountActivityContracts:
                 method()
 
 
-    def test_validate_account_activity_subscription_response_structure(self):
-        """Test validate_account_activity_subscription response structure validation."""
+    def test_validate_subscription_response_structure(self):
+        """Test validate_subscription response structure validation."""
         with patch.object(self.client, "session") as mock_session:
             # Create mock response with expected structure
             mock_response_data = {
@@ -201,9 +186,7 @@ class TestAccountActivityContracts:
             kwargs["webhook_id"] = "test"
             # Add request body if required
             # Call method and verify response structure
-            method = getattr(
-                self.account_activity_client, "validate_account_activity_subscription"
-            )
+            method = getattr(self.account_activity_client, "validate_subscription")
             result = method(**kwargs)
             # Verify response object has expected attributes
             # Optional field - just check it doesn't cause errors if accessed
@@ -215,100 +198,8 @@ class TestAccountActivityContracts:
                 )
 
 
-    def test_get_account_activity_subscription_count_request_structure(self):
-        """Test get_account_activity_subscription_count request structure."""
-        # Mock the session to capture request details
-        with patch.object(self.client, "session") as mock_session:
-            mock_response = Mock()
-            mock_response.status_code = 200
-            mock_response.json.return_value = {
-                "data": None,
-            }
-            mock_response.raise_for_status.return_value = None
-            mock_session.get.return_value = mock_response
-            # Prepare test parameters
-            kwargs = {}
-            # Add required parameters
-            # Add request body if required
-            # Call the method
-            try:
-                method = getattr(
-                    self.account_activity_client,
-                    "get_account_activity_subscription_count",
-                )
-                result = method(**kwargs)
-                # Verify the request was made
-                mock_session.get.assert_called_once()
-                # Verify request structure
-                call_args = mock_session.get.call_args
-                # Check URL structure
-                called_url = (
-                    call_args[0][0] if call_args[0] else call_args[1].get("url", "")
-                )
-                expected_path = "/2/account_activity/subscriptions/count"
-                assert expected_path.replace("{", "").replace(
-                    "}", ""
-                ) in called_url or any(
-                    param in called_url for param in ["test_", "42"]
-                ), f"URL should contain path template elements: {called_url}"
-                # Verify response structure
-                assert result is not None, "Method should return a result"
-            except Exception as e:
-                pytest.fail(
-                    f"Contract test failed for get_account_activity_subscription_count: {e}"
-                )
-
-
-    def test_get_account_activity_subscription_count_required_parameters(self):
-        """Test that get_account_activity_subscription_count handles parameters correctly."""
-        method = getattr(
-            self.account_activity_client, "get_account_activity_subscription_count"
-        )
-        # No required parameters, method should be callable without args
-        with patch.object(self.client, "session") as mock_session:
-            mock_response = Mock()
-            mock_response.status_code = 200
-            mock_response.json.return_value = {}
-            mock_response.raise_for_status.return_value = None
-            mock_session.get.return_value = mock_response
-            try:
-                method()
-            except Exception as e:
-                pytest.fail(f"Method with no required params should be callable: {e}")
-
-
-    def test_get_account_activity_subscription_count_response_structure(self):
-        """Test get_account_activity_subscription_count response structure validation."""
-        with patch.object(self.client, "session") as mock_session:
-            # Create mock response with expected structure
-            mock_response_data = {
-                "data": None,
-            }
-            mock_response = Mock()
-            mock_response.status_code = 200
-            mock_response.json.return_value = mock_response_data
-            mock_response.raise_for_status.return_value = None
-            mock_session.get.return_value = mock_response
-            # Prepare minimal valid parameters
-            kwargs = {}
-            # Add request body if required
-            # Call method and verify response structure
-            method = getattr(
-                self.account_activity_client, "get_account_activity_subscription_count"
-            )
-            result = method(**kwargs)
-            # Verify response object has expected attributes
-            # Optional field - just check it doesn't cause errors if accessed
-            try:
-                getattr(result, "data", None)
-            except Exception as e:
-                pytest.fail(
-                    f"Accessing optional field 'data' should not cause errors: {e}"
-                )
-
-
-    def test_delete_account_activity_subscription_request_structure(self):
-        """Test delete_account_activity_subscription request structure."""
+    def test_delete_subscription_request_structure(self):
+        """Test delete_subscription request structure."""
         # Mock the session to capture request details
         with patch.object(self.client, "session") as mock_session:
             mock_response = Mock()
@@ -326,9 +217,7 @@ class TestAccountActivityContracts:
             # Add request body if required
             # Call the method
             try:
-                method = getattr(
-                    self.account_activity_client, "delete_account_activity_subscription"
-                )
+                method = getattr(self.account_activity_client, "delete_subscription")
                 result = method(**kwargs)
                 # Verify the request was made
                 mock_session.delete.assert_called_once()
@@ -347,16 +236,12 @@ class TestAccountActivityContracts:
                 # Verify response structure
                 assert result is not None, "Method should return a result"
             except Exception as e:
-                pytest.fail(
-                    f"Contract test failed for delete_account_activity_subscription: {e}"
-                )
+                pytest.fail(f"Contract test failed for delete_subscription: {e}")
 
 
-    def test_delete_account_activity_subscription_required_parameters(self):
-        """Test that delete_account_activity_subscription handles parameters correctly."""
-        method = getattr(
-            self.account_activity_client, "delete_account_activity_subscription"
-        )
+    def test_delete_subscription_required_parameters(self):
+        """Test that delete_subscription handles parameters correctly."""
+        method = getattr(self.account_activity_client, "delete_subscription")
         # Test with missing required parameters - mock the request to avoid network calls
         with patch.object(self.client, "session") as mock_session:
             # Mock a 400 response (typical for missing required parameters)
@@ -370,8 +255,8 @@ class TestAccountActivityContracts:
                 method()
 
 
-    def test_delete_account_activity_subscription_response_structure(self):
-        """Test delete_account_activity_subscription response structure validation."""
+    def test_delete_subscription_response_structure(self):
+        """Test delete_subscription response structure validation."""
         with patch.object(self.client, "session") as mock_session:
             # Create mock response with expected structure
             mock_response_data = {
@@ -388,9 +273,7 @@ class TestAccountActivityContracts:
             kwargs["user_id"] = "test"
             # Add request body if required
             # Call method and verify response structure
-            method = getattr(
-                self.account_activity_client, "delete_account_activity_subscription"
-            )
+            method = getattr(self.account_activity_client, "delete_subscription")
             result = method(**kwargs)
             # Verify response object has expected attributes
             # Optional field - just check it doesn't cause errors if accessed
@@ -402,8 +285,91 @@ class TestAccountActivityContracts:
                 )
 
 
-    def test_create_account_activity_replay_job_request_structure(self):
-        """Test create_account_activity_replay_job request structure."""
+    def test_get_subscription_count_request_structure(self):
+        """Test get_subscription_count request structure."""
+        # Mock the session to capture request details
+        with patch.object(self.client, "session") as mock_session:
+            mock_response = Mock()
+            mock_response.status_code = 200
+            mock_response.json.return_value = {
+                "data": None,
+            }
+            mock_response.raise_for_status.return_value = None
+            mock_session.get.return_value = mock_response
+            # Prepare test parameters
+            kwargs = {}
+            # Add required parameters
+            # Add request body if required
+            # Call the method
+            try:
+                method = getattr(self.account_activity_client, "get_subscription_count")
+                result = method(**kwargs)
+                # Verify the request was made
+                mock_session.get.assert_called_once()
+                # Verify request structure
+                call_args = mock_session.get.call_args
+                # Check URL structure
+                called_url = (
+                    call_args[0][0] if call_args[0] else call_args[1].get("url", "")
+                )
+                expected_path = "/2/account_activity/subscriptions/count"
+                assert expected_path.replace("{", "").replace(
+                    "}", ""
+                ) in called_url or any(
+                    param in called_url for param in ["test_", "42"]
+                ), f"URL should contain path template elements: {called_url}"
+                # Verify response structure
+                assert result is not None, "Method should return a result"
+            except Exception as e:
+                pytest.fail(f"Contract test failed for get_subscription_count: {e}")
+
+
+    def test_get_subscription_count_required_parameters(self):
+        """Test that get_subscription_count handles parameters correctly."""
+        method = getattr(self.account_activity_client, "get_subscription_count")
+        # No required parameters, method should be callable without args
+        with patch.object(self.client, "session") as mock_session:
+            mock_response = Mock()
+            mock_response.status_code = 200
+            mock_response.json.return_value = {}
+            mock_response.raise_for_status.return_value = None
+            mock_session.get.return_value = mock_response
+            try:
+                method()
+            except Exception as e:
+                pytest.fail(f"Method with no required params should be callable: {e}")
+
+
+    def test_get_subscription_count_response_structure(self):
+        """Test get_subscription_count response structure validation."""
+        with patch.object(self.client, "session") as mock_session:
+            # Create mock response with expected structure
+            mock_response_data = {
+                "data": None,
+            }
+            mock_response = Mock()
+            mock_response.status_code = 200
+            mock_response.json.return_value = mock_response_data
+            mock_response.raise_for_status.return_value = None
+            mock_session.get.return_value = mock_response
+            # Prepare minimal valid parameters
+            kwargs = {}
+            # Add request body if required
+            # Call method and verify response structure
+            method = getattr(self.account_activity_client, "get_subscription_count")
+            result = method(**kwargs)
+            # Verify response object has expected attributes
+            # Optional field - just check it doesn't cause errors if accessed
+            try:
+                getattr(result, "data", None)
+            except Exception as e:
+                pytest.fail(
+                    f"Accessing optional field 'data' should not cause errors: {e}"
+                )
+
+
+    def test_create_replay_job_request_structure(self):
+        """Test create_replay_job request structure."""
         # Mock the session to capture request details
         with patch.object(self.client, "session") as mock_session:
             mock_response = Mock()
@@ -422,9 +388,7 @@ class TestAccountActivityContracts:
             # Add request body if required
             # Call the method
             try:
-                method = getattr(
-                    self.account_activity_client, "create_account_activity_replay_job"
-                )
+                method = getattr(self.account_activity_client, "create_replay_job")
                 result = method(**kwargs)
                 # Verify the request was made
                 mock_session.post.assert_called_once()
@@ -445,16 +409,12 @@ class TestAccountActivityContracts:
                 # Verify response structure
                 assert result is not None, "Method should return a result"
             except Exception as e:
-                pytest.fail(
-                    f"Contract test failed for create_account_activity_replay_job: {e}"
-                )
+                pytest.fail(f"Contract test failed for create_replay_job: {e}")
 
 
-    def test_create_account_activity_replay_job_required_parameters(self):
-        """Test that create_account_activity_replay_job handles parameters correctly."""
-        method = getattr(
-            self.account_activity_client, "create_account_activity_replay_job"
-        )
+    def test_create_replay_job_required_parameters(self):
+        """Test that create_replay_job handles parameters correctly."""
+        method = getattr(self.account_activity_client, "create_replay_job")
         # Test with missing required parameters - mock the request to avoid network calls
         with patch.object(self.client, "session") as mock_session:
             # Mock a 400 response (typical for missing required parameters)
@@ -468,8 +428,8 @@ class TestAccountActivityContracts:
                 method()
 
 
-    def test_create_account_activity_replay_job_response_structure(self):
-        """Test create_account_activity_replay_job response structure validation."""
+    def test_create_replay_job_response_structure(self):
+        """Test create_replay_job response structure validation."""
         with patch.object(self.client, "session") as mock_session:
             # Create mock response with expected structure
             mock_response_data = {
@@ -487,9 +447,7 @@ class TestAccountActivityContracts:
             kwargs["to_date"] = "test_value"
             # Add request body if required
             # Call method and verify response structure
-            method = getattr(
-                self.account_activity_client, "create_account_activity_replay_job"
-            )
+            method = getattr(self.account_activity_client, "create_replay_job")
             result = method(**kwargs)
             # Verify response object has expected attributes
             # Optional field - just check it doesn't cause errors if accessed

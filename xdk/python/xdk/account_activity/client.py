@@ -1,7 +1,7 @@
 """
-Account_Activity client for the X API.
+account activity client for the X API.
 
-This module provides a client for interacting with the Account_Activity endpoints of the X API.
+This module provides a client for interacting with the account activity endpoints of the X API.
 """
 
 from __future__ import annotations
@@ -12,33 +12,33 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    GetAccountActivitySubscriptionsResponse,
-    ValidateAccountActivitySubscriptionResponse,
-    GetAccountActivitySubscriptionCountResponse,
-    DeleteAccountActivitySubscriptionResponse,
-    CreateAccountActivityReplayJobResponse,
+    GetSubscriptionsResponse,
+    ValidateSubscriptionResponse,
+    DeleteSubscriptionResponse,
+    GetSubscriptionCountResponse,
+    CreateReplayJobResponse,
 )
 
 
 class AccountActivityClient:
-    """Client for Account_Activity operations"""
+    """Client for account activity operations"""
 
 
     def __init__(self, client: Client):
         self.client = client
 
 
-    def get_account_activity_subscriptions(
+    def get_subscriptions(
         self,
-        webhook_id: str,
-    ) -> GetAccountActivitySubscriptionsResponse:
+        webhook_id: Any,
+    ) -> GetSubscriptionsResponse:
         """
         Get subscriptions
         Retrieves a list of all active subscriptions for a given webhook.
         Args:
             webhook_id: The webhook ID to pull subscriptions for.
         Returns:
-            GetAccountActivitySubscriptionsResponse: Response data
+            GetSubscriptionsResponse: Response data
         """
         url = (
             self.client.base_url
@@ -66,20 +66,20 @@ class AccountActivityClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return GetAccountActivitySubscriptionsResponse.model_validate(response_data)
+        return GetSubscriptionsResponse.model_validate(response_data)
 
 
-    def validate_account_activity_subscription(
+    def validate_subscription(
         self,
-        webhook_id: str,
-    ) -> ValidateAccountActivitySubscriptionResponse:
+        webhook_id: Any,
+    ) -> ValidateSubscriptionResponse:
         """
         Validate subscription
         Checks a user’s Account Activity subscription for a given webhook.
         Args:
             webhook_id: The webhook ID to check subscription against.
         Returns:
-            ValidateAccountActivitySubscriptionResponse: Response data
+            ValidateSubscriptionResponse: Response data
         """
         url = (
             self.client.base_url
@@ -111,48 +111,14 @@ class AccountActivityClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return ValidateAccountActivitySubscriptionResponse.model_validate(response_data)
+        return ValidateSubscriptionResponse.model_validate(response_data)
 
 
-    def get_account_activity_subscription_count(
+    def delete_subscription(
         self,
-    ) -> GetAccountActivitySubscriptionCountResponse:
-        """
-        Get subscription count
-        Retrieves a count of currently active Account Activity subscriptions.
-        Returns:
-            GetAccountActivitySubscriptionCountResponse: Response data
-        """
-        url = self.client.base_url + "/2/account_activity/subscriptions/count"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetAccountActivitySubscriptionCountResponse.model_validate(response_data)
-
-
-    def delete_account_activity_subscription(
-        self,
-        webhook_id: str,
-        user_id: str,
-    ) -> DeleteAccountActivitySubscriptionResponse:
+        webhook_id: Any,
+        user_id: Any,
+    ) -> DeleteSubscriptionResponse:
         """
         Delete subscription
         Deletes an Account Activity subscription for the given webhook and user ID.
@@ -161,7 +127,7 @@ class AccountActivityClient:
         Args:
             user_id: User ID to unsubscribe from.
         Returns:
-            DeleteAccountActivitySubscriptionResponse: Response data
+            DeleteSubscriptionResponse: Response data
         """
         url = (
             self.client.base_url
@@ -190,15 +156,49 @@ class AccountActivityClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return DeleteAccountActivitySubscriptionResponse.model_validate(response_data)
+        return DeleteSubscriptionResponse.model_validate(response_data)
 
 
-    def create_account_activity_replay_job(
+    def get_subscription_count(
         self,
-        webhook_id: str,
+    ) -> GetSubscriptionCountResponse:
+        """
+        Get subscription count
+        Retrieves a count of currently active Account Activity subscriptions.
+        Returns:
+            GetSubscriptionCountResponse: Response data
+        """
+        url = self.client.base_url + "/2/account_activity/subscriptions/count"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetSubscriptionCountResponse.model_validate(response_data)
+
+
+    def create_replay_job(
+        self,
+        webhook_id: Any,
         from_date: str,
         to_date: str,
-    ) -> CreateAccountActivityReplayJobResponse:
+    ) -> CreateReplayJobResponse:
         """
         Create replay job
         Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
@@ -209,7 +209,7 @@ class AccountActivityClient:
         Args:
             to_date: The latest (ending) UTC timestamp (exclusive) up to which events will be provided, in `yyyymmddhhmm` format.
         Returns:
-            CreateAccountActivityReplayJobResponse: Response data
+            CreateReplayJobResponse: Response data
         """
         url = (
             self.client.base_url
@@ -241,4 +241,4 @@ class AccountActivityClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return CreateAccountActivityReplayJobResponse.model_validate(response_data)
+        return CreateReplayJobResponse.model_validate(response_data)

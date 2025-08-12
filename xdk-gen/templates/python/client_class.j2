@@ -1,7 +1,7 @@
 """
-{{ tag }} client for the X API.
+{{ tag.display_name }} client for the X API.
 
-This module provides a client for interacting with the {{ tag }} endpoints of the X API.
+This module provides a client for interacting with the {{ tag.display_name }} endpoints of the X API.
 """
 
 from __future__ import annotations
@@ -14,45 +14,45 @@ if TYPE_CHECKING:
 from .models import (
     {% for operation in operations %}
     {% if operation.request_body %}
-    {{ operation.operation_id | pascal_case }}Request,
+    {{ operation.class_name }}Request,
     {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
-    {{ operation.operation_id | pascal_case }}Response,
+    {{ operation.class_name }}Response,
     {% endif %}
     {% elif operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
-    {{ operation.operation_id | pascal_case }}Response,
+    {{ operation.class_name }}Response,
     {% endif %}
     {% endfor %}
 )
 
-class {{ tag|pascal_case }}Client:
-    """Client for {{ tag }} operations"""
+class {{ tag.class_name }}Client:
+    """Client for {{ tag.display_name }} operations"""
     
     def __init__(self, client: Client):
         self.client = client
     
     {% for operation in operations %}
-    def {{ operation.operation_id | snake_case }}(self, 
+    def {{ operation.method_name }}(self, 
         {# Required parameters #}
         {% for param in operation.parameters | selectattr('required') %}
-        {% if param.name %}
-        {{ param.name | snake_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | python_type }}{% else %}Any{% endif %},
+        {% if param.original_name %}
+        {{ param.variable_name }}: {% if param.param_type %}{{ param.param_type | python_type }}{% else %}Any{% endif %},
         {% endif %}
         {% endfor %}
         {# Required body #}
         {% if operation.request_body and operation.request_body.required %}
-        body: {{ operation.operation_id | pascal_case }}Request,
+        body: {{ operation.class_name }}Request,
         {% endif %}
         {# Optional parameters #}
         {% for param in operation.parameters | rejectattr('required') %}
-        {% if param.name %}
-        {{ param.name | snake_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | python_type }}{% else %}Any{% endif %} = None,
+        {% if param.original_name %}
+        {{ param.variable_name }}: {% if param.param_type %}{{ param.param_type | python_type }}{% else %}Any{% endif %} = None,
         {% endif %}
         {% endfor %}
         {# Optional body #}
         {% if operation.request_body and not operation.request_body.required %}
-        body: Optional[{{ operation.operation_id | pascal_case }}Request] = None,
+        body: Optional[{{ operation.class_name }}Request] = None,
         {% endif %}
-    ) -> {% if operation.responses and "200" in operation.responses %}{{ operation.operation_id | pascal_case }}Response{% else %}Dict[str, Any]{% endif %}:
+    ) -> {% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}:
         """
         {{ operation.summary | default("") }}
         
@@ -61,9 +61,9 @@ class {{ tag|pascal_case }}Client:
         {% endif %}
         
         {% for param in operation.parameters %}
-        {% if param.name %}
+        {% if param.original_name %}
         Args:
-            {{ param.name | snake_case }}: {% if param.description %}{{ param.description }}{% else %}{{ param.name }}{% endif %}
+            {{ param.variable_name }}: {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
         {% endif %}
         {% endfor %}
         {% if operation.request_body %}
@@ -81,7 +81,7 @@ class {{ tag|pascal_case }}Client:
         {% endif %}
         
         Returns:
-            {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.operation_id | pascal_case }}Response{% else %}Dict[str, Any]{% endif %}: Response data
+            {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}: Response data
         """
         url = self.client.base_url + "{{ operation.path }}"
 
@@ -111,33 +111,27 @@ class {{ tag|pascal_case }}Client:
         
         params = {}
         {% for param in operation.parameters %}
-        {% if param.name %}
-        {% if param.in == "query" %}
-        if {{ param.name | snake_case }} is not None:
-            {% if param.schema and param.schema.type == "array" and not param.explode %}
-            params["{{ param.name }}"] = ",".join(str(item) for item in {{ param.name | snake_case }})
+        {% if param.location == "query" %}
+        if {{ param.variable_name }} is not None:
+            {% if param.param_type == "array" %}
+            params["{{ param.original_name }}"] = ",".join(str(item) for item in {{ param.variable_name }})
             {% else %}
-            params["{{ param.name }}"] = {{ param.name | snake_case }}
+            params["{{ param.original_name }}"] = {{ param.variable_name }}
             {% endif %}
-        {% endif %}
         {% endif %}
         {% endfor %}
         
         {% for param in operation.parameters %}
-        {% if param.name %}
-        {% if param.in == "path" %}
-        url = url.replace("{{ '{' + param.name + '}' }}", str({{ param.name | snake_case }}))
-        {% endif %}
+        {% if param.location == "path" %}
+        url = url.replace("{{ '{' + param.original_name + '}' }}", str({{ param.variable_name }}))
         {% endif %}
         {% endfor %}
         
         headers = {}
         {% for param in operation.parameters %}
-        {% if param.name %}
-        {% if param.in == "header" %}
-        if {{ param.name | snake_case }} is not None:
-            headers["{{ param.name }}"] = {{ param.name | snake_case }}
-        {% endif %}
+        {% if param.location == "header" %}
+        if {{ param.variable_name }} is not None:
+            headers["{{ param.original_name }}"] = {{ param.variable_name }}
         {% endif %}
         {% endfor %}
         {% if operation.request_body and operation.request_body.content %}
@@ -205,7 +199,7 @@ class {{ tag|pascal_case }}Client:
         
         # Convert to Pydantic model if applicable
         {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
-        return {{ operation.operation_id | pascal_case }}Response.model_validate(response_data)
+        return {{ operation.class_name }}Response.model_validate(response_data)
         {% else %}
         return response_data
         {% endif %}

@@ -12,18 +12,25 @@
 /// - `error`: Error types and handling for SDK generation
 /// - `generator`: The SDK generator interface and implementation
 /// - `models`: Common data models for SDK generation
-/// - `utils`: Utility functions for SDK generation
 /// - `testing`: Test generation for SDK generation
+/// - `casing`: Casing conversion utilities for different naming conventions
+pub mod casing;
 pub mod error;
 pub mod generator;
 pub mod logging;
 pub mod models;
+pub mod openapi;
+pub mod templates;
 pub mod testing;
-pub mod utils;
 
+pub use casing::*;
 pub use error::*;
 pub use generator::*;
 pub use logging::*;
+
+// Re-export important functions for better API
+pub use openapi::extract_operations_by_tag;
+pub use templates::render_template;
 
 /// Result type for SDK generator operations
 pub type Result<T> = std::result::Result<T, SdkGeneratorError>;

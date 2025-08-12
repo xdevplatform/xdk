@@ -4,9 +4,8 @@ use std::env;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-use super::models::OperationInfo;
-use super::testing::generate_test_specifications;
-use super::utils::extract_operations_by_tag;
+use super::models::OperationGroup;
+use super::openapi::extract_operations_by_tag;
 use minijinja::Environment;
 
 /// Trait that defines the interface for language-specific SDK generators.
@@ -87,26 +86,11 @@ pub trait LanguageGenerator {
     fn generate(
         &self,
         env: &Environment,
-        operations: &HashMap<String, Vec<OperationInfo>>,
+        operations: &HashMap<Vec<String>, Vec<OperationGroup>>,
         output_dir: &Path,
     ) -> crate::Result<()>;
 
-    /// Generates test code for the language (optional)
-    ///
-    /// # Parameters
-    /// * `env` - The MiniJinja environment with templates and filters
-    /// * `test_spec` - The test specification containing all test scenarios
-    /// * `output_dir` - The directory where the generated test code will be written
-    fn generate_tests(
-        &self,
-        _env: &Environment,
-        _test_specs: &HashMap<String, crate::testing::TestSpecification>,
-        _output_dir: &Path,
-    ) -> crate::Result<()> {
-        // Default implementation - no test generation
-        // Languages can override this to implement test generation
-        Ok(())
-    }
+    // Test generation is now integrated into the main generate method
 }
 
 /// SDK generation function that takes a language generator and an OpenAPI specification
@@ -125,19 +109,8 @@ where
 
     let operations_by_tag = extract_operations_by_tag(openapi)?;
 
-    // Generate test specifications
-    let test_specs = generate_test_specifications(&operations_by_tag)?;
-
     // Generate SDK code
     language.generate(&env, &operations_by_tag, output_dir)?;
-
-    // Generate tests if test templates are available
-    language
-        .generate_tests(&env, &test_specs, output_dir)
-        .unwrap_or_else(|e| {
-            // If test generation fails, it's not critical - just log and continue
-            eprintln!("Warning: Test generation failed: {}", e);
-        });
 
     Ok(())
 }
@@ -151,13 +124,21 @@ where
 /// # Parameters
 /// * `name` - Name of the language generator struct to create
 /// * `filters` - A list of filter functions to be added to the MiniJinja environment
+/// * `class_casing` - Casing convention for class/tag names (e.g., Casing::Pascal)
+/// * `operation_casing` - Casing convention for operation/method names (e.g., Casing::Snake)
+/// * `import_casing` - Casing convention for import/module names (e.g., Casing::Snake for Python, Casing::Pascal for Java)
+/// * `variable_casing` - Casing convention for variable/property names (e.g., Casing::Snake)
 /// * `render` - Configuration for how templates should be rendered
 ///   * `multiple` - Block that defines templates to be rendered for each API tag
 ///   * `render ($template) to ($path)` - Render a template to a specific path
+/// * `tests` - Configuration for how test templates should be rendered
+///   * `multiple` - Block that defines test templates to be rendered for each API tag
+///   * `render ($template) to ($path)` - Render a test template to a specific path
 ///
 /// # Example
 /// ```
 /// # use xdk_lib::language;
+/// # use xdk_lib::Casing;
 /// # fn snake_case(value: &str) -> String {
 /// #     value.to_lowercase()
 /// # }
@@ -168,11 +149,22 @@ where
 /// language! {
 ///     name: Python,
 ///     filters: [snake_case, pascal_case],
+///     class_casing: Casing::Pascal,
+///     operation_casing: Casing::Snake,
+///     import_casing: Casing::Snake,
+///     variable_casing: Casing::Snake,
 ///     render: [
 ///         multiple { // Render once per API tag
 ///             render "module" => "python/src/{}.py"
 ///         },
 ///         render "__init__" => "python/src/__init__.py" // Render once for the entire SDK
+///     ],
+///     tests: [
+///         multiple { // Render once per API tag
+///             render "test_contracts" => "tests/{}/test_contracts.py",
+///             render "test_generic" => "tests/{}/test_generic.py"
+///         },
+///         render "conftest" => "tests/conftest.py" // Render once for all tests
 ///     ]
 /// }
 /// ```
@@ -181,6 +173,10 @@ macro_rules! language {
     (
         name: $name:ident,
         filters: [$($filter:ident),*],
+        class_casing: $class_casing:expr,
+        operation_casing: $operation_casing:expr,
+        import_casing: $import_casing:expr,
+        variable_casing: $variable_casing:expr,
         render: [
             $(
                 multiple {
@@ -192,12 +188,25 @@ macro_rules! language {
             $(
                 render $s_template:expr => $s_path:expr
             ),*
+        ],
+        tests: [
+            $(
+                multiple {
+                    $(
+                        render $test_template:expr => $test_path:expr
+                    ),*
+                }
+            ),*,
+            $(
+                render $s_test_template:expr => $s_test_path:expr
+            ),*
         ]
     ) => {
         use std::collections::HashMap;
         use std::path::{Path, PathBuf};
-        use $crate::utils::render_template;
-        use $crate::models::OperationInfo;
+                use $crate::templates::render_template;
+                use $crate::models::TagInfo;
+        use $crate::models::{OperationInfo, OperationGroup};
         use $crate::generator::LanguageGenerator;
         use $crate::Result;
         use $crate::models::{OperationContext, TagsContext, TestContext};
@@ -226,21 +235,48 @@ macro_rules! language {
             fn generate(
                 &self,
                 env: &minijinja::Environment,
-                operations: &HashMap<String, Vec<OperationInfo>>,
+                operations: &HashMap<Vec<String>, Vec<OperationGroup>>,
                 output_dir: &Path,
             ) -> Result<()> {
 
-                let tags: Vec<String> = operations.keys().cloned().collect();
+                let tags: Vec<Vec<String>> = operations.keys().cloned().collect();
 
                 // Handle per-tag template renders
                 $(
                     for tag in &tags {
+                        // Process operations once per tag with proper casing
+                        let operations_with_converted_ids: Vec<OperationInfo> = operations[tag]
+                            .iter()
+                            .map(|op_group| {
+                                let method_name = $operation_casing.convert_words(
+                                    &op_group.metadata.normalized_operation_id,
+                                );
+                                let class_name = $class_casing.convert_words(
+                                    &op_group.metadata.normalized_operation_id,
+                                );
+                                let processed_parameters = $crate::models::ParameterInfo::from_openapi_parameters(
+                                    &op_group.raw_parameters,
+                                    $variable_casing,
+                                );
+
+                                let mut operation = op_group
+                                    .operation
+                                    .clone()
+                                    .with_casing(method_name, class_name);
+                                operation.parameters = processed_parameters;
+                                operation
+                            })
+                            .collect();
+
+                        let tag_info = TagInfo::new(tag, $class_casing, $import_casing, $variable_casing);
+                        let context = OperationContext {
+                            tag: tag_info,
+                            operations: operations_with_converted_ids
+                        };
+
                         $(
-                            let context = OperationContext {
-                                tag: $crate::utils::normalize_tag_to_pascal_case(tag),
-                                operations: operations[tag].clone()
-                            };
-                            let output_path = PathBuf::from(format!($path, tag.replace(" ", "_").to_lowercase()));
+                            let tag_path = tag.join("_").to_lowercase();
+                            let output_path = PathBuf::from(format!($path, tag_path));
                             let content = render_template(env, $template, &context)?;
                             let full_path = output_dir.join(&output_path);
                             std::fs::create_dir_all(full_path.parent().unwrap_or(output_dir))?;
@@ -250,133 +286,118 @@ macro_rules! language {
                 )*
 
                 // Handle singleton template renders (once per SDK)
+                let tag_infos: Vec<_> = tags.iter().map(|tag| TagInfo::new(tag, $class_casing, $import_casing, $variable_casing)).collect();
+                let tags_context = TagsContext {
+                    tags: tag_infos,
+                };
+
                 $(
-                    let context = TagsContext {
-                        tags: tags.clone(),
-                    };
                     let output_path = PathBuf::from($s_path);
-                    let content = render_template(env, $s_template, &context)?;
+                    let content = render_template(env, $s_template, &tags_context)?;
                     let full_path = output_dir.join(&output_path);
                     std::fs::create_dir_all(full_path.parent().unwrap_or(output_dir))?;
                     std::fs::write(&full_path, content)?;
                 )*
 
-                Ok(())
-            }
+                // Generate test specifications with proper casing applied
+                let operations_for_tests: HashMap<String, Vec<OperationInfo>> = operations
+                    .iter()
+                    .map(|(tag_vec, operation_groups)| {
+                        let tag_string = tag_vec.join("_");
+                        let operations_with_casing = operation_groups
+                            .iter()
+                            .map(|og| {
+                                let method_name = $operation_casing.convert_words(&og.metadata.normalized_operation_id);
+                                let class_name = $class_casing.convert_words(&og.metadata.normalized_operation_id);
+                                let processed_parameters = $crate::models::ParameterInfo::from_openapi_parameters(
+                                    &og.raw_parameters,
+                                    $variable_casing,
+                                );
 
-            /// TODO: Can we make this more generic/a default implementation?
-            /// Generate test code - can be overridden by specific implementations
-            fn generate_tests(
-                &self,
-                env: &minijinja::Environment,
-                test_specs: &HashMap<String, $crate::testing::TestSpecification>,
-                output_dir: &Path,
-            ) -> Result<()> {
-                // Check if language has test templates available
-                if env.get_template("test_structure").is_ok() ||
-                   env.get_template("test_contracts").is_ok() ||
-                   env.get_template("test_pagination").is_ok() {
+                                let mut operation = og.operation.clone().with_casing(method_name, class_name);
+                                operation.parameters = processed_parameters;
+                                operation
+                            })
+                            .collect();
+                        (tag_string, operations_with_casing)
+                    })
+                    .collect();
 
-                    // Use the same tag iteration as the main generate function
-                    let tags: Vec<String> = test_specs.keys().cloned().collect();
+                let test_specs = $crate::testing::generate_test_specifications(&operations_for_tests)?;
 
-                    for tag in tags {
-                        let context = TestContext {
-                            tag: tag.clone(),
-                            test_spec: test_specs[&tag].clone(),
-                        };
+                // Convert test specs to use Vec<String> keys to match our tag format
+                let converted_test_specs: HashMap<Vec<String>, $crate::testing::TestSpecification> = test_specs
+                    .iter()
+                    .map(|(tag_string, spec)| {
+                        let tag_vec: Vec<String> = tag_string.split('_').map(|s| s.to_string()).collect();
+                        (tag_vec, spec.clone())
+                    })
+                    .collect();
 
-                        let tag_folder = output_dir.join("tests").join(tag.replace(" ", "_").to_lowercase());
+                let test_tags: Vec<Vec<String>> = converted_test_specs.keys().cloned().collect();
 
-                        // Generate structural tests if template exists
-                        if let Ok(template) = env.get_template("test_structure") {
-                            let content = template.render(&context).map_err(|e| $crate::SdkGeneratorError::TemplateError(e))?;
-                            let path = tag_folder.join("test_structure.py");
-                            std::fs::create_dir_all(tag_folder.clone())?;
-                            std::fs::write(&path, content)?;
-                        }
+                // Handle per-tag test template renders
+                $(
+                    for tag in &test_tags {
+                        let tag_info = TagInfo::new(tag, $class_casing, $import_casing, $variable_casing);
+                        let tag_path = tag.join("_").to_lowercase();
 
-                        // Generate contract tests if template exists
-                        match env.get_template("test_contracts") {
-                            Ok(template) => {
-                                let content = template.render(&context).map_err(|e| $crate::SdkGeneratorError::TemplateError(e))?;
-                                let path = tag_folder.join("test_contracts.py");
-                                std::fs::create_dir_all(tag_folder.clone())?;
-                                std::fs::write(&path, content)?;
-                            }
-                            Err(e) => {
-                                eprintln!("Debug: test_contracts template not found: {}", e);
-                            }
-                        }
+                        if let Some(test_spec) = converted_test_specs.get(tag) {
+                            let test_context = TestContext {
+                                tag: tag_info.clone(),
+                                test_spec: test_spec.clone(),
+                            };
 
-                        // Generate pagination tests only if there are valid pagination tests to generate
-                        let has_valid_pagination_tests = !context.test_spec.pagination_tests.is_empty()
-                            && context.test_spec.pagination_tests.iter().any(|test|
-                                !test.method_name.is_empty() && !test.operation_id.is_empty()
-                            );
+                            $(
+                                if let Ok(_) = env.get_template($test_template) {
+                                    // Special handling for pagination tests - only generate if there are valid pagination tests
+                                    let should_generate = if $test_template == "test_pagination" {
+                                        !test_spec.pagination_tests.is_empty() &&
+                                        test_spec.pagination_tests.iter().any(|test|
+                                            !test.method_name.is_empty()
+                                        )
+                                    } else {
+                                        true
+                                    };
 
-                        if has_valid_pagination_tests {
-                            match env.get_template("test_pagination") {
-                                Ok(template) => {
-                                    let content = template.render(&context).map_err(|e| $crate::SdkGeneratorError::TemplateError(e))?;
-                                    let path = tag_folder.join("test_pagination.py");
-                                    std::fs::create_dir_all(tag_folder.clone())?;
-                                    std::fs::write(&path, content)?;
+                                    if should_generate {
+                                        let output_path = PathBuf::from(format!($test_path, tag_path));
+                                        let content = render_template(env, $test_template, &test_context)?;
+                                        let full_path = output_dir.join(&output_path);
+                                        std::fs::create_dir_all(full_path.parent().unwrap_or(output_dir))?;
+                                        std::fs::write(&full_path, content)?;
+
+                                        // Generate __init__.py for each tag test folder if it's in a subdirectory
+                                        if let Some(parent) = full_path.parent() {
+                                            if parent != output_dir {
+                                                let init_path = parent.join("__init__.py");
+                                                if !init_path.exists() {
+                                                    std::fs::write(&init_path, "")?;
+                                                }
+                                            }
+                                        }
+                                    }
                                 }
-                                Err(e) => {
-                                    eprintln!("Debug: test_pagination template not found: {}", e);
-                                }
-                            }
+                            )*
                         }
-
-                        // Generate generic tests if template exists
-                        match env.get_template("test_generic") {
-                            Ok(template) => {
-                                let content = template.render(&context).map_err(|e| $crate::SdkGeneratorError::TemplateError(e))?;
-                                let path = tag_folder.join("test_generic.py");
-                                std::fs::create_dir_all(tag_folder.clone())?;
-                                std::fs::write(&path, content)?;
-                            }
-                            Err(e) => {
-                                eprintln!("Debug: test_generic template not found: {}", e);
-                            }
-                        }
-
-                        // Generate __init__.py for each tag folder
-                        let tag_init_path = tag_folder.join("__init__.py");
-                        std::fs::write(&tag_init_path, "")?;
                     }
+                )*
 
-                    // Generate test configuration files for Python
-                    if stringify!($name).to_lowercase() == "python" {
-                        let conftest_content = r#""""Test configuration and fixtures."""
+                // Handle singleton test template renders (once per SDK)
+                let test_tag_infos: Vec<_> = test_tags.iter().map(|tag| TagInfo::new(tag, $class_casing, $import_casing, $variable_casing)).collect();
+                let test_tags_context = TagsContext {
+                    tags: test_tag_infos,
+                };
 
-import pytest
-from unittest.mock import Mock
-from xdk import Client
-
-
-@pytest.fixture
-def mock_client():
-    """Provide a mock client for testing."""
-    return Client(base_url="https://api.example.com")
-
-
-@pytest.fixture  
-def mock_session():
-    """Provide a mock session for HTTP requests."""
-    return Mock()
-"#;
-
-                        let conftest_path = output_dir.join("tests").join("conftest.py");
-                        std::fs::create_dir_all(conftest_path.parent().unwrap_or(output_dir))?;
-                        std::fs::write(&conftest_path, conftest_content)?;
-
-                        // Generate __init__.py for tests package
-                        let tests_init_path = output_dir.join("tests").join("__init__.py");
-                        std::fs::write(&tests_init_path, "")?;
+                $(
+                    if let Ok(_) = env.get_template($s_test_template) {
+                        let output_path = PathBuf::from($s_test_path);
+                        let content = render_template(env, $s_test_template, &test_tags_context)?;
+                        let full_path = output_dir.join(&output_path);
+                        std::fs::create_dir_all(full_path.parent().unwrap_or(output_dir))?;
+                        std::fs::write(&full_path, content)?;
                     }
-                }
+                )*
 
                 Ok(())
             }

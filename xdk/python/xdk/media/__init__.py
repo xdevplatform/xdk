@@ -1,7 +1,7 @@
 """
-Media module for the X API.
+media module for the X API.
 
-This module provides access to the Media endpoints of the X API.
+This module provides access to the media endpoints of the X API.
 """
 
 from .client import MediaClient
