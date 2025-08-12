@@ -3,15 +3,6 @@
  */
 
 /**
- * Response for getSubscriptions
- */
-export interface AccountActivityGetSubscriptionsResponse {
-  /** The list of active subscriptions for a specified webhook */
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
  * Response for getSubscriptionCount
  */
 export interface AccountActivityGetSubscriptionCountResponse {
@@ -29,6 +20,15 @@ export interface AccountActivityCreateReplayJobResponse {
   createdAt?: string;
   /** The unique identifier for the initiated replay job. */
   jobId?: string;
+}
+
+/**
+ * Response for getSubscriptions
+ */
+export interface AccountActivityGetSubscriptionsResponse {
+  /** The list of active subscriptions for a specified webhook */
+  data: Record<string, any>;
+  errors?: Array<any>;
 }
 
 /**

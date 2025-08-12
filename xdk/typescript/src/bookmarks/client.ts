@@ -7,11 +7,10 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
   BookmarksDeleteUsersResponse,
-  BookmarksGetUsersResponse,
+  BookmarksGetUsersFoldersResponse,
+  BookmarksGetUsersByFolderIdResponse,
   BookmarksCreateUsersRequest,
   BookmarksCreateUsersResponse,
-  BookmarksGetUsersByFolderIdResponse,
-  BookmarksGetUsersFoldersResponse,
 } from './models.js';
 
 /**
@@ -32,11 +31,15 @@ export class BookmarksClient {
      * @returns Promise with the API response
      */
   async deleteUsers(
+    id: string,
+    tweetId: string,
     options?: RequestOptions
   ): Promise<ApiResponse<BookmarksDeleteUsersResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/users/{id}/bookmarks/{tweet_id}`;
+    const path = `/2/users/{id}/bookmarks/{tweet_id}`
+      .replace('{id}', String(id))
+      .replace('{tweet_id}', String(tweetId));
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -53,69 +56,40 @@ export class BookmarksClient {
   }
 
   /**
-     * Get Bookmarks
-     * Retrieves a list of Posts bookmarked by the authenticated user.
+     * Get Bookmark folders
+     * Retrieves a list of Bookmark folders created by the authenticated user.
      * @param id The ID of the authenticated source User for whom to return results.
      * @param maxResults The maximum number of results.
-     * @param paginationToken This parameter is used to get the next 'page' of results.
-     * @param tweetfields A comma separated list of Tweet fields to display.
-     * @param expansions A comma separated list of fields to expand.
-     * @param mediafields A comma separated list of Media fields to display.
-     * @param pollfields A comma separated list of Poll fields to display.
-     * @param userfields A comma separated list of User fields to display.
-     * @param placefields A comma separated list of Place fields to display.* @param options Additional request options
+     * @param paginationToken This parameter is used to get the next 'page' of results.* @param options Additional request options
      * @returns Promise with the API response
      */
-  async getUsers(
+  async getUsersFolders(
+    id: string,
+    maxResults?: number,
+    paginationToken?: string,
     options?: RequestOptions
-  ): Promise<ApiResponse<BookmarksGetUsersResponse>> {
+  ): Promise<ApiResponse<BookmarksGetUsersFoldersResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/users/{id}/bookmarks`;
-
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-      },
-    };
-
-    return this.client.request<BookmarksGetUsersResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      requestOptions
-    );
-  }
-
-  /**
-     * Create Bookmark
-     * Adds a post to the authenticated user’s bookmarks.
-     * @param id The ID of the authenticated source User for whom to add bookmarks.* @param body Request body* @param options Additional request options
-     * @returns Promise with the API response
-     */
-  async createUsers(
-    body: BookmarksCreateUsersRequest,
-    options?: RequestOptions
-  ): Promise<ApiResponse<BookmarksCreateUsersResponse>> {
-    const params = new URLSearchParams();
-
-    const path = `/2/users/{id}/bookmarks`;
-
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-
-        'Content-Type': 'application/json',
-      },
-    };
-
-    if (body) {
-      requestOptions.body = JSON.stringify(body);
+    if (maxResults !== undefined) {
+      params.set('max_results', String(maxResults));
     }
 
-    return this.client.request<BookmarksCreateUsersResponse>(
-      'POST',
+    if (paginationToken !== undefined) {
+      params.set('pagination_token', String(paginationToken));
+    }
+
+    const path = `/2/users/{id}/bookmarks/folders`.replace('{id}', String(id));
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<BookmarksGetUsersFoldersResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       requestOptions
     );
@@ -129,11 +103,15 @@ export class BookmarksClient {
      * @returns Promise with the API response
      */
   async getUsersByFolderId(
+    id: string,
+    folderId: string,
     options?: RequestOptions
   ): Promise<ApiResponse<BookmarksGetUsersByFolderIdResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/users/{id}/bookmarks/folders/{folder_id}`;
+    const path = `/2/users/{id}/bookmarks/folders/{folder_id}`
+      .replace('{id}', String(id))
+      .replace('{folder_id}', String(folderId));
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -150,29 +128,35 @@ export class BookmarksClient {
   }
 
   /**
-     * Get Bookmark folders
-     * Retrieves a list of Bookmark folders created by the authenticated user.
-     * @param id The ID of the authenticated source User for whom to return results.
-     * @param maxResults The maximum number of results.
-     * @param paginationToken This parameter is used to get the next 'page' of results.* @param options Additional request options
+     * Create Bookmark
+     * Adds a post to the authenticated user’s bookmarks.
+     * @param id The ID of the authenticated source User for whom to add bookmarks.* @param body Request body* @param options Additional request options
      * @returns Promise with the API response
      */
-  async getUsersFolders(
+  async createUsers(
+    id: string,
+    body: BookmarksCreateUsersRequest,
     options?: RequestOptions
-  ): Promise<ApiResponse<BookmarksGetUsersFoldersResponse>> {
+  ): Promise<ApiResponse<BookmarksCreateUsersResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/users/{id}/bookmarks/folders`;
+    const path = `/2/users/{id}/bookmarks`.replace('{id}', String(id));
 
     const requestOptions: RequestOptions = {
       ...options,
       headers: {
         ...options && options.headers ? options.headers : {},
+
+        'Content-Type': 'application/json',
       },
     };
 
-    return this.client.request<BookmarksGetUsersFoldersResponse>(
-      'GET',
+    if (body) {
+      requestOptions.body = JSON.stringify(body);
+    }
+
+    return this.client.request<BookmarksCreateUsersResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       requestOptions
     );

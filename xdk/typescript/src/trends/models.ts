@@ -11,9 +11,9 @@ export interface TrendsGetByWoeidResponse {
 }
 
 /**
- * Response for getUsersPersonalized
+ * Response for getPersonalizedTrends
  */
-export interface TrendsGetUsersPersonalizedResponse {
+export interface TrendsGetPersonalizedTrendsResponse {
   data?: Array<any>;
   errors?: Array<any>;
 }

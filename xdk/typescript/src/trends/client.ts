@@ -7,7 +7,7 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
   TrendsGetByWoeidResponse,
-  TrendsGetUsersPersonalizedResponse,
+  TrendsGetPersonalizedTrendsResponse,
 } from './models.js';
 
 /**
@@ -29,11 +29,22 @@ export class TrendsClient {
      * @returns Promise with the API response
      */
   async getByWoeid(
+    woeid: number,
+    maxTrends?: number,
+    trendfields?: Array<any>,
     options?: RequestOptions
   ): Promise<ApiResponse<TrendsGetByWoeidResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/trends/by/woeid/{woeid}`;
+    if (maxTrends !== undefined) {
+      params.set('max_trends', String(maxTrends));
+    }
+
+    if (trendfields !== undefined) {
+      params.set('trend.fields', String(trendfields));
+    }
+
+    const path = `/2/trends/by/woeid/{woeid}`.replace('{woeid}', String(woeid));
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -55,10 +66,15 @@ export class TrendsClient {
      * @param personalizedTrendfields A comma separated list of PersonalizedTrend fields to display.* @param options Additional request options
      * @returns Promise with the API response
      */
-  async getUsersPersonalized(
+  async getPersonalizedTrends(
+    personalizedTrendfields?: Array<any>,
     options?: RequestOptions
-  ): Promise<ApiResponse<TrendsGetUsersPersonalizedResponse>> {
+  ): Promise<ApiResponse<TrendsGetPersonalizedTrendsResponse>> {
     const params = new URLSearchParams();
+
+    if (personalizedTrendfields !== undefined) {
+      params.set('personalized_trend.fields', String(personalizedTrendfields));
+    }
 
     const path = `/2/users/personalized_trends`;
 
@@ -69,7 +85,7 @@ export class TrendsClient {
       },
     };
 
-    return this.client.request<TrendsGetUsersPersonalizedResponse>(
+    return this.client.request<TrendsGetPersonalizedTrendsResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       requestOptions

@@ -28,11 +28,17 @@ export class CommunitiesClient {
      * @returns Promise with the API response
      */
   async getById(
+    id: string,
+    communityfields?: Array<any>,
     options?: RequestOptions
   ): Promise<ApiResponse<CommunitiesGetByIdResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/communities/{id}`;
+    if (communityfields !== undefined) {
+      params.set('community.fields', String(communityfields));
+    }
+
+    const path = `/2/communities/{id}`.replace('{id}', String(id));
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -59,9 +65,34 @@ export class CommunitiesClient {
      * @returns Promise with the API response
      */
   async search(
+    query: string,
+    maxResults?: number,
+    nextToken?: string,
+    paginationToken?: string,
+    communityfields?: Array<any>,
     options?: RequestOptions
   ): Promise<ApiResponse<CommunitiesSearchResponse>> {
     const params = new URLSearchParams();
+
+    if (query !== undefined) {
+      params.set('query', String(query));
+    }
+
+    if (maxResults !== undefined) {
+      params.set('max_results', String(maxResults));
+    }
+
+    if (nextToken !== undefined) {
+      params.set('next_token', String(nextToken));
+    }
+
+    if (paginationToken !== undefined) {
+      params.set('pagination_token', String(paginationToken));
+    }
+
+    if (communityfields !== undefined) {
+      params.set('community.fields', String(communityfields));
+    }
 
     const path = `/2/communities/search`;
 

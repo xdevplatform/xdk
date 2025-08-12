@@ -3,9 +3,9 @@
  */
 
 /**
- * Response for getFollowers
+ * Response for getRepostsOfMe
  */
-export interface UsersGetFollowersResponse {
+export interface UsersGetRepostsOfMeResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -13,55 +13,17 @@ export interface UsersGetFollowersResponse {
 }
 
 /**
- * Response for getListsFollowers
+ * Response for blockDms
  */
-export interface UsersGetListsFollowersResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getMy
- */
-export interface UsersGetMyResponse {
-  /** The X User object. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for getFollowing
- */
-export interface UsersGetFollowingResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for follow
- */
-export interface UsersFollowRequest {
-  /** Unique identifier of this User. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  targetUserId?: string;
-}
-
-/**
- * Response for follow
- */
-export interface UsersFollowResponse {
+export interface UsersBlockDmsResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
- * Response for getListsMembers
+ * Response for getMentions
  */
-export interface UsersGetListsMembersResponse {
+export interface UsersGetMentionsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -69,19 +31,9 @@ export interface UsersGetListsMembersResponse {
 }
 
 /**
- * Response for getById
+ * Response for search
  */
-export interface UsersGetByIdResponse {
-  /** The X User object. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for getPostsLiking
- */
-export interface UsersGetPostsLikingResponse {
+export interface UsersSearchResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -89,39 +41,11 @@ export interface UsersGetPostsLikingResponse {
 }
 
 /**
- * Response for getPostsRepostedBy
+ * Response for unblockDms
  */
-export interface UsersGetPostsRepostedByResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for unfollow
- */
-export interface UsersUnfollowResponse {
+export interface UsersUnblockDmsResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
-}
-
-/**
- * Response for getByIds
- */
-export interface UsersGetByIdsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for getByUsernames
- */
-export interface UsersGetByUsernamesResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
 }
 
 /**
@@ -151,13 +75,13 @@ export interface UsersMuteResponse {
 }
 
 /**
- * Response for search
+ * Response for getById
  */
-export interface UsersSearchResponse {
-  data?: Array<any>;
+export interface UsersGetByIdResponse {
+  /** The X User object. */
+  data: Record<string, any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
-  meta?: Record<string, any>;
 }
 
 /**
@@ -171,9 +95,37 @@ export interface UsersGetBlockingResponse {
 }
 
 /**
- * Response for blockDms
+ * Response for getFollowers
  */
-export interface UsersBlockDmsResponse {
+export interface UsersGetFollowersResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getFollowing
+ */
+export interface UsersGetFollowingResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Request body for follow
+ */
+export interface UsersFollowRequest {
+  /** Unique identifier of this User. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
+  targetUserId?: string;
+}
+
+/**
+ * Response for follow
+ */
+export interface UsersFollowResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
@@ -189,9 +141,9 @@ export interface UsersGetByUsernameResponse {
 }
 
 /**
- * Response for getRepostsOfMe
+ * Response for getListMemberships
  */
-export interface UsersGetRepostsOfMeResponse {
+export interface UsersGetListMembershipsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -199,11 +151,99 @@ export interface UsersGetRepostsOfMeResponse {
 }
 
 /**
- * Response for unblockDms
+ * Response for getTimeline
  */
-export interface UsersUnblockDmsResponse {
+export interface UsersGetTimelineResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getByIds
+ */
+export interface UsersGetByIdsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+}
+
+/**
+ * Response for getByUsernames
+ */
+export interface UsersGetByUsernamesResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+}
+
+/**
+ * Response for getOwnedLists
+ */
+export interface UsersGetOwnedListsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getBookmarks
+ */
+export interface UsersGetBookmarksResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getMe
+ */
+export interface UsersGetMeResponse {
+  /** The X User object. */
+  data: Record<string, any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+}
+
+/**
+ * Response for getLikedPosts
+ */
+export interface UsersGetLikedPostsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getPosts
+ */
+export interface UsersGetPostsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for unfollow
+ */
+export interface UsersUnfollowResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
+}
+
+/**
+ * Response for getFollowedLists
+ */
+export interface UsersGetFollowedListsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
 }
 
 /**
