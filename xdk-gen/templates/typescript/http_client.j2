@@ -36,10 +36,12 @@ export class HttpClient {
   private HeadersClass: any;
 
   constructor() {
+    this.initializeEnvironment();
+  }
+
+  private initializeEnvironment(): void {
     if (isNode) {
-      // Node.js environment - dynamically import node-fetch
-      this.fetch = globalThis.fetch;
-      this.HeadersClass = globalThis.Headers;
+      // Node.js environment - set up polyfills synchronously
       this.initializeNodeEnvironment();
     } else if (isBrowser) {
       // Browser environment - use native APIs
@@ -52,33 +54,27 @@ export class HttpClient {
     }
   }
 
-  private async initializeNodeEnvironment(): Promise<void> {
-    try {
-      // Try to use native Node.js fetch (Node 18+)
-      if (typeof globalThis.fetch === 'function') {
-        this.fetch = globalThis.fetch;
-        this.HeadersClass = globalThis.Headers;
-        return;
-      }
+  private initializeNodeEnvironment(): void {
+    // Check if native fetch is available (Node.js 18+)
+    if (typeof globalThis.fetch === 'function' && typeof globalThis.Headers === 'function') {
+      this.fetch = globalThis.fetch;
+      this.HeadersClass = globalThis.Headers;
+      return;
+    }
 
-      // Fallback to node-fetch for older Node.js versions
-      try {
-        const { default: nodeFetch, Headers: NodeHeaders } = await import('node-fetch');
-        // Use any type to avoid type conflicts
-        this.fetch = nodeFetch as any;
-        this.HeadersClass = NodeHeaders as any;
-      } catch (importError) {
-        // If node-fetch is not available, provide a helpful error
-        throw new Error(
-          'HTTP client requires either Node.js 18+ (with native fetch) or node-fetch package. ' +
-          'Please install node-fetch: npm install node-fetch'
-        );
-      }
+    // Try to use node-fetch for older Node.js versions
+    try {
+      const nodeFetch = require('node-fetch');
+      const { Headers: NodeHeaders } = nodeFetch;
+      
+      this.fetch = nodeFetch.default || nodeFetch;
+      this.HeadersClass = NodeHeaders;
     } catch (error) {
       // If node-fetch is not available, provide a helpful error
       throw new Error(
-        'HTTP client requires either Node.js 18+ (with native fetch) or node-fetch package. ' +
-        'Please install node-fetch: npm install node-fetch'
+        'X API SDK: node-fetch not found. For Node.js environments, please install node-fetch:\n' +
+        'npm install node-fetch\n' +
+        'Or upgrade to Node.js 18+ for native fetch support.'
       );
     }
   }
@@ -94,11 +90,6 @@ export class HttpClient {
    * Make an HTTP request
    */
   async request(url: string, options: RequestOptions = {}): Promise<HttpResponse> {
-    // Ensure fetch is initialized (for Node.js async initialization)
-    if (!this.fetch) {
-      await this.initializeNodeEnvironment();
-    }
-
     // Convert body to string if it's a Buffer or ArrayBuffer
     let body = options.body;
     if (body && typeof body !== 'string') {
