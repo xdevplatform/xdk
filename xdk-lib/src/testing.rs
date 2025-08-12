@@ -427,10 +427,10 @@ fn generate_request_body_schema(operation: &OperationInfo) -> Option<RequestBody
 fn extract_response_fields(response: &openapi::Response) -> Vec<ResponseField> {
     let mut fields = Vec::new();
 
-    if let Some(content) = &response.content {
-        if let Some(json_content) = content.get("application/json") {
-            fields.extend(extract_fields_from_schema(&json_content.schema));
-        }
+    if let Some(content) = &response.content
+        && let Some(json_content) = content.get("application/json")
+    {
+        fields.extend(extract_fields_from_schema(&json_content.schema));
     }
 
     fields
@@ -442,11 +442,12 @@ fn extract_fields_from_schema(schema: &RefOrValue<Schema>) -> Vec<ResponseField>
 
     match schema {
         RefOrValue::Value(schema) => {
-            if let Schema::Typed(typed) = schema {
-                if let TypedSchema::Object(obj) = typed.as_ref() {
-                    if let Some(properties) = &obj.properties {
-                        for (name, prop_schema) in properties {
-                            fields.push(ResponseField {
+            if let Schema::Typed(typed) = schema
+                && let TypedSchema::Object(obj) = typed.as_ref()
+                && let Some(properties) = &obj.properties
+            {
+                for (name, prop_schema) in properties {
+                    fields.push(ResponseField {
                                 name: name.clone(),
                                 field_type: get_schema_type(prop_schema),
                                 required: obj.required.as_ref()
@@ -454,8 +455,6 @@ fn extract_fields_from_schema(schema: &RefOrValue<Schema>) -> Vec<ResponseField>
                                     .unwrap_or(false),
                                 is_array: matches!(prop_schema, RefOrValue::Value(Schema::Typed(t)) if matches!(t.as_ref(), TypedSchema::Array(_))),
                             });
-                        }
-                    }
                 }
             }
         }
@@ -627,10 +626,10 @@ fn generate_mock_scenarios(operation: &OperationInfo) -> Vec<MockScenario> {
 /// Generate success response mock data from OpenAPI schema
 fn generate_success_response(operation: &OperationInfo) -> serde_json::Value {
     // Try to generate response based on actual OpenAPI response schema
-    if let Some(response) = operation.responses.get("200") {
-        if let Some(mock_data) = generate_mock_from_response_schema(response) {
-            return mock_data;
-        }
+    if let Some(response) = operation.responses.get("200")
+        && let Some(mock_data) = generate_mock_from_response_schema(response)
+    {
+        return mock_data;
     }
 
     // Fallback to simple mock response
@@ -698,10 +697,10 @@ fn generate_simple_param_value(param_type: &str) -> serde_json::Value {
 
 /// Generate mock data from OpenAPI response schema
 fn generate_mock_from_response_schema(response: &openapi::Response) -> Option<serde_json::Value> {
-    if let Some(content) = &response.content {
-        if let Some(json_content) = content.get("application/json") {
-            return generate_mock_from_schema(&json_content.schema);
-        }
+    if let Some(content) = &response.content
+        && let Some(json_content) = content.get("application/json")
+    {
+        return generate_mock_from_schema(&json_content.schema);
     }
     None
 }

@@ -25,7 +25,7 @@ fn python_type(value: &str) -> String {
 
 /// MiniJinja filter for getting the last part of a dot-separated path
 fn last_part(value: &str) -> String {
-    value.split('.').last().unwrap_or(value).to_string()
+    value.split('.').next_back().unwrap_or(value).to_string()
 }
 /*
     This is the main generator for the Python SDK

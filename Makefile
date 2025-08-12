@@ -15,7 +15,7 @@ fmt:
 
 # Run clippy linter
 clippy:
-	cargo clippy -- -D warnings
+	cargo clippy --all --all-targets --all-features -- -D warnings
 
 # Run all checks (fmt and clippy)
 check: fmt clippy

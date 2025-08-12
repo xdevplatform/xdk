@@ -159,22 +159,22 @@ mod tests {
         );
 
         // Should be able to access anyOf schemas in components
-        if let Some(components) = &openapi.components {
-            if let Some(schemas) = &components.schemas {
-                if let Some(Schema::AnyOf(any_of)) = schemas.get("TestSchemaAnyOf") {
-                    assert_eq!(any_of.any_of.len(), 3);
-                    println!(
-                        "Successfully parsed anyOf schema with {} variants",
-                        any_of.any_of.len()
-                    );
-                }
-                if let Some(Schema::AllOf(all_of)) = schemas.get("TestSchemaAllOf") {
-                    assert_eq!(all_of.all_of.len(), 3);
-                    println!(
-                        "Successfully parsed allOf schema with {} variants",
-                        all_of.all_of.len()
-                    );
-                }
+        if let Some(components) = &openapi.components
+            && let Some(schemas) = &components.schemas
+        {
+            if let Some(Schema::AnyOf(any_of)) = schemas.get("TestSchemaAnyOf") {
+                assert_eq!(any_of.any_of.len(), 3);
+                println!(
+                    "Successfully parsed anyOf schema with {} variants",
+                    any_of.any_of.len()
+                );
+            }
+            if let Some(Schema::AllOf(all_of)) = schemas.get("TestSchemaAllOf") {
+                assert_eq!(all_of.all_of.len(), 3);
+                println!(
+                    "Successfully parsed allOf schema with {} variants",
+                    all_of.all_of.len()
+                );
             }
         }
     }
@@ -249,23 +249,23 @@ mod tests {
         let content = request_body.content.get("application/json").unwrap();
         let schema = content.schema.try_resolve().unwrap();
 
-        if let Schema::Typed(typed_schema) = schema.as_ref() {
-            if let TypedSchema::Object(object_schema) = typed_schema.as_ref() {
-                let properties = object_schema.properties.as_ref().unwrap();
+        if let Schema::Typed(typed_schema) = schema.as_ref()
+            && let TypedSchema::Object(object_schema) = typed_schema.as_ref()
+        {
+            let properties = object_schema.properties.as_ref().unwrap();
 
-                // Test string validation fields
-                let username_schema = properties.get("username").unwrap().try_resolve().unwrap();
-                if let Schema::Typed(typed) = username_schema.as_ref() {
-                    if let TypedSchema::String(string_schema) = typed.as_ref() {
-                        assert_eq!(string_schema.min_length, Some(3));
-                        assert_eq!(string_schema.max_length, Some(50));
-                        assert_eq!(string_schema.pattern, Some("^[a-zA-Z0-9_]+$".to_string()));
-                        assert_eq!(
-                            string_schema.base.description,
-                            Some("Username field".to_string())
-                        );
-                    }
-                }
+            // Test string validation fields
+            let username_schema = properties.get("username").unwrap().try_resolve().unwrap();
+            if let Schema::Typed(typed) = username_schema.as_ref()
+                && let TypedSchema::String(string_schema) = typed.as_ref()
+            {
+                assert_eq!(string_schema.min_length, Some(3));
+                assert_eq!(string_schema.max_length, Some(50));
+                assert_eq!(string_schema.pattern, Some("^[a-zA-Z0-9_]+$".to_string()));
+                assert_eq!(
+                    string_schema.base.description,
+                    Some("Username field".to_string())
+                );
             }
         }
     }
@@ -281,10 +281,10 @@ mod tests {
         let content = request_body.content.get("application/json").unwrap();
         let schema = content.schema.try_resolve().unwrap();
 
-        if let Schema::Typed(typed) = schema.as_ref() {
-            if let TypedSchema::Object(object_schema) = typed.as_ref() {
-                assert!(object_schema.additional_properties.is_some());
-            }
+        if let Schema::Typed(typed) = schema.as_ref()
+            && let TypedSchema::Object(object_schema) = typed.as_ref()
+        {
+            assert!(object_schema.additional_properties.is_some());
         }
     }
 
@@ -299,21 +299,21 @@ mod tests {
         let content = request_body.content.get("application/json").unwrap();
         let schema = content.schema.try_resolve().unwrap();
 
-        if let Schema::Typed(typed) = schema.as_ref() {
-            if let TypedSchema::Object(object_schema) = typed.as_ref() {
-                let properties = object_schema.properties.as_ref().unwrap();
+        if let Schema::Typed(typed) = schema.as_ref()
+            && let TypedSchema::Object(object_schema) = typed.as_ref()
+        {
+            let properties = object_schema.properties.as_ref().unwrap();
 
-                // Test string enum exists
-                let status_schema = properties.get("status").unwrap().try_resolve().unwrap();
-                if let Schema::Typed(typed_status) = status_schema.as_ref() {
-                    if let TypedSchema::String(string_schema) = typed_status.as_ref() {
-                        assert!(string_schema.enum_values.is_some());
-                        assert_eq!(
-                            string_schema.base.description,
-                            Some("Status of the item".to_string())
-                        );
-                    }
-                }
+            // Test string enum exists
+            let status_schema = properties.get("status").unwrap().try_resolve().unwrap();
+            if let Schema::Typed(typed_status) = status_schema.as_ref()
+                && let TypedSchema::String(string_schema) = typed_status.as_ref()
+            {
+                assert!(string_schema.enum_values.is_some());
+                assert_eq!(
+                    string_schema.base.description,
+                    Some("Status of the item".to_string())
+                );
             }
         }
     }
@@ -353,13 +353,13 @@ mod tests {
 
         if let Schema::Not(not_schema) = schema.as_ref() {
             let inner_schema = not_schema.not.try_resolve().unwrap();
-            if let Schema::Typed(typed) = inner_schema.as_ref() {
-                if let TypedSchema::String(string_schema) = typed.as_ref() {
-                    assert_eq!(
-                        string_schema.enum_values,
-                        Some(vec!["forbidden".to_string()])
-                    );
-                }
+            if let Schema::Typed(typed) = inner_schema.as_ref()
+                && let TypedSchema::String(string_schema) = typed.as_ref()
+            {
+                assert_eq!(
+                    string_schema.enum_values,
+                    Some(vec!["forbidden".to_string()])
+                );
             }
         } else {
             panic!("Expected not schema");
@@ -377,23 +377,23 @@ mod tests {
         let content = request_body.content.get("application/json").unwrap();
         let schema = content.schema.try_resolve().unwrap();
 
-        if let Schema::Typed(typed) = schema.as_ref() {
-            if let TypedSchema::Object(object_schema) = typed.as_ref() {
-                let properties = object_schema.properties.as_ref().unwrap();
+        if let Schema::Typed(typed) = schema.as_ref()
+            && let TypedSchema::Object(object_schema) = typed.as_ref()
+        {
+            let properties = object_schema.properties.as_ref().unwrap();
 
-                // Test simple array validation
-                let simple_array = properties
-                    .get("simple_array")
-                    .unwrap()
-                    .try_resolve()
-                    .unwrap();
-                if let Schema::Typed(typed_array) = simple_array.as_ref() {
-                    if let TypedSchema::Array(array_schema) = typed_array.as_ref() {
-                        assert_eq!(array_schema.min_items, Some(1));
-                        assert_eq!(array_schema.max_items, Some(100));
-                        assert_eq!(array_schema.unique_items, Some(true));
-                    }
-                }
+            // Test simple array validation
+            let simple_array = properties
+                .get("simple_array")
+                .unwrap()
+                .try_resolve()
+                .unwrap();
+            if let Schema::Typed(typed_array) = simple_array.as_ref()
+                && let TypedSchema::Array(array_schema) = typed_array.as_ref()
+            {
+                assert_eq!(array_schema.min_items, Some(1));
+                assert_eq!(array_schema.max_items, Some(100));
+                assert_eq!(array_schema.unique_items, Some(true));
             }
         }
     }

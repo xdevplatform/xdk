@@ -46,23 +46,19 @@ pub trait LanguageGenerator {
             }
 
             for entry in fs::read_dir(&template_dir)?.filter_map(|e| e.ok()) {
-                if let Ok(file_type) = entry.file_type() {
-                    if file_type.is_file() {
-                        if let Some(file_name) = entry.file_name().to_str() {
-                            let template_name = if file_name.ends_with(".j2")
-                                || file_name.ends_with(".jinja")
-                                || file_name.ends_with(".jinja2")
-                            {
-                                file_name.rsplit_once('.').map(|x| x.0).unwrap_or(file_name)
-                            } else {
-                                file_name
-                            };
-                            templates.insert(
-                                template_name.to_string(),
-                                fs::read_to_string(entry.path())?,
-                            );
-                        }
-                    }
+                if let Ok(file_type) = entry.file_type()
+                    && file_type.is_file()
+                    && let Some(file_name) = entry.file_name().to_str()
+                {
+                    let template_name = if file_name.ends_with(".j2")
+                        || file_name.ends_with(".jinja")
+                        || file_name.ends_with(".jinja2")
+                    {
+                        file_name.rsplit_once('.').map(|x| x.0).unwrap_or(file_name)
+                    } else {
+                        file_name
+                    };
+                    templates.insert(template_name.to_string(), fs::read_to_string(entry.path())?);
                 }
             }
         }

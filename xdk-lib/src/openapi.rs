@@ -22,42 +22,40 @@ pub fn extract_operations_by_tag(
         method: &str,
         operation: &Option<openapi::Operation>,
     ) {
-        if let Some(op) = operation {
-            if let Some(tags) = &op.tags {
-                if let Some(first_tag) = tags.first() {
-                    let normalized_tag: Vec<String> = normalize_tag(first_tag);
+        if let Some(op) = operation
+            && let Some(tags) = &op.tags
+            && let Some(first_tag) = tags.first()
+        {
+            let normalized_tag: Vec<String> = normalize_tag(first_tag);
 
-                    let normalized_operation_id: Vec<String> =
-                        normalize_operation_id(&op.operation_id);
+            let normalized_operation_id: Vec<String> = normalize_operation_id(&op.operation_id);
 
-                    let operation_info = OperationInfo {
-                        path: path.to_string(),
-                        method: method.to_string(),
-                        class_name: String::new(), // Will be set when casing is applied
-                        method_name: String::new(), // Will be set when casing is applied
-                        summary: op.summary.clone(),
-                        description: op.description.clone(),
-                        parameters: None, // Will be processed with casing in the macro
-                        security: op.security.clone(),
-                        request_body: op.request_body.clone(),
-                        responses: op.responses.clone(),
-                    };
-                    let operation_group = OperationGroup {
-                        operation: operation_info,
-                        metadata: Metadata {
-                            normalized_operation_id: clean_operation_id(
-                                normalized_operation_id,
-                                normalized_tag.clone(),
-                            ),
-                        },
-                        raw_parameters: op.parameters.clone(),
-                    };
-                    operations_by_tag
-                        .entry(normalized_tag)
-                        .or_default()
-                        .push(operation_group);
-                }
-            }
+            let operation_info = OperationInfo {
+                path: path.to_string(),
+                method: method.to_string(),
+                class_name: String::new(), // Will be set when casing is applied
+                method_name: String::new(), // Will be set when casing is applied
+                summary: op.summary.clone(),
+                description: op.description.clone(),
+                parameters: None, // Will be processed with casing in the macro
+                security: op.security.clone(),
+                request_body: op.request_body.clone(),
+                responses: op.responses.clone(),
+            };
+            let operation_group = OperationGroup {
+                operation: operation_info,
+                metadata: Metadata {
+                    normalized_operation_id: clean_operation_id(
+                        normalized_operation_id,
+                        normalized_tag.clone(),
+                    ),
+                },
+                raw_parameters: op.parameters.clone(),
+            };
+            operations_by_tag
+                .entry(normalized_tag)
+                .or_default()
+                .push(operation_group);
         }
     }
 
