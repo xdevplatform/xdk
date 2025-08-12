@@ -6,41 +6,41 @@
 
 import { httpClient } from './http-client.js';
 
-import { CommunityNotesClient } from './community_notes/index.js';
+import { GeneralClient } from './general/index.js';
 
-import { MediaClient } from './media/index.js';
-
-import { ListsClient } from './lists/index.js';
-
-import { BookmarksClient } from './bookmarks/index.js';
-
-import { SpacesClient } from './spaces/index.js';
-
-import { PostsClient } from './posts/index.js';
-
-import { ComplianceClient } from './compliance/index.js';
+import { WebhooksClient } from './webhooks/index.js';
 
 import { AccountActivityClient } from './account_activity/index.js';
 
 import { UsageClient } from './usage/index.js';
 
-import { UsersClient } from './users/index.js';
+import { CommunityNotesClient } from './community_notes/index.js';
 
-import { AaasubscriptionsClient } from './aaasubscriptions/index.js';
-
-import { GeneralClient } from './general/index.js';
-
-import { ConnectionClient } from './connection/index.js';
-
-import { WebhooksClient } from './webhooks/index.js';
-
-import { StreamClient } from './stream/index.js';
+import { ComplianceClient } from './compliance/index.js';
 
 import { CommunitiesClient } from './communities/index.js';
 
 import { TrendsClient } from './trends/index.js';
 
 import { DirectMessagesClient } from './direct_messages/index.js';
+
+import { StreamClient } from './stream/index.js';
+
+import { ConnectionClient } from './connection/index.js';
+
+import { BookmarksClient } from './bookmarks/index.js';
+
+import { SpacesClient } from './spaces/index.js';
+
+import { MediaClient } from './media/index.js';
+
+import { ListsClient } from './lists/index.js';
+
+import { UsersClient } from './users/index.js';
+
+import { PostsClient } from './posts/index.js';
+
+import { AaasubscriptionsClient } from './aaasubscriptions/index.js';
 
 /**
  * Configuration options for the X API client
@@ -171,26 +171,11 @@ export class Client {
   /** HTTP client for making requests */
   readonly httpClient = httpClient;
 
-  /** community notes client */
-  readonly community_notes: CommunityNotesClient;
+  /** general client */
+  readonly general: GeneralClient;
 
-  /** media client */
-  readonly media: MediaClient;
-
-  /** lists client */
-  readonly lists: ListsClient;
-
-  /** bookmarks client */
-  readonly bookmarks: BookmarksClient;
-
-  /** spaces client */
-  readonly spaces: SpacesClient;
-
-  /** posts client */
-  readonly posts: PostsClient;
-
-  /** compliance client */
-  readonly compliance: ComplianceClient;
+  /** webhooks client */
+  readonly webhooks: WebhooksClient;
 
   /** account activity client */
   readonly account_activity: AccountActivityClient;
@@ -198,23 +183,11 @@ export class Client {
   /** usage client */
   readonly usage: UsageClient;
 
-  /** users client */
-  readonly users: UsersClient;
+  /** community notes client */
+  readonly community_notes: CommunityNotesClient;
 
-  /** aaasubscriptions client */
-  readonly aaasubscriptions: AaasubscriptionsClient;
-
-  /** general client */
-  readonly general: GeneralClient;
-
-  /** connection client */
-  readonly connection: ConnectionClient;
-
-  /** webhooks client */
-  readonly webhooks: WebhooksClient;
-
-  /** stream client */
-  readonly stream: StreamClient;
+  /** compliance client */
+  readonly compliance: ComplianceClient;
 
   /** communities client */
   readonly communities: CommunitiesClient;
@@ -224,6 +197,33 @@ export class Client {
 
   /** direct messages client */
   readonly direct_messages: DirectMessagesClient;
+
+  /** stream client */
+  readonly stream: StreamClient;
+
+  /** connection client */
+  readonly connection: ConnectionClient;
+
+  /** bookmarks client */
+  readonly bookmarks: BookmarksClient;
+
+  /** spaces client */
+  readonly spaces: SpacesClient;
+
+  /** media client */
+  readonly media: MediaClient;
+
+  /** lists client */
+  readonly lists: ListsClient;
+
+  /** users client */
+  readonly users: UsersClient;
+
+  /** posts client */
+  readonly posts: PostsClient;
+
+  /** aaasubscriptions client */
+  readonly aaasubscriptions: AaasubscriptionsClient;
 
   constructor(config: ClientConfig = {}) {
     this.baseUrl = config.baseUrl || 'https://api.x.com';
@@ -244,41 +244,41 @@ export class Client {
 
     this.headers = httpClient.createHeaders(defaultHeaders);
 
-    this.community_notes = new CommunityNotesClient(this);
+    this.general = new GeneralClient(this);
 
-    this.media = new MediaClient(this);
-
-    this.lists = new ListsClient(this);
-
-    this.bookmarks = new BookmarksClient(this);
-
-    this.spaces = new SpacesClient(this);
-
-    this.posts = new PostsClient(this);
-
-    this.compliance = new ComplianceClient(this);
+    this.webhooks = new WebhooksClient(this);
 
     this.account_activity = new AccountActivityClient(this);
 
     this.usage = new UsageClient(this);
 
-    this.users = new UsersClient(this);
+    this.community_notes = new CommunityNotesClient(this);
 
-    this.aaasubscriptions = new AaasubscriptionsClient(this);
-
-    this.general = new GeneralClient(this);
-
-    this.connection = new ConnectionClient(this);
-
-    this.webhooks = new WebhooksClient(this);
-
-    this.stream = new StreamClient(this);
+    this.compliance = new ComplianceClient(this);
 
     this.communities = new CommunitiesClient(this);
 
     this.trends = new TrendsClient(this);
 
     this.direct_messages = new DirectMessagesClient(this);
+
+    this.stream = new StreamClient(this);
+
+    this.connection = new ConnectionClient(this);
+
+    this.bookmarks = new BookmarksClient(this);
+
+    this.spaces = new SpacesClient(this);
+
+    this.media = new MediaClient(this);
+
+    this.lists = new ListsClient(this);
+
+    this.users = new UsersClient(this);
+
+    this.posts = new PostsClient(this);
+
+    this.aaasubscriptions = new AaasubscriptionsClient(this);
   }
 
   /**

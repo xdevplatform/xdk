@@ -11,12 +11,20 @@ export interface BookmarksDeleteUsersResponse {
 }
 
 /**
- * Response for getUsers
+ * Response for getUsersFolders
  */
-export interface BookmarksGetUsersResponse {
+export interface BookmarksGetUsersFoldersResponse {
   data?: Array<any>;
   errors?: Array<any>;
-  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getUsersByFolderId
+ */
+export interface BookmarksGetUsersByFolderIdResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
   meta?: Record<string, any>;
 }
 
@@ -34,22 +42,4 @@ export interface BookmarksCreateUsersRequest {
 export interface BookmarksCreateUsersResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
-}
-
-/**
- * Response for getUsersByFolderId
- */
-export interface BookmarksGetUsersByFolderIdResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getUsersFolders
- */
-export interface BookmarksGetUsersFoldersResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
 }

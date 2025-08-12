@@ -6,9 +6,9 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
-  AccountActivityGetSubscriptionsResponse,
   AccountActivityGetSubscriptionCountResponse,
   AccountActivityCreateReplayJobResponse,
+  AccountActivityGetSubscriptionsResponse,
   AccountActivityValidateSubscriptionResponse,
   AccountActivityDeleteSubscriptionResponse,
 } from './models.js';
@@ -21,33 +21,6 @@ export class AccountActivityClient {
 
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-     * Get subscriptions
-     * Retrieves a list of all active subscriptions for a given webhook.
-     * @param webhookId The webhook ID to pull subscriptions for.* @param options Additional request options
-     * @returns Promise with the API response
-     */
-  async getSubscriptions(
-    options?: RequestOptions
-  ): Promise<ApiResponse<AccountActivityGetSubscriptionsResponse>> {
-    const params = new URLSearchParams();
-
-    const path = `/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list`;
-
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-      },
-    };
-
-    return this.client.request<AccountActivityGetSubscriptionsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      requestOptions
-    );
   }
 
   /**
@@ -85,11 +58,25 @@ export class AccountActivityClient {
      * @returns Promise with the API response
      */
   async createReplayJob(
+    webhookId: string,
+    fromDate: string,
+    toDate: string,
     options?: RequestOptions
   ): Promise<ApiResponse<AccountActivityCreateReplayJobResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all`;
+    if (fromDate !== undefined) {
+      params.set('from_date', String(fromDate));
+    }
+
+    if (toDate !== undefined) {
+      params.set('to_date', String(toDate));
+    }
+
+    const path = `/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all`.replace(
+      '{webhook_id}',
+      String(webhookId)
+    );
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -106,17 +93,52 @@ export class AccountActivityClient {
   }
 
   /**
+     * Get subscriptions
+     * Retrieves a list of all active subscriptions for a given webhook.
+     * @param webhookId The webhook ID to pull subscriptions for.* @param options Additional request options
+     * @returns Promise with the API response
+     */
+  async getSubscriptions(
+    webhookId: string,
+    options?: RequestOptions
+  ): Promise<ApiResponse<AccountActivityGetSubscriptionsResponse>> {
+    const params = new URLSearchParams();
+
+    const path = `/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list`.replace(
+      '{webhook_id}',
+      String(webhookId)
+    );
+
+    const requestOptions: RequestOptions = {
+      ...options,
+      headers: {
+        ...options && options.headers ? options.headers : {},
+      },
+    };
+
+    return this.client.request<AccountActivityGetSubscriptionsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      requestOptions
+    );
+  }
+
+  /**
      * Validate subscription
      * Checks a user’s Account Activity subscription for a given webhook.
      * @param webhookId The webhook ID to check subscription against.* @param options Additional request options
      * @returns Promise with the API response
      */
   async validateSubscription(
+    webhookId: string,
     options?: RequestOptions
   ): Promise<ApiResponse<AccountActivityValidateSubscriptionResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/account_activity/webhooks/{webhook_id}/subscriptions/all`;
+    const path = `/2/account_activity/webhooks/{webhook_id}/subscriptions/all`.replace(
+      '{webhook_id}',
+      String(webhookId)
+    );
 
     const requestOptions: RequestOptions = {
       ...options,
@@ -140,11 +162,15 @@ export class AccountActivityClient {
      * @returns Promise with the API response
      */
   async deleteSubscription(
+    webhookId: string,
+    userId: string,
     options?: RequestOptions
   ): Promise<ApiResponse<AccountActivityDeleteSubscriptionResponse>> {
     const params = new URLSearchParams();
 
-    const path = `/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all`;
+    const path = `/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all`
+      .replace('{webhook_id}', String(webhookId))
+      .replace('{user_id}', String(userId));
 
     const requestOptions: RequestOptions = {
       ...options,

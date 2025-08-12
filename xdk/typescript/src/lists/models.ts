@@ -3,9 +3,9 @@
  */
 
 /**
- * Response for getUsersFollowed
+ * Response for getPosts
  */
-export interface ListsGetUsersFollowedResponse {
+export interface ListsGetPostsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -13,25 +13,62 @@ export interface ListsGetUsersFollowedResponse {
 }
 
 /**
- * Request body for follow
+ * Response for getById
  */
-export interface ListsFollowRequest {
-  /** The unique identifier of this List. */
-  listId?: string;
+export interface ListsGetByIdResponse {
+  /** A X List is a curated group of accounts. */
+  data: Record<string, any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
 }
 
 /**
- * Response for follow
+ * Request body for update
  */
-export interface ListsFollowResponse {
+export interface ListsUpdateRequest {
+  description?: string;
+  name?: string;
+  private?: boolean;
+}
+
+/**
+ * Response for update
+ */
+export interface ListsUpdateResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
- * Response for getUsersMemberships
+ * Response for delete
  */
-export interface ListsGetUsersMembershipsResponse {
+export interface ListsDeleteResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Request body for create
+ */
+export interface ListsCreateRequest {
+  description?: string;
+  name?: string;
+  private?: boolean;
+}
+
+/**
+ * Response for create
+ */
+export interface ListsCreateResponse {
+  /** A X List is a curated group of accounts. */
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getMembers
+ */
+export interface ListsGetMembersResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -81,54 +118,9 @@ export interface ListsPinResponse {
 }
 
 /**
- * Request body for create
+ * Response for unpin
  */
-export interface ListsCreateRequest {
-  description?: string;
-  name?: string;
-  private?: boolean;
-}
-
-/**
- * Response for create
- */
-export interface ListsCreateResponse {
-  /** A X List is a curated group of accounts. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getById
- */
-export interface ListsGetByIdResponse {
-  /** A X List is a curated group of accounts. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Request body for update
- */
-export interface ListsUpdateRequest {
-  description?: string;
-  name?: string;
-  private?: boolean;
-}
-
-/**
- * Response for update
- */
-export interface ListsUpdateResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for delete
- */
-export interface ListsDeleteResponse {
+export interface ListsUnpinResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
@@ -142,21 +134,19 @@ export interface ListsRemoveMemberByUserIdResponse {
 }
 
 /**
- * Response for unpin
+ * Request body for follow
  */
-export interface ListsUnpinResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
+export interface ListsFollowRequest {
+  /** The unique identifier of this List. */
+  listId?: string;
 }
 
 /**
- * Response for getUsersOwned
+ * Response for follow
  */
-export interface ListsGetUsersOwnedResponse {
-  data?: Array<any>;
+export interface ListsFollowResponse {
+  data?: Record<string, any>;
   errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
 }
 
 /**
@@ -165,4 +155,14 @@ export interface ListsGetUsersOwnedResponse {
 export interface ListsUnfollowResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
+}
+
+/**
+ * Response for getFollowers
+ */
+export interface ListsGetFollowersResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
 }

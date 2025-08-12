@@ -1,6 +1,6 @@
 # X API SDK
 
-A modern TypeScript/JavaScript SDK for interacting with the X API. Built with full TypeScript support, React hooks, and Next.js integration.
+A modern TypeScript/JavaScript SDK for interacting with the X API. Built with full TypeScript support and comprehensive API coverage.
 
 ## Installation
 
@@ -15,213 +15,269 @@ yarn add x-api-sdk
 pnpm add x-api-sdk
 ```
 
-## Usage
-
-### TypeScript/JavaScript (ESM)
+## Quick Start
 
 ```typescript
 import { Client } from 'x-api-sdk';
 
-// Create a client instance
+// Create a client instance - no polyfills needed!
 const client = new Client({
     bearerToken: 'your-bearer-token'
 });
 
-// Example: Get a user's tweets using async/await
-const tweets = await client.tweets.getUserTweets({
-    userId: '12345',
-    maxResults: 10
-});
+// Example: Get user details by ID
+const user = await client.users.getById('12345');
 
-// Example: Using the paginator with async iteration
-const paginator = client.tweets.getUserTweetsAll({ userId: '12345' });
-for await (const tweet of paginator) {
-    console.log(tweet);
-}
+// Example: Get user details by username
+const userByUsername = await client.users.getByUsername('username');
+
+// Example: Get multiple users by IDs
+const users = await client.users.getByIds(['12345', '67890']);
+
+// Example: Search for users
+const searchResults = await client.users.search('query', 10);
+
+console.log(user.data);
 ```
 
-### React with Hooks
+## Authentication
 
-```tsx
-import { XApiProvider, useTweets, useUserTweets } from 'x-api-sdk/react';
+The SDK supports multiple authentication methods:
 
-// Wrap your app with the provider
-function App() {
-    return (
-        <XApiProvider bearerToken="your-bearer-token">
-            <Timeline userId="12345" />
-        </XApiProvider>
-    );
-}
+### Bearer Token (App-only)
+```typescript
+import { Client } from 'x-api-sdk';
 
-// Use hooks in your components
-function Timeline({ userId }: { userId: string }) {
-    // Hook with automatic data fetching and state management
-    const { data: tweets, isLoading, error, refetch } = useUserTweets(
-        { userId, maxResults: 10 },
-        { refetchInterval: 30000 } // Refetch every 30 seconds
-    );
-
-    // Direct access to the tweets client
-    const tweetsClient = useTweets();
-
-    // Handle loading and error states
-    if (isLoading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error.message}</div>;
-
-    return (
-        <div>
-            {tweets?.map(tweet => (
-                <Tweet key={tweet.id} tweet={tweet} />
-            ))}
-            <button onClick={() => refetch()}>Refresh</button>
-        </div>
-    );
-}
+const client = new Client({
+    bearerToken: 'your-bearer-token'
+});
 ```
 
-### Next.js App Router
+### OAuth 2.0 (User authentication)
+```typescript
+import { Client, OAuth2Auth } from 'x-api-sdk';
 
-```tsx
-// app/api/auth/[...nextauth]/route.ts
-import { OAuth2Auth } from 'x-api-sdk';
-
-const auth = new OAuth2Auth({
-    clientId: process.env.X_CLIENT_ID!,
-    clientSecret: process.env.X_CLIENT_SECRET!,
-    redirectUri: process.env.X_REDIRECT_URI!
+const oauth2 = new OAuth2Auth({
+    clientId: 'your-client-id',
+    clientSecret: 'your-client-secret',
+    redirectUri: 'your-redirect-uri'
 });
 
-export const authConfig = {
-    // ... your NextAuth config
-};
+// Get authorization URL
+const authUrl = oauth2.getAuthorizationUrl();
 
-// app/tweets/page.tsx
-import { createServerActions } from 'x-api-sdk/next';
+// After user authorizes, exchange code for tokens
+const tokens = await oauth2.exchangeCodeForTokens('authorization-code');
 
-// Server Component
-export default async function TweetsPage() {
-    const actions = createServerActions({
-        bearerToken: process.env.X_BEARER_TOKEN
-    });
-
-    // Use server actions directly
-    const tweets = await actions.tweets.getUserTweets({
-        userId: '12345',
-        maxResults: 10
-    });
-
-    return (
-        <div>
-            {tweets.map(tweet => (
-                <Tweet key={tweet.id} tweet={tweet} />
-            ))}
-        </div>
-    );
-}
-
-// app/tweets/actions.ts
-'use server';
-
-import { createServerActions } from 'x-api-sdk/next';
-
-const actions = createServerActions({
-    bearerToken: process.env.X_BEARER_TOKEN
+const client = new Client({
+    accessToken: tokens.access_token
 });
-
-// Export server actions for client components
-export const createTweet = actions.tweets.createTweet;
-export const deleteTweet = actions.tweets.deleteTweet;
-
-// app/tweets/tweet-form.tsx
-'use client';
-
-import { createTweet } from './actions';
-
-export function TweetForm() {
-    async function handleSubmit(formData: FormData) {
-        const text = formData.get('text') as string;
-        await createTweet({ text });
-    }
-
-    return (
-        <form action={handleSubmit}>
-            <textarea name="text" />
-            <button type="submit">Tweet</button>
-        </form>
-    );
-}
 ```
+
+## API Examples
+
+### Users API
+```typescript
+// Get user by ID
+const user = await client.users.getById('12345', ['id', 'name', 'username']);
+
+// Get user by username
+const userByUsername = await client.users.getByUsername('username');
+
+// Get multiple users
+const users = await client.users.getByIds(['12345', '67890']);
+
+// Search users
+const searchResults = await client.users.search('query', 10);
+
+// Get user's followers
+const followers = await client.users.getFollowers('12345', 100);
+
+// Get user's following
+const following = await client.users.getFollowing('12345', 100);
+```
+
+### Tweets API
+```typescript
+// Get user's tweets
+const tweets = await client.tweets.getUserTweets('12345', 10);
+
+// Get tweet by ID
+const tweet = await client.tweets.getById('tweet-id');
+
+// Get multiple tweets
+const tweets = await client.tweets.getByIds(['tweet1', 'tweet2']);
+
+// Search tweets
+const searchResults = await client.tweets.search('query', 10);
+```
+
+### Lists API
+```typescript
+// Get user's lists
+const lists = await client.lists.getUserOwnedLists('12345');
+
+// Get list by ID
+const list = await client.lists.getById('list-id');
+
+// Get list members
+const members = await client.lists.getMembers('list-id', 100);
+```
+
+## Environment Support
+
+The SDK automatically handles polyfills and works in all environments:
+
+### Node.js 18+ (Native Fetch)
+```javascript
+import { Client } from 'x-api-sdk';
+// Works immediately - no polyfills needed
+const client = new Client({ bearerToken: 'token' });
+```
+
+### Node.js 16-17 (with node-fetch)
+```javascript
+import { Client } from 'x-api-sdk';
+// Works automatically - SDK sets up polyfills internally
+const client = new Client({ bearerToken: 'token' });
+```
+
+### Modern Browsers
+```javascript
+import { Client } from 'x-api-sdk';
+// Works immediately - uses native browser APIs
+const client = new Client({ bearerToken: 'token' });
+```
+
+### Requirements
+- **Node.js**: 16.14+ (18+ recommended for native fetch support)
+- **Browsers**: Modern browsers with fetch support
+- **Dependencies**: `node-fetch` is automatically included for Node.js environments
 
 ## Features
 
-- ✨ Full TypeScript support with type definitions
-- 🔄 Dual ESM/CommonJS support
-- ⚛️ React hooks with automatic data fetching
-- 📱 Next.js App Router integration with Server Actions
-- 🔒 OAuth2 authentication
-- 📄 Pagination support with async iterators
-- 🚨 Comprehensive error handling
-- 📦 Tree-shakeable
-- 🌐 Works in Node.js 18+, browsers, and edge runtime
-- 📚 Auto-generated documentation
-- ⚡ Zero dependencies
+- ✨ **Full TypeScript support** with complete type definitions
+- 🔄 **Dual ESM/CommonJS support** for maximum compatibility
+- 🌐 **Zero-config polyfills** - works in Node.js and browsers automatically
+- 🔒 **OAuth2 authentication** with PKCE support
+- 📄 **Comprehensive API coverage** - all X API endpoints
+- 🚨 **Robust error handling** with detailed error messages
+- 📦 **Tree-shakeable** - only import what you use
+- ⚡ **Minimal dependencies** - lightweight and fast
+- 🔧 **Auto-generated** - always up to date with the latest API changes
 
 ## Type Safety
 
 The SDK is written in TypeScript and provides full type safety:
 
 ```typescript
-// All methods have full type definitions
-interface CreateTweetRequest {
-    text: string;
-    reply?: {
-        in_reply_to_tweet_id: string;
-    };
-    // ... other properties
-}
+// All methods have complete type definitions
+const user = await client.users.getById('12345', ['id', 'name', 'username']);
+
+// TypeScript knows the exact structure of the response
+console.log(user.data?.name); // ✅ Fully typed
+console.log(user.data?.id);   // ✅ Fully typed
 
 // Autocomplete and type checking work out of the box
-const tweet = await client.tweets.createTweet({
-    text: 'Hello!',
-    reply: {
-        in_reply_to_tweet_id: '123' // Type checked!
-    }
-});
+const searchResults = await client.users.search(
+    'query',     // ✅ Type checked
+    10,          // ✅ Type checked
+    undefined,   // ✅ Optional parameters
+    ['id', 'name'] // ✅ Type checked array
+);
 ```
 
-## Documentation
+## Error Handling
 
-For detailed documentation:
+The SDK provides comprehensive error handling:
 
-- [API Reference](./docs/api.md)
-- [React Hooks Guide](./docs/react.md)
-- [Next.js Integration](./docs/nextjs.md)
-- [X API Documentation](https://developer.twitter.com/en/docs/twitter-api)
-- [TypeDoc Documentation](./docs/typedoc/index.html)
+```typescript
+try {
+    const user = await client.users.getById('invalid-id');
+} catch (error) {
+    if (error instanceof ApiError) {
+        console.log('API Error:', error.status, error.message);
+        console.log('Response:', error.response);
+    } else {
+        console.log('Network Error:', error.message);
+    }
+}
+```
+
+## Pagination
+
+Many API endpoints support pagination:
+
+```typescript
+// Get all followers (handles pagination automatically)
+const allFollowers = [];
+for await (const follower of client.users.getFollowersAll('12345')) {
+    allFollowers.push(follower);
+    console.log('Follower:', follower.name);
+}
+```
+
+## Configuration
+
+The client supports various configuration options:
+
+```typescript
+const client = new Client({
+    bearerToken: 'your-bearer-token',
+    baseUrl: 'https://api.twitter.com', // Optional: custom base URL
+    timeout: 30000, // Optional: request timeout in milliseconds
+    retries: 3, // Optional: number of retry attempts
+});
+```
 
 ## Development
 
 ```bash
 # Install dependencies
-pnpm install
+npm install
 
-# Build
-pnpm build
+# Build the SDK
+npm run build
 
-# Test
-pnpm test
+# Run tests
+npm test
 
-# Lint
-pnpm lint
+# Lint code
+npm run lint
 
-# Format
-pnpm format
+# Format code
+npm run format
 
-# Generate docs
-pnpm docs
+# Type checking
+npm run type-check
 ```
+
+## API Reference
+
+The SDK provides access to all X API endpoints:
+
+- **Users API** - User management and lookup
+- **Tweets API** - Tweet creation, retrieval, and search
+- **Lists API** - List management and operations
+- **Spaces API** - Audio spaces functionality
+- **Direct Messages API** - DM management
+- **Bookmarks API** - Bookmark operations
+- **Compliance API** - Data compliance and deletion
+- **Media API** - Media upload and management
+- **Trends API** - Trending topics and places
+- **Stream API** - Real-time data streaming
+
+For detailed API documentation, visit the [X API Documentation](https://developer.twitter.com/en/docs/twitter-api).
+
+## Contributing
+
+This SDK is auto-generated from the X API OpenAPI specification. To contribute:
+
+1. Fork the repository
+2. Make your changes to the generator templates
+3. Run the generation process
+4. Submit a pull request
 
 ## License
 
-MIT 
+MIT License - see [LICENSE](LICENSE) file for details. 
