@@ -22,7 +22,7 @@ pnpm add x-api-sdk
 ```typescript
 import { Client } from 'x-api-sdk';
 
-// Create a client instance
+// Create a client instance - no polyfills needed!
 const client = new Client({
     bearerToken: 'your-bearer-token'
 });
@@ -153,6 +153,36 @@ export function TweetForm() {
 }
 ```
 
+## Environment Support
+
+The SDK automatically handles polyfills and works in all environments:
+
+### Node.js 18+ (Native Fetch)
+```javascript
+import { Client } from 'x-api-sdk';
+// Works immediately - no polyfills needed
+const client = new Client({ bearerToken: 'token' });
+```
+
+### Node.js 14-17 (with node-fetch)
+```javascript
+import { Client } from 'x-api-sdk';
+// Works automatically - SDK sets up polyfills internally
+const client = new Client({ bearerToken: 'token' });
+```
+
+### Modern Browsers
+```javascript
+import { Client } from 'x-api-sdk';
+// Works immediately - uses native browser APIs
+const client = new Client({ bearerToken: 'token' });
+```
+
+### Requirements
+- **Node.js**: 16.14+ (18+ recommended for native fetch support)
+- **Browsers**: Modern browsers with fetch support
+- **Dependencies**: `node-fetch` is automatically included for Node.js environments
+
 ## Features
 
 - ✨ Full TypeScript support with type definitions
@@ -163,9 +193,9 @@ export function TweetForm() {
 - 📄 Pagination support with async iterators
 - 🚨 Comprehensive error handling
 - 📦 Tree-shakeable
-- 🌐 Works in Node.js 18+, browsers, and edge runtime
+- 🌐 **Zero-config polyfills** - works in Node.js and browsers automatically
 - 📚 Auto-generated documentation
-- ⚡ Zero dependencies
+- ⚡ Minimal dependencies
 
 ## Type Safety
 
