@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for Direct_Messages client.
+Auto-generated generic tests for {"class_name": "DirectMessages", "display_name": "direct messages", "import_name": "direct_messages", "original": ["direct", "messages"], "property_name": "direct_messages"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be

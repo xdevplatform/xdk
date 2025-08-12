@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for Lists client.
+Auto-generated generic tests for {"class_name": "Lists", "display_name": "lists", "import_name": "lists", "original": ["lists"], "property_name": "lists"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be

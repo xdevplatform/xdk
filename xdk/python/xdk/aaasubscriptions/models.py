@@ -1,7 +1,7 @@
 """
-AAASubscriptions models for the X API.
+aaasubscriptions models for the X API.
 
-This module provides models for the AAASubscriptions endpoints of the X API.
+This module provides models for the aaasubscriptions endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
@@ -9,17 +9,17 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for createAccountActivitySubscription
+# Models for create_account_activity_subscription
 
 
 class CreateAccountActivitySubscriptionRequest(BaseModel):
-    """Request model for createAccountActivitySubscription"""
+    """Request model for create_account_activity_subscription"""
 
     model_config = ConfigDict(populate_by_name=True)
 
 
 class CreateAccountActivitySubscriptionResponse(BaseModel):
-    """Response model for createAccountActivitySubscription"""
+    """Response model for create_account_activity_subscription"""
 
     data: Optional["CreateAccountActivitySubscriptionResponseData"] = None
     errors: Optional[List] = None

@@ -1,7 +1,7 @@
 """
-Webhooks client for the X API.
+webhooks client for the X API.
 
-This module provides a client for interacting with the Webhooks endpoints of the X API.
+This module provides a client for interacting with the webhooks endpoints of the X API.
 """
 
 from __future__ import annotations
@@ -12,33 +12,33 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    ValidateWebhooksResponse,
-    DeleteWebhooksResponse,
-    GetWebhooksResponse,
-    CreateWebhooksRequest,
-    CreateWebhooksResponse,
+    ValidateResponse,
+    DeleteResponse,
+    GetResponse,
+    CreateRequest,
+    CreateResponse,
 )
 
 
 class WebhooksClient:
-    """Client for Webhooks operations"""
+    """Client for webhooks operations"""
 
 
     def __init__(self, client: Client):
         self.client = client
 
 
-    def validate_webhooks(
+    def validate(
         self,
         webhook_id: str,
-    ) -> ValidateWebhooksResponse:
+    ) -> ValidateResponse:
         """
         Validate webhook
         Triggers a CRC check for a given webhook.
         Args:
             webhook_id: The ID of the webhook to check.
         Returns:
-            ValidateWebhooksResponse: Response data
+            ValidateResponse: Response data
         """
         url = self.client.base_url + "/2/webhooks/{webhook_id}"
         if self.client.bearer_token:
@@ -63,20 +63,20 @@ class WebhooksClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return ValidateWebhooksResponse.model_validate(response_data)
+        return ValidateResponse.model_validate(response_data)
 
 
-    def delete_webhooks(
+    def delete(
         self,
         webhook_id: str,
-    ) -> DeleteWebhooksResponse:
+    ) -> DeleteResponse:
         """
         Delete webhook
         Deletes an existing webhook configuration.
         Args:
             webhook_id: The ID of the webhook to delete.
         Returns:
-            DeleteWebhooksResponse: Response data
+            DeleteResponse: Response data
         """
         url = self.client.base_url + "/2/webhooks/{webhook_id}"
         if self.client.bearer_token:
@@ -101,20 +101,20 @@ class WebhooksClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return DeleteWebhooksResponse.model_validate(response_data)
+        return DeleteResponse.model_validate(response_data)
 
 
-    def get_webhooks(
+    def get(
         self,
         webhook_config_fields: List = None,
-    ) -> GetWebhooksResponse:
+    ) -> GetResponse:
         """
         Get webhook
         Get a list of webhook configs associated with a client app.
         Args:
             webhook_config_fields: A comma separated list of WebhookConfig fields to display.
         Returns:
-            GetWebhooksResponse: Response data
+            GetResponse: Response data
         """
         url = self.client.base_url + "/2/webhooks"
         if self.client.bearer_token:
@@ -142,19 +142,19 @@ class WebhooksClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return GetWebhooksResponse.model_validate(response_data)
+        return GetResponse.model_validate(response_data)
 
 
-    def create_webhooks(
+    def create(
         self,
-        body: Optional[CreateWebhooksRequest] = None,
-    ) -> CreateWebhooksResponse:
+        body: Optional[CreateRequest] = None,
+    ) -> CreateResponse:
         """
         Create webhook
         Creates a new webhook configuration.
             body: Request body
         Returns:
-            CreateWebhooksResponse: Response data
+            CreateResponse: Response data
         """
         url = self.client.base_url + "/2/webhooks"
         if self.client.bearer_token:
@@ -180,4 +180,4 @@ class WebhooksClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return CreateWebhooksResponse.model_validate(response_data)
+        return CreateResponse.model_validate(response_data)

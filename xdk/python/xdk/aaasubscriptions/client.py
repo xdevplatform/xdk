@@ -1,7 +1,7 @@
 """
-AAASubscriptions client for the X API.
+aaasubscriptions client for the X API.
 
-This module provides a client for interacting with the AAASubscriptions endpoints of the X API.
+This module provides a client for interacting with the aaasubscriptions endpoints of the X API.
 """
 
 from __future__ import annotations
@@ -17,8 +17,8 @@ from .models import (
 )
 
 
-class AAASubscriptionsClient:
-    """Client for AAASubscriptions operations"""
+class AaasubscriptionsClient:
+    """Client for aaasubscriptions operations"""
 
 
     def __init__(self, client: Client):

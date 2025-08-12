@@ -1,184 +1,82 @@
-use super::models::OperationInfo;
-use crate::Result;
+use super::models::{Metadata, OperationGroup, OperationInfo, TagInfo};
+use crate::{Casing, Result};
 use minijinja::Environment;
 use openapi::OpenApi;
 use serde::Serialize;
 use std::collections::HashMap;
 
-/// Transform tag names to better client names based on common patterns
-pub fn normalize_tag(tag: &str) -> String {
-    // Normalize tag to lowercase for case-insensitive comparison
-    let normalized_tag = tag.to_lowercase();
-
-    // Handle special cases for better naming
-    match normalized_tag.as_str() {
-        "tweets" => "posts".to_string(),
-        _ => normalized_tag.to_lowercase(),
-    }
-}
-
-/// Convert normalized tag to PascalCase for class names
-pub fn normalize_tag_to_pascal_case(tag: &str) -> String {
-    let normalized = normalize_tag(tag);
-
-    // Convert snake_case to PascalCase
-    normalized
-        .split('_')
+fn normalize_tag(tag: &str) -> Vec<String> {
+    tag.split_whitespace()
         .map(|word| {
-            let mut chars = word.chars();
-            match chars.next() {
-                None => String::new(),
-                Some(first) => first.to_uppercase().collect::<String>() + chars.as_str(),
-            }
+            word.to_lowercase()
+                .replace("tweets", "posts")
+                .replace("tweet", "post")
         })
-        .collect::<String>()
+        .collect()
 }
 
-pub fn normalize_operation_id(operation_id: &str, _path: &str, _method: &str, tag: &str) -> String {
-    let mut words = split_into_words(operation_id);
+fn normalize_operation_id(operation_id: &str) -> Vec<String> {
+    let chars: Vec<char> = operation_id.chars().collect();
+    let mut words: Vec<String> = Vec::new();
+    let mut current = String::new();
 
-    // Generate singular/plural variations of the tag
-    let tag_variations = generate_tag_variations(tag);
-
-    // Remove the first occurrence of any tag variation
-    for variation in tag_variations {
-        if let Some(start_index) = find_tag_sequence(&words, &variation) {
-            remove_tag_sequence(&mut words, start_index, &variation);
-            break; // Only remove the first occurrence
-        }
-    }
-
-    // Convert words back to camelCase
-    words_to_camel_case(&words)
-}
-
-/// Convert a vector of words to camelCase
-fn words_to_camel_case(words: &[String]) -> String {
-    if words.is_empty() {
-        return String::new();
-    }
-
-    let mut result = String::new();
-
-    for (i, word) in words.iter().enumerate() {
-        if i == 0 {
-            // First word should be lowercase
-            result.push_str(&word.to_lowercase());
-        } else {
-            // Subsequent words should be capitalized
-            let mut chars = word.chars();
-            if let Some(first) = chars.next() {
-                result.push(first.to_uppercase().next().unwrap());
-                result.push_str(&chars.as_str().to_lowercase());
+    for i in 0..chars.len() {
+        let ch = chars[i];
+        if ch.is_uppercase() {
+            let prev_lower = i > 0 && chars[i - 1].is_lowercase();
+            let prev_upper = i > 0 && chars[i - 1].is_uppercase();
+            let next_lower = i + 1 < chars.len() && chars[i + 1].is_lowercase();
+            if !current.is_empty() && (prev_lower || (prev_upper && next_lower)) {
+                words.push(current.clone());
+                current.clear();
             }
         }
+        current.push(ch.to_lowercase().next().unwrap());
     }
 
-    result
-}
-
-/// Generate singular and plural variations of a tag for matching
-fn generate_tag_variations(tag: &str) -> Vec<String> {
-    let mut variations = vec![tag.to_string()];
-
-    // Add singular version if tag is plural
-    if tag.ends_with('s') {
-        variations.push(tag[..tag.len() - 1].to_string());
-    } else {
-        // Add plural version if tag is singular
-        variations.push(format!("{}s", tag));
+    if !current.is_empty() {
+        words.push(current);
     }
 
-    variations
+    words
 }
 
-/// Find the starting index of a tag sequence in the words vector
-fn find_tag_sequence(words: &[String], tag: &str) -> Option<usize> {
-    // Split by both underscore and space
-    let tag_words: Vec<&str> = tag.split(&['_', ' '][..]).collect();
-
-    for (i, window) in words.windows(tag_words.len()).enumerate() {
-        let window_lower: Vec<String> = window.iter().map(|w| w.to_lowercase()).collect();
-        let tag_words_string: Vec<String> = tag_words.iter().map(|&w| w.to_string()).collect();
-        if window_lower == tag_words_string {
-            return Some(i);
+fn clean_operation_id(operation_id_as_vec: Vec<String>, tag_as_vec: Vec<String>) -> Vec<String> {
+    let mut cleaned_operation_id = Vec::new();
+    for word in operation_id_as_vec {
+        if !tag_as_vec.contains(&word) {
+            cleaned_operation_id.push(word.to_lowercase());
         }
     }
-
-    None
-}
-
-/// Remove a tag sequence from the words vector starting at the given index
-fn remove_tag_sequence(words: &mut Vec<String>, start_index: usize, tag: &str) {
-    // Split by both underscore and space
-    let tag_words: Vec<&str> = tag.split(&['_', ' '][..]).collect();
-
-    // Remove the sequence of words
-    for _ in 0..tag_words.len() {
-        if start_index < words.len() {
-            words.remove(start_index);
-        }
-    }
-}
-
-/// Split a camelCase string into words based on uppercase boundaries
-fn split_into_words(s: &str) -> Vec<String> {
-    if s.is_empty() {
-        return vec![];
-    }
-
-    let mut words = Vec::new();
-    let mut current_word = String::new();
-    let chars: Vec<char> = s.chars().collect();
-
-    for (i, &ch) in chars.iter().enumerate() {
-        if ch.is_uppercase() && i > 0 {
-            // If we have a current word and encounter an uppercase letter, start a new word
-            if !current_word.is_empty() {
-                words.push(current_word.clone());
-                current_word.clear();
-            }
-            current_word.push(ch.to_lowercase().next().unwrap());
-        } else {
-            current_word.push(ch);
-        }
-    }
-
-    // Add the last word if it's not empty
-    if !current_word.is_empty() {
-        words.push(current_word);
-    }
-
-    // Filter out empty strings
-    words.into_iter().filter(|word| !word.is_empty()).collect()
+    cleaned_operation_id
 }
 
 /// Extract operations by tag from the OpenAPI specification with automatic name transformations
-pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Vec<OperationInfo>>> {
-    let mut operations_by_tag: HashMap<String, Vec<OperationInfo>> = HashMap::new();
+pub fn extract_operations_by_tag(
+    openapi: &OpenApi,
+) -> Result<HashMap<Vec<String>, Vec<OperationGroup>>> {
+    let mut operations_by_tag: HashMap<Vec<String>, Vec<OperationGroup>> = HashMap::new();
 
     /// Helper function to process an operation and add it to the operations_by_tag map
     fn process_operation(
-        operations_by_tag: &mut HashMap<String, Vec<OperationInfo>>,
+        operations_by_tag: &mut HashMap<Vec<String>, Vec<OperationGroup>>,
         path: &str,
         method: &str,
         operation: &Option<openapi::Operation>,
     ) {
         if let Some(op) = operation {
             if let Some(tags) = &op.tags {
-                // Only use the first tag
                 if let Some(first_tag) = tags.first() {
-                    // Normalize tag name
-                    let normalized_tag = normalize_tag(first_tag);
+                    let normalized_tag: Vec<String> = normalize_tag(first_tag);
 
-                    // Normalize operation ID
-                    let normalized_operation_id =
-                        normalize_operation_id(&op.operation_id, path, method, &normalized_tag);
+                    let normalized_operation_id: Vec<String> =
+                        normalize_operation_id(&op.operation_id);
 
                     let operation_info = OperationInfo {
                         path: path.to_string(),
                         method: method.to_string(),
-                        operation_id: normalized_operation_id,
+                        class_name: String::new(), // Will be set when casing is applied
+                        method_name: String::new(), // Will be set when casing is applied
                         summary: op.summary.clone(),
                         description: op.description.clone(),
                         parameters: op.parameters.clone(),
@@ -186,10 +84,19 @@ pub fn extract_operations_by_tag(openapi: &OpenApi) -> Result<HashMap<String, Ve
                         request_body: op.request_body.clone(),
                         responses: op.responses.clone(),
                     };
+                    let operation_group = OperationGroup {
+                        operation: operation_info,
+                        metadata: Metadata {
+                            normalized_operation_id: clean_operation_id(
+                                normalized_operation_id,
+                                normalized_tag.clone(),
+                            ),
+                        },
+                    };
                     operations_by_tag
                         .entry(normalized_tag)
                         .or_default()
-                        .push(operation_info);
+                        .push(operation_group);
                 }
             }
         }
@@ -213,4 +120,36 @@ pub fn render_template<C: Serialize>(
     context: &C,
 ) -> Result<String> {
     Ok(env.get_template(template)?.render(context)?)
+}
+
+/// Convert a tag vector to PascalCase format
+pub fn normalize_tag_to_pascal_case(tag: &[String]) -> String {
+    tag.iter()
+        .map(|word| {
+            let mut chars = word.chars();
+            match chars.next() {
+                None => String::new(),
+                Some(first) => {
+                    first.to_uppercase().collect::<String>() + &chars.as_str().to_lowercase()
+                }
+            }
+        })
+        .collect::<Vec<_>>()
+        .join("")
+}
+
+/// Create TagInfo with different casing variants based on language configuration
+pub fn create_tag_info(
+    tag_words: &[String],
+    class_casing: Casing,
+    import_casing: Casing,
+    property_casing: Casing,
+) -> TagInfo {
+    TagInfo {
+        original: tag_words.to_vec(),
+        class_name: class_casing.convert_words(tag_words),
+        import_name: import_casing.convert_words(tag_words),
+        property_name: property_casing.convert_words(tag_words),
+        display_name: tag_words.join(" "),
+    }
 }

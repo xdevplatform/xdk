@@ -1,5 +1,5 @@
 """
-Auto-generated pagination tests for Communities client.
+Auto-generated pagination tests for {"class_name": "Communities", "display_name": "communities", "import_name": "communities", "original": ["communities"], "property_name": "communities"} client.
 
 This module contains tests that validate pagination functionality
 using the Cursor class for methods that support pagination.
@@ -23,20 +23,20 @@ class TestCommunitiesPagination:
         self.communities_client = getattr(self.client, "communities")
 
 
-    def test_search_communities_cursor_creation(self):
-        """Test that search_communities can be used with Cursor."""
-        method = getattr(self.communities_client, "search_communities")
+    def test_search_cursor_creation(self):
+        """Test that search can be used with Cursor."""
+        method = getattr(self.communities_client, "search")
         # Should be able to create cursor without error
         try:
             test_cursor = cursor(method, "test_query", max_results=10)
             assert test_cursor is not None
             assert isinstance(test_cursor, Cursor)
         except PaginationError:
-            pytest.fail(f"Method searchCommunities should support pagination")
+            pytest.fail(f"Method search should support pagination")
 
 
-    def test_search_communities_cursor_pages(self):
-        """Test pagination with pages() for search_communities."""
+    def test_search_cursor_pages(self):
+        """Test pagination with pages() for search."""
         with patch.object(self.client, "session") as mock_session:
             # Mock first page response
             first_page_response = Mock()
@@ -57,7 +57,7 @@ class TestCommunitiesPagination:
             # Return different responses for consecutive calls
             mock_session.get.side_effect = [first_page_response, second_page_response]
             # Test pagination
-            method = getattr(self.communities_client, "search_communities")
+            method = getattr(self.communities_client, "search")
             test_cursor = cursor(method, "test_query", max_results=2)
             pages = list(test_cursor.pages(2))  # Limit to 2 pages
             assert len(pages) == 2, f"Should get 2 pages, got {len(pages)}"
@@ -73,8 +73,8 @@ class TestCommunitiesPagination:
             assert len(second_data) == 1, "Second page should have 1 item"
 
 
-    def test_search_communities_cursor_items(self):
-        """Test pagination with items() for search_communities."""
+    def test_search_cursor_items(self):
+        """Test pagination with items() for search."""
         with patch.object(self.client, "session") as mock_session:
             # Mock response with paginated data
             mock_response = Mock()
@@ -93,7 +93,7 @@ class TestCommunitiesPagination:
             mock_response.raise_for_status.return_value = None
             mock_session.get.return_value = mock_response
             # Test item iteration
-            method = getattr(self.communities_client, "search_communities")
+            method = getattr(self.communities_client, "search")
             test_cursor = cursor(method, "test_query", max_results=10)
             items = list(test_cursor.items(5))  # Limit to 5 items
             assert len(items) == 3, f"Should get 3 items, got {len(items)}"
@@ -104,15 +104,15 @@ class TestCommunitiesPagination:
                 ), "Items should have 'id' field"
 
 
-    def test_search_communities_pagination_parameters(self):
-        """Test that pagination parameters are handled correctly for search_communities."""
+    def test_search_pagination_parameters(self):
+        """Test that pagination parameters are handled correctly for search."""
         with patch.object(self.client, "session") as mock_session:
             mock_response = Mock()
             mock_response.status_code = 200
             mock_response.json.return_value = {"data": [], "meta": {"result_count": 0}}
             mock_response.raise_for_status.return_value = None
             mock_session.get.return_value = mock_response
-            method = getattr(self.communities_client, "search_communities")
+            method = getattr(self.communities_client, "search")
             # Test with max_results parameter
             test_cursor = cursor(method, "test_query", max_results=5)
             list(test_cursor.pages(1))  # Trigger one request
@@ -175,7 +175,7 @@ class TestCommunitiesPagination:
             empty_response.raise_for_status.return_value = None
             mock_session.get.return_value = empty_response
             # Pick first paginatable method for testing
-            method = getattr(self.communities_client, "search_communities")
+            method = getattr(self.communities_client, "search")
             test_cursor = cursor(method, "test_query", max_results=10)
             # Should handle empty responses gracefully
             pages = list(test_cursor.pages(1))

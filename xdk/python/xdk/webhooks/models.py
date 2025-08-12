@@ -1,7 +1,7 @@
 """
-Webhooks models for the X API.
+webhooks models for the X API.
 
-This module provides models for the Webhooks endpoints of the X API.
+This module provides models for the webhooks endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
@@ -9,80 +9,80 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for validateWebhooks
+# Models for validate
 
 
-class ValidateWebhooksResponse(BaseModel):
-    """Response model for validateWebhooks"""
+class ValidateResponse(BaseModel):
+    """Response model for validate"""
 
-    data: Optional["ValidateWebhooksResponseData"] = None
+    data: Optional["ValidateResponseData"] = None
     errors: Optional[List] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class ValidateWebhooksResponseData(BaseModel):
-    """Nested model for ValidateWebhooksResponseData"""
+class ValidateResponseData(BaseModel):
+    """Nested model for ValidateResponseData"""
 
     attempted: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for deleteWebhooks
+# Models for delete
 
 
-class DeleteWebhooksResponse(BaseModel):
-    """Response model for deleteWebhooks"""
+class DeleteResponse(BaseModel):
+    """Response model for delete"""
 
-    data: Optional["DeleteWebhooksResponseData"] = None
+    data: Optional["DeleteResponseData"] = None
     errors: Optional[List] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class DeleteWebhooksResponseData(BaseModel):
-    """Nested model for DeleteWebhooksResponseData"""
+class DeleteResponseData(BaseModel):
+    """Nested model for DeleteResponseData"""
 
     deleted: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for getWebhooks
+# Models for get
 
 
-class GetWebhooksResponse(BaseModel):
-    """Response model for getWebhooks"""
+class GetResponse(BaseModel):
+    """Response model for get"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    meta: Optional["GetWebhooksResponseMeta"] = None
+    meta: Optional["GetResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetWebhooksResponseMeta(BaseModel):
-    """Nested model for GetWebhooksResponseMeta"""
+class GetResponseMeta(BaseModel):
+    """Nested model for GetResponseMeta"""
 
     result_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for createWebhooks
+# Models for create
 
 
-class CreateWebhooksRequest(BaseModel):
-    """Request model for createWebhooks"""
+class CreateRequest(BaseModel):
+    """Request model for create"""
 
     url: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class CreateWebhooksResponse(BaseModel):
-    """Response model for createWebhooks"""
+class CreateResponse(BaseModel):
+    """Response model for create"""
 
     created_at: Optional[str] = None
     id: Optional[str] = None

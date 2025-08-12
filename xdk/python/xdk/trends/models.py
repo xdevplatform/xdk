@@ -1,7 +1,7 @@
 """
-Trends models for the X API.
+trends models for the X API.
 
-This module provides models for the Trends endpoints of the X API.
+This module provides models for the trends endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
@@ -9,11 +9,11 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for getUsersPersonalizedTrends
+# Models for get_personalized
 
 
-class GetUsersPersonalizedTrendsResponse(BaseModel):
-    """Response model for getUsersPersonalizedTrends"""
+class GetPersonalizedResponse(BaseModel):
+    """Response model for get_personalized"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
@@ -21,11 +21,11 @@ class GetUsersPersonalizedTrendsResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for getTrendsByWoeid
+# Models for get_by_woeid
 
 
-class GetTrendsByWoeidResponse(BaseModel):
-    """Response model for getTrendsByWoeid"""
+class GetByWoeidResponse(BaseModel):
+    """Response model for get_by_woeid"""
 
     data: Optional[List] = None
     errors: Optional[List] = None

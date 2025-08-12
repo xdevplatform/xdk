@@ -122,6 +122,7 @@
 //!
 //! This system enables the XDK generator to produce comprehensive, realistic test suites for any
 //! target language while maintaining consistency and leveraging the full OpenAPI specification.
+use crate::Casing;
 use crate::models::OperationInfo;
 use openapi::{Parameter, RefOrValue, RequestBody, Schema, TypedSchema};
 use serde::Serialize;
@@ -154,10 +155,10 @@ pub struct StructuralTest {
 /// Method signature information for structural testing
 #[derive(Debug, Serialize, Clone)]
 pub struct MethodSignature {
-    /// Method name (e.g., "get_users")
+    /// Method name (e.g., "get_users") - cased for the target language
     pub method_name: String,
-    /// Original operation ID from OpenAPI
-    pub operation_id: String,
+    /// Class name (e.g., "GetUsers") - for Request/Response models
+    pub class_name: String,
     /// Required parameters
     pub required_params: Vec<TestParameter>,
     /// Optional parameters
@@ -171,8 +172,10 @@ pub struct MethodSignature {
 /// Parameter information for testing
 #[derive(Debug, Serialize, Clone)]
 pub struct TestParameter {
-    /// Parameter name
+    /// Parameter name (original from OpenAPI)
     pub name: String,
+    /// Variable name (cased for the target language)
+    pub variable_name: String,
     /// Parameter type (language-neutral)
     pub param_type: String,
     /// Where the parameter goes (query, path, header, body)
@@ -186,8 +189,10 @@ pub struct TestParameter {
 /// Contract test specification
 #[derive(Debug, Serialize, Clone)]
 pub struct ContractTest {
-    /// Operation ID being tested
-    pub operation_id: String,
+    /// Method name (cased for target language, e.g., "get_users")
+    pub method_name: String,
+    /// Class name (cased for models, e.g., "GetUsers")
+    pub class_name: String,
     /// HTTP method
     pub method: String,
     /// URL path template
@@ -231,8 +236,6 @@ pub struct ResponseField {
 /// Pagination test specification
 #[derive(Debug, Serialize, Clone)]
 pub struct PaginationTest {
-    /// Operation ID that supports pagination
-    pub operation_id: String,
     /// Method name for testing
     pub method_name: String,
     /// Required parameters for this operation (excluding pagination params)
@@ -250,8 +253,8 @@ pub struct PaginationTest {
 /// Mock scenario for integration testing
 #[derive(Debug, Serialize, Clone)]
 pub struct MockScenario {
-    /// Operation ID this scenario tests
-    pub operation_id: String,
+    /// Method name this scenario tests
+    pub method_name: String,
     /// Scenario name (e.g., "success", "not_found", "rate_limit")
     pub scenario_name: String,
     /// HTTP status code to mock
@@ -330,11 +333,11 @@ fn generate_method_signature(operation: &OperationInfo) -> MethodSignature {
     let (required_params, optional_params) = extract_parameters(operation);
 
     MethodSignature {
-        method_name: operation.operation_id.clone(),
-        operation_id: operation.operation_id.clone(),
+        method_name: operation.method_name.clone(),
+        class_name: operation.class_name.clone(),
         required_params,
         optional_params,
-        return_type: format!("{}Response", operation.operation_id),
+        return_type: format!("{}Response", operation.class_name),
         supports_pagination: detect_pagination_support(operation),
     }
 }
@@ -363,6 +366,7 @@ fn extract_parameters(operation: &OperationInfo) -> (Vec<TestParameter>, Vec<Tes
 
                     let test_param = TestParameter {
                         name: name.clone(),
+                        variable_name: Casing::Snake.convert_words(&[name.clone()]), // TODO: Should be dynamic based on config
                         param_type,
                         location: location.clone(),
                         required: is_required,
@@ -405,7 +409,8 @@ fn generate_contract_test(operation: &OperationInfo) -> ContractTest {
     let (required_params, optional_params) = extract_parameters(operation);
 
     ContractTest {
-        operation_id: operation.operation_id.clone(),
+        method_name: operation.method_name.clone(),
+        class_name: operation.class_name.clone(),
         method: operation.method.clone(),
         path: operation.path.clone(),
         required_params,
@@ -585,8 +590,7 @@ fn generate_pagination_test(operation: &OperationInfo) -> PaginationTest {
         .collect();
 
     PaginationTest {
-        operation_id: operation.operation_id.clone(),
-        method_name: operation.operation_id.clone(),
+        method_name: operation.method_name.clone(),
         required_params: filtered_required_params,
         token_param,
         max_results_param,
@@ -627,7 +631,7 @@ fn generate_mock_scenarios(operation: &OperationInfo) -> Vec<MockScenario> {
 
     // Success scenario
     scenarios.push(MockScenario {
-        operation_id: operation.operation_id.clone(),
+        method_name: operation.method_name.clone(),
         scenario_name: "success".to_string(),
         status_code: 200,
         response_body: generate_success_response(operation),
@@ -637,7 +641,7 @@ fn generate_mock_scenarios(operation: &OperationInfo) -> Vec<MockScenario> {
 
     // Error scenarios
     scenarios.push(MockScenario {
-        operation_id: operation.operation_id.clone(),
+        method_name: operation.method_name.clone(),
         scenario_name: "not_found".to_string(),
         status_code: 404,
         response_body: serde_json::json!({
@@ -651,7 +655,7 @@ fn generate_mock_scenarios(operation: &OperationInfo) -> Vec<MockScenario> {
     });
 
     scenarios.push(MockScenario {
-        operation_id: operation.operation_id.clone(),
+        method_name: operation.method_name.clone(),
         scenario_name: "rate_limit".to_string(),
         status_code: 429,
         response_body: serde_json::json!({

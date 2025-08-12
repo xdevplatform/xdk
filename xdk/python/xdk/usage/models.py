@@ -1,7 +1,7 @@
 """
-Usage models for the X API.
+usage models for the X API.
 
-This module provides models for the Usage endpoints of the X API.
+This module provides models for the usage endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
@@ -9,24 +9,24 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for getUsage
+# Models for get
 
 
-class GetUsageResponse(BaseModel):
-    """Response model for getUsage"""
+class GetResponse(BaseModel):
+    """Response model for get"""
 
-    data: Optional["GetUsageResponseData"] = None
+    data: Optional["GetResponseData"] = None
     errors: Optional[List] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetUsageResponseData(BaseModel):
-    """Nested model for GetUsageResponseData"""
+class GetResponseData(BaseModel):
+    """Nested model for GetResponseData"""
 
     cap_reset_day: Optional[int] = None
     daily_client_app_usage: Optional[List] = None
-    daily_project_usage: Optional["GetUsageResponseDataDailyProjectUsage"] = None
+    daily_project_usage: Optional["GetResponseDataDailyProjectUsage"] = None
     project_cap: Optional[int] = None
     project_id: Optional[str] = None
     project_usage: Optional[int] = None
@@ -34,8 +34,8 @@ class GetUsageResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetUsageResponseDataDailyProjectUsage(BaseModel):
-    """Nested model for GetUsageResponseDataDailyProjectUsage"""
+class GetResponseDataDailyProjectUsage(BaseModel):
+    """Nested model for GetResponseDataDailyProjectUsage"""
 
     project_id: Optional[int] = None
     usage: Optional[List] = None

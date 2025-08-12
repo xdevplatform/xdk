@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for Account_Activity client.
+Auto-generated generic tests for {"class_name": "AccountActivity", "display_name": "account activity", "import_name": "account_activity", "original": ["account", "activity"], "property_name": "account_activity"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be

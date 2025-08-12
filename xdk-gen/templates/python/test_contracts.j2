@@ -10,21 +10,21 @@ Generated automatically - do not edit manually.
 import pytest
 import json
 from unittest.mock import Mock, patch
-from xdk.{{ tag|lower }}.client import {{ tag|pascal_case }}Client
+from xdk.{{ tag.import_name }}.client import {{ tag.class_name }}Client
 from xdk import Client
 
 
-class Test{{ tag|pascal_case }}Contracts:
-    """Test the API contracts of {{ tag|pascal_case }}Client."""
+class Test{{ tag.class_name }}Contracts:
+    """Test the API contracts of {{ tag.class_name }}Client."""
     
     def setup_class(self):
         """Set up test fixtures."""
         self.client = Client(base_url="https://api.example.com")
-        self.{{ tag|lower }}_client = getattr(self.client, "{{ tag|lower }}")
+        self.{{ tag.property_name }}_client = getattr(self.client, "{{ tag.property_name }}")
     
     {% for contract_test in test_spec.contract_tests %}
-    def test_{{ contract_test.operation_id|snake_case }}_request_structure(self):
-        """Test {{ contract_test.operation_id|snake_case }} request structure."""
+    def test_{{ contract_test.method_name }}_request_structure(self):
+        """Test {{ contract_test.method_name }} request structure."""
         
         # Mock the session to capture request details
         with patch.object(self.client, 'session') as mock_session:
@@ -69,14 +69,14 @@ class Test{{ tag|pascal_case }}Contracts:
             # Add request body if required
             {% if contract_test.request_body_schema %}
             # Import and create proper request model instance
-            from xdk.{{ tag|lower }}.models import {{ contract_test.operation_id|pascal_case }}Request
+            from xdk.{{ tag.property_name }}.models import {{ contract_test.class_name }}Request
             # Create instance with minimal valid data (empty instance should work for most cases)
-            kwargs["body"] = {{ contract_test.operation_id|pascal_case }}Request()
+            kwargs["body"] = {{ contract_test.class_name }}Request()
             {% endif %}
             
             # Call the method
             try:
-                method = getattr(self.{{ tag|lower }}_client, "{{ contract_test.operation_id|snake_case }}")
+                method = getattr(self.{{ tag.property_name }}_client, "{{ contract_test.method_name }}")
                 result = method(**kwargs)
                 
                 # Verify the request was made
@@ -96,11 +96,11 @@ class Test{{ tag|pascal_case }}Contracts:
                 assert result is not None, "Method should return a result"
                 
             except Exception as e:
-                pytest.fail(f"Contract test failed for {{ contract_test.operation_id|snake_case }}: {e}")
+                pytest.fail(f"Contract test failed for {{ contract_test.method_name }}: {e}")
     
-    def test_{{ contract_test.operation_id|snake_case }}_required_parameters(self):
-        """Test that {{ contract_test.operation_id|snake_case }} handles parameters correctly."""
-        method = getattr(self.{{ tag|lower }}_client, "{{ contract_test.operation_id|snake_case }}")
+    def test_{{ contract_test.method_name }}_required_parameters(self):
+        """Test that {{ contract_test.method_name }} handles parameters correctly."""
+        method = getattr(self.{{ tag.property_name }}_client, "{{ contract_test.method_name }}")
         
         {% if contract_test.required_params or contract_test.request_body_schema %}
         # Test with missing required parameters - mock the request to avoid network calls
@@ -130,8 +130,8 @@ class Test{{ tag|pascal_case }}Contracts:
                 pytest.fail(f"Method with no required params should be callable: {e}")
         {% endif %}
     
-    def test_{{ contract_test.operation_id|snake_case }}_response_structure(self):
-        """Test {{ contract_test.operation_id|snake_case }} response structure validation."""
+    def test_{{ contract_test.method_name }}_response_structure(self):
+        """Test {{ contract_test.method_name }} response structure validation."""
         
         with patch.object(self.client, 'session') as mock_session:
             # Create mock response with expected structure
@@ -186,13 +186,13 @@ class Test{{ tag|pascal_case }}Contracts:
             # Add request body if required
             {% if contract_test.request_body_schema %}
             # Import and create proper request model instance
-            from xdk.{{ tag|lower }}.models import {{ contract_test.operation_id|pascal_case }}Request
+            from xdk.{{ tag.property_name }}.models import {{ contract_test.class_name }}Request
             # Create instance with minimal valid data (empty instance should work for most cases)
-            kwargs["body"] = {{ contract_test.operation_id|pascal_case }}Request()
+            kwargs["body"] = {{ contract_test.class_name }}Request()
             {% endif %}
             
             # Call method and verify response structure
-            method = getattr(self.{{ tag|lower }}_client, "{{ contract_test.operation_id|snake_case }}")
+            method = getattr(self.{{ tag.property_name }}_client, "{{ contract_test.method_name }}")
             result = method(**kwargs)
             
             # Verify response object has expected attributes

@@ -1,7 +1,7 @@
 """
-Community_Notes client for the X API.
+community notes client for the X API.
 
-This module provides a client for interacting with the Community_Notes endpoints of the X API.
+This module provides a client for interacting with the community notes endpoints of the X API.
 """
 
 from __future__ import annotations
@@ -12,114 +12,29 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    CreateNotesRequest,
-    CreateNotesResponse,
-    DeleteNotesResponse,
-    SearchNotesWrittenResponse,
-    SearchForEligiblePostsResponse,
+    SearchWrittenResponse,
+    CreateRequest,
+    CreateResponse,
+    DeleteResponse,
+    SearchEligiblePostsResponse,
 )
 
 
 class CommunityNotesClient:
-    """Client for Community_Notes operations"""
+    """Client for community notes operations"""
 
 
     def __init__(self, client: Client):
         self.client = client
 
 
-    def create_notes(
-        self,
-        body: Optional[CreateNotesRequest] = None,
-    ) -> CreateNotesResponse:
-        """
-        Create a Community Note
-        Creates a community note endpoint for LLM use case.
-            body: Request body
-        Returns:
-            CreateNotesResponse: Response data
-        """
-        url = self.client.base_url + "/2/notes"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return CreateNotesResponse.model_validate(response_data)
-
-
-    def delete_notes(
-        self,
-        id: str,
-    ) -> DeleteNotesResponse:
-        """
-        Delete a Community Note
-        Deletes a community note.
-        Args:
-            id: The community note id to delete.
-        Returns:
-            DeleteNotesResponse: Response data
-        """
-        url = self.client.base_url + "/2/notes/{id}"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.delete(
-                url,
-                params=params,
-                headers=headers,
-            )
-        else:
-            response = self.client.session.delete(
-                url,
-                params=params,
-                headers=headers,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return DeleteNotesResponse.model_validate(response_data)
-
-
-    def search_notes_written(
+    def search_written(
         self,
         test_mode: bool,
         pagination_token: str = None,
         max_results: int = None,
         note_fields: List = None,
-    ) -> SearchNotesWrittenResponse:
+    ) -> SearchWrittenResponse:
         """
         Search for Community Notes Written
         Returns all the community notes written by the user.
@@ -132,7 +47,7 @@ class CommunityNotesClient:
         Args:
             note_fields: A comma separated list of Note fields to display.
         Returns:
-            SearchNotesWrittenResponse: Response data
+            SearchWrittenResponse: Response data
         """
         url = self.client.base_url + "/2/notes/search/notes_written"
         # Ensure we have a valid access token
@@ -168,10 +83,95 @@ class CommunityNotesClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return SearchNotesWrittenResponse.model_validate(response_data)
+        return SearchWrittenResponse.model_validate(response_data)
 
 
-    def search_for_eligible_posts(
+    def create(
+        self,
+        body: Optional[CreateRequest] = None,
+    ) -> CreateResponse:
+        """
+        Create a Community Note
+        Creates a community note endpoint for LLM use case.
+            body: Request body
+        Returns:
+            CreateResponse: Response data
+        """
+        url = self.client.base_url + "/2/notes"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return CreateResponse.model_validate(response_data)
+
+
+    def delete(
+        self,
+        id: str,
+    ) -> DeleteResponse:
+        """
+        Delete a Community Note
+        Deletes a community note.
+        Args:
+            id: The community note id to delete.
+        Returns:
+            DeleteResponse: Response data
+        """
+        url = self.client.base_url + "/2/notes/{id}"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.delete(
+                url,
+                params=params,
+                headers=headers,
+            )
+        else:
+            response = self.client.session.delete(
+                url,
+                params=params,
+                headers=headers,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return DeleteResponse.model_validate(response_data)
+
+
+    def search_eligible_posts(
         self,
         test_mode: bool,
         pagination_token: str = None,
@@ -182,7 +182,7 @@ class CommunityNotesClient:
         poll_fields: List = None,
         user_fields: List = None,
         place_fields: List = None,
-    ) -> SearchForEligiblePostsResponse:
+    ) -> SearchEligiblePostsResponse:
         """
         Search for Posts Eligible for Community Notes
         Returns all the posts that are eligible for community notes.
@@ -205,7 +205,7 @@ class CommunityNotesClient:
         Args:
             place_fields: A comma separated list of Place fields to display.
         Returns:
-            SearchForEligiblePostsResponse: Response data
+            SearchEligiblePostsResponse: Response data
         """
         url = self.client.base_url + "/2/notes/search/posts_eligible_for_notes"
         # Ensure we have a valid access token
@@ -251,4 +251,4 @@ class CommunityNotesClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return SearchForEligiblePostsResponse.model_validate(response_data)
+        return SearchEligiblePostsResponse.model_validate(response_data)

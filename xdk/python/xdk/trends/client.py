@@ -1,7 +1,7 @@
 """
-Trends client for the X API.
+trends client for the X API.
 
-This module provides a client for interacting with the Trends endpoints of the X API.
+This module provides a client for interacting with the trends endpoints of the X API.
 """
 
 from __future__ import annotations
@@ -12,30 +12,30 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    GetUsersPersonalizedTrendsResponse,
-    GetTrendsByWoeidResponse,
+    GetPersonalizedResponse,
+    GetByWoeidResponse,
 )
 
 
 class TrendsClient:
-    """Client for Trends operations"""
+    """Client for trends operations"""
 
 
     def __init__(self, client: Client):
         self.client = client
 
 
-    def get_users_personalized_trends(
+    def get_personalized(
         self,
         personalized_trend_fields: List = None,
-    ) -> GetUsersPersonalizedTrendsResponse:
+    ) -> GetPersonalizedResponse:
         """
         Get personalized Trends
         Retrieves personalized trending topics for the authenticated user.
         Args:
             personalized_trend_fields: A comma separated list of PersonalizedTrend fields to display.
         Returns:
-            GetUsersPersonalizedTrendsResponse: Response data
+            GetPersonalizedResponse: Response data
         """
         url = self.client.base_url + "/2/users/personalized_trends"
         # Ensure we have a valid access token
@@ -67,15 +67,15 @@ class TrendsClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return GetUsersPersonalizedTrendsResponse.model_validate(response_data)
+        return GetPersonalizedResponse.model_validate(response_data)
 
 
-    def get_trends_by_woeid(
+    def get_by_woeid(
         self,
         woeid: int,
         max_trends: int = None,
         trend_fields: List = None,
-    ) -> GetTrendsByWoeidResponse:
+    ) -> GetByWoeidResponse:
         """
         Get Trends by WOEID
         Retrieves trending topics for a specific location identified by its WOEID.
@@ -86,7 +86,7 @@ class TrendsClient:
         Args:
             trend_fields: A comma separated list of Trend fields to display.
         Returns:
-            GetTrendsByWoeidResponse: Response data
+            GetByWoeidResponse: Response data
         """
         url = self.client.base_url + "/2/trends/by/woeid/{woeid}"
         if self.client.bearer_token:
@@ -115,4 +115,4 @@ class TrendsClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return GetTrendsByWoeidResponse.model_validate(response_data)
+        return GetByWoeidResponse.model_validate(response_data)

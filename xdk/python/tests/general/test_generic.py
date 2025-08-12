@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for General client.
+Auto-generated generic tests for {"class_name": "General", "display_name": "general", "import_name": "general", "original": ["general"], "property_name": "general"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be

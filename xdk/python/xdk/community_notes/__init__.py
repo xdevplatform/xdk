@@ -1,7 +1,7 @@
 """
-Community_Notes module for the X API.
+community notes module for the X API.
 
-This module provides access to the Community_Notes endpoints of the X API.
+This module provides access to the community notes endpoints of the X API.
 """
 
 from .client import CommunityNotesClient

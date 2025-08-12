@@ -1,8 +1,8 @@
 """
-Auto-generated contract tests for General client.
+Auto-generated contract tests for {"class_name": "General", "display_name": "general", "import_name": "general", "original": ["general"], "property_name": "general"} client.
 
 This module contains tests that validate the request/response contracts
-of the General client against the OpenAPI specification.
+of the {"class_name": "General", "display_name": "general", "import_name": "general", "original": ["general"], "property_name": "general"} client against the OpenAPI specification.
 
 Generated automatically - do not edit manually.
 """

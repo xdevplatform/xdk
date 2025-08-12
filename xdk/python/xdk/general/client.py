@@ -1,7 +1,7 @@
 """
-General client for the X API.
+general client for the X API.
 
-This module provides a client for interacting with the General endpoints of the X API.
+This module provides a client for interacting with the general endpoints of the X API.
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from .models import (
 
 
 class GeneralClient:
-    """Client for General operations"""
+    """Client for general operations"""
 
 
     def __init__(self, client: Client):

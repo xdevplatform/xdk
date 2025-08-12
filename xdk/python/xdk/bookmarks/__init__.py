@@ -1,7 +1,7 @@
 """
-Bookmarks module for the X API.
+bookmarks module for the X API.
 
-This module provides access to the Bookmarks endpoints of the X API.
+This module provides access to the bookmarks endpoints of the X API.
 """
 
 from .client import BookmarksClient

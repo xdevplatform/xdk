@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for Media client.
+Auto-generated generic tests for {"class_name": "Media", "display_name": "media", "import_name": "media", "original": ["media"], "property_name": "media"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be

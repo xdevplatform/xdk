@@ -1,7 +1,7 @@
 """
-Communities models for the X API.
+communities models for the X API.
 
-This module provides models for the Communities endpoints of the X API.
+This module provides models for the communities endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
@@ -9,34 +9,34 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for searchCommunities
+# Models for search
 
 
-class SearchCommunitiesResponse(BaseModel):
-    """Response model for searchCommunities"""
+class SearchResponse(BaseModel):
+    """Response model for search"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    meta: Optional["SearchCommunitiesResponseMeta"] = None
+    meta: Optional["SearchResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class SearchCommunitiesResponseMeta(BaseModel):
-    """Nested model for SearchCommunitiesResponseMeta"""
+class SearchResponseMeta(BaseModel):
+    """Nested model for SearchResponseMeta"""
 
     next_token: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for getCommunitiesById
+# Models for get_by_id
 
 
-class GetCommunitiesByIdResponse(BaseModel):
-    """Response model for getCommunitiesById"""
+class GetByIdResponse(BaseModel):
+    """Response model for get_by_id"""
 
-    data: Optional["GetCommunitiesByIdResponseData"] = Field(
+    data: Optional["GetByIdResponseData"] = Field(
         description="A X Community is a curated group of Posts.", default_factory=dict
     )
     errors: Optional[List] = None
@@ -44,8 +44,8 @@ class GetCommunitiesByIdResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetCommunitiesByIdResponseData(BaseModel):
-    """Nested model for GetCommunitiesByIdResponseData"""
+class GetByIdResponseData(BaseModel):
+    """Nested model for GetByIdResponseData"""
 
     created_at: Optional[str] = None
     id: Optional[str] = None

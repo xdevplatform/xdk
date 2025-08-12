@@ -1,8 +1,8 @@
 """
-Auto-generated structural tests for Usage client.
+Auto-generated structural tests for {"class_name": "Usage", "display_name": "usage", "import_name": "usage", "original": ["usage"], "property_name": "usage"} client.
 
 This module contains tests that validate the structure and API surface
-of the Usage client. These tests ensure that all expected methods
+of the {"class_name": "Usage", "display_name": "usage", "import_name": "usage", "original": ["usage"], "property_name": "usage"} client. These tests ensure that all expected methods
 exist and have the correct signatures.
 
 Generated automatically - do not edit manually.
@@ -25,18 +25,18 @@ class TestUsageStructure:
         self.usage_client = getattr(self.client, "usage")
 
 
-    def test_get_usage_exists(self):
-        """Test that get_usage method exists with correct signature."""
+    def test_get_exists(self):
+        """Test that get method exists with correct signature."""
         # Check method exists
-        method = getattr(UsageClient, "get_usage", None)
-        assert method is not None, f"Method get_usage does not exist on UsageClient"
+        method = getattr(UsageClient, "get", None)
+        assert method is not None, f"Method get does not exist on UsageClient"
         # Check method is callable
-        assert callable(method), f"get_usage is not callable"
+        assert callable(method), f"get is not callable"
         # Check method signature
         sig = inspect.signature(method)
         params = list(sig.parameters.keys())
         # Should have 'self' as first parameter
-        assert len(params) >= 1, f"get_usage should have at least 'self' parameter"
+        assert len(params) >= 1, f"get should have at least 'self' parameter"
         assert (
             params[0] == "self"
         ), f"First parameter should be 'self', got '{params[0]}'"
@@ -45,7 +45,7 @@ class TestUsageStructure:
         for required_param in required_params:
             assert (
                 required_param in params
-            ), f"Required parameter '{required_param}' missing from get_usage"
+            ), f"Required parameter '{required_param}' missing from get"
         # Check optional parameters have defaults (excluding 'self')
         optional_params = [
             "days",
@@ -58,20 +58,20 @@ class TestUsageStructure:
                 ), f"Optional parameter '{optional_param}' should have a default value"
 
 
-    def test_get_usage_return_annotation(self):
-        """Test that get_usage has proper return type annotation."""
-        method = getattr(UsageClient, "get_usage")
+    def test_get_return_annotation(self):
+        """Test that get has proper return type annotation."""
+        method = getattr(UsageClient, "get")
         sig = inspect.signature(method)
         # Check return annotation exists
         assert (
             sig.return_annotation is not inspect.Signature.empty
-        ), f"Method get_usage should have return type annotation"
+        ), f"Method get should have return type annotation"
 
 
     def test_all_expected_methods_exist(self):
         """Test that all expected methods exist on the client."""
         expected_methods = [
-            "get_usage",
+            "get",
         ]
         for expected_method in expected_methods:
             assert hasattr(

@@ -1,8 +1,8 @@
 """
-Auto-generated contract tests for Usage client.
+Auto-generated contract tests for {"class_name": "Usage", "display_name": "usage", "import_name": "usage", "original": ["usage"], "property_name": "usage"} client.
 
 This module contains tests that validate the request/response contracts
-of the Usage client against the OpenAPI specification.
+of the {"class_name": "Usage", "display_name": "usage", "import_name": "usage", "original": ["usage"], "property_name": "usage"} client against the OpenAPI specification.
 
 Generated automatically - do not edit manually.
 """
@@ -24,8 +24,8 @@ class TestUsageContracts:
         self.usage_client = getattr(self.client, "usage")
 
 
-    def test_get_usage_request_structure(self):
-        """Test get_usage request structure."""
+    def test_get_request_structure(self):
+        """Test get request structure."""
         # Mock the session to capture request details
         with patch.object(self.client, "session") as mock_session:
             mock_response = Mock()
@@ -41,7 +41,7 @@ class TestUsageContracts:
             # Add request body if required
             # Call the method
             try:
-                method = getattr(self.usage_client, "get_usage")
+                method = getattr(self.usage_client, "get")
                 result = method(**kwargs)
                 # Verify the request was made
                 mock_session.get.assert_called_once()
@@ -60,12 +60,12 @@ class TestUsageContracts:
                 # Verify response structure
                 assert result is not None, "Method should return a result"
             except Exception as e:
-                pytest.fail(f"Contract test failed for get_usage: {e}")
+                pytest.fail(f"Contract test failed for get: {e}")
 
 
-    def test_get_usage_required_parameters(self):
-        """Test that get_usage handles parameters correctly."""
-        method = getattr(self.usage_client, "get_usage")
+    def test_get_required_parameters(self):
+        """Test that get handles parameters correctly."""
+        method = getattr(self.usage_client, "get")
         # No required parameters, method should be callable without args
         with patch.object(self.client, "session") as mock_session:
             mock_response = Mock()
@@ -79,8 +79,8 @@ class TestUsageContracts:
                 pytest.fail(f"Method with no required params should be callable: {e}")
 
 
-    def test_get_usage_response_structure(self):
-        """Test get_usage response structure validation."""
+    def test_get_response_structure(self):
+        """Test get response structure validation."""
         with patch.object(self.client, "session") as mock_session:
             # Create mock response with expected structure
             mock_response_data = {
@@ -95,7 +95,7 @@ class TestUsageContracts:
             kwargs = {}
             # Add request body if required
             # Call method and verify response structure
-            method = getattr(self.usage_client, "get_usage")
+            method = getattr(self.usage_client, "get")
             result = method(**kwargs)
             # Verify response object has expected attributes
             # Optional field - just check it doesn't cause errors if accessed

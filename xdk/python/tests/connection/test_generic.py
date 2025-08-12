@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for Connection client.
+Auto-generated generic tests for {"class_name": "Connection", "display_name": "connection", "import_name": "connection", "original": ["connection"], "property_name": "connection"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be

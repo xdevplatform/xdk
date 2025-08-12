@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for Webhooks client.
+Auto-generated generic tests for {"class_name": "Webhooks", "display_name": "webhooks", "import_name": "webhooks", "original": ["webhooks"], "property_name": "webhooks"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be

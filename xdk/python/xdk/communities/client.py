@@ -1,7 +1,7 @@
 """
-Communities client for the X API.
+communities client for the X API.
 
-This module provides a client for interacting with the Communities endpoints of the X API.
+This module provides a client for interacting with the communities endpoints of the X API.
 """
 
 from __future__ import annotations
@@ -12,27 +12,27 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    SearchCommunitiesResponse,
-    GetCommunitiesByIdResponse,
+    SearchResponse,
+    GetByIdResponse,
 )
 
 
 class CommunitiesClient:
-    """Client for Communities operations"""
+    """Client for communities operations"""
 
 
     def __init__(self, client: Client):
         self.client = client
 
 
-    def search_communities(
+    def search(
         self,
         query: str,
         max_results: int = None,
         next_token: str = None,
         pagination_token: str = None,
         community_fields: List = None,
-    ) -> SearchCommunitiesResponse:
+    ) -> SearchResponse:
         """
         Search Communities
         Retrieves a list of Communities matching the specified search query.
@@ -47,7 +47,7 @@ class CommunitiesClient:
         Args:
             community_fields: A comma separated list of Community fields to display.
         Returns:
-            SearchCommunitiesResponse: Response data
+            SearchResponse: Response data
         """
         url = self.client.base_url + "/2/communities/search"
         # Ensure we have a valid access token
@@ -87,14 +87,14 @@ class CommunitiesClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return SearchCommunitiesResponse.model_validate(response_data)
+        return SearchResponse.model_validate(response_data)
 
 
-    def get_communities_by_id(
+    def get_by_id(
         self,
         id: str,
         community_fields: List = None,
-    ) -> GetCommunitiesByIdResponse:
+    ) -> GetByIdResponse:
         """
         Get Community by ID
         Retrieves details of a specific Community by its ID.
@@ -103,7 +103,7 @@ class CommunitiesClient:
         Args:
             community_fields: A comma separated list of Community fields to display.
         Returns:
-            GetCommunitiesByIdResponse: Response data
+            GetByIdResponse: Response data
         """
         url = self.client.base_url + "/2/communities/{id}"
         if self.client.bearer_token:
@@ -137,4 +137,4 @@ class CommunitiesClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return GetCommunitiesByIdResponse.model_validate(response_data)
+        return GetByIdResponse.model_validate(response_data)

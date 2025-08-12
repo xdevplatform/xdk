@@ -27,14 +27,14 @@ client = Client(
 )
 
 # Use the client to interact with the X API
-# For example, to get tweets:
-tweets = client.tweets.get_tweets(ids=["1234567890"])
+# For example, to get posts:
+posts = client.posts.get(ids=["1234567890"])
 
-# To search for tweets:
-search_results = client.tweets.tweets_recent_search(query="python")
+# To search for posts:
+search_results = client.posts.recent_search(query="python")
 
-# To post a tweet:
-tweet = client.tweets.post_tweets(tweet_data={"text": "Hello, world!"})
+# To post a post:
+post = client.posts.create(post_data={"text": "Hello, world!"})
 ```
 
 ## Features

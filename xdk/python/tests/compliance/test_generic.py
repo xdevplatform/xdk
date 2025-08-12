@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for Compliance client.
+Auto-generated generic tests for {"class_name": "Compliance", "display_name": "compliance", "import_name": "compliance", "original": ["compliance"], "property_name": "compliance"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be

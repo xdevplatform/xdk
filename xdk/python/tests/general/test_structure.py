@@ -1,8 +1,8 @@
 """
-Auto-generated structural tests for General client.
+Auto-generated structural tests for {"class_name": "General", "display_name": "general", "import_name": "general", "original": ["general"], "property_name": "general"} client.
 
 This module contains tests that validate the structure and API surface
-of the General client. These tests ensure that all expected methods
+of the {"class_name": "General", "display_name": "general", "import_name": "general", "original": ["general"], "property_name": "general"} client. These tests ensure that all expected methods
 exist and have the correct signatures.
 
 Generated automatically - do not edit manually.

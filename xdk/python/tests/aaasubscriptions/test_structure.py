@@ -1,8 +1,8 @@
 """
-Auto-generated structural tests for AAASubscriptions client.
+Auto-generated structural tests for {"class_name": "Aaasubscriptions", "display_name": "aaasubscriptions", "import_name": "aaasubscriptions", "original": ["aaasubscriptions"], "property_name": "aaasubscriptions"} client.
 
 This module contains tests that validate the structure and API surface
-of the AAASubscriptions client. These tests ensure that all expected methods
+of the {"class_name": "Aaasubscriptions", "display_name": "aaasubscriptions", "import_name": "aaasubscriptions", "original": ["aaasubscriptions"], "property_name": "aaasubscriptions"} client. These tests ensure that all expected methods
 exist and have the correct signatures.
 
 Generated automatically - do not edit manually.
@@ -11,12 +11,12 @@ Generated automatically - do not edit manually.
 import pytest
 import inspect
 from typing import get_type_hints
-from xdk.aaasubscriptions.client import AAASubscriptionsClient
+from xdk.aaasubscriptions.client import AaasubscriptionsClient
 from xdk import Client
 
 
-class TestAAASubscriptionsStructure:
-    """Test the structure of AAASubscriptionsClient."""
+class TestAaasubscriptionsStructure:
+    """Test the structure of AaasubscriptionsClient."""
 
 
     def setup_class(self):
@@ -29,11 +29,11 @@ class TestAAASubscriptionsStructure:
         """Test that create_account_activity_subscription method exists with correct signature."""
         # Check method exists
         method = getattr(
-            AAASubscriptionsClient, "create_account_activity_subscription", None
+            AaasubscriptionsClient, "create_account_activity_subscription", None
         )
         assert (
             method is not None
-        ), f"Method create_account_activity_subscription does not exist on AAASubscriptionsClient"
+        ), f"Method create_account_activity_subscription does not exist on AaasubscriptionsClient"
         # Check method is callable
         assert callable(method), f"create_account_activity_subscription is not callable"
         # Check method signature
@@ -66,7 +66,7 @@ class TestAAASubscriptionsStructure:
 
     def test_create_account_activity_subscription_return_annotation(self):
         """Test that create_account_activity_subscription has proper return type annotation."""
-        method = getattr(AAASubscriptionsClient, "create_account_activity_subscription")
+        method = getattr(AaasubscriptionsClient, "create_account_activity_subscription")
         sig = inspect.signature(method)
         # Check return annotation exists
         assert (
@@ -81,8 +81,8 @@ class TestAAASubscriptionsStructure:
         ]
         for expected_method in expected_methods:
             assert hasattr(
-                AAASubscriptionsClient, expected_method
-            ), f"Expected method '{expected_method}' not found on AAASubscriptionsClient"
+                AaasubscriptionsClient, expected_method
+            ), f"Expected method '{expected_method}' not found on AaasubscriptionsClient"
             assert callable(
-                getattr(AAASubscriptionsClient, expected_method)
+                getattr(AaasubscriptionsClient, expected_method)
             ), f"'{expected_method}' exists but is not callable"

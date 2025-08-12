@@ -1,5 +1,5 @@
 """
-Auto-generated pagination tests for Stream client.
+Auto-generated pagination tests for {"class_name": "Stream", "display_name": "stream", "import_name": "stream", "original": ["stream"], "property_name": "stream"} client.
 
 This module contains tests that validate pagination functionality
 using the Cursor class for methods that support pagination.
@@ -32,7 +32,7 @@ class TestStreamPagination:
             assert test_cursor is not None
             assert isinstance(test_cursor, Cursor)
         except PaginationError:
-            pytest.fail(f"Method getRules should support pagination")
+            pytest.fail(f"Method get_rules should support pagination")
 
 
     def test_get_rules_cursor_pages(self):

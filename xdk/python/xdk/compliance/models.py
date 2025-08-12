@@ -1,7 +1,7 @@
 """
-Compliance models for the X API.
+compliance models for the X API.
 
-This module provides models for the Compliance endpoints of the X API.
+This module provides models for the compliance endpoints of the X API.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
@@ -9,84 +9,32 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for getComplianceJobsById
+# Models for get_jobs
 
 
-class GetComplianceJobsByIdResponse(BaseModel):
-    """Response model for getComplianceJobsById"""
-
-    data: Optional["GetComplianceJobsByIdResponseData"] = Field(default_factory=dict)
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetComplianceJobsByIdResponseData(BaseModel):
-    """Nested model for GetComplianceJobsByIdResponseData"""
-
-    created_at: Optional[str] = None
-    download_expires_at: Optional[str] = None
-    download_url: Optional[str] = None
-    id: Optional[str] = None
-    name: Optional[str] = None
-    status: Optional[str] = None
-    type: Optional[str] = None
-    upload_expires_at: Optional[str] = None
-    upload_url: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for streamLikesCompliance
-
-
-class StreamLikesComplianceResponse(BaseModel):
-    """Response model for streamLikesCompliance"""
-
-    data: Optional[Dict[str, Any]] = Field(default=None)
-    errors: Optional[List] = Field(default=None)
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for streamPostsCompliance
-
-
-class StreamPostsComplianceResponse(BaseModel):
-    """Response model for streamPostsCompliance"""
-
-    data: Optional[Any] = Field(default=None, description="Tweet compliance data.")
-    errors: Optional[List] = Field(default=None)
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for getComplianceJobs
-
-
-class GetComplianceJobsResponse(BaseModel):
-    """Response model for getComplianceJobs"""
+class GetJobsResponse(BaseModel):
+    """Response model for get_jobs"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    meta: Optional["GetComplianceJobsResponseMeta"] = None
+    meta: Optional["GetJobsResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetComplianceJobsResponseMeta(BaseModel):
-    """Nested model for GetComplianceJobsResponseMeta"""
+class GetJobsResponseMeta(BaseModel):
+    """Nested model for GetJobsResponseMeta"""
 
     result_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for createComplianceJobs
+# Models for create_jobs
 
 
-class CreateComplianceJobsRequest(BaseModel):
-    """Request model for createComplianceJobs"""
+class CreateJobsRequest(BaseModel):
+    """Request model for create_jobs"""
 
     name: Optional[str] = None
     resumable: Optional[bool] = None
@@ -95,17 +43,17 @@ class CreateComplianceJobsRequest(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class CreateComplianceJobsResponse(BaseModel):
-    """Response model for createComplianceJobs"""
+class CreateJobsResponse(BaseModel):
+    """Response model for create_jobs"""
 
-    data: Optional["CreateComplianceJobsResponseData"] = Field(default_factory=dict)
+    data: Optional["CreateJobsResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class CreateComplianceJobsResponseData(BaseModel):
-    """Nested model for CreateComplianceJobsResponseData"""
+class CreateJobsResponseData(BaseModel):
+    """Nested model for CreateJobsResponseData"""
 
     created_at: Optional[str] = None
     download_expires_at: Optional[str] = None
@@ -120,25 +68,29 @@ class CreateComplianceJobsResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for streamUsersCompliance
+# Models for get_jobs_by_id
 
 
-class StreamUsersComplianceResponse(BaseModel):
-    """Response model for streamUsersCompliance"""
+class GetJobsByIdResponse(BaseModel):
+    """Response model for get_jobs_by_id"""
 
-    data: Optional[Any] = Field(default=None, description="User compliance data.")
-    errors: Optional[List] = Field(default=None)
+    data: Optional["GetJobsByIdResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for streamLabelsCompliance
+class GetJobsByIdResponseData(BaseModel):
+    """Nested model for GetJobsByIdResponseData"""
 
-
-class StreamLabelsComplianceResponse(BaseModel):
-    """Response model for streamLabelsCompliance"""
-
-    data: Optional[Any] = Field(default=None, description="Tweet label data.")
-    errors: Optional[List] = Field(default=None)
+    created_at: Optional[str] = None
+    download_expires_at: Optional[str] = None
+    download_url: Optional[str] = None
+    id: Optional[str] = None
+    name: Optional[str] = None
+    status: Optional[str] = None
+    type: Optional[str] = None
+    upload_expires_at: Optional[str] = None
+    upload_url: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)

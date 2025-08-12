@@ -8,11 +8,20 @@ use crate::testing::TestSpecification;
 use openapi::{Parameter, RefOrValue, RequestBody, Response, SecurityRequirement, StatusCode};
 use serde::Serialize;
 use std::collections::HashMap;
+
+#[derive(Debug, Serialize, Clone)]
+pub struct OperationGroup {
+    pub operation: OperationInfo,
+    pub metadata: Metadata,
+}
+
 /// Information about an operation in the OpenAPI spec
 #[derive(Debug, Serialize, Clone)]
 pub struct OperationInfo {
-    /// Operation ID from the OpenAPI spec
-    pub operation_id: String,
+    /// Class name for Request/Response models (e.g., "GetUsers")
+    pub class_name: String,
+    /// Method name (same as operation_id for consistency)
+    pub method_name: String,
     /// HTTP method (GET, POST, etc.)
     pub method: String,
     /// Path for the operation
@@ -31,22 +40,52 @@ pub struct OperationInfo {
     pub responses: HashMap<StatusCode, Response>,
 }
 
+#[derive(Debug, Serialize, Clone)]
+pub struct Metadata {
+    pub normalized_operation_id: Vec<String>,
+}
+
 /// Context for rendering a client class template
 #[derive(Debug, Serialize)]
 pub struct OperationContext {
-    pub tag: String,
+    pub tag: TagInfo,
     pub operations: Vec<OperationInfo>,
+}
+
+/// Information about a tag with different casing variants
+#[derive(Debug, Serialize, Clone)]
+pub struct TagInfo {
+    /// Original tag words
+    pub original: Vec<String>,
+    /// Class name (e.g., "CommunityNotes")
+    pub class_name: String,
+    /// Import name/module name (e.g., "community_notes")
+    pub import_name: String,
+    /// Property name (e.g., "community_notes")
+    pub property_name: String,
+    /// Display name (e.g., "Community Notes")
+    pub display_name: String,
 }
 
 /// Context for rendering the main client template that imports all tag-specific clients
 #[derive(Debug, Serialize)]
 pub struct TagsContext {
-    pub tags: Vec<String>,
+    pub tags: Vec<TagInfo>,
 }
 
 /// Context for rendering test templates
 #[derive(Debug, Serialize)]
 pub struct TestContext {
-    pub tag: String,
+    pub tag: TagInfo,
     pub test_spec: TestSpecification,
+}
+
+impl OperationInfo {
+    pub fn with_casing(self, method_name: String, class_name: String) -> Self {
+        Self {
+            method_name,
+            class_name,
+            ..self
+        }
+    }
 }
