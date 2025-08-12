@@ -27,15 +27,12 @@ class UsageClient:
     def get(
         self,
         days: int = None,
-        usage_fields: List = None,
     ) -> GetResponse:
         """
         Get usage
         Retrieves usage statistics for Posts over a specified number of days.
         Args:
             days: The number of days for which you need usage for.
-        Args:
-            usage_fields: A comma separated list of Usage fields to display.
         Returns:
             GetResponse: Response data
         """
@@ -51,8 +48,6 @@ class UsageClient:
         params = {}
         if days is not None:
             params["days"] = days
-        if usage_fields is not None:
-            params["usage.fields"] = ",".join(str(item) for item in usage_fields)
         headers = {}
         # Make the request
         response = self.client.session.get(

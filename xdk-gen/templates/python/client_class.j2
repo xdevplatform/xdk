@@ -34,8 +34,8 @@ class {{ tag.class_name }}Client:
     def {{ operation.method_name }}(self, 
         {# Required parameters #}
         {% for param in operation.parameters | selectattr('required') %}
-        {% if param.name %}
-        {{ param.name | snake_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | python_type }}{% else %}Any{% endif %},
+        {% if param.original_name %}
+        {{ param.variable_name }}: {% if param.param_type %}{{ param.param_type | python_type }}{% else %}Any{% endif %},
         {% endif %}
         {% endfor %}
         {# Required body #}
@@ -44,8 +44,8 @@ class {{ tag.class_name }}Client:
         {% endif %}
         {# Optional parameters #}
         {% for param in operation.parameters | rejectattr('required') %}
-        {% if param.name %}
-        {{ param.name | snake_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | python_type }}{% else %}Any{% endif %} = None,
+        {% if param.original_name %}
+        {{ param.variable_name }}: {% if param.param_type %}{{ param.param_type | python_type }}{% else %}Any{% endif %} = None,
         {% endif %}
         {% endfor %}
         {# Optional body #}
@@ -61,9 +61,9 @@ class {{ tag.class_name }}Client:
         {% endif %}
         
         {% for param in operation.parameters %}
-        {% if param.name %}
+        {% if param.original_name %}
         Args:
-            {{ param.name | snake_case }}: {% if param.description %}{{ param.description }}{% else %}{{ param.name }}{% endif %}
+            {{ param.variable_name }}: {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
         {% endif %}
         {% endfor %}
         {% if operation.request_body %}
@@ -111,33 +111,27 @@ class {{ tag.class_name }}Client:
         
         params = {}
         {% for param in operation.parameters %}
-        {% if param.name %}
-        {% if param.in == "query" %}
-        if {{ param.name | snake_case }} is not None:
-            {% if param.schema and param.schema.type == "array" and not param.explode %}
-            params["{{ param.name }}"] = ",".join(str(item) for item in {{ param.name | snake_case }})
+        {% if param.location == "query" %}
+        if {{ param.variable_name }} is not None:
+            {% if param.param_type == "array" %}
+            params["{{ param.original_name }}"] = ",".join(str(item) for item in {{ param.variable_name }})
             {% else %}
-            params["{{ param.name }}"] = {{ param.name | snake_case }}
+            params["{{ param.original_name }}"] = {{ param.variable_name }}
             {% endif %}
-        {% endif %}
         {% endif %}
         {% endfor %}
         
         {% for param in operation.parameters %}
-        {% if param.name %}
-        {% if param.in == "path" %}
-        url = url.replace("{{ '{' + param.name + '}' }}", str({{ param.name | snake_case }}))
-        {% endif %}
+        {% if param.location == "path" %}
+        url = url.replace("{{ '{' + param.original_name + '}' }}", str({{ param.variable_name }}))
         {% endif %}
         {% endfor %}
         
         headers = {}
         {% for param in operation.parameters %}
-        {% if param.name %}
-        {% if param.in == "header" %}
-        if {{ param.name | snake_case }} is not None:
-            headers["{{ param.name }}"] = {{ param.name | snake_case }}
-        {% endif %}
+        {% if param.location == "header" %}
+        if {{ param.variable_name }} is not None:
+            headers["{{ param.original_name }}"] = {{ param.variable_name }}
         {% endif %}
         {% endfor %}
         {% if operation.request_body and operation.request_body.content %}

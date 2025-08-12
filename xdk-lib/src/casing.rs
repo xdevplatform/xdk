@@ -38,31 +38,47 @@ impl Casing {
             Casing::ScreamingSnake => words.join("_").to_uppercase(),
         }
     }
+
+    /// Convert a single string to the specified casing convention
+    /// This first splits the string into words based on common delimiters and casing
+    pub fn convert_string(&self, value: &str) -> String {
+        let words = split_into_words(value);
+        self.convert_words(&words)
+    }
 }
 
-/// Helper for converting a string to snake_case
-pub fn snake_case(value: &str) -> String {
-    let chars = value.chars();
-    let mut result = String::new();
-    let mut prev_is_underscore = false;
+/// Split a string into words based on various delimiters and casing conventions
+fn split_into_words(value: &str) -> Vec<String> {
+    let mut words = Vec::new();
+    let mut current_word = String::new();
+    let mut chars = value.chars().peekable();
 
-    for c in chars {
-        if c.is_uppercase() {
-            if !result.is_empty() && !prev_is_underscore {
-                result.push('_');
+    while let Some(c) = chars.next() {
+        if c == '_' || c == '-' || c == ' ' {
+            // Delimiter found, finish current word
+            if !current_word.is_empty() {
+                words.push(current_word);
+                current_word = String::new();
             }
-            result.push(c.to_ascii_lowercase());
-            prev_is_underscore = false;
+        } else if c.is_uppercase() {
+            // Uppercase letter indicates new word boundary (camelCase/PascalCase)
+            if !current_word.is_empty() {
+                words.push(current_word);
+                current_word = String::new();
+            }
+            current_word.push(c.to_lowercase().next().unwrap());
         } else if c.is_alphanumeric() {
-            result.push(c.to_ascii_lowercase());
-            prev_is_underscore = false;
-        } else if !prev_is_underscore {
-            result.push('_');
-            prev_is_underscore = true;
+            current_word.push(c);
         }
+        // Skip other characters
     }
 
-    result.trim_matches('_').to_string()
+    // Add the last word if any
+    if !current_word.is_empty() {
+        words.push(current_word);
+    }
+
+    words
 }
 
 /// Helper for converting a string to PascalCase
@@ -104,14 +120,4 @@ pub fn camel_case(value: &str) -> String {
         None => String::new(),
         Some(first) => first.to_lowercase().collect::<String>() + chars.as_str(),
     }
-}
-
-/// Helper for converting a string to kebab-case
-pub fn kebab_case(value: &str) -> String {
-    snake_case(value).replace('_', "-")
-}
-
-/// Helper for converting a string to SCREAMING_SNAKE_CASE
-pub fn screaming_snake_case(value: &str) -> String {
-    snake_case(value).to_uppercase()
 }

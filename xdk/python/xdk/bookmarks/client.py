@@ -12,11 +12,11 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    DeleteUsersBookmarkResponse,
-    CreateUsersBookmarkRequest,
-    CreateUsersBookmarkResponse,
     GetUsersBookmarkFoldersResponse,
     GetUsersByFolderIdResponse,
+    CreateUsersBookmarkRequest,
+    CreateUsersBookmarkResponse,
+    DeleteUsersBookmarkResponse,
 )
 
 
@@ -28,104 +28,11 @@ class BookmarksClient:
         self.client = client
 
 
-    def delete_users_bookmark(
-        self,
-        id: str,
-        tweet_id: str,
-    ) -> DeleteUsersBookmarkResponse:
-        """
-        Delete Bookmark
-        Removes a Post from the authenticated user’s Bookmarks by its ID.
-        Args:
-            id: The ID of the authenticated source User whose bookmark is to be removed.
-        Args:
-            tweet_id: The ID of the Post that the source User is removing from bookmarks.
-        Returns:
-            DeleteUsersBookmarkResponse: Response data
-        """
-        url = self.client.base_url + "/2/users/{id}/bookmarks/{tweet_id}"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        url = url.replace("{id}", str(id))
-        url = url.replace("{tweet_id}", str(tweet_id))
-        headers = {}
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.delete(
-                url,
-                params=params,
-                headers=headers,
-            )
-        else:
-            response = self.client.session.delete(
-                url,
-                params=params,
-                headers=headers,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return DeleteUsersBookmarkResponse.model_validate(response_data)
-
-
-    def create_users_bookmark(
-        self,
-        id: str,
-        body: CreateUsersBookmarkRequest,
-    ) -> CreateUsersBookmarkResponse:
-        """
-        Create Bookmark
-        Adds a post to the authenticated user’s bookmarks.
-        Args:
-            id: The ID of the authenticated source User for whom to add bookmarks.
-            body: Request body
-        Returns:
-            CreateUsersBookmarkResponse: Response data
-        """
-        url = self.client.base_url + "/2/users/{id}/bookmarks"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        url = url.replace("{id}", str(id))
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return CreateUsersBookmarkResponse.model_validate(response_data)
-
-
     def get_users_bookmark_folders(
         self,
-        id: str,
+        id: Any,
         max_results: int = None,
-        pagination_token: str = None,
+        pagination_token: Any = None,
     ) -> GetUsersBookmarkFoldersResponse:
         """
         Get Bookmark folders
@@ -175,8 +82,8 @@ class BookmarksClient:
 
     def get_users_by_folder_id(
         self,
-        id: str,
-        folder_id: str,
+        id: Any,
+        folder_id: Any,
     ) -> GetUsersByFolderIdResponse:
         """
         Get Bookmarks by folder ID
@@ -217,3 +124,96 @@ class BookmarksClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return GetUsersByFolderIdResponse.model_validate(response_data)
+
+
+    def create_users_bookmark(
+        self,
+        id: Any,
+        body: CreateUsersBookmarkRequest,
+    ) -> CreateUsersBookmarkResponse:
+        """
+        Create Bookmark
+        Adds a post to the authenticated user’s bookmarks.
+        Args:
+            id: The ID of the authenticated source User for whom to add bookmarks.
+            body: Request body
+        Returns:
+            CreateUsersBookmarkResponse: Response data
+        """
+        url = self.client.base_url + "/2/users/{id}/bookmarks"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        url = url.replace("{id}", str(id))
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return CreateUsersBookmarkResponse.model_validate(response_data)
+
+
+    def delete_users_bookmark(
+        self,
+        id: Any,
+        tweet_id: Any,
+    ) -> DeleteUsersBookmarkResponse:
+        """
+        Delete Bookmark
+        Removes a Post from the authenticated user’s Bookmarks by its ID.
+        Args:
+            id: The ID of the authenticated source User whose bookmark is to be removed.
+        Args:
+            tweet_id: The ID of the Post that the source User is removing from bookmarks.
+        Returns:
+            DeleteUsersBookmarkResponse: Response data
+        """
+        url = self.client.base_url + "/2/users/{id}/bookmarks/{tweet_id}"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        url = url.replace("{id}", str(id))
+        url = url.replace("{tweet_id}", str(tweet_id))
+        headers = {}
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.delete(
+                url,
+                params=params,
+                headers=headers,
+            )
+        else:
+            response = self.client.session.delete(
+                url,
+                params=params,
+                headers=headers,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return DeleteUsersBookmarkResponse.model_validate(response_data)

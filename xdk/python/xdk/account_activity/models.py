@@ -35,6 +35,46 @@ class GetSubscriptionsResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
+# Models for validate_subscription
+
+
+class ValidateSubscriptionResponse(BaseModel):
+    """Response model for validate_subscription"""
+
+    data: Optional["ValidateSubscriptionResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class ValidateSubscriptionResponseData(BaseModel):
+    """Nested model for ValidateSubscriptionResponseData"""
+
+    subscribed: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for delete_subscription
+
+
+class DeleteSubscriptionResponse(BaseModel):
+    """Response model for delete_subscription"""
+
+    data: Optional["DeleteSubscriptionResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DeleteSubscriptionResponseData(BaseModel):
+    """Nested model for DeleteSubscriptionResponseData"""
+
+    subscribed: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 # Models for get_subscription_count
 
 
@@ -61,26 +101,6 @@ class GetSubscriptionCountResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for validate_subscription
-
-
-class ValidateSubscriptionResponse(BaseModel):
-    """Response model for validate_subscription"""
-
-    data: Optional["ValidateSubscriptionResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class ValidateSubscriptionResponseData(BaseModel):
-    """Nested model for ValidateSubscriptionResponseData"""
-
-    subscribed: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for create_replay_job
 
 
@@ -89,25 +109,5 @@ class CreateReplayJobResponse(BaseModel):
 
     created_at: Optional[str] = None
     job_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for delete_subscription
-
-
-class DeleteSubscriptionResponse(BaseModel):
-    """Response model for delete_subscription"""
-
-    data: Optional["DeleteSubscriptionResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class DeleteSubscriptionResponseData(BaseModel):
-    """Nested model for DeleteSubscriptionResponseData"""
-
-    subscribed: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)

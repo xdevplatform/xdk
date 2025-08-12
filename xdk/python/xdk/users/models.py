@@ -9,6 +9,230 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
+# Models for get_followed_lists
+
+
+class GetFollowedListsResponse(BaseModel):
+    """Response model for get_followed_lists"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetFollowedListsResponseIncludes"] = None
+    meta: Optional["GetFollowedListsResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetFollowedListsResponseIncludes(BaseModel):
+    """Nested model for GetFollowedListsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetFollowedListsResponseMeta(BaseModel):
+    """Nested model for GetFollowedListsResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_list_memberships
+
+
+class GetListMembershipsResponse(BaseModel):
+    """Response model for get_list_memberships"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetListMembershipsResponseIncludes"] = None
+    meta: Optional["GetListMembershipsResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetListMembershipsResponseIncludes(BaseModel):
+    """Nested model for GetListMembershipsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetListMembershipsResponseMeta(BaseModel):
+    """Nested model for GetListMembershipsResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_reposts_of_me
+
+
+class GetRepostsOfMeResponse(BaseModel):
+    """Response model for get_reposts_of_me"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetRepostsOfMeResponseIncludes"] = None
+    meta: Optional["GetRepostsOfMeResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetRepostsOfMeResponseIncludes(BaseModel):
+    """Nested model for GetRepostsOfMeResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetRepostsOfMeResponseMeta(BaseModel):
+    """Nested model for GetRepostsOfMeResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_owned_lists
+
+
+class GetOwnedListsResponse(BaseModel):
+    """Response model for get_owned_lists"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetOwnedListsResponseIncludes"] = None
+    meta: Optional["GetOwnedListsResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetOwnedListsResponseIncludes(BaseModel):
+    """Nested model for GetOwnedListsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetOwnedListsResponseMeta(BaseModel):
+    """Nested model for GetOwnedListsResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_posts
+
+
+class GetPostsResponse(BaseModel):
+    """Response model for get_posts"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetPostsResponseIncludes"] = None
+    meta: Optional["GetPostsResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetPostsResponseIncludes(BaseModel):
+    """Nested model for GetPostsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetPostsResponseMeta(BaseModel):
+    """Nested model for GetPostsResponseMeta"""
+
+    newest_id: Optional[str] = None
+    next_token: Optional[str] = None
+    oldest_id: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_liked_posts
+
+
+class GetLikedPostsResponse(BaseModel):
+    """Response model for get_liked_posts"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetLikedPostsResponseIncludes"] = None
+    meta: Optional["GetLikedPostsResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetLikedPostsResponseIncludes(BaseModel):
+    """Nested model for GetLikedPostsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetLikedPostsResponseMeta(BaseModel):
+    """Nested model for GetLikedPostsResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 # Models for get_timeline
 
 
@@ -44,6 +268,275 @@ class GetTimelineResponseMeta(BaseModel):
     oldest_id: Optional[str] = None
     previous_token: Optional[str] = None
     result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_by_usernames
+
+
+class GetByUsernamesResponse(BaseModel):
+    """Response model for get_by_usernames"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetByUsernamesResponseIncludes"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetByUsernamesResponseIncludes(BaseModel):
+    """Nested model for GetByUsernamesResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_mentions
+
+
+class GetMentionsResponse(BaseModel):
+    """Response model for get_mentions"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetMentionsResponseIncludes"] = None
+    meta: Optional["GetMentionsResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetMentionsResponseIncludes(BaseModel):
+    """Nested model for GetMentionsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetMentionsResponseMeta(BaseModel):
+    """Nested model for GetMentionsResponseMeta"""
+
+    newest_id: Optional[str] = None
+    next_token: Optional[str] = None
+    oldest_id: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for search
+
+
+class SearchResponse(BaseModel):
+    """Response model for search"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["SearchResponseIncludes"] = None
+    meta: Optional["SearchResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class SearchResponseIncludes(BaseModel):
+    """Nested model for SearchResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class SearchResponseMeta(BaseModel):
+    """Nested model for SearchResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_muting
+
+
+class GetMutingResponse(BaseModel):
+    """Response model for get_muting"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetMutingResponseIncludes"] = None
+    meta: Optional["GetMutingResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetMutingResponseIncludes(BaseModel):
+    """Nested model for GetMutingResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetMutingResponseMeta(BaseModel):
+    """Nested model for GetMutingResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for mute_user
+
+
+class MuteUserRequest(BaseModel):
+    """Request model for mute_user"""
+
+    target_user_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class MuteUserResponse(BaseModel):
+    """Response model for mute_user"""
+
+    data: Optional["MuteUserResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class MuteUserResponseData(BaseModel):
+    """Nested model for MuteUserResponseData"""
+
+    muting: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for unblock_dms
+
+
+class UnblockDmsResponse(BaseModel):
+    """Response model for unblock_dms"""
+
+    data: Optional["UnblockDmsResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class UnblockDmsResponseData(BaseModel):
+    """Nested model for UnblockDmsResponseData"""
+
+    blocked: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for unmute_user
+
+
+class UnmuteUserResponse(BaseModel):
+    """Response model for unmute_user"""
+
+    data: Optional["UnmuteUserResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class UnmuteUserResponseData(BaseModel):
+    """Nested model for UnmuteUserResponseData"""
+
+    muting: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_bookmarks
+
+
+class GetBookmarksResponse(BaseModel):
+    """Response model for get_bookmarks"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetBookmarksResponseIncludes"] = None
+    meta: Optional["GetBookmarksResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetBookmarksResponseIncludes(BaseModel):
+    """Nested model for GetBookmarksResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetBookmarksResponseMeta(BaseModel):
+    """Nested model for GetBookmarksResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_by_ids
+
+
+class GetByIdsResponse(BaseModel):
+    """Response model for get_by_ids"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetByIdsResponseIncludes"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetByIdsResponseIncludes(BaseModel):
+    """Nested model for GetByIdsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -110,111 +603,6 @@ class FollowUserResponseData(BaseModel):
 
     following: Optional[bool] = None
     pending_follow: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for unfollow_user
-
-
-class UnfollowUserResponse(BaseModel):
-    """Response model for unfollow_user"""
-
-    data: Optional["UnfollowUserResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class UnfollowUserResponseData(BaseModel):
-    """Nested model for UnfollowUserResponseData"""
-
-    following: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_by_usernames
-
-
-class GetByUsernamesResponse(BaseModel):
-    """Response model for get_by_usernames"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetByUsernamesResponseIncludes"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetByUsernamesResponseIncludes(BaseModel):
-    """Nested model for GetByUsernamesResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for block_dms
-
-
-class BlockDmsResponse(BaseModel):
-    """Response model for block_dms"""
-
-    data: Optional["BlockDmsResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class BlockDmsResponseData(BaseModel):
-    """Nested model for BlockDmsResponseData"""
-
-    blocked: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_mentions
-
-
-class GetMentionsResponse(BaseModel):
-    """Response model for get_mentions"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetMentionsResponseIncludes"] = None
-    meta: Optional["GetMentionsResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetMentionsResponseIncludes(BaseModel):
-    """Nested model for GetMentionsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetMentionsResponseMeta(BaseModel):
-    """Nested model for GetMentionsResponseMeta"""
-
-    newest_id: Optional[str] = None
-    next_token: Optional[str] = None
-    oldest_id: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -336,117 +724,6 @@ class GetMeResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for get_bookmarks
-
-
-class GetBookmarksResponse(BaseModel):
-    """Response model for get_bookmarks"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetBookmarksResponseIncludes"] = None
-    meta: Optional["GetBookmarksResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetBookmarksResponseIncludes(BaseModel):
-    """Nested model for GetBookmarksResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetBookmarksResponseMeta(BaseModel):
-    """Nested model for GetBookmarksResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_liked_posts
-
-
-class GetLikedPostsResponse(BaseModel):
-    """Response model for get_liked_posts"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetLikedPostsResponseIncludes"] = None
-    meta: Optional["GetLikedPostsResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetLikedPostsResponseIncludes(BaseModel):
-    """Nested model for GetLikedPostsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetLikedPostsResponseMeta(BaseModel):
-    """Nested model for GetLikedPostsResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_list_memberships
-
-
-class GetListMembershipsResponse(BaseModel):
-    """Response model for get_list_memberships"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetListMembershipsResponseIncludes"] = None
-    meta: Optional["GetListMembershipsResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetListMembershipsResponseIncludes(BaseModel):
-    """Nested model for GetListMembershipsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetListMembershipsResponseMeta(BaseModel):
-    """Nested model for GetListMembershipsResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for get_by_id
 
 
@@ -564,108 +841,6 @@ class GetByIdResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for get_owned_lists
-
-
-class GetOwnedListsResponse(BaseModel):
-    """Response model for get_owned_lists"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetOwnedListsResponseIncludes"] = None
-    meta: Optional["GetOwnedListsResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetOwnedListsResponseIncludes(BaseModel):
-    """Nested model for GetOwnedListsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetOwnedListsResponseMeta(BaseModel):
-    """Nested model for GetOwnedListsResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_posts
-
-
-class GetPostsResponse(BaseModel):
-    """Response model for get_posts"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetPostsResponseIncludes"] = None
-    meta: Optional["GetPostsResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetPostsResponseIncludes(BaseModel):
-    """Nested model for GetPostsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetPostsResponseMeta(BaseModel):
-    """Nested model for GetPostsResponseMeta"""
-
-    newest_id: Optional[str] = None
-    next_token: Optional[str] = None
-    oldest_id: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_by_ids
-
-
-class GetByIdsResponse(BaseModel):
-    """Response model for get_by_ids"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetByIdsResponseIncludes"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetByIdsResponseIncludes(BaseModel):
-    """Nested model for GetByIdsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for get_blocking
 
 
@@ -703,42 +878,62 @@ class GetBlockingResponseMeta(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for unblock_dms
+# Models for block_dms
 
 
-class UnblockDmsResponse(BaseModel):
-    """Response model for unblock_dms"""
+class BlockDmsResponse(BaseModel):
+    """Response model for block_dms"""
 
-    data: Optional["UnblockDmsResponseData"] = None
+    data: Optional["BlockDmsResponseData"] = None
     errors: Optional[List] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class UnblockDmsResponseData(BaseModel):
-    """Nested model for UnblockDmsResponseData"""
+class BlockDmsResponseData(BaseModel):
+    """Nested model for BlockDmsResponseData"""
 
     blocked: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for get_reposts_of_me
+# Models for unfollow_user
 
 
-class GetRepostsOfMeResponse(BaseModel):
-    """Response model for get_reposts_of_me"""
+class UnfollowUserResponse(BaseModel):
+    """Response model for unfollow_user"""
 
-    data: Optional[List] = None
+    data: Optional["UnfollowUserResponseData"] = None
     errors: Optional[List] = None
-    includes: Optional["GetRepostsOfMeResponseIncludes"] = None
-    meta: Optional["GetRepostsOfMeResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetRepostsOfMeResponseIncludes(BaseModel):
-    """Nested model for GetRepostsOfMeResponseIncludes"""
+class UnfollowUserResponseData(BaseModel):
+    """Nested model for UnfollowUserResponseData"""
+
+    following: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_followers
+
+
+class GetFollowersResponse(BaseModel):
+    """Response model for get_followers"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetFollowersResponseIncludes"] = None
+    meta: Optional["GetFollowersResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetFollowersResponseIncludes(BaseModel):
+    """Nested model for GetFollowersResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -750,150 +945,12 @@ class GetRepostsOfMeResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetRepostsOfMeResponseMeta(BaseModel):
-    """Nested model for GetRepostsOfMeResponseMeta"""
+class GetFollowersResponseMeta(BaseModel):
+    """Nested model for GetFollowersResponseMeta"""
 
     next_token: Optional[str] = None
     previous_token: Optional[str] = None
     result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for search
-
-
-class SearchResponse(BaseModel):
-    """Response model for search"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["SearchResponseIncludes"] = None
-    meta: Optional["SearchResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class SearchResponseIncludes(BaseModel):
-    """Nested model for SearchResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class SearchResponseMeta(BaseModel):
-    """Nested model for SearchResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_followed_lists
-
-
-class GetFollowedListsResponse(BaseModel):
-    """Response model for get_followed_lists"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetFollowedListsResponseIncludes"] = None
-    meta: Optional["GetFollowedListsResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetFollowedListsResponseIncludes(BaseModel):
-    """Nested model for GetFollowedListsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetFollowedListsResponseMeta(BaseModel):
-    """Nested model for GetFollowedListsResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_muting
-
-
-class GetMutingResponse(BaseModel):
-    """Response model for get_muting"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetMutingResponseIncludes"] = None
-    meta: Optional["GetMutingResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetMutingResponseIncludes(BaseModel):
-    """Nested model for GetMutingResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetMutingResponseMeta(BaseModel):
-    """Nested model for GetMutingResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for mute_user
-
-
-class MuteUserRequest(BaseModel):
-    """Request model for mute_user"""
-
-    target_user_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class MuteUserResponse(BaseModel):
-    """Response model for mute_user"""
-
-    data: Optional["MuteUserResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class MuteUserResponseData(BaseModel):
-    """Nested model for MuteUserResponseData"""
-
-    muting: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -1011,62 +1068,5 @@ class GetByUsernameResponseIncludes(BaseModel):
     topics: Optional[List] = None
     tweets: Optional[List] = None
     users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for unmute_user
-
-
-class UnmuteUserResponse(BaseModel):
-    """Response model for unmute_user"""
-
-    data: Optional["UnmuteUserResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class UnmuteUserResponseData(BaseModel):
-    """Nested model for UnmuteUserResponseData"""
-
-    muting: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_followers
-
-
-class GetFollowersResponse(BaseModel):
-    """Response model for get_followers"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetFollowersResponseIncludes"] = None
-    meta: Optional["GetFollowersResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetFollowersResponseIncludes(BaseModel):
-    """Nested model for GetFollowersResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetFollowersResponseMeta(BaseModel):
-    """Nested model for GetFollowersResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)

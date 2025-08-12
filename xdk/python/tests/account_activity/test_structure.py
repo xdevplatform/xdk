@@ -72,51 +72,6 @@ class TestAccountActivityStructure:
         ), f"Method get_subscriptions should have return type annotation"
 
 
-    def test_get_subscription_count_exists(self):
-        """Test that get_subscription_count method exists with correct signature."""
-        # Check method exists
-        method = getattr(AccountActivityClient, "get_subscription_count", None)
-        assert (
-            method is not None
-        ), f"Method get_subscription_count does not exist on AccountActivityClient"
-        # Check method is callable
-        assert callable(method), f"get_subscription_count is not callable"
-        # Check method signature
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        # Should have 'self' as first parameter
-        assert (
-            len(params) >= 1
-        ), f"get_subscription_count should have at least 'self' parameter"
-        assert (
-            params[0] == "self"
-        ), f"First parameter should be 'self', got '{params[0]}'"
-        # Check required parameters exist (excluding 'self')
-        required_params = []
-        for required_param in required_params:
-            assert (
-                required_param in params
-            ), f"Required parameter '{required_param}' missing from get_subscription_count"
-        # Check optional parameters have defaults (excluding 'self')
-        optional_params = []
-        for optional_param in optional_params:
-            if optional_param in params:
-                param_obj = sig.parameters[optional_param]
-                assert (
-                    param_obj.default is not inspect.Parameter.empty
-                ), f"Optional parameter '{optional_param}' should have a default value"
-
-
-    def test_get_subscription_count_return_annotation(self):
-        """Test that get_subscription_count has proper return type annotation."""
-        method = getattr(AccountActivityClient, "get_subscription_count")
-        sig = inspect.signature(method)
-        # Check return annotation exists
-        assert (
-            sig.return_annotation is not inspect.Signature.empty
-        ), f"Method get_subscription_count should have return type annotation"
-
-
     def test_validate_subscription_exists(self):
         """Test that validate_subscription method exists with correct signature."""
         # Check method exists
@@ -162,6 +117,99 @@ class TestAccountActivityStructure:
         assert (
             sig.return_annotation is not inspect.Signature.empty
         ), f"Method validate_subscription should have return type annotation"
+
+
+    def test_delete_subscription_exists(self):
+        """Test that delete_subscription method exists with correct signature."""
+        # Check method exists
+        method = getattr(AccountActivityClient, "delete_subscription", None)
+        assert (
+            method is not None
+        ), f"Method delete_subscription does not exist on AccountActivityClient"
+        # Check method is callable
+        assert callable(method), f"delete_subscription is not callable"
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        # Should have 'self' as first parameter
+        assert (
+            len(params) >= 1
+        ), f"delete_subscription should have at least 'self' parameter"
+        assert (
+            params[0] == "self"
+        ), f"First parameter should be 'self', got '{params[0]}'"
+        # Check required parameters exist (excluding 'self')
+        required_params = [
+            "webhook_id",
+            "user_id",
+        ]
+        for required_param in required_params:
+            assert (
+                required_param in params
+            ), f"Required parameter '{required_param}' missing from delete_subscription"
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = []
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert (
+                    param_obj.default is not inspect.Parameter.empty
+                ), f"Optional parameter '{optional_param}' should have a default value"
+
+
+    def test_delete_subscription_return_annotation(self):
+        """Test that delete_subscription has proper return type annotation."""
+        method = getattr(AccountActivityClient, "delete_subscription")
+        sig = inspect.signature(method)
+        # Check return annotation exists
+        assert (
+            sig.return_annotation is not inspect.Signature.empty
+        ), f"Method delete_subscription should have return type annotation"
+
+
+    def test_get_subscription_count_exists(self):
+        """Test that get_subscription_count method exists with correct signature."""
+        # Check method exists
+        method = getattr(AccountActivityClient, "get_subscription_count", None)
+        assert (
+            method is not None
+        ), f"Method get_subscription_count does not exist on AccountActivityClient"
+        # Check method is callable
+        assert callable(method), f"get_subscription_count is not callable"
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        # Should have 'self' as first parameter
+        assert (
+            len(params) >= 1
+        ), f"get_subscription_count should have at least 'self' parameter"
+        assert (
+            params[0] == "self"
+        ), f"First parameter should be 'self', got '{params[0]}'"
+        # Check required parameters exist (excluding 'self')
+        required_params = []
+        for required_param in required_params:
+            assert (
+                required_param in params
+            ), f"Required parameter '{required_param}' missing from get_subscription_count"
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = []
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert (
+                    param_obj.default is not inspect.Parameter.empty
+                ), f"Optional parameter '{optional_param}' should have a default value"
+
+
+    def test_get_subscription_count_return_annotation(self):
+        """Test that get_subscription_count has proper return type annotation."""
+        method = getattr(AccountActivityClient, "get_subscription_count")
+        sig = inspect.signature(method)
+        # Check return annotation exists
+        assert (
+            sig.return_annotation is not inspect.Signature.empty
+        ), f"Method get_subscription_count should have return type annotation"
 
 
     def test_create_replay_job_exists(self):
@@ -213,62 +261,14 @@ class TestAccountActivityStructure:
         ), f"Method create_replay_job should have return type annotation"
 
 
-    def test_delete_subscription_exists(self):
-        """Test that delete_subscription method exists with correct signature."""
-        # Check method exists
-        method = getattr(AccountActivityClient, "delete_subscription", None)
-        assert (
-            method is not None
-        ), f"Method delete_subscription does not exist on AccountActivityClient"
-        # Check method is callable
-        assert callable(method), f"delete_subscription is not callable"
-        # Check method signature
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        # Should have 'self' as first parameter
-        assert (
-            len(params) >= 1
-        ), f"delete_subscription should have at least 'self' parameter"
-        assert (
-            params[0] == "self"
-        ), f"First parameter should be 'self', got '{params[0]}'"
-        # Check required parameters exist (excluding 'self')
-        required_params = [
-            "webhook_id",
-            "user_id",
-        ]
-        for required_param in required_params:
-            assert (
-                required_param in params
-            ), f"Required parameter '{required_param}' missing from delete_subscription"
-        # Check optional parameters have defaults (excluding 'self')
-        optional_params = []
-        for optional_param in optional_params:
-            if optional_param in params:
-                param_obj = sig.parameters[optional_param]
-                assert (
-                    param_obj.default is not inspect.Parameter.empty
-                ), f"Optional parameter '{optional_param}' should have a default value"
-
-
-    def test_delete_subscription_return_annotation(self):
-        """Test that delete_subscription has proper return type annotation."""
-        method = getattr(AccountActivityClient, "delete_subscription")
-        sig = inspect.signature(method)
-        # Check return annotation exists
-        assert (
-            sig.return_annotation is not inspect.Signature.empty
-        ), f"Method delete_subscription should have return type annotation"
-
-
     def test_all_expected_methods_exist(self):
         """Test that all expected methods exist on the client."""
         expected_methods = [
             "get_subscriptions",
-            "get_subscription_count",
             "validate_subscription",
-            "create_replay_job",
             "delete_subscription",
+            "get_subscription_count",
+            "create_replay_job",
         ]
         for expected_method in expected_methods:
             assert hasattr(

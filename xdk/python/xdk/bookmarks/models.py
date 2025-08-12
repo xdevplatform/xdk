@@ -9,54 +9,6 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for delete_users_bookmark
-
-
-class DeleteUsersBookmarkResponse(BaseModel):
-    """Response model for delete_users_bookmark"""
-
-    data: Optional["DeleteUsersBookmarkResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class DeleteUsersBookmarkResponseData(BaseModel):
-    """Nested model for DeleteUsersBookmarkResponseData"""
-
-    bookmarked: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for create_users_bookmark
-
-
-class CreateUsersBookmarkRequest(BaseModel):
-    """Request model for create_users_bookmark"""
-
-    tweet_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateUsersBookmarkResponse(BaseModel):
-    """Response model for create_users_bookmark"""
-
-    data: Optional["CreateUsersBookmarkResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateUsersBookmarkResponseData(BaseModel):
-    """Nested model for CreateUsersBookmarkResponseData"""
-
-    bookmarked: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for get_users_bookmark_folders
 
 
@@ -95,5 +47,53 @@ class GetUsersByFolderIdResponseMeta(BaseModel):
     """Nested model for GetUsersByFolderIdResponseMeta"""
 
     pagination_token: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for create_users_bookmark
+
+
+class CreateUsersBookmarkRequest(BaseModel):
+    """Request model for create_users_bookmark"""
+
+    tweet_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateUsersBookmarkResponse(BaseModel):
+    """Response model for create_users_bookmark"""
+
+    data: Optional["CreateUsersBookmarkResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateUsersBookmarkResponseData(BaseModel):
+    """Nested model for CreateUsersBookmarkResponseData"""
+
+    bookmarked: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for delete_users_bookmark
+
+
+class DeleteUsersBookmarkResponse(BaseModel):
+    """Response model for delete_users_bookmark"""
+
+    data: Optional["DeleteUsersBookmarkResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DeleteUsersBookmarkResponseData(BaseModel):
+    """Nested model for DeleteUsersBookmarkResponseData"""
+
+    bookmarked: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)

@@ -122,9 +122,8 @@
 //!
 //! This system enables the XDK generator to produce comprehensive, realistic test suites for any
 //! target language while maintaining consistency and leveraging the full OpenAPI specification.
-use crate::Casing;
 use crate::models::OperationInfo;
-use openapi::{Parameter, RefOrValue, RequestBody, Schema, TypedSchema};
+use openapi::{RefOrValue, RequestBody, Schema, TypedSchema};
 use serde::Serialize;
 use std::collections::HashMap;
 
@@ -342,66 +341,34 @@ fn generate_method_signature(operation: &OperationInfo) -> MethodSignature {
     }
 }
 
-/// Extract parameters from operation
+/// Extract parameters from operation (convert ParameterInfo to TestParameter)
 fn extract_parameters(operation: &OperationInfo) -> (Vec<TestParameter>, Vec<TestParameter>) {
     let mut required_params = Vec::new();
     let mut optional_params = Vec::new();
 
     if let Some(parameters) = &operation.parameters {
-        for param_ref in parameters {
-            // Handle both direct parameters and parameter references
-            let param = match param_ref {
-                RefOrValue::Value(p) => p,
-                RefOrValue::Reference {
-                    path: _,
-                    resolved: _,
-                } => continue, // References are only used for components (requests/responses), not parameters
-            };
+        for param in parameters {
+            // Only include path and query parameters for testing
+            if param.location == "path" || param.location == "query" {
+                let test_param = TestParameter {
+                    name: param.original_name.clone(),
+                    variable_name: param.variable_name.clone(), // Already cased
+                    param_type: param.param_type.clone(),
+                    location: param.location.clone(),
+                    required: param.required,
+                    description: param.description.clone(),
+                };
 
-            if let (Some(name), Some(location)) = (&param.name, &param.r#in) {
-                // Only include path and query parameters for testing
-                if location == "path" || location == "query" {
-                    let param_type = extract_param_type(param);
-                    let is_required = param.required.unwrap_or(false) || location == "path"; // Path params are always required
-
-                    let test_param = TestParameter {
-                        name: name.clone(),
-                        variable_name: Casing::Snake.convert_words(&[name.clone()]), // TODO: Should be dynamic based on config
-                        param_type,
-                        location: location.clone(),
-                        required: is_required,
-                        description: param.description.clone(),
-                    };
-
-                    if is_required {
-                        required_params.push(test_param);
-                    } else {
-                        optional_params.push(test_param);
-                    }
+                if param.required {
+                    required_params.push(test_param);
+                } else {
+                    optional_params.push(test_param);
                 }
             }
         }
     }
 
     (required_params, optional_params)
-}
-
-/// Extract parameter type from parameter schema
-fn extract_param_type(param: &Parameter) -> String {
-    if let Some(RefOrValue::Value(Schema::Typed(typed))) = &param.schema {
-        match typed.as_ref() {
-            TypedSchema::String(_) => "string".to_string(),
-            TypedSchema::Integer(_) => "integer".to_string(),
-            TypedSchema::Number(_) => "number".to_string(),
-            TypedSchema::Boolean(_) => "boolean".to_string(),
-            TypedSchema::Array(_) => "array".to_string(),
-            TypedSchema::Object(_) => "object".to_string(),
-        }
-    } else if let Some(RefOrValue::Reference { .. }) = &param.schema {
-        "reference".to_string()
-    } else {
-        "any".to_string()
-    }
 }
 
 /// Generate contract test from operation
@@ -543,27 +510,17 @@ fn extract_security_requirements(operation: &OperationInfo) -> Vec<String> {
 fn detect_pagination_support(operation: &OperationInfo) -> bool {
     if let Some(parameters) = &operation.parameters {
         let has_token = parameters.iter().any(|param| {
-            if let RefOrValue::Value(param) = param {
-                if let Some(name) = &param.name {
-                    matches!(name.as_str(), "pagination_token" | "next_token" | "cursor")
-                } else {
-                    false
-                }
-            } else {
-                false
-            }
+            matches!(
+                param.original_name.as_str(),
+                "pagination_token" | "next_token" | "cursor"
+            )
         });
 
         let has_limit = parameters.iter().any(|param| {
-            if let RefOrValue::Value(param) = param {
-                if let Some(name) = &param.name {
-                    matches!(name.as_str(), "max_results" | "limit" | "count")
-                } else {
-                    false
-                }
-            } else {
-                false
-            }
+            matches!(
+                param.original_name.as_str(),
+                "max_results" | "limit" | "count"
+            )
         });
 
         // Require BOTH token and limit parameters for true pagination support
@@ -606,18 +563,14 @@ fn extract_pagination_params(operation: &OperationInfo) -> (Option<String>, Opti
 
     if let Some(parameters) = &operation.parameters {
         for param in parameters {
-            if let RefOrValue::Value(param) = param {
-                if let Some(name) = &param.name {
-                    match name.as_str() {
-                        "pagination_token" | "next_token" | "cursor" => {
-                            token_param = Some(name.clone());
-                        }
-                        "max_results" | "limit" | "count" => {
-                            max_results_param = Some(name.clone());
-                        }
-                        _ => {}
-                    }
+            match param.original_name.as_str() {
+                "pagination_token" | "next_token" | "cursor" => {
+                    token_param = Some(param.original_name.clone());
                 }
+                "max_results" | "limit" | "count" => {
+                    max_results_param = Some(param.original_name.clone());
+                }
+                _ => {}
             }
         }
     }
@@ -705,22 +658,18 @@ fn generate_request_params(operation: &OperationInfo) -> HashMap<String, serde_j
 
     if let Some(parameters) = &operation.parameters {
         for param in parameters {
-            if let RefOrValue::Value(param) = param {
-                if let Some(name) = &param.name {
-                    // Try to generate value from schema first
-                    let value = if let Some(schema) = &param.schema {
-                        generate_mock_from_schema(schema).unwrap_or_else(|| {
-                            // Fallback to simple type-based generation
-                            generate_simple_param_value(&extract_param_type(param))
-                        })
-                    } else {
-                        // Fallback to simple type-based generation
-                        generate_simple_param_value(&extract_param_type(param))
-                    };
+            // Try to generate value from schema first
+            let value = if let Some(schema) = &param.schema {
+                generate_mock_from_schema(schema).unwrap_or_else(|| {
+                    // Fallback to simple type-based generation
+                    generate_simple_param_value(&param.param_type)
+                })
+            } else {
+                // Fallback to simple type-based generation
+                generate_simple_param_value(&param.param_type)
+            };
 
-                    params.insert(name.clone(), value);
-                }
-            }
+            params.insert(param.original_name.clone(), value);
         }
     }
 

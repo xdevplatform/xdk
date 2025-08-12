@@ -25,101 +25,6 @@ class TestBookmarksStructure:
         self.bookmarks_client = getattr(self.client, "bookmarks")
 
 
-    def test_delete_users_bookmark_exists(self):
-        """Test that delete_users_bookmark method exists with correct signature."""
-        # Check method exists
-        method = getattr(BookmarksClient, "delete_users_bookmark", None)
-        assert (
-            method is not None
-        ), f"Method delete_users_bookmark does not exist on BookmarksClient"
-        # Check method is callable
-        assert callable(method), f"delete_users_bookmark is not callable"
-        # Check method signature
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        # Should have 'self' as first parameter
-        assert (
-            len(params) >= 1
-        ), f"delete_users_bookmark should have at least 'self' parameter"
-        assert (
-            params[0] == "self"
-        ), f"First parameter should be 'self', got '{params[0]}'"
-        # Check required parameters exist (excluding 'self')
-        required_params = [
-            "id",
-            "tweet_id",
-        ]
-        for required_param in required_params:
-            assert (
-                required_param in params
-            ), f"Required parameter '{required_param}' missing from delete_users_bookmark"
-        # Check optional parameters have defaults (excluding 'self')
-        optional_params = []
-        for optional_param in optional_params:
-            if optional_param in params:
-                param_obj = sig.parameters[optional_param]
-                assert (
-                    param_obj.default is not inspect.Parameter.empty
-                ), f"Optional parameter '{optional_param}' should have a default value"
-
-
-    def test_delete_users_bookmark_return_annotation(self):
-        """Test that delete_users_bookmark has proper return type annotation."""
-        method = getattr(BookmarksClient, "delete_users_bookmark")
-        sig = inspect.signature(method)
-        # Check return annotation exists
-        assert (
-            sig.return_annotation is not inspect.Signature.empty
-        ), f"Method delete_users_bookmark should have return type annotation"
-
-
-    def test_create_users_bookmark_exists(self):
-        """Test that create_users_bookmark method exists with correct signature."""
-        # Check method exists
-        method = getattr(BookmarksClient, "create_users_bookmark", None)
-        assert (
-            method is not None
-        ), f"Method create_users_bookmark does not exist on BookmarksClient"
-        # Check method is callable
-        assert callable(method), f"create_users_bookmark is not callable"
-        # Check method signature
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        # Should have 'self' as first parameter
-        assert (
-            len(params) >= 1
-        ), f"create_users_bookmark should have at least 'self' parameter"
-        assert (
-            params[0] == "self"
-        ), f"First parameter should be 'self', got '{params[0]}'"
-        # Check required parameters exist (excluding 'self')
-        required_params = [
-            "id",
-        ]
-        for required_param in required_params:
-            assert (
-                required_param in params
-            ), f"Required parameter '{required_param}' missing from create_users_bookmark"
-        # Check optional parameters have defaults (excluding 'self')
-        optional_params = []
-        for optional_param in optional_params:
-            if optional_param in params:
-                param_obj = sig.parameters[optional_param]
-                assert (
-                    param_obj.default is not inspect.Parameter.empty
-                ), f"Optional parameter '{optional_param}' should have a default value"
-
-
-    def test_create_users_bookmark_return_annotation(self):
-        """Test that create_users_bookmark has proper return type annotation."""
-        method = getattr(BookmarksClient, "create_users_bookmark")
-        sig = inspect.signature(method)
-        # Check return annotation exists
-        assert (
-            sig.return_annotation is not inspect.Signature.empty
-        ), f"Method create_users_bookmark should have return type annotation"
-
-
     def test_get_users_bookmark_folders_exists(self):
         """Test that get_users_bookmark_folders method exists with correct signature."""
         # Check method exists
@@ -237,13 +142,108 @@ class TestBookmarksStructure:
         ), f"Method get_users_by_folder_id should have return type annotation"
 
 
+    def test_create_users_bookmark_exists(self):
+        """Test that create_users_bookmark method exists with correct signature."""
+        # Check method exists
+        method = getattr(BookmarksClient, "create_users_bookmark", None)
+        assert (
+            method is not None
+        ), f"Method create_users_bookmark does not exist on BookmarksClient"
+        # Check method is callable
+        assert callable(method), f"create_users_bookmark is not callable"
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        # Should have 'self' as first parameter
+        assert (
+            len(params) >= 1
+        ), f"create_users_bookmark should have at least 'self' parameter"
+        assert (
+            params[0] == "self"
+        ), f"First parameter should be 'self', got '{params[0]}'"
+        # Check required parameters exist (excluding 'self')
+        required_params = [
+            "id",
+        ]
+        for required_param in required_params:
+            assert (
+                required_param in params
+            ), f"Required parameter '{required_param}' missing from create_users_bookmark"
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = []
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert (
+                    param_obj.default is not inspect.Parameter.empty
+                ), f"Optional parameter '{optional_param}' should have a default value"
+
+
+    def test_create_users_bookmark_return_annotation(self):
+        """Test that create_users_bookmark has proper return type annotation."""
+        method = getattr(BookmarksClient, "create_users_bookmark")
+        sig = inspect.signature(method)
+        # Check return annotation exists
+        assert (
+            sig.return_annotation is not inspect.Signature.empty
+        ), f"Method create_users_bookmark should have return type annotation"
+
+
+    def test_delete_users_bookmark_exists(self):
+        """Test that delete_users_bookmark method exists with correct signature."""
+        # Check method exists
+        method = getattr(BookmarksClient, "delete_users_bookmark", None)
+        assert (
+            method is not None
+        ), f"Method delete_users_bookmark does not exist on BookmarksClient"
+        # Check method is callable
+        assert callable(method), f"delete_users_bookmark is not callable"
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        # Should have 'self' as first parameter
+        assert (
+            len(params) >= 1
+        ), f"delete_users_bookmark should have at least 'self' parameter"
+        assert (
+            params[0] == "self"
+        ), f"First parameter should be 'self', got '{params[0]}'"
+        # Check required parameters exist (excluding 'self')
+        required_params = [
+            "id",
+            "tweet_id",
+        ]
+        for required_param in required_params:
+            assert (
+                required_param in params
+            ), f"Required parameter '{required_param}' missing from delete_users_bookmark"
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = []
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert (
+                    param_obj.default is not inspect.Parameter.empty
+                ), f"Optional parameter '{optional_param}' should have a default value"
+
+
+    def test_delete_users_bookmark_return_annotation(self):
+        """Test that delete_users_bookmark has proper return type annotation."""
+        method = getattr(BookmarksClient, "delete_users_bookmark")
+        sig = inspect.signature(method)
+        # Check return annotation exists
+        assert (
+            sig.return_annotation is not inspect.Signature.empty
+        ), f"Method delete_users_bookmark should have return type annotation"
+
+
     def test_all_expected_methods_exist(self):
         """Test that all expected methods exist on the client."""
         expected_methods = [
-            "delete_users_bookmark",
-            "create_users_bookmark",
             "get_users_bookmark_folders",
             "get_users_by_folder_id",
+            "create_users_bookmark",
+            "delete_users_bookmark",
         ]
         for expected_method in expected_methods:
             assert hasattr(

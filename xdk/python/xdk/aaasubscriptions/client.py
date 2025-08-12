@@ -27,7 +27,7 @@ class AaasubscriptionsClient:
 
     def create_account_activity_subscription(
         self,
-        webhook_id: str,
+        webhook_id: Any,
         body: Optional[CreateAccountActivitySubscriptionRequest] = None,
     ) -> CreateAccountActivitySubscriptionResponse:
         """

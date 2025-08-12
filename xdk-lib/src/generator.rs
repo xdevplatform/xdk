@@ -5,7 +5,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 
 use super::models::OperationGroup;
-use super::utils::extract_operations_by_tag;
+use super::openapi::extract_operations_by_tag;
 use minijinja::Environment;
 
 /// Trait that defines the interface for language-specific SDK generators.
@@ -138,6 +138,7 @@ where
 /// # Example
 /// ```
 /// # use xdk_lib::language;
+/// # use xdk_lib::Casing;
 /// # fn snake_case(value: &str) -> String {
 /// #     value.to_lowercase()
 /// # }
@@ -203,7 +204,8 @@ macro_rules! language {
     ) => {
         use std::collections::HashMap;
         use std::path::{Path, PathBuf};
-        use $crate::utils::{render_template, create_tag_info};
+                use $crate::templates::render_template;
+                use $crate::models::TagInfo;
         use $crate::models::{OperationInfo, OperationGroup};
         use $crate::generator::LanguageGenerator;
         use $crate::Result;
@@ -252,14 +254,21 @@ macro_rules! language {
                                 let class_name = $class_casing.convert_words(
                                     &op_group.metadata.normalized_operation_id,
                                 );
-                                op_group
+                                let processed_parameters = $crate::models::ParameterInfo::from_openapi_parameters(
+                                    &op_group.raw_parameters,
+                                    $variable_casing,
+                                );
+
+                                let mut operation = op_group
                                     .operation
                                     .clone()
-                                    .with_casing(method_name, class_name)
+                                    .with_casing(method_name, class_name);
+                                operation.parameters = processed_parameters;
+                                operation
                             })
                             .collect();
 
-                        let tag_info = create_tag_info(tag, $class_casing, $import_casing, $variable_casing);
+                        let tag_info = TagInfo::new(tag, $class_casing, $import_casing, $variable_casing);
                         let context = OperationContext {
                             tag: tag_info,
                             operations: operations_with_converted_ids
@@ -277,7 +286,7 @@ macro_rules! language {
                 )*
 
                 // Handle singleton template renders (once per SDK)
-                let tag_infos: Vec<_> = tags.iter().map(|tag| create_tag_info(tag, $class_casing, $import_casing, $variable_casing)).collect();
+                let tag_infos: Vec<_> = tags.iter().map(|tag| TagInfo::new(tag, $class_casing, $import_casing, $variable_casing)).collect();
                 let tags_context = TagsContext {
                     tags: tag_infos,
                 };
@@ -300,7 +309,14 @@ macro_rules! language {
                             .map(|og| {
                                 let method_name = $operation_casing.convert_words(&og.metadata.normalized_operation_id);
                                 let class_name = $class_casing.convert_words(&og.metadata.normalized_operation_id);
-                                og.operation.clone().with_casing(method_name, class_name)
+                                let processed_parameters = $crate::models::ParameterInfo::from_openapi_parameters(
+                                    &og.raw_parameters,
+                                    $variable_casing,
+                                );
+
+                                let mut operation = og.operation.clone().with_casing(method_name, class_name);
+                                operation.parameters = processed_parameters;
+                                operation
                             })
                             .collect();
                         (tag_string, operations_with_casing)
@@ -323,7 +339,7 @@ macro_rules! language {
                 // Handle per-tag test template renders
                 $(
                     for tag in &test_tags {
-                        let tag_info = create_tag_info(tag, $class_casing, $import_casing, $variable_casing);
+                        let tag_info = TagInfo::new(tag, $class_casing, $import_casing, $variable_casing);
                         let tag_path = tag.join("_").to_lowercase();
 
                         if let Some(test_spec) = converted_test_specs.get(tag) {
@@ -368,7 +384,7 @@ macro_rules! language {
                 )*
 
                 // Handle singleton test template renders (once per SDK)
-                let test_tag_infos: Vec<_> = test_tags.iter().map(|tag| create_tag_info(tag, $class_casing, $import_casing, $variable_casing)).collect();
+                let test_tag_infos: Vec<_> = test_tags.iter().map(|tag| TagInfo::new(tag, $class_casing, $import_casing, $variable_casing)).collect();
                 let test_tags_context = TagsContext {
                     tags: test_tag_infos,
                 };

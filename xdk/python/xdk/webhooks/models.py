@@ -9,46 +9,6 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for validate
-
-
-class ValidateResponse(BaseModel):
-    """Response model for validate"""
-
-    data: Optional["ValidateResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class ValidateResponseData(BaseModel):
-    """Nested model for ValidateResponseData"""
-
-    attempted: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for delete
-
-
-class DeleteResponse(BaseModel):
-    """Response model for delete"""
-
-    data: Optional["DeleteResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class DeleteResponseData(BaseModel):
-    """Nested model for DeleteResponseData"""
-
-    deleted: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for get
 
 
@@ -88,5 +48,45 @@ class CreateResponse(BaseModel):
     id: Optional[str] = None
     url: Optional[str] = None
     valid: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for validate
+
+
+class ValidateResponse(BaseModel):
+    """Response model for validate"""
+
+    data: Optional["ValidateResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class ValidateResponseData(BaseModel):
+    """Nested model for ValidateResponseData"""
+
+    attempted: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for delete
+
+
+class DeleteResponse(BaseModel):
+    """Response model for delete"""
+
+    data: Optional["DeleteResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DeleteResponseData(BaseModel):
+    """Nested model for DeleteResponseData"""
+
+    deleted: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)

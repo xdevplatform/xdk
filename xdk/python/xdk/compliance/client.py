@@ -12,10 +12,10 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
+    GetJobsByIdResponse,
     GetJobsResponse,
     CreateJobsRequest,
     CreateJobsResponse,
-    GetJobsByIdResponse,
 )
 
 
@@ -27,11 +27,48 @@ class ComplianceClient:
         self.client = client
 
 
+    def get_jobs_by_id(
+        self,
+        id: Any,
+    ) -> GetJobsByIdResponse:
+        """
+        Get Compliance Job by ID
+        Retrieves details of a specific Compliance Job by its ID.
+        Args:
+            id: The ID of the Compliance Job to retrieve.
+        Returns:
+            GetJobsByIdResponse: Response data
+        """
+        url = self.client.base_url + "/2/compliance/jobs/{id}"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetJobsByIdResponse.model_validate(response_data)
+
+
     def get_jobs(
         self,
         type: str,
         status: str = None,
-        compliance_job_fields: List = None,
     ) -> GetJobsResponse:
         """
         Get Compliance Jobs
@@ -40,8 +77,6 @@ class ComplianceClient:
             type: Type of Compliance Job to list.
         Args:
             status: Status of Compliance Job to list.
-        Args:
-            compliance_job_fields: A comma separated list of ComplianceJob fields to display.
         Returns:
             GetJobsResponse: Response data
         """
@@ -59,10 +94,6 @@ class ComplianceClient:
             params["type"] = type
         if status is not None:
             params["status"] = status
-        if compliance_job_fields is not None:
-            params["compliance_job.fields"] = ",".join(
-                str(item) for item in compliance_job_fields
-            )
         headers = {}
         # Make the request
         response = self.client.session.get(
@@ -114,48 +145,3 @@ class ComplianceClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return CreateJobsResponse.model_validate(response_data)
-
-
-    def get_jobs_by_id(
-        self,
-        id: str,
-        compliance_job_fields: List = None,
-    ) -> GetJobsByIdResponse:
-        """
-        Get Compliance Job by ID
-        Retrieves details of a specific Compliance Job by its ID.
-        Args:
-            id: The ID of the Compliance Job to retrieve.
-        Args:
-            compliance_job_fields: A comma separated list of ComplianceJob fields to display.
-        Returns:
-            GetJobsByIdResponse: Response data
-        """
-        url = self.client.base_url + "/2/compliance/jobs/{id}"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        if compliance_job_fields is not None:
-            params["compliance_job.fields"] = ",".join(
-                str(item) for item in compliance_job_fields
-            )
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetJobsByIdResponse.model_validate(response_data)

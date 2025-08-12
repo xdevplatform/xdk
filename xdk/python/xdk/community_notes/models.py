@@ -9,21 +9,35 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for search_written
+# Models for search_eligible_posts
 
 
-class SearchWrittenResponse(BaseModel):
-    """Response model for search_written"""
+class SearchEligiblePostsResponse(BaseModel):
+    """Response model for search_eligible_posts"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    meta: Optional["SearchWrittenResponseMeta"] = None
+    includes: Optional["SearchEligiblePostsResponseIncludes"] = None
+    meta: Optional["SearchEligiblePostsResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class SearchWrittenResponseMeta(BaseModel):
-    """Nested model for SearchWrittenResponseMeta"""
+class SearchEligiblePostsResponseIncludes(BaseModel):
+    """Nested model for SearchEligiblePostsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class SearchEligiblePostsResponseMeta(BaseModel):
+    """Nested model for SearchEligiblePostsResponseMeta"""
 
     next_token: Optional[str] = None
     result_count: Optional[int] = None
@@ -74,6 +88,28 @@ class CreateResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
+# Models for search_written
+
+
+class SearchWrittenResponse(BaseModel):
+    """Response model for search_written"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    meta: Optional["SearchWrittenResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class SearchWrittenResponseMeta(BaseModel):
+    """Nested model for SearchWrittenResponseMeta"""
+
+    next_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 # Models for delete
 
 
@@ -90,41 +126,5 @@ class DeleteResponseData(BaseModel):
     """Nested model for DeleteResponseData"""
 
     id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for search_eligible_posts
-
-
-class SearchEligiblePostsResponse(BaseModel):
-    """Response model for search_eligible_posts"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["SearchEligiblePostsResponseIncludes"] = None
-    meta: Optional["SearchEligiblePostsResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class SearchEligiblePostsResponseIncludes(BaseModel):
-    """Nested model for SearchEligiblePostsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class SearchEligiblePostsResponseMeta(BaseModel):
-    """Nested model for SearchEligiblePostsResponseMeta"""
-
-    next_token: Optional[str] = None
-    result_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)

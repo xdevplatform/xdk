@@ -9,6 +9,241 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
+# Models for get_insights_historical
+
+
+class GetInsightsHistoricalResponse(BaseModel):
+    """Response model for get_insights_historical"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_counts_recent
+
+
+class GetCountsRecentResponse(BaseModel):
+    """Response model for get_counts_recent"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    meta: Optional["GetCountsRecentResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetCountsRecentResponseMeta(BaseModel):
+    """Nested model for GetCountsRecentResponseMeta"""
+
+    newest_id: Optional[str] = None
+    next_token: Optional[str] = None
+    oldest_id: Optional[str] = None
+    total_tweet_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_by_ids
+
+
+class GetByIdsResponse(BaseModel):
+    """Response model for get_by_ids"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetByIdsResponseIncludes"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetByIdsResponseIncludes(BaseModel):
+    """Nested model for GetByIdsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for create
+
+
+class CreateRequest(BaseModel):
+    """Request model for create"""
+
+    card_uri: Optional[str] = None
+    community_id: Optional[str] = None
+    direct_message_deep_link: Optional[str] = None
+    for_super_followers_only: Optional[bool] = None
+    geo: Optional["CreateRequestGeo"] = None
+    media: Optional["CreateRequestMedia"] = Field(
+        description="Media information being attached to created Tweet. This is mutually exclusive from Quote Tweet Id, Poll, and Card URI.",
+        default_factory=dict,
+    )
+    nullcast: Optional[bool] = None
+    poll: Optional["CreateRequestPoll"] = Field(
+        description="Poll options for a Tweet with a poll. This is mutually exclusive from Media, Quote Tweet Id, and Card URI.",
+        default_factory=dict,
+    )
+    quote_tweet_id: Optional[str] = None
+    reply: Optional["CreateRequestReply"] = Field(
+        description="Tweet information of the Tweet being replied to.",
+        default_factory=dict,
+    )
+    reply_settings: Optional[str] = None
+    share_with_followers: Optional[bool] = None
+    text: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateResponse(BaseModel):
+    """Response model for create"""
+
+    data: Optional["CreateResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateRequestGeo(BaseModel):
+    """Nested model for CreateRequestGeo"""
+
+    place_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateRequestMedia(BaseModel):
+    """Nested model for CreateRequestMedia"""
+
+    media_ids: Optional[List] = None
+    tagged_user_ids: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateRequestPoll(BaseModel):
+    """Nested model for CreateRequestPoll"""
+
+    duration_minutes: Optional[int] = None
+    options: Optional[List] = None
+    reply_settings: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateRequestReply(BaseModel):
+    """Nested model for CreateRequestReply"""
+
+    exclude_reply_user_ids: Optional[List] = None
+    in_reply_to_tweet_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateResponseData(BaseModel):
+    """Nested model for CreateResponseData"""
+
+    id: Optional[str] = None
+    text: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_insights28hr
+
+
+class GetInsights28hrResponse(BaseModel):
+    """Response model for get_insights28hr"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for search_all
+
+
+class SearchAllResponse(BaseModel):
+    """Response model for search_all"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["SearchAllResponseIncludes"] = None
+    meta: Optional["SearchAllResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class SearchAllResponseIncludes(BaseModel):
+    """Nested model for SearchAllResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class SearchAllResponseMeta(BaseModel):
+    """Nested model for SearchAllResponseMeta"""
+
+    newest_id: Optional[str] = None
+    next_token: Optional[str] = None
+    oldest_id: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_reposted_by
+
+
+class GetRepostedByResponse(BaseModel):
+    """Response model for get_reposted_by"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetRepostedByResponseIncludes"] = None
+    meta: Optional["GetRepostedByResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetRepostedByResponseIncludes(BaseModel):
+    """Nested model for GetRepostedByResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetRepostedByResponseMeta(BaseModel):
+    """Nested model for GetRepostedByResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 # Models for get_reposts
 
 
@@ -46,55 +281,26 @@ class GetRepostsResponseMeta(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for repost_post
+# Models for get_counts_all
 
 
-class RepostPostRequest(BaseModel):
-    """Request model for repost_post"""
-
-    tweet_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class RepostPostResponse(BaseModel):
-    """Response model for repost_post"""
-
-    data: Optional["RepostPostResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class RepostPostResponseData(BaseModel):
-    """Nested model for RepostPostResponseData"""
-
-    id: Optional[str] = None
-    retweeted: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_insights_historical
-
-
-class GetInsightsHistoricalResponse(BaseModel):
-    """Response model for get_insights_historical"""
+class GetCountsAllResponse(BaseModel):
+    """Response model for get_counts_all"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
+    meta: Optional["GetCountsAllResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for get_insights28hr
+class GetCountsAllResponseMeta(BaseModel):
+    """Nested model for GetCountsAllResponseMeta"""
 
-
-class GetInsights28hrResponse(BaseModel):
-    """Response model for get_insights28hr"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
+    newest_id: Optional[str] = None
+    next_token: Optional[str] = None
+    oldest_id: Optional[str] = None
+    total_tweet_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -137,26 +343,138 @@ class SearchRecentResponseMeta(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for get_counts_all
+# Models for unrepost_post
 
 
-class GetCountsAllResponse(BaseModel):
-    """Response model for get_counts_all"""
+class UnrepostPostResponse(BaseModel):
+    """Response model for unrepost_post"""
 
-    data: Optional[List] = None
+    data: Optional["UnrepostPostResponseData"] = None
     errors: Optional[List] = None
-    meta: Optional["GetCountsAllResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetCountsAllResponseMeta(BaseModel):
-    """Nested model for GetCountsAllResponseMeta"""
+class UnrepostPostResponseData(BaseModel):
+    """Nested model for UnrepostPostResponseData"""
 
-    newest_id: Optional[str] = None
-    next_token: Optional[str] = None
-    oldest_id: Optional[str] = None
-    total_tweet_count: Optional[int] = None
+    retweeted: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_analytics
+
+
+class GetAnalyticsResponse(BaseModel):
+    """Response model for get_analytics"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for repost_post
+
+
+class RepostPostRequest(BaseModel):
+    """Request model for repost_post"""
+
+    tweet_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class RepostPostResponse(BaseModel):
+    """Response model for repost_post"""
+
+    data: Optional["RepostPostResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class RepostPostResponseData(BaseModel):
+    """Nested model for RepostPostResponseData"""
+
+    id: Optional[str] = None
+    retweeted: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for like_post
+
+
+class LikePostRequest(BaseModel):
+    """Request model for like_post"""
+
+    tweet_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class LikePostResponse(BaseModel):
+    """Response model for like_post"""
+
+    data: Optional["LikePostResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class LikePostResponseData(BaseModel):
+    """Nested model for LikePostResponseData"""
+
+    liked: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for hide_reply
+
+
+class HideReplyRequest(BaseModel):
+    """Request model for hide_reply"""
+
+    hidden: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class HideReplyResponse(BaseModel):
+    """Response model for hide_reply"""
+
+    data: Optional["HideReplyResponseData"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class HideReplyResponseData(BaseModel):
+    """Nested model for HideReplyResponseData"""
+
+    hidden: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for unlike_post
+
+
+class UnlikePostResponse(BaseModel):
+    """Response model for unlike_post"""
+
+    data: Optional["UnlikePostResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class UnlikePostResponseData(BaseModel):
+    """Nested model for UnlikePostResponseData"""
+
+    liked: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -372,221 +690,6 @@ class DeleteResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for search_all
-
-
-class SearchAllResponse(BaseModel):
-    """Response model for search_all"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["SearchAllResponseIncludes"] = None
-    meta: Optional["SearchAllResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class SearchAllResponseIncludes(BaseModel):
-    """Nested model for SearchAllResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class SearchAllResponseMeta(BaseModel):
-    """Nested model for SearchAllResponseMeta"""
-
-    newest_id: Optional[str] = None
-    next_token: Optional[str] = None
-    oldest_id: Optional[str] = None
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for like_post
-
-
-class LikePostRequest(BaseModel):
-    """Request model for like_post"""
-
-    tweet_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class LikePostResponse(BaseModel):
-    """Response model for like_post"""
-
-    data: Optional["LikePostResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class LikePostResponseData(BaseModel):
-    """Nested model for LikePostResponseData"""
-
-    liked: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_by_ids
-
-
-class GetByIdsResponse(BaseModel):
-    """Response model for get_by_ids"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetByIdsResponseIncludes"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetByIdsResponseIncludes(BaseModel):
-    """Nested model for GetByIdsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for create
-
-
-class CreateRequest(BaseModel):
-    """Request model for create"""
-
-    card_uri: Optional[str] = None
-    community_id: Optional[str] = None
-    direct_message_deep_link: Optional[str] = None
-    for_super_followers_only: Optional[bool] = None
-    geo: Optional["CreateRequestGeo"] = None
-    media: Optional["CreateRequestMedia"] = Field(
-        description="Media information being attached to created Tweet. This is mutually exclusive from Quote Tweet Id, Poll, and Card URI.",
-        default_factory=dict,
-    )
-    nullcast: Optional[bool] = None
-    poll: Optional["CreateRequestPoll"] = Field(
-        description="Poll options for a Tweet with a poll. This is mutually exclusive from Media, Quote Tweet Id, and Card URI.",
-        default_factory=dict,
-    )
-    quote_tweet_id: Optional[str] = None
-    reply: Optional["CreateRequestReply"] = Field(
-        description="Tweet information of the Tweet being replied to.",
-        default_factory=dict,
-    )
-    reply_settings: Optional[str] = None
-    share_with_followers: Optional[bool] = None
-    text: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateResponse(BaseModel):
-    """Response model for create"""
-
-    data: Optional["CreateResponseData"] = Field(default_factory=dict)
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateRequestGeo(BaseModel):
-    """Nested model for CreateRequestGeo"""
-
-    place_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateRequestMedia(BaseModel):
-    """Nested model for CreateRequestMedia"""
-
-    media_ids: Optional[List] = None
-    tagged_user_ids: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateRequestPoll(BaseModel):
-    """Nested model for CreateRequestPoll"""
-
-    duration_minutes: Optional[int] = None
-    options: Optional[List] = None
-    reply_settings: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateRequestReply(BaseModel):
-    """Nested model for CreateRequestReply"""
-
-    exclude_reply_user_ids: Optional[List] = None
-    in_reply_to_tweet_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateResponseData(BaseModel):
-    """Nested model for CreateResponseData"""
-
-    id: Optional[str] = None
-    text: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_reposted_by
-
-
-class GetRepostedByResponse(BaseModel):
-    """Response model for get_reposted_by"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetRepostedByResponseIncludes"] = None
-    meta: Optional["GetRepostedByResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetRepostedByResponseIncludes(BaseModel):
-    """Nested model for GetRepostedByResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetRepostedByResponseMeta(BaseModel):
-    """Nested model for GetRepostedByResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for get_liking_users
 
 
@@ -656,108 +759,5 @@ class GetQuotedResponseMeta(BaseModel):
 
     next_token: Optional[str] = None
     result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for hide_reply
-
-
-class HideReplyRequest(BaseModel):
-    """Request model for hide_reply"""
-
-    hidden: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class HideReplyResponse(BaseModel):
-    """Response model for hide_reply"""
-
-    data: Optional["HideReplyResponseData"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class HideReplyResponseData(BaseModel):
-    """Nested model for HideReplyResponseData"""
-
-    hidden: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_analytics
-
-
-class GetAnalyticsResponse(BaseModel):
-    """Response model for get_analytics"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_counts_recent
-
-
-class GetCountsRecentResponse(BaseModel):
-    """Response model for get_counts_recent"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    meta: Optional["GetCountsRecentResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetCountsRecentResponseMeta(BaseModel):
-    """Nested model for GetCountsRecentResponseMeta"""
-
-    newest_id: Optional[str] = None
-    next_token: Optional[str] = None
-    oldest_id: Optional[str] = None
-    total_tweet_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for unlike_post
-
-
-class UnlikePostResponse(BaseModel):
-    """Response model for unlike_post"""
-
-    data: Optional["UnlikePostResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class UnlikePostResponseData(BaseModel):
-    """Nested model for UnlikePostResponseData"""
-
-    liked: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for unrepost_post
-
-
-class UnrepostPostResponse(BaseModel):
-    """Response model for unrepost_post"""
-
-    data: Optional["UnrepostPostResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class UnrepostPostResponseData(BaseModel):
-    """Nested model for UnrepostPostResponseData"""
-
-    retweeted: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)
