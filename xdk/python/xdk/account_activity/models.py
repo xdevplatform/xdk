@@ -25,28 +25,22 @@ class CreateReplayJobResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for get_subscription_count
+# Models for delete_subscription
 
 
-class GetSubscriptionCountResponse(BaseModel):
-    """Response model for get_subscription_count"""
+class DeleteSubscriptionResponse(BaseModel):
+    """Response model for delete_subscription"""
 
-    data: Optional["GetSubscriptionCountResponseData"] = Field(
-        description="The count of active subscriptions across all webhooks",
-        default_factory=dict,
-    )
+    data: Optional["DeleteSubscriptionResponseData"] = None
     errors: Optional[List] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetSubscriptionCountResponseData(BaseModel):
-    """Nested model for GetSubscriptionCountResponseData"""
+class DeleteSubscriptionResponseData(BaseModel):
+    """Nested model for DeleteSubscriptionResponseData"""
 
-    account_name: Optional[str] = None
-    provisioned_count: Optional[str] = None
-    subscriptions_count_all: Optional[str] = None
-    subscriptions_count_direct_messages: Optional[str] = None
+    subscribed: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -97,26 +91,6 @@ class CreateSubscriptionResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for delete_subscription
-
-
-class DeleteSubscriptionResponse(BaseModel):
-    """Response model for delete_subscription"""
-
-    data: Optional["DeleteSubscriptionResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class DeleteSubscriptionResponseData(BaseModel):
-    """Nested model for DeleteSubscriptionResponseData"""
-
-    subscribed: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for get_subscriptions
 
 
@@ -139,5 +113,31 @@ class GetSubscriptionsResponseData(BaseModel):
     subscriptions: Optional[List] = None
     webhook_id: Optional[str] = None
     webhook_url: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_subscription_count
+
+
+class GetSubscriptionCountResponse(BaseModel):
+    """Response model for get_subscription_count"""
+
+    data: Optional["GetSubscriptionCountResponseData"] = Field(
+        description="The count of active subscriptions across all webhooks",
+        default_factory=dict,
+    )
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetSubscriptionCountResponseData(BaseModel):
+    """Nested model for GetSubscriptionCountResponseData"""
+
+    account_name: Optional[str] = None
+    provisioned_count: Optional[str] = None
+    subscriptions_count_all: Optional[str] = None
+    subscriptions_count_direct_messages: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)

@@ -16,35 +16,35 @@ from .paginator import Cursor, cursor, PaginationError
 
 from .usage.client import UsageClient
 
-from .media.client import MediaClient
-
 from .community_notes.client import CommunityNotesClient
 
-from .account_activity.client import AccountActivityClient
+from .trends.client import TrendsClient
+
+from .media.client import MediaClient
+
+from .connections.client import ConnectionsClient
 
 from .communities.client import CommunitiesClient
 
 from .posts.client import PostsClient
 
-from .lists.client import ListsClient
+from .spaces.client import SpacesClient
 
-from .general.client import GeneralClient
-
-from .direct_messages.client import DirectMessagesClient
+from .account_activity.client import AccountActivityClient
 
 from .stream.client import StreamClient
 
-from .users.client import UsersClient
+from .lists.client import ListsClient
 
 from .compliance.client import ComplianceClient
 
 from .webhooks.client import WebhooksClient
 
-from .spaces.client import SpacesClient
+from .direct_messages.client import DirectMessagesClient
 
-from .connections.client import ConnectionsClient
+from .users.client import UsersClient
 
-from .trends.client import TrendsClient
+from .general.client import GeneralClient
 
 
 class Client:
@@ -87,21 +87,21 @@ class Client:
             )
         # Initialize clients for each tag
         self.usage = UsageClient(self)
-        self.media = MediaClient(self)
         self.community_notes = CommunityNotesClient(self)
-        self.account_activity = AccountActivityClient(self)
+        self.trends = TrendsClient(self)
+        self.media = MediaClient(self)
+        self.connections = ConnectionsClient(self)
         self.communities = CommunitiesClient(self)
         self.posts = PostsClient(self)
-        self.lists = ListsClient(self)
-        self.general = GeneralClient(self)
-        self.direct_messages = DirectMessagesClient(self)
+        self.spaces = SpacesClient(self)
+        self.account_activity = AccountActivityClient(self)
         self.stream = StreamClient(self)
-        self.users = UsersClient(self)
+        self.lists = ListsClient(self)
         self.compliance = ComplianceClient(self)
         self.webhooks = WebhooksClient(self)
-        self.spaces = SpacesClient(self)
-        self.connections = ConnectionsClient(self)
-        self.trends = TrendsClient(self)
+        self.direct_messages = DirectMessagesClient(self)
+        self.users = UsersClient(self)
+        self.general = GeneralClient(self)
 
     @property
 
