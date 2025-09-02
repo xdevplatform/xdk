@@ -25,22 +25,22 @@ class TestMediaStructure:
         self.media_client = getattr(self.client, "media")
 
 
-    def test_initialize_upload_exists(self):
-        """Test that initialize_upload method exists with correct signature."""
+    def test_create_metadata_exists(self):
+        """Test that create_metadata method exists with correct signature."""
         # Check method exists
-        method = getattr(MediaClient, "initialize_upload", None)
+        method = getattr(MediaClient, "create_metadata", None)
         assert (
             method is not None
-        ), f"Method initialize_upload does not exist on MediaClient"
+        ), f"Method create_metadata does not exist on MediaClient"
         # Check method is callable
-        assert callable(method), f"initialize_upload is not callable"
+        assert callable(method), f"create_metadata is not callable"
         # Check method signature
         sig = inspect.signature(method)
         params = list(sig.parameters.keys())
         # Should have 'self' as first parameter
         assert (
             len(params) >= 1
-        ), f"initialize_upload should have at least 'self' parameter"
+        ), f"create_metadata should have at least 'self' parameter"
         assert (
             params[0] == "self"
         ), f"First parameter should be 'self', got '{params[0]}'"
@@ -49,7 +49,7 @@ class TestMediaStructure:
         for required_param in required_params:
             assert (
                 required_param in params
-            ), f"Required parameter '{required_param}' missing from initialize_upload"
+            ), f"Required parameter '{required_param}' missing from create_metadata"
         # Check optional parameters have defaults (excluding 'self')
         optional_params = []
         for optional_param in optional_params:
@@ -60,41 +60,42 @@ class TestMediaStructure:
                 ), f"Optional parameter '{optional_param}' should have a default value"
 
 
-    def test_initialize_upload_return_annotation(self):
-        """Test that initialize_upload has proper return type annotation."""
-        method = getattr(MediaClient, "initialize_upload")
+    def test_create_metadata_return_annotation(self):
+        """Test that create_metadata has proper return type annotation."""
+        method = getattr(MediaClient, "create_metadata")
         sig = inspect.signature(method)
         # Check return annotation exists
         assert (
             sig.return_annotation is not inspect.Signature.empty
-        ), f"Method initialize_upload should have return type annotation"
+        ), f"Method create_metadata should have return type annotation"
 
 
-    def test_create_subtitles_exists(self):
-        """Test that create_subtitles method exists with correct signature."""
+    def test_get_analytics_exists(self):
+        """Test that get_analytics method exists with correct signature."""
         # Check method exists
-        method = getattr(MediaClient, "create_subtitles", None)
-        assert (
-            method is not None
-        ), f"Method create_subtitles does not exist on MediaClient"
+        method = getattr(MediaClient, "get_analytics", None)
+        assert method is not None, f"Method get_analytics does not exist on MediaClient"
         # Check method is callable
-        assert callable(method), f"create_subtitles is not callable"
+        assert callable(method), f"get_analytics is not callable"
         # Check method signature
         sig = inspect.signature(method)
         params = list(sig.parameters.keys())
         # Should have 'self' as first parameter
-        assert (
-            len(params) >= 1
-        ), f"create_subtitles should have at least 'self' parameter"
+        assert len(params) >= 1, f"get_analytics should have at least 'self' parameter"
         assert (
             params[0] == "self"
         ), f"First parameter should be 'self', got '{params[0]}'"
         # Check required parameters exist (excluding 'self')
-        required_params = []
+        required_params = [
+            "media_keys",
+            "end_time",
+            "start_time",
+            "granularity",
+        ]
         for required_param in required_params:
             assert (
                 required_param in params
-            ), f"Required parameter '{required_param}' missing from create_subtitles"
+            ), f"Required parameter '{required_param}' missing from get_analytics"
         # Check optional parameters have defaults (excluding 'self')
         optional_params = []
         for optional_param in optional_params:
@@ -105,41 +106,39 @@ class TestMediaStructure:
                 ), f"Optional parameter '{optional_param}' should have a default value"
 
 
-    def test_create_subtitles_return_annotation(self):
-        """Test that create_subtitles has proper return type annotation."""
-        method = getattr(MediaClient, "create_subtitles")
+    def test_get_analytics_return_annotation(self):
+        """Test that get_analytics has proper return type annotation."""
+        method = getattr(MediaClient, "get_analytics")
         sig = inspect.signature(method)
         # Check return annotation exists
         assert (
             sig.return_annotation is not inspect.Signature.empty
-        ), f"Method create_subtitles should have return type annotation"
+        ), f"Method get_analytics should have return type annotation"
 
 
-    def test_delete_subtitles_exists(self):
-        """Test that delete_subtitles method exists with correct signature."""
+    def test_get_by_keys_exists(self):
+        """Test that get_by_keys method exists with correct signature."""
         # Check method exists
-        method = getattr(MediaClient, "delete_subtitles", None)
-        assert (
-            method is not None
-        ), f"Method delete_subtitles does not exist on MediaClient"
+        method = getattr(MediaClient, "get_by_keys", None)
+        assert method is not None, f"Method get_by_keys does not exist on MediaClient"
         # Check method is callable
-        assert callable(method), f"delete_subtitles is not callable"
+        assert callable(method), f"get_by_keys is not callable"
         # Check method signature
         sig = inspect.signature(method)
         params = list(sig.parameters.keys())
         # Should have 'self' as first parameter
-        assert (
-            len(params) >= 1
-        ), f"delete_subtitles should have at least 'self' parameter"
+        assert len(params) >= 1, f"get_by_keys should have at least 'self' parameter"
         assert (
             params[0] == "self"
         ), f"First parameter should be 'self', got '{params[0]}'"
         # Check required parameters exist (excluding 'self')
-        required_params = []
+        required_params = [
+            "media_keys",
+        ]
         for required_param in required_params:
             assert (
                 required_param in params
-            ), f"Required parameter '{required_param}' missing from delete_subtitles"
+            ), f"Required parameter '{required_param}' missing from get_by_keys"
         # Check optional parameters have defaults (excluding 'self')
         optional_params = []
         for optional_param in optional_params:
@@ -150,14 +149,61 @@ class TestMediaStructure:
                 ), f"Optional parameter '{optional_param}' should have a default value"
 
 
-    def test_delete_subtitles_return_annotation(self):
-        """Test that delete_subtitles has proper return type annotation."""
-        method = getattr(MediaClient, "delete_subtitles")
+    def test_get_by_keys_return_annotation(self):
+        """Test that get_by_keys has proper return type annotation."""
+        method = getattr(MediaClient, "get_by_keys")
         sig = inspect.signature(method)
         # Check return annotation exists
         assert (
             sig.return_annotation is not inspect.Signature.empty
-        ), f"Method delete_subtitles should have return type annotation"
+        ), f"Method get_by_keys should have return type annotation"
+
+
+    def test_finalize_upload_exists(self):
+        """Test that finalize_upload method exists with correct signature."""
+        # Check method exists
+        method = getattr(MediaClient, "finalize_upload", None)
+        assert (
+            method is not None
+        ), f"Method finalize_upload does not exist on MediaClient"
+        # Check method is callable
+        assert callable(method), f"finalize_upload is not callable"
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        # Should have 'self' as first parameter
+        assert (
+            len(params) >= 1
+        ), f"finalize_upload should have at least 'self' parameter"
+        assert (
+            params[0] == "self"
+        ), f"First parameter should be 'self', got '{params[0]}'"
+        # Check required parameters exist (excluding 'self')
+        required_params = [
+            "id",
+        ]
+        for required_param in required_params:
+            assert (
+                required_param in params
+            ), f"Required parameter '{required_param}' missing from finalize_upload"
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = []
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert (
+                    param_obj.default is not inspect.Parameter.empty
+                ), f"Optional parameter '{optional_param}' should have a default value"
+
+
+    def test_finalize_upload_return_annotation(self):
+        """Test that finalize_upload has proper return type annotation."""
+        method = getattr(MediaClient, "finalize_upload")
+        sig = inspect.signature(method)
+        # Check return annotation exists
+        assert (
+            sig.return_annotation is not inspect.Signature.empty
+        ), f"Method finalize_upload should have return type annotation"
 
 
     def test_append_upload_exists(self):
@@ -293,33 +339,31 @@ class TestMediaStructure:
         ), f"Method upload should have return type annotation"
 
 
-    def test_finalize_upload_exists(self):
-        """Test that finalize_upload method exists with correct signature."""
+    def test_create_subtitles_exists(self):
+        """Test that create_subtitles method exists with correct signature."""
         # Check method exists
-        method = getattr(MediaClient, "finalize_upload", None)
+        method = getattr(MediaClient, "create_subtitles", None)
         assert (
             method is not None
-        ), f"Method finalize_upload does not exist on MediaClient"
+        ), f"Method create_subtitles does not exist on MediaClient"
         # Check method is callable
-        assert callable(method), f"finalize_upload is not callable"
+        assert callable(method), f"create_subtitles is not callable"
         # Check method signature
         sig = inspect.signature(method)
         params = list(sig.parameters.keys())
         # Should have 'self' as first parameter
         assert (
             len(params) >= 1
-        ), f"finalize_upload should have at least 'self' parameter"
+        ), f"create_subtitles should have at least 'self' parameter"
         assert (
             params[0] == "self"
         ), f"First parameter should be 'self', got '{params[0]}'"
         # Check required parameters exist (excluding 'self')
-        required_params = [
-            "id",
-        ]
+        required_params = []
         for required_param in required_params:
             assert (
                 required_param in params
-            ), f"Required parameter '{required_param}' missing from finalize_upload"
+            ), f"Required parameter '{required_param}' missing from create_subtitles"
         # Check optional parameters have defaults (excluding 'self')
         optional_params = []
         for optional_param in optional_params:
@@ -330,42 +374,41 @@ class TestMediaStructure:
                 ), f"Optional parameter '{optional_param}' should have a default value"
 
 
-    def test_finalize_upload_return_annotation(self):
-        """Test that finalize_upload has proper return type annotation."""
-        method = getattr(MediaClient, "finalize_upload")
+    def test_create_subtitles_return_annotation(self):
+        """Test that create_subtitles has proper return type annotation."""
+        method = getattr(MediaClient, "create_subtitles")
         sig = inspect.signature(method)
         # Check return annotation exists
         assert (
             sig.return_annotation is not inspect.Signature.empty
-        ), f"Method finalize_upload should have return type annotation"
+        ), f"Method create_subtitles should have return type annotation"
 
 
-    def test_get_analytics_exists(self):
-        """Test that get_analytics method exists with correct signature."""
+    def test_delete_subtitles_exists(self):
+        """Test that delete_subtitles method exists with correct signature."""
         # Check method exists
-        method = getattr(MediaClient, "get_analytics", None)
-        assert method is not None, f"Method get_analytics does not exist on MediaClient"
+        method = getattr(MediaClient, "delete_subtitles", None)
+        assert (
+            method is not None
+        ), f"Method delete_subtitles does not exist on MediaClient"
         # Check method is callable
-        assert callable(method), f"get_analytics is not callable"
+        assert callable(method), f"delete_subtitles is not callable"
         # Check method signature
         sig = inspect.signature(method)
         params = list(sig.parameters.keys())
         # Should have 'self' as first parameter
-        assert len(params) >= 1, f"get_analytics should have at least 'self' parameter"
+        assert (
+            len(params) >= 1
+        ), f"delete_subtitles should have at least 'self' parameter"
         assert (
             params[0] == "self"
         ), f"First parameter should be 'self', got '{params[0]}'"
         # Check required parameters exist (excluding 'self')
-        required_params = [
-            "media_keys",
-            "end_time",
-            "start_time",
-            "granularity",
-        ]
+        required_params = []
         for required_param in required_params:
             assert (
                 required_param in params
-            ), f"Required parameter '{required_param}' missing from get_analytics"
+            ), f"Required parameter '{required_param}' missing from delete_subtitles"
         # Check optional parameters have defaults (excluding 'self')
         optional_params = []
         for optional_param in optional_params:
@@ -376,14 +419,59 @@ class TestMediaStructure:
                 ), f"Optional parameter '{optional_param}' should have a default value"
 
 
-    def test_get_analytics_return_annotation(self):
-        """Test that get_analytics has proper return type annotation."""
-        method = getattr(MediaClient, "get_analytics")
+    def test_delete_subtitles_return_annotation(self):
+        """Test that delete_subtitles has proper return type annotation."""
+        method = getattr(MediaClient, "delete_subtitles")
         sig = inspect.signature(method)
         # Check return annotation exists
         assert (
             sig.return_annotation is not inspect.Signature.empty
-        ), f"Method get_analytics should have return type annotation"
+        ), f"Method delete_subtitles should have return type annotation"
+
+
+    def test_initialize_upload_exists(self):
+        """Test that initialize_upload method exists with correct signature."""
+        # Check method exists
+        method = getattr(MediaClient, "initialize_upload", None)
+        assert (
+            method is not None
+        ), f"Method initialize_upload does not exist on MediaClient"
+        # Check method is callable
+        assert callable(method), f"initialize_upload is not callable"
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        # Should have 'self' as first parameter
+        assert (
+            len(params) >= 1
+        ), f"initialize_upload should have at least 'self' parameter"
+        assert (
+            params[0] == "self"
+        ), f"First parameter should be 'self', got '{params[0]}'"
+        # Check required parameters exist (excluding 'self')
+        required_params = []
+        for required_param in required_params:
+            assert (
+                required_param in params
+            ), f"Required parameter '{required_param}' missing from initialize_upload"
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = []
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert (
+                    param_obj.default is not inspect.Parameter.empty
+                ), f"Optional parameter '{optional_param}' should have a default value"
+
+
+    def test_initialize_upload_return_annotation(self):
+        """Test that initialize_upload has proper return type annotation."""
+        method = getattr(MediaClient, "initialize_upload")
+        sig = inspect.signature(method)
+        # Check return annotation exists
+        assert (
+            sig.return_annotation is not inspect.Signature.empty
+        ), f"Method initialize_upload should have return type annotation"
 
 
     def test_get_by_key_exists(self):
@@ -429,108 +517,20 @@ class TestMediaStructure:
         ), f"Method get_by_key should have return type annotation"
 
 
-    def test_create_metadata_exists(self):
-        """Test that create_metadata method exists with correct signature."""
-        # Check method exists
-        method = getattr(MediaClient, "create_metadata", None)
-        assert (
-            method is not None
-        ), f"Method create_metadata does not exist on MediaClient"
-        # Check method is callable
-        assert callable(method), f"create_metadata is not callable"
-        # Check method signature
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        # Should have 'self' as first parameter
-        assert (
-            len(params) >= 1
-        ), f"create_metadata should have at least 'self' parameter"
-        assert (
-            params[0] == "self"
-        ), f"First parameter should be 'self', got '{params[0]}'"
-        # Check required parameters exist (excluding 'self')
-        required_params = []
-        for required_param in required_params:
-            assert (
-                required_param in params
-            ), f"Required parameter '{required_param}' missing from create_metadata"
-        # Check optional parameters have defaults (excluding 'self')
-        optional_params = []
-        for optional_param in optional_params:
-            if optional_param in params:
-                param_obj = sig.parameters[optional_param]
-                assert (
-                    param_obj.default is not inspect.Parameter.empty
-                ), f"Optional parameter '{optional_param}' should have a default value"
-
-
-    def test_create_metadata_return_annotation(self):
-        """Test that create_metadata has proper return type annotation."""
-        method = getattr(MediaClient, "create_metadata")
-        sig = inspect.signature(method)
-        # Check return annotation exists
-        assert (
-            sig.return_annotation is not inspect.Signature.empty
-        ), f"Method create_metadata should have return type annotation"
-
-
-    def test_get_by_keys_exists(self):
-        """Test that get_by_keys method exists with correct signature."""
-        # Check method exists
-        method = getattr(MediaClient, "get_by_keys", None)
-        assert method is not None, f"Method get_by_keys does not exist on MediaClient"
-        # Check method is callable
-        assert callable(method), f"get_by_keys is not callable"
-        # Check method signature
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        # Should have 'self' as first parameter
-        assert len(params) >= 1, f"get_by_keys should have at least 'self' parameter"
-        assert (
-            params[0] == "self"
-        ), f"First parameter should be 'self', got '{params[0]}'"
-        # Check required parameters exist (excluding 'self')
-        required_params = [
-            "media_keys",
-        ]
-        for required_param in required_params:
-            assert (
-                required_param in params
-            ), f"Required parameter '{required_param}' missing from get_by_keys"
-        # Check optional parameters have defaults (excluding 'self')
-        optional_params = []
-        for optional_param in optional_params:
-            if optional_param in params:
-                param_obj = sig.parameters[optional_param]
-                assert (
-                    param_obj.default is not inspect.Parameter.empty
-                ), f"Optional parameter '{optional_param}' should have a default value"
-
-
-    def test_get_by_keys_return_annotation(self):
-        """Test that get_by_keys has proper return type annotation."""
-        method = getattr(MediaClient, "get_by_keys")
-        sig = inspect.signature(method)
-        # Check return annotation exists
-        assert (
-            sig.return_annotation is not inspect.Signature.empty
-        ), f"Method get_by_keys should have return type annotation"
-
-
     def test_all_expected_methods_exist(self):
         """Test that all expected methods exist on the client."""
         expected_methods = [
-            "initialize_upload",
-            "create_subtitles",
-            "delete_subtitles",
+            "create_metadata",
+            "get_analytics",
+            "get_by_keys",
+            "finalize_upload",
             "append_upload",
             "get_upload_status",
             "upload",
-            "finalize_upload",
-            "get_analytics",
+            "create_subtitles",
+            "delete_subtitles",
+            "initialize_upload",
             "get_by_key",
-            "create_metadata",
-            "get_by_keys",
         ]
         for expected_method in expected_methods:
             assert hasattr(

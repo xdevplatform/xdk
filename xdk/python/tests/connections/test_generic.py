@@ -1,5 +1,5 @@
 """
-Auto-generated generic tests for {"class_name": "Aaasubscriptions", "display_name": "aaasubscriptions", "import_name": "aaasubscriptions", "original": ["aaasubscriptions"], "property_name": "aaasubscriptions"} client.
+Auto-generated generic tests for {"class_name": "Connections", "display_name": "connections", "import_name": "connections", "original": ["connections"], "property_name": "connections"} client.
 
 This module contains general tests that validate the overall client
 functionality, imports, and error handling that don't need to be
@@ -11,31 +11,31 @@ Generated automatically - do not edit manually.
 import pytest
 import inspect
 from unittest.mock import Mock, patch
-from xdk.aaasubscriptions.client import AaasubscriptionsClient
+from xdk.connections.client import ConnectionsClient
 from xdk import Client
 
 
-class TestAaasubscriptionsGeneric:
-    """Generic tests for AaasubscriptionsClient."""
+class TestConnectionsGeneric:
+    """Generic tests for ConnectionsClient."""
 
 
     def setup_class(self):
         """Set up test fixtures."""
         self.client = Client(base_url="https://api.example.com")
-        self.aaasubscriptions_client = getattr(self.client, "aaasubscriptions")
+        self.connections_client = getattr(self.client, "connections")
 
 
     def test_client_exists(self):
-        """Test that AaasubscriptionsClient class exists and is importable."""
-        assert AaasubscriptionsClient is not None
-        assert hasattr(AaasubscriptionsClient, "__name__")
-        assert AaasubscriptionsClient.__name__ == "AaasubscriptionsClient"
+        """Test that ConnectionsClient class exists and is importable."""
+        assert ConnectionsClient is not None
+        assert hasattr(ConnectionsClient, "__name__")
+        assert ConnectionsClient.__name__ == "ConnectionsClient"
 
 
     def test_client_initialization(self):
-        """Test that AaasubscriptionsClient can be initialized properly."""
-        assert self.aaasubscriptions_client is not None
-        assert isinstance(self.aaasubscriptions_client, AaasubscriptionsClient)
+        """Test that ConnectionsClient can be initialized properly."""
+        assert self.connections_client is not None
+        assert isinstance(self.connections_client, ConnectionsClient)
 
 
     def test_imports_work(self):
@@ -62,13 +62,13 @@ class TestAaasubscriptionsGeneric:
             # Get first available method for testing error handling
             client_methods = [
                 name
-                for name in dir(AaasubscriptionsClient)
+                for name in dir(ConnectionsClient)
                 if not name.startswith("_")
-                and callable(getattr(AaasubscriptionsClient, name))
+                and callable(getattr(ConnectionsClient, name))
             ]
             if client_methods:
                 method_name = client_methods[0]
-                method = getattr(self.aaasubscriptions_client, method_name)
+                method = getattr(self.connections_client, method_name)
                 # Try calling the method and expect an exception
                 with pytest.raises(Exception):
                     try:
@@ -86,32 +86,31 @@ class TestAaasubscriptionsGeneric:
     def test_client_has_expected_base_functionality(self):
         """Test that the client has expected base functionality."""
         # Should be able to access the client through main Client
-        assert hasattr(self.client, "aaasubscriptions")
+        assert hasattr(self.client, "connections")
         # Client should have standard Python object features
-        assert hasattr(self.aaasubscriptions_client, "__class__")
-        assert hasattr(self.aaasubscriptions_client, "__dict__")
+        assert hasattr(self.connections_client, "__class__")
+        assert hasattr(self.connections_client, "__dict__")
         # Should have at least one public method
         public_methods = [
             name
-            for name in dir(self.aaasubscriptions_client)
+            for name in dir(self.connections_client)
             if not name.startswith("_")
-            and callable(getattr(self.aaasubscriptions_client, name))
+            and callable(getattr(self.connections_client, name))
         ]
         assert (
             len(public_methods) > 0
-        ), f"AaasubscriptionsClient should have at least one public method"
+        ), f"ConnectionsClient should have at least one public method"
 
 
     def test_client_method_signatures_are_valid(self):
         """Test that all client methods have valid Python signatures."""
         public_methods = [
             name
-            for name in dir(AaasubscriptionsClient)
-            if not name.startswith("_")
-            and callable(getattr(AaasubscriptionsClient, name))
+            for name in dir(ConnectionsClient)
+            if not name.startswith("_") and callable(getattr(ConnectionsClient, name))
         ]
         for method_name in public_methods:
-            method = getattr(AaasubscriptionsClient, method_name)
+            method = getattr(ConnectionsClient, method_name)
             # Should be able to get signature without error
             try:
                 sig = inspect.signature(method)

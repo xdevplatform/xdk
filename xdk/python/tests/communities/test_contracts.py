@@ -44,6 +44,31 @@ class TestCommunitiesContracts:
             try:
                 method = getattr(self.communities_client, "get_by_id")
                 result = method(**kwargs)
+                # Check if this is a streaming operation (returns Generator)
+                import types
+                is_streaming = isinstance(result, types.GeneratorType)
+                if is_streaming:
+                    # For streaming operations, we need to set up the mock to handle streaming
+                    # Mock the streaming response
+                    mock_streaming_response = Mock()
+                    mock_streaming_response.status_code = 200
+                    mock_streaming_response.raise_for_status.return_value = None
+                    mock_streaming_response.__enter__ = Mock(
+                        return_value=mock_streaming_response
+                    )
+                    mock_streaming_response.__exit__ = Mock(return_value=None)
+                    # Mock iter_content to yield some test data
+                    test_data = '{"data": "test"}\n'
+                    mock_streaming_response.iter_content.return_value = [test_data]
+                    # Update the session mock to return our streaming response
+                    mock_session.get.return_value = mock_streaming_response
+                    # Consume the generator to trigger the HTTP request
+                    try:
+                        next(result)
+                    except StopIteration:
+                        pass  # Expected when stream ends
+                    except Exception:
+                        pass  # Ignore other exceptions in test data processing
                 # Verify the request was made
                 mock_session.get.assert_called_once()
                 # Verify request structure
@@ -59,7 +84,14 @@ class TestCommunitiesContracts:
                     param in called_url for param in ["test_", "42"]
                 ), f"URL should contain path template elements: {called_url}"
                 # Verify response structure
-                assert result is not None, "Method should return a result"
+                if is_streaming:
+                    # For streaming, verify we got a generator
+                    assert isinstance(
+                        result, types.GeneratorType
+                    ), "Streaming method should return a generator"
+                else:
+                    # For regular operations, verify we got a result
+                    assert result is not None, "Method should return a result"
             except Exception as e:
                 pytest.fail(f"Contract test failed for get_by_id: {e}")
 
@@ -129,6 +161,31 @@ class TestCommunitiesContracts:
             try:
                 method = getattr(self.communities_client, "search")
                 result = method(**kwargs)
+                # Check if this is a streaming operation (returns Generator)
+                import types
+                is_streaming = isinstance(result, types.GeneratorType)
+                if is_streaming:
+                    # For streaming operations, we need to set up the mock to handle streaming
+                    # Mock the streaming response
+                    mock_streaming_response = Mock()
+                    mock_streaming_response.status_code = 200
+                    mock_streaming_response.raise_for_status.return_value = None
+                    mock_streaming_response.__enter__ = Mock(
+                        return_value=mock_streaming_response
+                    )
+                    mock_streaming_response.__exit__ = Mock(return_value=None)
+                    # Mock iter_content to yield some test data
+                    test_data = '{"data": "test"}\n'
+                    mock_streaming_response.iter_content.return_value = [test_data]
+                    # Update the session mock to return our streaming response
+                    mock_session.get.return_value = mock_streaming_response
+                    # Consume the generator to trigger the HTTP request
+                    try:
+                        next(result)
+                    except StopIteration:
+                        pass  # Expected when stream ends
+                    except Exception:
+                        pass  # Ignore other exceptions in test data processing
                 # Verify the request was made
                 mock_session.get.assert_called_once()
                 # Verify request structure
@@ -144,7 +201,14 @@ class TestCommunitiesContracts:
                     param in called_url for param in ["test_", "42"]
                 ), f"URL should contain path template elements: {called_url}"
                 # Verify response structure
-                assert result is not None, "Method should return a result"
+                if is_streaming:
+                    # For streaming, verify we got a generator
+                    assert isinstance(
+                        result, types.GeneratorType
+                    ), "Streaming method should return a generator"
+                else:
+                    # For regular operations, verify we got a result
+                    assert result is not None, "Method should return a result"
             except Exception as e:
                 pytest.fail(f"Contract test failed for search: {e}")
 

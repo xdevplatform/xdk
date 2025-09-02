@@ -12,25 +12,18 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    FollowListRequest,
-    FollowListResponse,
     GetByIdResponse,
     UpdateRequest,
     UpdateResponse,
     DeleteResponse,
+    GetPostsResponse,
+    RemoveMemberByUserIdResponse,
+    CreateRequest,
+    CreateResponse,
+    GetFollowersResponse,
     GetMembersResponse,
     AddMemberRequest,
     AddMemberResponse,
-    GetFollowersResponse,
-    GetPostsResponse,
-    UnfollowListResponse,
-    GetUsersPinnedResponse,
-    PinListRequest,
-    PinListResponse,
-    CreateRequest,
-    CreateResponse,
-    RemoveMemberByUserIdResponse,
-    UnpinListResponse,
 )
 
 
@@ -40,53 +33,6 @@ class ListsClient:
 
     def __init__(self, client: Client):
         self.client = client
-
-
-    def follow_list(
-        self,
-        id: Any,
-        body: Optional[FollowListRequest] = None,
-    ) -> FollowListResponse:
-        """
-        Follow List
-        Causes the authenticated user to follow a specific List by its ID.
-        Args:
-            id: The ID of the authenticated source User that will follow the List.
-            body: Request body
-        Returns:
-            FollowListResponse: Response data
-        """
-        url = self.client.base_url + "/2/users/{id}/followed_lists"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        url = url.replace("{id}", str(id))
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return FollowListResponse.model_validate(response_data)
 
 
     def get_by_id(
@@ -221,6 +167,201 @@ class ListsClient:
         return DeleteResponse.model_validate(response_data)
 
 
+    def get_posts(
+        self,
+        id: Any,
+        max_results: int = None,
+        pagination_token: Any = None,
+    ) -> GetPostsResponse:
+        """
+        Get List Posts
+        Retrieves a list of Posts associated with a specific List by its ID.
+        Args:
+            id: The ID of the List.
+        Args:
+            max_results: The maximum number of results.
+        Args:
+            pagination_token: This parameter is used to get the next 'page' of results.
+        Returns:
+            GetPostsResponse: Response data
+        """
+        url = self.client.base_url + "/2/lists/{id}/tweets"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        if max_results is not None:
+            params["max_results"] = max_results
+        if pagination_token is not None:
+            params["pagination_token"] = pagination_token
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetPostsResponse.model_validate(response_data)
+
+
+    def remove_member_by_user_id(
+        self,
+        id: Any,
+        user_id: Any,
+    ) -> RemoveMemberByUserIdResponse:
+        """
+        Remove List member
+        Removes a User from a specific List by its ID and the User’s ID.
+        Args:
+            id: The ID of the List to remove a member.
+        Args:
+            user_id: The ID of User that will be removed from the List.
+        Returns:
+            RemoveMemberByUserIdResponse: Response data
+        """
+        url = self.client.base_url + "/2/lists/{id}/members/{user_id}"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        url = url.replace("{id}", str(id))
+        url = url.replace("{user_id}", str(user_id))
+        headers = {}
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.delete(
+                url,
+                params=params,
+                headers=headers,
+            )
+        else:
+            response = self.client.session.delete(
+                url,
+                params=params,
+                headers=headers,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return RemoveMemberByUserIdResponse.model_validate(response_data)
+
+
+    def create(
+        self,
+        body: Optional[CreateRequest] = None,
+    ) -> CreateResponse:
+        """
+        Create List
+        Creates a new List for the authenticated user.
+            body: Request body
+        Returns:
+            CreateResponse: Response data
+        """
+        url = self.client.base_url + "/2/lists"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return CreateResponse.model_validate(response_data)
+
+
+    def get_followers(
+        self,
+        id: Any,
+        max_results: int = None,
+        pagination_token: Any = None,
+    ) -> GetFollowersResponse:
+        """
+        Get List followers
+        Retrieves a list of Users who follow a specific List by its ID.
+        Args:
+            id: The ID of the List.
+        Args:
+            max_results: The maximum number of results.
+        Args:
+            pagination_token: This parameter is used to get a specified 'page' of results.
+        Returns:
+            GetFollowersResponse: Response data
+        """
+        url = self.client.base_url + "/2/lists/{id}/followers"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        if max_results is not None:
+            params["max_results"] = max_results
+        if pagination_token is not None:
+            params["pagination_token"] = pagination_token
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetFollowersResponse.model_validate(response_data)
+
+
     def get_members(
         self,
         id: Any,
@@ -319,379 +460,3 @@ class ListsClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return AddMemberResponse.model_validate(response_data)
-
-
-    def get_followers(
-        self,
-        id: Any,
-        max_results: int = None,
-        pagination_token: Any = None,
-    ) -> GetFollowersResponse:
-        """
-        Get List followers
-        Retrieves a list of Users who follow a specific List by its ID.
-        Args:
-            id: The ID of the List.
-        Args:
-            max_results: The maximum number of results.
-        Args:
-            pagination_token: This parameter is used to get a specified 'page' of results.
-        Returns:
-            GetFollowersResponse: Response data
-        """
-        url = self.client.base_url + "/2/lists/{id}/followers"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        if max_results is not None:
-            params["max_results"] = max_results
-        if pagination_token is not None:
-            params["pagination_token"] = pagination_token
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetFollowersResponse.model_validate(response_data)
-
-
-    def get_posts(
-        self,
-        id: Any,
-        max_results: int = None,
-        pagination_token: Any = None,
-    ) -> GetPostsResponse:
-        """
-        Get List Posts
-        Retrieves a list of Posts associated with a specific List by its ID.
-        Args:
-            id: The ID of the List.
-        Args:
-            max_results: The maximum number of results.
-        Args:
-            pagination_token: This parameter is used to get the next 'page' of results.
-        Returns:
-            GetPostsResponse: Response data
-        """
-        url = self.client.base_url + "/2/lists/{id}/tweets"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        if max_results is not None:
-            params["max_results"] = max_results
-        if pagination_token is not None:
-            params["pagination_token"] = pagination_token
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetPostsResponse.model_validate(response_data)
-
-
-    def unfollow_list(
-        self,
-        id: Any,
-        list_id: Any,
-    ) -> UnfollowListResponse:
-        """
-        Unfollow List
-        Causes the authenticated user to unfollow a specific List by its ID.
-        Args:
-            id: The ID of the authenticated source User that will unfollow the List.
-        Args:
-            list_id: The ID of the List to unfollow.
-        Returns:
-            UnfollowListResponse: Response data
-        """
-        url = self.client.base_url + "/2/users/{id}/followed_lists/{list_id}"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        url = url.replace("{id}", str(id))
-        url = url.replace("{list_id}", str(list_id))
-        headers = {}
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.delete(
-                url,
-                params=params,
-                headers=headers,
-            )
-        else:
-            response = self.client.session.delete(
-                url,
-                params=params,
-                headers=headers,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return UnfollowListResponse.model_validate(response_data)
-
-
-    def get_users_pinned(
-        self,
-        id: Any,
-    ) -> GetUsersPinnedResponse:
-        """
-        Get pinned Lists
-        Retrieves a list of Lists pinned by the authenticated user.
-        Args:
-            id: The ID of the authenticated source User for whom to return results.
-        Returns:
-            GetUsersPinnedResponse: Response data
-        """
-        url = self.client.base_url + "/2/users/{id}/pinned_lists"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.get(
-                url,
-                params=params,
-                headers=headers,
-            )
-        else:
-            response = self.client.session.get(
-                url,
-                params=params,
-                headers=headers,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetUsersPinnedResponse.model_validate(response_data)
-
-
-    def pin_list(
-        self,
-        id: Any,
-        body: PinListRequest,
-    ) -> PinListResponse:
-        """
-        Pin List
-        Causes the authenticated user to pin a specific List by its ID.
-        Args:
-            id: The ID of the authenticated source User that will pin the List.
-            body: Request body
-        Returns:
-            PinListResponse: Response data
-        """
-        url = self.client.base_url + "/2/users/{id}/pinned_lists"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        url = url.replace("{id}", str(id))
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return PinListResponse.model_validate(response_data)
-
-
-    def create(
-        self,
-        body: Optional[CreateRequest] = None,
-    ) -> CreateResponse:
-        """
-        Create List
-        Creates a new List for the authenticated user.
-            body: Request body
-        Returns:
-            CreateResponse: Response data
-        """
-        url = self.client.base_url + "/2/lists"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return CreateResponse.model_validate(response_data)
-
-
-    def remove_member_by_user_id(
-        self,
-        id: Any,
-        user_id: Any,
-    ) -> RemoveMemberByUserIdResponse:
-        """
-        Remove List member
-        Removes a User from a specific List by its ID and the User’s ID.
-        Args:
-            id: The ID of the List to remove a member.
-        Args:
-            user_id: The ID of User that will be removed from the List.
-        Returns:
-            RemoveMemberByUserIdResponse: Response data
-        """
-        url = self.client.base_url + "/2/lists/{id}/members/{user_id}"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        url = url.replace("{id}", str(id))
-        url = url.replace("{user_id}", str(user_id))
-        headers = {}
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.delete(
-                url,
-                params=params,
-                headers=headers,
-            )
-        else:
-            response = self.client.session.delete(
-                url,
-                params=params,
-                headers=headers,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return RemoveMemberByUserIdResponse.model_validate(response_data)
-
-
-    def unpin_list(
-        self,
-        id: Any,
-        list_id: Any,
-    ) -> UnpinListResponse:
-        """
-        Unpin List
-        Causes the authenticated user to unpin a specific List by its ID.
-        Args:
-            id: The ID of the authenticated source User for whom to return results.
-        Args:
-            list_id: The ID of the List to unpin.
-        Returns:
-            UnpinListResponse: Response data
-        """
-        url = self.client.base_url + "/2/users/{id}/pinned_lists/{list_id}"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        url = url.replace("{id}", str(id))
-        url = url.replace("{list_id}", str(list_id))
-        headers = {}
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.delete(
-                url,
-                params=params,
-                headers=headers,
-            )
-        else:
-            response = self.client.session.delete(
-                url,
-                params=params,
-                headers=headers,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return UnpinListResponse.model_validate(response_data)

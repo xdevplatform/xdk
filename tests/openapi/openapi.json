@@ -2,7 +2,7 @@
   "openapi":"3.0.0",
   "info":{
     "description":"X API v2 available endpoints",
-    "version":"2.146",
+    "version":"2.147",
     "title":"X API v2",
     "termsOfService":"https://developer.x.com/en/developer-terms/agreement-and-policy.html",
     "contact":{
@@ -226,7 +226,7 @@
           }
         ],
         "tags":[
-          "AAASubscriptions"
+          "Account Activity"
         ],
         "summary":"Create subscription",
         "description":"Creates an Account Activity subscription for the user and the given webhook.",
@@ -793,7 +793,7 @@
           }
         ],
         "tags":[
-          "Connection"
+          "Connections"
         ],
         "summary":"Terminate all connections",
         "description":"Terminates all active streaming connections for the authenticated application.",
@@ -852,7 +852,7 @@
         ],
         "summary":"Create DM conversation",
         "description":"Initiates a new direct message conversation with specified participants.",
-        "operationId":"createDmConversations",
+        "operationId":"createDirectMessagesConversation",
         "parameters":[
 ],
         "requestBody":{
@@ -913,7 +913,7 @@
         ],
         "summary":"Get DM events for a DM conversation",
         "description":"Retrieves direct message events for a specific conversation.",
-        "operationId":"getDmEventsByParticipantId",
+        "operationId":"getDirectMessagesEventsByParticipantId",
         "parameters":[
           {
             "name":"participant_id",
@@ -1044,7 +1044,7 @@
         ],
         "summary":"Create DM message by participant ID",
         "description":"Sends a new direct message to a specific participant by their ID.",
-        "operationId":"createDmByParticipantId",
+        "operationId":"createDirectMessagesByParticipantId",
         "parameters":[
           {
             "name":"participant_id",
@@ -1115,7 +1115,7 @@
         ],
         "summary":"Create DM message by conversation ID",
         "description":"Sends a new direct message to a specific conversation by its ID.",
-        "operationId":"createDmByConversationId",
+        "operationId":"createDirectMessagesByConversationId",
         "parameters":[
           {
             "name":"dm_conversation_id",
@@ -1186,7 +1186,7 @@
         ],
         "summary":"Get DM events for a DM conversation",
         "description":"Retrieves direct message events for a specific conversation.",
-        "operationId":"getDmConversationsIdDmEvents",
+        "operationId":"getDirectMessagesEventsByConversationId",
         "parameters":[
           {
             "name":"id",
@@ -1317,7 +1317,7 @@
         ],
         "summary":"Get DM events",
         "description":"Retrieves a list of recent direct message events across all conversations.",
-        "operationId":"getDmEvents",
+        "operationId":"getDirectMessagesEvents",
         "parameters":[
           {
             "name":"max_results",
@@ -1437,7 +1437,7 @@
         ],
         "summary":"Delete DM event",
         "description":"Deletes a specific direct message event by its ID, if owned by the authenticated user.",
-        "operationId":"deleteDmEvents",
+        "operationId":"deleteDirectMessagesEvents",
         "parameters":[
           {
             "name":"event_id",
@@ -1497,7 +1497,7 @@
         ],
         "summary":"Get DM event by ID",
         "description":"Retrieves details of a specific direct message event by its ID.",
-        "operationId":"getDmEventsById",
+        "operationId":"getDirectMessagesEventsById",
         "parameters":[
           {
             "name":"event_id",
@@ -2448,6 +2448,7 @@
           }
         ],
         "tags":[
+          "Lists",
           "Users"
         ],
         "summary":"Get List followers",
@@ -2550,6 +2551,7 @@
           }
         ],
         "tags":[
+          "Lists",
           "Users"
         ],
         "summary":"Get List members",
@@ -2799,6 +2801,7 @@
           }
         ],
         "tags":[
+          "Lists",
           "Tweets"
         ],
         "summary":"Get List Posts",
@@ -3693,7 +3696,7 @@
         "externalDocs":{
           "url":"https://communitynotes.x.com/guide/api/overview"
         },
-        "operationId":"createNotes",
+        "operationId":"createCommunityNotes",
         "parameters":[
 ],
         "requestBody":{
@@ -3755,7 +3758,7 @@
         "externalDocs":{
           "url":"https://docs.x.com/x-api/community-notes/search-for-community-notes-written"
         },
-        "operationId":"searchNotesWritten",
+        "operationId":"searchCommunityNotesWritten",
         "parameters":[
           {
             "name":"test_mode",
@@ -3845,7 +3848,7 @@
         "externalDocs":{
           "url":"https://docs.x.com/x-api/community-notes/search-for-posts-eligible-for-community-notes"
         },
-        "operationId":"searchForEligiblePosts",
+        "operationId":"searchEligiblePosts",
         "parameters":[
           {
             "name":"test_mode",
@@ -3950,7 +3953,7 @@
         "externalDocs":{
           "url":"https://communitynotes.x.com/guide/api/overview"
         },
-        "operationId":"deleteNotes",
+        "operationId":"deleteCommunityNotes",
         "parameters":[
           {
             "name":"id",
@@ -6826,6 +6829,231 @@
         }
       }
     },
+    "/2/tweets/search/webhooks":{
+      "get":{
+        "security":[
+          {
+            "BearerToken":[
+]
+          }
+        ],
+        "tags":[
+          "Webhooks",
+          "Stream"
+        ],
+        "summary":"Get stream links",
+        "description":"Get a list of webhook links associated with a filtered stream ruleset.",
+        "externalDocs":{
+          "url":"https://docs.x.com/x-api/webhooks/introduction"
+        },
+        "operationId":"getWebhooksStreamLinks",
+        "parameters":[
+],
+        "responses":{
+          "200":{
+            "description":"The request has succeeded.",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "$ref":"#/components/schemas/WebhookLinksGetResponse"
+                }
+              }
+            }
+          },
+          "default":{
+            "description":"The request has failed.",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "$ref":"#/components/schemas/Error"
+                }
+              },
+              "application/problem+json":{
+                "schema":{
+                  "$ref":"#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/tweets/search/webhooks/{webhook_id}":{
+      "delete":{
+        "security":[
+          {
+            "BearerToken":[
+]
+          }
+        ],
+        "tags":[
+          "Webhooks",
+          "Stream"
+        ],
+        "summary":"Delete stream link",
+        "description":"Deletes a link from FilteredStream events to the given webhook.",
+        "externalDocs":{
+          "url":"https://docs.x.com/x-api/webhooks/introduction"
+        },
+        "operationId":"deleteWebhooksStreamLink",
+        "parameters":[
+          {
+            "name":"webhook_id",
+            "in":"path",
+            "description":"The webhook ID to link to your FilteredStream ruleset.",
+            "required":true,
+            "schema":{
+              "$ref":"#/components/schemas/WebhookConfigId"
+            },
+            "style":"simple"
+          }
+        ],
+        "responses":{
+          "200":{
+            "description":"The request has succeeded.",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "$ref":"#/components/schemas/WebhookLinksDeleteResponse"
+                }
+              }
+            }
+          },
+          "default":{
+            "description":"The request has failed.",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "$ref":"#/components/schemas/Error"
+                }
+              },
+              "application/problem+json":{
+                "schema":{
+                  "$ref":"#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post":{
+        "security":[
+          {
+            "BearerToken":[
+]
+          }
+        ],
+        "tags":[
+          "Webhooks",
+          "Stream"
+        ],
+        "summary":"Create stream link",
+        "description":"Creates a link to deliver FilteredStream events to the given webhook.",
+        "externalDocs":{
+          "url":"https://docs.x.com/x-api/webhooks/introduction"
+        },
+        "operationId":"createWebhooksStreamLink",
+        "parameters":[
+          {
+            "name":"webhook_id",
+            "in":"path",
+            "description":"The webhook ID to link to your FilteredStream ruleset.",
+            "required":true,
+            "schema":{
+              "$ref":"#/components/schemas/WebhookConfigId"
+            },
+            "style":"simple"
+          },
+          {
+            "name":"tweet.fields",
+            "in":"query",
+            "description":"A comma separated list of Tweet fields to display.",
+            "required":false,
+            "schema":{
+              "type":"string"
+            },
+            "style":"form"
+          },
+          {
+            "name":"expansions",
+            "in":"query",
+            "description":"A comma separated list of fields to expand.",
+            "required":false,
+            "schema":{
+              "type":"string"
+            },
+            "style":"form"
+          },
+          {
+            "name":"media.fields",
+            "in":"query",
+            "description":"A comma separated list of Media fields to display.",
+            "required":false,
+            "schema":{
+              "type":"string"
+            },
+            "style":"form"
+          },
+          {
+            "name":"poll.fields",
+            "in":"query",
+            "description":"A comma separated list of Poll fields to display.",
+            "required":false,
+            "schema":{
+              "type":"string"
+            },
+            "style":"form"
+          },
+          {
+            "name":"user.fields",
+            "in":"query",
+            "description":"A comma separated list of User fields to display.",
+            "required":false,
+            "schema":{
+              "type":"string"
+            },
+            "style":"form"
+          },
+          {
+            "name":"place.fields",
+            "in":"query",
+            "description":"A comma separated list of Place fields to display.",
+            "required":false,
+            "schema":{
+              "type":"string"
+            },
+            "style":"form"
+          }
+        ],
+        "responses":{
+          "200":{
+            "description":"The request has succeeded.",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "$ref":"#/components/schemas/WebhookLinksCreateResponse"
+                }
+              }
+            }
+          },
+          "default":{
+            "description":"The request has failed.",
+            "content":{
+              "application/json":{
+                "schema":{
+                  "$ref":"#/components/schemas/Error"
+                }
+              },
+              "application/problem+json":{
+                "schema":{
+                  "$ref":"#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/2/tweets/{id}":{
       "delete":{
         "security":[
@@ -6991,6 +7219,7 @@
           }
         ],
         "tags":[
+          "Tweets",
           "Users"
         ],
         "summary":"Get Liking Users",
@@ -7226,6 +7455,7 @@
           }
         ],
         "tags":[
+          "Tweets",
           "Users"
         ],
         "summary":"Get Reposted by",
@@ -7925,7 +8155,7 @@
         "externalDocs":{
           "url":"https://developer.twitter.com/en/docs/twitter-api/users/lookup/api-reference/get-users-me"
         },
-        "operationId":"getMyUser",
+        "operationId":"getUsersMe",
         "parameters":[
           {
             "$ref":"#/components/parameters/UserFieldsParameter"
@@ -7988,7 +8218,7 @@
         "externalDocs":{
           "url":"https://developer.x.com/"
         },
-        "operationId":"getUsersPersonalizedTrends",
+        "operationId":"getTrendsPersonalizedTrends",
         "parameters":[
           {
             "$ref":"#/components/parameters/PersonalizedTrendFieldsParameter"
@@ -8401,6 +8631,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Bookmarks"
         ],
         "summary":"Get Bookmarks",
@@ -8501,6 +8732,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Bookmarks"
         ],
         "summary":"Create Bookmark",
@@ -8571,6 +8803,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Bookmarks"
         ],
         "summary":"Get Bookmark folders",
@@ -8655,6 +8888,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Bookmarks"
         ],
         "summary":"Get Bookmarks by folder ID",
@@ -8726,6 +8960,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Bookmarks"
         ],
         "summary":"Delete Bookmark",
@@ -8935,6 +9170,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Lists"
         ],
         "summary":"Get followed Lists",
@@ -9032,6 +9268,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Lists"
         ],
         "summary":"Follow List",
@@ -9106,6 +9343,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Lists"
         ],
         "summary":"Unfollow List",
@@ -9457,6 +9695,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Tweets"
         ],
         "summary":"Get liked Posts",
@@ -9564,6 +9803,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Tweets"
         ],
         "summary":"Like Post",
@@ -9638,6 +9878,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Tweets"
         ],
         "summary":"Unlike Post",
@@ -9717,6 +9958,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Lists"
         ],
         "summary":"Get List memberships",
@@ -9819,6 +10061,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Tweets"
         ],
         "summary":"Get mentions",
@@ -10145,6 +10388,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Lists"
         ],
         "summary":"Get owned Lists",
@@ -10244,6 +10488,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Lists"
         ],
         "summary":"Get pinned Lists",
@@ -10316,6 +10561,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Lists"
         ],
         "summary":"Pin List",
@@ -10391,6 +10637,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Lists"
         ],
         "summary":"Unpin List",
@@ -10466,6 +10713,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Tweets"
         ],
         "summary":"Repost Post",
@@ -10540,6 +10788,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Tweets"
         ],
         "summary":"Unrepost Post",
@@ -10614,6 +10863,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Tweets"
         ],
         "summary":"Get Timeline",
@@ -10792,6 +11042,7 @@
           }
         ],
         "tags":[
+          "Users",
           "Tweets"
         ],
         "summary":"Get Posts",
@@ -11368,6 +11619,14 @@
       }
     },
     {
+      "name":"Connections",
+      "description":"Endpoints related to streaming connections",
+      "externalDocs":{
+        "description":"Find out more",
+        "url":"https://developer.x.com/en/docs/x-api/connections"
+      }
+    },
+    {
       "name":"Direct Messages",
       "description":"Endpoints related to retrieving, managing Direct Messages",
       "externalDocs":{
@@ -11678,10 +11937,28 @@
         "type":"object",
         "properties":{
           "data":{
+            "type":"array",
+            "items":{
+              "type":"object",
+              "properties":{
+                "id":{
+                  "$ref":"#/components/schemas/TweetId"
+                }
+              }
+            }
+          },
+          "errors":{
+            "type":"array",
+            "minItems":1,
+            "items":{
+              "$ref":"#/components/schemas/Problem"
+            }
+          },
+          "meta":{
             "type":"object",
             "properties":{
-              "id":{
-                "$ref":"#/components/schemas/TweetId"
+              "next_token":{
+                "$ref":"#/components/schemas/NextToken"
               }
             }
           }
@@ -11691,13 +11968,31 @@
         "type":"object",
         "properties":{
           "data":{
+            "type":"array",
+            "items":{
+              "type":"object",
+              "properties":{
+                "id":{
+                  "$ref":"#/components/schemas/BookmarkFolderId"
+                },
+                "name":{
+                  "type":"string"
+                }
+              }
+            }
+          },
+          "errors":{
+            "type":"array",
+            "minItems":1,
+            "items":{
+              "$ref":"#/components/schemas/Problem"
+            }
+          },
+          "meta":{
             "type":"object",
             "properties":{
-              "id":{
-                "$ref":"#/components/schemas/BookmarkFolderId"
-              },
-              "name":{
-                "type":"string"
+              "next_token":{
+                "$ref":"#/components/schemas/NextToken"
               }
             }
           }
@@ -16219,7 +16514,7 @@
           "text":{
             "type":"string",
             "description":"The text summary in the Community Note.",
-            "pattern":"^(?=.*https?://\\S+).+$"
+            "pattern":"^(?=[\\s\\S]*https?://\\S+)[\\s\\S]+$"
           },
           "trustworthy_sources":{
             "type":"boolean",
@@ -16243,16 +16538,15 @@
       },
       "NoteTestResult":{
         "type":"object",
-        "description":"The test result of a community note.",
+        "description":"The evaluation result of a community note.",
         "properties":{
-          "evaluator_score":{
-            "type":"number",
-            "description":"The score given to a written test note.",
-            "format":"double"
+          "evaluator_score_bucket":{
+            "type":"string",
+            "description":"Score bucket from the evaluator result."
           },
           "evaluator_type":{
             "type":"string",
-            "description":"The type of evaluator response."
+            "description":"The type of the evaluator."
           }
         }
       },
@@ -20085,6 +20379,100 @@
             "properties":{
               "attempted":{
                 "type":"boolean"
+              }
+            }
+          },
+          "errors":{
+            "type":"array",
+            "minItems":1,
+            "items":{
+              "$ref":"#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "WebhookLinksCreateResponse":{
+        "type":"object",
+        "properties":{
+          "data":{
+            "type":"object",
+            "properties":{
+              "provisioned":{
+                "type":"boolean"
+              }
+            }
+          },
+          "errors":{
+            "type":"array",
+            "minItems":1,
+            "items":{
+              "$ref":"#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "WebhookLinksDeleteResponse":{
+        "type":"object",
+        "properties":{
+          "data":{
+            "type":"object",
+            "properties":{
+              "deleted":{
+                "type":"boolean"
+              }
+            }
+          },
+          "errors":{
+            "type":"array",
+            "minItems":1,
+            "items":{
+              "$ref":"#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "WebhookLinksGetResponse":{
+        "type":"object",
+        "properties":{
+          "data":{
+            "type":"object",
+            "description":"The list of active webhook links for a given stream",
+            "required":[
+              "links"
+            ],
+            "properties":{
+              "links":{
+                "type":"array",
+                "description":"list of links",
+                "items":{
+                  "type":"object",
+                  "properties":{
+                    "application_id":{
+                      "type":"string",
+                      "description":"The application ID"
+                    },
+                    "business_user_id":{
+                      "type":"string",
+                      "description":"The user ID"
+                    },
+                    "fields":{
+                      "type":"array",
+                      "description":"Requested fields to be rendered",
+                      "items":{
+                        "type":"string",
+                        "description":"A query-parameter formatted field or expansion, e.g., 'expansions=author_id' or 'user.fields=name,username'"
+                      }
+                    },
+                    "instance_id":{
+                      "type":"string",
+                      "description":"The stream ID associated with the FilteredStream instance"
+                    },
+                    "webhook_id":{
+                      "type":"string",
+                      "description":"The unique identifier for the webhook"
+                    }
+                  }
+                }
               }
             }
           },

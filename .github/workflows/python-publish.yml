@@ -11,8 +11,34 @@ on:
 permissions:
   contents: read
 jobs:
+  test-rust:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Run Rust checks and tests
+        run: make all
+
+  test-python-sdk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - uses: astral-sh/setup-uv@v3
+      - name: Generate Python SDK
+        run: make run-python
+      - name: Test Python SDK
+        run: make test-python
+
   release-build:
     runs-on: ubuntu-latest
+    needs:
+      - test-rust
+      - test-python-sdk
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5

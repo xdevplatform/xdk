@@ -192,7 +192,6 @@ mod tests {
         // Verify basic structure
         assert_eq!(openapi.openapi, "3.0.0");
         assert_eq!(openapi.info.title, "X API v2");
-        assert_eq!(openapi.info.version, "2.146");
 
         // Verify paths exist
         assert!(openapi.paths.contains_key("/2/communities/search"));

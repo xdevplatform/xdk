@@ -12,10 +12,10 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    GetBuyersResponse,
-    GetByIdResponse,
     GetPostsResponse,
+    GetBuyersResponse,
     GetByIdsResponse,
+    GetByIdResponse,
     SearchResponse,
     GetByCreatorIdsResponse,
 )
@@ -27,6 +27,54 @@ class SpacesClient:
 
     def __init__(self, client: Client):
         self.client = client
+
+
+    def get_posts(
+        self,
+        id: str,
+        max_results: int = None,
+    ) -> GetPostsResponse:
+        """
+        Get Space Posts
+        Retrieves a list of Posts shared in a specific Space by its ID.
+        Args:
+            id: The ID of the Space to be retrieved.
+        Args:
+            max_results: The number of Posts to fetch from the provided space. If not provided, the value will default to the maximum of 100.
+        Returns:
+            GetPostsResponse: Response data
+        """
+        url = self.client.base_url + "/2/spaces/{id}/tweets"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        if max_results is not None:
+            params["max_results"] = max_results
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetPostsResponse.model_validate(response_data)
 
 
     def get_buyers(
@@ -81,97 +129,6 @@ class SpacesClient:
         return GetBuyersResponse.model_validate(response_data)
 
 
-    def get_by_id(
-        self,
-        id: str,
-    ) -> GetByIdResponse:
-        """
-        Get space by ID
-        Retrieves details of a specific space by its ID.
-        Args:
-            id: The ID of the Space to be retrieved.
-        Returns:
-            GetByIdResponse: Response data
-        """
-        url = self.client.base_url + "/2/spaces/{id}"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetByIdResponse.model_validate(response_data)
-
-
-    def get_posts(
-        self,
-        id: str,
-        max_results: int = None,
-    ) -> GetPostsResponse:
-        """
-        Get Space Posts
-        Retrieves a list of Posts shared in a specific Space by its ID.
-        Args:
-            id: The ID of the Space to be retrieved.
-        Args:
-            max_results: The number of Posts to fetch from the provided space. If not provided, the value will default to the maximum of 100.
-        Returns:
-            GetPostsResponse: Response data
-        """
-        url = self.client.base_url + "/2/spaces/{id}/tweets"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        if max_results is not None:
-            params["max_results"] = max_results
-        url = url.replace("{id}", str(id))
-        headers = {}
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetPostsResponse.model_validate(response_data)
-
-
     def get_by_ids(
         self,
         ids: List,
@@ -214,6 +171,49 @@ class SpacesClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return GetByIdsResponse.model_validate(response_data)
+
+
+    def get_by_id(
+        self,
+        id: str,
+    ) -> GetByIdResponse:
+        """
+        Get space by ID
+        Retrieves details of a specific space by its ID.
+        Args:
+            id: The ID of the Space to be retrieved.
+        Returns:
+            GetByIdResponse: Response data
+        """
+        url = self.client.base_url + "/2/spaces/{id}"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetByIdResponse.model_validate(response_data)
 
 
     def search(
