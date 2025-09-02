@@ -1,7 +1,11 @@
 """
-spaces models for the X API.
+Auto-generated spaces models for the X API.
 
-This module provides models for the spaces endpoints of the X API.
+This module provides Pydantic models for request and response data structures
+for the spaces endpoints of the X API. All models are generated
+from the OpenAPI specification and provide type safety and validation.
+
+Generated automatically - do not edit manually.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
@@ -9,22 +13,22 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for get_posts
+# Models for search
 
 
-class GetPostsResponse(BaseModel):
-    """Response model for get_posts"""
+class SearchResponse(BaseModel):
+    """Response model for search"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["GetPostsResponseIncludes"] = None
-    meta: Optional["GetPostsResponseMeta"] = None
+    includes: Optional["SearchResponseIncludes"] = None
+    meta: Optional["SearchResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetPostsResponseIncludes(BaseModel):
-    """Nested model for GetPostsResponseIncludes"""
+class SearchResponseIncludes(BaseModel):
+    """Nested model for SearchResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -36,48 +40,9 @@ class GetPostsResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetPostsResponseMeta(BaseModel):
-    """Nested model for GetPostsResponseMeta"""
+class SearchResponseMeta(BaseModel):
+    """Nested model for SearchResponseMeta"""
 
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_buyers
-
-
-class GetBuyersResponse(BaseModel):
-    """Response model for get_buyers"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetBuyersResponseIncludes"] = None
-    meta: Optional["GetBuyersResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetBuyersResponseIncludes(BaseModel):
-    """Nested model for GetBuyersResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetBuyersResponseMeta(BaseModel):
-    """Nested model for GetBuyersResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
     result_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)
@@ -159,41 +124,6 @@ class GetByIdResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for search
-
-
-class SearchResponse(BaseModel):
-    """Response model for search"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["SearchResponseIncludes"] = None
-    meta: Optional["SearchResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class SearchResponseIncludes(BaseModel):
-    """Nested model for SearchResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class SearchResponseMeta(BaseModel):
-    """Nested model for SearchResponseMeta"""
-
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for get_by_creator_ids
 
 
@@ -224,6 +154,80 @@ class GetByCreatorIdsResponseIncludes(BaseModel):
 class GetByCreatorIdsResponseMeta(BaseModel):
     """Nested model for GetByCreatorIdsResponseMeta"""
 
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_posts
+
+
+class GetPostsResponse(BaseModel):
+    """Response model for get_posts"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetPostsResponseIncludes"] = None
+    meta: Optional["GetPostsResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetPostsResponseIncludes(BaseModel):
+    """Nested model for GetPostsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetPostsResponseMeta(BaseModel):
+    """Nested model for GetPostsResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_buyers
+
+
+class GetBuyersResponse(BaseModel):
+    """Response model for get_buyers"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetBuyersResponseIncludes"] = None
+    meta: Optional["GetBuyersResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetBuyersResponseIncludes(BaseModel):
+    """Nested model for GetBuyersResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetBuyersResponseMeta(BaseModel):
+    """Nested model for GetBuyersResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
     result_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)

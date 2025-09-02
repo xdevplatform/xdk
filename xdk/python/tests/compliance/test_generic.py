@@ -2,8 +2,8 @@
 Auto-generated generic tests for {"class_name": "Compliance", "display_name": "compliance", "import_name": "compliance", "original": ["compliance"], "property_name": "compliance"} client.
 
 This module contains general tests that validate the overall client
-functionality, imports, and error handling that don't need to be
-repeated for each operation.
+functionality, imports, error handling, and common behavior patterns
+that apply across all operations without being operation-specific.
 
 Generated automatically - do not edit manually.
 """

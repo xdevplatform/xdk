@@ -3,7 +3,7 @@ Auto-generated structural tests for {"class_name": "Usage", "display_name": "usa
 
 This module contains tests that validate the structure and API surface
 of the {"class_name": "Usage", "display_name": "usage", "import_name": "usage", "original": ["usage"], "property_name": "usage"} client. These tests ensure that all expected methods
-exist and have the correct signatures.
+exist, have correct signatures, and proper type annotations for robust API contracts.
 
 Generated automatically - do not edit manually.
 """

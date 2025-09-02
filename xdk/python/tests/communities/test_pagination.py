@@ -2,7 +2,8 @@
 Auto-generated pagination tests for {"class_name": "Communities", "display_name": "communities", "import_name": "communities", "original": ["communities"], "property_name": "communities"} client.
 
 This module contains tests that validate pagination functionality
-using the Cursor class for methods that support pagination.
+using the Cursor class for methods that support pagination. Tests verify
+proper handling of pagination tokens, page limits, and item iteration.
 
 Generated automatically - do not edit manually.
 """

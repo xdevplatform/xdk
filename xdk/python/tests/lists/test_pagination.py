@@ -2,7 +2,8 @@
 Auto-generated pagination tests for {"class_name": "Lists", "display_name": "lists", "import_name": "lists", "original": ["lists"], "property_name": "lists"} client.
 
 This module contains tests that validate pagination functionality
-using the Cursor class for methods that support pagination.
+using the Cursor class for methods that support pagination. Tests verify
+proper handling of pagination tokens, page limits, and item iteration.
 
 Generated automatically - do not edit manually.
 """

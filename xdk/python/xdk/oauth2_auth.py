@@ -1,7 +1,11 @@
 """
-OAuth2 PKCE authentication for the X API.
+Auto-generated OAuth2 PKCE authentication for the X API.
 
-This module provides OAuth2 PKCE authentication functionality for the X API client.
+This module provides OAuth2 PKCE (Proof Key for Code Exchange) authentication
+functionality for secure authorization flows. Includes code verifier generation,
+token management, and automatic token refresh capabilities.
+
+Generated automatically - do not edit manually.
 """
 
 import secrets

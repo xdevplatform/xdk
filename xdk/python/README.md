@@ -1,5 +1,14 @@
 # XDK Python SDK
 
+<!--
+Auto-generated README for the X API Python SDK.
+
+This file contains the documentation and usage examples
+for the generated Python SDK package.
+
+Generated automatically - do not edit manually.
+-->
+
 A Python SDK for the X API.
 
 ## Installation

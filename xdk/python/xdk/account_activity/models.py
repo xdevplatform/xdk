@@ -1,12 +1,28 @@
 """
-account activity models for the X API.
+Auto-generated account activity models for the X API.
 
-This module provides models for the account activity endpoints of the X API.
+This module provides Pydantic models for request and response data structures
+for the account activity endpoints of the X API. All models are generated
+from the OpenAPI specification and provide type safety and validation.
+
+Generated automatically - do not edit manually.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
 from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
+
+
+# Models for create_replay_job
+
+
+class CreateReplayJobResponse(BaseModel):
+    """Response model for create_replay_job"""
+
+    created_at: Optional[str] = None
+    job_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # Models for validate_subscription
@@ -55,6 +71,26 @@ class CreateSubscriptionResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
+# Models for delete_subscription
+
+
+class DeleteSubscriptionResponse(BaseModel):
+    """Response model for delete_subscription"""
+
+    data: Optional["DeleteSubscriptionResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DeleteSubscriptionResponseData(BaseModel):
+    """Nested model for DeleteSubscriptionResponseData"""
+
+    subscribed: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 # Models for get_subscription_count
 
 
@@ -81,26 +117,6 @@ class GetSubscriptionCountResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for delete_subscription
-
-
-class DeleteSubscriptionResponse(BaseModel):
-    """Response model for delete_subscription"""
-
-    data: Optional["DeleteSubscriptionResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class DeleteSubscriptionResponseData(BaseModel):
-    """Nested model for DeleteSubscriptionResponseData"""
-
-    subscribed: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for get_subscriptions
 
 
@@ -123,17 +139,5 @@ class GetSubscriptionsResponseData(BaseModel):
     subscriptions: Optional[List] = None
     webhook_id: Optional[str] = None
     webhook_url: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for create_replay_job
-
-
-class CreateReplayJobResponse(BaseModel):
-    """Response model for create_replay_job"""
-
-    created_at: Optional[str] = None
-    job_id: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)

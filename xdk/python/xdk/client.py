@@ -1,7 +1,11 @@
 """
-Main client for the X API.
+Auto-generated main client for the X API.
 
-This module provides a client for interacting with the X API.
+This module provides the primary Client class for interacting with the X API.
+It coordinates all sub-clients and handles authentication, session management,
+and OAuth2 PKCE flows. All functionality is generated from the OpenAPI specification.
+
+Generated automatically - do not edit manually.
 """
 
 import requests
@@ -10,37 +14,37 @@ from typing import Dict, List, Optional, Union, Any, Callable
 from .oauth2_auth import OAuth2PKCEAuth
 from .paginator import Cursor, cursor, PaginationError
 
-from .posts.client import PostsClient
-
-from .general.client import GeneralClient
-
-from .media.client import MediaClient
-
-from .webhooks.client import WebhooksClient
-
-from .account_activity.client import AccountActivityClient
-
-from .direct_messages.client import DirectMessagesClient
-
-from .lists.client import ListsClient
-
-from .trends.client import TrendsClient
-
-from .spaces.client import SpacesClient
-
-from .communities.client import CommunitiesClient
-
-from .users.client import UsersClient
+from .compliance.client import ComplianceClient
 
 from .usage.client import UsageClient
 
-from .compliance.client import ComplianceClient
+from .account_activity.client import AccountActivityClient
+
+from .media.client import MediaClient
+
+from .communities.client import CommunitiesClient
+
+from .webhooks.client import WebhooksClient
+
+from .direct_messages.client import DirectMessagesClient
+
+from .stream.client import StreamClient
+
+from .general.client import GeneralClient
+
+from .users.client import UsersClient
+
+from .spaces.client import SpacesClient
+
+from .trends.client import TrendsClient
 
 from .connections.client import ConnectionsClient
 
+from .posts.client import PostsClient
+
 from .community_notes.client import CommunityNotesClient
 
-from .stream.client import StreamClient
+from .lists.client import ListsClient
 
 
 class Client:
@@ -82,22 +86,22 @@ class Client:
                 scope=scope,
             )
         # Initialize clients for each tag
-        self.posts = PostsClient(self)
-        self.general = GeneralClient(self)
-        self.media = MediaClient(self)
-        self.webhooks = WebhooksClient(self)
-        self.account_activity = AccountActivityClient(self)
-        self.direct_messages = DirectMessagesClient(self)
-        self.lists = ListsClient(self)
-        self.trends = TrendsClient(self)
-        self.spaces = SpacesClient(self)
-        self.communities = CommunitiesClient(self)
-        self.users = UsersClient(self)
-        self.usage = UsageClient(self)
         self.compliance = ComplianceClient(self)
-        self.connections = ConnectionsClient(self)
-        self.community_notes = CommunityNotesClient(self)
+        self.usage = UsageClient(self)
+        self.account_activity = AccountActivityClient(self)
+        self.media = MediaClient(self)
+        self.communities = CommunitiesClient(self)
+        self.webhooks = WebhooksClient(self)
+        self.direct_messages = DirectMessagesClient(self)
         self.stream = StreamClient(self)
+        self.general = GeneralClient(self)
+        self.users = UsersClient(self)
+        self.spaces = SpacesClient(self)
+        self.trends = TrendsClient(self)
+        self.connections = ConnectionsClient(self)
+        self.posts = PostsClient(self)
+        self.community_notes = CommunityNotesClient(self)
+        self.lists = ListsClient(self)
 
     @property
 

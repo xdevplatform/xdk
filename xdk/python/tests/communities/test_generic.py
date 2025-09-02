@@ -2,8 +2,8 @@
 Auto-generated generic tests for {"class_name": "Communities", "display_name": "communities", "import_name": "communities", "original": ["communities"], "property_name": "communities"} client.
 
 This module contains general tests that validate the overall client
-functionality, imports, and error handling that don't need to be
-repeated for each operation.
+functionality, imports, error handling, and common behavior patterns
+that apply across all operations without being operation-specific.
 
 Generated automatically - do not edit manually.
 """

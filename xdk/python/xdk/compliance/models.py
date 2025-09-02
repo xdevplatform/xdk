@@ -1,7 +1,11 @@
 """
-compliance models for the X API.
+Auto-generated compliance models for the X API.
 
-This module provides models for the compliance endpoints of the X API.
+This module provides Pydantic models for request and response data structures
+for the compliance endpoints of the X API. All models are generated
+from the OpenAPI specification and provide type safety and validation.
+
+Generated automatically - do not edit manually.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal

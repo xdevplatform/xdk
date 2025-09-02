@@ -1,7 +1,10 @@
 """
-community notes client for the X API.
+Auto-generated community notes client for the X API.
 
 This module provides a client for interacting with the community notes endpoints of the X API.
+All methods, parameters, and response models are generated from the OpenAPI specification.
+
+Generated automatically - do not edit manually.
 """
 
 from __future__ import annotations
@@ -13,10 +16,10 @@ if TYPE_CHECKING:
     from ..client import Client
 from .models import (
     DeleteResponse,
-    SearchEligiblePostsResponse,
-    SearchWrittenResponse,
     CreateRequest,
     CreateResponse,
+    SearchEligiblePostsResponse,
+    SearchWrittenResponse,
 )
 
 
@@ -68,6 +71,49 @@ class CommunityNotesClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return DeleteResponse.model_validate(response_data)
+
+
+    def create(
+        self,
+        body: Optional[CreateRequest] = None,
+    ) -> CreateResponse:
+        """
+        Create a Community Note
+        Creates a community note endpoint for LLM use case.
+            body: Request body
+        Returns:
+            CreateResponse: Response data
+        """
+        url = self.client.base_url + "/2/notes"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return CreateResponse.model_validate(response_data)
 
 
     def search_eligible_posts(
@@ -174,46 +220,3 @@ class CommunityNotesClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return SearchWrittenResponse.model_validate(response_data)
-
-
-    def create(
-        self,
-        body: Optional[CreateRequest] = None,
-    ) -> CreateResponse:
-        """
-        Create a Community Note
-        Creates a community note endpoint for LLM use case.
-            body: Request body
-        Returns:
-            CreateResponse: Response data
-        """
-        url = self.client.base_url + "/2/notes"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return CreateResponse.model_validate(response_data)

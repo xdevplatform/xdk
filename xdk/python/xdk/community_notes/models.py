@@ -1,7 +1,11 @@
 """
-community notes models for the X API.
+Auto-generated community notes models for the X API.
 
-This module provides models for the community notes endpoints of the X API.
+This module provides Pydantic models for request and response data structures
+for the community notes endpoints of the X API. All models are generated
+from the OpenAPI specification and provide type safety and validation.
+
+Generated automatically - do not edit manually.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
@@ -25,6 +29,49 @@ class DeleteResponseData(BaseModel):
     """Nested model for DeleteResponseData"""
 
     id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for create
+
+
+class CreateRequest(BaseModel):
+    """Request model for create"""
+
+    info: Optional["CreateRequestInfo"] = Field(
+        description="A X Community Note is a note on a Post.", default_factory=dict
+    )
+    post_id: Optional[str] = None
+    test_mode: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateResponse(BaseModel):
+    """Response model for create"""
+
+    data: Optional["CreateResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateRequestInfo(BaseModel):
+    """Nested model for CreateRequestInfo"""
+
+    classification: Optional[str] = None
+    misleading_tags: Optional[List] = None
+    text: Optional[str] = None
+    trustworthy_sources: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateResponseData(BaseModel):
+    """Nested model for CreateResponseData"""
+
+    deleted: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -83,48 +130,5 @@ class SearchWrittenResponseMeta(BaseModel):
 
     next_token: Optional[str] = None
     result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for create
-
-
-class CreateRequest(BaseModel):
-    """Request model for create"""
-
-    info: Optional["CreateRequestInfo"] = Field(
-        description="A X Community Note is a note on a Post.", default_factory=dict
-    )
-    post_id: Optional[str] = None
-    test_mode: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateResponse(BaseModel):
-    """Response model for create"""
-
-    data: Optional["CreateResponseData"] = Field(default_factory=dict)
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateRequestInfo(BaseModel):
-    """Nested model for CreateRequestInfo"""
-
-    classification: Optional[str] = None
-    misleading_tags: Optional[List] = None
-    text: Optional[str] = None
-    trustworthy_sources: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateResponseData(BaseModel):
-    """Nested model for CreateResponseData"""
-
-    deleted: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)

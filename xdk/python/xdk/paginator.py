@@ -1,7 +1,11 @@
 """
 Cursor-based pagination utilities for the X API SDK.
 
-This module provides a Cursor for elegant pagination support.
+This module provides a Cursor class for elegant pagination support across
+all API clients. The Cursor enables easy iteration over paginated results
+using both .pages() and .items() methods with proper type safety.
+
+Generated automatically - do not edit manually.
 """
 
 from typing import (

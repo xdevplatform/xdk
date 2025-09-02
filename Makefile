@@ -3,7 +3,7 @@
 # Default target: runs checks and tests
 all: check test
 
-run-python:
+python:
 	cargo run -- python --latest true
 
 test-python:
@@ -35,4 +35,4 @@ clean:
 cargo-clean:
 	cargo clean
 
-.PHONY: all run-python test-python fmt clippy check build test clean cargo-clean
+.PHONY: all python test-python fmt clippy check build test clean cargo-clean

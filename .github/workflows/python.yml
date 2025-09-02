@@ -28,7 +28,7 @@ jobs:
       uses: astral-sh/setup-uv@v3
 
     - name: Generate Python SDK
-      run: make run-python
+      run: make python
 
     - name: Test Python SDK
       run: make test-python

@@ -2,8 +2,8 @@
 Auto-generated generic tests for {"class_name": "Users", "display_name": "users", "import_name": "users", "original": ["users"], "property_name": "users"} client.
 
 This module contains general tests that validate the overall client
-functionality, imports, and error handling that don't need to be
-repeated for each operation.
+functionality, imports, error handling, and common behavior patterns
+that apply across all operations without being operation-specific.
 
 Generated automatically - do not edit manually.
 """

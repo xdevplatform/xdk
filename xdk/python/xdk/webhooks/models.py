@@ -1,12 +1,39 @@
 """
-webhooks models for the X API.
+Auto-generated webhooks models for the X API.
 
-This module provides models for the webhooks endpoints of the X API.
+This module provides Pydantic models for request and response data structures
+for the webhooks endpoints of the X API. All models are generated
+from the OpenAPI specification and provide type safety and validation.
+
+Generated automatically - do not edit manually.
 """
 
 from typing import Dict, List, Optional, Any, Union, Literal
 from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
+
+
+# Models for get_stream_links
+
+
+class GetStreamLinksResponse(BaseModel):
+    """Response model for get_stream_links"""
+
+    data: Optional["GetStreamLinksResponseData"] = Field(
+        description="The list of active webhook links for a given stream",
+        default_factory=dict,
+    )
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetStreamLinksResponseData(BaseModel):
+    """Nested model for GetStreamLinksResponseData"""
+
+    links: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 # Models for get
@@ -48,29 +75,6 @@ class CreateResponse(BaseModel):
     id: Optional[str] = None
     url: Optional[str] = None
     valid: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_stream_links
-
-
-class GetStreamLinksResponse(BaseModel):
-    """Response model for get_stream_links"""
-
-    data: Optional["GetStreamLinksResponseData"] = Field(
-        description="The list of active webhook links for a given stream",
-        default_factory=dict,
-    )
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetStreamLinksResponseData(BaseModel):
-    """Nested model for GetStreamLinksResponseData"""
-
-    links: Optional[List] = None
 
     model_config = ConfigDict(populate_by_name=True)
 

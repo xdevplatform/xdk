@@ -2,7 +2,8 @@
 Auto-generated pagination tests for {"class_name": "Stream", "display_name": "stream", "import_name": "stream", "original": ["stream"], "property_name": "stream"} client.
 
 This module contains tests that validate pagination functionality
-using the Cursor class for methods that support pagination.
+using the Cursor class for methods that support pagination. Tests verify
+proper handling of pagination tokens, page limits, and item iteration.
 
 Generated automatically - do not edit manually.
 """
