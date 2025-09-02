@@ -9,6 +9,26 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
+# Models for delete
+
+
+class DeleteResponse(BaseModel):
+    """Response model for delete"""
+
+    data: Optional["DeleteResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DeleteResponseData(BaseModel):
+    """Nested model for DeleteResponseData"""
+
+    id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 # Models for search_eligible_posts
 
 
@@ -38,6 +58,28 @@ class SearchEligiblePostsResponseIncludes(BaseModel):
 
 class SearchEligiblePostsResponseMeta(BaseModel):
     """Nested model for SearchEligiblePostsResponseMeta"""
+
+    next_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for search_written
+
+
+class SearchWrittenResponse(BaseModel):
+    """Response model for search_written"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    meta: Optional["SearchWrittenResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class SearchWrittenResponseMeta(BaseModel):
+    """Nested model for SearchWrittenResponseMeta"""
 
     next_token: Optional[str] = None
     result_count: Optional[int] = None
@@ -84,47 +126,5 @@ class CreateResponseData(BaseModel):
     """Nested model for CreateResponseData"""
 
     deleted: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for search_written
-
-
-class SearchWrittenResponse(BaseModel):
-    """Response model for search_written"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    meta: Optional["SearchWrittenResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class SearchWrittenResponseMeta(BaseModel):
-    """Nested model for SearchWrittenResponseMeta"""
-
-    next_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for delete
-
-
-class DeleteResponse(BaseModel):
-    """Response model for delete"""
-
-    data: Optional["DeleteResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class DeleteResponseData(BaseModel):
-    """Nested model for DeleteResponseData"""
-
-    id: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)

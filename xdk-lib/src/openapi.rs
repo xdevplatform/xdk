@@ -41,6 +41,7 @@ pub fn extract_operations_by_tag(
                 security: op.security.clone(),
                 request_body: op.request_body.clone(),
                 responses: op.responses.clone(),
+                is_streaming: op.streaming.unwrap_or(false),
             };
             let operation_group = OperationGroup {
                 operation: operation_info,

@@ -12,11 +12,11 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
+    DeleteResponse,
     SearchEligiblePostsResponse,
+    SearchWrittenResponse,
     CreateRequest,
     CreateResponse,
-    SearchWrittenResponse,
-    DeleteResponse,
 )
 
 
@@ -26,6 +26,48 @@ class CommunityNotesClient:
 
     def __init__(self, client: Client):
         self.client = client
+
+
+    def delete(
+        self,
+        id: Any,
+    ) -> DeleteResponse:
+        """
+        Delete a Community Note
+        Deletes a community note.
+        Args:
+            id: The community note id to delete.
+        Returns:
+            DeleteResponse: Response data
+        """
+        url = self.client.base_url + "/2/notes/{id}"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        url = url.replace("{id}", str(id))
+        headers = {}
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.delete(
+                url,
+                params=params,
+                headers=headers,
+            )
+        else:
+            response = self.client.session.delete(
+                url,
+                params=params,
+                headers=headers,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return DeleteResponse.model_validate(response_data)
 
 
     def search_eligible_posts(
@@ -81,49 +123,6 @@ class CommunityNotesClient:
         return SearchEligiblePostsResponse.model_validate(response_data)
 
 
-    def create(
-        self,
-        body: Optional[CreateRequest] = None,
-    ) -> CreateResponse:
-        """
-        Create a Community Note
-        Creates a community note endpoint for LLM use case.
-            body: Request body
-        Returns:
-            CreateResponse: Response data
-        """
-        url = self.client.base_url + "/2/notes"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=body.model_dump(exclude_none=True) if body else None,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return CreateResponse.model_validate(response_data)
-
-
     def search_written(
         self,
         test_mode: bool,
@@ -177,43 +176,44 @@ class CommunityNotesClient:
         return SearchWrittenResponse.model_validate(response_data)
 
 
-    def delete(
+    def create(
         self,
-        id: Any,
-    ) -> DeleteResponse:
+        body: Optional[CreateRequest] = None,
+    ) -> CreateResponse:
         """
-        Delete a Community Note
-        Deletes a community note.
-        Args:
-            id: The community note id to delete.
+        Create a Community Note
+        Creates a community note endpoint for LLM use case.
+            body: Request body
         Returns:
-            DeleteResponse: Response data
+            CreateResponse: Response data
         """
-        url = self.client.base_url + "/2/notes/{id}"
+        url = self.client.base_url + "/2/notes"
         # Ensure we have a valid access token
         if self.client.oauth2_auth and self.client.token:
             # Check if token needs refresh
             if self.client.is_token_expired():
                 self.client.refresh_token()
         params = {}
-        url = url.replace("{id}", str(id))
         headers = {}
+        headers["Content-Type"] = "application/json"
         # Make the request
         if self.client.oauth2_session:
-            response = self.client.oauth2_session.delete(
+            response = self.client.oauth2_session.post(
                 url,
                 params=params,
                 headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
             )
         else:
-            response = self.client.session.delete(
+            response = self.client.session.post(
                 url,
                 params=params,
                 headers=headers,
+                json=body.model_dump(exclude_none=True) if body else None,
             )
         # Check for errors
         response.raise_for_status()
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return DeleteResponse.model_validate(response_data)
+        return CreateResponse.model_validate(response_data)

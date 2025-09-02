@@ -51,6 +51,9 @@ language! {
         render "pyproject_toml" => "pyproject.toml",
         render "readme" => "README.md"
     ],
+    streaming: [
+        "client_class" => "streaming_client_class"
+    ],
     tests: [
         multiple {
             render "test_contracts" => "tests/{}/test_contracts.py",

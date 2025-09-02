@@ -44,6 +44,8 @@ pub struct OperationInfo {
     pub request_body: Option<RequestBody>,
     /// Response information
     pub responses: HashMap<StatusCode, Response>,
+    /// Whether this operation supports streaming (from x-twitter-streaming extension)
+    pub is_streaming: bool,
 }
 
 #[derive(Debug, Serialize, Clone)]

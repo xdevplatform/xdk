@@ -10,41 +10,37 @@ from typing import Dict, List, Optional, Union, Any, Callable
 from .oauth2_auth import OAuth2PKCEAuth
 from .paginator import Cursor, cursor, PaginationError
 
-from .stream.client import StreamClient
-
-from .direct_messages.client import DirectMessagesClient
-
-from .communities.client import CommunitiesClient
-
-from .connection.client import ConnectionClient
+from .posts.client import PostsClient
 
 from .general.client import GeneralClient
 
-from .webhooks.client import WebhooksClient
-
-from .posts.client import PostsClient
-
 from .media.client import MediaClient
 
-from .compliance.client import ComplianceClient
+from .webhooks.client import WebhooksClient
 
-from .users.client import UsersClient
+from .account_activity.client import AccountActivityClient
 
-from .spaces.client import SpacesClient
-
-from .community_notes.client import CommunityNotesClient
-
-from .aaasubscriptions.client import AaasubscriptionsClient
+from .direct_messages.client import DirectMessagesClient
 
 from .lists.client import ListsClient
 
 from .trends.client import TrendsClient
 
-from .bookmarks.client import BookmarksClient
+from .spaces.client import SpacesClient
+
+from .communities.client import CommunitiesClient
+
+from .users.client import UsersClient
 
 from .usage.client import UsageClient
 
-from .account_activity.client import AccountActivityClient
+from .compliance.client import ComplianceClient
+
+from .connections.client import ConnectionsClient
+
+from .community_notes.client import CommunityNotesClient
+
+from .stream.client import StreamClient
 
 
 class Client:
@@ -86,24 +82,22 @@ class Client:
                 scope=scope,
             )
         # Initialize clients for each tag
-        self.stream = StreamClient(self)
-        self.direct_messages = DirectMessagesClient(self)
-        self.communities = CommunitiesClient(self)
-        self.connection = ConnectionClient(self)
-        self.general = GeneralClient(self)
-        self.webhooks = WebhooksClient(self)
         self.posts = PostsClient(self)
+        self.general = GeneralClient(self)
         self.media = MediaClient(self)
-        self.compliance = ComplianceClient(self)
-        self.users = UsersClient(self)
-        self.spaces = SpacesClient(self)
-        self.community_notes = CommunityNotesClient(self)
-        self.aaasubscriptions = AaasubscriptionsClient(self)
+        self.webhooks = WebhooksClient(self)
+        self.account_activity = AccountActivityClient(self)
+        self.direct_messages = DirectMessagesClient(self)
         self.lists = ListsClient(self)
         self.trends = TrendsClient(self)
-        self.bookmarks = BookmarksClient(self)
+        self.spaces = SpacesClient(self)
+        self.communities = CommunitiesClient(self)
+        self.users = UsersClient(self)
         self.usage = UsageClient(self)
-        self.account_activity = AccountActivityClient(self)
+        self.compliance = ComplianceClient(self)
+        self.connections = ConnectionsClient(self)
+        self.community_notes = CommunityNotesClient(self)
+        self.stream = StreamClient(self)
 
     @property
 

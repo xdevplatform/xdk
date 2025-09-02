@@ -127,6 +127,9 @@ pub struct Operation {
     pub request_body: Option<RequestBody>,
     /// Responses for the operation
     pub responses: HashMap<StatusCode, Response>,
+    /// X-Twitter-Streaming extension flag
+    #[serde(rename = "x-twitter-streaming", default)]
+    pub streaming: Option<bool>,
 }
 
 /// Represents a content type

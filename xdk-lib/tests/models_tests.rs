@@ -18,6 +18,7 @@ fn test_operation_info_with_casing() {
         parameters: None,
         request_body: None,
         responses: HashMap::new(),
+        is_streaming: false,
     };
 
     let updated_operation = operation.with_casing("get_users".to_string(), "GetUsers".to_string());
@@ -81,6 +82,7 @@ fn test_operation_group_structure() {
         parameters: None,
         request_body: None,
         responses: HashMap::new(),
+        is_streaming: false,
     };
 
     let metadata = Metadata {

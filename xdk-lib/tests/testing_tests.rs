@@ -23,6 +23,7 @@ fn create_test_operation(
         parameters,
         request_body: None,
         responses: HashMap::new(),
+        is_streaming: false,
     }
 }
 

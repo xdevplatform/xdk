@@ -1,7 +1,7 @@
 """
-connection client for the X API.
+connections client for the X API.
 
-This module provides a client for interacting with the connection endpoints of the X API.
+This module provides a client for interacting with the connections endpoints of the X API.
 """
 
 from __future__ import annotations
@@ -12,26 +12,26 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    DeleteAllConnectionsResponse,
+    DeleteAllResponse,
 )
 
 
-class ConnectionClient:
-    """Client for connection operations"""
+class ConnectionsClient:
+    """Client for connections operations"""
 
 
     def __init__(self, client: Client):
         self.client = client
 
 
-    def delete_all_connections(
+    def delete_all(
         self,
-    ) -> DeleteAllConnectionsResponse:
+    ) -> DeleteAllResponse:
         """
         Terminate all connections
         Terminates all active streaming connections for the authenticated application.
         Returns:
-            DeleteAllConnectionsResponse: Response data
+            DeleteAllResponse: Response data
         """
         url = self.client.base_url + "/2/connections/all"
         if self.client.bearer_token:
@@ -55,4 +55,4 @@ class ConnectionClient:
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return DeleteAllConnectionsResponse.model_validate(response_data)
+        return DeleteAllResponse.model_validate(response_data)
