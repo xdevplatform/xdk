@@ -185,13 +185,6 @@ macro_rules! language {
                 render $s_template:expr => $s_path:expr
             ),*
         ],
-        $(
-            streaming: [
-                $(
-                    $stream_from:expr => $stream_to:expr
-                ),*
-            ],
-        )?
         tests: [
             $(
                 multiple {
@@ -244,11 +237,6 @@ macro_rules! language {
 
                 let tags: Vec<Vec<String>> = operations.keys().cloned().collect();
 
-                let mut streaming_map: std::collections::HashMap<&str, &str> = std::collections::HashMap::new();
-                $($(
-                    streaming_map.insert($stream_from, $stream_to);
-                )*)?
-
                 // Handle per-tag template renders
                 $(
                     for tag in &tags {
@@ -282,17 +270,11 @@ macro_rules! language {
                             operations: operations_with_converted_ids
                         };
 
-                        let has_streaming = context.operations.iter().any(|op| op.is_streaming);
-
                         $(
                             let tag_path = tag.join("_").to_lowercase();
                             let output_path = PathBuf::from(format!($path, tag_path));
 
-                            let template_name = if has_streaming && streaming_map.contains_key($template) {
-                                streaming_map.get($template).unwrap()
-                            } else {
-                                $template
-                            };
+                            let template_name = $template;
 
                             let content = render_template(env, template_name, &context)?;
                             let full_path = output_dir.join(&output_path);

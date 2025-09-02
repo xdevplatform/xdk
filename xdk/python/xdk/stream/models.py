@@ -13,209 +13,6 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for posts_firehose
-
-
-class PostsFirehoseResponse(BaseModel):
-    """Response model for posts_firehose"""
-
-    data: Optional["PostsFirehoseResponseData"] = None
-    errors: Optional[List] = None
-    includes: Optional["PostsFirehoseResponseIncludes"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseData(BaseModel):
-    """Nested model for PostsFirehoseResponseData"""
-
-    attachments: Optional["PostsFirehoseResponseDataAttachments"] = None
-    author_id: Optional[str] = None
-    community_id: Optional[str] = None
-    context_annotations: Optional[List] = None
-    conversation_id: Optional[str] = None
-    created_at: Optional[str] = None
-    display_text_range: Optional[List] = None
-    edit_controls: Optional["PostsFirehoseResponseDataEditControls"] = None
-    edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["PostsFirehoseResponseDataEntities"] = None
-    geo: Optional["PostsFirehoseResponseDataGeo"] = None
-    id: Optional[str] = None
-    in_reply_to_user_id: Optional[str] = None
-    lang: Optional[str] = None
-    non_public_metrics: Optional["PostsFirehoseResponseDataNonPublicMetrics"] = None
-    note_tweet: Optional["PostsFirehoseResponseDataNoteTweet"] = None
-    organic_metrics: Optional["PostsFirehoseResponseDataOrganicMetrics"] = None
-    possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["PostsFirehoseResponseDataPromotedMetrics"] = None
-    public_metrics: Optional["PostsFirehoseResponseDataPublicMetrics"] = None
-    referenced_tweets: Optional[List] = None
-    reply_settings: Optional[str] = None
-    scopes: Optional["PostsFirehoseResponseDataScopes"] = None
-    source: Optional[str] = None
-    text: Optional[str] = None
-    username: Optional[str] = None
-    withheld: Optional["PostsFirehoseResponseDataWithheld"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseDataAttachments(BaseModel):
-    """Nested model for PostsFirehoseResponseDataAttachments"""
-
-    media_keys: Optional[List] = None
-    media_source_tweet_id: Optional[List] = None
-    poll_ids: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseDataEditControls(BaseModel):
-    """Nested model for PostsFirehoseResponseDataEditControls"""
-
-    editable_until: Optional[str] = None
-    edits_remaining: Optional[int] = None
-    is_edit_eligible: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseDataEntities(BaseModel):
-    """Nested model for PostsFirehoseResponseDataEntities"""
-
-    annotations: Optional[List] = None
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseDataGeo(BaseModel):
-    """Nested model for PostsFirehoseResponseDataGeo"""
-
-    coordinates: Optional["PostsFirehoseResponseDataGeoCoordinates"] = None
-    place_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseDataGeoCoordinates(BaseModel):
-    """Nested model for PostsFirehoseResponseDataGeoCoordinates"""
-
-    coordinates: Optional[List] = None
-    type: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseDataNonPublicMetrics(BaseModel):
-    """Nested model for PostsFirehoseResponseDataNonPublicMetrics"""
-
-    impression_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseDataNoteTweet(BaseModel):
-    """Nested model for PostsFirehoseResponseDataNoteTweet"""
-
-    entities: Optional["PostsFirehoseResponseDataNoteTweetEntities"] = None
-    text: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseDataNoteTweetEntities(BaseModel):
-    """Nested model for PostsFirehoseResponseDataNoteTweetEntities"""
-
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseDataOrganicMetrics(BaseModel):
-    """Nested model for PostsFirehoseResponseDataOrganicMetrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseDataPromotedMetrics(BaseModel):
-    """Nested model for PostsFirehoseResponseDataPromotedMetrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseDataPublicMetrics(BaseModel):
-    """Nested model for PostsFirehoseResponseDataPublicMetrics"""
-
-    bookmark_count: Optional[int] = None
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    quote_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseDataScopes(BaseModel):
-    """Nested model for PostsFirehoseResponseDataScopes"""
-
-    followers: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseDataWithheld(BaseModel):
-    """Nested model for PostsFirehoseResponseDataWithheld"""
-
-    copyright: Optional[bool] = None
-    country_codes: Optional[List] = None
-    scope: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseResponseIncludes(BaseModel):
-    """Nested model for PostsFirehoseResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for posts_compliance
-
-
-class PostsComplianceResponse(BaseModel):
-    """Response model for posts_compliance"""
-
-    data: Optional[Any] = Field(default=None, description="Tweet compliance data.")
-    errors: Optional[List] = Field(default=None)
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for posts_sample10
 
 
@@ -407,55 +204,55 @@ class PostsSample10ResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for posts_firehose_ja
+# Models for posts_firehose_en
 
 
-class PostsFirehoseJaResponse(BaseModel):
-    """Response model for posts_firehose_ja"""
+class PostsFirehoseEnResponse(BaseModel):
+    """Response model for posts_firehose_en"""
 
-    data: Optional["PostsFirehoseJaResponseData"] = None
+    data: Optional["PostsFirehoseEnResponseData"] = None
     errors: Optional[List] = None
-    includes: Optional["PostsFirehoseJaResponseIncludes"] = None
+    includes: Optional["PostsFirehoseEnResponseIncludes"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseData(BaseModel):
-    """Nested model for PostsFirehoseJaResponseData"""
+class PostsFirehoseEnResponseData(BaseModel):
+    """Nested model for PostsFirehoseEnResponseData"""
 
-    attachments: Optional["PostsFirehoseJaResponseDataAttachments"] = None
+    attachments: Optional["PostsFirehoseEnResponseDataAttachments"] = None
     author_id: Optional[str] = None
     community_id: Optional[str] = None
     context_annotations: Optional[List] = None
     conversation_id: Optional[str] = None
     created_at: Optional[str] = None
     display_text_range: Optional[List] = None
-    edit_controls: Optional["PostsFirehoseJaResponseDataEditControls"] = None
+    edit_controls: Optional["PostsFirehoseEnResponseDataEditControls"] = None
     edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["PostsFirehoseJaResponseDataEntities"] = None
-    geo: Optional["PostsFirehoseJaResponseDataGeo"] = None
+    entities: Optional["PostsFirehoseEnResponseDataEntities"] = None
+    geo: Optional["PostsFirehoseEnResponseDataGeo"] = None
     id: Optional[str] = None
     in_reply_to_user_id: Optional[str] = None
     lang: Optional[str] = None
-    non_public_metrics: Optional["PostsFirehoseJaResponseDataNonPublicMetrics"] = None
-    note_tweet: Optional["PostsFirehoseJaResponseDataNoteTweet"] = None
-    organic_metrics: Optional["PostsFirehoseJaResponseDataOrganicMetrics"] = None
+    non_public_metrics: Optional["PostsFirehoseEnResponseDataNonPublicMetrics"] = None
+    note_tweet: Optional["PostsFirehoseEnResponseDataNoteTweet"] = None
+    organic_metrics: Optional["PostsFirehoseEnResponseDataOrganicMetrics"] = None
     possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["PostsFirehoseJaResponseDataPromotedMetrics"] = None
-    public_metrics: Optional["PostsFirehoseJaResponseDataPublicMetrics"] = None
+    promoted_metrics: Optional["PostsFirehoseEnResponseDataPromotedMetrics"] = None
+    public_metrics: Optional["PostsFirehoseEnResponseDataPublicMetrics"] = None
     referenced_tweets: Optional[List] = None
     reply_settings: Optional[str] = None
-    scopes: Optional["PostsFirehoseJaResponseDataScopes"] = None
+    scopes: Optional["PostsFirehoseEnResponseDataScopes"] = None
     source: Optional[str] = None
     text: Optional[str] = None
     username: Optional[str] = None
-    withheld: Optional["PostsFirehoseJaResponseDataWithheld"] = None
+    withheld: Optional["PostsFirehoseEnResponseDataWithheld"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseDataAttachments(BaseModel):
-    """Nested model for PostsFirehoseJaResponseDataAttachments"""
+class PostsFirehoseEnResponseDataAttachments(BaseModel):
+    """Nested model for PostsFirehoseEnResponseDataAttachments"""
 
     media_keys: Optional[List] = None
     media_source_tweet_id: Optional[List] = None
@@ -464,8 +261,8 @@ class PostsFirehoseJaResponseDataAttachments(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseDataEditControls(BaseModel):
-    """Nested model for PostsFirehoseJaResponseDataEditControls"""
+class PostsFirehoseEnResponseDataEditControls(BaseModel):
+    """Nested model for PostsFirehoseEnResponseDataEditControls"""
 
     editable_until: Optional[str] = None
     edits_remaining: Optional[int] = None
@@ -474,8 +271,8 @@ class PostsFirehoseJaResponseDataEditControls(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseDataEntities(BaseModel):
-    """Nested model for PostsFirehoseJaResponseDataEntities"""
+class PostsFirehoseEnResponseDataEntities(BaseModel):
+    """Nested model for PostsFirehoseEnResponseDataEntities"""
 
     annotations: Optional[List] = None
     cashtags: Optional[List] = None
@@ -486,17 +283,17 @@ class PostsFirehoseJaResponseDataEntities(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseDataGeo(BaseModel):
-    """Nested model for PostsFirehoseJaResponseDataGeo"""
+class PostsFirehoseEnResponseDataGeo(BaseModel):
+    """Nested model for PostsFirehoseEnResponseDataGeo"""
 
-    coordinates: Optional["PostsFirehoseJaResponseDataGeoCoordinates"] = None
+    coordinates: Optional["PostsFirehoseEnResponseDataGeoCoordinates"] = None
     place_id: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseDataGeoCoordinates(BaseModel):
-    """Nested model for PostsFirehoseJaResponseDataGeoCoordinates"""
+class PostsFirehoseEnResponseDataGeoCoordinates(BaseModel):
+    """Nested model for PostsFirehoseEnResponseDataGeoCoordinates"""
 
     coordinates: Optional[List] = None
     type: Optional[str] = None
@@ -504,25 +301,25 @@ class PostsFirehoseJaResponseDataGeoCoordinates(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseDataNonPublicMetrics(BaseModel):
-    """Nested model for PostsFirehoseJaResponseDataNonPublicMetrics"""
+class PostsFirehoseEnResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for PostsFirehoseEnResponseDataNonPublicMetrics"""
 
     impression_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseDataNoteTweet(BaseModel):
-    """Nested model for PostsFirehoseJaResponseDataNoteTweet"""
+class PostsFirehoseEnResponseDataNoteTweet(BaseModel):
+    """Nested model for PostsFirehoseEnResponseDataNoteTweet"""
 
-    entities: Optional["PostsFirehoseJaResponseDataNoteTweetEntities"] = None
+    entities: Optional["PostsFirehoseEnResponseDataNoteTweetEntities"] = None
     text: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseDataNoteTweetEntities(BaseModel):
-    """Nested model for PostsFirehoseJaResponseDataNoteTweetEntities"""
+class PostsFirehoseEnResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for PostsFirehoseEnResponseDataNoteTweetEntities"""
 
     cashtags: Optional[List] = None
     hashtags: Optional[List] = None
@@ -532,8 +329,8 @@ class PostsFirehoseJaResponseDataNoteTweetEntities(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseDataOrganicMetrics(BaseModel):
-    """Nested model for PostsFirehoseJaResponseDataOrganicMetrics"""
+class PostsFirehoseEnResponseDataOrganicMetrics(BaseModel):
+    """Nested model for PostsFirehoseEnResponseDataOrganicMetrics"""
 
     impression_count: Optional[int] = None
     like_count: Optional[int] = None
@@ -543,8 +340,8 @@ class PostsFirehoseJaResponseDataOrganicMetrics(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseDataPromotedMetrics(BaseModel):
-    """Nested model for PostsFirehoseJaResponseDataPromotedMetrics"""
+class PostsFirehoseEnResponseDataPromotedMetrics(BaseModel):
+    """Nested model for PostsFirehoseEnResponseDataPromotedMetrics"""
 
     impression_count: Optional[int] = None
     like_count: Optional[int] = None
@@ -554,8 +351,8 @@ class PostsFirehoseJaResponseDataPromotedMetrics(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseDataPublicMetrics(BaseModel):
-    """Nested model for PostsFirehoseJaResponseDataPublicMetrics"""
+class PostsFirehoseEnResponseDataPublicMetrics(BaseModel):
+    """Nested model for PostsFirehoseEnResponseDataPublicMetrics"""
 
     bookmark_count: Optional[int] = None
     impression_count: Optional[int] = None
@@ -567,16 +364,16 @@ class PostsFirehoseJaResponseDataPublicMetrics(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseDataScopes(BaseModel):
-    """Nested model for PostsFirehoseJaResponseDataScopes"""
+class PostsFirehoseEnResponseDataScopes(BaseModel):
+    """Nested model for PostsFirehoseEnResponseDataScopes"""
 
     followers: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseDataWithheld(BaseModel):
-    """Nested model for PostsFirehoseJaResponseDataWithheld"""
+class PostsFirehoseEnResponseDataWithheld(BaseModel):
+    """Nested model for PostsFirehoseEnResponseDataWithheld"""
 
     copyright: Optional[bool] = None
     country_codes: Optional[List] = None
@@ -585,199 +382,8 @@ class PostsFirehoseJaResponseDataWithheld(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseJaResponseIncludes(BaseModel):
-    """Nested model for PostsFirehoseJaResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for posts_firehose_pt
-
-
-class PostsFirehosePtResponse(BaseModel):
-    """Response model for posts_firehose_pt"""
-
-    data: Optional["PostsFirehosePtResponseData"] = None
-    errors: Optional[List] = None
-    includes: Optional["PostsFirehosePtResponseIncludes"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseData(BaseModel):
-    """Nested model for PostsFirehosePtResponseData"""
-
-    attachments: Optional["PostsFirehosePtResponseDataAttachments"] = None
-    author_id: Optional[str] = None
-    community_id: Optional[str] = None
-    context_annotations: Optional[List] = None
-    conversation_id: Optional[str] = None
-    created_at: Optional[str] = None
-    display_text_range: Optional[List] = None
-    edit_controls: Optional["PostsFirehosePtResponseDataEditControls"] = None
-    edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["PostsFirehosePtResponseDataEntities"] = None
-    geo: Optional["PostsFirehosePtResponseDataGeo"] = None
-    id: Optional[str] = None
-    in_reply_to_user_id: Optional[str] = None
-    lang: Optional[str] = None
-    non_public_metrics: Optional["PostsFirehosePtResponseDataNonPublicMetrics"] = None
-    note_tweet: Optional["PostsFirehosePtResponseDataNoteTweet"] = None
-    organic_metrics: Optional["PostsFirehosePtResponseDataOrganicMetrics"] = None
-    possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["PostsFirehosePtResponseDataPromotedMetrics"] = None
-    public_metrics: Optional["PostsFirehosePtResponseDataPublicMetrics"] = None
-    referenced_tweets: Optional[List] = None
-    reply_settings: Optional[str] = None
-    scopes: Optional["PostsFirehosePtResponseDataScopes"] = None
-    source: Optional[str] = None
-    text: Optional[str] = None
-    username: Optional[str] = None
-    withheld: Optional["PostsFirehosePtResponseDataWithheld"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseDataAttachments(BaseModel):
-    """Nested model for PostsFirehosePtResponseDataAttachments"""
-
-    media_keys: Optional[List] = None
-    media_source_tweet_id: Optional[List] = None
-    poll_ids: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseDataEditControls(BaseModel):
-    """Nested model for PostsFirehosePtResponseDataEditControls"""
-
-    editable_until: Optional[str] = None
-    edits_remaining: Optional[int] = None
-    is_edit_eligible: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseDataEntities(BaseModel):
-    """Nested model for PostsFirehosePtResponseDataEntities"""
-
-    annotations: Optional[List] = None
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseDataGeo(BaseModel):
-    """Nested model for PostsFirehosePtResponseDataGeo"""
-
-    coordinates: Optional["PostsFirehosePtResponseDataGeoCoordinates"] = None
-    place_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseDataGeoCoordinates(BaseModel):
-    """Nested model for PostsFirehosePtResponseDataGeoCoordinates"""
-
-    coordinates: Optional[List] = None
-    type: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseDataNonPublicMetrics(BaseModel):
-    """Nested model for PostsFirehosePtResponseDataNonPublicMetrics"""
-
-    impression_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseDataNoteTweet(BaseModel):
-    """Nested model for PostsFirehosePtResponseDataNoteTweet"""
-
-    entities: Optional["PostsFirehosePtResponseDataNoteTweetEntities"] = None
-    text: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseDataNoteTweetEntities(BaseModel):
-    """Nested model for PostsFirehosePtResponseDataNoteTweetEntities"""
-
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseDataOrganicMetrics(BaseModel):
-    """Nested model for PostsFirehosePtResponseDataOrganicMetrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseDataPromotedMetrics(BaseModel):
-    """Nested model for PostsFirehosePtResponseDataPromotedMetrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseDataPublicMetrics(BaseModel):
-    """Nested model for PostsFirehosePtResponseDataPublicMetrics"""
-
-    bookmark_count: Optional[int] = None
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    quote_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseDataScopes(BaseModel):
-    """Nested model for PostsFirehosePtResponseDataScopes"""
-
-    followers: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseDataWithheld(BaseModel):
-    """Nested model for PostsFirehosePtResponseDataWithheld"""
-
-    copyright: Optional[bool] = None
-    country_codes: Optional[List] = None
-    scope: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehosePtResponseIncludes(BaseModel):
-    """Nested model for PostsFirehosePtResponseIncludes"""
+class PostsFirehoseEnResponseIncludes(BaseModel):
+    """Nested model for PostsFirehoseEnResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -981,6 +587,688 @@ class PostsResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
+# Models for get_rules
+
+
+class GetRulesResponse(BaseModel):
+    """Response model for get_rules"""
+
+    data: Optional[List] = None
+    meta: Optional["GetRulesResponseMeta"] = Field(default_factory=dict)
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetRulesResponseMeta(BaseModel):
+    """Nested model for GetRulesResponseMeta"""
+
+    next_token: Optional[str] = None
+    result_count: Optional[int] = None
+    sent: Optional[str] = None
+    summary: Any = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for update_rules
+
+
+class UpdateRulesRequest(BaseModel):
+    """Request model for update_rules"""
+
+    add: Optional[List] = Field(default=None)
+    delete: Optional[Dict[str, Any]] = Field(
+        default=None,
+        description="IDs and values of all deleted user-specified stream filtering rules.",
+    )
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class UpdateRulesResponse(BaseModel):
+    """Response model for update_rules"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    meta: Optional["UpdateRulesResponseMeta"] = Field(default_factory=dict)
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class UpdateRulesResponseMeta(BaseModel):
+    """Nested model for UpdateRulesResponseMeta"""
+
+    next_token: Optional[str] = None
+    result_count: Optional[int] = None
+    sent: Optional[str] = None
+    summary: Any = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for posts_firehose
+
+
+class PostsFirehoseResponse(BaseModel):
+    """Response model for posts_firehose"""
+
+    data: Optional["PostsFirehoseResponseData"] = None
+    errors: Optional[List] = None
+    includes: Optional["PostsFirehoseResponseIncludes"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseData(BaseModel):
+    """Nested model for PostsFirehoseResponseData"""
+
+    attachments: Optional["PostsFirehoseResponseDataAttachments"] = None
+    author_id: Optional[str] = None
+    community_id: Optional[str] = None
+    context_annotations: Optional[List] = None
+    conversation_id: Optional[str] = None
+    created_at: Optional[str] = None
+    display_text_range: Optional[List] = None
+    edit_controls: Optional["PostsFirehoseResponseDataEditControls"] = None
+    edit_history_tweet_ids: Optional[List] = None
+    entities: Optional["PostsFirehoseResponseDataEntities"] = None
+    geo: Optional["PostsFirehoseResponseDataGeo"] = None
+    id: Optional[str] = None
+    in_reply_to_user_id: Optional[str] = None
+    lang: Optional[str] = None
+    non_public_metrics: Optional["PostsFirehoseResponseDataNonPublicMetrics"] = None
+    note_tweet: Optional["PostsFirehoseResponseDataNoteTweet"] = None
+    organic_metrics: Optional["PostsFirehoseResponseDataOrganicMetrics"] = None
+    possibly_sensitive: Optional[bool] = None
+    promoted_metrics: Optional["PostsFirehoseResponseDataPromotedMetrics"] = None
+    public_metrics: Optional["PostsFirehoseResponseDataPublicMetrics"] = None
+    referenced_tweets: Optional[List] = None
+    reply_settings: Optional[str] = None
+    scopes: Optional["PostsFirehoseResponseDataScopes"] = None
+    source: Optional[str] = None
+    text: Optional[str] = None
+    username: Optional[str] = None
+    withheld: Optional["PostsFirehoseResponseDataWithheld"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseDataAttachments(BaseModel):
+    """Nested model for PostsFirehoseResponseDataAttachments"""
+
+    media_keys: Optional[List] = None
+    media_source_tweet_id: Optional[List] = None
+    poll_ids: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseDataEditControls(BaseModel):
+    """Nested model for PostsFirehoseResponseDataEditControls"""
+
+    editable_until: Optional[str] = None
+    edits_remaining: Optional[int] = None
+    is_edit_eligible: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseDataEntities(BaseModel):
+    """Nested model for PostsFirehoseResponseDataEntities"""
+
+    annotations: Optional[List] = None
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseDataGeo(BaseModel):
+    """Nested model for PostsFirehoseResponseDataGeo"""
+
+    coordinates: Optional["PostsFirehoseResponseDataGeoCoordinates"] = None
+    place_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseDataGeoCoordinates(BaseModel):
+    """Nested model for PostsFirehoseResponseDataGeoCoordinates"""
+
+    coordinates: Optional[List] = None
+    type: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for PostsFirehoseResponseDataNonPublicMetrics"""
+
+    impression_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseDataNoteTweet(BaseModel):
+    """Nested model for PostsFirehoseResponseDataNoteTweet"""
+
+    entities: Optional["PostsFirehoseResponseDataNoteTweetEntities"] = None
+    text: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for PostsFirehoseResponseDataNoteTweetEntities"""
+
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseDataOrganicMetrics(BaseModel):
+    """Nested model for PostsFirehoseResponseDataOrganicMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseDataPromotedMetrics(BaseModel):
+    """Nested model for PostsFirehoseResponseDataPromotedMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseDataPublicMetrics(BaseModel):
+    """Nested model for PostsFirehoseResponseDataPublicMetrics"""
+
+    bookmark_count: Optional[int] = None
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    quote_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseDataScopes(BaseModel):
+    """Nested model for PostsFirehoseResponseDataScopes"""
+
+    followers: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseDataWithheld(BaseModel):
+    """Nested model for PostsFirehoseResponseDataWithheld"""
+
+    copyright: Optional[bool] = None
+    country_codes: Optional[List] = None
+    scope: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseResponseIncludes(BaseModel):
+    """Nested model for PostsFirehoseResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for labels_compliance
+
+
+class LabelsComplianceResponse(BaseModel):
+    """Response model for labels_compliance"""
+
+    data: Optional[Any] = Field(default=None, description="Tweet label data.")
+    errors: Optional[List] = Field(default=None)
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for posts_firehose_ko
+
+
+class PostsFirehoseKoResponse(BaseModel):
+    """Response model for posts_firehose_ko"""
+
+    data: Optional["PostsFirehoseKoResponseData"] = None
+    errors: Optional[List] = None
+    includes: Optional["PostsFirehoseKoResponseIncludes"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseData(BaseModel):
+    """Nested model for PostsFirehoseKoResponseData"""
+
+    attachments: Optional["PostsFirehoseKoResponseDataAttachments"] = None
+    author_id: Optional[str] = None
+    community_id: Optional[str] = None
+    context_annotations: Optional[List] = None
+    conversation_id: Optional[str] = None
+    created_at: Optional[str] = None
+    display_text_range: Optional[List] = None
+    edit_controls: Optional["PostsFirehoseKoResponseDataEditControls"] = None
+    edit_history_tweet_ids: Optional[List] = None
+    entities: Optional["PostsFirehoseKoResponseDataEntities"] = None
+    geo: Optional["PostsFirehoseKoResponseDataGeo"] = None
+    id: Optional[str] = None
+    in_reply_to_user_id: Optional[str] = None
+    lang: Optional[str] = None
+    non_public_metrics: Optional["PostsFirehoseKoResponseDataNonPublicMetrics"] = None
+    note_tweet: Optional["PostsFirehoseKoResponseDataNoteTweet"] = None
+    organic_metrics: Optional["PostsFirehoseKoResponseDataOrganicMetrics"] = None
+    possibly_sensitive: Optional[bool] = None
+    promoted_metrics: Optional["PostsFirehoseKoResponseDataPromotedMetrics"] = None
+    public_metrics: Optional["PostsFirehoseKoResponseDataPublicMetrics"] = None
+    referenced_tweets: Optional[List] = None
+    reply_settings: Optional[str] = None
+    scopes: Optional["PostsFirehoseKoResponseDataScopes"] = None
+    source: Optional[str] = None
+    text: Optional[str] = None
+    username: Optional[str] = None
+    withheld: Optional["PostsFirehoseKoResponseDataWithheld"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseDataAttachments(BaseModel):
+    """Nested model for PostsFirehoseKoResponseDataAttachments"""
+
+    media_keys: Optional[List] = None
+    media_source_tweet_id: Optional[List] = None
+    poll_ids: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseDataEditControls(BaseModel):
+    """Nested model for PostsFirehoseKoResponseDataEditControls"""
+
+    editable_until: Optional[str] = None
+    edits_remaining: Optional[int] = None
+    is_edit_eligible: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseDataEntities(BaseModel):
+    """Nested model for PostsFirehoseKoResponseDataEntities"""
+
+    annotations: Optional[List] = None
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseDataGeo(BaseModel):
+    """Nested model for PostsFirehoseKoResponseDataGeo"""
+
+    coordinates: Optional["PostsFirehoseKoResponseDataGeoCoordinates"] = None
+    place_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseDataGeoCoordinates(BaseModel):
+    """Nested model for PostsFirehoseKoResponseDataGeoCoordinates"""
+
+    coordinates: Optional[List] = None
+    type: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for PostsFirehoseKoResponseDataNonPublicMetrics"""
+
+    impression_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseDataNoteTweet(BaseModel):
+    """Nested model for PostsFirehoseKoResponseDataNoteTweet"""
+
+    entities: Optional["PostsFirehoseKoResponseDataNoteTweetEntities"] = None
+    text: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for PostsFirehoseKoResponseDataNoteTweetEntities"""
+
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseDataOrganicMetrics(BaseModel):
+    """Nested model for PostsFirehoseKoResponseDataOrganicMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseDataPromotedMetrics(BaseModel):
+    """Nested model for PostsFirehoseKoResponseDataPromotedMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseDataPublicMetrics(BaseModel):
+    """Nested model for PostsFirehoseKoResponseDataPublicMetrics"""
+
+    bookmark_count: Optional[int] = None
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    quote_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseDataScopes(BaseModel):
+    """Nested model for PostsFirehoseKoResponseDataScopes"""
+
+    followers: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseDataWithheld(BaseModel):
+    """Nested model for PostsFirehoseKoResponseDataWithheld"""
+
+    copyright: Optional[bool] = None
+    country_codes: Optional[List] = None
+    scope: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseKoResponseIncludes(BaseModel):
+    """Nested model for PostsFirehoseKoResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for posts_firehose_ja
+
+
+class PostsFirehoseJaResponse(BaseModel):
+    """Response model for posts_firehose_ja"""
+
+    data: Optional["PostsFirehoseJaResponseData"] = None
+    errors: Optional[List] = None
+    includes: Optional["PostsFirehoseJaResponseIncludes"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseData(BaseModel):
+    """Nested model for PostsFirehoseJaResponseData"""
+
+    attachments: Optional["PostsFirehoseJaResponseDataAttachments"] = None
+    author_id: Optional[str] = None
+    community_id: Optional[str] = None
+    context_annotations: Optional[List] = None
+    conversation_id: Optional[str] = None
+    created_at: Optional[str] = None
+    display_text_range: Optional[List] = None
+    edit_controls: Optional["PostsFirehoseJaResponseDataEditControls"] = None
+    edit_history_tweet_ids: Optional[List] = None
+    entities: Optional["PostsFirehoseJaResponseDataEntities"] = None
+    geo: Optional["PostsFirehoseJaResponseDataGeo"] = None
+    id: Optional[str] = None
+    in_reply_to_user_id: Optional[str] = None
+    lang: Optional[str] = None
+    non_public_metrics: Optional["PostsFirehoseJaResponseDataNonPublicMetrics"] = None
+    note_tweet: Optional["PostsFirehoseJaResponseDataNoteTweet"] = None
+    organic_metrics: Optional["PostsFirehoseJaResponseDataOrganicMetrics"] = None
+    possibly_sensitive: Optional[bool] = None
+    promoted_metrics: Optional["PostsFirehoseJaResponseDataPromotedMetrics"] = None
+    public_metrics: Optional["PostsFirehoseJaResponseDataPublicMetrics"] = None
+    referenced_tweets: Optional[List] = None
+    reply_settings: Optional[str] = None
+    scopes: Optional["PostsFirehoseJaResponseDataScopes"] = None
+    source: Optional[str] = None
+    text: Optional[str] = None
+    username: Optional[str] = None
+    withheld: Optional["PostsFirehoseJaResponseDataWithheld"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseDataAttachments(BaseModel):
+    """Nested model for PostsFirehoseJaResponseDataAttachments"""
+
+    media_keys: Optional[List] = None
+    media_source_tweet_id: Optional[List] = None
+    poll_ids: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseDataEditControls(BaseModel):
+    """Nested model for PostsFirehoseJaResponseDataEditControls"""
+
+    editable_until: Optional[str] = None
+    edits_remaining: Optional[int] = None
+    is_edit_eligible: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseDataEntities(BaseModel):
+    """Nested model for PostsFirehoseJaResponseDataEntities"""
+
+    annotations: Optional[List] = None
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseDataGeo(BaseModel):
+    """Nested model for PostsFirehoseJaResponseDataGeo"""
+
+    coordinates: Optional["PostsFirehoseJaResponseDataGeoCoordinates"] = None
+    place_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseDataGeoCoordinates(BaseModel):
+    """Nested model for PostsFirehoseJaResponseDataGeoCoordinates"""
+
+    coordinates: Optional[List] = None
+    type: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for PostsFirehoseJaResponseDataNonPublicMetrics"""
+
+    impression_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseDataNoteTweet(BaseModel):
+    """Nested model for PostsFirehoseJaResponseDataNoteTweet"""
+
+    entities: Optional["PostsFirehoseJaResponseDataNoteTweetEntities"] = None
+    text: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for PostsFirehoseJaResponseDataNoteTweetEntities"""
+
+    cashtags: Optional[List] = None
+    hashtags: Optional[List] = None
+    mentions: Optional[List] = None
+    urls: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseDataOrganicMetrics(BaseModel):
+    """Nested model for PostsFirehoseJaResponseDataOrganicMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseDataPromotedMetrics(BaseModel):
+    """Nested model for PostsFirehoseJaResponseDataPromotedMetrics"""
+
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseDataPublicMetrics(BaseModel):
+    """Nested model for PostsFirehoseJaResponseDataPublicMetrics"""
+
+    bookmark_count: Optional[int] = None
+    impression_count: Optional[int] = None
+    like_count: Optional[int] = None
+    quote_count: Optional[int] = None
+    reply_count: Optional[int] = None
+    retweet_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseDataScopes(BaseModel):
+    """Nested model for PostsFirehoseJaResponseDataScopes"""
+
+    followers: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseDataWithheld(BaseModel):
+    """Nested model for PostsFirehoseJaResponseDataWithheld"""
+
+    copyright: Optional[bool] = None
+    country_codes: Optional[List] = None
+    scope: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class PostsFirehoseJaResponseIncludes(BaseModel):
+    """Nested model for PostsFirehoseJaResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for likes_firehose
+
+
+class LikesFirehoseResponse(BaseModel):
+    """Response model for likes_firehose"""
+
+    data: Optional["LikesFirehoseResponseData"] = None
+    errors: Optional[List] = None
+    includes: Optional["LikesFirehoseResponseIncludes"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class LikesFirehoseResponseData(BaseModel):
+    """Nested model for LikesFirehoseResponseData"""
+
+    created_at: Optional[str] = None
+    id: Optional[str] = None
+    liked_tweet_id: Optional[str] = None
+    timestamp_ms: Optional[int] = None
+    tweet_author_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class LikesFirehoseResponseIncludes(BaseModel):
+    """Nested model for LikesFirehoseResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 # Models for likes_compliance
 
 
@@ -988,6 +1276,56 @@ class LikesComplianceResponse(BaseModel):
     """Response model for likes_compliance"""
 
     data: Optional[Dict[str, Any]] = Field(default=None)
+    errors: Optional[List] = Field(default=None)
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for likes_sample10
+
+
+class LikesSample10Response(BaseModel):
+    """Response model for likes_sample10"""
+
+    data: Optional["LikesSample10ResponseData"] = None
+    errors: Optional[List] = None
+    includes: Optional["LikesSample10ResponseIncludes"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class LikesSample10ResponseData(BaseModel):
+    """Nested model for LikesSample10ResponseData"""
+
+    created_at: Optional[str] = None
+    id: Optional[str] = None
+    liked_tweet_id: Optional[str] = None
+    timestamp_ms: Optional[int] = None
+    tweet_author_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class LikesSample10ResponseIncludes(BaseModel):
+    """Nested model for LikesSample10ResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for posts_compliance
+
+
+class PostsComplianceResponse(BaseModel):
+    """Response model for posts_compliance"""
+
+    data: Optional[Any] = Field(default=None, description="Tweet compliance data.")
     errors: Optional[List] = Field(default=None)
 
     model_config = ConfigDict(populate_by_name=True)
@@ -1028,40 +1366,14 @@ class GetRuleCountsResponseDataClientAppRulesCount(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for likes_firehose
+# Models for users_compliance
 
 
-class LikesFirehoseResponse(BaseModel):
-    """Response model for likes_firehose"""
+class UsersComplianceResponse(BaseModel):
+    """Response model for users_compliance"""
 
-    data: Optional["LikesFirehoseResponseData"] = None
-    errors: Optional[List] = None
-    includes: Optional["LikesFirehoseResponseIncludes"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class LikesFirehoseResponseData(BaseModel):
-    """Nested model for LikesFirehoseResponseData"""
-
-    created_at: Optional[str] = None
-    id: Optional[str] = None
-    liked_tweet_id: Optional[str] = None
-    timestamp_ms: Optional[int] = None
-    tweet_author_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class LikesFirehoseResponseIncludes(BaseModel):
-    """Nested model for LikesFirehoseResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
+    data: Optional[Any] = Field(default=None, description="User compliance data.")
+    errors: Optional[List] = Field(default=None)
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -1257,176 +1569,55 @@ class PostsSampleResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for labels_compliance
+# Models for posts_firehose_pt
 
 
-class LabelsComplianceResponse(BaseModel):
-    """Response model for labels_compliance"""
+class PostsFirehosePtResponse(BaseModel):
+    """Response model for posts_firehose_pt"""
 
-    data: Optional[Any] = Field(default=None, description="Tweet label data.")
-    errors: Optional[List] = Field(default=None)
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for users_compliance
-
-
-class UsersComplianceResponse(BaseModel):
-    """Response model for users_compliance"""
-
-    data: Optional[Any] = Field(default=None, description="User compliance data.")
-    errors: Optional[List] = Field(default=None)
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for likes_sample10
-
-
-class LikesSample10Response(BaseModel):
-    """Response model for likes_sample10"""
-
-    data: Optional["LikesSample10ResponseData"] = None
+    data: Optional["PostsFirehosePtResponseData"] = None
     errors: Optional[List] = None
-    includes: Optional["LikesSample10ResponseIncludes"] = None
+    includes: Optional["PostsFirehosePtResponseIncludes"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class LikesSample10ResponseData(BaseModel):
-    """Nested model for LikesSample10ResponseData"""
+class PostsFirehosePtResponseData(BaseModel):
+    """Nested model for PostsFirehosePtResponseData"""
 
-    created_at: Optional[str] = None
-    id: Optional[str] = None
-    liked_tweet_id: Optional[str] = None
-    timestamp_ms: Optional[int] = None
-    tweet_author_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class LikesSample10ResponseIncludes(BaseModel):
-    """Nested model for LikesSample10ResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_rules
-
-
-class GetRulesResponse(BaseModel):
-    """Response model for get_rules"""
-
-    data: Optional[List] = None
-    meta: Optional["GetRulesResponseMeta"] = Field(default_factory=dict)
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetRulesResponseMeta(BaseModel):
-    """Nested model for GetRulesResponseMeta"""
-
-    next_token: Optional[str] = None
-    result_count: Optional[int] = None
-    sent: Optional[str] = None
-    summary: Any = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for update_rules
-
-
-class UpdateRulesRequest(BaseModel):
-    """Request model for update_rules"""
-
-    add: Optional[List] = Field(default=None)
-    delete: Optional[Dict[str, Any]] = Field(
-        default=None,
-        description="IDs and values of all deleted user-specified stream filtering rules.",
-    )
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class UpdateRulesResponse(BaseModel):
-    """Response model for update_rules"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    meta: Optional["UpdateRulesResponseMeta"] = Field(default_factory=dict)
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class UpdateRulesResponseMeta(BaseModel):
-    """Nested model for UpdateRulesResponseMeta"""
-
-    next_token: Optional[str] = None
-    result_count: Optional[int] = None
-    sent: Optional[str] = None
-    summary: Any = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for posts_firehose_en
-
-
-class PostsFirehoseEnResponse(BaseModel):
-    """Response model for posts_firehose_en"""
-
-    data: Optional["PostsFirehoseEnResponseData"] = None
-    errors: Optional[List] = None
-    includes: Optional["PostsFirehoseEnResponseIncludes"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseEnResponseData(BaseModel):
-    """Nested model for PostsFirehoseEnResponseData"""
-
-    attachments: Optional["PostsFirehoseEnResponseDataAttachments"] = None
+    attachments: Optional["PostsFirehosePtResponseDataAttachments"] = None
     author_id: Optional[str] = None
     community_id: Optional[str] = None
     context_annotations: Optional[List] = None
     conversation_id: Optional[str] = None
     created_at: Optional[str] = None
     display_text_range: Optional[List] = None
-    edit_controls: Optional["PostsFirehoseEnResponseDataEditControls"] = None
+    edit_controls: Optional["PostsFirehosePtResponseDataEditControls"] = None
     edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["PostsFirehoseEnResponseDataEntities"] = None
-    geo: Optional["PostsFirehoseEnResponseDataGeo"] = None
+    entities: Optional["PostsFirehosePtResponseDataEntities"] = None
+    geo: Optional["PostsFirehosePtResponseDataGeo"] = None
     id: Optional[str] = None
     in_reply_to_user_id: Optional[str] = None
     lang: Optional[str] = None
-    non_public_metrics: Optional["PostsFirehoseEnResponseDataNonPublicMetrics"] = None
-    note_tweet: Optional["PostsFirehoseEnResponseDataNoteTweet"] = None
-    organic_metrics: Optional["PostsFirehoseEnResponseDataOrganicMetrics"] = None
+    non_public_metrics: Optional["PostsFirehosePtResponseDataNonPublicMetrics"] = None
+    note_tweet: Optional["PostsFirehosePtResponseDataNoteTweet"] = None
+    organic_metrics: Optional["PostsFirehosePtResponseDataOrganicMetrics"] = None
     possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["PostsFirehoseEnResponseDataPromotedMetrics"] = None
-    public_metrics: Optional["PostsFirehoseEnResponseDataPublicMetrics"] = None
+    promoted_metrics: Optional["PostsFirehosePtResponseDataPromotedMetrics"] = None
+    public_metrics: Optional["PostsFirehosePtResponseDataPublicMetrics"] = None
     referenced_tweets: Optional[List] = None
     reply_settings: Optional[str] = None
-    scopes: Optional["PostsFirehoseEnResponseDataScopes"] = None
+    scopes: Optional["PostsFirehosePtResponseDataScopes"] = None
     source: Optional[str] = None
     text: Optional[str] = None
     username: Optional[str] = None
-    withheld: Optional["PostsFirehoseEnResponseDataWithheld"] = None
+    withheld: Optional["PostsFirehosePtResponseDataWithheld"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseDataAttachments(BaseModel):
-    """Nested model for PostsFirehoseEnResponseDataAttachments"""
+class PostsFirehosePtResponseDataAttachments(BaseModel):
+    """Nested model for PostsFirehosePtResponseDataAttachments"""
 
     media_keys: Optional[List] = None
     media_source_tweet_id: Optional[List] = None
@@ -1435,8 +1626,8 @@ class PostsFirehoseEnResponseDataAttachments(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseDataEditControls(BaseModel):
-    """Nested model for PostsFirehoseEnResponseDataEditControls"""
+class PostsFirehosePtResponseDataEditControls(BaseModel):
+    """Nested model for PostsFirehosePtResponseDataEditControls"""
 
     editable_until: Optional[str] = None
     edits_remaining: Optional[int] = None
@@ -1445,8 +1636,8 @@ class PostsFirehoseEnResponseDataEditControls(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseDataEntities(BaseModel):
-    """Nested model for PostsFirehoseEnResponseDataEntities"""
+class PostsFirehosePtResponseDataEntities(BaseModel):
+    """Nested model for PostsFirehosePtResponseDataEntities"""
 
     annotations: Optional[List] = None
     cashtags: Optional[List] = None
@@ -1457,17 +1648,17 @@ class PostsFirehoseEnResponseDataEntities(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseDataGeo(BaseModel):
-    """Nested model for PostsFirehoseEnResponseDataGeo"""
+class PostsFirehosePtResponseDataGeo(BaseModel):
+    """Nested model for PostsFirehosePtResponseDataGeo"""
 
-    coordinates: Optional["PostsFirehoseEnResponseDataGeoCoordinates"] = None
+    coordinates: Optional["PostsFirehosePtResponseDataGeoCoordinates"] = None
     place_id: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseDataGeoCoordinates(BaseModel):
-    """Nested model for PostsFirehoseEnResponseDataGeoCoordinates"""
+class PostsFirehosePtResponseDataGeoCoordinates(BaseModel):
+    """Nested model for PostsFirehosePtResponseDataGeoCoordinates"""
 
     coordinates: Optional[List] = None
     type: Optional[str] = None
@@ -1475,25 +1666,25 @@ class PostsFirehoseEnResponseDataGeoCoordinates(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseDataNonPublicMetrics(BaseModel):
-    """Nested model for PostsFirehoseEnResponseDataNonPublicMetrics"""
+class PostsFirehosePtResponseDataNonPublicMetrics(BaseModel):
+    """Nested model for PostsFirehosePtResponseDataNonPublicMetrics"""
 
     impression_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseDataNoteTweet(BaseModel):
-    """Nested model for PostsFirehoseEnResponseDataNoteTweet"""
+class PostsFirehosePtResponseDataNoteTweet(BaseModel):
+    """Nested model for PostsFirehosePtResponseDataNoteTweet"""
 
-    entities: Optional["PostsFirehoseEnResponseDataNoteTweetEntities"] = None
+    entities: Optional["PostsFirehosePtResponseDataNoteTweetEntities"] = None
     text: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseDataNoteTweetEntities(BaseModel):
-    """Nested model for PostsFirehoseEnResponseDataNoteTweetEntities"""
+class PostsFirehosePtResponseDataNoteTweetEntities(BaseModel):
+    """Nested model for PostsFirehosePtResponseDataNoteTweetEntities"""
 
     cashtags: Optional[List] = None
     hashtags: Optional[List] = None
@@ -1503,8 +1694,8 @@ class PostsFirehoseEnResponseDataNoteTweetEntities(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseDataOrganicMetrics(BaseModel):
-    """Nested model for PostsFirehoseEnResponseDataOrganicMetrics"""
+class PostsFirehosePtResponseDataOrganicMetrics(BaseModel):
+    """Nested model for PostsFirehosePtResponseDataOrganicMetrics"""
 
     impression_count: Optional[int] = None
     like_count: Optional[int] = None
@@ -1514,8 +1705,8 @@ class PostsFirehoseEnResponseDataOrganicMetrics(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseDataPromotedMetrics(BaseModel):
-    """Nested model for PostsFirehoseEnResponseDataPromotedMetrics"""
+class PostsFirehosePtResponseDataPromotedMetrics(BaseModel):
+    """Nested model for PostsFirehosePtResponseDataPromotedMetrics"""
 
     impression_count: Optional[int] = None
     like_count: Optional[int] = None
@@ -1525,8 +1716,8 @@ class PostsFirehoseEnResponseDataPromotedMetrics(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseDataPublicMetrics(BaseModel):
-    """Nested model for PostsFirehoseEnResponseDataPublicMetrics"""
+class PostsFirehosePtResponseDataPublicMetrics(BaseModel):
+    """Nested model for PostsFirehosePtResponseDataPublicMetrics"""
 
     bookmark_count: Optional[int] = None
     impression_count: Optional[int] = None
@@ -1538,16 +1729,16 @@ class PostsFirehoseEnResponseDataPublicMetrics(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseDataScopes(BaseModel):
-    """Nested model for PostsFirehoseEnResponseDataScopes"""
+class PostsFirehosePtResponseDataScopes(BaseModel):
+    """Nested model for PostsFirehosePtResponseDataScopes"""
 
     followers: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseDataWithheld(BaseModel):
-    """Nested model for PostsFirehoseEnResponseDataWithheld"""
+class PostsFirehosePtResponseDataWithheld(BaseModel):
+    """Nested model for PostsFirehosePtResponseDataWithheld"""
 
     copyright: Optional[bool] = None
     country_codes: Optional[List] = None
@@ -1556,199 +1747,8 @@ class PostsFirehoseEnResponseDataWithheld(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-class PostsFirehoseEnResponseIncludes(BaseModel):
-    """Nested model for PostsFirehoseEnResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for posts_firehose_ko
-
-
-class PostsFirehoseKoResponse(BaseModel):
-    """Response model for posts_firehose_ko"""
-
-    data: Optional["PostsFirehoseKoResponseData"] = None
-    errors: Optional[List] = None
-    includes: Optional["PostsFirehoseKoResponseIncludes"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseData(BaseModel):
-    """Nested model for PostsFirehoseKoResponseData"""
-
-    attachments: Optional["PostsFirehoseKoResponseDataAttachments"] = None
-    author_id: Optional[str] = None
-    community_id: Optional[str] = None
-    context_annotations: Optional[List] = None
-    conversation_id: Optional[str] = None
-    created_at: Optional[str] = None
-    display_text_range: Optional[List] = None
-    edit_controls: Optional["PostsFirehoseKoResponseDataEditControls"] = None
-    edit_history_tweet_ids: Optional[List] = None
-    entities: Optional["PostsFirehoseKoResponseDataEntities"] = None
-    geo: Optional["PostsFirehoseKoResponseDataGeo"] = None
-    id: Optional[str] = None
-    in_reply_to_user_id: Optional[str] = None
-    lang: Optional[str] = None
-    non_public_metrics: Optional["PostsFirehoseKoResponseDataNonPublicMetrics"] = None
-    note_tweet: Optional["PostsFirehoseKoResponseDataNoteTweet"] = None
-    organic_metrics: Optional["PostsFirehoseKoResponseDataOrganicMetrics"] = None
-    possibly_sensitive: Optional[bool] = None
-    promoted_metrics: Optional["PostsFirehoseKoResponseDataPromotedMetrics"] = None
-    public_metrics: Optional["PostsFirehoseKoResponseDataPublicMetrics"] = None
-    referenced_tweets: Optional[List] = None
-    reply_settings: Optional[str] = None
-    scopes: Optional["PostsFirehoseKoResponseDataScopes"] = None
-    source: Optional[str] = None
-    text: Optional[str] = None
-    username: Optional[str] = None
-    withheld: Optional["PostsFirehoseKoResponseDataWithheld"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseDataAttachments(BaseModel):
-    """Nested model for PostsFirehoseKoResponseDataAttachments"""
-
-    media_keys: Optional[List] = None
-    media_source_tweet_id: Optional[List] = None
-    poll_ids: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseDataEditControls(BaseModel):
-    """Nested model for PostsFirehoseKoResponseDataEditControls"""
-
-    editable_until: Optional[str] = None
-    edits_remaining: Optional[int] = None
-    is_edit_eligible: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseDataEntities(BaseModel):
-    """Nested model for PostsFirehoseKoResponseDataEntities"""
-
-    annotations: Optional[List] = None
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseDataGeo(BaseModel):
-    """Nested model for PostsFirehoseKoResponseDataGeo"""
-
-    coordinates: Optional["PostsFirehoseKoResponseDataGeoCoordinates"] = None
-    place_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseDataGeoCoordinates(BaseModel):
-    """Nested model for PostsFirehoseKoResponseDataGeoCoordinates"""
-
-    coordinates: Optional[List] = None
-    type: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseDataNonPublicMetrics(BaseModel):
-    """Nested model for PostsFirehoseKoResponseDataNonPublicMetrics"""
-
-    impression_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseDataNoteTweet(BaseModel):
-    """Nested model for PostsFirehoseKoResponseDataNoteTweet"""
-
-    entities: Optional["PostsFirehoseKoResponseDataNoteTweetEntities"] = None
-    text: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseDataNoteTweetEntities(BaseModel):
-    """Nested model for PostsFirehoseKoResponseDataNoteTweetEntities"""
-
-    cashtags: Optional[List] = None
-    hashtags: Optional[List] = None
-    mentions: Optional[List] = None
-    urls: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseDataOrganicMetrics(BaseModel):
-    """Nested model for PostsFirehoseKoResponseDataOrganicMetrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseDataPromotedMetrics(BaseModel):
-    """Nested model for PostsFirehoseKoResponseDataPromotedMetrics"""
-
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseDataPublicMetrics(BaseModel):
-    """Nested model for PostsFirehoseKoResponseDataPublicMetrics"""
-
-    bookmark_count: Optional[int] = None
-    impression_count: Optional[int] = None
-    like_count: Optional[int] = None
-    quote_count: Optional[int] = None
-    reply_count: Optional[int] = None
-    retweet_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseDataScopes(BaseModel):
-    """Nested model for PostsFirehoseKoResponseDataScopes"""
-
-    followers: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseDataWithheld(BaseModel):
-    """Nested model for PostsFirehoseKoResponseDataWithheld"""
-
-    copyright: Optional[bool] = None
-    country_codes: Optional[List] = None
-    scope: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class PostsFirehoseKoResponseIncludes(BaseModel):
-    """Nested model for PostsFirehoseKoResponseIncludes"""
+class PostsFirehosePtResponseIncludes(BaseModel):
+    """Nested model for PostsFirehosePtResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None

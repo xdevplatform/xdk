@@ -2,6 +2,7 @@
 Auto-generated connections client for the X API.
 
 This module provides a client for interacting with the connections endpoints of the X API.
+
 All methods, parameters, and response models are generated from the OpenAPI specification.
 
 Generated automatically - do not edit manually.
@@ -11,6 +12,7 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast, TYPE_CHECKING
 import requests
 import time
+
 
 if TYPE_CHECKING:
     from ..client import Client
@@ -47,6 +49,8 @@ class ConnectionsClient:
             )
         params = {}
         headers = {}
+        # Prepare request data
+        json_data = None
         # Make the request
         response = self.client.session.delete(
             url,

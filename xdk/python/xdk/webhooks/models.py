@@ -36,45 +36,42 @@ class GetStreamLinksResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for get
+# Models for validate
 
 
-class GetResponse(BaseModel):
-    """Response model for get"""
+class ValidateResponse(BaseModel):
+    """Response model for validate"""
 
-    data: Optional[List] = None
+    data: Optional["ValidateResponseData"] = None
     errors: Optional[List] = None
-    meta: Optional["GetResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetResponseMeta(BaseModel):
-    """Nested model for GetResponseMeta"""
+class ValidateResponseData(BaseModel):
+    """Nested model for ValidateResponseData"""
 
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for create
-
-
-class CreateRequest(BaseModel):
-    """Request model for create"""
-
-    url: Optional[str] = None
+    attempted: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class CreateResponse(BaseModel):
-    """Response model for create"""
+# Models for delete
 
-    created_at: Optional[str] = None
-    id: Optional[str] = None
-    url: Optional[str] = None
-    valid: Optional[bool] = None
+
+class DeleteResponse(BaseModel):
+    """Response model for delete"""
+
+    data: Optional["DeleteResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DeleteResponseData(BaseModel):
+    """Nested model for DeleteResponseData"""
+
+    deleted: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -119,41 +116,44 @@ class DeleteStreamLinkResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for validate
+# Models for get
 
 
-class ValidateResponse(BaseModel):
-    """Response model for validate"""
+class GetResponse(BaseModel):
+    """Response model for get"""
 
-    data: Optional["ValidateResponseData"] = None
+    data: Optional[List] = None
     errors: Optional[List] = None
+    meta: Optional["GetResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class ValidateResponseData(BaseModel):
-    """Nested model for ValidateResponseData"""
+class GetResponseMeta(BaseModel):
+    """Nested model for GetResponseMeta"""
 
-    attempted: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for delete
-
-
-class DeleteResponse(BaseModel):
-    """Response model for delete"""
-
-    data: Optional["DeleteResponseData"] = None
-    errors: Optional[List] = None
+    result_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class DeleteResponseData(BaseModel):
-    """Nested model for DeleteResponseData"""
+# Models for create
 
-    deleted: Optional[bool] = None
+
+class CreateRequest(BaseModel):
+    """Request model for create"""
+
+    url: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateResponse(BaseModel):
+    """Response model for create"""
+
+    created_at: Optional[str] = None
+    id: Optional[str] = None
+    url: Optional[str] = None
+    valid: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)

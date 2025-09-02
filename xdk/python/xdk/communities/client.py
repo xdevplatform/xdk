@@ -2,6 +2,7 @@
 Auto-generated communities client for the X API.
 
 This module provides a client for interacting with the communities endpoints of the X API.
+
 All methods, parameters, and response models are generated from the OpenAPI specification.
 
 Generated automatically - do not edit manually.
@@ -11,6 +12,7 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast, TYPE_CHECKING
 import requests
 import time
+
 
 if TYPE_CHECKING:
     from ..client import Client
@@ -40,13 +42,10 @@ class CommunitiesClient:
         Retrieves a list of Communities matching the specified search query.
         Args:
             query: Query to search communities.
-        Args:
             max_results: The maximum number of search results to be returned by a request.
-        Args:
             next_token: This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
-        Args:
             pagination_token: This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
-        Returns:
+            Returns:
             SearchResponse: Response data
         """
         url = self.client.base_url + "/2/communities/search"
@@ -65,6 +64,8 @@ class CommunitiesClient:
         if pagination_token is not None:
             params["pagination_token"] = pagination_token
         headers = {}
+        # Prepare request data
+        json_data = None
         # Make the request
         if self.client.oauth2_session:
             response = self.client.oauth2_session.get(
@@ -86,19 +87,17 @@ class CommunitiesClient:
         return SearchResponse.model_validate(response_data)
 
 
-    def get_by_id(
-        self,
-        id: Any,
-    ) -> GetByIdResponse:
+    def get_by_id(self, id: Any) -> GetByIdResponse:
         """
         Get Community by ID
         Retrieves details of a specific Community by its ID.
         Args:
             id: The ID of the Community.
-        Returns:
+            Returns:
             GetByIdResponse: Response data
         """
         url = self.client.base_url + "/2/communities/{id}"
+        url = url.replace("{id}", str(id))
         if self.client.bearer_token:
             self.client.session.headers["Authorization"] = (
                 f"Bearer {self.client.bearer_token}"
@@ -113,8 +112,9 @@ class CommunitiesClient:
             if self.client.is_token_expired():
                 self.client.refresh_token()
         params = {}
-        url = url.replace("{id}", str(id))
         headers = {}
+        # Prepare request data
+        json_data = None
         # Make the request
         response = self.client.session.get(
             url,

@@ -48,21 +48,22 @@ class SearchResponseMeta(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for get_by_ids
+# Models for get_posts
 
 
-class GetByIdsResponse(BaseModel):
-    """Response model for get_by_ids"""
+class GetPostsResponse(BaseModel):
+    """Response model for get_posts"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["GetByIdsResponseIncludes"] = None
+    includes: Optional["GetPostsResponseIncludes"] = None
+    meta: Optional["GetPostsResponseMeta"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetByIdsResponseIncludes(BaseModel):
-    """Nested model for GetByIdsResponseIncludes"""
+class GetPostsResponseIncludes(BaseModel):
+    """Nested model for GetPostsResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -70,6 +71,16 @@ class GetByIdsResponseIncludes(BaseModel):
     topics: Optional[List] = None
     tweets: Optional[List] = None
     users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetPostsResponseMeta(BaseModel):
+    """Nested model for GetPostsResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -124,22 +135,21 @@ class GetByIdResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for get_by_creator_ids
+# Models for get_by_ids
 
 
-class GetByCreatorIdsResponse(BaseModel):
-    """Response model for get_by_creator_ids"""
+class GetByIdsResponse(BaseModel):
+    """Response model for get_by_ids"""
 
     data: Optional[List] = None
     errors: Optional[List] = None
-    includes: Optional["GetByCreatorIdsResponseIncludes"] = None
-    meta: Optional["GetByCreatorIdsResponseMeta"] = None
+    includes: Optional["GetByIdsResponseIncludes"] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class GetByCreatorIdsResponseIncludes(BaseModel):
-    """Nested model for GetByCreatorIdsResponseIncludes"""
+class GetByIdsResponseIncludes(BaseModel):
+    """Nested model for GetByIdsResponseIncludes"""
 
     media: Optional[List] = None
     places: Optional[List] = None
@@ -147,51 +157,6 @@ class GetByCreatorIdsResponseIncludes(BaseModel):
     topics: Optional[List] = None
     tweets: Optional[List] = None
     users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetByCreatorIdsResponseMeta(BaseModel):
-    """Nested model for GetByCreatorIdsResponseMeta"""
-
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_posts
-
-
-class GetPostsResponse(BaseModel):
-    """Response model for get_posts"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetPostsResponseIncludes"] = None
-    meta: Optional["GetPostsResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetPostsResponseIncludes(BaseModel):
-    """Nested model for GetPostsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetPostsResponseMeta(BaseModel):
-    """Nested model for GetPostsResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -228,6 +193,41 @@ class GetBuyersResponseMeta(BaseModel):
 
     next_token: Optional[str] = None
     previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_by_creator_ids
+
+
+class GetByCreatorIdsResponse(BaseModel):
+    """Response model for get_by_creator_ids"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetByCreatorIdsResponseIncludes"] = None
+    meta: Optional["GetByCreatorIdsResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetByCreatorIdsResponseIncludes(BaseModel):
+    """Nested model for GetByCreatorIdsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetByCreatorIdsResponseMeta(BaseModel):
+    """Nested model for GetByCreatorIdsResponseMeta"""
+
     result_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)

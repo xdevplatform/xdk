@@ -2,6 +2,7 @@
 Auto-generated trends client for the X API.
 
 This module provides a client for interacting with the trends endpoints of the X API.
+
 All methods, parameters, and response models are generated from the OpenAPI specification.
 
 Generated automatically - do not edit manually.
@@ -11,6 +12,7 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast, TYPE_CHECKING
 import requests
 import time
+
 
 if TYPE_CHECKING:
     from ..client import Client
@@ -28,22 +30,18 @@ class TrendsClient:
         self.client = client
 
 
-    def get_by_woeid(
-        self,
-        woeid: int,
-        max_trends: int = None,
-    ) -> GetByWoeidResponse:
+    def get_by_woeid(self, woeid: int, max_trends: int = None) -> GetByWoeidResponse:
         """
         Get Trends by WOEID
         Retrieves trending topics for a specific location identified by its WOEID.
         Args:
             woeid: The WOEID of the place to lookup a trend for.
-        Args:
             max_trends: The maximum number of results.
-        Returns:
+            Returns:
             GetByWoeidResponse: Response data
         """
         url = self.client.base_url + "/2/trends/by/woeid/{woeid}"
+        url = url.replace("{woeid}", str(woeid))
         if self.client.bearer_token:
             self.client.session.headers["Authorization"] = (
                 f"Bearer {self.client.bearer_token}"
@@ -55,8 +53,9 @@ class TrendsClient:
         params = {}
         if max_trends is not None:
             params["max_trends"] = max_trends
-        url = url.replace("{woeid}", str(woeid))
         headers = {}
+        # Prepare request data
+        json_data = None
         # Make the request
         response = self.client.session.get(
             url,
@@ -88,6 +87,8 @@ class TrendsClient:
                 self.client.refresh_token()
         params = {}
         headers = {}
+        # Prepare request data
+        json_data = None
         # Make the request
         if self.client.oauth2_session:
             response = self.client.oauth2_session.get(

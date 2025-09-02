@@ -1,16 +1,19 @@
+{% import "client_macros" as macros %}
 """
 Auto-generated {{ tag.display_name }} client for the X API.
 
 This module provides a client for interacting with the {{ tag.display_name }} endpoints of the X API.
+{% if operations | selectattr('is_streaming') | list %}Real-time streaming operations return generators that yield data as it arrives.{% endif %}
 All methods, parameters, and response models are generated from the OpenAPI specification.
 
 Generated automatically - do not edit manually.
 """
 
 from __future__ import annotations
-from typing import Dict, List, Optional, Any, Union, cast, TYPE_CHECKING
+from typing import Dict, List, Optional, Any, Union, cast, TYPE_CHECKING{% if operations | selectattr('is_streaming') | list %}, Iterator, Generator{% endif %}
 import requests
 import time
+{% if operations | selectattr('is_streaming') | list %}import json{% endif %}
 
 if TYPE_CHECKING:
     from ..client import Client
@@ -28,182 +31,28 @@ from .models import (
 )
 
 class {{ tag.class_name }}Client:
-    """Client for {{ tag.display_name }} operations"""
+    """{% if operations | selectattr('is_streaming') | list %}Streaming {% endif %}Client for {{ tag.display_name }} operations"""
     
     def __init__(self, client: Client):
         self.client = client
     
     {% for operation in operations %}
-    def {{ operation.method_name }}(self, 
-        {# Required parameters #}
-        {% for param in operation.parameters | selectattr('required') %}
-        {% if param.original_name %}
-        {{ param.variable_name }}: {% if param.param_type %}{{ param.param_type | python_type }}{% else %}Any{% endif %},
-        {% endif %}
-        {% endfor %}
-        {# Required body #}
-        {% if operation.request_body and operation.request_body.required %}
-        body: {{ operation.class_name }}Request,
-        {% endif %}
-        {# Optional parameters #}
-        {% for param in operation.parameters | rejectattr('required') %}
-        {% if param.original_name %}
-        {{ param.variable_name }}: {% if param.param_type %}{{ param.param_type | python_type }}{% else %}Any{% endif %} = None,
-        {% endif %}
-        {% endfor %}
-        {# Optional body #}
-        {% if operation.request_body and not operation.request_body.required %}
-        body: Optional[{{ operation.class_name }}Request] = None,
-        {% endif %}
-    ) -> {% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}:
-        """
-        {{ operation.summary | default("") }}
-        
-        {% if operation.description %}
-        {{ operation.description }}
-        {% endif %}
-        
-        {% for param in operation.parameters %}
-        {% if param.original_name %}
-        Args:
-            {{ param.variable_name }}: {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
-        {% endif %}
-        {% endfor %}
-        {% if operation.request_body %}
-        {% if operation.request_body.content %}
-        {% set content_type = "application/json" %}
-        {% if operation.request_body.content[content_type] %}
-        {% set schema = operation.request_body.content[content_type].schema %}
-            body: {% if schema and schema.description %}{{ schema.description }}{% else %}Request body{% endif %}
-        {% else %}
-            body: Request body
-        {% endif %}
-        {% else %}
-            body: Request body
-        {% endif %}
-        {% endif %}
-        
-        Returns:
-            {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}: Response data
-        """
-        url = self.client.base_url + "{{ operation.path }}"
+    def {{ operation.method_name }}(self, {{ macros.method_parameters(operation) }}) -> {{ macros.return_type(operation) }}:
+        {{ macros.method_docstring(operation) }}
+        {{ macros.build_url(operation) }}
 
-        {% set ns = namespace(has_bearer_token = false, has_oauth2_token = false) %}
+        {{ macros.setup_authentication(operation) }}
+        
+        {{ macros.build_query_params(operation) }}
+        
+        {{ macros.build_headers(operation) }}
+        
+        {{ macros.prepare_request_data(operation) }}
+        
+        {% if operation.is_streaming %}
+        {{ macros.streaming_request(operation) }}
+        {% else %}
+        {{ macros.regular_request(operation) }}
+        {% endif %}
 
-        {% if operation.security %}
-        {% for security_requirement in operation.security %}
-        {% for scheme_name in security_requirement %}
-        {% if scheme_name == "BearerToken" %}
-        {% set ns.has_bearer_token = true %}
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = f"Bearer {self.client.bearer_token}"
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = f"Bearer {self.client.access_token}"
-        {% endif %}
-        {% if scheme_name == "OAuth2UserToken" %}
-        {% set ns.has_oauth2_token = true %}
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        {% endif %}
-        {% endfor %}
-        {% endfor %}
-        {% endif %}
-        
-        params = {}
-        {% for param in operation.parameters %}
-        {% if param.location == "query" %}
-        if {{ param.variable_name }} is not None:
-            {% if param.param_type == "array" %}
-            params["{{ param.original_name }}"] = ",".join(str(item) for item in {{ param.variable_name }})
-            {% else %}
-            params["{{ param.original_name }}"] = {{ param.variable_name }}
-            {% endif %}
-        {% endif %}
-        {% endfor %}
-        
-        {% for param in operation.parameters %}
-        {% if param.location == "path" %}
-        url = url.replace("{{ '{' + param.original_name + '}' }}", str({{ param.variable_name }}))
-        {% endif %}
-        {% endfor %}
-        
-        headers = {}
-        {% for param in operation.parameters %}
-        {% if param.location == "header" %}
-        if {{ param.variable_name }} is not None:
-            headers["{{ param.original_name }}"] = {{ param.variable_name }}
-        {% endif %}
-        {% endfor %}
-        {% if operation.request_body and operation.request_body.content %}
-        {% set content_type = "application/json" %}
-        headers["Content-Type"] = "{{ content_type }}"
-        {% endif %}
-        
-        # Make the request
-        {% if operation.security %}
-        {% if ns.has_bearer_token %}
-        response = self.client.session.{{ operation.method }}(
-            url,
-            params=params,
-            headers=headers,
-            {% if operation.request_body %}
-            json=body.model_dump(exclude_none=True) if body else None,
-            {% endif %}
-        )
-        {% elif ns.has_oauth2_token %}
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.{{ operation.method }}(
-                url,
-                params=params,
-                headers=headers,
-                {% if operation.request_body %}
-                json=body.model_dump(exclude_none=True) if body else None,
-                {% endif %}
-            )
-        else:
-            response = self.client.session.{{ operation.method }}(
-                url,
-                params=params,
-                headers=headers,
-                {% if operation.request_body %}
-                json=body.model_dump(exclude_none=True) if body else None,
-                {% endif %}
-            )
-        {% else %}
-        response = self.client.session.{{ operation.method }}(
-            url,
-            params=params,
-            headers=headers,
-            {% if operation.request_body %}
-            json=body.model_dump(exclude_none=True) if body else None,
-            {% endif %}
-        )
-        {% endif %}
-        {% else %}
-        # This should only happend for the /2/openapi.json route
-        response = self.client.session.{{ operation.method }}(
-            url,
-            params=params,
-            headers=headers,
-            {% if operation.request_body %}
-            json=body.model_dump(exclude_none=True) if body else None,
-            {% endif %}
-        )
-        {% endif %}
-        
-        # Check for errors
-        response.raise_for_status()
-        
-        # Parse the response data
-        response_data = response.json()
-        
-        # Convert to Pydantic model if applicable
-        {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
-        return {{ operation.class_name }}Response.model_validate(response_data)
-        {% else %}
-        return response_data
-        {% endif %}
     {% endfor %}

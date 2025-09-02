@@ -2,6 +2,7 @@
 Auto-generated usage client for the X API.
 
 This module provides a client for interacting with the usage endpoints of the X API.
+
 All methods, parameters, and response models are generated from the OpenAPI specification.
 
 Generated automatically - do not edit manually.
@@ -11,6 +12,7 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast, TYPE_CHECKING
 import requests
 import time
+
 
 if TYPE_CHECKING:
     from ..client import Client
@@ -27,16 +29,13 @@ class UsageClient:
         self.client = client
 
 
-    def get(
-        self,
-        days: int = None,
-    ) -> GetResponse:
+    def get(self, days: int = None) -> GetResponse:
         """
         Get usage
         Retrieves usage statistics for Posts over a specified number of days.
         Args:
             days: The number of days for which you need usage for.
-        Returns:
+            Returns:
             GetResponse: Response data
         """
         url = self.client.base_url + "/2/usage/tweets"
@@ -52,6 +51,8 @@ class UsageClient:
         if days is not None:
             params["days"] = days
         headers = {}
+        # Prepare request data
+        json_data = None
         # Make the request
         response = self.client.session.get(
             url,

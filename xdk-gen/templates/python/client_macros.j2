@@ -1,0 +1,319 @@
+{# Macro for generating method parameters #}
+{% macro method_parameters(operation) -%}
+{%- for param in operation.parameters | selectattr('required') -%}
+{%- if param.original_name -%}
+{{ param.variable_name }}: {% if param.param_type %}{{ param.param_type | python_type }}{% else %}Any{% endif %}{% if not loop.last or operation.request_body or operation.parameters | rejectattr('required') | list or operation.is_streaming %}, {% endif %}
+{%- endif -%}
+{%- endfor -%}
+{%- if operation.request_body and operation.request_body.required -%}
+body: {{ operation.class_name }}Request{% if operation.parameters | rejectattr('required') | list or operation.is_streaming %}, {% endif %}
+{%- endif -%}
+{%- for param in operation.parameters | rejectattr('required') -%}
+{%- if param.original_name -%}
+{{ param.variable_name }}: {% if param.param_type %}{{ param.param_type | python_type }}{% else %}Any{% endif %} = None{% if not loop.last or (operation.request_body and not operation.request_body.required) or operation.is_streaming %}, {% endif %}
+{%- endif -%}
+{%- endfor -%}
+{%- if operation.request_body and not operation.request_body.required -%}
+body: Optional[{{ operation.class_name }}Request] = None{% if operation.is_streaming %}, {% endif %}
+{%- endif -%}
+{%- if operation.is_streaming -%}
+timeout: Optional[float] = None, chunk_size: int = 1024
+{%- endif -%}
+{%- endmacro %}
+
+{# Macro for method return type #}
+{% macro return_type(operation) -%}
+{% if operation.is_streaming %}Generator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}, None, None]{% else %}{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}{% endif %}
+{%- endmacro %}
+
+{# Macro for method docstring #}
+{% macro method_docstring(operation) -%}
+"""
+        {{ operation.summary | default("") }}{% if operation.is_streaming %} (Streaming){% endif %}
+        
+        {% if operation.description -%}
+        {{ operation.description }}
+        
+        {% endif -%}
+        {% if operation.is_streaming -%}
+        This is a streaming endpoint that yields data in real-time as it becomes available.
+        Each yielded item represents a single data point from the stream.
+        
+        {% endif -%}
+        {% if operation.parameters -%}
+        Args:
+            {% for param in operation.parameters -%}
+            {% if param.original_name -%}
+            {{ param.variable_name }}: {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
+            {% endif -%}
+            {% endfor -%}
+        {% endif -%}
+        {% if operation.request_body -%}
+        {% if operation.request_body.content -%}
+        {% set content_type = "application/json" -%}
+        {% if operation.request_body.content[content_type] -%}
+        {% set schema = operation.request_body.content[content_type].schema -%}
+            body: {% if schema and schema.description %}{{ schema.description }}{% else %}Request body{% endif %}
+        {% else -%}
+            body: Request body
+        {% endif -%}
+        {% else -%}
+            body: Request body
+        {% endif -%}
+        {% endif -%}
+        {% if operation.is_streaming -%}
+            timeout: Request timeout in seconds (default: None for no timeout)
+            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
+        
+        Yields:
+            {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}: Individual streaming data items
+        
+        Raises:
+            requests.exceptions.RequestException: If the streaming connection fails
+            json.JSONDecodeError: If the streamed data is not valid JSON
+        {% else -%}
+        
+        Returns:
+            {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}: Response data
+        {% endif -%}
+        """
+{%- endmacro %}
+
+{# Macro for authentication setup #}
+{% macro setup_authentication(operation) -%}
+{% if operation.security -%}
+        {% for security_requirement in operation.security -%}
+        {% for scheme_name in security_requirement -%}
+        {% if scheme_name == "BearerToken" -%}
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = f"Bearer {self.client.bearer_token}"
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = f"Bearer {self.client.access_token}"
+        {% endif -%}
+        {% if scheme_name == "OAuth2UserToken" -%}
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        {% endif -%}
+        {% endfor -%}
+        {% endfor -%}
+        {% endif -%}
+{%- endmacro %}
+
+{# Macro to get authentication type flags #}
+{% macro get_auth_flags(operation) -%}
+{% set ns = namespace(has_bearer_token = false, has_oauth2_token = false) %}
+{% if operation.security %}
+{% for security_requirement in operation.security %}
+{% for scheme_name in security_requirement %}
+{% if scheme_name == "BearerToken" %}
+{% set ns.has_bearer_token = true %}
+{% endif %}
+{% if scheme_name == "OAuth2UserToken" %}
+{% set ns.has_oauth2_token = true %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+{{ ns }}
+{%- endmacro %}
+
+{# Macro for building query parameters #}
+{% macro build_query_params(operation) -%}
+params = {}
+        {% for param in operation.parameters -%}
+        {% if param.location == "query" -%}
+        if {{ param.variable_name }} is not None:
+            {% if param.param_type == "array" -%}
+            params["{{ param.original_name }}"] = ",".join(str(item) for item in {{ param.variable_name }})
+            {% else -%}
+            params["{{ param.original_name }}"] = {{ param.variable_name }}
+            {% endif %}
+        {% endif -%}
+        {% endfor -%}
+{%- endmacro %}
+
+{# Macro for building URL with path parameters #}
+{% macro build_url(operation) -%}
+url = self.client.base_url + "{{ operation.path }}"
+        {% for param in operation.parameters -%}
+        {% if param.location == "path" -%}
+        url = url.replace("{{ '{' + param.original_name + '}' }}", str({{ param.variable_name }}))
+        {% endif -%}
+        {% endfor -%}
+{%- endmacro %}
+
+{# Macro for building headers #}
+{% macro build_headers(operation) -%}
+headers = {% if operation.is_streaming %}{
+            "Accept": "application/json",
+        }{% else %}{}{% endif %}
+        {% for param in operation.parameters -%}
+        {% if param.location == "header" -%}
+        if {{ param.variable_name }} is not None:
+            headers["{{ param.original_name }}"] = {% if operation.is_streaming %}str({{ param.variable_name }}){% else %}{{ param.variable_name }}{% endif %}
+        {% endif -%}
+        {% endfor -%}
+        {% if not operation.is_streaming and operation.request_body and operation.request_body.content -%}
+        {% set content_type = "application/json" -%}
+        headers["Content-Type"] = "{{ content_type }}"
+        {% endif -%}
+{%- endmacro %}
+
+{# Macro for preparing request data #}
+{% macro prepare_request_data(operation) -%}
+        # Prepare request data
+        json_data = None
+        {% if operation.request_body -%}
+        if body is not None:
+            json_data = body.model_dump(exclude_none=True) if hasattr(body, 'model_dump') else body
+        {% endif -%}
+{%- endmacro %}
+
+{# Macro for streaming request logic #}
+{% macro streaming_request(operation) -%}
+        try:
+            # Make streaming request
+            with self.client.session.{{ operation.method | lower }}(
+                url,
+                params=params,
+                headers=headers,
+                {% if operation.request_body %}json=json_data,{% endif %}
+                stream=True,
+                timeout=timeout,
+            ) as response:
+                # Check for HTTP errors
+                response.raise_for_status()
+                
+                # Buffer for incomplete lines
+                buffer = ""
+                
+                # Stream data chunk by chunk
+                for chunk in response.iter_content(chunk_size=chunk_size, decode_unicode=True):
+                    if chunk:
+                        buffer += chunk
+                        
+                        # Process complete lines
+                        while '\n' in buffer:
+                            line, buffer = buffer.split('\n', 1)
+                            line = line.strip()
+                            
+                            if line:
+                                try:
+                                    # Parse JSON line
+                                    data = json.loads(line)
+                                    
+                                    # Convert to response model if available
+                                    {% if operation.responses and "200" in operation.responses %}
+                                    yield {{ operation.class_name }}Response.model_validate(data)
+                                    {% else %}
+                                    yield data
+                                    {% endif %}
+                                    
+                                except json.JSONDecodeError:
+                                    # Skip invalid JSON lines
+                                    continue
+                                except Exception:
+                                    # Skip lines that cause processing errors
+                                    continue
+                
+                # Process any remaining data in buffer
+                if buffer.strip():
+                    try:
+                        data = json.loads(buffer.strip())
+                        {% if operation.responses and "200" in operation.responses %}
+                        yield {{ operation.class_name }}Response.model_validate(data)
+                        {% else %}
+                        yield data
+                        {% endif %}
+                    except json.JSONDecodeError:
+                        # Skip invalid JSON in final buffer
+                        pass
+        except requests.exceptions.RequestException:
+            raise
+        except Exception:
+            raise
+{%- endmacro %}
+
+{# Macro for regular request logic #}
+{% macro regular_request(operation) -%}
+{% set ns = namespace(has_bearer_token = false, has_oauth2_token = false) %}
+{% if operation.security %}
+{% for security_requirement in operation.security %}
+{% for scheme_name in security_requirement %}
+{% if scheme_name == "BearerToken" %}
+{% set ns.has_bearer_token = true %}
+{% endif %}
+{% if scheme_name == "OAuth2UserToken" %}
+{% set ns.has_oauth2_token = true %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+        # Make the request
+        {% if operation.security %}
+        {% if ns.has_bearer_token %}
+        response = self.client.session.{{ operation.method }}(
+            url,
+            params=params,
+            headers=headers,
+            {% if operation.request_body %}
+            json=json_data,
+            {% endif %}
+        )
+        {% elif ns.has_oauth2_token %}
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.{{ operation.method }}(
+                url,
+                params=params,
+                headers=headers,
+                {% if operation.request_body %}
+                json=json_data,
+                {% endif %}
+            )
+        else:
+            response = self.client.session.{{ operation.method }}(
+                url,
+                params=params,
+                headers=headers,
+                {% if operation.request_body %}
+                json=json_data,
+                {% endif %}
+            )
+        {% else %}
+        response = self.client.session.{{ operation.method }}(
+            url,
+            params=params,
+            headers=headers,
+            {% if operation.request_body %}
+            json=json_data,
+            {% endif %}
+        )
+        {% endif %}
+        {% else %}
+        # This should only happen for the /2/openapi.json route
+        response = self.client.session.{{ operation.method }}(
+            url,
+            params=params,
+            headers=headers,
+            {% if operation.request_body %}
+            json=json_data,
+            {% endif %}
+        )
+        {% endif %}
+
+        # Check for errors
+        response.raise_for_status()
+
+        # Parse the response data
+        response_data = response.json()
+
+        # Convert to Pydantic model if applicable
+        {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
+        return {{ operation.class_name }}Response.model_validate(response_data)
+        {% else %}
+        return response_data
+        {% endif %}
+{%- endmacro %}

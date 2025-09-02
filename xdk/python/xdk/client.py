@@ -14,37 +14,37 @@ from typing import Dict, List, Optional, Union, Any, Callable
 from .oauth2_auth import OAuth2PKCEAuth
 from .paginator import Cursor, cursor, PaginationError
 
-from .compliance.client import ComplianceClient
-
 from .usage.client import UsageClient
-
-from .account_activity.client import AccountActivityClient
 
 from .media.client import MediaClient
 
+from .community_notes.client import CommunityNotesClient
+
+from .account_activity.client import AccountActivityClient
+
 from .communities.client import CommunitiesClient
 
-from .webhooks.client import WebhooksClient
+from .posts.client import PostsClient
+
+from .lists.client import ListsClient
+
+from .general.client import GeneralClient
 
 from .direct_messages.client import DirectMessagesClient
 
 from .stream.client import StreamClient
 
-from .general.client import GeneralClient
-
 from .users.client import UsersClient
+
+from .compliance.client import ComplianceClient
+
+from .webhooks.client import WebhooksClient
 
 from .spaces.client import SpacesClient
 
-from .trends.client import TrendsClient
-
 from .connections.client import ConnectionsClient
 
-from .posts.client import PostsClient
-
-from .community_notes.client import CommunityNotesClient
-
-from .lists.client import ListsClient
+from .trends.client import TrendsClient
 
 
 class Client:
@@ -86,22 +86,22 @@ class Client:
                 scope=scope,
             )
         # Initialize clients for each tag
-        self.compliance = ComplianceClient(self)
         self.usage = UsageClient(self)
-        self.account_activity = AccountActivityClient(self)
         self.media = MediaClient(self)
+        self.community_notes = CommunityNotesClient(self)
+        self.account_activity = AccountActivityClient(self)
         self.communities = CommunitiesClient(self)
-        self.webhooks = WebhooksClient(self)
+        self.posts = PostsClient(self)
+        self.lists = ListsClient(self)
+        self.general = GeneralClient(self)
         self.direct_messages = DirectMessagesClient(self)
         self.stream = StreamClient(self)
-        self.general = GeneralClient(self)
         self.users = UsersClient(self)
+        self.compliance = ComplianceClient(self)
+        self.webhooks = WebhooksClient(self)
         self.spaces = SpacesClient(self)
-        self.trends = TrendsClient(self)
         self.connections = ConnectionsClient(self)
-        self.posts = PostsClient(self)
-        self.community_notes = CommunityNotesClient(self)
-        self.lists = ListsClient(self)
+        self.trends = TrendsClient(self)
 
     @property
 
