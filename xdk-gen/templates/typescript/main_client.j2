@@ -20,6 +20,8 @@ export interface ClientConfig {
   bearerToken?: string;
   /** OAuth2 access token */
   accessToken?: string;
+  /** OAuth1 instance for authentication */
+  oauth1?: any;
   /** Custom headers to include in requests */
   headers?: Record<string, string>;
   /** Request timeout in milliseconds */
@@ -113,6 +115,8 @@ export class Client {
   readonly bearerToken?: string;
   /** OAuth2 access token */
   readonly accessToken?: string;
+  /** OAuth1 instance for authentication */
+  readonly oauth1?: any;
   /** Headers for requests */
   readonly headers: Headers;
   /** Request timeout in milliseconds */
@@ -123,12 +127,6 @@ export class Client {
   readonly maxRetries: number;
   /** User agent string */
   readonly userAgent: string;
-  /** OAuth2 session for requests */
-  readonly oauth2Session?: typeof fetch;
-  /** OAuth2 authentication instance */
-  readonly oauth2Auth?: any;
-  /** OAuth2 token */
-  readonly token?: any;
 
   /** HTTP client for making requests */
   readonly httpClient = httpClient;
@@ -138,21 +136,32 @@ export class Client {
   readonly {{ tag | snake_case }}: {{ tag | pascal_case }}Client;
 {% endfor %}
 
-  constructor(config: ClientConfig = {}) {
-    this.baseUrl = config.baseUrl || "https://api.x.com";
-    this.bearerToken = config.bearerToken;
-    this.accessToken = config.accessToken;
-    this.timeout = config.timeout || 30000;
-    this.retry = config.retry !== undefined ? config.retry : true;
-    this.maxRetries = config.maxRetries || 3;
-    this.userAgent = config.userAgent || "x-api-sdk/1.0.0";
+  constructor(config: ClientConfig | any) {
+    // Handle OAuth1 instance passed directly
+    if (config && typeof config === 'object' && config.accessToken && config.accessToken.accessToken && config.accessToken.accessTokenSecret) {
+      // This is an OAuth1 instance
+      this.oauth1 = config;
+      this.baseUrl = "https://api.x.com";
+    } else {
+      // This is a regular config object
+      const clientConfig = config as ClientConfig;
+      this.baseUrl = clientConfig.baseUrl || "https://api.x.com";
+      this.bearerToken = clientConfig.bearerToken;
+      this.accessToken = clientConfig.accessToken;
+      this.oauth1 = clientConfig.oauth1;
+    }
+    
+    this.timeout = (config as ClientConfig).timeout || 30000;
+    this.retry = (config as ClientConfig).retry ?? true;
+    this.maxRetries = (config as ClientConfig).maxRetries || 3;
+    this.userAgent = (config as ClientConfig).userAgent || "x-api-sdk/1.0.0";
     
     // Initialize headers
     const defaultHeaders: Record<string, string> = {
       'User-Agent': this.userAgent,
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      ...config.headers,
+      ...((config as ClientConfig).headers || {}),
     };
     
     this.headers = httpClient.createHeaders(defaultHeaders);
@@ -178,6 +187,20 @@ export class Client {
       headers.set('Authorization', `Bearer ${this.bearerToken}`);
     } else if (this.accessToken) {
       headers.set('Authorization', `Bearer ${this.accessToken}`);
+    } else if (this.oauth1 && this.oauth1.accessToken) {
+      // OAuth1 authentication - build proper OAuth1 header
+      try {
+        const oauthHeader = await this.oauth1.buildRequestHeader(method, url, options.body || '');
+        headers.set('Authorization', oauthHeader);
+        
+        // Remove Content-Type for OAuth1 requests if it's application/json
+        // OAuth1 typically expects application/x-www-form-urlencoded or no content type
+        if (headers.get('Content-Type') === 'application/json') {
+          headers.delete('Content-Type');
+        }
+      } catch (error) {
+        throw new Error(`Failed to build OAuth1 header: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
     }
     
     // Add custom headers
@@ -260,6 +283,6 @@ export class Client {
    * Get the current authentication status
    */
   isAuthenticated(): boolean {
-    return !!(this.bearerToken || this.accessToken);
+    return !!(this.bearerToken || this.accessToken || (this.oauth1 && this.oauth1.accessToken));
   }
 } 

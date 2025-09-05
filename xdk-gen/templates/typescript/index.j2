@@ -49,8 +49,13 @@ export { httpClient, HttpClient } from './http-client.js';
 export type { RequestOptions as HttpClientRequestOptions, HttpResponse } from './http-client.js';
 
 // Authentication
-export { OAuth2Auth } from './oauth2_auth.js';
-export type { OAuth2Config } from './oauth2_auth.js';
+export { OAuth2 } from './oauth2_auth.js';
+export type { OAuth2Config, OAuth2Token } from './oauth2_auth.js';
+export { OAuth1 } from './oauth1_auth.js';
+export type { OAuth1Config, OAuth1RequestToken, OAuth1AccessToken } from './oauth1_auth.js';
+
+// Crypto utilities
+export { CryptoUtils, hmacSha1, generateNonce, generateTimestamp } from './crypto_utils.js';
 
 // Client modules and their types
 {% for tag in tags %}
