@@ -6,146 +6,106 @@
  * OAuth2 configuration options
  */
 export interface OAuth2Config {
-    /** Client ID */
-    clientId: string;
-    /** Client secret */
-    clientSecret: string;
-    /** Redirect URI */
-    redirectUri: string;
-    /** Authorization URL */
-    authUrl?: string;
-    /** Token URL */
-    tokenUrl?: string;
-    /** Scopes to request */
-    scopes?: string[];
+  /** Client ID */
+  clientId: string;
+  /** Client secret */
+  clientSecret: string;
+  /** Redirect URI */
+  redirectUri: string;
+  /** Scopes to request */
+  scope?: string[];
 }
 
 /**
  * OAuth2 token response
  */
 export interface OAuth2Token {
-    /** Access token */
-    accessToken: string;
-    /** Token type */
-    tokenType: string;
-    /** Expiration time in seconds */
-    expiresIn: number;
-    /** Refresh token */
-    refreshToken?: string;
-    /** Scopes granted */
-    scope?: string;
+  /** Access token */
+  access_token: string;
+  /** Token type */
+  token_type: string;
+  /** Expiration time in seconds */
+  expires_in: number;
+  /** Refresh token */
+  refresh_token?: string;
+  /** Scopes granted */
+  scope?: string;
 }
 
 /**
  * OAuth2 authentication handler
  */
-export class OAuth2Auth {
-    private config: OAuth2Config;
-    private token?: OAuth2Token;
+export class OAuth2 {
+  private config: OAuth2Config;
+  private token?: OAuth2Token;
 
-    constructor(config: OAuth2Config) {
-        this.config = {
-            authUrl: 'https://twitter.com/i/oauth2/authorize',
-            tokenUrl: 'https://api.twitter.com/2/oauth2/token',
-            scopes: ['tweet.read', 'users.read'],
-            ...config
-        };
+  constructor(config: OAuth2Config) {
+    this.config = {
+      scope: ['tweet.read', 'users.read'],
+      ...config
+    };
+  }
+
+  /**
+   * Get the authorization URL
+   * @param state Optional state parameter for security
+   * @returns Authorization URL
+   */
+  getAuthorizationUrl(state?: string): string {
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: this.config.clientId,
+      redirect_uri: this.config.redirectUri,
+      scope: this.config.scope?.join(' ') || '',
+      state: state || ''
+    });
+
+    return `https://x.com/i/oauth2/authorize?${params.toString()}`;
+  }
+
+  /**
+   * Exchange authorization code for tokens
+   * @param code Authorization code from callback
+   * @returns Promise with OAuth2 token
+   */
+  async exchangeCode(code: string): Promise<OAuth2Token> {
+    const params = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: this.config.redirectUri,
+      client_id: this.config.clientId,
+      client_secret: this.config.clientSecret
+    });
+
+    const response = await fetch('https://api.x.com/2/oauth2/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: params.toString()
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    /**
-     * Get the authorization URL
-     */
-    getAuthorizationUrl(state?: string): string {
-        const params = new URLSearchParams({
-            response_type: 'code',
-            client_id: this.config.clientId,
-            redirect_uri: this.config.redirectUri,
-            scope: this.config.scopes?.join(' ') || '',
-            state: state || ''
-        });
+    const data = await response.json();
+    this.token = {
+      access_token: data.access_token,
+      token_type: data.token_type,
+      expires_in: data.expires_in,
+      refresh_token: data.refresh_token,
+      scope: data.scope
+    };
 
-        return `${this.config.authUrl}?${params.toString()}`;
-    }
+    return this.token;
+  }
 
-    /**
-     * Exchange authorization code for tokens
-     */
-    async exchangeCode(code: string): Promise<OAuth2Token> {
-        const params = new URLSearchParams({
-            grant_type: 'authorization_code',
-            code,
-            redirect_uri: this.config.redirectUri,
-            client_id: this.config.clientId,
-            client_secret: this.config.clientSecret
-        });
-
-        const response = await fetch(this.config.tokenUrl!, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: params.toString()
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        this.token = {
-            accessToken: data.access_token,
-            tokenType: data.token_type,
-            expiresIn: data.expires_in,
-            refreshToken: data.refresh_token,
-            scope: data.scope
-        };
-
-        return this.token;
-    }
-
-    /**
-     * Refresh the access token
-     */
-    async refreshToken(): Promise<OAuth2Token> {
-        if (!this.token?.refreshToken) {
-            throw new Error('No refresh token available');
-        }
-
-        const params = new URLSearchParams({
-            grant_type: 'refresh_token',
-            refresh_token: this.token.refreshToken,
-            client_id: this.config.clientId,
-            client_secret: this.config.clientSecret
-        });
-
-        const response = await fetch(this.config.tokenUrl!, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: params.toString()
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        this.token = {
-            accessToken: data.access_token,
-            tokenType: data.token_type,
-            expiresIn: data.expires_in,
-            refreshToken: data.refresh_token || this.token.refreshToken,
-            scope: data.scope
-        };
-
-        return this.token;
-    }
-
-    /**
-     * Get the current token
-     */
-    getToken(): OAuth2Token | undefined {
-        return this.token;
-    }
+  /**
+   * Get the current token
+   * @returns Current OAuth2 token if available
+   */
+  getToken(): OAuth2Token | undefined {
+    return this.token;
+  }
 } 
