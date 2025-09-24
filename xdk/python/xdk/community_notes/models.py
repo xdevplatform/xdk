@@ -13,26 +13,6 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for delete
-
-
-class DeleteResponse(BaseModel):
-    """Response model for delete"""
-
-    data: Optional["DeleteResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class DeleteResponseData(BaseModel):
-    """Nested model for DeleteResponseData"""
-
-    id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for create
 
 
@@ -51,7 +31,7 @@ class CreateRequest(BaseModel):
 class CreateResponse(BaseModel):
     """Response model for create"""
 
-    data: Optional["CreateResponseData"] = Field(default_factory=dict)
+    data: Optional["CreateResponseData"] = None
     errors: Optional[List] = None
 
     model_config = ConfigDict(populate_by_name=True)
@@ -71,7 +51,49 @@ class CreateRequestInfo(BaseModel):
 class CreateResponseData(BaseModel):
     """Nested model for CreateResponseData"""
 
+    id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for delete
+
+
+class DeleteResponse(BaseModel):
+    """Response model for delete"""
+
+    data: Optional["DeleteResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DeleteResponseData(BaseModel):
+    """Nested model for DeleteResponseData"""
+
     deleted: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for search_written
+
+
+class SearchWrittenResponse(BaseModel):
+    """Response model for search_written"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    meta: Optional["SearchWrittenResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class SearchWrittenResponseMeta(BaseModel):
+    """Nested model for SearchWrittenResponseMeta"""
+
+    next_token: Optional[str] = None
+    result_count: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -112,23 +134,30 @@ class SearchEligiblePostsResponseMeta(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for search_written
+# Models for evaluate
 
 
-class SearchWrittenResponse(BaseModel):
-    """Response model for search_written"""
+class EvaluateRequest(BaseModel):
+    """Request model for evaluate"""
 
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    meta: Optional["SearchWrittenResponseMeta"] = None
+    note_text: Optional[str] = None
+    post_id: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class SearchWrittenResponseMeta(BaseModel):
-    """Nested model for SearchWrittenResponseMeta"""
+class EvaluateResponse(BaseModel):
+    """Response model for evaluate"""
 
-    next_token: Optional[str] = None
-    result_count: Optional[int] = None
+    data: Optional["EvaluateResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class EvaluateResponseData(BaseModel):
+    """Nested model for EvaluateResponseData"""
+
+    claim_opinion_score: Optional[float] = None
 
     model_config = ConfigDict(populate_by_name=True)

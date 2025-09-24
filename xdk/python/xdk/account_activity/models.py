@@ -13,14 +13,28 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for create_replay_job
+# Models for get_subscriptions
 
 
-class CreateReplayJobResponse(BaseModel):
-    """Response model for create_replay_job"""
+class GetSubscriptionsResponse(BaseModel):
+    """Response model for get_subscriptions"""
 
-    created_at: Optional[str] = None
-    job_id: Optional[str] = None
+    data: Optional["GetSubscriptionsResponseData"] = Field(
+        description="The list of active subscriptions for a specified webhook",
+        default_factory=dict,
+    )
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetSubscriptionsResponseData(BaseModel):
+    """Nested model for GetSubscriptionsResponseData"""
+
+    application_id: Optional[str] = None
+    subscriptions: Optional[List] = None
+    webhook_id: Optional[str] = None
+    webhook_url: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -91,32 +105,6 @@ class CreateSubscriptionResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for get_subscriptions
-
-
-class GetSubscriptionsResponse(BaseModel):
-    """Response model for get_subscriptions"""
-
-    data: Optional["GetSubscriptionsResponseData"] = Field(
-        description="The list of active subscriptions for a specified webhook",
-        default_factory=dict,
-    )
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetSubscriptionsResponseData(BaseModel):
-    """Nested model for GetSubscriptionsResponseData"""
-
-    application_id: Optional[str] = None
-    subscriptions: Optional[List] = None
-    webhook_id: Optional[str] = None
-    webhook_url: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for get_subscription_count
 
 
@@ -139,5 +127,17 @@ class GetSubscriptionCountResponseData(BaseModel):
     provisioned_count: Optional[str] = None
     subscriptions_count_all: Optional[str] = None
     subscriptions_count_direct_messages: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for create_replay_job
+
+
+class CreateReplayJobResponse(BaseModel):
+    """Response model for create_replay_job"""
+
+    created_at: Optional[str] = None
+    job_id: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)

@@ -17,23 +17,23 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    GetByKeyResponse,
-    CreateSubtitlesRequest,
-    CreateSubtitlesResponse,
-    DeleteSubtitlesRequest,
-    DeleteSubtitlesResponse,
-    CreateMetadataRequest,
-    CreateMetadataResponse,
     GetAnalyticsResponse,
     AppendUploadRequest,
     AppendUploadResponse,
-    InitializeUploadRequest,
-    InitializeUploadResponse,
     FinalizeUploadResponse,
     GetByKeysResponse,
     GetUploadStatusResponse,
     UploadRequest,
     UploadResponse,
+    InitializeUploadRequest,
+    InitializeUploadResponse,
+    CreateSubtitlesRequest,
+    CreateSubtitlesResponse,
+    DeleteSubtitlesRequest,
+    DeleteSubtitlesResponse,
+    GetByKeyResponse,
+    CreateMetadataRequest,
+    CreateMetadataResponse,
 )
 
 
@@ -43,198 +43,6 @@ class MediaClient:
 
     def __init__(self, client: Client):
         self.client = client
-
-
-    def get_by_key(self, media_key: Any) -> GetByKeyResponse:
-        """
-        Get Media by media key
-        Retrieves details of a specific Media file by its media key.
-        Args:
-            media_key: A single Media Key.
-            Returns:
-            GetByKeyResponse: Response data
-        """
-        url = self.client.base_url + "/2/media/{media_key}"
-        url = url.replace("{media_key}", str(media_key))
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        headers = {}
-        # Prepare request data
-        json_data = None
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetByKeyResponse.model_validate(response_data)
-
-
-    def create_subtitles(
-        self, body: Optional[CreateSubtitlesRequest] = None
-    ) -> CreateSubtitlesResponse:
-        """
-        Create Media subtitles
-        Creates subtitles for a specific Media file.
-        body: Request body
-        Returns:
-            CreateSubtitlesResponse: Response data
-        """
-        url = self.client.base_url + "/2/media/subtitles"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Prepare request data
-        json_data = None
-        if body is not None:
-            json_data = (
-                body.model_dump(exclude_none=True)
-                if hasattr(body, "model_dump")
-                else body
-            )
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=json_data,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=json_data,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return CreateSubtitlesResponse.model_validate(response_data)
-
-
-    def delete_subtitles(
-        self, body: Optional[DeleteSubtitlesRequest] = None
-    ) -> DeleteSubtitlesResponse:
-        """
-        Delete Media subtitles
-        Deletes subtitles for a specific Media file.
-        body: Request body
-        Returns:
-            DeleteSubtitlesResponse: Response data
-        """
-        url = self.client.base_url + "/2/media/subtitles"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Prepare request data
-        json_data = None
-        if body is not None:
-            json_data = (
-                body.model_dump(exclude_none=True)
-                if hasattr(body, "model_dump")
-                else body
-            )
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.delete(
-                url,
-                params=params,
-                headers=headers,
-                json=json_data,
-            )
-        else:
-            response = self.client.session.delete(
-                url,
-                params=params,
-                headers=headers,
-                json=json_data,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return DeleteSubtitlesResponse.model_validate(response_data)
-
-
-    def create_metadata(
-        self, body: Optional[CreateMetadataRequest] = None
-    ) -> CreateMetadataResponse:
-        """
-        Create Media metadata
-        Creates metadata for a Media file.
-        body: Request body
-        Returns:
-            CreateMetadataResponse: Response data
-        """
-        url = self.client.base_url + "/2/media/metadata"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Prepare request data
-        json_data = None
-        if body is not None:
-            json_data = (
-                body.model_dump(exclude_none=True)
-                if hasattr(body, "model_dump")
-                else body
-            )
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=json_data,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=json_data,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return CreateMetadataResponse.model_validate(response_data)
 
 
     def get_analytics(
@@ -341,56 +149,6 @@ class MediaClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return AppendUploadResponse.model_validate(response_data)
-
-
-    def initialize_upload(
-        self, body: Optional[InitializeUploadRequest] = None
-    ) -> InitializeUploadResponse:
-        """
-        Initialize media upload
-        Initializes a media upload.
-        body: Request body
-        Returns:
-            InitializeUploadResponse: Response data
-        """
-        url = self.client.base_url + "/2/media/upload/initialize"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Prepare request data
-        json_data = None
-        if body is not None:
-            json_data = (
-                body.model_dump(exclude_none=True)
-                if hasattr(body, "model_dump")
-                else body
-            )
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=json_data,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=json_data,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return InitializeUploadResponse.model_validate(response_data)
 
 
     def finalize_upload(self, id: Any) -> FinalizeUploadResponse:
@@ -570,3 +328,245 @@ class MediaClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return UploadResponse.model_validate(response_data)
+
+
+    def initialize_upload(
+        self, body: Optional[InitializeUploadRequest] = None
+    ) -> InitializeUploadResponse:
+        """
+        Initialize media upload
+        Initializes a media upload.
+        body: Request body
+        Returns:
+            InitializeUploadResponse: Response data
+        """
+        url = self.client.base_url + "/2/media/upload/initialize"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Prepare request data
+        json_data = None
+        if body is not None:
+            json_data = (
+                body.model_dump(exclude_none=True)
+                if hasattr(body, "model_dump")
+                else body
+            )
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=json_data,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=json_data,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return InitializeUploadResponse.model_validate(response_data)
+
+
+    def create_subtitles(
+        self, body: Optional[CreateSubtitlesRequest] = None
+    ) -> CreateSubtitlesResponse:
+        """
+        Create Media subtitles
+        Creates subtitles for a specific Media file.
+        body: Request body
+        Returns:
+            CreateSubtitlesResponse: Response data
+        """
+        url = self.client.base_url + "/2/media/subtitles"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Prepare request data
+        json_data = None
+        if body is not None:
+            json_data = (
+                body.model_dump(exclude_none=True)
+                if hasattr(body, "model_dump")
+                else body
+            )
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=json_data,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=json_data,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return CreateSubtitlesResponse.model_validate(response_data)
+
+
+    def delete_subtitles(
+        self, body: Optional[DeleteSubtitlesRequest] = None
+    ) -> DeleteSubtitlesResponse:
+        """
+        Delete Media subtitles
+        Deletes subtitles for a specific Media file.
+        body: Request body
+        Returns:
+            DeleteSubtitlesResponse: Response data
+        """
+        url = self.client.base_url + "/2/media/subtitles"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Prepare request data
+        json_data = None
+        if body is not None:
+            json_data = (
+                body.model_dump(exclude_none=True)
+                if hasattr(body, "model_dump")
+                else body
+            )
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.delete(
+                url,
+                params=params,
+                headers=headers,
+                json=json_data,
+            )
+        else:
+            response = self.client.session.delete(
+                url,
+                params=params,
+                headers=headers,
+                json=json_data,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return DeleteSubtitlesResponse.model_validate(response_data)
+
+
+    def get_by_key(self, media_key: Any) -> GetByKeyResponse:
+        """
+        Get Media by media key
+        Retrieves details of a specific Media file by its media key.
+        Args:
+            media_key: A single Media Key.
+            Returns:
+            GetByKeyResponse: Response data
+        """
+        url = self.client.base_url + "/2/media/{media_key}"
+        url = url.replace("{media_key}", str(media_key))
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        headers = {}
+        # Prepare request data
+        json_data = None
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetByKeyResponse.model_validate(response_data)
+
+
+    def create_metadata(
+        self, body: Optional[CreateMetadataRequest] = None
+    ) -> CreateMetadataResponse:
+        """
+        Create Media metadata
+        Creates metadata for a Media file.
+        body: Request body
+        Returns:
+            CreateMetadataResponse: Response data
+        """
+        url = self.client.base_url + "/2/media/metadata"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Prepare request data
+        json_data = None
+        if body is not None:
+            json_data = (
+                body.model_dump(exclude_none=True)
+                if hasattr(body, "model_dump")
+                else body
+            )
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=json_data,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=json_data,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return CreateMetadataResponse.model_validate(response_data)

@@ -13,67 +13,6 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for get_by_ids
-
-
-class GetByIdsResponse(BaseModel):
-    """Response model for get_by_ids"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetByIdsResponseIncludes"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetByIdsResponseIncludes(BaseModel):
-    """Nested model for GetByIdsResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for search
-
-
-class SearchResponse(BaseModel):
-    """Response model for search"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["SearchResponseIncludes"] = None
-    meta: Optional["SearchResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class SearchResponseIncludes(BaseModel):
-    """Nested model for SearchResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class SearchResponseMeta(BaseModel):
-    """Nested model for SearchResponseMeta"""
-
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for get_by_id
 
 
@@ -124,43 +63,6 @@ class GetByIdResponseIncludes(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for get_buyers
-
-
-class GetBuyersResponse(BaseModel):
-    """Response model for get_buyers"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-    includes: Optional["GetBuyersResponseIncludes"] = None
-    meta: Optional["GetBuyersResponseMeta"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetBuyersResponseIncludes(BaseModel):
-    """Nested model for GetBuyersResponseIncludes"""
-
-    media: Optional[List] = None
-    places: Optional[List] = None
-    polls: Optional[List] = None
-    topics: Optional[List] = None
-    tweets: Optional[List] = None
-    users: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetBuyersResponseMeta(BaseModel):
-    """Nested model for GetBuyersResponseMeta"""
-
-    next_token: Optional[str] = None
-    previous_token: Optional[str] = None
-    result_count: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for get_posts
 
 
@@ -198,6 +100,69 @@ class GetPostsResponseMeta(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
+# Models for get_buyers
+
+
+class GetBuyersResponse(BaseModel):
+    """Response model for get_buyers"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetBuyersResponseIncludes"] = None
+    meta: Optional["GetBuyersResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetBuyersResponseIncludes(BaseModel):
+    """Nested model for GetBuyersResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetBuyersResponseMeta(BaseModel):
+    """Nested model for GetBuyersResponseMeta"""
+
+    next_token: Optional[str] = None
+    previous_token: Optional[str] = None
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_by_ids
+
+
+class GetByIdsResponse(BaseModel):
+    """Response model for get_by_ids"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["GetByIdsResponseIncludes"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetByIdsResponseIncludes(BaseModel):
+    """Nested model for GetByIdsResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 # Models for get_by_creator_ids
 
 
@@ -227,6 +192,41 @@ class GetByCreatorIdsResponseIncludes(BaseModel):
 
 class GetByCreatorIdsResponseMeta(BaseModel):
     """Nested model for GetByCreatorIdsResponseMeta"""
+
+    result_count: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for search
+
+
+class SearchResponse(BaseModel):
+    """Response model for search"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+    includes: Optional["SearchResponseIncludes"] = None
+    meta: Optional["SearchResponseMeta"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class SearchResponseIncludes(BaseModel):
+    """Nested model for SearchResponseIncludes"""
+
+    media: Optional[List] = None
+    places: Optional[List] = None
+    polls: Optional[List] = None
+    topics: Optional[List] = None
+    tweets: Optional[List] = None
+    users: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class SearchResponseMeta(BaseModel):
+    """Nested model for SearchResponseMeta"""
 
     result_count: Optional[int] = None
 

@@ -13,6 +13,69 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
+# Models for create_stream_link
+
+
+class CreateStreamLinkResponse(BaseModel):
+    """Response model for create_stream_link"""
+
+    data: Optional["CreateStreamLinkResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateStreamLinkResponseData(BaseModel):
+    """Nested model for CreateStreamLinkResponseData"""
+
+    provisioned: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for delete_stream_link
+
+
+class DeleteStreamLinkResponse(BaseModel):
+    """Response model for delete_stream_link"""
+
+    data: Optional["DeleteStreamLinkResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DeleteStreamLinkResponseData(BaseModel):
+    """Nested model for DeleteStreamLinkResponseData"""
+
+    deleted: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_stream_links
+
+
+class GetStreamLinksResponse(BaseModel):
+    """Response model for get_stream_links"""
+
+    data: Optional["GetStreamLinksResponseData"] = Field(
+        description="The list of active webhook links for a given stream",
+        default_factory=dict,
+    )
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetStreamLinksResponseData(BaseModel):
+    """Nested model for GetStreamLinksResponseData"""
+
+    links: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 # Models for get
 
 
