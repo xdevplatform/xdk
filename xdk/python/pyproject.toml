@@ -11,10 +11,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "xdk"
-version = "0.2.0-beta"
+version = "0.1.0"
 description = "Python SDK for the X API"
 authors = [
-    {name = "X Developer Platform", email = "twitterdev@x.com"},
+    {name = "XDK Team", email = "info@xdk.com"},
 ]
 readme = "README.md"
 requires-python = ">=3.8"

@@ -193,6 +193,9 @@ headers = {% if operation.is_streaming %}{
                 # Stream data chunk by chunk
                 for chunk in response.iter_content(chunk_size=chunk_size, decode_unicode=True):
                     if chunk:
+                        # Ensure chunk is always a string, not bytes
+                        if isinstance(chunk, bytes):
+                            chunk = chunk.decode('utf-8')
                         buffer += chunk
                         
                         # Process complete lines

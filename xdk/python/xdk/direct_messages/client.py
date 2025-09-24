@@ -17,15 +17,15 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    CreateConversationRequest,
-    CreateConversationResponse,
-    GetEventsByConversationIdResponse,
     GetEventsByParticipantIdResponse,
-    GetEventsResponse,
     CreateByParticipantIdRequest,
     CreateByParticipantIdResponse,
     GetEventsByIdResponse,
     DeleteEventsResponse,
+    CreateConversationRequest,
+    CreateConversationResponse,
+    GetEventsByConversationIdResponse,
+    GetEventsResponse,
     CreateByConversationIdRequest,
     CreateByConversationIdResponse,
 )
@@ -37,112 +37,6 @@ class DirectMessagesClient:
 
     def __init__(self, client: Client):
         self.client = client
-
-
-    def create_conversation(
-        self, body: Optional[CreateConversationRequest] = None
-    ) -> Dict[str, Any]:
-        """
-        Create DM conversation
-        Initiates a new direct message conversation with specified participants.
-        body: Request body
-        Returns:
-            CreateConversationResponse: Response data
-        """
-        url = self.client.base_url + "/2/dm_conversations"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Prepare request data
-        json_data = None
-        if body is not None:
-            json_data = (
-                body.model_dump(exclude_none=True)
-                if hasattr(body, "model_dump")
-                else body
-            )
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=json_data,
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                json=json_data,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return CreateConversationResponse.model_validate(response_data)
-
-
-    def get_events_by_conversation_id(
-        self,
-        id: Any,
-        max_results: int = None,
-        pagination_token: Any = None,
-        event_types: List = None,
-    ) -> GetEventsByConversationIdResponse:
-        """
-        Get DM events for a DM conversation
-        Retrieves direct message events for a specific conversation.
-        Args:
-            id: The DM conversation ID.
-            max_results: The maximum number of results.
-            pagination_token: This parameter is used to get a specified 'page' of results.
-            event_types: The set of event_types to include in the results.
-            Returns:
-            GetEventsByConversationIdResponse: Response data
-        """
-        url = self.client.base_url + "/2/dm_conversations/{id}/dm_events"
-        url = url.replace("{id}", str(id))
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        if max_results is not None:
-            params["max_results"] = max_results
-        if pagination_token is not None:
-            params["pagination_token"] = pagination_token
-        if event_types is not None:
-            params["event_types"] = ",".join(str(item) for item in event_types)
-        headers = {}
-        # Prepare request data
-        json_data = None
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.get(
-                url,
-                params=params,
-                headers=headers,
-            )
-        else:
-            response = self.client.session.get(
-                url,
-                params=params,
-                headers=headers,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetEventsByConversationIdResponse.model_validate(response_data)
 
 
     def get_events_by_participant_id(
@@ -201,59 +95,6 @@ class DirectMessagesClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return GetEventsByParticipantIdResponse.model_validate(response_data)
-
-
-    def get_events(
-        self,
-        max_results: int = None,
-        pagination_token: Any = None,
-        event_types: List = None,
-    ) -> GetEventsResponse:
-        """
-        Get DM events
-        Retrieves a list of recent direct message events across all conversations.
-        Args:
-            max_results: The maximum number of results.
-            pagination_token: This parameter is used to get a specified 'page' of results.
-            event_types: The set of event_types to include in the results.
-            Returns:
-            GetEventsResponse: Response data
-        """
-        url = self.client.base_url + "/2/dm_events"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        params = {}
-        if max_results is not None:
-            params["max_results"] = max_results
-        if pagination_token is not None:
-            params["pagination_token"] = pagination_token
-        if event_types is not None:
-            params["event_types"] = ",".join(str(item) for item in event_types)
-        headers = {}
-        # Prepare request data
-        json_data = None
-        # Make the request
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.get(
-                url,
-                params=params,
-                headers=headers,
-            )
-        else:
-            response = self.client.session.get(
-                url,
-                params=params,
-                headers=headers,
-            )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetEventsResponse.model_validate(response_data)
 
 
     def create_by_participant_id(
@@ -391,6 +232,165 @@ class DirectMessagesClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return DeleteEventsResponse.model_validate(response_data)
+
+
+    def create_conversation(
+        self, body: Optional[CreateConversationRequest] = None
+    ) -> Dict[str, Any]:
+        """
+        Create DM conversation
+        Initiates a new direct message conversation with specified participants.
+        body: Request body
+        Returns:
+            CreateConversationResponse: Response data
+        """
+        url = self.client.base_url + "/2/dm_conversations"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Prepare request data
+        json_data = None
+        if body is not None:
+            json_data = (
+                body.model_dump(exclude_none=True)
+                if hasattr(body, "model_dump")
+                else body
+            )
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=json_data,
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                json=json_data,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return CreateConversationResponse.model_validate(response_data)
+
+
+    def get_events_by_conversation_id(
+        self,
+        id: Any,
+        max_results: int = None,
+        pagination_token: Any = None,
+        event_types: List = None,
+    ) -> GetEventsByConversationIdResponse:
+        """
+        Get DM events for a DM conversation
+        Retrieves direct message events for a specific conversation.
+        Args:
+            id: The DM conversation ID.
+            max_results: The maximum number of results.
+            pagination_token: This parameter is used to get a specified 'page' of results.
+            event_types: The set of event_types to include in the results.
+            Returns:
+            GetEventsByConversationIdResponse: Response data
+        """
+        url = self.client.base_url + "/2/dm_conversations/{id}/dm_events"
+        url = url.replace("{id}", str(id))
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        if max_results is not None:
+            params["max_results"] = max_results
+        if pagination_token is not None:
+            params["pagination_token"] = pagination_token
+        if event_types is not None:
+            params["event_types"] = ",".join(str(item) for item in event_types)
+        headers = {}
+        # Prepare request data
+        json_data = None
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.get(
+                url,
+                params=params,
+                headers=headers,
+            )
+        else:
+            response = self.client.session.get(
+                url,
+                params=params,
+                headers=headers,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetEventsByConversationIdResponse.model_validate(response_data)
+
+
+    def get_events(
+        self,
+        max_results: int = None,
+        pagination_token: Any = None,
+        event_types: List = None,
+    ) -> GetEventsResponse:
+        """
+        Get DM events
+        Retrieves a list of recent direct message events across all conversations.
+        Args:
+            max_results: The maximum number of results.
+            pagination_token: This parameter is used to get a specified 'page' of results.
+            event_types: The set of event_types to include in the results.
+            Returns:
+            GetEventsResponse: Response data
+        """
+        url = self.client.base_url + "/2/dm_events"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        params = {}
+        if max_results is not None:
+            params["max_results"] = max_results
+        if pagination_token is not None:
+            params["pagination_token"] = pagination_token
+        if event_types is not None:
+            params["event_types"] = ",".join(str(item) for item in event_types)
+        headers = {}
+        # Prepare request data
+        json_data = None
+        # Make the request
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.get(
+                url,
+                params=params,
+                headers=headers,
+            )
+        else:
+            response = self.client.session.get(
+                url,
+                params=params,
+                headers=headers,
+            )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetEventsResponse.model_validate(response_data)
 
 
     def create_by_conversation_id(

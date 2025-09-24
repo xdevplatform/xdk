@@ -13,38 +13,6 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for create_replay_job
-
-
-class CreateReplayJobResponse(BaseModel):
-    """Response model for create_replay_job"""
-
-    created_at: Optional[str] = None
-    job_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for delete_subscription
-
-
-class DeleteSubscriptionResponse(BaseModel):
-    """Response model for delete_subscription"""
-
-    data: Optional["DeleteSubscriptionResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class DeleteSubscriptionResponseData(BaseModel):
-    """Nested model for DeleteSubscriptionResponseData"""
-
-    subscribed: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for validate_subscription
 
 
@@ -117,6 +85,18 @@ class GetSubscriptionsResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
+# Models for create_replay_job
+
+
+class CreateReplayJobResponse(BaseModel):
+    """Response model for create_replay_job"""
+
+    created_at: Optional[str] = None
+    job_id: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 # Models for get_subscription_count
 
 
@@ -139,5 +119,25 @@ class GetSubscriptionCountResponseData(BaseModel):
     provisioned_count: Optional[str] = None
     subscriptions_count_all: Optional[str] = None
     subscriptions_count_direct_messages: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for delete_subscription
+
+
+class DeleteSubscriptionResponse(BaseModel):
+    """Response model for delete_subscription"""
+
+    data: Optional["DeleteSubscriptionResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DeleteSubscriptionResponseData(BaseModel):
+    """Nested model for DeleteSubscriptionResponseData"""
+
+    subscribed: Optional[bool] = None
 
     model_config = ConfigDict(populate_by_name=True)
