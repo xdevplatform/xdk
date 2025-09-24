@@ -13,6 +13,52 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
+# Models for get_subscriptions
+
+
+class GetSubscriptionsResponse(BaseModel):
+    """Response model for get_subscriptions"""
+
+    data: Optional["GetSubscriptionsResponseData"] = Field(
+        description="The list of active subscriptions for a specified webhook",
+        default_factory=dict,
+    )
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetSubscriptionsResponseData(BaseModel):
+    """Nested model for GetSubscriptionsResponseData"""
+
+    application_id: Optional[str] = None
+    subscriptions: Optional[List] = None
+    webhook_id: Optional[str] = None
+    webhook_url: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for delete_subscription
+
+
+class DeleteSubscriptionResponse(BaseModel):
+    """Response model for delete_subscription"""
+
+    data: Optional["DeleteSubscriptionResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DeleteSubscriptionResponseData(BaseModel):
+    """Nested model for DeleteSubscriptionResponseData"""
+
+    subscribed: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 # Models for validate_subscription
 
 
@@ -59,44 +105,6 @@ class CreateSubscriptionResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for get_subscriptions
-
-
-class GetSubscriptionsResponse(BaseModel):
-    """Response model for get_subscriptions"""
-
-    data: Optional["GetSubscriptionsResponseData"] = Field(
-        description="The list of active subscriptions for a specified webhook",
-        default_factory=dict,
-    )
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetSubscriptionsResponseData(BaseModel):
-    """Nested model for GetSubscriptionsResponseData"""
-
-    application_id: Optional[str] = None
-    subscriptions: Optional[List] = None
-    webhook_id: Optional[str] = None
-    webhook_url: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for create_replay_job
-
-
-class CreateReplayJobResponse(BaseModel):
-    """Response model for create_replay_job"""
-
-    created_at: Optional[str] = None
-    job_id: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for get_subscription_count
 
 
@@ -123,21 +131,13 @@ class GetSubscriptionCountResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for delete_subscription
+# Models for create_replay_job
 
 
-class DeleteSubscriptionResponse(BaseModel):
-    """Response model for delete_subscription"""
+class CreateReplayJobResponse(BaseModel):
+    """Response model for create_replay_job"""
 
-    data: Optional["DeleteSubscriptionResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class DeleteSubscriptionResponseData(BaseModel):
-    """Nested model for DeleteSubscriptionResponseData"""
-
-    subscribed: Optional[bool] = None
+    created_at: Optional[str] = None
+    job_id: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)

@@ -53,6 +53,29 @@ class DeleteStreamLinkResponseData(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
+# Models for get_stream_links
+
+
+class GetStreamLinksResponse(BaseModel):
+    """Response model for get_stream_links"""
+
+    data: Optional["GetStreamLinksResponseData"] = Field(
+        description="The list of active webhook links for a given stream",
+        default_factory=dict,
+    )
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetStreamLinksResponseData(BaseModel):
+    """Nested model for GetStreamLinksResponseData"""
+
+    links: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 # Models for get
 
 
@@ -92,29 +115,6 @@ class CreateResponse(BaseModel):
     id: Optional[str] = None
     url: Optional[str] = None
     valid: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_stream_links
-
-
-class GetStreamLinksResponse(BaseModel):
-    """Response model for get_stream_links"""
-
-    data: Optional["GetStreamLinksResponseData"] = Field(
-        description="The list of active webhook links for a given stream",
-        default_factory=dict,
-    )
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetStreamLinksResponseData(BaseModel):
-    """Nested model for GetStreamLinksResponseData"""
-
-    links: Optional[List] = None
 
     model_config = ConfigDict(populate_by_name=True)
 

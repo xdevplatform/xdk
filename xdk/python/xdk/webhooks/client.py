@@ -19,10 +19,10 @@ if TYPE_CHECKING:
 from .models import (
     CreateStreamLinkResponse,
     DeleteStreamLinkResponse,
+    GetStreamLinksResponse,
     GetResponse,
     CreateRequest,
     CreateResponse,
-    GetStreamLinksResponse,
     ValidateResponse,
     DeleteResponse,
 )
@@ -137,6 +137,42 @@ class WebhooksClient:
         return DeleteStreamLinkResponse.model_validate(response_data)
 
 
+    def get_stream_links(
+        self,
+    ) -> GetStreamLinksResponse:
+        """
+        Get stream links
+        Get a list of webhook links associated with a filtered stream ruleset.
+        Returns:
+            GetStreamLinksResponse: Response data
+        """
+        url = self.client.base_url + "/2/tweets/search/webhooks"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        headers = {}
+        # Prepare request data
+        json_data = None
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetStreamLinksResponse.model_validate(response_data)
+
+
     def get(
         self,
     ) -> GetResponse:
@@ -214,42 +250,6 @@ class WebhooksClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return CreateResponse.model_validate(response_data)
-
-
-    def get_stream_links(
-        self,
-    ) -> GetStreamLinksResponse:
-        """
-        Get stream links
-        Get a list of webhook links associated with a filtered stream ruleset.
-        Returns:
-            GetStreamLinksResponse: Response data
-        """
-        url = self.client.base_url + "/2/tweets/search/webhooks"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        headers = {}
-        # Prepare request data
-        json_data = None
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetStreamLinksResponse.model_validate(response_data)
 
 
     def validate(self, webhook_id: Any) -> ValidateResponse:

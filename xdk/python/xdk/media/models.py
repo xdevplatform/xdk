@@ -13,6 +13,83 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
+# Models for get_analytics
+
+
+class GetAnalyticsResponse(BaseModel):
+    """Response model for get_analytics"""
+
+    data: Optional[List] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for append_upload
+
+
+class AppendUploadRequest(BaseModel):
+    """Request model for append_upload"""
+
+    media: Optional[str] = Field(default=None, description="The file to upload.")
+    segment_index: Optional[Any] = Field(default=None)
+    media: Optional[str] = Field(default=None, description="The file to upload.")
+    segment_index: Optional[Any] = Field(default=None)
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class AppendUploadResponse(BaseModel):
+    """Response model for append_upload"""
+
+    data: Optional["AppendUploadResponseData"] = None
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class AppendUploadResponseData(BaseModel):
+    """Nested model for AppendUploadResponseData"""
+
+    expires_at: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for finalize_upload
+
+
+class FinalizeUploadResponse(BaseModel):
+    """Response model for finalize_upload"""
+
+    data: Optional["FinalizeUploadResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class FinalizeUploadResponseData(BaseModel):
+    """Nested model for FinalizeUploadResponseData"""
+
+    expires_after_secs: Optional[int] = None
+    id: Optional[str] = None
+    media_key: Optional[str] = None
+    processing_info: Optional["FinalizeUploadResponseDataProcessingInfo"] = None
+    size: Optional[int] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class FinalizeUploadResponseDataProcessingInfo(BaseModel):
+    """Nested model for FinalizeUploadResponseDataProcessingInfo"""
+
+    check_after_secs: Optional[int] = None
+    progress_percent: Optional[int] = None
+    state: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
 # Models for get_by_keys
 
 
@@ -105,49 +182,6 @@ class UploadResponseDataProcessingInfo(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for append_upload
-
-
-class AppendUploadRequest(BaseModel):
-    """Request model for append_upload"""
-
-    media: Optional[str] = Field(default=None, description="The file to upload.")
-    segment_index: Optional[Any] = Field(default=None)
-    media: Optional[str] = Field(default=None, description="The file to upload.")
-    segment_index: Optional[Any] = Field(default=None)
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class AppendUploadResponse(BaseModel):
-    """Response model for append_upload"""
-
-    data: Optional["AppendUploadResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class AppendUploadResponseData(BaseModel):
-    """Nested model for AppendUploadResponseData"""
-
-    expires_at: Optional[int] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_analytics
-
-
-class GetAnalyticsResponse(BaseModel):
-    """Response model for get_analytics"""
-
-    data: Optional[List] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
 # Models for initialize_upload
 
 
@@ -194,36 +228,97 @@ class InitializeUploadResponseDataProcessingInfo(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
 
-# Models for finalize_upload
+# Models for create_subtitles
 
 
-class FinalizeUploadResponse(BaseModel):
-    """Response model for finalize_upload"""
+class CreateSubtitlesRequest(BaseModel):
+    """Request model for create_subtitles"""
 
-    data: Optional["FinalizeUploadResponseData"] = Field(default_factory=dict)
+    id: Optional[str] = None
+    media_category: Optional[str] = None
+    subtitles: Optional["CreateSubtitlesRequestSubtitles"] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateSubtitlesResponse(BaseModel):
+    """Response model for create_subtitles"""
+
+    data: Optional["CreateSubtitlesResponseData"] = Field(default_factory=dict)
     errors: Optional[List] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class FinalizeUploadResponseData(BaseModel):
-    """Nested model for FinalizeUploadResponseData"""
+class CreateSubtitlesRequestSubtitles(BaseModel):
+    """Nested model for CreateSubtitlesRequestSubtitles"""
 
-    expires_after_secs: Optional[int] = None
+    display_name: Optional[str] = None
     id: Optional[str] = None
-    media_key: Optional[str] = None
-    processing_info: Optional["FinalizeUploadResponseDataProcessingInfo"] = None
-    size: Optional[int] = None
+    language_code: Optional[str] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class FinalizeUploadResponseDataProcessingInfo(BaseModel):
-    """Nested model for FinalizeUploadResponseDataProcessingInfo"""
+class CreateSubtitlesResponseData(BaseModel):
+    """Nested model for CreateSubtitlesResponseData"""
 
-    check_after_secs: Optional[int] = None
-    progress_percent: Optional[int] = None
-    state: Optional[str] = None
+    associated_subtitles: Optional[List] = None
+    id: Optional[str] = None
+    media_category: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for delete_subtitles
+
+
+class DeleteSubtitlesRequest(BaseModel):
+    """Request model for delete_subtitles"""
+
+    id: Optional[str] = None
+    language_code: Optional[str] = None
+    media_category: Optional[str] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DeleteSubtitlesResponse(BaseModel):
+    """Response model for delete_subtitles"""
+
+    data: Optional["DeleteSubtitlesResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class DeleteSubtitlesResponseData(BaseModel):
+    """Nested model for DeleteSubtitlesResponseData"""
+
+    deleted: Optional[bool] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+# Models for get_by_key
+
+
+class GetByKeyResponse(BaseModel):
+    """Response model for get_by_key"""
+
+    data: Optional["GetByKeyResponseData"] = Field(default_factory=dict)
+    errors: Optional[List] = None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class GetByKeyResponseData(BaseModel):
+    """Nested model for GetByKeyResponseData"""
+
+    height: Optional[int] = None
+    media_key: Optional[str] = None
+    type: Optional[str] = None
+    width: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -544,100 +639,5 @@ class CreateMetadataResponseDataAssociatedMetadataUploadSource(BaseModel):
     """Nested model for CreateMetadataResponseDataAssociatedMetadataUploadSource"""
 
     upload_source: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for create_subtitles
-
-
-class CreateSubtitlesRequest(BaseModel):
-    """Request model for create_subtitles"""
-
-    id: Optional[str] = None
-    media_category: Optional[str] = None
-    subtitles: Optional["CreateSubtitlesRequestSubtitles"] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateSubtitlesResponse(BaseModel):
-    """Response model for create_subtitles"""
-
-    data: Optional["CreateSubtitlesResponseData"] = Field(default_factory=dict)
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateSubtitlesRequestSubtitles(BaseModel):
-    """Nested model for CreateSubtitlesRequestSubtitles"""
-
-    display_name: Optional[str] = None
-    id: Optional[str] = None
-    language_code: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateSubtitlesResponseData(BaseModel):
-    """Nested model for CreateSubtitlesResponseData"""
-
-    associated_subtitles: Optional[List] = None
-    id: Optional[str] = None
-    media_category: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for delete_subtitles
-
-
-class DeleteSubtitlesRequest(BaseModel):
-    """Request model for delete_subtitles"""
-
-    id: Optional[str] = None
-    language_code: Optional[str] = None
-    media_category: Optional[str] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class DeleteSubtitlesResponse(BaseModel):
-    """Response model for delete_subtitles"""
-
-    data: Optional["DeleteSubtitlesResponseData"] = Field(default_factory=dict)
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class DeleteSubtitlesResponseData(BaseModel):
-    """Nested model for DeleteSubtitlesResponseData"""
-
-    deleted: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-# Models for get_by_key
-
-
-class GetByKeyResponse(BaseModel):
-    """Response model for get_by_key"""
-
-    data: Optional["GetByKeyResponseData"] = Field(default_factory=dict)
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class GetByKeyResponseData(BaseModel):
-    """Nested model for GetByKeyResponseData"""
-
-    height: Optional[int] = None
-    media_key: Optional[str] = None
-    type: Optional[str] = None
-    width: Optional[int] = None
 
     model_config = ConfigDict(populate_by_name=True)

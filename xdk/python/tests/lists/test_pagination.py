@@ -24,20 +24,20 @@ class TestListsPagination:
         self.lists_client = getattr(self.client, "lists")
 
 
-    def test_get_posts_cursor_creation(self):
-        """Test that get_posts can be used with Cursor."""
-        method = getattr(self.lists_client, "get_posts")
+    def test_get_followers_cursor_creation(self):
+        """Test that get_followers can be used with Cursor."""
+        method = getattr(self.lists_client, "get_followers")
         # Should be able to create cursor without error
         try:
             test_cursor = cursor(method, "test_id", max_results=10)
             assert test_cursor is not None
             assert isinstance(test_cursor, Cursor)
         except PaginationError:
-            pytest.fail(f"Method get_posts should support pagination")
+            pytest.fail(f"Method get_followers should support pagination")
 
 
-    def test_get_posts_cursor_pages(self):
-        """Test pagination with pages() for get_posts."""
+    def test_get_followers_cursor_pages(self):
+        """Test pagination with pages() for get_followers."""
         with patch.object(self.client, "session") as mock_session:
             # Mock first page response
             first_page_response = Mock()
@@ -58,7 +58,7 @@ class TestListsPagination:
             # Return different responses for consecutive calls
             mock_session.get.side_effect = [first_page_response, second_page_response]
             # Test pagination
-            method = getattr(self.lists_client, "get_posts")
+            method = getattr(self.lists_client, "get_followers")
             test_cursor = cursor(method, "test_id", max_results=2)
             pages = list(test_cursor.pages(2))  # Limit to 2 pages
             assert len(pages) == 2, f"Should get 2 pages, got {len(pages)}"
@@ -74,8 +74,8 @@ class TestListsPagination:
             assert len(second_data) == 1, "Second page should have 1 item"
 
 
-    def test_get_posts_cursor_items(self):
-        """Test pagination with items() for get_posts."""
+    def test_get_followers_cursor_items(self):
+        """Test pagination with items() for get_followers."""
         with patch.object(self.client, "session") as mock_session:
             # Mock response with paginated data
             mock_response = Mock()
@@ -94,7 +94,7 @@ class TestListsPagination:
             mock_response.raise_for_status.return_value = None
             mock_session.get.return_value = mock_response
             # Test item iteration
-            method = getattr(self.lists_client, "get_posts")
+            method = getattr(self.lists_client, "get_followers")
             test_cursor = cursor(method, "test_id", max_results=10)
             items = list(test_cursor.items(5))  # Limit to 5 items
             assert len(items) == 3, f"Should get 3 items, got {len(items)}"
@@ -105,15 +105,15 @@ class TestListsPagination:
                 ), "Items should have 'id' field"
 
 
-    def test_get_posts_pagination_parameters(self):
-        """Test that pagination parameters are handled correctly for get_posts."""
+    def test_get_followers_pagination_parameters(self):
+        """Test that pagination parameters are handled correctly for get_followers."""
         with patch.object(self.client, "session") as mock_session:
             mock_response = Mock()
             mock_response.status_code = 200
             mock_response.json.return_value = {"data": [], "meta": {"result_count": 0}}
             mock_response.raise_for_status.return_value = None
             mock_session.get.return_value = mock_response
-            method = getattr(self.lists_client, "get_posts")
+            method = getattr(self.lists_client, "get_followers")
             # Test with max_results parameter
             test_cursor = cursor(method, "test_id", max_results=5)
             list(test_cursor.pages(1))  # Trigger one request
@@ -308,20 +308,20 @@ class TestListsPagination:
                 ), "Pagination token should be passed correctly"
 
 
-    def test_get_followers_cursor_creation(self):
-        """Test that get_followers can be used with Cursor."""
-        method = getattr(self.lists_client, "get_followers")
+    def test_get_posts_cursor_creation(self):
+        """Test that get_posts can be used with Cursor."""
+        method = getattr(self.lists_client, "get_posts")
         # Should be able to create cursor without error
         try:
             test_cursor = cursor(method, "test_id", max_results=10)
             assert test_cursor is not None
             assert isinstance(test_cursor, Cursor)
         except PaginationError:
-            pytest.fail(f"Method get_followers should support pagination")
+            pytest.fail(f"Method get_posts should support pagination")
 
 
-    def test_get_followers_cursor_pages(self):
-        """Test pagination with pages() for get_followers."""
+    def test_get_posts_cursor_pages(self):
+        """Test pagination with pages() for get_posts."""
         with patch.object(self.client, "session") as mock_session:
             # Mock first page response
             first_page_response = Mock()
@@ -342,7 +342,7 @@ class TestListsPagination:
             # Return different responses for consecutive calls
             mock_session.get.side_effect = [first_page_response, second_page_response]
             # Test pagination
-            method = getattr(self.lists_client, "get_followers")
+            method = getattr(self.lists_client, "get_posts")
             test_cursor = cursor(method, "test_id", max_results=2)
             pages = list(test_cursor.pages(2))  # Limit to 2 pages
             assert len(pages) == 2, f"Should get 2 pages, got {len(pages)}"
@@ -358,8 +358,8 @@ class TestListsPagination:
             assert len(second_data) == 1, "Second page should have 1 item"
 
 
-    def test_get_followers_cursor_items(self):
-        """Test pagination with items() for get_followers."""
+    def test_get_posts_cursor_items(self):
+        """Test pagination with items() for get_posts."""
         with patch.object(self.client, "session") as mock_session:
             # Mock response with paginated data
             mock_response = Mock()
@@ -378,7 +378,7 @@ class TestListsPagination:
             mock_response.raise_for_status.return_value = None
             mock_session.get.return_value = mock_response
             # Test item iteration
-            method = getattr(self.lists_client, "get_followers")
+            method = getattr(self.lists_client, "get_posts")
             test_cursor = cursor(method, "test_id", max_results=10)
             items = list(test_cursor.items(5))  # Limit to 5 items
             assert len(items) == 3, f"Should get 3 items, got {len(items)}"
@@ -389,15 +389,15 @@ class TestListsPagination:
                 ), "Items should have 'id' field"
 
 
-    def test_get_followers_pagination_parameters(self):
-        """Test that pagination parameters are handled correctly for get_followers."""
+    def test_get_posts_pagination_parameters(self):
+        """Test that pagination parameters are handled correctly for get_posts."""
         with patch.object(self.client, "session") as mock_session:
             mock_response = Mock()
             mock_response.status_code = 200
             mock_response.json.return_value = {"data": [], "meta": {"result_count": 0}}
             mock_response.raise_for_status.return_value = None
             mock_session.get.return_value = mock_response
-            method = getattr(self.lists_client, "get_followers")
+            method = getattr(self.lists_client, "get_posts")
             # Test with max_results parameter
             test_cursor = cursor(method, "test_id", max_results=5)
             list(test_cursor.pages(1))  # Trigger one request
@@ -460,7 +460,7 @@ class TestListsPagination:
             empty_response.raise_for_status.return_value = None
             mock_session.get.return_value = empty_response
             # Pick first paginatable method for testing
-            method = getattr(self.lists_client, "get_posts")
+            method = getattr(self.lists_client, "get_followers")
             test_cursor = cursor(method, "test_id", max_results=10)
             # Should handle empty responses gracefully
             pages = list(test_cursor.pages(1))
