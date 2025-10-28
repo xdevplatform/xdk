@@ -2,150 +2,194 @@
  * OAuth2 authentication utilities for the X API.
  */
 
+import { CryptoUtils, generateCodeVerifier, generateCodeChallenge } from './crypto_utils.js';
+
 /**
  * OAuth2 configuration options
  */
 export interface OAuth2Config {
-    /** Client ID */
-    clientId: string;
-    /** Client secret */
-    clientSecret: string;
-    /** Redirect URI */
-    redirectUri: string;
-    /** Authorization URL */
-    authUrl?: string;
-    /** Token URL */
-    tokenUrl?: string;
-    /** Scopes to request */
-    scopes?: string[];
+  /** Client ID */
+  clientId: string;
+  /** Client secret (optional for public clients) */
+  clientSecret?: string;
+  /** Redirect URI */
+  redirectUri: string;
+  /** Scopes to request */
+  scope?: string[];
 }
 
 /**
  * OAuth2 token response
  */
 export interface OAuth2Token {
-    /** Access token */
-    accessToken: string;
-    /** Token type */
-    tokenType: string;
-    /** Expiration time in seconds */
-    expiresIn: number;
-    /** Refresh token */
-    refreshToken?: string;
-    /** Scopes granted */
-    scope?: string;
+  /** Access token */
+  access_token: string;
+  /** Token type */
+  token_type: string;
+  /** Expiration time in seconds */
+  expires_in: number;
+  /** Refresh token */
+  refresh_token?: string;
+  /** Scopes granted */
+  scope?: string;
 }
 
 /**
  * OAuth2 authentication handler
  */
-export class OAuth2Auth {
-    private config: OAuth2Config;
-    private token?: OAuth2Token;
+export class OAuth2 {
+  private config: OAuth2Config;
+  private token?: OAuth2Token;
+  private codeVerifier?: string;
+  private codeChallenge?: string;
 
-    constructor(config: OAuth2Config) {
-        this.config = {
-            authUrl: 'https://x.com/i/oauth2/authorize',
-            tokenUrl: 'https://api.x.com/2/oauth2/token',
-            scopes: ['tweet.read', 'users.read'],
-            ...config
-        };
+  constructor(config: OAuth2Config) {
+    this.config = {
+      scope: ['tweet.read', 'users.read'],
+      ...config
+    };
+  }
+
+  /**
+   * Get the authorization URL
+   * @param state Optional state parameter for security
+   * @returns Authorization URL
+   */
+  async getAuthorizationUrl(state?: string): Promise<string> {
+    const params = new URLSearchParams({
+      response_type: 'code',
+      client_id: this.config.clientId,
+      redirect_uri: this.config.redirectUri,
+      scope: this.config.scope?.join(' ') || '',
+      state: state || ''
+    });
+
+    // PKCE parameters are handled separately - not generated automatically
+
+    return `https://x.com/i/oauth2/authorize?${params.toString()}`;
+  }
+
+  /**
+   * Exchange authorization code for tokens
+   * @param code Authorization code from callback
+   * @param codeVerifier Optional code verifier for PKCE
+   * @returns Promise with OAuth2 token
+   */
+  async exchangeCode(code: string, codeVerifier?: string): Promise<OAuth2Token> {
+    const params = new URLSearchParams({
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: this.config.redirectUri
+    });
+
+    // Add PKCE code verifier if provided
+    if (codeVerifier) {
+      params.append('code_verifier', codeVerifier);
     }
 
-    /**
-     * Get the authorization URL
-     */
-    getAuthorizationUrl(state?: string): string {
-        const params = new URLSearchParams({
-            response_type: 'code',
-            client_id: this.config.clientId,
-            redirect_uri: this.config.redirectUri,
-            scope: this.config.scopes?.join(' ') || '',
-            state: state || ''
-        });
+    // Prepare headers
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/x-www-form-urlencoded'
+    };
 
-        return `${this.config.authUrl}?${params.toString()}`;
+    // Add Basic Auth header if client secret is provided (optional but recommended)
+    if (this.config.clientSecret) {
+      const credentials = this._base64Encode(`${this.config.clientId}:${this.config.clientSecret}`);
+      headers['Authorization'] = `Basic ${credentials}`;
+    } else {
+      // Only add client_id to body if no client_secret (public client)
+      params.append('client_id', this.config.clientId);
+    }
+    
+    const response = await fetch('https://api.x.com/2/oauth2/token', {
+      method: 'POST',
+      headers,
+      body: params.toString()
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => response.text());
+      throw new Error(`HTTP error! status: ${response.status}, body: ${JSON.stringify(errorData)}`);
     }
 
-    /**
-     * Exchange authorization code for tokens
-     */
-    async exchangeCode(code: string): Promise<OAuth2Token> {
-        const params = new URLSearchParams({
-            grant_type: 'authorization_code',
-            code,
-            redirect_uri: this.config.redirectUri,
-            client_id: this.config.clientId,
-            client_secret: this.config.clientSecret
-        });
+    const data = await response.json();
+    this.token = {
+      access_token: data.access_token,
+      token_type: data.token_type,
+      expires_in: data.expires_in,
+      refresh_token: data.refresh_token,
+      scope: data.scope
+    };
 
-        const response = await fetch(this.config.tokenUrl!, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: params.toString()
-        });
+    return this.token;
+  }
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+  /**
+   * Get the current token
+   * @returns Current OAuth2 token if available
+   */
+  getToken(): OAuth2Token | undefined {
+    return this.token;
+  }
 
-        const data = await response.json();
-        this.token = {
-            accessToken: data.access_token,
-            tokenType: data.token_type,
-            expiresIn: data.expires_in,
-            refreshToken: data.refresh_token,
-            scope: data.scope
-        };
+  /**
+   * Get the current code verifier (for PKCE)
+   * @returns Current code verifier if available
+   */
+  getCodeVerifier(): string | undefined {
+    return this.codeVerifier;
+  }
 
-        return this.token;
+
+  /**
+   * Manually set PKCE parameters
+   * @param codeVerifier The code verifier to use
+   * @param codeChallenge Optional code challenge (will be generated if not provided)
+   */
+  async setPkceParameters(codeVerifier: string, codeChallenge?: string): Promise<void> {
+    this.codeVerifier = codeVerifier;
+    if (codeChallenge) {
+      this.codeChallenge = codeChallenge;
+    } else {
+      this.codeChallenge = await generateCodeChallenge(codeVerifier);
     }
+  }
 
-    /**
-     * Refresh the access token
-     */
-    async refreshToken(): Promise<OAuth2Token> {
-        if (!this.token?.refreshToken) {
-            throw new Error('No refresh token available');
-        }
+  /**
+   * Get the current code challenge (for PKCE)
+   * @returns Current code challenge if available
+   */
+  getCodeChallenge(): string | undefined {
+    return this.codeChallenge;
+  }
 
-        const params = new URLSearchParams({
-            grant_type: 'refresh_token',
-            refresh_token: this.token.refreshToken,
-            client_id: this.config.clientId,
-            client_secret: this.config.clientSecret
-        });
-
-        const response = await fetch(this.config.tokenUrl!, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            },
-            body: params.toString()
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const data = await response.json();
-        this.token = {
-            accessToken: data.access_token,
-            tokenType: data.token_type,
-            expiresIn: data.expires_in,
-            refreshToken: data.refresh_token || this.token.refreshToken,
-            scope: data.scope
-        };
-
-        return this.token;
+  /**
+   * Base64 encode a string (with fallback for environments without btoa)
+   * @param str String to encode
+   * @returns Base64 encoded string
+   */
+  private _base64Encode(str: string): string {
+    if (typeof btoa !== 'undefined') {
+      return btoa(str);
+    } else if (typeof Buffer !== 'undefined') {
+      // Node.js fallback
+      return Buffer.from(str, 'utf8').toString('base64');
+    } else {
+      // Manual base64 encoding fallback
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+      let result = '';
+      let i = 0;
+      while (i < str.length) {
+        const a = str.charCodeAt(i++);
+        const b = i < str.length ? str.charCodeAt(i++) : 0;
+        const c = i < str.length ? str.charCodeAt(i++) : 0;
+        const bitmap = (a << 16) | (b << 8) | c;
+        result += chars.charAt((bitmap >> 18) & 63);
+        result += chars.charAt((bitmap >> 12) & 63);
+        result += i - 2 < str.length ? chars.charAt((bitmap >> 6) & 63) : '=';
+        result += i - 1 < str.length ? chars.charAt(bitmap & 63) : '=';
+      }
+      return result;
     }
-
-    /**
-     * Get the current token
-     */
-    getToken(): OAuth2Token | undefined {
-        return this.token;
-    }
+  }
 } 

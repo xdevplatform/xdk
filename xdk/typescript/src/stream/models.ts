@@ -3,15 +3,12 @@
  */
 
 /**
- * Response for posts
- * A Tweet or error that can be returned by the streaming Tweet API. The values returned with a successful streamed Tweet includes the user provided rules that the Tweet matched.
+ * Response for getRuleCounts
  */
-export interface StreamPostsResponse {
+export interface StreamGetRuleCountsResponse {
+  /** A count of user-provided stream filtering rules at the application and project levels. */
   data?: Record<string, any>;
   errors?: Array<any>;
-  includes?: Record<string, any>;
-  /** The list of rules which matched the Tweet */
-  matchingRules?: Array<any>;
 }
 
 /**
@@ -24,52 +21,19 @@ export interface StreamPostsFirehosePtResponse {
 }
 
 /**
- * Response for postsFirehose
+ * Response for postsSample10
  */
-export interface StreamPostsFirehoseResponse {
+export interface StreamPostsSample10Response {
   data?: Record<string, any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
 }
 
 /**
- * Response for postsFirehoseJa
+ * Response for usersCompliance
+ * User compliance stream events.
  */
-export interface StreamPostsFirehoseJaResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for postsSample
- */
-export interface StreamPostsSampleResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for likesCompliance
- * Likes compliance stream events.
- */
-export interface StreamLikesComplianceResponse {}
-
-/**
- * Response for postsCompliance
- * Tweet compliance stream events.
- */
-export interface StreamPostsComplianceResponse {}
-
-/**
- * Response for getRuleCounts
- */
-export interface StreamGetRuleCountsResponse {
-  /** A count of user-provided stream filtering rules at the application and project levels. */
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
+export interface StreamUsersComplianceResponse {}
 
 /**
  * Response for likesFirehose
@@ -79,6 +43,24 @@ export interface StreamLikesFirehoseResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
+}
+
+/**
+ * Response for postsCompliance
+ * Tweet compliance stream events.
+ */
+export interface StreamPostsComplianceResponse {}
+
+/**
+ * Response for posts
+ * A Tweet or error that can be returned by the streaming Tweet API. The values returned with a successful streamed Tweet includes the user provided rules that the Tweet matched.
+ */
+export interface StreamPostsResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  /** The list of rules which matched the Tweet */
+  matchingRules?: Array<any>;
 }
 
 /**
@@ -100,6 +82,15 @@ export interface StreamPostsFirehoseKoResponse {
 }
 
 /**
+ * Response for postsFirehose
+ */
+export interface StreamPostsFirehoseResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+}
+
+/**
  * Response for likesSample10
  */
 export interface StreamLikesSample10Response {
@@ -110,25 +101,19 @@ export interface StreamLikesSample10Response {
 }
 
 /**
- * Response for labelsCompliance
- * Tweet label stream events.
+ * Response for likesCompliance
+ * Likes compliance stream events.
  */
-export interface StreamLabelsComplianceResponse {}
+export interface StreamLikesComplianceResponse {}
 
 /**
- * Response for postsSample10
+ * Response for postsFirehoseJa
  */
-export interface StreamPostsSample10Response {
+export interface StreamPostsFirehoseJaResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
 }
-
-/**
- * Response for usersCompliance
- * User compliance stream events.
- */
-export interface StreamUsersComplianceResponse {}
 
 /**
  * Response for getRules
@@ -152,4 +137,19 @@ export interface StreamUpdateRulesResponse {
   data?: Array<any>;
   errors?: Array<any>;
   meta: Record<string, any>;
+}
+
+/**
+ * Response for labelsCompliance
+ * Tweet label stream events.
+ */
+export interface StreamLabelsComplianceResponse {}
+
+/**
+ * Response for postsSample
+ */
+export interface StreamPostsSampleResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
 }

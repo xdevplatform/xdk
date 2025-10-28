@@ -3,6 +3,22 @@
  */
 
 /**
+ * Response for validate
+ */
+export interface WebhooksValidateResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for delete
+ */
+export interface WebhooksDeleteResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
  * Response for get
  */
 export interface WebhooksGetResponse {
@@ -29,20 +45,4 @@ export interface WebhooksCreateResponse {
   /** The callback URL of the webhook. */
   url?: string;
   valid?: boolean;
-}
-
-/**
- * Response for validate
- */
-export interface WebhooksValidateResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for delete
- */
-export interface WebhooksDeleteResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
 }

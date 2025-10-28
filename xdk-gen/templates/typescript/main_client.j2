@@ -5,10 +5,24 @@
  */
 
 import { httpClient } from "./http-client.js";
+import { 
+  TwitterPaginator, 
+  TweetPaginator, 
+  UserPaginator, 
+  ListPaginator, 
+  IdPaginator,
+  WelcomeMessagePaginator,
+  EventPaginator,
+  Paginator
+} from "./paginator.js";
 
 {% for tag in tags %}
+{% if tag != 'Stream' %}
 import { {{ tag | pascal_case }}Client } from "./{{ tag | snake_case }}/index.js";
+{% endif %}
 {% endfor %}
+
+// Import the new event-driven StreamClient
 
 /**
  * Configuration options for the X API client
@@ -65,14 +79,16 @@ export interface RequestOptions {
   signal?: AbortSignal;
   /** Request body */
   body?: string;
+  /** Return raw HTTP wrapper instead of parsed body */
+  raw?: boolean;
 }
 
 /**
  * Response wrapper with metadata
  */
 export interface ApiResponse<T = any> {
-  /** Response data */
-  data: T;
+  /** Response body */
+  body: T;
   /** Response headers */
   headers: Headers;
   /** HTTP status code */
@@ -97,13 +113,6 @@ export interface PaginationMeta {
   result_count?: number;
 }
 
-/**
- * Paginated response wrapper
- */
-export interface PaginatedResponse<T = any> extends ApiResponse<T[]> {
-  /** Pagination metadata */
-  meta: PaginationMeta;
-}
 
 /**
  * Main client class for the X API
@@ -178,7 +187,7 @@ export class Client {
     method: string,
     path: string,
     options: RequestOptions = {}
-  ): Promise<ApiResponse<T>> {
+  ): Promise<T> {
     const url = `${this.baseUrl}${path}`;
     const headers = new Headers(this.headers);
     
@@ -216,6 +225,7 @@ export class Client {
         headers,
         signal: options.signal,
         body: options.body,
+        timeout: options.timeout !== undefined ? options.timeout : this.timeout,
       });
 
       if (!response.ok) {
@@ -235,6 +245,11 @@ export class Client {
         );
       }
 
+      // For streaming requests, return the raw Response object
+      if (options.raw) {
+        return response as any; // Return the actual Response object for streaming
+      }
+
       let data: T;
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('application/json')) {
@@ -243,13 +258,8 @@ export class Client {
         data = await response.text() as T;
       }
 
-      return {
-        data,
-        headers: response.headers,
-        status: response.status,
-        statusText: response.statusText,
-        url: response.url || url,
-      };
+      // Return parsed body for non-streaming requests
+      return data;
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;
@@ -284,5 +294,82 @@ export class Client {
    */
   isAuthenticated(): boolean {
     return !!(this.bearerToken || this.accessToken || (this.oauth1 && this.oauth1.accessToken));
+  }
+
+  /**
+   * Map OpenAPI security scheme names to internal authentication types
+   * @param securitySchemeName The security scheme name from OpenAPI
+   * @returns Array of internal authentication types
+   */
+  public mapSecuritySchemeToAuthTypes(securitySchemeName: string): string[] {
+    // Mappings for X/Twitter API security schemes
+    const schemeMapping: Record<string, string[]> = {
+      'BearerToken': ['bearer_token'],           // App-only OAuth2.0
+      'OAuth2UserToken': ['oauth2_user_context'], // OAuth2.0 User Context
+      'UserToken': ['oauth1'],                   // OAuth1.0a User Context
+      // Fallback mappings for common variations
+      'OAuth2': ['bearer_token', 'oauth2_user_context'],
+      'OAuth1': ['oauth1'],
+      'Bearer': ['bearer_token'],
+      'OAuth2User': ['oauth2_user_context'],
+      'OAuth1User': ['oauth1'],
+    };
+
+    return schemeMapping[securitySchemeName] || [securitySchemeName.toLowerCase()];
+  }
+
+  /**
+   * Validate that the required authentication method is available
+   * @param requiredAuthTypes Array of required authentication types (OpenAPI security scheme names)
+   * @param operationName Name of the operation for error messages
+   */
+  public validateAuthentication(requiredAuthTypes: string[], operationName: string): void {
+    if (requiredAuthTypes.length === 0) {
+      return; // No authentication required
+    }
+
+    const availableAuthTypes: string[] = [];
+    
+    if (this.bearerToken) {
+      availableAuthTypes.push('bearer_token');
+    }
+    if (this.accessToken) {
+      availableAuthTypes.push('oauth2_user_context');
+    }
+    if (this.oauth1 && this.oauth1.accessToken) {
+      availableAuthTypes.push('oauth1');
+    }
+
+    // Map OpenAPI security schemes to internal auth types
+    const mappedRequiredTypes = requiredAuthTypes.flatMap(scheme => 
+      this.mapSecuritySchemeToAuthTypes(scheme)
+    );
+
+    // Check if any of the required auth types are available
+    const hasRequiredAuth = mappedRequiredTypes.some(required => 
+      availableAuthTypes.includes(required)
+    );
+
+    if (!hasRequiredAuth) {
+      const availableStr = availableAuthTypes.length > 0 ? availableAuthTypes.join(', ') : 'none';
+      const requiredStr = requiredAuthTypes.join(', ');
+      throw new Error(
+        `Authentication required for ${operationName}. ` +
+        `Required: ${requiredStr}. ` +
+        `Available: ${availableStr}. ` +
+        `Please configure the appropriate authentication method.`
+      );
+    }
+  }
+
+  /**
+   * Get available authentication types
+   */
+  getAvailableAuthTypes(): string[] {
+    const authTypes: string[] = [];
+    if (this.bearerToken) authTypes.push('bearer_token');
+    if (this.accessToken) authTypes.push('oauth2_user_context');
+    if (this.oauth1 && this.oauth1.accessToken) authTypes.push('oauth1');
+    return authTypes;
   }
 } 

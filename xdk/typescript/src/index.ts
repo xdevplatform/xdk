@@ -42,51 +42,59 @@ export type { ClientConfig } from './client.js';
 
 // Error handling
 export { ApiError } from './client.js';
-export type { RequestOptions, ApiResponse, PaginatedResponse, PaginationMeta } from './client.js';
+export type { RequestOptions, ApiResponse, PaginationMeta } from './client.js';
 
 // HTTP client
 export { httpClient, HttpClient } from './http-client.js';
 export type { RequestOptions as HttpClientRequestOptions, HttpResponse } from './http-client.js';
 
 // Authentication
-export { OAuth2Auth } from './oauth2_auth.js';
-export type { OAuth2Config } from './oauth2_auth.js';
+export { OAuth2 } from './oauth2_auth.js';
+export type { OAuth2Config, OAuth2Token } from './oauth2_auth.js';
+export { OAuth1 } from './oauth1_auth.js';
+export type { OAuth1Config, OAuth1RequestToken, OAuth1AccessToken } from './oauth1_auth.js';
+
+// Crypto utilities
+export { CryptoUtils, hmacSha1, generateNonce, generateTimestamp, generateCodeVerifier, generateCodeChallenge } from './crypto_utils.js';
+
+// Streaming
+export type { StreamListener, TweetStreamListener } from './stream_listener.js';
 
 // Client modules and their types
-
-export * from './general/index.js';
-
-export * from './webhooks/index.js';
-
-export * from './account_activity/index.js';
-
-export * from './usage/index.js';
-
-export * from './community_notes/index.js';
-
-export * from './compliance/index.js';
-
-export * from './communities/index.js';
-
-export * from './trends/index.js';
-
-export * from './direct_messages/index.js';
-
-export * from './stream/index.js';
-
-export * from './connection/index.js';
-
-export * from './bookmarks/index.js';
-
-export * from './spaces/index.js';
 
 export * from './media/index.js';
 
 export * from './lists/index.js';
 
+export * from './posts/index.js';
+
+export * from './stream/index.js';
+
+export * from './trends/index.js';
+
+export * from './spaces/index.js';
+
+export * from './account_activity/index.js';
+
+export * from './usage/index.js';
+
+export * from './general/index.js';
+
+export * from './bookmarks/index.js';
+
+export * from './webhooks/index.js';
+
+export * from './compliance/index.js';
+
 export * from './users/index.js';
 
-export * from './posts/index.js';
+export * from './community_notes/index.js';
+
+export * from './connection/index.js';
+
+export * from './direct_messages/index.js';
+
+export * from './communities/index.js';
 
 export * from './aaasubscriptions/index.js';
 

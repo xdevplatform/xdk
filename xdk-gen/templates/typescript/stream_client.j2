@@ -1,0 +1,276 @@
+/**
+ * Stream client for the X API.
+ *
+ * This module provides a client for interacting with the streaming endpoints of the X API.
+ */
+
+import { Client, ApiResponse, RequestOptions } from '../client.js';
+import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
+import {
+{% for operation in operations -%}
+{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
+  {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response,
+{% endif %}
+{% endfor -%}
+} from './models.js';
+
+{% for operation in operations -%}
+{% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+/**
+ * Options for {{ operation.operation_id | camel_case }} method
+ */
+export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}StreamingOptions {
+    {% for param in operation.parameters | rejectattr('required') %}
+    {% if param.name %}
+    /** {% if param.description %}{{ param.description }}{% else %}{{ param.name }}{% endif %} */
+    {{ param.name | camel_case }}?: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %};
+    {% endif %}
+    {% endfor %}
+    {% if operation.request_body and not operation.request_body.required %}
+    /** Request body */
+    body?: any;
+    {% endif %}
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+    /** AbortSignal for cancelling the request */
+    signal?: AbortSignal;
+}
+{% endif %}
+{% endfor %}
+
+export class {{ tag|pascal_case }}Client {
+    private client: Client;
+
+    constructor(client: Client) {
+        this.client = client;
+    }
+
+{% for operation in operations %}
+{% if operation["x-twitter-streaming"] or ('/stream' in operation.path and '/rules' not in operation.path) %}
+    /**
+     * {{ operation.summary | default("") }}{% if operation.description %}
+     * {{ operation.description }}{% endif %}
+     * 
+     * Returns an event-driven stream that's easy to use.
+     * Use .on() to listen for events like 'data', 'error', 'close'.
+     * Also supports async iteration with for await...of.
+     */
+    async {{ operation.operation_id | camel_case }}(
+        {# Required parameters #}
+        {% for param in operation.parameters | selectattr('required') %}
+        {% if param.name %}
+        {{ param.name | camel_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
+        {% endif %}
+        {% endfor %}
+        {# Required request body #}
+        {% if operation.request_body and operation.request_body.required %}
+        body: any,
+        {% endif %}
+        {# Options object for all optional parameters #}
+        {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        options: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}StreamingOptions = {}
+        {% endif %}
+    ): Promise<EventDrivenStream> {
+        // Validate authentication requirements
+        {% if operation.security %}
+        const requiredAuthTypes = [];
+        {% for security_req in operation.security %}
+        {% for auth_type in security_req %}
+        requiredAuthTypes.push('{{ auth_type }}');
+        {% endfor %}
+        {% endfor %}
+        this.client.validateAuthentication(requiredAuthTypes, '{{ operation.operation_id | camel_case }}');
+        {% endif %}
+
+        // Destructure options with defaults
+        {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        const {
+            {% for param in operation.parameters | rejectattr('required') %}
+            {% if param.name %}
+            {{ param.name | camel_case }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
+            {% endif %}
+            {% endfor %}
+            {% if operation.request_body and not operation.request_body.required %}
+            body,
+            {% endif %}
+            requestOptions: reqOpts = {}
+        } = options;
+        {% else %}
+        const reqOpts = {};
+        {% endif %}
+
+        // Build query parameters
+        const params = new URLSearchParams();
+        {% for param in operation.parameters %}
+        {% if param.name %}
+        {% if param.in == "query" %}
+        {% if param.required %}
+        if ({{ param.name | camel_case }} !== undefined) {
+            params.append('{{ param.name }}', String({{ param.name | camel_case }}));
+        }
+        {% else %}
+        if ({{ param.name | camel_case }} !== undefined) {
+            {% if param.schema and param.schema.type == 'array' %}
+            params.append('{{ param.name }}', {{ param.name | camel_case }}.join(','));
+            {% else %}
+            params.append('{{ param.name }}', String({{ param.name | camel_case }}));
+            {% endif %}
+        }
+        {% endif %}
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+        // Make the authenticated request using the main client's request method
+        // We need raw: true to get the raw Response object for streaming
+        const url = '{{ operation.path }}' + (params.toString() ? `?${params.toString()}` : '');
+        
+        // For streaming requests, we don't want to timeout the initial connection
+        // Instead, we'll handle timeouts at the stream level
+        const response = await this.client.request(
+            '{{ operation.method | upper }}',
+            url,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...reqOpts.headers,
+                },
+                {% if operation.request_body %}
+                body: JSON.stringify({% if operation.request_body.required %}body{% else %}body{% endif %}),
+                {% endif %}
+                signal: options.signal,
+                raw: true, // Get raw Response object for streaming
+                timeout: 0, // Disable timeout for streaming requests
+                ...reqOpts,
+            }
+        ) as Response;
+
+        // Handle errors
+        if (!response.ok) {
+            throw new Error(
+                `HTTP ${response.status}: ${response.statusText}`
+            );
+        }
+
+        // Return the readable stream
+        // The response.body is the actual ReadableStream for streaming
+        if (!response.body) {
+            throw new Error('Response body is not available for streaming');
+        }
+
+        // Wrap the ReadableStream in an event-driven interface
+        const eventStream = new EventDrivenStream();
+        await eventStream.connect(response.body);
+        return eventStream;
+    }
+{% endif %}
+
+{% endfor %}
+
+{% for operation in operations %}
+{% if not operation["x-twitter-streaming"] and not ('/stream' in operation.path and '/rules' not in operation.path) %}
+    /**
+     * {{ operation.summary | default("") }}{% if operation.description %}
+     * {{ operation.description }}{% endif %}
+     * 
+     * @returns Promise with the API response
+     */
+    async {{ operation.operation_id | camel_case }}(
+        {# Required parameters #}
+        {% for param in operation.parameters | selectattr('required') %}
+        {% if param.name %}
+        {{ param.name | camel_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
+        {% endif %}
+        {% endfor %}
+        {# Required request body #}
+        {% if operation.request_body and operation.request_body.required %}
+        body: any,
+        {% endif %}
+        {# Options object for all optional parameters #}
+        {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        options: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}StreamingOptions = {}
+        {% endif %}
+    ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}any{% endif %}> {
+        // Validate authentication requirements
+        {% if operation.security %}
+        const requiredAuthTypes = [];
+        {% for security_req in operation.security %}
+        {% for auth_type in security_req %}
+        requiredAuthTypes.push('{{ auth_type }}');
+        {% endfor %}
+        {% endfor %}
+        this.client.validateAuthentication(requiredAuthTypes, '{{ operation.operation_id | camel_case }}');
+        {% endif %}
+
+        // Destructure options with defaults
+        {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        const {
+            {% for param in operation.parameters | rejectattr('required') %}
+            {% if param.name %}
+            {{ param.name | camel_case }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
+            {% endif %}
+            {% endfor %}
+            {% if operation.request_body and not operation.request_body.required %}
+            body,
+            {% endif %}
+            requestOptions: reqOpts = {}
+        } = options;
+        {% else %}
+        const reqOpts = {};
+        {% endif %}
+
+        // Build query parameters
+        const params = new URLSearchParams();
+        {% for param in operation.parameters %}
+        {% if param.name %}
+        {% if param.in == "query" %}
+        {% if param.required %}
+        if ({{ param.name | camel_case }} !== undefined) {
+            params.append('{{ param.name }}', String({{ param.name | camel_case }}));
+        }
+        {% else %}
+        if ({{ param.name | camel_case }} !== undefined) {
+            {% if param.schema and param.schema.type == 'array' %}
+            params.append('{{ param.name }}', {{ param.name | camel_case }}.join(','));
+            {% else %}
+            params.append('{{ param.name }}', String({{ param.name | camel_case }}));
+            {% endif %}
+        }
+        {% endif %}
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+        // Build path parameters
+        let path = `{{ operation.path }}`;
+        {% for param in operation.parameters %}
+        {% if param.name %}
+        {% if param.in == "path" %}
+        path = path.replace(`{${'{{ param.name }}'}}`, String({{ param.name | camel_case }}));
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+        // Prepare request options
+        const finalRequestOptions: RequestOptions = {
+            headers: {
+                'Content-Type': 'application/json',
+                ...reqOpts.headers,
+            },
+            signal: options.signal,
+            {% if operation.request_body %}
+            body: JSON.stringify({% if operation.request_body.required %}body{% else %}body{% endif %}),
+            {% endif %}
+            ...reqOpts,
+        };
+
+        // Make the request
+        return this.client.request<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}any{% endif %}>(
+            '{{ operation.method | upper }}',
+            path + (params.toString() ? `?${params.toString()}` : ''),
+            finalRequestOptions
+        );
+    }
+{% endif %}
+{% endfor %}
+}

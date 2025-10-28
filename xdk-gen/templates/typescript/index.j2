@@ -42,7 +42,7 @@ export type { ClientConfig } from './client.js';
 
 // Error handling
 export { ApiError } from './client.js';
-export type { RequestOptions, ApiResponse, PaginatedResponse, PaginationMeta } from './client.js';
+export type { RequestOptions, ApiResponse, PaginationMeta } from './client.js';
 
 // HTTP client
 export { httpClient, HttpClient } from './http-client.js';
@@ -55,7 +55,10 @@ export { OAuth1 } from './oauth1_auth.js';
 export type { OAuth1Config, OAuth1RequestToken, OAuth1AccessToken } from './oauth1_auth.js';
 
 // Crypto utilities
-export { CryptoUtils, hmacSha1, generateNonce, generateTimestamp } from './crypto_utils.js';
+export { CryptoUtils, hmacSha1, generateNonce, generateTimestamp, generateCodeVerifier, generateCodeChallenge } from './crypto_utils.js';
+
+// Streaming
+export type { StreamListener, TweetStreamListener } from './stream_listener.js';
 
 // Client modules and their types
 {% for tag in tags %}

@@ -35,14 +35,17 @@ language! {
         multiple {
             render "models" => "src/{}/models.ts",
             render "client_module" => "src/{}/index.ts",
-            render "client_class" => "src/{}/client.ts"
+            render "client_class" => "src/{}/client.ts",
+            render "stream_client" => "src/{}/stream_client.ts",
+            render "event_driven_stream" => "src/{}/event_driven_stream.ts"
         },
         render "main_client" => "src/client.ts",
         render "http_client" => "src/http-client.ts",
         render "oauth2_auth" => "src/oauth2_auth.ts",
-        render "oauth1_auth" => "src/oauth1_auth.ts",
-        render "crypto_utils" => "src/crypto_utils.ts",
-        render "paginator" => "src/paginator.ts",
+                render "oauth1_auth" => "src/oauth1_auth.ts",
+                render "crypto_utils" => "src/crypto_utils.ts",
+                render "stream_listener" => "src/stream_listener.ts",
+                render "paginator" => "src/paginator.ts",
         render "index" => "src/index.ts",
         render "package_json" => "package.json",
         render "tsconfig" => "tsconfig.json",

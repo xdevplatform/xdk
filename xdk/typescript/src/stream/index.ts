@@ -6,3 +6,6 @@
 
 export * from './client.js';
 export * from './models.js';
+
+export * from './stream_client.js';
+export * from './event_driven_stream.js';

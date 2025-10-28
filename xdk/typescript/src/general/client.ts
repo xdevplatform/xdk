@@ -5,6 +5,13 @@
  */
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
+import {
+  TwitterPaginator,
+  TweetPaginator,
+  UserPaginator,
+  ListPaginator,
+  IdPaginator,
+} from '../paginator.js';
 import { GeneralGetOpenApiSpecResponse } from './models.js';
 
 /**
@@ -18,28 +25,30 @@ export class GeneralClient {
   }
 
   /**
-     * Get OpenAPI Spec.
-     * Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)* @param options Additional request options
-     * @returns Promise with the API response
-     */
-  async getOpenApiSpec(
-    options?: RequestOptions
-  ): Promise<ApiResponse<GeneralGetOpenApiSpecResponse>> {
+   * Get OpenAPI Spec.
+   * Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)* @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getOpenApiSpec(): Promise<GeneralGetOpenApiSpecResponse> {
+    // Destructure options
+
+    const reqOpts = {};
+
+    // Build the path with path parameters
+    let path = '/2/openapi.json';
+
+    // Build query parameters
     const params = new URLSearchParams();
 
-    const path = `/2/openapi.json`;
-
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-      },
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
     };
 
     return this.client.request<GeneralGetOpenApiSpecResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
-      requestOptions
+      finalRequestOptions
     );
   }
 }

@@ -5,6 +5,13 @@
  */
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
+import {
+  TwitterPaginator,
+  TweetPaginator,
+  UserPaginator,
+  ListPaginator,
+  IdPaginator,
+} from '../paginator.js';
 import { ConnectionDeleteAllResponse } from './models.js';
 
 /**
@@ -18,28 +25,30 @@ export class ConnectionClient {
   }
 
   /**
-     * Terminate all connections
-     * Terminates all active streaming connections for the authenticated application.* @param options Additional request options
-     * @returns Promise with the API response
-     */
-  async deleteAll(
-    options?: RequestOptions
-  ): Promise<ApiResponse<ConnectionDeleteAllResponse>> {
+   * Terminate all connections
+   * Terminates all active streaming connections for the authenticated application.* @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async deleteAll(): Promise<ConnectionDeleteAllResponse> {
+    // Destructure options
+
+    const reqOpts = {};
+
+    // Build the path with path parameters
+    let path = '/2/connections/all';
+
+    // Build query parameters
     const params = new URLSearchParams();
 
-    const path = `/2/connections/all`;
-
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-      },
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
     };
 
     return this.client.request<ConnectionDeleteAllResponse>(
       'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
-      requestOptions
+      finalRequestOptions
     );
   }
 }

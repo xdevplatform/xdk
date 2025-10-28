@@ -6,9 +6,27 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
+  TwitterPaginator,
+  TweetPaginator,
+  UserPaginator,
+  ListPaginator,
+  IdPaginator,
+} from '../paginator.js';
+import {
   AaasubscriptionsCreateAccountActivitySubscriptionRequest,
   AaasubscriptionsCreateAccountActivitySubscriptionResponse,
 } from './models.js';
+
+/**
+ * Options for createAccountActivitySubscription method
+ */
+export interface AaasubscriptionsCreateAccountActivitySubscriptionOptions {
+  /** Request body */
+  body?: AaasubscriptionsCreateAccountActivitySubscriptionRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
 
 /**
  * Client for Aaasubscriptions operations
@@ -21,44 +39,44 @@ export class AaasubscriptionsClient {
   }
 
   /**
-     * Create subscription
-     * Creates an Account Activity subscription for the user and the given webhook.
-     * @param webhookId The webhook ID to check subscription against.* @param body Request body* @param options Additional request options
-     * @returns Promise with the API response
-     */
+   * Create subscription
+   * Creates an Account Activity subscription for the user and the given webhook.
+   * @param webhookId The webhook ID to check subscription against.* @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
   async createAccountActivitySubscription(
     webhookId: string,
-    body?: AaasubscriptionsCreateAccountActivitySubscriptionRequest,
-    options?: RequestOptions
-  ): Promise<
-    ApiResponse<AaasubscriptionsCreateAccountActivitySubscriptionResponse>
-  > {
+    options: AaasubscriptionsCreateAccountActivitySubscriptionOptions = {}
+  ): Promise<AaasubscriptionsCreateAccountActivitySubscriptionResponse> {
+    // Destructure options
+
+    const {
+      body,
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build the path with path parameters
+    let path = '/2/account_activity/webhooks/{webhook_id}/subscriptions/all';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    // Build query parameters
     const params = new URLSearchParams();
 
-    const path = `/2/account_activity/webhooks/{webhook_id}/subscriptions/all`.replace(
-      '{webhook_id}',
-      String(webhookId)
-    );
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
 
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-
-        'Content-Type': 'application/json',
-      },
+      ...reqOpts,
     };
-
-    if (body) {
-      requestOptions.body = JSON.stringify(body);
-    }
 
     return this.client.request<
       AaasubscriptionsCreateAccountActivitySubscriptionResponse
     >(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
-      requestOptions
+      finalRequestOptions
     );
   }
 }

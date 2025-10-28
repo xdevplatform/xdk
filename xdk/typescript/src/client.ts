@@ -4,43 +4,93 @@
  * This module provides the main client class for interacting with the X API.
  */
 
-import { httpClient } from './http-client.js';
+import { httpClient } from "./http-client.js";
+import { 
+  TwitterPaginator, 
+  TweetPaginator, 
+  UserPaginator, 
+  ListPaginator, 
+  IdPaginator,
+  WelcomeMessagePaginator,
+  EventPaginator,
+  Paginator
+} from "./paginator.js";
 
-import { GeneralClient } from './general/index.js';
 
-import { WebhooksClient } from './webhooks/index.js';
 
-import { AccountActivityClient } from './account_activity/index.js';
+import { MediaClient } from "./media/index.js";
 
-import { UsageClient } from './usage/index.js';
 
-import { CommunityNotesClient } from './community_notes/index.js';
 
-import { ComplianceClient } from './compliance/index.js';
+import { ListsClient } from "./lists/index.js";
 
-import { CommunitiesClient } from './communities/index.js';
 
-import { TrendsClient } from './trends/index.js';
 
-import { DirectMessagesClient } from './direct_messages/index.js';
+import { PostsClient } from "./posts/index.js";
 
-import { StreamClient } from './stream/index.js';
 
-import { ConnectionClient } from './connection/index.js';
 
-import { BookmarksClient } from './bookmarks/index.js';
+import { StreamClient } from "./stream/index.js";
 
-import { SpacesClient } from './spaces/index.js';
 
-import { MediaClient } from './media/index.js';
 
-import { ListsClient } from './lists/index.js';
+import { TrendsClient } from "./trends/index.js";
 
-import { UsersClient } from './users/index.js';
 
-import { PostsClient } from './posts/index.js';
 
-import { AaasubscriptionsClient } from './aaasubscriptions/index.js';
+import { SpacesClient } from "./spaces/index.js";
+
+
+
+import { AccountActivityClient } from "./account_activity/index.js";
+
+
+
+import { UsageClient } from "./usage/index.js";
+
+
+
+import { GeneralClient } from "./general/index.js";
+
+
+
+import { BookmarksClient } from "./bookmarks/index.js";
+
+
+
+import { WebhooksClient } from "./webhooks/index.js";
+
+
+
+import { ComplianceClient } from "./compliance/index.js";
+
+
+
+import { UsersClient } from "./users/index.js";
+
+
+
+import { CommunityNotesClient } from "./community_notes/index.js";
+
+
+
+import { ConnectionClient } from "./connection/index.js";
+
+
+
+import { DirectMessagesClient } from "./direct_messages/index.js";
+
+
+
+import { CommunitiesClient } from "./communities/index.js";
+
+
+
+import { AaasubscriptionsClient } from "./aaasubscriptions/index.js";
+
+
+
+// Import the new event-driven StreamClient
 
 /**
  * Configuration options for the X API client
@@ -52,6 +102,8 @@ export interface ClientConfig {
   bearerToken?: string;
   /** OAuth2 access token */
   accessToken?: string;
+  /** OAuth1 instance for authentication */
+  oauth1?: any;
   /** Custom headers to include in requests */
   headers?: Record<string, string>;
   /** Request timeout in milliseconds */
@@ -73,13 +125,7 @@ export class ApiError extends Error {
   public readonly headers: Headers;
   public readonly data?: any;
 
-  constructor(
-    message: string,
-    status: number,
-    statusText: string,
-    headers: Headers,
-    data?: any
-  ) {
+  constructor(message: string, status: number, statusText: string, headers: Headers, data?: any) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
@@ -101,14 +147,16 @@ export interface RequestOptions {
   signal?: AbortSignal;
   /** Request body */
   body?: string;
+  /** Return raw HTTP wrapper instead of parsed body */
+  raw?: boolean;
 }
 
 /**
  * Response wrapper with metadata
  */
 export interface ApiResponse<T = any> {
-  /** Response data */
-  data: T;
+  /** Response body */
+  body: T;
   /** Response headers */
   headers: Headers;
   /** HTTP status code */
@@ -133,13 +181,6 @@ export interface PaginationMeta {
   result_count?: number;
 }
 
-/**
- * Paginated response wrapper
- */
-export interface PaginatedResponse<T = any> extends ApiResponse<T[]> {
-  /** Pagination metadata */
-  meta: PaginationMeta;
-}
 
 /**
  * Main client class for the X API
@@ -151,6 +192,8 @@ export class Client {
   readonly bearerToken?: string;
   /** OAuth2 access token */
   readonly accessToken?: string;
+  /** OAuth1 instance for authentication */
+  readonly oauth1?: any;
   /** Headers for requests */
   readonly headers: Headers;
   /** Request timeout in milliseconds */
@@ -161,54 +204,10 @@ export class Client {
   readonly maxRetries: number;
   /** User agent string */
   readonly userAgent: string;
-  /** OAuth2 session for requests */
-  readonly oauth2Session?: typeof fetch;
-  /** OAuth2 authentication instance */
-  readonly oauth2Auth?: any;
-  /** OAuth2 token */
-  readonly token?: any;
 
   /** HTTP client for making requests */
   readonly httpClient = httpClient;
 
-  /** general client */
-  readonly general: GeneralClient;
-
-  /** webhooks client */
-  readonly webhooks: WebhooksClient;
-
-  /** account activity client */
-  readonly account_activity: AccountActivityClient;
-
-  /** usage client */
-  readonly usage: UsageClient;
-
-  /** community notes client */
-  readonly community_notes: CommunityNotesClient;
-
-  /** compliance client */
-  readonly compliance: ComplianceClient;
-
-  /** communities client */
-  readonly communities: CommunitiesClient;
-
-  /** trends client */
-  readonly trends: TrendsClient;
-
-  /** direct messages client */
-  readonly direct_messages: DirectMessagesClient;
-
-  /** stream client */
-  readonly stream: StreamClient;
-
-  /** connection client */
-  readonly connection: ConnectionClient;
-
-  /** bookmarks client */
-  readonly bookmarks: BookmarksClient;
-
-  /** spaces client */
-  readonly spaces: SpacesClient;
 
   /** media client */
   readonly media: MediaClient;
@@ -216,69 +215,122 @@ export class Client {
   /** lists client */
   readonly lists: ListsClient;
 
+  /** posts client */
+  readonly posts: PostsClient;
+
+  /** stream client */
+  readonly stream: StreamClient;
+
+  /** trends client */
+  readonly trends: TrendsClient;
+
+  /** spaces client */
+  readonly spaces: SpacesClient;
+
+  /** account activity client */
+  readonly account_activity: AccountActivityClient;
+
+  /** usage client */
+  readonly usage: UsageClient;
+
+  /** general client */
+  readonly general: GeneralClient;
+
+  /** bookmarks client */
+  readonly bookmarks: BookmarksClient;
+
+  /** webhooks client */
+  readonly webhooks: WebhooksClient;
+
+  /** compliance client */
+  readonly compliance: ComplianceClient;
+
   /** users client */
   readonly users: UsersClient;
 
-  /** posts client */
-  readonly posts: PostsClient;
+  /** community notes client */
+  readonly community_notes: CommunityNotesClient;
+
+  /** connection client */
+  readonly connection: ConnectionClient;
+
+  /** direct messages client */
+  readonly direct_messages: DirectMessagesClient;
+
+  /** communities client */
+  readonly communities: CommunitiesClient;
 
   /** aaasubscriptions client */
   readonly aaasubscriptions: AaasubscriptionsClient;
 
-  constructor(config: ClientConfig = {}) {
-    this.baseUrl = config.baseUrl || 'https://api.x.com';
-    this.bearerToken = config.bearerToken;
-    this.accessToken = config.accessToken;
-    this.timeout = config.timeout || 30000;
-    this.retry = config.retry !== undefined ? config.retry : true;
-    this.maxRetries = config.maxRetries || 3;
-    this.userAgent = config.userAgent || 'x-api-sdk/1.0.0';
 
+  constructor(config: ClientConfig | any) {
+    // Handle OAuth1 instance passed directly
+    if (config && typeof config === 'object' && config.accessToken && config.accessToken.accessToken && config.accessToken.accessTokenSecret) {
+      // This is an OAuth1 instance
+      this.oauth1 = config;
+      this.baseUrl = "https://api.x.com";
+    } else {
+      // This is a regular config object
+      const clientConfig = config as ClientConfig;
+      this.baseUrl = clientConfig.baseUrl || "https://api.x.com";
+      this.bearerToken = clientConfig.bearerToken;
+      this.accessToken = clientConfig.accessToken;
+      this.oauth1 = clientConfig.oauth1;
+    }
+    
+    this.timeout = (config as ClientConfig).timeout || 30000;
+    this.retry = (config as ClientConfig).retry ?? true;
+    this.maxRetries = (config as ClientConfig).maxRetries || 3;
+    this.userAgent = (config as ClientConfig).userAgent || "x-api-sdk/1.0.0";
+    
     // Initialize headers
     const defaultHeaders: Record<string, string> = {
       'User-Agent': this.userAgent,
       'Content-Type': 'application/json',
-      Accept: 'application/json',
-      ...config.headers,
+      'Accept': 'application/json',
+      ...((config as ClientConfig).headers || {}),
     };
-
+    
     this.headers = httpClient.createHeaders(defaultHeaders);
 
-    this.general = new GeneralClient(this);
-
-    this.webhooks = new WebhooksClient(this);
-
-    this.account_activity = new AccountActivityClient(this);
-
-    this.usage = new UsageClient(this);
-
-    this.community_notes = new CommunityNotesClient(this);
-
-    this.compliance = new ComplianceClient(this);
-
-    this.communities = new CommunitiesClient(this);
-
-    this.trends = new TrendsClient(this);
-
-    this.direct_messages = new DirectMessagesClient(this);
-
-    this.stream = new StreamClient(this);
-
-    this.connection = new ConnectionClient(this);
-
-    this.bookmarks = new BookmarksClient(this);
-
-    this.spaces = new SpacesClient(this);
 
     this.media = new MediaClient(this);
 
     this.lists = new ListsClient(this);
 
-    this.users = new UsersClient(this);
-
     this.posts = new PostsClient(this);
 
+    this.stream = new StreamClient(this);
+
+    this.trends = new TrendsClient(this);
+
+    this.spaces = new SpacesClient(this);
+
+    this.account_activity = new AccountActivityClient(this);
+
+    this.usage = new UsageClient(this);
+
+    this.general = new GeneralClient(this);
+
+    this.bookmarks = new BookmarksClient(this);
+
+    this.webhooks = new WebhooksClient(this);
+
+    this.compliance = new ComplianceClient(this);
+
+    this.users = new UsersClient(this);
+
+    this.community_notes = new CommunityNotesClient(this);
+
+    this.connection = new ConnectionClient(this);
+
+    this.direct_messages = new DirectMessagesClient(this);
+
+    this.communities = new CommunitiesClient(this);
+
     this.aaasubscriptions = new AaasubscriptionsClient(this);
+
   }
 
   /**
@@ -288,17 +340,31 @@ export class Client {
     method: string,
     path: string,
     options: RequestOptions = {}
-  ): Promise<ApiResponse<T>> {
+  ): Promise<T> {
     const url = `${this.baseUrl}${path}`;
     const headers = new Headers(this.headers);
-
+    
     // Add authentication headers
     if (this.bearerToken) {
       headers.set('Authorization', `Bearer ${this.bearerToken}`);
     } else if (this.accessToken) {
       headers.set('Authorization', `Bearer ${this.accessToken}`);
+    } else if (this.oauth1 && this.oauth1.accessToken) {
+      // OAuth1 authentication - build proper OAuth1 header
+      try {
+        const oauthHeader = await this.oauth1.buildRequestHeader(method, url, options.body || '');
+        headers.set('Authorization', oauthHeader);
+        
+        // Remove Content-Type for OAuth1 requests if it's application/json
+        // OAuth1 typically expects application/x-www-form-urlencoded or no content type
+        if (headers.get('Content-Type') === 'application/json') {
+          headers.delete('Content-Type');
+        }
+      } catch (error) {
+        throw new Error(`Failed to build OAuth1 header: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
     }
-
+    
     // Add custom headers
     if (options.headers) {
       Object.entries(options.headers).forEach(([key, value]) => {
@@ -312,6 +378,7 @@ export class Client {
         headers,
         signal: options.signal,
         body: options.body,
+        timeout: options.timeout !== undefined ? options.timeout : this.timeout,
       });
 
       if (!response.ok) {
@@ -321,11 +388,9 @@ export class Client {
         } catch {
           errorData = await response.text();
         }
-
+        
         throw new ApiError(
-          errorData && errorData.message
-            ? errorData.message
-            : `HTTP ${response.status}: ${response.statusText}`,
+          errorData && errorData.message ? errorData.message : `HTTP ${response.status}: ${response.statusText}`,
           response.status,
           response.statusText,
           response.headers,
@@ -333,21 +398,21 @@ export class Client {
         );
       }
 
+      // For streaming requests, return the raw Response object
+      if (options.raw) {
+        return response as any; // Return the actual Response object for streaming
+      }
+
       let data: T;
       const contentType = response.headers.get('content-type');
       if (contentType && contentType.includes('application/json')) {
         data = await response.json();
       } else {
-        data = (await response.text()) as T;
+        data = await response.text() as T;
       }
 
-      return {
-        data,
-        headers: response.headers,
-        status: response.status,
-        statusText: response.statusText,
-        url: response.url || url,
-      };
+      // Return parsed body for non-streaming requests
+      return data;
     } catch (error) {
       if (error instanceof ApiError) {
         throw error;
@@ -381,6 +446,83 @@ export class Client {
    * Get the current authentication status
    */
   isAuthenticated(): boolean {
-    return !!(this.bearerToken || this.accessToken);
+    return !!(this.bearerToken || this.accessToken || (this.oauth1 && this.oauth1.accessToken));
   }
-}
+
+  /**
+   * Map OpenAPI security scheme names to internal authentication types
+   * @param securitySchemeName The security scheme name from OpenAPI
+   * @returns Array of internal authentication types
+   */
+  public mapSecuritySchemeToAuthTypes(securitySchemeName: string): string[] {
+    // Mappings for X/Twitter API security schemes
+    const schemeMapping: Record<string, string[]> = {
+      'BearerToken': ['bearer_token'],           // App-only OAuth2.0
+      'OAuth2UserToken': ['oauth2_user_context'], // OAuth2.0 User Context
+      'UserToken': ['oauth1'],                   // OAuth1.0a User Context
+      // Fallback mappings for common variations
+      'OAuth2': ['bearer_token', 'oauth2_user_context'],
+      'OAuth1': ['oauth1'],
+      'Bearer': ['bearer_token'],
+      'OAuth2User': ['oauth2_user_context'],
+      'OAuth1User': ['oauth1'],
+    };
+
+    return schemeMapping[securitySchemeName] || [securitySchemeName.toLowerCase()];
+  }
+
+  /**
+   * Validate that the required authentication method is available
+   * @param requiredAuthTypes Array of required authentication types (OpenAPI security scheme names)
+   * @param operationName Name of the operation for error messages
+   */
+  public validateAuthentication(requiredAuthTypes: string[], operationName: string): void {
+    if (requiredAuthTypes.length === 0) {
+      return; // No authentication required
+    }
+
+    const availableAuthTypes: string[] = [];
+    
+    if (this.bearerToken) {
+      availableAuthTypes.push('bearer_token');
+    }
+    if (this.accessToken) {
+      availableAuthTypes.push('oauth2_user_context');
+    }
+    if (this.oauth1 && this.oauth1.accessToken) {
+      availableAuthTypes.push('oauth1');
+    }
+
+    // Map OpenAPI security schemes to internal auth types
+    const mappedRequiredTypes = requiredAuthTypes.flatMap(scheme => 
+      this.mapSecuritySchemeToAuthTypes(scheme)
+    );
+
+    // Check if any of the required auth types are available
+    const hasRequiredAuth = mappedRequiredTypes.some(required => 
+      availableAuthTypes.includes(required)
+    );
+
+    if (!hasRequiredAuth) {
+      const availableStr = availableAuthTypes.length > 0 ? availableAuthTypes.join(', ') : 'none';
+      const requiredStr = requiredAuthTypes.join(', ');
+      throw new Error(
+        `Authentication required for ${operationName}. ` +
+        `Required: ${requiredStr}. ` +
+        `Available: ${availableStr}. ` +
+        `Please configure the appropriate authentication method.`
+      );
+    }
+  }
+
+  /**
+   * Get available authentication types
+   */
+  getAvailableAuthTypes(): string[] {
+    const authTypes: string[] = [];
+    if (this.bearerToken) authTypes.push('bearer_token');
+    if (this.accessToken) authTypes.push('oauth2_user_context');
+    if (this.oauth1 && this.oauth1.accessToken) authTypes.push('oauth1');
+    return authTypes;
+  }
+} 

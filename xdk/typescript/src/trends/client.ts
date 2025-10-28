@@ -6,9 +6,41 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
+  TwitterPaginator,
+  TweetPaginator,
+  UserPaginator,
+  ListPaginator,
+  IdPaginator,
+} from '../paginator.js';
+import {
+  TrendsGetUsersPersonalizedResponse,
   TrendsGetByWoeidResponse,
-  TrendsGetPersonalizedTrendsResponse,
 } from './models.js';
+
+/**
+ * Options for getUsersPersonalized method
+ */
+export interface TrendsGetUsersPersonalizedOptions {
+  /** A comma separated list of PersonalizedTrend fields to display. */
+  personalizedTrendfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getByWoeid method
+ */
+export interface TrendsGetByWoeidOptions {
+  /** The maximum number of results. */
+  maxTrends?: number;
+
+  /** A comma separated list of Trend fields to display. */
+  trendfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
 
 /**
  * Client for Trends operations
@@ -21,74 +53,90 @@ export class TrendsClient {
   }
 
   /**
-     * Get Trends by WOEID
-     * Retrieves trending topics for a specific location identified by its WOEID.
-     * @param woeid The WOEID of the place to lookup a trend for.
-     * @param maxTrends The maximum number of results.
-     * @param trendfields A comma separated list of Trend fields to display.* @param options Additional request options
-     * @returns Promise with the API response
-     */
+   * Get personalized Trends
+   * Retrieves personalized trending topics for the authenticated user.* @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getUsersPersonalized(
+    options: TrendsGetUsersPersonalizedOptions = {}
+  ): Promise<TrendsGetUsersPersonalizedResponse> {
+    // Destructure options
+
+    const {
+      personalizedTrendfields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build the path with path parameters
+    let path = '/2/users/personalized_trends';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (personalizedTrendfields !== undefined) {
+      personalizedTrendfields.forEach(item =>
+        params.append('personalized_trend.fields', String(item))
+      );
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...reqOpts,
+    };
+
+    return this.client.request<TrendsGetUsersPersonalizedResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Trends by WOEID
+   * Retrieves trending topics for a specific location identified by its WOEID.
+   * @param woeid The WOEID of the place to lookup a trend for.* @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
   async getByWoeid(
     woeid: number,
-    maxTrends?: number,
-    trendfields?: Array<any>,
-    options?: RequestOptions
-  ): Promise<ApiResponse<TrendsGetByWoeidResponse>> {
+    options: TrendsGetByWoeidOptions = {}
+  ): Promise<TrendsGetByWoeidResponse> {
+    // Destructure options
+
+    const {
+      maxTrends = undefined,
+
+      trendfields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build the path with path parameters
+    let path = '/2/trends/by/woeid/{woeid}';
+
+    path = path.replace('{woeid}', encodeURIComponent(String(woeid)));
+
+    // Build query parameters
     const params = new URLSearchParams();
 
     if (maxTrends !== undefined) {
-      params.set('max_trends', String(maxTrends));
+      params.append('max_trends', String(maxTrends));
     }
 
     if (trendfields !== undefined) {
-      params.set('trend.fields', String(trendfields));
+      trendfields.forEach(item => params.append('trend.fields', String(item)));
     }
 
-    const path = `/2/trends/by/woeid/{woeid}`.replace('{woeid}', String(woeid));
-
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-      },
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...reqOpts,
     };
 
     return this.client.request<TrendsGetByWoeidResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
-      requestOptions
-    );
-  }
-
-  /**
-     * Get personalized Trends
-     * Retrieves personalized trending topics for the authenticated user.
-     * @param personalizedTrendfields A comma separated list of PersonalizedTrend fields to display.* @param options Additional request options
-     * @returns Promise with the API response
-     */
-  async getPersonalizedTrends(
-    personalizedTrendfields?: Array<any>,
-    options?: RequestOptions
-  ): Promise<ApiResponse<TrendsGetPersonalizedTrendsResponse>> {
-    const params = new URLSearchParams();
-
-    if (personalizedTrendfields !== undefined) {
-      params.set('personalized_trend.fields', String(personalizedTrendfields));
-    }
-
-    const path = `/2/users/personalized_trends`;
-
-    const requestOptions: RequestOptions = {
-      ...options,
-      headers: {
-        ...options && options.headers ? options.headers : {},
-      },
-    };
-
-    return this.client.request<TrendsGetPersonalizedTrendsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      requestOptions
+      finalRequestOptions
     );
   }
 }

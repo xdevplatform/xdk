@@ -17,6 +17,7 @@ export interface RequestOptions {
   headers?: Record<string, string> | Headers;
   body?: string | Buffer | ArrayBuffer | ArrayBufferView;
   signal?: AbortSignal;
+  timeout?: number;
 }
 
 export interface HttpResponse {
@@ -110,11 +111,19 @@ export class HttpClient {
       }
     }
 
+    // Handle timeout
+    let signal = options.signal;
+    if (options.timeout && options.timeout > 0 && !signal) {
+      const controller = new AbortController();
+      setTimeout(() => controller.abort(), options.timeout);
+      signal = controller.signal;
+    }
+
     const response = await this.fetch(url, {
       method: options.method || 'GET',
       headers: options.headers as any,
       body: body as any,
-      signal: options.signal,
+      signal: signal,
     });
 
     return response as HttpResponse;
