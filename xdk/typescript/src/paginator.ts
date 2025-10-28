@@ -1,72 +1,73 @@
 /**
  * Pagination utilities for the X API.
+ * 
+ * This module provides comprehensive pagination support for the X API, including
+ * automatic iteration, manual page control, and metadata access.
+ * 
+ * @category Pagination
  */
 
 /**
  * Paginated response interface
+ * 
+ * Represents the structure of a paginated API response from the X API.
+ * 
+ * @template T - The type of items in the response
  */
 export interface PaginatedResponse<T> {
+    /** Array of items in the current page */
     data: T[];
+    /** Pagination metadata */
     meta?: {
+        /** Number of results in the current page */
         result_count?: number;
+        /** Token for fetching the next page */
         next_token?: string;
+        /** Token for fetching the previous page */
         previous_token?: string;
     };
+    /** Additional included objects (users, tweets, etc.) */
     includes?: Record<string, any>;
+    /** Any errors in the response */
     errors?: Array<any>;
 }
 
-/**
- * Base paginator class for handling paginated responses
- */
-export class Paginator<T> {
-    private fetchPage: (token?: string) => Promise<PaginatedResponse<T>>;
-    private currentToken?: string;
-    private hasMore: boolean = true;
-
-    constructor(fetchPage: (token?: string) => Promise<PaginatedResponse<T>>) {
-        this.fetchPage = fetchPage;
-    }
-
-    /**
-     * Get the next page of results
-     */
-    async next(): Promise<PaginatedResponse<T>> {
-        if (!this.hasMore) {
-            return { data: [] };
-        }
-
-        const response = await this.fetchPage(this.currentToken);
-        this.currentToken = response.meta?.next_token;
-        this.hasMore = !!this.currentToken;
-
-        return response;
-    }
-
-    /**
-     * Check if there are more pages
-     */
-    hasNextPage(): boolean {
-        return this.hasMore;
-    }
-
-    /**
-     * Get all remaining results
-     */
-    async *[Symbol.asyncIterator](): AsyncIterator<T> {
-        while (this.hasMore) {
-            const response = await this.next();
-            for (const item of response.data) {
-                yield item;
-            }
-        }
-    }
-}
 
 /**
- * Twitter-specific paginator with rich functionality
+ * X API paginator with rich functionality
+ * 
+ * This class provides comprehensive pagination support for the X API, including:
+ * - Automatic iteration with `for await...of` loops
+ * - Manual page control with `fetchNext()` and `fetchPrevious()`
+ * - Metadata access for pagination tokens and counts
+ * - Error handling and rate limit detection
+ * - Support for both forward and backward pagination
+ * 
+ * @template T - The type of items being paginated
+ * 
+ * @example
+ * ```typescript
+ * // Automatic iteration
+ * const followers = await client.users.getFollowers('783214');
+ * for await (const follower of followers) {
+ *   console.log(follower.username);
+ * }
+ * 
+ * // Manual control
+ * const followers = await client.users.getFollowers('783214');
+ * await followers.fetchNext();
+ * console.log(followers.items.length); // Number of followers
+ * console.log(followers.meta.next_token); // Next page token
+ * 
+ * // Check status
+ * if (!followers.done) {
+ *   await followers.fetchNext();
+ * }
+ * ```
+ * 
+ * @category Pagination
  */
-export class TwitterPaginator<T> {
+export class Paginator<T> implements AsyncIterable<T> {
     private fetchPage: (token?: string) => Promise<PaginatedResponse<T>>;
     private currentToken?: string;
     private previousToken?: string;
@@ -78,6 +79,11 @@ export class TwitterPaginator<T> {
     private currentErrors?: Array<any>;
     private rateLimitHit: boolean = false;
 
+    /**
+     * Creates a new paginator instance
+     * 
+     * @param fetchPage - Function that fetches a page of data given a pagination token
+     */
     constructor(fetchPage: (token?: string) => Promise<PaginatedResponse<T>>) {
         this.fetchPage = fetchPage;
     }
@@ -126,6 +132,23 @@ export class TwitterPaginator<T> {
 
     /**
      * Fetch the next page and add items to current instance
+     * 
+     * This method fetches the next page of data and appends the items to the
+     * current paginator instance. It updates the pagination state and metadata.
+     * 
+     * @example
+     * ```typescript
+     * const followers = await client.users.getFollowers('783214');
+     * await followers.fetchNext(); // Fetch first page
+     * console.log(followers.items.length); // Number of followers
+     * 
+     * if (!followers.done) {
+     *   await followers.fetchNext(); // Fetch second page
+     *   console.log(followers.items.length); // Total followers across pages
+     * }
+     * ```
+     * 
+     * @throws {Error} When the API request fails
      */
     async fetchNext(): Promise<void> {
         if (this.done) {
@@ -164,13 +187,30 @@ export class TwitterPaginator<T> {
 
     /**
      * Get next page as a new instance
+     * 
+     * This method creates a new paginator instance that starts from the next page,
+     * without affecting the current paginator's state.
+     * 
+     * @example
+     * ```typescript
+     * const followers = await client.users.getFollowers('783214');
+     * await followers.fetchNext(); // Fetch first page
+     * 
+     * if (!followers.done) {
+     *   const nextPage = await followers.next(); // Get next page as new instance
+     *   console.log(followers.items.length); // Still first page
+     *   console.log(nextPage.items.length); // Second page
+     * }
+     * ```
+     * 
+     * @returns New paginator instance for the next page
      */
-    async next(): Promise<TwitterPaginator<T>> {
+    async next(): Promise<Paginator<T>> {
         if (this.done) {
-            return new TwitterPaginator(this.fetchPage);
+            return new Paginator(this.fetchPage);
         }
 
-        const nextPaginator = new TwitterPaginator(this.fetchPage);
+        const nextPaginator = new Paginator(this.fetchPage);
         nextPaginator.currentToken = this.currentToken;
         await nextPaginator.fetchNext();
         return nextPaginator;
@@ -214,12 +254,12 @@ export class TwitterPaginator<T> {
     /**
      * Get previous page as a new instance
      */
-    async previous(): Promise<TwitterPaginator<T>> {
+    async previous(): Promise<Paginator<T>> {
         if (!this.previousToken) {
-            return new TwitterPaginator(this.fetchPage);
+            return new Paginator(this.fetchPage);
         }
 
-        const prevPaginator = new TwitterPaginator(this.fetchPage);
+        const prevPaginator = new Paginator(this.fetchPage);
         prevPaginator.currentToken = this.previousToken;
         await prevPaginator.fetchNext();
         return prevPaginator;
@@ -293,10 +333,10 @@ export class TwitterPaginator<T> {
  */
 
 /**
- * Paginator for tweets
+ * Paginator for posts
  */
-export class TweetPaginator extends TwitterPaginator<any> {
-    get tweets(): any[] {
+export class PostPaginator extends Paginator<any> {
+    get posts(): any[] {
         return this.items;
     }
 }
@@ -304,7 +344,7 @@ export class TweetPaginator extends TwitterPaginator<any> {
 /**
  * Paginator for users
  */
-export class UserPaginator extends TwitterPaginator<any> {
+export class UserPaginator extends Paginator<any> {
     get users(): any[] {
         return this.items;
     }
@@ -313,7 +353,7 @@ export class UserPaginator extends TwitterPaginator<any> {
 /**
  * Paginator for lists
  */
-export class ListPaginator extends TwitterPaginator<any> {
+export class ListPaginator extends Paginator<any> {
     get lists(): any[] {
         return this.items;
     }
@@ -322,7 +362,7 @@ export class ListPaginator extends TwitterPaginator<any> {
 /**
  * Paginator for IDs only
  */
-export class IdPaginator extends TwitterPaginator<string> {
+export class IdPaginator extends Paginator<string> {
     get ids(): string[] {
         return this.items;
     }
@@ -331,7 +371,7 @@ export class IdPaginator extends TwitterPaginator<string> {
 /**
  * Paginator for welcome messages
  */
-export class WelcomeMessagePaginator extends TwitterPaginator<any> {
+export class WelcomeMessagePaginator extends Paginator<any> {
     get welcomeMessages(): any[] {
         return this.items;
     }
@@ -340,7 +380,7 @@ export class WelcomeMessagePaginator extends TwitterPaginator<any> {
 /**
  * Paginator for events (like DM events)
  */
-export class EventPaginator extends TwitterPaginator<any> {
+export class EventPaginator extends Paginator<any> {
     get events(): any[] {
         return this.items;
     }

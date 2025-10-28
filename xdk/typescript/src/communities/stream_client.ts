@@ -7,9 +7,22 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  CommunitiesSearchResponse,
   CommunitiesGetByIdResponse,
+  CommunitiesSearchResponse,
 } from './models.js';
+
+/**
+ * Options for getById method
+ */
+export interface CommunitiesGetByIdStreamingOptions {
+  /** A comma separated list of Community fields to display. */
+  communityfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
 
 /**
  * Options for search method
@@ -33,24 +46,72 @@ export interface CommunitiesSearchStreamingOptions {
   signal?: AbortSignal;
 }
 
-/**
- * Options for getById method
- */
-export interface CommunitiesGetByIdStreamingOptions {
-  /** A comma separated list of Community fields to display. */
-  communityfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-
 export class CommunitiesClient {
   private client: Client;
 
   constructor(client: Client) {
     this.client = client;
+  }
+
+  /**
+     * Get Community by ID
+     * Retrieves details of a specific Community by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getById(
+    id: string,
+    options: CommunitiesGetByIdStreamingOptions = {}
+  ): Promise<CommunitiesGetByIdResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getById');
+
+    // Destructure options with defaults
+
+    const {
+      communityfields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (communityfields !== undefined) {
+      params.append('community.fields', communityfields.join(','));
+    }
+
+    // Build path parameters
+    let path = `/2/communities/{id}`;
+
+    path = path.replace(`{${'id'}}`, String(id));
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<CommunitiesGetByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 
   /**
@@ -126,67 +187,6 @@ export class CommunitiesClient {
 
     // Make the request
     return this.client.request<CommunitiesSearchResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get Community by ID
-     * Retrieves details of a specific Community by its ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async getById(
-    id: string,
-    options: CommunitiesGetByIdStreamingOptions = {}
-  ): Promise<CommunitiesGetByIdResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getById');
-
-    // Destructure options with defaults
-
-    const {
-      communityfields = [],
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (communityfields !== undefined) {
-      params.append('community.fields', communityfields.join(','));
-    }
-
-    // Build path parameters
-    let path = `/2/communities/{id}`;
-
-    path = path.replace(`{${'id'}}`, String(id));
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<CommunitiesGetByIdResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

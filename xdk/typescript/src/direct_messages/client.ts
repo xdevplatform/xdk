@@ -1,4 +1,3 @@
-
 /**
  * Direct messages client for the X API.
  *
@@ -6,643 +5,528 @@
  */
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
-import { 
-    TwitterPaginator, 
-    TweetPaginator, 
-    UserPaginator, 
-    ListPaginator, 
-    IdPaginator 
+import {
+  Paginator,
+  PostPaginator,
+  UserPaginator,
+  ListPaginator,
+  IdPaginator,
 } from '../paginator.js';
 import {
-DirectMessagesCreateDmByParticipantIdRequest,
-DirectMessagesCreateDmByParticipantIdResponse,
-DirectMessagesGetDmConversationsIdDmEventsResponse,
-DirectMessagesGetDmEventsResponse,
-DirectMessagesCreateDmConversationsRequest,
-DirectMessagesCreateDmConversationsResponse,
-DirectMessagesCreateDmByConversationIdRequest,
-DirectMessagesCreateDmByConversationIdResponse,
-DirectMessagesGetDmEventsByParticipantIdResponse,
-DirectMessagesGetDmEventsByIdResponse,
-DirectMessagesDeleteDmEventsResponse,
+  DirectMessagesCreateByConversationIdRequest,
+  DirectMessagesCreateByConversationIdResponse,
+  DirectMessagesGetEventsByIdResponse,
+  DirectMessagesDeleteEventsResponse,
+  DirectMessagesCreateConversationRequest,
+  DirectMessagesCreateConversationResponse,
+  DirectMessagesGetEventsResponse,
+  DirectMessagesCreateByParticipantIdRequest,
+  DirectMessagesCreateByParticipantIdResponse,
+  DirectMessagesGetEventsByConversationIdResponse,
+  DirectMessagesGetEventsByParticipantIdResponse,
 } from './models.js';
 
-
 /**
- * Options for createDmByParticipantId method
+ * Options for createByConversationId method
  */
-export interface DirectMessagesCreateDmByParticipantIdOptions {
-    
-    
-    /** Request body */
-    body?: DirectMessagesCreateDmByParticipantIdRequest;
-    
-    /** Additional request options */
-    requestOptions?: RequestOptions;
+export interface DirectMessagesCreateByConversationIdOptions {
+  /** Request body */
+  body?: DirectMessagesCreateByConversationIdRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
 }
 
-
 /**
- * Options for getDmConversationsIdDmEvents method
+ * Options for getEventsById method
  */
-export interface DirectMessagesGetDmConversationsIdDmEventsOptions {
-    
-    
-    /** The maximum number of results. */
-    maxResults?: number;
-    
-    
-    
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: string;
-    
-    
-    
-    /** The set of event_types to include in the results. */
-    eventTypes?: Array<any>;
-    
-    
-    
-    /** A comma separated list of DmEvent fields to display. */
-    dmEventfields?: Array<any>;
-    
-    
-    
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    
-    
-    
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    
-    
-    
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    
-    
-    
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    
-    
-    
-    /** Additional request options */
-    requestOptions?: RequestOptions;
+export interface DirectMessagesGetEventsByIdOptions {
+  /** A comma separated list of DmEvent fields to display. */
+  dmEventfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
 }
 
-
 /**
- * Options for getDmEvents method
+ * Options for createConversation method
  */
-export interface DirectMessagesGetDmEventsOptions {
-    
-    
-    /** The maximum number of results. */
-    maxResults?: number;
-    
-    
-    
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: string;
-    
-    
-    
-    /** The set of event_types to include in the results. */
-    eventTypes?: Array<any>;
-    
-    
-    
-    /** A comma separated list of DmEvent fields to display. */
-    dmEventfields?: Array<any>;
-    
-    
-    
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    
-    
-    
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    
-    
-    
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    
-    
-    
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    
-    
-    
-    /** Additional request options */
-    requestOptions?: RequestOptions;
+export interface DirectMessagesCreateConversationOptions {
+  /** Request body */
+  body?: DirectMessagesCreateConversationRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
 }
 
-
 /**
- * Options for createDmConversations method
+ * Options for getEvents method
  */
-export interface DirectMessagesCreateDmConversationsOptions {
-    
-    
-    /** Request body */
-    body?: DirectMessagesCreateDmConversationsRequest;
-    
-    /** Additional request options */
-    requestOptions?: RequestOptions;
+export interface DirectMessagesGetEventsOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get a specified 'page' of results. */
+  paginationToken?: string;
+
+  /** The set of event_types to include in the results. */
+  eventTypes?: Array<any>;
+
+  /** A comma separated list of DmEvent fields to display. */
+  dmEventfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
 }
 
-
 /**
- * Options for createDmByConversationId method
+ * Options for createByParticipantId method
  */
-export interface DirectMessagesCreateDmByConversationIdOptions {
-    
-    
-    /** Request body */
-    body?: DirectMessagesCreateDmByConversationIdRequest;
-    
-    /** Additional request options */
-    requestOptions?: RequestOptions;
+export interface DirectMessagesCreateByParticipantIdOptions {
+  /** Request body */
+  body?: DirectMessagesCreateByParticipantIdRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
 }
 
-
 /**
- * Options for getDmEventsByParticipantId method
+ * Options for getEventsByConversationId method
  */
-export interface DirectMessagesGetDmEventsByParticipantIdOptions {
-    
-    
-    /** The maximum number of results. */
-    maxResults?: number;
-    
-    
-    
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: string;
-    
-    
-    
-    /** The set of event_types to include in the results. */
-    eventTypes?: Array<any>;
-    
-    
-    
-    /** A comma separated list of DmEvent fields to display. */
-    dmEventfields?: Array<any>;
-    
-    
-    
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    
-    
-    
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    
-    
-    
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    
-    
-    
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    
-    
-    
-    /** Additional request options */
-    requestOptions?: RequestOptions;
+export interface DirectMessagesGetEventsByConversationIdOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get a specified 'page' of results. */
+  paginationToken?: string;
+
+  /** The set of event_types to include in the results. */
+  eventTypes?: Array<any>;
+
+  /** A comma separated list of DmEvent fields to display. */
+  dmEventfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
 }
 
-
 /**
- * Options for getDmEventsById method
+ * Options for getEventsByParticipantId method
  */
-export interface DirectMessagesGetDmEventsByIdOptions {
-    
-    
-    /** A comma separated list of DmEvent fields to display. */
-    dmEventfields?: Array<any>;
-    
-    
-    
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    
-    
-    
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    
-    
-    
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    
-    
-    
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    
-    
-    
-    /** Additional request options */
-    requestOptions?: RequestOptions;
+export interface DirectMessagesGetEventsByParticipantIdOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get a specified 'page' of results. */
+  paginationToken?: string;
+
+  /** The set of event_types to include in the results. */
+  eventTypes?: Array<any>;
+
+  /** A comma separated list of DmEvent fields to display. */
+  dmEventfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
 }
-
-
-
 
 /**
  * Client for Direct messages operations
+ * 
+ * This client provides methods for interacting with the Direct messages endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all Direct messages related operations.
+ * 
+ * @category Direct messages
  */
 export class DirectMessagesClient {
-    private client: Client;
-
-    constructor(client: Client) {
-        this.client = client;
-    }
-
+  private client: Client;
 
   /**
-   * Create DM message by participant ID
-   * Sends a new direct message to a specific participant by their ID.
-   * @param participantId The ID of the recipient user that will receive the DM.* @returns Promise with the API response
-   */
-    // Overload 1: Default behavior (unwrapped response)
-    async createDmByParticipantId(
-        
-        
-        
-        participantId: string,
-        
-        
-        
-        
-        
-        
-        options: DirectMessagesCreateDmByParticipantIdOptions = {}
-        
-    ): Promise<DirectMessagesCreateDmByParticipantIdResponse> {
-        // Destructure options
-        
-        const {
-            
-            
-            body,
-            
-            requestOptions: reqOpts = {}
-        } = options;
-        
-
-        // Build the path with path parameters
-        let path = '/2/dm_conversations/with/{participant_id}/messages';
-        
-        
-        path = path.replace('{participant_id}', encodeURIComponent(String(participantId)));
-        
-        
-
-        // Build query parameters
-        const params = new URLSearchParams();
-        
-
-        // Prepare request options
-        const finalRequestOptions: RequestOptions = {
-            
-            body: body ? JSON.stringify(body) : undefined,
-            
-            
-            ...reqOpts
-            
-        };
-
-        return this.client.request<DirectMessagesCreateDmByParticipantIdResponse>(
-            'POST',
-            path + (params.toString() ? `?${params.toString()}` : ''),
-            finalRequestOptions
-        );
-    }
-
-
-
-
-
-
-
-
-  /**
-   * Create DM conversation
-   * Initiates a new direct message conversation with specified participants.* @returns Promise with the API response
-   */
-    // Overload 1: Default behavior (unwrapped response)
-    async createDmConversations(
-        
-        
-        
-        
-        
-        
-        options: DirectMessagesCreateDmConversationsOptions = {}
-        
-    ): Promise<DirectMessagesCreateDmConversationsResponse> {
-        // Destructure options
-        
-        const {
-            
-            
-            body,
-            
-            requestOptions: reqOpts = {}
-        } = options;
-        
-
-        // Build the path with path parameters
-        let path = '/2/dm_conversations';
-        
-
-        // Build query parameters
-        const params = new URLSearchParams();
-        
-
-        // Prepare request options
-        const finalRequestOptions: RequestOptions = {
-            
-            body: body ? JSON.stringify(body) : undefined,
-            
-            
-            ...reqOpts
-            
-        };
-
-        return this.client.request<DirectMessagesCreateDmConversationsResponse>(
-            'POST',
-            path + (params.toString() ? `?${params.toString()}` : ''),
-            finalRequestOptions
-        );
-    }
-
-
-
+     * Creates a new Direct messages client instance
+     * 
+     * @param client - The main X API client instance
+     */
+  constructor(client: Client) {
+    this.client = client;
+  }
 
   /**
    * Create DM message by conversation ID
    * Sends a new direct message to a specific conversation by its ID.
    * @param dmConversationId The DM Conversation ID.* @returns Promise with the API response
    */
-    // Overload 1: Default behavior (unwrapped response)
-    async createDmByConversationId(
-        
-        
-        
-        dmConversationId: string,
-        
-        
-        
-        
-        
-        
-        options: DirectMessagesCreateDmByConversationIdOptions = {}
-        
-    ): Promise<DirectMessagesCreateDmByConversationIdResponse> {
-        // Destructure options
-        
-        const {
-            
-            
-            body,
-            
-            requestOptions: reqOpts = {}
-        } = options;
-        
+  // Overload 1: Default behavior (unwrapped response)
+  async createByConversationId(
+    dmConversationId: string,
+    options: DirectMessagesCreateByConversationIdOptions = {}
+  ): Promise<DirectMessagesCreateByConversationIdResponse> {
+    // Destructure options
 
-        // Build the path with path parameters
-        let path = '/2/dm_conversations/{dm_conversation_id}/messages';
-        
-        
-        path = path.replace('{dm_conversation_id}', encodeURIComponent(String(dmConversationId)));
-        
-        
+    const {
+      body,
 
-        // Build query parameters
-        const params = new URLSearchParams();
-        
+      requestOptions: reqOpts = {},
+    } = options;
 
-        // Prepare request options
-        const finalRequestOptions: RequestOptions = {
-            
-            body: body ? JSON.stringify(body) : undefined,
-            
-            
-            ...reqOpts
-            
-        };
+    // Build the path with path parameters
+    let path = '/2/dm_conversations/{dm_conversation_id}/messages';
 
-        return this.client.request<DirectMessagesCreateDmByConversationIdResponse>(
-            'POST',
-            path + (params.toString() ? `?${params.toString()}` : ''),
-            finalRequestOptions
-        );
-    }
+    path = path.replace(
+      '{dm_conversation_id}',
+      encodeURIComponent(String(dmConversationId))
+    );
 
+    // Build query parameters
+    const params = new URLSearchParams();
 
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
 
+      ...reqOpts,
+    };
 
-
+    return this.client.request<DirectMessagesCreateByConversationIdResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
 
   /**
    * Get DM event by ID
    * Retrieves details of a specific direct message event by its ID.
    * @param eventId dm event id.* @returns Promise with the API response
    */
-    // Overload 1: Default behavior (unwrapped response)
-    async getDmEventsById(
-        
-        
-        
-        eventId: string,
-        
-        
-        
-        
-        
-        
-        options: DirectMessagesGetDmEventsByIdOptions = {}
-        
-    ): Promise<DirectMessagesGetDmEventsByIdResponse> {
-        // Destructure options
-        
-        const {
-            
-            
-            dmEventfields = [],
-            
-            
-            
-            expansions = [],
-            
-            
-            
-            mediafields = [],
-            
-            
-            
-            userfields = [],
-            
-            
-            
-            tweetfields = [],
-            
-            
-            
-            requestOptions: reqOpts = {}
-        } = options;
-        
+  // Overload 1: Default behavior (unwrapped response)
+  async getEventsById(
+    eventId: string,
+    options: DirectMessagesGetEventsByIdOptions = {}
+  ): Promise<DirectMessagesGetEventsByIdResponse> {
+    // Destructure options
 
-        // Build the path with path parameters
-        let path = '/2/dm_events/{event_id}';
-        
-        
-        path = path.replace('{event_id}', encodeURIComponent(String(eventId)));
-        
-        
+    const {
+      dmEventfields = [],
 
-        // Build query parameters
-        const params = new URLSearchParams();
-        
-        
-        
-        if (dmEventfields !== undefined) {
-            
-            dmEventfields.forEach(item => params.append('dm_event.fields', String(item)));
-            
-        }
-        
-        
-        
-        
-        
-        if (expansions !== undefined) {
-            
-            expansions.forEach(item => params.append('expansions', String(item)));
-            
-        }
-        
-        
-        
-        
-        
-        if (mediafields !== undefined) {
-            
-            mediafields.forEach(item => params.append('media.fields', String(item)));
-            
-        }
-        
-        
-        
-        
-        
-        if (userfields !== undefined) {
-            
-            userfields.forEach(item => params.append('user.fields', String(item)));
-            
-        }
-        
-        
-        
-        
-        
-        if (tweetfields !== undefined) {
-            
-            tweetfields.forEach(item => params.append('tweet.fields', String(item)));
-            
-        }
-        
-        
-        
+      expansions = [],
 
-        // Prepare request options
-        const finalRequestOptions: RequestOptions = {
-            
-            
-            ...reqOpts
-            
-        };
+      mediafields = [],
 
-        return this.client.request<DirectMessagesGetDmEventsByIdResponse>(
-            'GET',
-            path + (params.toString() ? `?${params.toString()}` : ''),
-            finalRequestOptions
-        );
+      userfields = [],
+
+      tweetfields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build the path with path parameters
+    let path = '/2/dm_events/{event_id}';
+
+    path = path.replace('{event_id}', encodeURIComponent(String(eventId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (dmEventfields !== undefined) {
+      params.append('dm_event.fields', dmEventfields.join(','));
     }
 
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
 
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
 
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...reqOpts,
+    };
+
+    return this.client.request<DirectMessagesGetEventsByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
 
   /**
    * Delete DM event
    * Deletes a specific direct message event by its ID, if owned by the authenticated user.
    * @param eventId The ID of the direct-message event to delete.* @returns Promise with the API response
    */
-    // Overload 1: Default behavior (unwrapped response)
-    async deleteDmEvents(
-        
-        
-        
-        eventId: string,
-        
-        
-        
-        
-        
-        
-    ): Promise<DirectMessagesDeleteDmEventsResponse> {
-        // Destructure options
-        
-        const reqOpts = {};
-        
+  // Overload 1: Default behavior (unwrapped response)
+  async deleteEvents(
+    eventId: string
+  ): Promise<DirectMessagesDeleteEventsResponse> {
+    // Destructure options
 
-        // Build the path with path parameters
-        let path = '/2/dm_events/{event_id}';
-        
-        
-        path = path.replace('{event_id}', encodeURIComponent(String(eventId)));
-        
-        
+    const reqOpts = {};
 
-        // Build query parameters
-        const params = new URLSearchParams();
-        
+    // Build the path with path parameters
+    let path = '/2/dm_events/{event_id}';
 
-        // Prepare request options
-        const finalRequestOptions: RequestOptions = {
-            
-            
-            // No optional parameters, using empty request options
-            
-        };
+    path = path.replace('{event_id}', encodeURIComponent(String(eventId)));
 
-        return this.client.request<DirectMessagesDeleteDmEventsResponse>(
-            'DELETE',
-            path + (params.toString() ? `?${params.toString()}` : ''),
-            finalRequestOptions
-        );
-    }
+    // Build query parameters
+    const params = new URLSearchParams();
 
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
 
+    return this.client.request<DirectMessagesDeleteEventsResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
 
+  /**
+   * Create DM conversation
+   * Initiates a new direct message conversation with specified participants.* @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async createConversation(
+    options: DirectMessagesCreateConversationOptions = {}
+  ): Promise<DirectMessagesCreateConversationResponse> {
+    // Destructure options
 
+    const {
+      body,
 
+      requestOptions: reqOpts = {},
+    } = options;
 
+    // Build the path with path parameters
+    let path = '/2/dm_conversations';
 
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...reqOpts,
+    };
+
+    return this.client.request<DirectMessagesCreateConversationResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Create DM message by participant ID
+   * Sends a new direct message to a specific participant by their ID.
+   * @param participantId The ID of the recipient user that will receive the DM.* @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async createByParticipantId(
+    participantId: string,
+    options: DirectMessagesCreateByParticipantIdOptions = {}
+  ): Promise<DirectMessagesCreateByParticipantIdResponse> {
+    // Destructure options
+
+    const {
+      body,
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build the path with path parameters
+    let path = '/2/dm_conversations/with/{participant_id}/messages';
+
+    path = path.replace(
+      '{participant_id}',
+      encodeURIComponent(String(participantId))
+    );
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...reqOpts,
+    };
+
+    return this.client.request<DirectMessagesCreateByParticipantIdResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get DM events
+   * Retrieves a list of recent direct message events across all conversations.
+   * Returns a paginator for automatic pagination through all results.
+   * @param 
+   * @param options Options for the paginated request
+   * @returns A paginator instance for iterating through all results
+   */
+  async getEvents(
+    options: DirectMessagesGetEventsOptions = {}
+  ): Promise<Paginator<any>> {
+    // Destructure options
+
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      eventTypes = [],
+
+      dmEventfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      userfields = [],
+
+      tweetfields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build the path with path parameters
+    let path = '/2/dm_events';
+
+    // Create the fetch function for the paginator
+    const fetchPage = async (paginationToken?: string) => {
+      // Build query parameters
+      const params = new URLSearchParams();
+
+      if (maxResults !== undefined) {
+        params.append('max_results', String(maxResults));
+      }
+
+      if (paginationToken !== undefined) {
+        params.append('pagination_token', String(paginationToken));
+      }
+
+      if (eventTypes !== undefined) {
+        params.append('event_types', eventTypes.join(','));
+      }
+
+      if (dmEventfields !== undefined) {
+        params.append('dm_event.fields', dmEventfields.join(','));
+      }
+
+      if (expansions !== undefined) {
+        params.append('expansions', expansions.join(','));
+      }
+
+      if (mediafields !== undefined) {
+        params.append('media.fields', mediafields.join(','));
+      }
+
+      if (userfields !== undefined) {
+        params.append('user.fields', userfields.join(','));
+      }
+
+      if (tweetfields !== undefined) {
+        params.append('tweet.fields', tweetfields.join(','));
+      }
+
+      // Add pagination token if provided
+      if (paginationToken) {
+        params.set('pagination_token', paginationToken);
+      }
+
+      // Prepare request options
+      const finalRequestOptions: RequestOptions = {
+        ...reqOpts,
+      };
+
+      const response = await this.client.request<
+        DirectMessagesGetEventsResponse
+      >(
+        'GET',
+        path + (params.toString() ? `?${params.toString()}` : ''),
+        finalRequestOptions
+      );
+
+      return {
+        data: Array.isArray(response.data) ? response.data : [],
+        meta: (response as any).meta,
+        includes: (response as any).includes,
+        errors: (response as any).errors,
+      };
+    };
+
+    // Create paginator and fetch first page
+    const paginator = new Paginator(fetchPage);
+
+    // Fetch the first page immediately
+    await paginator.fetchNext();
+
+    return paginator;
+  }
 
   /**
    * Get DM events for a DM conversation
@@ -654,367 +538,108 @@ export class DirectMessagesClient {
    * @param options Options for the paginated request
    * @returns A paginator instance for iterating through all results
    */
-  getDmConversationsIdDmEvents(
-    
-    
-    
+  async getEventsByConversationId(
     id: string,
-    
-    
-    
-    
-    options: DirectMessagesGetDmConversationsIdDmEventsOptions = {}
-    
-  ): IdPaginator {
+    options: DirectMessagesGetEventsByConversationIdOptions = {}
+  ): Promise<IdPaginator> {
     // Destructure options
-    
+
     const {
-        
-        
-        maxResults = undefined,
-        
-        
-        
-        paginationToken = undefined,
-        
-        
-        
-        eventTypes = [],
-        
-        
-        
-        dmEventfields = [],
-        
-        
-        
-        expansions = [],
-        
-        
-        
-        mediafields = [],
-        
-        
-        
-        userfields = [],
-        
-        
-        
-        tweetfields = [],
-        
-        
-        requestOptions: reqOpts = {}
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      eventTypes = [],
+
+      dmEventfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      userfields = [],
+
+      tweetfields = [],
+
+      requestOptions: reqOpts = {},
     } = options;
-    
 
     // Build the path with path parameters
     let path = '/2/dm_conversations/{id}/dm_events';
-    
-    
+
     path = path.replace('{id}', encodeURIComponent(String(id)));
-    
-    
 
     // Create the fetch function for the paginator
     const fetchPage = async (paginationToken?: string) => {
       // Build query parameters
       const params = new URLSearchParams();
-      
-      
-      
+
       if (maxResults !== undefined) {
-          
-          params.append('max_results', String(maxResults));
-          
+        params.append('max_results', String(maxResults));
       }
-      
-      
-      
-      
-      
+
       if (paginationToken !== undefined) {
-          
-          params.append('pagination_token', String(paginationToken));
-          
+        params.append('pagination_token', String(paginationToken));
       }
-      
-      
-      
-      
-      
+
       if (eventTypes !== undefined) {
-          
-          eventTypes.forEach(item => params.append('event_types', String(item)));
-          
+        params.append('event_types', eventTypes.join(','));
       }
-      
-      
-      
-      
-      
+
       if (dmEventfields !== undefined) {
-          
-          dmEventfields.forEach(item => params.append('dm_event.fields', String(item)));
-          
+        params.append('dm_event.fields', dmEventfields.join(','));
       }
-      
-      
-      
-      
-      
+
       if (expansions !== undefined) {
-          
-          expansions.forEach(item => params.append('expansions', String(item)));
-          
+        params.append('expansions', expansions.join(','));
       }
-      
-      
-      
-      
-      
+
       if (mediafields !== undefined) {
-          
-          mediafields.forEach(item => params.append('media.fields', String(item)));
-          
+        params.append('media.fields', mediafields.join(','));
       }
-      
-      
-      
-      
-      
+
       if (userfields !== undefined) {
-          
-          userfields.forEach(item => params.append('user.fields', String(item)));
-          
+        params.append('user.fields', userfields.join(','));
       }
-      
-      
-      
-      
-      
+
       if (tweetfields !== undefined) {
-          
-          tweetfields.forEach(item => params.append('tweet.fields', String(item)));
-          
+        params.append('tweet.fields', tweetfields.join(','));
       }
-      
-      
-      
 
       // Add pagination token if provided
       if (paginationToken) {
-        
         params.set('pagination_token', paginationToken);
-        
       }
 
       // Prepare request options
       const finalRequestOptions: RequestOptions = {
-          
-          ...reqOpts
+        ...reqOpts,
       };
 
-      const response = await this.client.request<DirectMessagesGetDmConversationsIdDmEventsResponse>(
-          'GET',
-          path + (params.toString() ? `?${params.toString()}` : ''),
-          finalRequestOptions
+      const response = await this.client.request<
+        DirectMessagesGetEventsByConversationIdResponse
+      >(
+        'GET',
+        path + (params.toString() ? `?${params.toString()}` : ''),
+        finalRequestOptions
       );
 
       return {
-        data: (response.data as any)?.data || [],
-        meta: (response.data as any)?.meta,
-        includes: (response.data as any)?.includes,
-        errors: (response.data as any)?.errors
+        data: Array.isArray(response.data) ? response.data : [],
+        meta: (response as any).meta,
+        includes: (response as any).includes,
+        errors: (response as any).errors,
       };
     };
 
-    return new IdPaginator(fetchPage);
+    // Create paginator and fetch first page
+    const paginator = new IdPaginator(fetchPage);
+
+    // Fetch the first page immediately
+    await paginator.fetchNext();
+
+    return paginator;
   }
-
-
-
-
-  /**
-   * Get DM events
-   * Retrieves a list of recent direct message events across all conversations.
-   * Returns a paginator for automatic pagination through all results.
-   * @param 
-   * @param options Options for the paginated request
-   * @returns A paginator instance for iterating through all results
-   */
-  getDmEvents(
-    
-    
-    
-    
-    options: DirectMessagesGetDmEventsOptions = {}
-    
-  ): TwitterPaginator<any> {
-    // Destructure options
-    
-    const {
-        
-        
-        maxResults = undefined,
-        
-        
-        
-        paginationToken = undefined,
-        
-        
-        
-        eventTypes = [],
-        
-        
-        
-        dmEventfields = [],
-        
-        
-        
-        expansions = [],
-        
-        
-        
-        mediafields = [],
-        
-        
-        
-        userfields = [],
-        
-        
-        
-        tweetfields = [],
-        
-        
-        requestOptions: reqOpts = {}
-    } = options;
-    
-
-    // Build the path with path parameters
-    let path = '/2/dm_events';
-    
-
-    // Create the fetch function for the paginator
-    const fetchPage = async (paginationToken?: string) => {
-      // Build query parameters
-      const params = new URLSearchParams();
-      
-      
-      
-      if (maxResults !== undefined) {
-          
-          params.append('max_results', String(maxResults));
-          
-      }
-      
-      
-      
-      
-      
-      if (paginationToken !== undefined) {
-          
-          params.append('pagination_token', String(paginationToken));
-          
-      }
-      
-      
-      
-      
-      
-      if (eventTypes !== undefined) {
-          
-          eventTypes.forEach(item => params.append('event_types', String(item)));
-          
-      }
-      
-      
-      
-      
-      
-      if (dmEventfields !== undefined) {
-          
-          dmEventfields.forEach(item => params.append('dm_event.fields', String(item)));
-          
-      }
-      
-      
-      
-      
-      
-      if (expansions !== undefined) {
-          
-          expansions.forEach(item => params.append('expansions', String(item)));
-          
-      }
-      
-      
-      
-      
-      
-      if (mediafields !== undefined) {
-          
-          mediafields.forEach(item => params.append('media.fields', String(item)));
-          
-      }
-      
-      
-      
-      
-      
-      if (userfields !== undefined) {
-          
-          userfields.forEach(item => params.append('user.fields', String(item)));
-          
-      }
-      
-      
-      
-      
-      
-      if (tweetfields !== undefined) {
-          
-          tweetfields.forEach(item => params.append('tweet.fields', String(item)));
-          
-      }
-      
-      
-      
-
-      // Add pagination token if provided
-      if (paginationToken) {
-        
-        params.set('pagination_token', paginationToken);
-        
-      }
-
-      // Prepare request options
-      const finalRequestOptions: RequestOptions = {
-          
-          ...reqOpts
-      };
-
-      const response = await this.client.request<DirectMessagesGetDmEventsResponse>(
-          'GET',
-          path + (params.toString() ? `?${params.toString()}` : ''),
-          finalRequestOptions
-      );
-
-      return {
-        data: (response.data as any)?.data || [],
-        meta: (response.data as any)?.meta,
-        includes: (response.data as any)?.includes,
-        errors: (response.data as any)?.errors
-      };
-    };
-
-    return new TwitterPaginator(fetchPage);
-  }
-
-
-
-
-
-
-
 
   /**
    * Get DM events for a DM conversation
@@ -1026,186 +651,109 @@ export class DirectMessagesClient {
    * @param options Options for the paginated request
    * @returns A paginator instance for iterating through all results
    */
-  getDmEventsByParticipantId(
-    
-    
-    
+  async getEventsByParticipantId(
     participantId: string,
-    
-    
-    
-    
-    options: DirectMessagesGetDmEventsByParticipantIdOptions = {}
-    
-  ): IdPaginator {
+    options: DirectMessagesGetEventsByParticipantIdOptions = {}
+  ): Promise<IdPaginator> {
     // Destructure options
-    
+
     const {
-        
-        
-        maxResults = undefined,
-        
-        
-        
-        paginationToken = undefined,
-        
-        
-        
-        eventTypes = [],
-        
-        
-        
-        dmEventfields = [],
-        
-        
-        
-        expansions = [],
-        
-        
-        
-        mediafields = [],
-        
-        
-        
-        userfields = [],
-        
-        
-        
-        tweetfields = [],
-        
-        
-        requestOptions: reqOpts = {}
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      eventTypes = [],
+
+      dmEventfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      userfields = [],
+
+      tweetfields = [],
+
+      requestOptions: reqOpts = {},
     } = options;
-    
 
     // Build the path with path parameters
     let path = '/2/dm_conversations/with/{participant_id}/dm_events';
-    
-    
-    path = path.replace('{participant_id}', encodeURIComponent(String(participantId)));
-    
-    
+
+    path = path.replace(
+      '{participant_id}',
+      encodeURIComponent(String(participantId))
+    );
 
     // Create the fetch function for the paginator
     const fetchPage = async (paginationToken?: string) => {
       // Build query parameters
       const params = new URLSearchParams();
-      
-      
-      
+
       if (maxResults !== undefined) {
-          
-          params.append('max_results', String(maxResults));
-          
+        params.append('max_results', String(maxResults));
       }
-      
-      
-      
-      
-      
+
       if (paginationToken !== undefined) {
-          
-          params.append('pagination_token', String(paginationToken));
-          
+        params.append('pagination_token', String(paginationToken));
       }
-      
-      
-      
-      
-      
+
       if (eventTypes !== undefined) {
-          
-          eventTypes.forEach(item => params.append('event_types', String(item)));
-          
+        params.append('event_types', eventTypes.join(','));
       }
-      
-      
-      
-      
-      
+
       if (dmEventfields !== undefined) {
-          
-          dmEventfields.forEach(item => params.append('dm_event.fields', String(item)));
-          
+        params.append('dm_event.fields', dmEventfields.join(','));
       }
-      
-      
-      
-      
-      
+
       if (expansions !== undefined) {
-          
-          expansions.forEach(item => params.append('expansions', String(item)));
-          
+        params.append('expansions', expansions.join(','));
       }
-      
-      
-      
-      
-      
+
       if (mediafields !== undefined) {
-          
-          mediafields.forEach(item => params.append('media.fields', String(item)));
-          
+        params.append('media.fields', mediafields.join(','));
       }
-      
-      
-      
-      
-      
+
       if (userfields !== undefined) {
-          
-          userfields.forEach(item => params.append('user.fields', String(item)));
-          
+        params.append('user.fields', userfields.join(','));
       }
-      
-      
-      
-      
-      
+
       if (tweetfields !== undefined) {
-          
-          tweetfields.forEach(item => params.append('tweet.fields', String(item)));
-          
+        params.append('tweet.fields', tweetfields.join(','));
       }
-      
-      
-      
 
       // Add pagination token if provided
       if (paginationToken) {
-        
         params.set('pagination_token', paginationToken);
-        
       }
 
       // Prepare request options
       const finalRequestOptions: RequestOptions = {
-          
-          ...reqOpts
+        ...reqOpts,
       };
 
-      const response = await this.client.request<DirectMessagesGetDmEventsByParticipantIdResponse>(
-          'GET',
-          path + (params.toString() ? `?${params.toString()}` : ''),
-          finalRequestOptions
+      const response = await this.client.request<
+        DirectMessagesGetEventsByParticipantIdResponse
+      >(
+        'GET',
+        path + (params.toString() ? `?${params.toString()}` : ''),
+        finalRequestOptions
       );
 
       return {
-        data: (response.data as any)?.data || [],
-        meta: (response.data as any)?.meta,
-        includes: (response.data as any)?.includes,
-        errors: (response.data as any)?.errors
+        data: Array.isArray(response.data) ? response.data : [],
+        meta: (response as any).meta,
+        includes: (response as any).includes,
+        errors: (response as any).errors,
       };
     };
 
-    return new IdPaginator(fetchPage);
+    // Create paginator and fetch first page
+    const paginator = new IdPaginator(fetchPage);
+
+    // Fetch the first page immediately
+    await paginator.fetchNext();
+
+    return paginator;
   }
-
-
-
-
-
-
-
 }

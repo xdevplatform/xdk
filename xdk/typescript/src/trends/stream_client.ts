@@ -7,22 +7,9 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  TrendsGetUsersPersonalizedResponse,
   TrendsGetByWoeidResponse,
+  TrendsGetPersonalizedTrendsResponse,
 } from './models.js';
-
-/**
- * Options for getUsersPersonalized method
- */
-export interface TrendsGetUsersPersonalizedStreamingOptions {
-  /** A comma separated list of PersonalizedTrend fields to display. */
-  personalizedTrendfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
 
 /**
  * Options for getByWoeid method
@@ -40,73 +27,24 @@ export interface TrendsGetByWoeidStreamingOptions {
   signal?: AbortSignal;
 }
 
+/**
+ * Options for getPersonalizedTrends method
+ */
+export interface TrendsGetPersonalizedTrendsStreamingOptions {
+  /** A comma separated list of PersonalizedTrend fields to display. */
+  personalizedTrendfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
 export class TrendsClient {
   private client: Client;
 
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-     * Get personalized Trends
-     * Retrieves personalized trending topics for the authenticated user.
-     * 
-     * @returns Promise with the API response
-     */
-  async getUsersPersonalized(
-    options: TrendsGetUsersPersonalizedStreamingOptions = {}
-  ): Promise<TrendsGetUsersPersonalizedResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(
-      requiredAuthTypes,
-      'getUsersPersonalized'
-    );
-
-    // Destructure options with defaults
-
-    const {
-      personalizedTrendfields = [],
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (personalizedTrendfields !== undefined) {
-      params.append(
-        'personalized_trend.fields',
-        personalizedTrendfields.join(',')
-      );
-    }
-
-    // Build path parameters
-    let path = `/2/users/personalized_trends`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<TrendsGetUsersPersonalizedResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
   }
 
   /**
@@ -166,6 +104,68 @@ export class TrendsClient {
 
     // Make the request
     return this.client.request<TrendsGetByWoeidResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get personalized Trends
+     * Retrieves personalized trending topics for the authenticated user.
+     * 
+     * @returns Promise with the API response
+     */
+  async getPersonalizedTrends(
+    options: TrendsGetPersonalizedTrendsStreamingOptions = {}
+  ): Promise<TrendsGetPersonalizedTrendsResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(
+      requiredAuthTypes,
+      'getPersonalizedTrends'
+    );
+
+    // Destructure options with defaults
+
+    const {
+      personalizedTrendfields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (personalizedTrendfields !== undefined) {
+      params.append(
+        'personalized_trend.fields',
+        personalizedTrendfields.join(',')
+      );
+    }
+
+    // Build path parameters
+    let path = `/2/users/personalized_trends`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<TrendsGetPersonalizedTrendsResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

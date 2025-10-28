@@ -15,6 +15,45 @@ yarn add x-api-sdk
 pnpm add x-api-sdk
 ```
 
+## Documentation
+
+### 📚 API Reference
+
+- **HTML Documentation**: [View Online](https://your-docs-site.com) | [Generate Locally](#generating-documentation)
+- **TypeScript Definitions**: Full type definitions included
+- **JSDoc Comments**: Comprehensive inline documentation
+
+### 🔧 Generating Documentation
+
+To generate documentation locally:
+
+```bash
+# Install dependencies
+npm install
+
+# Generate HTML documentation
+npm run docs:build
+
+# Generate and serve documentation locally
+npm run docs:serve
+
+# Watch for changes and regenerate
+npm run docs:watch
+```
+
+The documentation will be generated in the `docs/` directory:
+- `docs/html/` - HTML documentation with search and navigation
+- `docs/markdown/` - Markdown documentation for GitHub/GitLab
+- `docs/api/` - Minimal API reference
+
+### 📖 Documentation Features
+
+- **Interactive Examples**: Copy-paste ready code samples
+- **Type Information**: Full TypeScript type definitions
+- **Search**: Find methods, classes, and interfaces quickly
+- **Categories**: Organized by functionality (Authentication, Pagination, etc.)
+- **Cross-References**: Links between related methods and types
+
 ## Quick Start
 
 ```typescript

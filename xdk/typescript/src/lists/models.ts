@@ -3,9 +3,9 @@
  */
 
 /**
- * Response for getUsersMemberships
+ * Response for getFollowers
  */
-export interface ListsGetUsersMembershipsResponse {
+export interface ListsGetFollowersResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -13,43 +13,9 @@ export interface ListsGetUsersMembershipsResponse {
 }
 
 /**
- * Response for unfollow
+ * Response for getMembers
  */
-export interface ListsUnfollowResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getUsersFollowed
- */
-export interface ListsGetUsersFollowedResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for follow
- */
-export interface ListsFollowRequest {
-  /** The unique identifier of this List. */
-  listId?: string;
-}
-
-/**
- * Response for follow
- */
-export interface ListsFollowResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getUsersOwned
- */
-export interface ListsGetUsersOwnedResponse {
+export interface ListsGetMembersResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -73,63 +39,13 @@ export interface ListsAddMemberResponse {
 }
 
 /**
- * Request body for create
+ * Response for getPosts
  */
-export interface ListsCreateRequest {
-  description?: string;
-  name?: string;
-  private?: boolean;
-}
-
-/**
- * Response for create
- */
-export interface ListsCreateResponse {
-  /** A X List is a curated group of accounts. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for removeMemberByUserId
- */
-export interface ListsRemoveMemberByUserIdResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getUsersPinned
- */
-export interface ListsGetUsersPinnedResponse {
+export interface ListsGetPostsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
   meta?: Record<string, any>;
-}
-
-/**
- * Request body for pin
- */
-export interface ListsPinRequest {
-  /** The unique identifier of this List. */
-  listId?: string;
-}
-
-/**
- * Response for pin
- */
-export interface ListsPinResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for unpin
- */
-export interface ListsUnpinResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
 }
 
 /**
@@ -164,5 +80,31 @@ export interface ListsUpdateResponse {
  */
 export interface ListsDeleteResponse {
   data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for removeMemberByUserId
+ */
+export interface ListsRemoveMemberByUserIdResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Request body for create
+ */
+export interface ListsCreateRequest {
+  description?: string;
+  name?: string;
+  private?: boolean;
+}
+
+/**
+ * Response for create
+ */
+export interface ListsCreateResponse {
+  /** A X List is a curated group of accounts. */
+  data: Record<string, any>;
   errors?: Array<any>;
 }

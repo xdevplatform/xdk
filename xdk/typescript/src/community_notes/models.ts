@@ -3,18 +3,9 @@
  */
 
 /**
- * Response for searchNotesWritten
+ * Response for searchEligiblePosts
  */
-export interface CommunityNotesSearchNotesWrittenResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for searchForEligiblePosts
- */
-export interface CommunityNotesSearchForEligiblePostsResponse {
+export interface CommunityNotesSearchEligiblePostsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -22,9 +13,18 @@ export interface CommunityNotesSearchForEligiblePostsResponse {
 }
 
 /**
- * Request body for createNotes
+ * Response for searchWritten
  */
-export interface CommunityNotesCreateNotesRequest {
+export interface CommunityNotesSearchWrittenResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Request body for create
+ */
+export interface CommunityNotesCreateRequest {
   /** A X Community Note is a note on a Post. */
   info: Record<string, any>;
   /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
@@ -34,17 +34,35 @@ export interface CommunityNotesCreateNotesRequest {
 }
 
 /**
- * Response for createNotes
+ * Response for create
  */
-export interface CommunityNotesCreateNotesResponse {
-  data: Record<string, any>;
+export interface CommunityNotesCreateResponse {
+  data?: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
- * Response for deleteNotes
+ * Request body for evaluate
  */
-export interface CommunityNotesDeleteNotesResponse {
+export interface CommunityNotesEvaluateRequest {
+  /** Text for the community note. */
+  noteText?: string;
+  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
+  postId?: string;
+}
+
+/**
+ * Response for evaluate
+ */
+export interface CommunityNotesEvaluateResponse {
   data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for delete
+ */
+export interface CommunityNotesDeleteResponse {
+  data: Record<string, any>;
   errors?: Array<any>;
 }

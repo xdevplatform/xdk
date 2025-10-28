@@ -6,14 +6,13 @@
 
 import { httpClient } from "./http-client.js";
 import { 
-  TwitterPaginator, 
-  TweetPaginator, 
+  Paginator, 
+  PostPaginator, 
   UserPaginator, 
   ListPaginator, 
   IdPaginator,
   WelcomeMessagePaginator,
-  EventPaginator,
-  Paginator
+  EventPaginator
 } from "./paginator.js";
 
 {% for tag in tags %}
@@ -116,6 +115,35 @@ export interface PaginationMeta {
 
 /**
  * Main client class for the X API
+ * 
+ * This is the primary entry point for interacting with the X API. It provides
+ * access to all API endpoints through specialized client modules and handles
+ * authentication, request configuration, and error handling.
+ * 
+ * @example
+ * ```typescript
+ * import { Client } from 'x-api-sdk';
+ * 
+ * const client = new Client({
+ *   bearerToken: 'your-bearer-token'
+ * });
+ * 
+ * // Get user information
+ * const user = await client.users.getUser('783214');
+ * 
+ * // Get followers with pagination
+ * const followers = await client.users.getFollowers('783214', {
+ *   maxResults: 10,
+ *   userFields: ['id', 'name', 'username']
+ * });
+ * 
+ * // Iterate through followers
+ * for await (const follower of followers) {
+ *   console.log(follower.username);
+ * }
+ * ```
+ * 
+ * @category Client
  */
 export class Client {
   /** Base URL for API requests */
@@ -145,6 +173,38 @@ export class Client {
   readonly {{ tag | snake_case }}: {{ tag | pascal_case }}Client;
 {% endfor %}
 
+  /**
+   * Creates a new X API client instance
+   * 
+   * @param config - Configuration options for the client
+   * @param config.bearerToken - Bearer token for OAuth2 authentication
+   * @param config.accessToken - OAuth2 access token
+   * @param config.oauth1 - OAuth1 instance for authentication
+   * @param config.baseUrl - Base URL for API requests (defaults to https://api.x.com)
+   * @param config.timeout - Request timeout in milliseconds (defaults to 30000)
+   * @param config.retry - Whether to automatically retry failed requests (defaults to true)
+   * @param config.maxRetries - Maximum number of retry attempts (defaults to 3)
+   * @param config.headers - Custom headers to include in requests
+   * @param config.userAgent - User agent string (defaults to "x-api-sdk/1.0.0")
+   * 
+   * @example
+   * ```typescript
+   * // Bearer token authentication
+   * const client = new Client({
+   *   bearerToken: 'your-bearer-token'
+   * });
+   * 
+   * // OAuth2 authentication
+   * const client = new Client({
+   *   accessToken: 'your-access-token'
+   * });
+   * 
+   * // OAuth1 authentication
+   * const client = new Client({
+   *   oauth1: oauth1Instance
+   * });
+   * ```
+   */
   constructor(config: ClientConfig | any) {
     // Handle OAuth1 instance passed directly
     if (config && typeof config === 'object' && config.accessToken && config.accessToken.accessToken && config.accessToken.accessTokenSecret) {
@@ -181,7 +241,31 @@ export class Client {
   }
 
   /**
-   * Make an authenticated request to the API
+   * Make an authenticated request to the X API
+   * 
+   * This method handles authentication, request formatting, and error handling
+   * for all API requests. It automatically adds the appropriate authentication
+   * headers based on the client configuration.
+   * 
+   * @param method - HTTP method (GET, POST, PUT, DELETE, etc.)
+   * @param path - API endpoint path (e.g., '/2/users/by/username/username')
+   * @param options - Request options including timeout, headers, and body
+   * @returns Promise that resolves to the parsed response data
+   * 
+   * @example
+   * ```typescript
+   * // GET request
+   * const user = await client.request('GET', '/2/users/by/username/username', {
+   *   timeout: 5000
+   * });
+   * 
+   * // POST request with body
+   * const result = await client.request('POST', '/2/tweets', {
+   *   body: JSON.stringify({ text: 'Hello World!' })
+   * });
+   * ```
+   * 
+   * @throws {ApiError} When the API returns an error response
    */
   async request<T = any>(
     method: string,

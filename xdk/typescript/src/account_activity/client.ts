@@ -6,26 +6,50 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
-  TwitterPaginator,
-  TweetPaginator,
+  Paginator,
+  PostPaginator,
   UserPaginator,
   ListPaginator,
   IdPaginator,
 } from '../paginator.js';
 import {
   AccountActivityDeleteSubscriptionResponse,
-  AccountActivityGetSubscriptionsResponse,
   AccountActivityCreateReplayJobResponse,
+  AccountActivityGetSubscriptionsResponse,
   AccountActivityValidateSubscriptionResponse,
+  AccountActivityCreateSubscriptionRequest,
+  AccountActivityCreateSubscriptionResponse,
   AccountActivityGetSubscriptionCountResponse,
 } from './models.js';
 
 /**
+ * Options for createSubscription method
+ */
+export interface AccountActivityCreateSubscriptionOptions {
+  /** Request body */
+  body?: AccountActivityCreateSubscriptionRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
  * Client for Account activity operations
+ * 
+ * This client provides methods for interacting with the Account activity endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all Account activity related operations.
+ * 
+ * @category Account activity
  */
 export class AccountActivityClient {
   private client: Client;
 
+  /**
+     * Creates a new Account activity client instance
+     * 
+     * @param client - The main X API client instance
+     */
   constructor(client: Client) {
     this.client = client;
   }
@@ -63,40 +87,6 @@ export class AccountActivityClient {
 
     return this.client.request<AccountActivityDeleteSubscriptionResponse>(
       'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get subscriptions
-   * Retrieves a list of all active subscriptions for a given webhook.
-   * @param webhookId The webhook ID to pull subscriptions for.* @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getSubscriptions(
-    webhookId: string
-  ): Promise<AccountActivityGetSubscriptionsResponse> {
-    // Destructure options
-
-    const reqOpts = {};
-
-    // Build the path with path parameters
-    let path =
-      '/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<AccountActivityGetSubscriptionsResponse>(
-      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -149,6 +139,40 @@ export class AccountActivityClient {
   }
 
   /**
+   * Get subscriptions
+   * Retrieves a list of all active subscriptions for a given webhook.
+   * @param webhookId The webhook ID to pull subscriptions for.* @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getSubscriptions(
+    webhookId: string
+  ): Promise<AccountActivityGetSubscriptionsResponse> {
+    // Destructure options
+
+    const reqOpts = {};
+
+    // Build the path with path parameters
+    let path =
+      '/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<AccountActivityGetSubscriptionsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Validate subscription
    * Checks a user’s Account Activity subscription for a given webhook.
    * @param webhookId The webhook ID to check subscription against.* @returns Promise with the API response
@@ -176,6 +200,46 @@ export class AccountActivityClient {
 
     return this.client.request<AccountActivityValidateSubscriptionResponse>(
       'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Create subscription
+   * Creates an Account Activity subscription for the user and the given webhook.
+   * @param webhookId The webhook ID to check subscription against.* @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async createSubscription(
+    webhookId: string,
+    options: AccountActivityCreateSubscriptionOptions = {}
+  ): Promise<AccountActivityCreateSubscriptionResponse> {
+    // Destructure options
+
+    const {
+      body,
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build the path with path parameters
+    let path = '/2/account_activity/webhooks/{webhook_id}/subscriptions/all';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...reqOpts,
+    };
+
+    return this.client.request<AccountActivityCreateSubscriptionResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

@@ -6,27 +6,16 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
-  TwitterPaginator,
-  TweetPaginator,
+  Paginator,
+  PostPaginator,
   UserPaginator,
   ListPaginator,
   IdPaginator,
 } from '../paginator.js';
 import {
-  TrendsGetUsersPersonalizedResponse,
   TrendsGetByWoeidResponse,
+  TrendsGetPersonalizedTrendsResponse,
 } from './models.js';
-
-/**
- * Options for getUsersPersonalized method
- */
-export interface TrendsGetUsersPersonalizedOptions {
-  /** A comma separated list of PersonalizedTrend fields to display. */
-  personalizedTrendfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
 
 /**
  * Options for getByWoeid method
@@ -43,53 +32,35 @@ export interface TrendsGetByWoeidOptions {
 }
 
 /**
+ * Options for getPersonalizedTrends method
+ */
+export interface TrendsGetPersonalizedTrendsOptions {
+  /** A comma separated list of PersonalizedTrend fields to display. */
+  personalizedTrendfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
  * Client for Trends operations
+ * 
+ * This client provides methods for interacting with the Trends endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all Trends related operations.
+ * 
+ * @category Trends
  */
 export class TrendsClient {
   private client: Client;
 
+  /**
+     * Creates a new Trends client instance
+     * 
+     * @param client - The main X API client instance
+     */
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-   * Get personalized Trends
-   * Retrieves personalized trending topics for the authenticated user.* @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getUsersPersonalized(
-    options: TrendsGetUsersPersonalizedOptions = {}
-  ): Promise<TrendsGetUsersPersonalizedResponse> {
-    // Destructure options
-
-    const {
-      personalizedTrendfields = [],
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/personalized_trends';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (personalizedTrendfields !== undefined) {
-      personalizedTrendfields.forEach(item =>
-        params.append('personalized_trend.fields', String(item))
-      );
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...reqOpts,
-    };
-
-    return this.client.request<TrendsGetUsersPersonalizedResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
   }
 
   /**
@@ -125,7 +96,7 @@ export class TrendsClient {
     }
 
     if (trendfields !== undefined) {
-      trendfields.forEach(item => params.append('trend.fields', String(item)));
+      params.append('trend.fields', trendfields.join(','));
     }
 
     // Prepare request options
@@ -134,6 +105,47 @@ export class TrendsClient {
     };
 
     return this.client.request<TrendsGetByWoeidResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get personalized Trends
+   * Retrieves personalized trending topics for the authenticated user.* @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getPersonalizedTrends(
+    options: TrendsGetPersonalizedTrendsOptions = {}
+  ): Promise<TrendsGetPersonalizedTrendsResponse> {
+    // Destructure options
+
+    const {
+      personalizedTrendfields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build the path with path parameters
+    let path = '/2/users/personalized_trends';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (personalizedTrendfields !== undefined) {
+      params.append(
+        'personalized_trend.fields',
+        personalizedTrendfields.join(',')
+      );
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...reqOpts,
+    };
+
+    return this.client.request<TrendsGetPersonalizedTrendsResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

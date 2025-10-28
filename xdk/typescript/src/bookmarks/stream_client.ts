@@ -7,28 +7,12 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  BookmarksGetUsersFoldersResponse,
   BookmarksGetUsersByFolderIdResponse,
   BookmarksGetUsersResponse,
   BookmarksCreateUsersResponse,
   BookmarksDeleteUsersResponse,
+  BookmarksGetUsersFoldersResponse,
 } from './models.js';
-
-/**
- * Options for getUsersFolders method
- */
-export interface BookmarksGetUsersFoldersStreamingOptions {
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get the next 'page' of results. */
-  paginationToken?: string;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
 
 /**
  * Options for getUsers method
@@ -64,74 +48,27 @@ export interface BookmarksGetUsersStreamingOptions {
   signal?: AbortSignal;
 }
 
+/**
+ * Options for getUsersFolders method
+ */
+export interface BookmarksGetUsersFoldersStreamingOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. */
+  paginationToken?: string;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
 export class BookmarksClient {
   private client: Client;
 
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-     * Get Bookmark folders
-     * Retrieves a list of Bookmark folders created by the authenticated user.
-     * 
-     * @returns Promise with the API response
-     */
-  async getUsersFolders(
-    id: string,
-    options: BookmarksGetUsersFoldersStreamingOptions = {}
-  ): Promise<BookmarksGetUsersFoldersResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getUsersFolders');
-
-    // Destructure options with defaults
-
-    const {
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    // Build path parameters
-    let path = `/2/users/{id}/bookmarks/folders`;
-
-    path = path.replace(`{${'id'}}`, String(id));
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<BookmarksGetUsersFoldersResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
   }
 
   /**
@@ -381,6 +318,69 @@ export class BookmarksClient {
     // Make the request
     return this.client.request<BookmarksDeleteUsersResponse>(
       'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get Bookmark folders
+     * Retrieves a list of Bookmark folders created by the authenticated user.
+     * 
+     * @returns Promise with the API response
+     */
+  async getUsersFolders(
+    id: string,
+    options: BookmarksGetUsersFoldersStreamingOptions = {}
+  ): Promise<BookmarksGetUsersFoldersResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getUsersFolders');
+
+    // Destructure options with defaults
+
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    // Build path parameters
+    let path = `/2/users/{id}/bookmarks/folders`;
+
+    path = path.replace(`{${'id'}}`, String(id));
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<BookmarksGetUsersFoldersResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

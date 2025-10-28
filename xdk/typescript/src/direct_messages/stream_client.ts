@@ -7,20 +7,20 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  DirectMessagesCreateDmByParticipantIdResponse,
-  DirectMessagesGetDmConversationsIdDmEventsResponse,
-  DirectMessagesGetDmEventsResponse,
-  DirectMessagesCreateDmConversationsResponse,
-  DirectMessagesCreateDmByConversationIdResponse,
-  DirectMessagesGetDmEventsByParticipantIdResponse,
-  DirectMessagesGetDmEventsByIdResponse,
-  DirectMessagesDeleteDmEventsResponse,
+  DirectMessagesCreateByConversationIdResponse,
+  DirectMessagesGetEventsByIdResponse,
+  DirectMessagesDeleteEventsResponse,
+  DirectMessagesCreateConversationResponse,
+  DirectMessagesGetEventsResponse,
+  DirectMessagesCreateByParticipantIdResponse,
+  DirectMessagesGetEventsByConversationIdResponse,
+  DirectMessagesGetEventsByParticipantIdResponse,
 } from './models.js';
 
 /**
- * Options for createDmByParticipantId method
+ * Options for createByConversationId method
  */
-export interface DirectMessagesCreateDmByParticipantIdStreamingOptions {
+export interface DirectMessagesCreateByConversationIdStreamingOptions {
   /** Request body */
   body?: any;
 
@@ -31,9 +31,47 @@ export interface DirectMessagesCreateDmByParticipantIdStreamingOptions {
 }
 
 /**
- * Options for getDmConversationsIdDmEvents method
+ * Options for getEventsById method
  */
-export interface DirectMessagesGetDmConversationsIdDmEventsStreamingOptions {
+export interface DirectMessagesGetEventsByIdStreamingOptions {
+  /** A comma separated list of DmEvent fields to display. */
+  dmEventfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
+/**
+ * Options for createConversation method
+ */
+export interface DirectMessagesCreateConversationStreamingOptions {
+  /** Request body */
+  body?: any;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
+/**
+ * Options for getEvents method
+ */
+export interface DirectMessagesGetEventsStreamingOptions {
   /** The maximum number of results. */
   maxResults?: number;
 
@@ -65,9 +103,22 @@ export interface DirectMessagesGetDmConversationsIdDmEventsStreamingOptions {
 }
 
 /**
- * Options for getDmEvents method
+ * Options for createByParticipantId method
  */
-export interface DirectMessagesGetDmEventsStreamingOptions {
+export interface DirectMessagesCreateByParticipantIdStreamingOptions {
+  /** Request body */
+  body?: any;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
+/**
+ * Options for getEventsByConversationId method
+ */
+export interface DirectMessagesGetEventsByConversationIdStreamingOptions {
   /** The maximum number of results. */
   maxResults?: number;
 
@@ -99,35 +150,9 @@ export interface DirectMessagesGetDmEventsStreamingOptions {
 }
 
 /**
- * Options for createDmConversations method
+ * Options for getEventsByParticipantId method
  */
-export interface DirectMessagesCreateDmConversationsStreamingOptions {
-  /** Request body */
-  body?: any;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-
-/**
- * Options for createDmByConversationId method
- */
-export interface DirectMessagesCreateDmByConversationIdStreamingOptions {
-  /** Request body */
-  body?: any;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-
-/**
- * Options for getDmEventsByParticipantId method
- */
-export interface DirectMessagesGetDmEventsByParticipantIdStreamingOptions {
+export interface DirectMessagesGetEventsByParticipantIdStreamingOptions {
   /** The maximum number of results. */
   maxResults?: number;
 
@@ -137,31 +162,6 @@ export interface DirectMessagesGetDmEventsByParticipantIdStreamingOptions {
   /** The set of event_types to include in the results. */
   eventTypes?: Array<any>;
 
-  /** A comma separated list of DmEvent fields to display. */
-  dmEventfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-
-/**
- * Options for getDmEventsById method
- */
-export interface DirectMessagesGetDmEventsByIdStreamingOptions {
   /** A comma separated list of DmEvent fields to display. */
   dmEventfields?: Array<any>;
 
@@ -191,15 +191,15 @@ export class DirectMessagesClient {
   }
 
   /**
-     * Create DM message by participant ID
-     * Sends a new direct message to a specific participant by their ID.
+     * Create DM message by conversation ID
+     * Sends a new direct message to a specific conversation by its ID.
      * 
      * @returns Promise with the API response
      */
-  async createDmByParticipantId(
-    participantId: string,
-    options: DirectMessagesCreateDmByParticipantIdStreamingOptions = {}
-  ): Promise<DirectMessagesCreateDmByParticipantIdResponse> {
+  async createByConversationId(
+    dmConversationId: string,
+    options: DirectMessagesCreateByConversationIdStreamingOptions = {}
+  ): Promise<DirectMessagesCreateByConversationIdResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -210,7 +210,352 @@ export class DirectMessagesClient {
 
     this.client.validateAuthentication(
       requiredAuthTypes,
-      'createDmByParticipantId'
+      'createByConversationId'
+    );
+
+    // Destructure options with defaults
+
+    const {
+      body,
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/dm_conversations/{dm_conversation_id}/messages`;
+
+    path = path.replace(`{${'dm_conversation_id'}}`, String(dmConversationId));
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      body: JSON.stringify(body),
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<DirectMessagesCreateByConversationIdResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get DM event by ID
+     * Retrieves details of a specific direct message event by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getEventsById(
+    eventId: string,
+    options: DirectMessagesGetEventsByIdStreamingOptions = {}
+  ): Promise<DirectMessagesGetEventsByIdResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getEventsById');
+
+    // Destructure options with defaults
+
+    const {
+      dmEventfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      userfields = [],
+
+      tweetfields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (dmEventfields !== undefined) {
+      params.append('dm_event.fields', dmEventfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Build path parameters
+    let path = `/2/dm_events/{event_id}`;
+
+    path = path.replace(`{${'event_id'}}`, String(eventId));
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<DirectMessagesGetEventsByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Delete DM event
+     * Deletes a specific direct message event by its ID, if owned by the authenticated user.
+     * 
+     * @returns Promise with the API response
+     */
+  async deleteEvents(
+    eventId: string
+  ): Promise<DirectMessagesDeleteEventsResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'deleteEvents');
+
+    // Destructure options with defaults
+
+    const reqOpts = {};
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/dm_events/{event_id}`;
+
+    path = path.replace(`{${'event_id'}}`, String(eventId));
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<DirectMessagesDeleteEventsResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Create DM conversation
+     * Initiates a new direct message conversation with specified participants.
+     * 
+     * @returns Promise with the API response
+     */
+  async createConversation(
+    options: DirectMessagesCreateConversationStreamingOptions = {}
+  ): Promise<DirectMessagesCreateConversationResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'createConversation');
+
+    // Destructure options with defaults
+
+    const {
+      body,
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/dm_conversations`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      body: JSON.stringify(body),
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<DirectMessagesCreateConversationResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get DM events
+     * Retrieves a list of recent direct message events across all conversations.
+     * 
+     * @returns Promise with the API response
+     */
+  async getEvents(
+    options: DirectMessagesGetEventsStreamingOptions = {}
+  ): Promise<DirectMessagesGetEventsResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getEvents');
+
+    // Destructure options with defaults
+
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      eventTypes = [],
+
+      dmEventfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      userfields = [],
+
+      tweetfields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (eventTypes !== undefined) {
+      params.append('event_types', eventTypes.join(','));
+    }
+
+    if (dmEventfields !== undefined) {
+      params.append('dm_event.fields', dmEventfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Build path parameters
+    let path = `/2/dm_events`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<DirectMessagesGetEventsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Create DM message by participant ID
+     * Sends a new direct message to a specific participant by their ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async createByParticipantId(
+    participantId: string,
+    options: DirectMessagesCreateByParticipantIdStreamingOptions = {}
+  ): Promise<DirectMessagesCreateByParticipantIdResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(
+      requiredAuthTypes,
+      'createByParticipantId'
     );
 
     // Destructure options with defaults
@@ -243,7 +588,7 @@ export class DirectMessagesClient {
     };
 
     // Make the request
-    return this.client.request<DirectMessagesCreateDmByParticipantIdResponse>(
+    return this.client.request<DirectMessagesCreateByParticipantIdResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -256,10 +601,10 @@ export class DirectMessagesClient {
      * 
      * @returns Promise with the API response
      */
-  async getDmConversationsIdDmEvents(
+  async getEventsByConversationId(
     id: string,
-    options: DirectMessagesGetDmConversationsIdDmEventsStreamingOptions = {}
-  ): Promise<DirectMessagesGetDmConversationsIdDmEventsResponse> {
+    options: DirectMessagesGetEventsByConversationIdStreamingOptions = {}
+  ): Promise<DirectMessagesGetEventsByConversationIdResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -270,7 +615,7 @@ export class DirectMessagesClient {
 
     this.client.validateAuthentication(
       requiredAuthTypes,
-      'getDmConversationsIdDmEvents'
+      'getEventsByConversationId'
     );
 
     // Destructure options with defaults
@@ -347,225 +692,8 @@ export class DirectMessagesClient {
     };
 
     // Make the request
-    return this.client.request<
-      DirectMessagesGetDmConversationsIdDmEventsResponse
-    >(
+    return this.client.request<DirectMessagesGetEventsByConversationIdResponse>(
       'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get DM events
-     * Retrieves a list of recent direct message events across all conversations.
-     * 
-     * @returns Promise with the API response
-     */
-  async getDmEvents(
-    options: DirectMessagesGetDmEventsStreamingOptions = {}
-  ): Promise<DirectMessagesGetDmEventsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getDmEvents');
-
-    // Destructure options with defaults
-
-    const {
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
-      eventTypes = [],
-
-      dmEventfields = [],
-
-      expansions = [],
-
-      mediafields = [],
-
-      userfields = [],
-
-      tweetfields = [],
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (eventTypes !== undefined) {
-      params.append('event_types', eventTypes.join(','));
-    }
-
-    if (dmEventfields !== undefined) {
-      params.append('dm_event.fields', dmEventfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (mediafields !== undefined) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    // Build path parameters
-    let path = `/2/dm_events`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<DirectMessagesGetDmEventsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Create DM conversation
-     * Initiates a new direct message conversation with specified participants.
-     * 
-     * @returns Promise with the API response
-     */
-  async createDmConversations(
-    options: DirectMessagesCreateDmConversationsStreamingOptions = {}
-  ): Promise<DirectMessagesCreateDmConversationsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(
-      requiredAuthTypes,
-      'createDmConversations'
-    );
-
-    // Destructure options with defaults
-
-    const {
-      body,
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/dm_conversations`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      body: JSON.stringify(body),
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<DirectMessagesCreateDmConversationsResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Create DM message by conversation ID
-     * Sends a new direct message to a specific conversation by its ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async createDmByConversationId(
-    dmConversationId: string,
-    options: DirectMessagesCreateDmByConversationIdStreamingOptions = {}
-  ): Promise<DirectMessagesCreateDmByConversationIdResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(
-      requiredAuthTypes,
-      'createDmByConversationId'
-    );
-
-    // Destructure options with defaults
-
-    const {
-      body,
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/dm_conversations/{dm_conversation_id}/messages`;
-
-    path = path.replace(`{${'dm_conversation_id'}}`, String(dmConversationId));
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      body: JSON.stringify(body),
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<DirectMessagesCreateDmByConversationIdResponse>(
-      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -577,10 +705,10 @@ export class DirectMessagesClient {
      * 
      * @returns Promise with the API response
      */
-  async getDmEventsByParticipantId(
+  async getEventsByParticipantId(
     participantId: string,
-    options: DirectMessagesGetDmEventsByParticipantIdStreamingOptions = {}
-  ): Promise<DirectMessagesGetDmEventsByParticipantIdResponse> {
+    options: DirectMessagesGetEventsByParticipantIdStreamingOptions = {}
+  ): Promise<DirectMessagesGetEventsByParticipantIdResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -591,7 +719,7 @@ export class DirectMessagesClient {
 
     this.client.validateAuthentication(
       requiredAuthTypes,
-      'getDmEventsByParticipantId'
+      'getEventsByParticipantId'
     );
 
     // Destructure options with defaults
@@ -668,143 +796,8 @@ export class DirectMessagesClient {
     };
 
     // Make the request
-    return this.client.request<
-      DirectMessagesGetDmEventsByParticipantIdResponse
-    >(
+    return this.client.request<DirectMessagesGetEventsByParticipantIdResponse>(
       'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get DM event by ID
-     * Retrieves details of a specific direct message event by its ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async getDmEventsById(
-    eventId: string,
-    options: DirectMessagesGetDmEventsByIdStreamingOptions = {}
-  ): Promise<DirectMessagesGetDmEventsByIdResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getDmEventsById');
-
-    // Destructure options with defaults
-
-    const {
-      dmEventfields = [],
-
-      expansions = [],
-
-      mediafields = [],
-
-      userfields = [],
-
-      tweetfields = [],
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (dmEventfields !== undefined) {
-      params.append('dm_event.fields', dmEventfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (mediafields !== undefined) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    // Build path parameters
-    let path = `/2/dm_events/{event_id}`;
-
-    path = path.replace(`{${'event_id'}}`, String(eventId));
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<DirectMessagesGetDmEventsByIdResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Delete DM event
-     * Deletes a specific direct message event by its ID, if owned by the authenticated user.
-     * 
-     * @returns Promise with the API response
-     */
-  async deleteDmEvents(
-    eventId: string
-  ): Promise<DirectMessagesDeleteDmEventsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'deleteDmEvents');
-
-    // Destructure options with defaults
-
-    const reqOpts = {};
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/dm_events/{event_id}`;
-
-    path = path.replace(`{${'event_id'}}`, String(eventId));
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<DirectMessagesDeleteDmEventsResponse>(
-      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

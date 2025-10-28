@@ -3,17 +3,17 @@
  */
 
 /**
- * Response for getUsersPersonalized
+ * Response for getByWoeid
  */
-export interface TrendsGetUsersPersonalizedResponse {
+export interface TrendsGetByWoeidResponse {
   data?: Array<any>;
   errors?: Array<any>;
 }
 
 /**
- * Response for getByWoeid
+ * Response for getPersonalizedTrends
  */
-export interface TrendsGetByWoeidResponse {
+export interface TrendsGetPersonalizedTrendsResponse {
   data?: Array<any>;
   errors?: Array<any>;
 }

@@ -11,15 +11,6 @@ export interface AccountActivityDeleteSubscriptionResponse {
 }
 
 /**
- * Response for getSubscriptions
- */
-export interface AccountActivityGetSubscriptionsResponse {
-  /** The list of active subscriptions for a specified webhook */
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
  * Response for createReplayJob
  * Confirmation that the replay job request was accepted.
  */
@@ -31,9 +22,31 @@ export interface AccountActivityCreateReplayJobResponse {
 }
 
 /**
+ * Response for getSubscriptions
+ */
+export interface AccountActivityGetSubscriptionsResponse {
+  /** The list of active subscriptions for a specified webhook */
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
  * Response for validateSubscription
  */
 export interface AccountActivityValidateSubscriptionResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Request body for createSubscription
+ */
+export interface AccountActivityCreateSubscriptionRequest {}
+
+/**
+ * Response for createSubscription
+ */
+export interface AccountActivityCreateSubscriptionResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }

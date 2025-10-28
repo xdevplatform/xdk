@@ -7,10 +7,13 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
+  WebhooksGetStreamLinksResponse,
   WebhooksValidateResponse,
   WebhooksDeleteResponse,
   WebhooksGetResponse,
   WebhooksCreateResponse,
+  WebhooksCreateStreamLinkResponse,
+  WebhooksDeleteStreamLinkResponse,
 } from './models.js';
 
 /**
@@ -39,11 +42,83 @@ export interface WebhooksCreateStreamingOptions {
   signal?: AbortSignal;
 }
 
+/**
+ * Options for createStreamLink method
+ */
+export interface WebhooksCreateStreamLinkStreamingOptions {
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: string;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: string;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: string;
+
+  /** A comma separated list of Poll fields to display. */
+  pollfields?: string;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: string;
+
+  /** A comma separated list of Place fields to display. */
+  placefields?: string;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
 export class WebhooksClient {
   private client: Client;
 
   constructor(client: Client) {
     this.client = client;
+  }
+
+  /**
+     * Get stream links
+     * Get a list of webhook links associated with a filtered stream ruleset.
+     * 
+     * @returns Promise with the API response
+     */
+  async getStreamLinks(): Promise<WebhooksGetStreamLinksResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getStreamLinks');
+
+    // Destructure options with defaults
+
+    const reqOpts = {};
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/tweets/search/webhooks`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<WebhooksGetStreamLinksResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 
   /**
@@ -245,6 +320,141 @@ export class WebhooksClient {
     // Make the request
     return this.client.request<WebhooksCreateResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Create stream link
+     * Creates a link to deliver FilteredStream events to the given webhook.
+     * 
+     * @returns Promise with the API response
+     */
+  async createStreamLink(
+    webhookId: string,
+    options: WebhooksCreateStreamLinkStreamingOptions = {}
+  ): Promise<WebhooksCreateStreamLinkResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'createStreamLink');
+
+    // Destructure options with defaults
+
+    const {
+      tweetfields = undefined,
+
+      expansions = undefined,
+
+      mediafields = undefined,
+
+      pollfields = undefined,
+
+      userfields = undefined,
+
+      placefields = undefined,
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', String(tweetfields));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', String(expansions));
+    }
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', String(mediafields));
+    }
+
+    if (pollfields !== undefined) {
+      params.append('poll.fields', String(pollfields));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', String(userfields));
+    }
+
+    if (placefields !== undefined) {
+      params.append('place.fields', String(placefields));
+    }
+
+    // Build path parameters
+    let path = `/2/tweets/search/webhooks/{webhook_id}`;
+
+    path = path.replace(`{${'webhook_id'}}`, String(webhookId));
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<WebhooksCreateStreamLinkResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Delete stream link
+     * Deletes a link from FilteredStream events to the given webhook.
+     * 
+     * @returns Promise with the API response
+     */
+  async deleteStreamLink(
+    webhookId: string
+  ): Promise<WebhooksDeleteStreamLinkResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'deleteStreamLink');
+
+    // Destructure options with defaults
+
+    const reqOpts = {};
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/tweets/search/webhooks/{webhook_id}`;
+
+    path = path.replace(`{${'webhook_id'}}`, String(webhookId));
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<WebhooksDeleteStreamLinkResponse>(
+      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

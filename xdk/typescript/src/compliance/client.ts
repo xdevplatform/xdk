@@ -6,8 +6,8 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
-  TwitterPaginator,
-  TweetPaginator,
+  Paginator,
+  PostPaginator,
   UserPaginator,
   ListPaginator,
   IdPaginator,
@@ -46,10 +46,21 @@ export interface ComplianceGetJobsOptions {
 
 /**
  * Client for Compliance operations
+ * 
+ * This client provides methods for interacting with the Compliance endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all Compliance related operations.
+ * 
+ * @category Compliance
  */
 export class ComplianceClient {
   private client: Client;
 
+  /**
+     * Creates a new Compliance client instance
+     * 
+     * @param client - The main X API client instance
+     */
   constructor(client: Client) {
     this.client = client;
   }
@@ -81,9 +92,7 @@ export class ComplianceClient {
     const params = new URLSearchParams();
 
     if (complianceJobfields !== undefined) {
-      complianceJobfields.forEach(item =>
-        params.append('compliance_job.fields', String(item))
-      );
+      params.append('compliance_job.fields', complianceJobfields.join(','));
     }
 
     // Prepare request options
@@ -133,9 +142,7 @@ export class ComplianceClient {
     }
 
     if (complianceJobfields !== undefined) {
-      complianceJobfields.forEach(item =>
-        params.append('compliance_job.fields', String(item))
-      );
+      params.append('compliance_job.fields', complianceJobfields.join(','));
     }
 
     // Prepare request options

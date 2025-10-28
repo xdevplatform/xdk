@@ -71,7 +71,9 @@
     "prettier": "^3.0.0",
     "eslint": "^8.0.0",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
-    "@typescript-eslint/parser": "^6.0.0"
+    "@typescript-eslint/parser": "^6.0.0",
+    "typedoc": "^0.25.0",
+    "typedoc-plugin-markdown": "^3.15.0"
   },
   "scripts": {
     "build": "tsup",
@@ -80,7 +82,11 @@
     "format": "prettier --write \"src/**/*.{ts,js}\"",
     "lint": "eslint \"src/**/*.{ts,js}\"",
     "type-check": "tsc --noEmit",
-    "test": "echo \"No tests specified\" && exit 0"
+    "test": "echo \"No tests specified\" && exit 0",
+    "docs": "typedoc",
+    "docs:build": "typedoc && echo \"Documentation generated in docs/\"",
+    "docs:serve": "typedoc --serve",
+    "docs:watch": "typedoc --watch"
   },
   "prettier": {
     "semi": true,

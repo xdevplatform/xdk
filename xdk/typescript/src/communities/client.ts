@@ -1,4 +1,3 @@
-
 /**
  * Communities client for the X API.
  *
@@ -6,154 +5,111 @@
  */
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
-import { 
-    TwitterPaginator, 
-    TweetPaginator, 
-    UserPaginator, 
-    ListPaginator, 
-    IdPaginator 
+import {
+  Paginator,
+  PostPaginator,
+  UserPaginator,
+  ListPaginator,
+  IdPaginator,
 } from '../paginator.js';
 import {
-CommunitiesSearchResponse,
-CommunitiesGetByIdResponse,
+  CommunitiesGetByIdResponse,
+  CommunitiesSearchResponse,
 } from './models.js';
-
-
-/**
- * Options for search method
- */
-export interface CommunitiesSearchOptions {
-    
-    
-    /** The maximum number of search results to be returned by a request. */
-    maxResults?: number;
-    
-    
-    
-    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-    nextToken?: string;
-    
-    
-    
-    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-    paginationToken?: string;
-    
-    
-    
-    /** A comma separated list of Community fields to display. */
-    communityfields?: Array<any>;
-    
-    
-    
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-
 
 /**
  * Options for getById method
  */
 export interface CommunitiesGetByIdOptions {
-    
-    
-    /** A comma separated list of Community fields to display. */
-    communityfields?: Array<any>;
-    
-    
-    
-    /** Additional request options */
-    requestOptions?: RequestOptions;
+  /** A comma separated list of Community fields to display. */
+  communityfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
 }
 
+/**
+ * Options for search method
+ */
+export interface CommunitiesSearchOptions {
+  /** The maximum number of search results to be returned by a request. */
+  maxResults?: number;
 
+  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+  nextToken?: string;
+
+  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+  paginationToken?: string;
+
+  /** A comma separated list of Community fields to display. */
+  communityfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
 
 /**
  * Client for Communities operations
+ * 
+ * This client provides methods for interacting with the Communities endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all Communities related operations.
+ * 
+ * @category Communities
  */
 export class CommunitiesClient {
-    private client: Client;
+  private client: Client;
 
-    constructor(client: Client) {
-        this.client = client;
-    }
-
-
-
+  /**
+     * Creates a new Communities client instance
+     * 
+     * @param client - The main X API client instance
+     */
+  constructor(client: Client) {
+    this.client = client;
+  }
 
   /**
    * Get Community by ID
    * Retrieves details of a specific Community by its ID.
    * @param id The ID of the Community.* @returns Promise with the API response
    */
-    // Overload 1: Default behavior (unwrapped response)
-    async getById(
-        
-        
-        
-        id: string,
-        
-        
-        
-        
-        
-        
-        options: CommunitiesGetByIdOptions = {}
-        
-    ): Promise<CommunitiesGetByIdResponse> {
-        // Destructure options
-        
-        const {
-            
-            
-            communityfields = [],
-            
-            
-            
-            requestOptions: reqOpts = {}
-        } = options;
-        
+  // Overload 1: Default behavior (unwrapped response)
+  async getById(
+    id: string,
+    options: CommunitiesGetByIdOptions = {}
+  ): Promise<CommunitiesGetByIdResponse> {
+    // Destructure options
 
-        // Build the path with path parameters
-        let path = '/2/communities/{id}';
-        
-        
-        path = path.replace('{id}', encodeURIComponent(String(id)));
-        
-        
+    const {
+      communityfields = [],
 
-        // Build query parameters
-        const params = new URLSearchParams();
-        
-        
-        
-        if (communityfields !== undefined) {
-            
-            communityfields.forEach(item => params.append('community.fields', String(item)));
-            
-        }
-        
-        
-        
+      requestOptions: reqOpts = {},
+    } = options;
 
-        // Prepare request options
-        const finalRequestOptions: RequestOptions = {
-            
-            
-            ...reqOpts
-            
-        };
+    // Build the path with path parameters
+    let path = '/2/communities/{id}';
 
-        return this.client.request<CommunitiesGetByIdResponse>(
-            'GET',
-            path + (params.toString() ? `?${params.toString()}` : ''),
-            finalRequestOptions
-        );
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (communityfields !== undefined) {
+      params.append('community.fields', communityfields.join(','));
     }
 
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...reqOpts,
+    };
 
-
-
-
+    return this.client.request<CommunitiesGetByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
 
   /**
    * Search Communities
@@ -165,134 +121,82 @@ export class CommunitiesClient {
    * @param options Options for the paginated request
    * @returns A paginator instance for iterating through all results
    */
-  search(
-    
-    
-    
+  async search(
     query: string,
-    
-    
-    
-    
     options: CommunitiesSearchOptions = {}
-    
-  ): TwitterPaginator<any> {
+  ): Promise<Paginator<any>> {
     // Destructure options
-    
+
     const {
-        
-        
-        maxResults = undefined,
-        
-        
-        
-        nextToken = undefined,
-        
-        
-        
-        paginationToken = undefined,
-        
-        
-        
-        communityfields = [],
-        
-        
-        requestOptions: reqOpts = {}
+      maxResults = undefined,
+
+      nextToken = undefined,
+
+      paginationToken = undefined,
+
+      communityfields = [],
+
+      requestOptions: reqOpts = {},
     } = options;
-    
 
     // Build the path with path parameters
     let path = '/2/communities/search';
-    
 
     // Create the fetch function for the paginator
     const fetchPage = async (paginationToken?: string) => {
       // Build query parameters
       const params = new URLSearchParams();
-      
-      
-      
+
       if (query !== undefined) {
-          
-          params.append('query', String(query));
-          
+        params.append('query', String(query));
       }
-      
-      
-      
-      
-      
+
       if (maxResults !== undefined) {
-          
-          params.append('max_results', String(maxResults));
-          
+        params.append('max_results', String(maxResults));
       }
-      
-      
-      
-      
-      
+
       if (nextToken !== undefined) {
-          
-          params.append('next_token', String(nextToken));
-          
+        params.append('next_token', String(nextToken));
       }
-      
-      
-      
-      
-      
+
       if (paginationToken !== undefined) {
-          
-          params.append('pagination_token', String(paginationToken));
-          
+        params.append('pagination_token', String(paginationToken));
       }
-      
-      
-      
-      
-      
+
       if (communityfields !== undefined) {
-          
-          communityfields.forEach(item => params.append('community.fields', String(item)));
-          
+        params.append('community.fields', communityfields.join(','));
       }
-      
-      
-      
 
       // Add pagination token if provided
       if (paginationToken) {
-        
         params.set('pagination_token', paginationToken);
-        
       }
 
       // Prepare request options
       const finalRequestOptions: RequestOptions = {
-          
-          ...reqOpts
+        ...reqOpts,
       };
 
       const response = await this.client.request<CommunitiesSearchResponse>(
-          'GET',
-          path + (params.toString() ? `?${params.toString()}` : ''),
-          finalRequestOptions
+        'GET',
+        path + (params.toString() ? `?${params.toString()}` : ''),
+        finalRequestOptions
       );
 
       return {
-        data: (response.data as any)?.data || [],
-        meta: (response.data as any)?.meta,
-        includes: (response.data as any)?.includes,
-        errors: (response.data as any)?.errors
+        data: Array.isArray(response.data) ? response.data : [],
+        meta: (response as any).meta,
+        includes: (response as any).includes,
+        errors: (response as any).errors,
       };
     };
 
-    return new TwitterPaginator(fetchPage);
+    // Create paginator and fetch first page
+    const paginator = new Paginator(fetchPage);
+
+    // Fetch the first page immediately
+    await paginator.fetchNext();
+
+    return paginator;
   }
-
-
-
-
-
 }

@@ -6,8 +6,8 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
-  TwitterPaginator,
-  TweetPaginator,
+  Paginator,
+  PostPaginator,
   UserPaginator,
   ListPaginator,
   IdPaginator,
@@ -30,10 +30,21 @@ export interface AaasubscriptionsCreateAccountActivitySubscriptionOptions {
 
 /**
  * Client for Aaasubscriptions operations
+ * 
+ * This client provides methods for interacting with the Aaasubscriptions endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all Aaasubscriptions related operations.
+ * 
+ * @category Aaasubscriptions
  */
 export class AaasubscriptionsClient {
   private client: Client;
 
+  /**
+     * Creates a new Aaasubscriptions client instance
+     * 
+     * @param client - The main X API client instance
+     */
   constructor(client: Client) {
     this.client = client;
   }

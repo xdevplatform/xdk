@@ -6,27 +6,14 @@
 
 import { httpClient } from "./http-client.js";
 import { 
-  TwitterPaginator, 
-  TweetPaginator, 
+  Paginator, 
+  PostPaginator, 
   UserPaginator, 
   ListPaginator, 
   IdPaginator,
   WelcomeMessagePaginator,
-  EventPaginator,
-  Paginator
+  EventPaginator
 } from "./paginator.js";
-
-
-
-import { MediaClient } from "./media/index.js";
-
-
-
-import { ListsClient } from "./lists/index.js";
-
-
-
-import { PostsClient } from "./posts/index.js";
 
 
 
@@ -34,11 +21,15 @@ import { StreamClient } from "./stream/index.js";
 
 
 
+import { UsageClient } from "./usage/index.js";
+
+
+
+import { PostsClient } from "./posts/index.js";
+
+
+
 import { TrendsClient } from "./trends/index.js";
-
-
-
-import { SpacesClient } from "./spaces/index.js";
 
 
 
@@ -46,7 +37,7 @@ import { AccountActivityClient } from "./account_activity/index.js";
 
 
 
-import { UsageClient } from "./usage/index.js";
+import { CommunitiesClient } from "./communities/index.js";
 
 
 
@@ -54,7 +45,19 @@ import { GeneralClient } from "./general/index.js";
 
 
 
-import { BookmarksClient } from "./bookmarks/index.js";
+import { SpacesClient } from "./spaces/index.js";
+
+
+
+import { MediaClient } from "./media/index.js";
+
+
+
+import { ActivityClient } from "./activity/index.js";
+
+
+
+import { ComplianceClient } from "./compliance/index.js";
 
 
 
@@ -62,7 +65,11 @@ import { WebhooksClient } from "./webhooks/index.js";
 
 
 
-import { ComplianceClient } from "./compliance/index.js";
+import { ConnectionsClient } from "./connections/index.js";
+
+
+
+import { ListsClient } from "./lists/index.js";
 
 
 
@@ -74,19 +81,7 @@ import { CommunityNotesClient } from "./community_notes/index.js";
 
 
 
-import { ConnectionClient } from "./connection/index.js";
-
-
-
 import { DirectMessagesClient } from "./direct_messages/index.js";
-
-
-
-import { CommunitiesClient } from "./communities/index.js";
-
-
-
-import { AaasubscriptionsClient } from "./aaasubscriptions/index.js";
 
 
 
@@ -184,6 +179,35 @@ export interface PaginationMeta {
 
 /**
  * Main client class for the X API
+ * 
+ * This is the primary entry point for interacting with the X API. It provides
+ * access to all API endpoints through specialized client modules and handles
+ * authentication, request configuration, and error handling.
+ * 
+ * @example
+ * ```typescript
+ * import { Client } from 'x-api-sdk';
+ * 
+ * const client = new Client({
+ *   bearerToken: 'your-bearer-token'
+ * });
+ * 
+ * // Get user information
+ * const user = await client.users.getUser('783214');
+ * 
+ * // Get followers with pagination
+ * const followers = await client.users.getFollowers('783214', {
+ *   maxResults: 10,
+ *   userFields: ['id', 'name', 'username']
+ * });
+ * 
+ * // Iterate through followers
+ * for await (const follower of followers) {
+ *   console.log(follower.username);
+ * }
+ * ```
+ * 
+ * @category Client
  */
 export class Client {
   /** Base URL for API requests */
@@ -209,41 +233,47 @@ export class Client {
   readonly httpClient = httpClient;
 
 
-  /** media client */
-  readonly media: MediaClient;
-
-  /** lists client */
-  readonly lists: ListsClient;
-
-  /** posts client */
-  readonly posts: PostsClient;
-
   /** stream client */
   readonly stream: StreamClient;
-
-  /** trends client */
-  readonly trends: TrendsClient;
-
-  /** spaces client */
-  readonly spaces: SpacesClient;
-
-  /** account activity client */
-  readonly account_activity: AccountActivityClient;
 
   /** usage client */
   readonly usage: UsageClient;
 
+  /** posts client */
+  readonly posts: PostsClient;
+
+  /** trends client */
+  readonly trends: TrendsClient;
+
+  /** account activity client */
+  readonly account_activity: AccountActivityClient;
+
+  /** communities client */
+  readonly communities: CommunitiesClient;
+
   /** general client */
   readonly general: GeneralClient;
 
-  /** bookmarks client */
-  readonly bookmarks: BookmarksClient;
+  /** spaces client */
+  readonly spaces: SpacesClient;
+
+  /** media client */
+  readonly media: MediaClient;
+
+  /** activity client */
+  readonly activity: ActivityClient;
+
+  /** compliance client */
+  readonly compliance: ComplianceClient;
 
   /** webhooks client */
   readonly webhooks: WebhooksClient;
 
-  /** compliance client */
-  readonly compliance: ComplianceClient;
+  /** connections client */
+  readonly connections: ConnectionsClient;
+
+  /** lists client */
+  readonly lists: ListsClient;
 
   /** users client */
   readonly users: UsersClient;
@@ -251,19 +281,42 @@ export class Client {
   /** community notes client */
   readonly community_notes: CommunityNotesClient;
 
-  /** connection client */
-  readonly connection: ConnectionClient;
-
   /** direct messages client */
   readonly direct_messages: DirectMessagesClient;
 
-  /** communities client */
-  readonly communities: CommunitiesClient;
 
-  /** aaasubscriptions client */
-  readonly aaasubscriptions: AaasubscriptionsClient;
-
-
+  /**
+   * Creates a new X API client instance
+   * 
+   * @param config - Configuration options for the client
+   * @param config.bearerToken - Bearer token for OAuth2 authentication
+   * @param config.accessToken - OAuth2 access token
+   * @param config.oauth1 - OAuth1 instance for authentication
+   * @param config.baseUrl - Base URL for API requests (defaults to https://api.x.com)
+   * @param config.timeout - Request timeout in milliseconds (defaults to 30000)
+   * @param config.retry - Whether to automatically retry failed requests (defaults to true)
+   * @param config.maxRetries - Maximum number of retry attempts (defaults to 3)
+   * @param config.headers - Custom headers to include in requests
+   * @param config.userAgent - User agent string (defaults to "x-api-sdk/1.0.0")
+   * 
+   * @example
+   * ```typescript
+   * // Bearer token authentication
+   * const client = new Client({
+   *   bearerToken: 'your-bearer-token'
+   * });
+   * 
+   * // OAuth2 authentication
+   * const client = new Client({
+   *   accessToken: 'your-access-token'
+   * });
+   * 
+   * // OAuth1 authentication
+   * const client = new Client({
+   *   oauth1: oauth1Instance
+   * });
+   * ```
+   */
   constructor(config: ClientConfig | any) {
     // Handle OAuth1 instance passed directly
     if (config && typeof config === 'object' && config.accessToken && config.accessToken.accessToken && config.accessToken.accessTokenSecret) {
@@ -295,46 +348,68 @@ export class Client {
     this.headers = httpClient.createHeaders(defaultHeaders);
 
 
-    this.media = new MediaClient(this);
-
-    this.lists = new ListsClient(this);
-
-    this.posts = new PostsClient(this);
-
     this.stream = new StreamClient(this);
-
-    this.trends = new TrendsClient(this);
-
-    this.spaces = new SpacesClient(this);
-
-    this.account_activity = new AccountActivityClient(this);
 
     this.usage = new UsageClient(this);
 
+    this.posts = new PostsClient(this);
+
+    this.trends = new TrendsClient(this);
+
+    this.account_activity = new AccountActivityClient(this);
+
+    this.communities = new CommunitiesClient(this);
+
     this.general = new GeneralClient(this);
 
-    this.bookmarks = new BookmarksClient(this);
+    this.spaces = new SpacesClient(this);
+
+    this.media = new MediaClient(this);
+
+    this.activity = new ActivityClient(this);
+
+    this.compliance = new ComplianceClient(this);
 
     this.webhooks = new WebhooksClient(this);
 
-    this.compliance = new ComplianceClient(this);
+    this.connections = new ConnectionsClient(this);
+
+    this.lists = new ListsClient(this);
 
     this.users = new UsersClient(this);
 
     this.community_notes = new CommunityNotesClient(this);
 
-    this.connection = new ConnectionClient(this);
-
     this.direct_messages = new DirectMessagesClient(this);
-
-    this.communities = new CommunitiesClient(this);
-
-    this.aaasubscriptions = new AaasubscriptionsClient(this);
 
   }
 
   /**
-   * Make an authenticated request to the API
+   * Make an authenticated request to the X API
+   * 
+   * This method handles authentication, request formatting, and error handling
+   * for all API requests. It automatically adds the appropriate authentication
+   * headers based on the client configuration.
+   * 
+   * @param method - HTTP method (GET, POST, PUT, DELETE, etc.)
+   * @param path - API endpoint path (e.g., '/2/users/by/username/username')
+   * @param options - Request options including timeout, headers, and body
+   * @returns Promise that resolves to the parsed response data
+   * 
+   * @example
+   * ```typescript
+   * // GET request
+   * const user = await client.request('GET', '/2/users/by/username/username', {
+   *   timeout: 5000
+   * });
+   * 
+   * // POST request with body
+   * const result = await client.request('POST', '/2/tweets', {
+   *   body: JSON.stringify({ text: 'Hello World!' })
+   * });
+   * ```
+   * 
+   * @throws {ApiError} When the API returns an error response
    */
   async request<T = any>(
     method: string,

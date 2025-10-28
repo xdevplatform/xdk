@@ -6,8 +6,8 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
-  TwitterPaginator,
-  TweetPaginator,
+  Paginator,
+  PostPaginator,
   UserPaginator,
   ListPaginator,
   IdPaginator,
@@ -30,10 +30,21 @@ export interface UsageGetOptions {
 
 /**
  * Client for Usage operations
+ * 
+ * This client provides methods for interacting with the Usage endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all Usage related operations.
+ * 
+ * @category Usage
  */
 export class UsageClient {
   private client: Client;
 
+  /**
+     * Creates a new Usage client instance
+     * 
+     * @param client - The main X API client instance
+     */
   constructor(client: Client) {
     this.client = client;
   }
@@ -65,7 +76,7 @@ export class UsageClient {
     }
 
     if (usagefields !== undefined) {
-      usagefields.forEach(item => params.append('usage.fields', String(item)));
+      params.append('usage.fields', usagefields.join(','));
     }
 
     // Prepare request options

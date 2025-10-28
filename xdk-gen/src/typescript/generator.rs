@@ -50,6 +50,8 @@ language! {
         render "package_json" => "package.json",
         render "tsconfig" => "tsconfig.json",
         render "tsup.config" => "tsup.config.ts",
+        render "typedoc.json" => "typedoc.json",
+        render "generate_docs" => "scripts/generate-docs.js",
         render "readme" => "README.md"
     ]
 } 

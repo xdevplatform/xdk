@@ -6,8 +6,8 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import {
-  TwitterPaginator,
-  TweetPaginator,
+  Paginator,
+  PostPaginator,
   UserPaginator,
   ListPaginator,
   IdPaginator,
@@ -16,10 +16,21 @@ import { ConnectionDeleteAllResponse } from './models.js';
 
 /**
  * Client for Connection operations
+ * 
+ * This client provides methods for interacting with the Connection endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all Connection related operations.
+ * 
+ * @category Connection
  */
 export class ConnectionClient {
   private client: Client;
 
+  /**
+     * Creates a new Connection client instance
+     * 
+     * @param client - The main X API client instance
+     */
   constructor(client: Client) {
     this.client = client;
   }

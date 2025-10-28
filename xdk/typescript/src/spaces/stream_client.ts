@@ -7,40 +7,18 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  SpacesGetByIdsResponse,
-  SpacesGetByIdResponse,
-  SpacesGetBuyersResponse,
   SpacesGetByCreatorIdsResponse,
-  SpacesSearchResponse,
+  SpacesGetBuyersResponse,
   SpacesGetPostsResponse,
+  SpacesGetByIdResponse,
+  SpacesGetByIdsResponse,
+  SpacesSearchResponse,
 } from './models.js';
 
 /**
- * Options for getByIds method
+ * Options for getByCreatorIds method
  */
-export interface SpacesGetByIdsStreamingOptions {
-  /** A comma separated list of Space fields to display. */
-  spacefields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Topic fields to display. */
-  topicfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-
-/**
- * Options for getById method
- */
-export interface SpacesGetByIdStreamingOptions {
+export interface SpacesGetByCreatorIdsStreamingOptions {
   /** A comma separated list of Space fields to display. */
   spacefields?: Array<any>;
 
@@ -85,9 +63,62 @@ export interface SpacesGetBuyersStreamingOptions {
 }
 
 /**
- * Options for getByCreatorIds method
+ * Options for getPosts method
  */
-export interface SpacesGetByCreatorIdsStreamingOptions {
+export interface SpacesGetPostsStreamingOptions {
+  /** The number of Posts to fetch from the provided space. If not provided, the value will default to the maximum of 100. */
+  maxResults?: number;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. */
+  placefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
+/**
+ * Options for getById method
+ */
+export interface SpacesGetByIdStreamingOptions {
+  /** A comma separated list of Space fields to display. */
+  spacefields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Topic fields to display. */
+  topicfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
+/**
+ * Options for getByIds method
+ */
+export interface SpacesGetByIdsStreamingOptions {
   /** A comma separated list of Space fields to display. */
   spacefields?: Array<any>;
 
@@ -134,279 +165,11 @@ export interface SpacesSearchStreamingOptions {
   signal?: AbortSignal;
 }
 
-/**
- * Options for getPosts method
- */
-export interface SpacesGetPostsStreamingOptions {
-  /** The number of Posts to fetch from the provided space. If not provided, the value will default to the maximum of 100. */
-  maxResults?: number;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
-
-  /** A comma separated list of Poll fields to display. */
-  pollfields?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Place fields to display. */
-  placefields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-
 export class SpacesClient {
   private client: Client;
 
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-     * Get Spaces by IDs
-     * Retrieves details of multiple Spaces by their IDs.
-     * 
-     * @returns Promise with the API response
-     */
-  async getByIds(
-    ids: Array<any>,
-    options: SpacesGetByIdsStreamingOptions = {}
-  ): Promise<SpacesGetByIdsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getByIds');
-
-    // Destructure options with defaults
-
-    const {
-      spacefields = [],
-
-      expansions = [],
-
-      userfields = [],
-
-      topicfields = [],
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (ids !== undefined) {
-      params.append('ids', String(ids));
-    }
-
-    if (spacefields !== undefined) {
-      params.append('space.fields', spacefields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (topicfields !== undefined) {
-      params.append('topic.fields', topicfields.join(','));
-    }
-
-    // Build path parameters
-    let path = `/2/spaces`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<SpacesGetByIdsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get space by ID
-     * Retrieves details of a specific space by its ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async getById(
-    id: string,
-    options: SpacesGetByIdStreamingOptions = {}
-  ): Promise<SpacesGetByIdResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getById');
-
-    // Destructure options with defaults
-
-    const {
-      spacefields = [],
-
-      expansions = [],
-
-      userfields = [],
-
-      topicfields = [],
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (spacefields !== undefined) {
-      params.append('space.fields', spacefields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (topicfields !== undefined) {
-      params.append('topic.fields', topicfields.join(','));
-    }
-
-    // Build path parameters
-    let path = `/2/spaces/{id}`;
-
-    path = path.replace(`{${'id'}}`, String(id));
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<SpacesGetByIdResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get Space ticket buyers
-     * Retrieves a list of Users who purchased tickets to a specific Space by its ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async getBuyers(
-    id: string,
-    options: SpacesGetBuyersStreamingOptions = {}
-  ): Promise<SpacesGetBuyersResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getBuyers');
-
-    // Destructure options with defaults
-
-    const {
-      paginationToken = undefined,
-
-      maxResults = undefined,
-
-      userfields = [],
-
-      expansions = [],
-
-      tweetfields = [],
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    // Build path parameters
-    let path = `/2/spaces/{id}/buyers`;
-
-    path = path.replace(`{${'id'}}`, String(id));
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<SpacesGetBuyersResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
   }
 
   /**
@@ -489,39 +252,35 @@ export class SpacesClient {
   }
 
   /**
-     * Search Spaces
-     * Retrieves a list of Spaces matching the specified search query.
+     * Get Space ticket buyers
+     * Retrieves a list of Users who purchased tickets to a specific Space by its ID.
      * 
      * @returns Promise with the API response
      */
-  async search(
-    query: string,
-    options: SpacesSearchStreamingOptions = {}
-  ): Promise<SpacesSearchResponse> {
+  async getBuyers(
+    id: string,
+    options: SpacesGetBuyersStreamingOptions = {}
+  ): Promise<SpacesGetBuyersResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
 
-    requiredAuthTypes.push('BearerToken');
-
     requiredAuthTypes.push('OAuth2UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'search');
+    this.client.validateAuthentication(requiredAuthTypes, 'getBuyers');
 
     // Destructure options with defaults
 
     const {
-      state = undefined,
+      paginationToken = undefined,
 
       maxResults = undefined,
 
-      spacefields = [],
+      userfields = [],
 
       expansions = [],
 
-      userfields = [],
-
-      topicfields = [],
+      tweetfields = [],
 
       requestOptions: reqOpts = {},
     } = options;
@@ -529,36 +288,30 @@ export class SpacesClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (query !== undefined) {
-      params.append('query', String(query));
-    }
-
-    if (state !== undefined) {
-      params.append('state', String(state));
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
     }
 
     if (maxResults !== undefined) {
       params.append('max_results', String(maxResults));
     }
 
-    if (spacefields !== undefined) {
-      params.append('space.fields', spacefields.join(','));
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
     }
 
     if (expansions !== undefined) {
       params.append('expansions', expansions.join(','));
     }
 
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (topicfields !== undefined) {
-      params.append('topic.fields', topicfields.join(','));
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
     }
 
     // Build path parameters
-    let path = `/2/spaces/search`;
+    let path = `/2/spaces/{id}/buyers`;
+
+    path = path.replace(`{${'id'}}`, String(id));
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -572,7 +325,7 @@ export class SpacesClient {
     };
 
     // Make the request
-    return this.client.request<SpacesSearchResponse>(
+    return this.client.request<SpacesGetBuyersResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -668,6 +421,253 @@ export class SpacesClient {
 
     // Make the request
     return this.client.request<SpacesGetPostsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get space by ID
+     * Retrieves details of a specific space by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getById(
+    id: string,
+    options: SpacesGetByIdStreamingOptions = {}
+  ): Promise<SpacesGetByIdResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getById');
+
+    // Destructure options with defaults
+
+    const {
+      spacefields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      topicfields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (spacefields !== undefined) {
+      params.append('space.fields', spacefields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (topicfields !== undefined) {
+      params.append('topic.fields', topicfields.join(','));
+    }
+
+    // Build path parameters
+    let path = `/2/spaces/{id}`;
+
+    path = path.replace(`{${'id'}}`, String(id));
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<SpacesGetByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get Spaces by IDs
+     * Retrieves details of multiple Spaces by their IDs.
+     * 
+     * @returns Promise with the API response
+     */
+  async getByIds(
+    ids: Array<any>,
+    options: SpacesGetByIdsStreamingOptions = {}
+  ): Promise<SpacesGetByIdsResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getByIds');
+
+    // Destructure options with defaults
+
+    const {
+      spacefields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      topicfields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (ids !== undefined) {
+      params.append('ids', String(ids));
+    }
+
+    if (spacefields !== undefined) {
+      params.append('space.fields', spacefields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (topicfields !== undefined) {
+      params.append('topic.fields', topicfields.join(','));
+    }
+
+    // Build path parameters
+    let path = `/2/spaces`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<SpacesGetByIdsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Search Spaces
+     * Retrieves a list of Spaces matching the specified search query.
+     * 
+     * @returns Promise with the API response
+     */
+  async search(
+    query: string,
+    options: SpacesSearchStreamingOptions = {}
+  ): Promise<SpacesSearchResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'search');
+
+    // Destructure options with defaults
+
+    const {
+      state = undefined,
+
+      maxResults = undefined,
+
+      spacefields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      topicfields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (query !== undefined) {
+      params.append('query', String(query));
+    }
+
+    if (state !== undefined) {
+      params.append('state', String(state));
+    }
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (spacefields !== undefined) {
+      params.append('space.fields', spacefields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (topicfields !== undefined) {
+      params.append('topic.fields', topicfields.join(','));
+    }
+
+    // Build path parameters
+    let path = `/2/spaces/search`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<SpacesSearchResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

@@ -7,8 +7,8 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { 
-    TwitterPaginator, 
-    TweetPaginator, 
+    Paginator, 
+    PostPaginator, 
     UserPaginator, 
     ListPaginator, 
     IdPaginator 
@@ -50,10 +50,21 @@ export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}
 
 /**
  * Client for {{ tag }} operations
+ * 
+ * This client provides methods for interacting with the {{ tag }} endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all {{ tag }} related operations.
+ * 
+ * @category {{ tag }}
  */
 export class {{ tag|pascal_case }}Client {
     private client: Client;
 
+    /**
+     * Creates a new {{ tag }} client instance
+     * 
+     * @param client - The main X API client instance
+     */
     constructor(client: Client) {
         this.client = client;
     }
@@ -118,7 +129,7 @@ export class {{ tag|pascal_case }}Client {
         {% if param.required %}
         if ({{ param.name | camel_case }} !== undefined) {
             {% if param.schema and param.schema.type == 'array' %}
-            {{ param.name | camel_case }}.forEach(item => params.append('{{ param.name }}', String(item)));
+            params.append('{{ param.name }}', {{ param.name | camel_case }}.join(','));
             {% else %}
             params.append('{{ param.name }}', String({{ param.name | camel_case }}));
             {% endif %}
@@ -126,7 +137,7 @@ export class {{ tag|pascal_case }}Client {
         {% else %}
         if ({{ param.name | camel_case }} !== undefined) {
             {% if param.schema and param.schema.type == 'array' %}
-            {{ param.name | camel_case }}.forEach(item => params.append('{{ param.name }}', String(item)));
+            params.append('{{ param.name }}', {{ param.name | camel_case }}.join(','));
             {% else %}
             params.append('{{ param.name }}', String({{ param.name | camel_case }}));
             {% endif %}
@@ -171,7 +182,7 @@ export class {{ tag|pascal_case }}Client {
    * @param options Options for the paginated request
    * @returns A paginator instance for iterating through all results
    */
-  {{ operation.operation_id | camel_case }}(
+  async {{ operation.operation_id | camel_case }}(
     {# Required parameters #}
     {% for param in operation.parameters | selectattr('required') %}
     {% if param.name %}
@@ -184,7 +195,7 @@ export class {{ tag|pascal_case }}Client {
     {% else %}
     options: { requestOptions?: RequestOptions } = {}
     {% endif %}
-  ): {% if 'tweet' in operation.operation_id|lower or 'post' in operation.operation_id|lower %}TweetPaginator{% elif 'user' in operation.operation_id|lower %}UserPaginator{% elif 'list' in operation.operation_id|lower %}ListPaginator{% elif 'id' in operation.operation_id|lower %}IdPaginator{% else %}TwitterPaginator<any>{% endif %} {
+  ): Promise<{% if 'tweet' in operation.operation_id|lower or 'post' in operation.operation_id|lower %}PostPaginator{% elif 'user' in operation.operation_id|lower or 'users' in operation.operation_id|lower %}UserPaginator{% elif 'list' in operation.operation_id|lower %}ListPaginator{% elif 'id' in operation.operation_id|lower %}IdPaginator{% else %}Paginator<any>{% endif %}> {
     // Destructure options
     {% if operation.parameters | rejectattr('required') | list | length > 0 %}
     const {
@@ -216,7 +227,7 @@ export class {{ tag|pascal_case }}Client {
       {% if param.required %}
       if ({{ param.name | camel_case }} !== undefined) {
           {% if param.schema and param.schema.type == 'array' %}
-          {{ param.name | camel_case }}.forEach(item => params.append('{{ param.name }}', String(item)));
+          params.append('{{ param.name }}', {{ param.name | camel_case }}.join(','));
           {% else %}
           params.append('{{ param.name }}', String({{ param.name | camel_case }}));
           {% endif %}
@@ -224,7 +235,7 @@ export class {{ tag|pascal_case }}Client {
       {% else %}
       if ({{ param.name | camel_case }} !== undefined) {
           {% if param.schema and param.schema.type == 'array' %}
-          {{ param.name | camel_case }}.forEach(item => params.append('{{ param.name }}', String(item)));
+          params.append('{{ param.name }}', {{ param.name | camel_case }}.join(','));
           {% else %}
           params.append('{{ param.name }}', String({{ param.name | camel_case }}));
           {% endif %}
@@ -259,14 +270,20 @@ export class {{ tag|pascal_case }}Client {
       );
 
       return {
-        data: (response.data as any)?.data || [],
-        meta: (response.data as any)?.meta,
-        includes: (response.data as any)?.includes,
-        errors: (response.data as any)?.errors
+        data: Array.isArray(response.data) ? response.data : [],
+        meta: (response as any).meta,
+        includes: (response as any).includes,
+        errors: (response as any).errors
       };
     };
 
-    return new {% if 'tweet' in operation.operation_id|lower or 'post' in operation.operation_id|lower %}TweetPaginator{% elif 'user' in operation.operation_id|lower %}UserPaginator{% elif 'list' in operation.operation_id|lower %}ListPaginator{% elif 'id' in operation.operation_id|lower %}IdPaginator{% else %}TwitterPaginator{% endif %}(fetchPage);
+    // Create paginator and fetch first page
+    const paginator = new {% if 'tweet' in operation.operation_id|lower or 'post' in operation.operation_id|lower %}PostPaginator{% elif 'user' in operation.operation_id|lower or 'users' in operation.operation_id|lower %}UserPaginator{% elif 'list' in operation.operation_id|lower %}ListPaginator{% elif 'id' in operation.operation_id|lower %}IdPaginator{% else %}Paginator{% endif %}(fetchPage);
+    
+    // Fetch the first page immediately
+    await paginator.fetchNext();
+    
+    return paginator;
   }
 
 {% endif %}

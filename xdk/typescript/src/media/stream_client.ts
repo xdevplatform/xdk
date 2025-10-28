@@ -7,51 +7,25 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  MediaGetUploadStatusResponse,
-  MediaUploadResponse,
-  MediaGetByMediaKeysResponse,
+  MediaInitializeUploadResponse,
   MediaFinalizeUploadResponse,
   MediaCreateSubtitlesResponse,
   MediaDeleteSubtitlesResponse,
-  MediaAppendUploadResponse,
+  MediaGetUploadStatusResponse,
+  MediaUploadResponse,
+  MediaGetByMediaKeyResponse,
+  MediaGetByMediaKeysResponse,
   MediaGetAnalyticsResponse,
   MediaCreateMetadataResponse,
-  MediaGetByMediaKeyResponse,
-  MediaInitializeUploadResponse,
+  MediaAppendUploadResponse,
 } from './models.js';
 
 /**
- * Options for getUploadStatus method
+ * Options for initializeUpload method
  */
-export interface MediaGetUploadStatusStreamingOptions {
-  /** The command for the media upload request. */
-  command?: string;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-
-/**
- * Options for upload method
- */
-export interface MediaUploadStreamingOptions {
+export interface MediaInitializeUploadStreamingOptions {
   /** Request body */
   body?: any;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-
-/**
- * Options for getByMediaKeys method
- */
-export interface MediaGetByMediaKeysStreamingOptions {
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -86,11 +60,50 @@ export interface MediaDeleteSubtitlesStreamingOptions {
 }
 
 /**
- * Options for appendUpload method
+ * Options for getUploadStatus method
  */
-export interface MediaAppendUploadStreamingOptions {
+export interface MediaGetUploadStatusStreamingOptions {
+  /** The command for the media upload request. */
+  command?: string;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
+/**
+ * Options for upload method
+ */
+export interface MediaUploadStreamingOptions {
   /** Request body */
   body?: any;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
+/**
+ * Options for getByMediaKey method
+ */
+export interface MediaGetByMediaKeyStreamingOptions {
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
+/**
+ * Options for getByMediaKeys method
+ */
+export interface MediaGetByMediaKeysStreamingOptions {
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -125,22 +138,9 @@ export interface MediaCreateMetadataStreamingOptions {
 }
 
 /**
- * Options for getByMediaKey method
+ * Options for appendUpload method
  */
-export interface MediaGetByMediaKeyStreamingOptions {
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-
-/**
- * Options for initializeUpload method
- */
-export interface MediaInitializeUploadStreamingOptions {
+export interface MediaAppendUploadStreamingOptions {
   /** Request body */
   body?: any;
 
@@ -158,15 +158,14 @@ export class MediaClient {
   }
 
   /**
-     * Get Media upload status
-     * Retrieves the status of a Media upload by its ID.
+     * Initialize media upload
+     * Initializes a media upload.
      * 
      * @returns Promise with the API response
      */
-  async getUploadStatus(
-    mediaId: string,
-    options: MediaGetUploadStatusStreamingOptions = {}
-  ): Promise<MediaGetUploadStatusResponse> {
+  async initializeUpload(
+    options: MediaInitializeUploadStreamingOptions = {}
+  ): Promise<MediaInitializeUploadResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -175,67 +174,7 @@ export class MediaClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'getUploadStatus');
-
-    // Destructure options with defaults
-
-    const {
-      command = undefined,
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (mediaId !== undefined) {
-      params.append('media_id', String(mediaId));
-    }
-
-    if (command !== undefined) {
-      params.append('command', String(command));
-    }
-
-    // Build path parameters
-    let path = `/2/media/upload`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<MediaGetUploadStatusResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Upload media
-     * Uploads a media file for use in posts or other content.
-     * 
-     * @returns Promise with the API response
-     */
-  async upload(
-    options: MediaUploadStreamingOptions = {}
-  ): Promise<MediaUploadResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'upload');
+    this.client.validateAuthentication(requiredAuthTypes, 'initializeUpload');
 
     // Destructure options with defaults
 
@@ -249,7 +188,7 @@ export class MediaClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/media/upload`;
+    let path = `/2/media/upload/initialize`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -265,71 +204,8 @@ export class MediaClient {
     };
 
     // Make the request
-    return this.client.request<MediaUploadResponse>(
+    return this.client.request<MediaInitializeUploadResponse>(
       'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get Media by media keys
-     * Retrieves details of Media files by their media keys.
-     * 
-     * @returns Promise with the API response
-     */
-  async getByMediaKeys(
-    mediaKeys: Array<any>,
-    options: MediaGetByMediaKeysStreamingOptions = {}
-  ): Promise<MediaGetByMediaKeysResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getByMediaKeys');
-
-    // Destructure options with defaults
-
-    const {
-      mediafields = [],
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (mediaKeys !== undefined) {
-      params.append('media_keys', String(mediaKeys));
-    }
-
-    if (mediafields !== undefined) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
-    // Build path parameters
-    let path = `/2/media`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<MediaGetByMediaKeysResponse>(
-      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -492,15 +368,15 @@ export class MediaClient {
   }
 
   /**
-     * Append Media upload
-     * Appends data to a Media upload request.
+     * Get Media upload status
+     * Retrieves the status of a Media upload by its ID.
      * 
      * @returns Promise with the API response
      */
-  async appendUpload(
-    id: string,
-    options: MediaAppendUploadStreamingOptions = {}
-  ): Promise<MediaAppendUploadResponse> {
+  async getUploadStatus(
+    mediaId: string,
+    options: MediaGetUploadStatusStreamingOptions = {}
+  ): Promise<MediaGetUploadStatusResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -509,7 +385,67 @@ export class MediaClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'appendUpload');
+    this.client.validateAuthentication(requiredAuthTypes, 'getUploadStatus');
+
+    // Destructure options with defaults
+
+    const {
+      command = undefined,
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (mediaId !== undefined) {
+      params.append('media_id', String(mediaId));
+    }
+
+    if (command !== undefined) {
+      params.append('command', String(command));
+    }
+
+    // Build path parameters
+    let path = `/2/media/upload`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<MediaGetUploadStatusResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Upload media
+     * Uploads a media file for use in posts or other content.
+     * 
+     * @returns Promise with the API response
+     */
+  async upload(
+    options: MediaUploadStreamingOptions = {}
+  ): Promise<MediaUploadResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'upload');
 
     // Destructure options with defaults
 
@@ -523,9 +459,7 @@ export class MediaClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/media/upload/{id}/append`;
-
-    path = path.replace(`{${'id'}}`, String(id));
+    let path = `/2/media/upload`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -541,8 +475,132 @@ export class MediaClient {
     };
 
     // Make the request
-    return this.client.request<MediaAppendUploadResponse>(
+    return this.client.request<MediaUploadResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get Media by media key
+     * Retrieves details of a specific Media file by its media key.
+     * 
+     * @returns Promise with the API response
+     */
+  async getByMediaKey(
+    mediaKey: string,
+    options: MediaGetByMediaKeyStreamingOptions = {}
+  ): Promise<MediaGetByMediaKeyResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getByMediaKey');
+
+    // Destructure options with defaults
+
+    const {
+      mediafields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    // Build path parameters
+    let path = `/2/media/{media_key}`;
+
+    path = path.replace(`{${'media_key'}}`, String(mediaKey));
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<MediaGetByMediaKeyResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get Media by media keys
+     * Retrieves details of Media files by their media keys.
+     * 
+     * @returns Promise with the API response
+     */
+  async getByMediaKeys(
+    mediaKeys: Array<any>,
+    options: MediaGetByMediaKeysStreamingOptions = {}
+  ): Promise<MediaGetByMediaKeysResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getByMediaKeys');
+
+    // Destructure options with defaults
+
+    const {
+      mediafields = [],
+
+      requestOptions: reqOpts = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (mediaKeys !== undefined) {
+      params.append('media_keys', String(mediaKeys));
+    }
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    // Build path parameters
+    let path = `/2/media`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...reqOpts.headers,
+      },
+      signal: options.signal,
+
+      ...reqOpts,
+    };
+
+    // Make the request
+    return this.client.request<MediaGetByMediaKeysResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -679,75 +737,15 @@ export class MediaClient {
   }
 
   /**
-     * Get Media by media key
-     * Retrieves details of a specific Media file by its media key.
+     * Append Media upload
+     * Appends data to a Media upload request.
      * 
      * @returns Promise with the API response
      */
-  async getByMediaKey(
-    mediaKey: string,
-    options: MediaGetByMediaKeyStreamingOptions = {}
-  ): Promise<MediaGetByMediaKeyResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getByMediaKey');
-
-    // Destructure options with defaults
-
-    const {
-      mediafields = [],
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (mediafields !== undefined) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
-    // Build path parameters
-    let path = `/2/media/{media_key}`;
-
-    path = path.replace(`{${'media_key'}}`, String(mediaKey));
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<MediaGetByMediaKeyResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Initialize media upload
-     * Initializes a media upload.
-     * 
-     * @returns Promise with the API response
-     */
-  async initializeUpload(
-    options: MediaInitializeUploadStreamingOptions = {}
-  ): Promise<MediaInitializeUploadResponse> {
+  async appendUpload(
+    id: string,
+    options: MediaAppendUploadStreamingOptions = {}
+  ): Promise<MediaAppendUploadResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -756,7 +754,7 @@ export class MediaClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'initializeUpload');
+    this.client.validateAuthentication(requiredAuthTypes, 'appendUpload');
 
     // Destructure options with defaults
 
@@ -770,7 +768,9 @@ export class MediaClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/media/upload/initialize`;
+    let path = `/2/media/upload/{id}/append`;
+
+    path = path.replace(`{${'id'}}`, String(id));
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -786,7 +786,7 @@ export class MediaClient {
     };
 
     // Make the request
-    return this.client.request<MediaInitializeUploadResponse>(
+    return this.client.request<MediaAppendUploadResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

@@ -3,42 +3,26 @@
  */
 
 /**
- * Response for getUploadStatus
- * A response from getting a media upload request status.
+ * Request body for initializeUpload
  */
-export interface MediaGetUploadStatusResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Request body for upload
- */
-export interface MediaUploadRequest {
+export interface MediaInitializeUploadRequest {
   additionalOwners?: Array<any>;
-  media?: any;
-  /** A string enum value which identifies a media use-case. This identifier is used to enforce use-case specific constraints (e.g. file size) and enable advanced features. */
+  /** A string enum value which identifies a media use-case. This identifier is used to enforce use-case specific constraints (e.g. file size, video duration) and enable advanced features. */
   mediaCategory?: string;
-  /** The type of image or subtitle. */
+  /** The type of media. */
   mediaType?: string;
   /** Whether this media is shared or not. */
   shared?: boolean;
+  /** The total size of the media upload in bytes. */
+  totalBytes?: number;
 }
 
 /**
- * Response for upload
+ * Response for initializeUpload
  * A response from getting a media upload request status.
  */
-export interface MediaUploadResponse {
+export interface MediaInitializeUploadResponse {
   data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getByMediaKeys
- */
-export interface MediaGetByMediaKeysResponse {
-  data?: Array<any>;
   errors?: Array<any>;
 }
 
@@ -91,16 +75,50 @@ export interface MediaDeleteSubtitlesResponse {
 }
 
 /**
- * Request body for appendUpload
- */
-export interface MediaAppendUploadRequest {}
-
-/**
- * Response for appendUpload
+ * Response for getUploadStatus
  * A response from getting a media upload request status.
  */
-export interface MediaAppendUploadResponse {
-  data?: Record<string, any>;
+export interface MediaGetUploadStatusResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Request body for upload
+ */
+export interface MediaUploadRequest {
+  additionalOwners?: Array<any>;
+  media?: any;
+  /** A string enum value which identifies a media use-case. This identifier is used to enforce use-case specific constraints (e.g. file size) and enable advanced features. */
+  mediaCategory?: string;
+  /** The type of image or subtitle. */
+  mediaType?: string;
+  /** Whether this media is shared or not. */
+  shared?: boolean;
+}
+
+/**
+ * Response for upload
+ * A response from getting a media upload request status.
+ */
+export interface MediaUploadResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getByMediaKey
+ */
+export interface MediaGetByMediaKeyResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getByMediaKeys
+ */
+export interface MediaGetByMediaKeysResponse {
+  data?: Array<any>;
   errors?: Array<any>;
 }
 
@@ -130,33 +148,15 @@ export interface MediaCreateMetadataResponse {
 }
 
 /**
- * Response for getByMediaKey
+ * Request body for appendUpload
  */
-export interface MediaGetByMediaKeyResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
+export interface MediaAppendUploadRequest {}
 
 /**
- * Request body for initializeUpload
- */
-export interface MediaInitializeUploadRequest {
-  additionalOwners?: Array<any>;
-  /** A string enum value which identifies a media use-case. This identifier is used to enforce use-case specific constraints (e.g. file size, video duration) and enable advanced features. */
-  mediaCategory?: string;
-  /** The type of media. */
-  mediaType?: string;
-  /** Whether this media is shared or not. */
-  shared?: boolean;
-  /** The total size of the media upload in bytes. */
-  totalBytes?: number;
-}
-
-/**
- * Response for initializeUpload
+ * Response for appendUpload
  * A response from getting a media upload request status.
  */
-export interface MediaInitializeUploadResponse {
-  data: Record<string, any>;
+export interface MediaAppendUploadResponse {
+  data?: Record<string, any>;
   errors?: Array<any>;
 }

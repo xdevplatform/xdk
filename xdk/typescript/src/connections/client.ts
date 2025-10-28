@@ -1,7 +1,7 @@
 /**
- * General client for the X API.
+ * Connections client for the X API.
  *
- * This module provides a client for interacting with the General endpoints of the X API.
+ * This module provides a client for interacting with the Connections endpoints of the X API.
  */
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
@@ -12,22 +12,22 @@ import {
   ListPaginator,
   IdPaginator,
 } from '../paginator.js';
-import { GeneralGetOpenApiSpecResponse } from './models.js';
+import { ConnectionsDeleteAllResponse } from './models.js';
 
 /**
- * Client for General operations
+ * Client for Connections operations
  * 
- * This client provides methods for interacting with the General endpoints
+ * This client provides methods for interacting with the Connections endpoints
  * of the X API. It handles authentication, request formatting, and response
- * parsing for all General related operations.
+ * parsing for all Connections related operations.
  * 
- * @category General
+ * @category Connections
  */
-export class GeneralClient {
+export class ConnectionsClient {
   private client: Client;
 
   /**
-     * Creates a new General client instance
+     * Creates a new Connections client instance
      * 
      * @param client - The main X API client instance
      */
@@ -36,17 +36,17 @@ export class GeneralClient {
   }
 
   /**
-   * Get OpenAPI Spec.
-   * Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)* @returns Promise with the API response
+   * Terminate all connections
+   * Terminates all active streaming connections for the authenticated application.* @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getOpenApiSpec(): Promise<GeneralGetOpenApiSpecResponse> {
+  async deleteAll(): Promise<ConnectionsDeleteAllResponse> {
     // Destructure options
 
     const reqOpts = {};
 
     // Build the path with path parameters
-    let path = '/2/openapi.json';
+    let path = '/2/connections/all';
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -56,8 +56,8 @@ export class GeneralClient {
       // No optional parameters, using empty request options
     };
 
-    return this.client.request<GeneralGetOpenApiSpecResponse>(
-      'GET',
+    return this.client.request<ConnectionsDeleteAllResponse>(
+      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
