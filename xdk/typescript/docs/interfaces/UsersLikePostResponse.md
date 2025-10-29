@@ -1,0 +1,32 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / UsersLikePostResponse
+
+# Interface: UsersLikePostResponse
+
+Response for likePost
+
+## Table of contents
+
+### Properties
+
+- [data](UsersLikePostResponse.md#data)
+- [errors](UsersLikePostResponse.md#errors)
+
+## Properties
+
+### data
+
+• `Optional` **data**: `Record`\<`string`, `any`\>
+
+#### Defined in
+
+[users/models.ts:124](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/models.ts#L124)
+
+___
+
+### errors
+
+• `Optional` **errors**: `any`[]
+
+#### Defined in
+
+[users/models.ts:125](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/models.ts#L125)

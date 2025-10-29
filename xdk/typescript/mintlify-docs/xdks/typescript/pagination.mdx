@@ -1,0 +1,95 @@
+---
+title: "Pagination"
+description: "Learn how to use pagination in the TypeScript SDK"
+sidebarTitle: "Pagination"
+---
+
+# Pagination
+
+The TypeScript SDK provides powerful pagination capabilities for efficiently handling large datasets.
+
+## Basic Pagination
+
+Most endpoints that return lists support pagination:
+
+```typescript
+import { Client } from '@your-org/x-api-sdk';
+
+const client = new Client({
+  bearerToken: 'your-bearer-token'
+});
+
+// Get followers with pagination
+const followersPaginator = await client.users.getFollowers({
+  userId: 'user-id',
+  maxResults: 100
+});
+
+// Access pagination metadata
+console.log('Has more pages:', !followersPaginator.done);
+console.log('Next token:', followersPaginator.meta?.next_token);
+```
+
+## Async Iteration
+
+Iterate through all pages automatically:
+
+```typescript
+// Get all followers
+for await (const follower of followersPaginator) {
+  console.log(follower.username);
+}
+```
+
+## Manual Page Control
+
+Control pagination manually:
+
+```typescript
+// Get first page
+await followersPaginator.fetchNext();
+console.log('First page:', followersPaginator.items);
+
+// Get next page
+if (!followersPaginator.done) {
+  await followersPaginator.fetchNext();
+  console.log('Second page:', followersPaginator.items);
+}
+```
+
+## Pagination Types
+
+Different endpoints return different paginator types:
+
+```typescript
+// User paginator for user-related endpoints
+const userPaginator = await client.users.getFollowers({ userId: 'user-id' });
+// userPaginator.users - array of User objects
+
+// Post paginator for tweet/post endpoints  
+const postPaginator = await client.posts.getUserTweets({ userId: 'user-id' });
+// postPaginator.posts - array of Post objects
+
+// Event paginator for DM/event endpoints
+const eventPaginator = await client.directMessages.getDmEvents({ userId: 'user-id' });
+// eventPaginator.events - array of DmEvent objects
+```
+
+## Error Handling
+
+Handle pagination errors gracefully:
+
+```typescript
+try {
+  for await (const follower of followersPaginator) {
+    console.log(follower.username);
+  }
+} catch (error) {
+  if (followersPaginator.rateLimited) {
+    console.log('Rate limited, waiting...');
+    // Handle rate limiting
+  } else {
+    console.error('Pagination error:', error);
+  }
+}
+```

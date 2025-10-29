@@ -1,0 +1,39 @@
+---
+title: "Overview"
+description: "TypeScript SDK for the X API - Comprehensive guide to getting started"
+sidebarTitle: "Overview"
+---
+
+# TypeScript SDK for X API
+
+A comprehensive TypeScript SDK for the X API (formerly Twitter API) with advanced features including smart pagination, multiple authentication methods, real-time streaming, and full type safety.
+
+## Key Features
+
+- **🔄 Smart Pagination**: Automatic pagination with async iteration support
+- **🔐 Multiple Authentication**: OAuth1, OAuth2, and Bearer token support  
+- **📡 Real-time Streaming**: Event-driven streaming with automatic reconnection
+- **📚 Full Type Safety**: Complete TypeScript definitions for all endpoints
+- **🎯 20+ API Modules**: Users, Posts, Lists, Bookmarks, Communities, and more
+
+## Quick Start
+
+```typescript
+import { Client } from '@your-org/x-api-sdk';
+
+const client = new Client({
+  bearerToken: 'your-bearer-token'
+});
+
+// Get user information
+const user = await client.users.getMe();
+console.log(user.data.username);
+```
+
+## What's Next?
+
+- [Installation Guide](/xdks/typescript/install) - Set up the SDK in your project
+- [Authentication](/xdks/typescript/authentication) - Learn about different auth methods
+- [Pagination](/xdks/typescript/pagination) - Master data pagination
+- [Streaming](/xdks/typescript/streaming) - Real-time data streaming
+- [API Reference](/xdks/typescript/reference/Client) - Complete API documentation

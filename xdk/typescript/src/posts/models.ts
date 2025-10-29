@@ -3,18 +3,9 @@
  */
 
 /**
- * Response for getCountsAll
+ * Response for getLikingUsers
  */
-export interface PostsGetCountsAllResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for searchAll
- */
-export interface PostsSearchAllResponse {
+export interface PostsGetLikingUsersResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -22,9 +13,9 @@ export interface PostsSearchAllResponse {
 }
 
 /**
- * Response for getQuotedPosts
+ * Response for searchRecent
  */
-export interface PostsGetQuotedPostsResponse {
+export interface PostsSearchRecentResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -32,19 +23,21 @@ export interface PostsGetQuotedPostsResponse {
 }
 
 /**
- * Response for getInsights28Hr
+ * Response for getInsightsHistorical
  */
-export interface PostsGetInsights28HrResponse {
+export interface PostsGetInsightsHistoricalResponse {
   data?: Array<any>;
   errors?: Array<any>;
 }
 
 /**
- * Response for getAnalytics
+ * Response for getRepostedBy
  */
-export interface PostsGetAnalyticsResponse {
+export interface PostsGetRepostedByResponse {
   data?: Array<any>;
   errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
 }
 
 /**
@@ -99,12 +92,56 @@ export interface PostsCreateResponse {
 }
 
 /**
- * Response for getRepostedBy
+ * Response for getCountsAll
  */
-export interface PostsGetRepostedByResponse {
+export interface PostsGetCountsAllResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getAnalytics
+ */
+export interface PostsGetAnalyticsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getQuotedPosts
+ */
+export interface PostsGetQuotedPostsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getInsights28Hr
+ */
+export interface PostsGetInsights28HrResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getReposts
+ */
+export interface PostsGetRepostsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getCountsRecent
+ */
+export interface PostsGetCountsRecentResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
   meta?: Record<string, any>;
 }
 
@@ -120,35 +157,6 @@ export interface PostsHideReplyRequest {
  */
 export interface PostsHideReplyResponse {
   data?: Record<string, any>;
-}
-
-/**
- * Response for getCountsRecent
- */
-export interface PostsGetCountsRecentResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getReposts
- */
-export interface PostsGetRepostsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getLikingUsers
- */
-export interface PostsGetLikingUsersResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
 }
 
 /**
@@ -169,19 +177,11 @@ export interface PostsDeleteResponse {
 }
 
 /**
- * Response for searchRecent
+ * Response for searchAll
  */
-export interface PostsSearchRecentResponse {
+export interface PostsSearchAllResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
   meta?: Record<string, any>;
-}
-
-/**
- * Response for getInsightsHistorical
- */
-export interface PostsGetInsightsHistoricalResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
 }

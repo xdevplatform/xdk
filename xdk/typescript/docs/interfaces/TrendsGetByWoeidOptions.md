@@ -1,0 +1,49 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / TrendsGetByWoeidOptions
+
+# Interface: TrendsGetByWoeidOptions
+
+Options for getByWoeid method
+
+## Table of contents
+
+### Properties
+
+- [maxTrends](TrendsGetByWoeidOptions.md#maxtrends)
+- [trendfields](TrendsGetByWoeidOptions.md#trendfields)
+- [requestOptions](TrendsGetByWoeidOptions.md#requestoptions)
+
+## Properties
+
+### maxTrends
+
+• `Optional` **maxTrends**: `number`
+
+The maximum number of results.
+
+#### Defined in
+
+[trends/client.ts:24](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/trends/client.ts#L24)
+
+___
+
+### trendfields
+
+• `Optional` **trendfields**: `any`[]
+
+A comma separated list of Trend fields to display.
+
+#### Defined in
+
+[trends/client.ts:27](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/trends/client.ts#L27)
+
+___
+
+### requestOptions
+
+• `Optional` **requestOptions**: [`RequestOptions`](RequestOptions.md)
+
+Additional request options
+
+#### Defined in
+
+[trends/client.ts:30](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/trends/client.ts#L30)

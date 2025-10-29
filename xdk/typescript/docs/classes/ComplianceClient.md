@@ -1,0 +1,120 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / ComplianceClient
+
+# Class: ComplianceClient
+
+Client for Compliance operations
+
+This client provides methods for interacting with the Compliance endpoints
+of the X API. It handles authentication, request formatting, and response
+parsing for all Compliance related operations.
+
+## Table of contents
+
+### Constructors
+
+- [constructor](ComplianceClient.md#constructor)
+
+### Methods
+
+- [getJobs](ComplianceClient.md#getjobs)
+- [createJobs](ComplianceClient.md#createjobs)
+- [getJobsById](ComplianceClient.md#getjobsbyid)
+
+## Constructors
+
+### constructor
+
+• **new ComplianceClient**(`client`): [`ComplianceClient`](ComplianceClient.md)
+
+Creates a new Compliance client instance
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `client` | [`Client`](Client.md) | The main X API client instance |
+
+#### Returns
+
+[`ComplianceClient`](ComplianceClient.md)
+
+#### Defined in
+
+[compliance/client.ts:63](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/compliance/client.ts#L63)
+
+## Methods
+
+### getJobs
+
+▸ **getJobs**(`type`, `options?`): `Promise`\<[`ComplianceGetJobsResponse`](../interfaces/ComplianceGetJobsResponse.md)\>
+
+Get Compliance Jobs
+Retrieves a list of Compliance Jobs filtered by job type and optional status.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `type` | `string` | Type of Compliance Job to list. |
+| `options` | [`ComplianceGetJobsOptions`](../interfaces/ComplianceGetJobsOptions.md) | - |
+
+#### Returns
+
+`Promise`\<[`ComplianceGetJobsResponse`](../interfaces/ComplianceGetJobsResponse.md)\>
+
+Promise with the API response
+
+#### Defined in
+
+[compliance/client.ts:79](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/compliance/client.ts#L79)
+
+___
+
+### createJobs
+
+▸ **createJobs**(`body`): `Promise`\<[`ComplianceCreateJobsResponse`](../interfaces/ComplianceCreateJobsResponse.md)\>
+
+Create Compliance Job
+Creates a new Compliance Job for the specified job type.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `body` | [`ComplianceCreateJobsRequest`](../interfaces/ComplianceCreateJobsRequest.md) | A request to create a new batch compliance job. |
+
+#### Returns
+
+`Promise`\<[`ComplianceCreateJobsResponse`](../interfaces/ComplianceCreateJobsResponse.md)\>
+
+Promise with the API response
+
+#### Defined in
+
+[compliance/client.ts:133](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/compliance/client.ts#L133)
+
+___
+
+### getJobsById
+
+▸ **getJobsById**(`id`, `options?`): `Promise`\<[`ComplianceGetJobsByIdResponse`](../interfaces/ComplianceGetJobsByIdResponse.md)\>
+
+Get Compliance Job by ID
+Retrieves details of a specific Compliance Job by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the Compliance Job to retrieve. |
+| `options` | [`ComplianceGetJobsByIdOptions`](../interfaces/ComplianceGetJobsByIdOptions.md) | - |
+
+#### Returns
+
+`Promise`\<[`ComplianceGetJobsByIdResponse`](../interfaces/ComplianceGetJobsByIdResponse.md)\>
+
+Promise with the API response
+
+#### Defined in
+
+[compliance/client.ts:172](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/compliance/client.ts#L172)

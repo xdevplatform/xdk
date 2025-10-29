@@ -20,10 +20,11 @@ export interface CommunitiesGetByIdStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
-
 /**
  * Options for search method
  */
@@ -42,6 +43,8 @@ export interface CommunitiesSearchStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
@@ -80,7 +83,7 @@ export class CommunitiesClient {
     const {
       communityfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -99,11 +102,11 @@ export class CommunitiesClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -145,7 +148,7 @@ export class CommunitiesClient {
 
       communityfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -178,11 +181,11 @@ export class CommunitiesClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request

@@ -1,0 +1,37 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / AccountActivityCreateReplayJobResponse
+
+# Interface: AccountActivityCreateReplayJobResponse
+
+Response for createReplayJob
+Confirmation that the replay job request was accepted.
+
+## Table of contents
+
+### Properties
+
+- [createdAt](AccountActivityCreateReplayJobResponse.md#createdat)
+- [jobId](AccountActivityCreateReplayJobResponse.md#jobid)
+
+## Properties
+
+### createdAt
+
+• `Optional` **createdAt**: `string`
+
+The UTC timestamp indicating when the replay job was created.
+
+#### Defined in
+
+[account_activity/models.ts:49](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/account_activity/models.ts#L49)
+
+___
+
+### jobId
+
+• `Optional` **jobId**: `string`
+
+The unique identifier for the initiated replay job.
+
+#### Defined in
+
+[account_activity/models.ts:51](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/account_activity/models.ts#L51)

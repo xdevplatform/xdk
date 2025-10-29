@@ -8,6 +8,18 @@ import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import { ConnectionsDeleteAllResponse } from './models.js';
 
+/**
+ * Options for deleteAll method
+ */
+export interface ConnectionsDeleteAllStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
 export class ConnectionsClient {
   private client: Client;
 
@@ -21,7 +33,9 @@ export class ConnectionsClient {
      * 
      * @returns Promise with the API response
      */
-  async deleteAll(): Promise<ConnectionsDeleteAllResponse> {
+  async deleteAll(
+    options: ConnectionsDeleteAllStreamingOptions = {}
+  ): Promise<ConnectionsDeleteAllResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -32,7 +46,7 @@ export class ConnectionsClient {
 
     // Destructure options with defaults
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -44,11 +58,11 @@ export class ConnectionsClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request

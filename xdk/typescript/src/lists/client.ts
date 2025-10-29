@@ -9,8 +9,7 @@ import {
   Paginator,
   PostPaginator,
   UserPaginator,
-  ListPaginator,
-  IdPaginator,
+  EventPaginator,
 } from '../paginator.js';
 import {
   ListsGetFollowersResponse,
@@ -179,7 +178,13 @@ export class ListsClient {
   /**
    * Add List member
    * Adds a User to a specific List by its ID.
-   * @param id The ID of the List for which to add a member.* @returns Promise with the API response
+
+
+   * @param id The ID of the List for which to add a member.
+
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async addMember(
@@ -191,7 +196,7 @@ export class ListsClient {
     const {
       body,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -206,7 +211,7 @@ export class ListsClient {
     const finalRequestOptions: RequestOptions = {
       body: body ? JSON.stringify(body) : undefined,
 
-      ...reqOpts,
+      ...requestOptions,
     };
 
     return this.client.request<ListsAddMemberResponse>(
@@ -219,7 +224,13 @@ export class ListsClient {
   /**
    * Get List by ID
    * Retrieves details of a specific List by its ID.
-   * @param id The ID of the List.* @returns Promise with the API response
+
+
+   * @param id The ID of the List.
+
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async getById(
@@ -235,7 +246,7 @@ export class ListsClient {
 
       userfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -260,7 +271,7 @@ export class ListsClient {
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      ...reqOpts,
+      ...requestOptions,
     };
 
     return this.client.request<ListsGetByIdResponse>(
@@ -273,7 +284,13 @@ export class ListsClient {
   /**
    * Update List
    * Updates the details of a specific List owned by the authenticated user by its ID.
-   * @param id The ID of the List to modify.* @returns Promise with the API response
+
+
+   * @param id The ID of the List to modify.
+
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async update(
@@ -285,7 +302,7 @@ export class ListsClient {
     const {
       body,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -300,7 +317,7 @@ export class ListsClient {
     const finalRequestOptions: RequestOptions = {
       body: body ? JSON.stringify(body) : undefined,
 
-      ...reqOpts,
+      ...requestOptions,
     };
 
     return this.client.request<ListsUpdateResponse>(
@@ -313,13 +330,19 @@ export class ListsClient {
   /**
    * Delete List
    * Deletes a specific List owned by the authenticated user by its ID.
-   * @param id The ID of the List to delete.* @returns Promise with the API response
+
+
+   * @param id The ID of the List to delete.
+
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async delete(id: string): Promise<ListsDeleteResponse> {
     // Destructure options
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build the path with path parameters
     let path = '/2/lists/{id}';
@@ -344,8 +367,17 @@ export class ListsClient {
   /**
    * Remove List member
    * Removes a User from a specific List by its ID and the User’s ID.
+
+
    * @param id The ID of the List to remove a member.
-   * @param userId The ID of User that will be removed from the List.* @returns Promise with the API response
+
+
+
+   * @param userId The ID of User that will be removed from the List.
+
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async removeMemberByUserId(
@@ -354,7 +386,7 @@ export class ListsClient {
   ): Promise<ListsRemoveMemberByUserIdResponse> {
     // Destructure options
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build the path with path parameters
     let path = '/2/lists/{id}/members/{user_id}';
@@ -380,7 +412,10 @@ export class ListsClient {
 
   /**
    * Create List
-   * Creates a new List for the authenticated user.* @returns Promise with the API response
+   * Creates a new List for the authenticated user.
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async create(options: ListsCreateOptions = {}): Promise<ListsCreateResponse> {
@@ -389,7 +424,7 @@ export class ListsClient {
     const {
       body,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -402,7 +437,7 @@ export class ListsClient {
     const finalRequestOptions: RequestOptions = {
       body: body ? JSON.stringify(body) : undefined,
 
-      ...reqOpts,
+      ...requestOptions,
     };
 
     return this.client.request<ListsCreateResponse>(
@@ -416,9 +451,11 @@ export class ListsClient {
    * Get List followers
    * Retrieves a list of Users who follow a specific List by its ID.
    * Returns a paginator for automatic pagination through all results.
-   * @param 
-   id: string
-   
+
+
+   * @param id The ID of the List.
+
+
    * @param options Options for the paginated request
    * @returns A paginator instance for iterating through all results
    */
@@ -439,7 +476,7 @@ export class ListsClient {
 
       tweetfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -479,7 +516,7 @@ export class ListsClient {
 
       // Prepare request options
       const finalRequestOptions: RequestOptions = {
-        ...reqOpts,
+        ...requestOptions,
       };
 
       const response = await this.client.request<ListsGetFollowersResponse>(
@@ -509,9 +546,11 @@ export class ListsClient {
    * Get List members
    * Retrieves a list of Users who are members of a specific List by its ID.
    * Returns a paginator for automatic pagination through all results.
-   * @param 
-   id: string
-   
+
+
+   * @param id The ID of the List.
+
+
    * @param options Options for the paginated request
    * @returns A paginator instance for iterating through all results
    */
@@ -532,7 +571,7 @@ export class ListsClient {
 
       tweetfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -572,7 +611,7 @@ export class ListsClient {
 
       // Prepare request options
       const finalRequestOptions: RequestOptions = {
-        ...reqOpts,
+        ...requestOptions,
       };
 
       const response = await this.client.request<ListsGetMembersResponse>(
@@ -602,9 +641,11 @@ export class ListsClient {
    * Get List Posts
    * Retrieves a list of Posts associated with a specific List by its ID.
    * Returns a paginator for automatic pagination through all results.
-   * @param 
-   id: string
-   
+
+
+   * @param id The ID of the List.
+
+
    * @param options Options for the paginated request
    * @returns A paginator instance for iterating through all results
    */
@@ -631,7 +672,7 @@ export class ListsClient {
 
       placefields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -683,7 +724,7 @@ export class ListsClient {
 
       // Prepare request options
       const finalRequestOptions: RequestOptions = {
-        ...reqOpts,
+        ...requestOptions,
       };
 
       const response = await this.client.request<ListsGetPostsResponse>(

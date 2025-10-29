@@ -39,10 +39,11 @@ export interface ListsGetFollowersStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
-
 /**
  * Options for getMembers method
  */
@@ -64,10 +65,11 @@ export interface ListsGetMembersStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
-
 /**
  * Options for addMember method
  */
@@ -77,10 +79,11 @@ export interface ListsAddMemberStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
-
 /**
  * Options for getPosts method
  */
@@ -111,10 +114,11 @@ export interface ListsGetPostsStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
-
 /**
  * Options for getById method
  */
@@ -130,10 +134,11 @@ export interface ListsGetByIdStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
-
 /**
  * Options for update method
  */
@@ -143,10 +148,33 @@ export interface ListsUpdateStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
-
+/**
+ * Options for delete method
+ */
+export interface ListsDeleteStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for removeMemberByUserId method
+ */
+export interface ListsRemoveMemberByUserIdStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
 /**
  * Options for create method
  */
@@ -156,6 +184,8 @@ export interface ListsCreateStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
@@ -202,7 +232,7 @@ export class ListsClient {
 
       tweetfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -237,11 +267,11 @@ export class ListsClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -287,7 +317,7 @@ export class ListsClient {
 
       tweetfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -322,11 +352,11 @@ export class ListsClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -362,7 +392,7 @@ export class ListsClient {
     const {
       body,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -377,13 +407,13 @@ export class ListsClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
       body: JSON.stringify(body),
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -435,7 +465,7 @@ export class ListsClient {
 
       placefields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -482,11 +512,11 @@ export class ListsClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -528,7 +558,7 @@ export class ListsClient {
 
       userfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -555,11 +585,11 @@ export class ListsClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -595,7 +625,7 @@ export class ListsClient {
     const {
       body,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -610,13 +640,13 @@ export class ListsClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
       body: JSON.stringify(body),
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -633,7 +663,10 @@ export class ListsClient {
      * 
      * @returns Promise with the API response
      */
-  async delete(id: string): Promise<ListsDeleteResponse> {
+  async delete(
+    id: string,
+    options: ListsDeleteStreamingOptions = {}
+  ): Promise<ListsDeleteResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -646,7 +679,7 @@ export class ListsClient {
 
     // Destructure options with defaults
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -660,11 +693,11 @@ export class ListsClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -683,7 +716,8 @@ export class ListsClient {
      */
   async removeMemberByUserId(
     id: string,
-    userId: string
+    userId: string,
+    options: ListsRemoveMemberByUserIdStreamingOptions = {}
   ): Promise<ListsRemoveMemberByUserIdResponse> {
     // Validate authentication requirements
 
@@ -700,7 +734,7 @@ export class ListsClient {
 
     // Destructure options with defaults
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -716,11 +750,11 @@ export class ListsClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -755,7 +789,7 @@ export class ListsClient {
     const {
       body,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -768,13 +802,13 @@ export class ListsClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
       body: JSON.stringify(body),
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request

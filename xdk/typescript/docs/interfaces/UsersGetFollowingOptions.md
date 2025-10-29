@@ -1,0 +1,88 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / UsersGetFollowingOptions
+
+# Interface: UsersGetFollowingOptions
+
+Options for getFollowing method
+
+## Table of contents
+
+### Properties
+
+- [maxResults](UsersGetFollowingOptions.md#maxresults)
+- [paginationToken](UsersGetFollowingOptions.md#paginationtoken)
+- [userfields](UsersGetFollowingOptions.md#userfields)
+- [expansions](UsersGetFollowingOptions.md#expansions)
+- [tweetfields](UsersGetFollowingOptions.md#tweetfields)
+- [requestOptions](UsersGetFollowingOptions.md#requestoptions)
+
+## Properties
+
+### maxResults
+
+• `Optional` **maxResults**: `number`
+
+The maximum number of results.
+
+#### Defined in
+
+[users/client.ts:622](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L622)
+
+___
+
+### paginationToken
+
+• `Optional` **paginationToken**: `string`
+
+This parameter is used to get a specified 'page' of results.
+
+#### Defined in
+
+[users/client.ts:625](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L625)
+
+___
+
+### userfields
+
+• `Optional` **userfields**: `any`[]
+
+A comma separated list of User fields to display.
+
+#### Defined in
+
+[users/client.ts:628](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L628)
+
+___
+
+### expansions
+
+• `Optional` **expansions**: `any`[]
+
+A comma separated list of fields to expand.
+
+#### Defined in
+
+[users/client.ts:631](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L631)
+
+___
+
+### tweetfields
+
+• `Optional` **tweetfields**: `any`[]
+
+A comma separated list of Tweet fields to display.
+
+#### Defined in
+
+[users/client.ts:634](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L634)
+
+___
+
+### requestOptions
+
+• `Optional` **requestOptions**: [`RequestOptions`](RequestOptions.md)
+
+Additional request options
+
+#### Defined in
+
+[users/client.ts:637](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L637)

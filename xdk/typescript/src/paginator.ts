@@ -350,32 +350,7 @@ export class UserPaginator extends Paginator<any> {
     }
 }
 
-/**
- * Paginator for lists
- */
-export class ListPaginator extends Paginator<any> {
-    get lists(): any[] {
-        return this.items;
-    }
-}
 
-/**
- * Paginator for IDs only
- */
-export class IdPaginator extends Paginator<string> {
-    get ids(): string[] {
-        return this.items;
-    }
-}
-
-/**
- * Paginator for welcome messages
- */
-export class WelcomeMessagePaginator extends Paginator<any> {
-    get welcomeMessages(): any[] {
-        return this.items;
-    }
-}
 
 /**
  * Paginator for events (like DM events)

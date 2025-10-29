@@ -1,0 +1,43 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / UsersGetByUsernamesResponse
+
+# Interface: UsersGetByUsernamesResponse
+
+Response for getByUsernames
+
+## Table of contents
+
+### Properties
+
+- [data](UsersGetByUsernamesResponse.md#data)
+- [errors](UsersGetByUsernamesResponse.md#errors)
+- [includes](UsersGetByUsernamesResponse.md#includes)
+
+## Properties
+
+### data
+
+• `Optional` **data**: `any`[]
+
+#### Defined in
+
+[users/models.ts:253](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/models.ts#L253)
+
+___
+
+### errors
+
+• `Optional` **errors**: `any`[]
+
+#### Defined in
+
+[users/models.ts:254](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/models.ts#L254)
+
+___
+
+### includes
+
+• `Optional` **includes**: `Record`\<`string`, `any`\>
+
+#### Defined in
+
+[users/models.ts:255](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/models.ts#L255)

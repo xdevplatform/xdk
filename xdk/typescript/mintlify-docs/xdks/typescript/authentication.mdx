@@ -1,0 +1,91 @@
+---
+title: "Authentication"
+description: "Authentication methods and setup for the TypeScript SDK"
+sidebarTitle: "Authentication"
+---
+
+# Authentication
+
+The TypeScript SDK supports multiple authentication methods for different use cases.
+
+## Bearer Token (App-Only Auth)
+
+For read-only operations and public data access:
+
+```typescript
+import { Client } from '@your-org/x-api-sdk';
+
+const client = new Client({
+  bearerToken: 'your-bearer-token'
+});
+
+// Get public tweets
+const tweets = await client.posts.searchRecent({
+  query: 'typescript'
+});
+```
+
+## OAuth 2.0 (User Context)
+
+For user-specific operations:
+
+```typescript
+import { Client, OAuth2Auth } from '@your-org/x-api-sdk';
+
+const auth = new OAuth2Auth({
+  clientId: 'your-client-id',
+  clientSecret: 'your-client-secret',
+  redirectUri: 'http://localhost:3000/callback'
+});
+
+// Get authorization URL
+const authUrl = auth.getAuthorizationUrl();
+
+// After user authorization, exchange code for token
+const token = await auth.getAccessToken(authorizationCode);
+
+const client = new Client({
+  auth
+});
+
+// Access user-specific data
+const user = await client.users.getMe();
+```
+
+## OAuth 1.0a (User Context)
+
+For legacy applications or specific use cases:
+
+```typescript
+import { Client, OAuth1Auth } from '@your-org/x-api-sdk';
+
+const auth = new OAuth1Auth({
+  apiKey: 'your-api-key',
+  apiSecret: 'your-api-secret',
+  accessToken: 'user-access-token',
+  accessTokenSecret: 'user-access-token-secret'
+});
+
+const client = new Client({
+  auth
+});
+```
+
+## Environment Variables
+
+Store sensitive credentials in environment variables:
+
+```bash
+# .env
+X_API_BEARER_TOKEN=your-bearer-token
+X_API_CLIENT_ID=your-client-id
+X_API_CLIENT_SECRET=your-client-secret
+```
+
+```typescript
+import { Client } from '@your-org/x-api-sdk';
+
+const client = new Client({
+  bearerToken: process.env.X_API_BEARER_TOKEN
+});
+```

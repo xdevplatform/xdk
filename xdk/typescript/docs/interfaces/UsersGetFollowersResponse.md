@@ -1,0 +1,54 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / UsersGetFollowersResponse
+
+# Interface: UsersGetFollowersResponse
+
+Response for getFollowers
+
+## Table of contents
+
+### Properties
+
+- [data](UsersGetFollowersResponse.md#data)
+- [errors](UsersGetFollowersResponse.md#errors)
+- [includes](UsersGetFollowersResponse.md#includes)
+- [meta](UsersGetFollowersResponse.md#meta)
+
+## Properties
+
+### data
+
+• `Optional` **data**: `any`[]
+
+#### Defined in
+
+[users/models.ts:207](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/models.ts#L207)
+
+___
+
+### errors
+
+• `Optional` **errors**: `any`[]
+
+#### Defined in
+
+[users/models.ts:208](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/models.ts#L208)
+
+___
+
+### includes
+
+• `Optional` **includes**: `Record`\<`string`, `any`\>
+
+#### Defined in
+
+[users/models.ts:209](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/models.ts#L209)
+
+___
+
+### meta
+
+• `Optional` **meta**: `Record`\<`string`, `any`\>
+
+#### Defined in
+
+[users/models.ts:210](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/models.ts#L210)

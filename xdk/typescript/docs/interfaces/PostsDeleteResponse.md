@@ -1,0 +1,32 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / PostsDeleteResponse
+
+# Interface: PostsDeleteResponse
+
+Response for delete
+
+## Table of contents
+
+### Properties
+
+- [data](PostsDeleteResponse.md#data)
+- [errors](PostsDeleteResponse.md#errors)
+
+## Properties
+
+### data
+
+• **data**: `Record`\<`string`, `any`\>
+
+#### Defined in
+
+[posts/models.ts:175](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L175)
+
+___
+
+### errors
+
+• `Optional` **errors**: `any`[]
+
+#### Defined in
+
+[posts/models.ts:176](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L176)

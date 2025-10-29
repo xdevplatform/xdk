@@ -1,0 +1,198 @@
+---
+title: "Users Get Timeline Options"
+description: "Documentation for Users Get Timeline Options"
+sidebarTitle: "Users Get Timeline Options"
+---
+
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / UsersGetTimelineOptions
+
+# Interface: UsersGetTimelineOptions
+
+Options for getTimeline method
+
+## Table of contents
+
+### Properties
+
+- [sinceId](UsersGetTimelineOptions.md#sinceid)
+- [untilId](UsersGetTimelineOptions.md#untilid)
+- [maxResults](UsersGetTimelineOptions.md#maxresults)
+- [paginationToken](UsersGetTimelineOptions.md#paginationtoken)
+- [exclude](UsersGetTimelineOptions.md#exclude)
+- [startTime](UsersGetTimelineOptions.md#starttime)
+- [endTime](UsersGetTimelineOptions.md#endtime)
+- [tweetfields](UsersGetTimelineOptions.md#tweetfields)
+- [expansions](UsersGetTimelineOptions.md#expansions)
+- [mediafields](UsersGetTimelineOptions.md#mediafields)
+- [pollfields](UsersGetTimelineOptions.md#pollfields)
+- [userfields](UsersGetTimelineOptions.md#userfields)
+- [placefields](UsersGetTimelineOptions.md#placefields)
+- [requestOptions](UsersGetTimelineOptions.md#requestoptions)
+
+## Properties
+
+### sinceId
+
+• `Optional` **sinceId**: `string`
+
+The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified.
+
+#### Defined in
+
+[users/client.ts:160](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L160)
+
+___
+
+### untilId
+
+• `Optional` **untilId**: `string`
+
+The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified.
+
+#### Defined in
+
+[users/client.ts:163](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L163)
+
+___
+
+### maxResults
+
+• `Optional` **maxResults**: `number`
+
+The maximum number of results.
+
+#### Defined in
+
+[users/client.ts:166](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L166)
+
+___
+
+### paginationToken
+
+• `Optional` **paginationToken**: `string`
+
+This parameter is used to get the next 'page' of results.
+
+#### Defined in
+
+[users/client.ts:169](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L169)
+
+___
+
+### exclude
+
+• `Optional` **exclude**: `any`[]
+
+The set of entities to exclude (e.g. 'replies' or 'retweets').
+
+#### Defined in
+
+[users/client.ts:172](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L172)
+
+___
+
+### startTime
+
+• `Optional` **startTime**: `string`
+
+YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since_id parameter takes precedence if it is also specified.
+
+#### Defined in
+
+[users/client.ts:175](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L175)
+
+___
+
+### endTime
+
+• `Optional` **endTime**: `string`
+
+YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until_id parameter takes precedence if it is also specified.
+
+#### Defined in
+
+[users/client.ts:178](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L178)
+
+___
+
+### tweetfields
+
+• `Optional` **tweetfields**: `any`[]
+
+A comma separated list of Tweet fields to display.
+
+#### Defined in
+
+[users/client.ts:181](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L181)
+
+___
+
+### expansions
+
+• `Optional` **expansions**: `any`[]
+
+A comma separated list of fields to expand.
+
+#### Defined in
+
+[users/client.ts:184](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L184)
+
+___
+
+### mediafields
+
+• `Optional` **mediafields**: `any`[]
+
+A comma separated list of Media fields to display.
+
+#### Defined in
+
+[users/client.ts:187](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L187)
+
+___
+
+### pollfields
+
+• `Optional` **pollfields**: `any`[]
+
+A comma separated list of Poll fields to display.
+
+#### Defined in
+
+[users/client.ts:190](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L190)
+
+___
+
+### userfields
+
+• `Optional` **userfields**: `any`[]
+
+A comma separated list of User fields to display.
+
+#### Defined in
+
+[users/client.ts:193](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L193)
+
+___
+
+### placefields
+
+• `Optional` **placefields**: `any`[]
+
+A comma separated list of Place fields to display.
+
+#### Defined in
+
+[users/client.ts:196](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L196)
+
+___
+
+### requestOptions
+
+• `Optional` **requestOptions**: [`RequestOptions`](RequestOptions.md)
+
+Additional request options
+
+#### Defined in
+
+[users/client.ts:199](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L199)

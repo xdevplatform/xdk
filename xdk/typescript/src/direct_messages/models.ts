@@ -3,6 +3,16 @@
  */
 
 /**
+ * Response for getEvents
+ */
+export interface DirectMessagesGetEventsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
  * Request body for createByConversationId
  */
 export interface DirectMessagesCreateByConversationIdRequest {}
@@ -13,6 +23,26 @@ export interface DirectMessagesCreateByConversationIdRequest {}
 export interface DirectMessagesCreateByConversationIdResponse {
   data: Record<string, any>;
   errors?: Array<any>;
+}
+
+/**
+ * Response for getEventsByParticipantId
+ */
+export interface DirectMessagesGetEventsByParticipantIdResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getEventsByConversationId
+ */
+export interface DirectMessagesGetEventsByConversationIdResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
 }
 
 /**
@@ -52,16 +82,6 @@ export interface DirectMessagesCreateConversationResponse {
 }
 
 /**
- * Response for getEvents
- */
-export interface DirectMessagesGetEventsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
  * Request body for createByParticipantId
  */
 export interface DirectMessagesCreateByParticipantIdRequest {}
@@ -72,24 +92,4 @@ export interface DirectMessagesCreateByParticipantIdRequest {}
 export interface DirectMessagesCreateByParticipantIdResponse {
   data: Record<string, any>;
   errors?: Array<any>;
-}
-
-/**
- * Response for getEventsByConversationId
- */
-export interface DirectMessagesGetEventsByConversationIdResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getEventsByParticipantId
- */
-export interface DirectMessagesGetEventsByParticipantIdResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
 }

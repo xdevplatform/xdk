@@ -3,15 +3,6 @@
  */
 
 /**
- * Response for stream
- * An activity event or error that can be returned by the x activity streaming API.
- */
-export interface ActivityStreamResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
  * Request body for updateSubscription
  */
 export interface ActivityUpdateSubscriptionRequest {
@@ -64,4 +55,13 @@ export interface ActivityCreateSubscriptionResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
   meta?: Record<string, any>;
+}
+
+/**
+ * Response for stream
+ * An activity event or error that can be returned by the x activity streaming API.
+ */
+export interface ActivityStreamResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
 }

@@ -1,0 +1,88 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / UsersGetBlockingOptions
+
+# Interface: UsersGetBlockingOptions
+
+Options for getBlocking method
+
+## Table of contents
+
+### Properties
+
+- [maxResults](UsersGetBlockingOptions.md#maxresults)
+- [paginationToken](UsersGetBlockingOptions.md#paginationtoken)
+- [userfields](UsersGetBlockingOptions.md#userfields)
+- [expansions](UsersGetBlockingOptions.md#expansions)
+- [tweetfields](UsersGetBlockingOptions.md#tweetfields)
+- [requestOptions](UsersGetBlockingOptions.md#requestoptions)
+
+## Properties
+
+### maxResults
+
+• `Optional` **maxResults**: `number`
+
+The maximum number of results.
+
+#### Defined in
+
+[users/client.ts:275](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L275)
+
+___
+
+### paginationToken
+
+• `Optional` **paginationToken**: `string`
+
+This parameter is used to get a specified 'page' of results.
+
+#### Defined in
+
+[users/client.ts:278](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L278)
+
+___
+
+### userfields
+
+• `Optional` **userfields**: `any`[]
+
+A comma separated list of User fields to display.
+
+#### Defined in
+
+[users/client.ts:281](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L281)
+
+___
+
+### expansions
+
+• `Optional` **expansions**: `any`[]
+
+A comma separated list of fields to expand.
+
+#### Defined in
+
+[users/client.ts:284](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L284)
+
+___
+
+### tweetfields
+
+• `Optional` **tweetfields**: `any`[]
+
+A comma separated list of Tweet fields to display.
+
+#### Defined in
+
+[users/client.ts:287](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L287)
+
+___
+
+### requestOptions
+
+• `Optional` **requestOptions**: [`RequestOptions`](RequestOptions.md)
+
+Additional request options
+
+#### Defined in
+
+[users/client.ts:290](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/client.ts#L290)

@@ -1,0 +1,32 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / UsersBlockDmsResponse
+
+# Interface: UsersBlockDmsResponse
+
+Response for blockDms
+
+## Table of contents
+
+### Properties
+
+- [data](UsersBlockDmsResponse.md#data)
+- [errors](UsersBlockDmsResponse.md#errors)
+
+## Properties
+
+### data
+
+• `Optional` **data**: `Record`\<`string`, `any`\>
+
+#### Defined in
+
+[users/models.ts:349](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/models.ts#L349)
+
+___
+
+### errors
+
+• `Optional` **errors**: `any`[]
+
+#### Defined in
+
+[users/models.ts:350](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/users/models.ts#L350)

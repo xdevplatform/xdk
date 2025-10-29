@@ -9,8 +9,7 @@ import {
   Paginator,
   PostPaginator,
   UserPaginator,
-  ListPaginator,
-  IdPaginator,
+  EventPaginator,
 } from '../paginator.js';
 import { GeneralGetOpenApiSpecResponse } from './models.js';
 
@@ -37,13 +36,16 @@ export class GeneralClient {
 
   /**
    * Get OpenAPI Spec.
-   * Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)* @returns Promise with the API response
+   * Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async getOpenApiSpec(): Promise<GeneralGetOpenApiSpecResponse> {
     // Destructure options
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build the path with path parameters
     let path = '/2/openapi.json';

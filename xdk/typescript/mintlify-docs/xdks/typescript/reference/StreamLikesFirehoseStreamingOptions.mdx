@@ -1,0 +1,146 @@
+---
+title: "Stream Likes Firehose Streaming Options"
+description: "Documentation for Stream Likes Firehose Streaming Options"
+sidebarTitle: "Stream Likes Firehose Streaming Options"
+---
+
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / StreamLikesFirehoseStreamingOptions
+
+# Interface: StreamLikesFirehoseStreamingOptions
+
+Options for likesFirehose method
+
+## Table of contents
+
+### Properties
+
+- [backfillMinutes](StreamLikesFirehoseStreamingOptions.md#backfillminutes)
+- [startTime](StreamLikesFirehoseStreamingOptions.md#starttime)
+- [endTime](StreamLikesFirehoseStreamingOptions.md#endtime)
+- [likeWithTweetAuthorfields](StreamLikesFirehoseStreamingOptions.md#likewithtweetauthorfields)
+- [expansions](StreamLikesFirehoseStreamingOptions.md#expansions)
+- [userfields](StreamLikesFirehoseStreamingOptions.md#userfields)
+- [tweetfields](StreamLikesFirehoseStreamingOptions.md#tweetfields)
+- [requestOptions](StreamLikesFirehoseStreamingOptions.md#requestoptions)
+- [headers](StreamLikesFirehoseStreamingOptions.md#headers)
+- [signal](StreamLikesFirehoseStreamingOptions.md#signal)
+
+## Properties
+
+### backfillMinutes
+
+• `Optional` **backfillMinutes**: `number`
+
+The number of minutes of backfill requested.
+
+#### Defined in
+
+[stream/stream_client.ts:162](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L162)
+
+___
+
+### startTime
+
+• `Optional` **startTime**: `string`
+
+YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Likes will be provided.
+
+#### Defined in
+
+[stream/stream_client.ts:165](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L165)
+
+___
+
+### endTime
+
+• `Optional` **endTime**: `string`
+
+YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided.
+
+#### Defined in
+
+[stream/stream_client.ts:168](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L168)
+
+___
+
+### likeWithTweetAuthorfields
+
+• `Optional` **likeWithTweetAuthorfields**: `any`[]
+
+A comma separated list of LikeWithTweetAuthor fields to display.
+
+#### Defined in
+
+[stream/stream_client.ts:171](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L171)
+
+___
+
+### expansions
+
+• `Optional` **expansions**: `any`[]
+
+A comma separated list of fields to expand.
+
+#### Defined in
+
+[stream/stream_client.ts:174](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L174)
+
+___
+
+### userfields
+
+• `Optional` **userfields**: `any`[]
+
+A comma separated list of User fields to display.
+
+#### Defined in
+
+[stream/stream_client.ts:177](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L177)
+
+___
+
+### tweetfields
+
+• `Optional` **tweetfields**: `any`[]
+
+A comma separated list of Tweet fields to display.
+
+#### Defined in
+
+[stream/stream_client.ts:180](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L180)
+
+___
+
+### requestOptions
+
+• `Optional` **requestOptions**: [`RequestOptions`](RequestOptions.md)
+
+Additional request options
+
+#### Defined in
+
+[stream/stream_client.ts:183](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L183)
+
+___
+
+### headers
+
+• `Optional` **headers**: `Record`\<`string`, `string`\>
+
+Additional headers
+
+#### Defined in
+
+[stream/stream_client.ts:185](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L185)
+
+___
+
+### signal
+
+• `Optional` **signal**: `AbortSignal`
+
+AbortSignal for cancelling the request
+
+#### Defined in
+
+[stream/stream_client.ts:187](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L187)

@@ -9,8 +9,7 @@ import {
   Paginator,
   PostPaginator,
   UserPaginator,
-  ListPaginator,
-  IdPaginator,
+  EventPaginator,
 } from '../paginator.js';
 import {
   TrendsGetByWoeidResponse,
@@ -66,7 +65,13 @@ export class TrendsClient {
   /**
    * Get Trends by WOEID
    * Retrieves trending topics for a specific location identified by its WOEID.
-   * @param woeid The WOEID of the place to lookup a trend for.* @returns Promise with the API response
+
+
+   * @param woeid The WOEID of the place to lookup a trend for.
+
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async getByWoeid(
@@ -80,7 +85,7 @@ export class TrendsClient {
 
       trendfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -101,7 +106,7 @@ export class TrendsClient {
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      ...reqOpts,
+      ...requestOptions,
     };
 
     return this.client.request<TrendsGetByWoeidResponse>(
@@ -113,7 +118,10 @@ export class TrendsClient {
 
   /**
    * Get personalized Trends
-   * Retrieves personalized trending topics for the authenticated user.* @returns Promise with the API response
+   * Retrieves personalized trending topics for the authenticated user.
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async getPersonalizedTrends(
@@ -124,7 +132,7 @@ export class TrendsClient {
     const {
       personalizedTrendfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -142,7 +150,7 @@ export class TrendsClient {
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      ...reqOpts,
+      ...requestOptions,
     };
 
     return this.client.request<TrendsGetPersonalizedTrendsResponse>(

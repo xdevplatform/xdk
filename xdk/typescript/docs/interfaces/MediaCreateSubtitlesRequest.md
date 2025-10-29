@@ -1,0 +1,47 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / MediaCreateSubtitlesRequest
+
+# Interface: MediaCreateSubtitlesRequest
+
+Request body for createSubtitles
+
+## Table of contents
+
+### Properties
+
+- [id](MediaCreateSubtitlesRequest.md#id)
+- [mediaCategory](MediaCreateSubtitlesRequest.md#mediacategory)
+- [subtitles](MediaCreateSubtitlesRequest.md#subtitles)
+
+## Properties
+
+### id
+
+• `Optional` **id**: `string`
+
+The unique identifier of this Media.
+
+#### Defined in
+
+[media/models.ts:73](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/media/models.ts#L73)
+
+___
+
+### mediaCategory
+
+• `Optional` **mediaCategory**: `string`
+
+The media category of uploaded media to which subtitles should be added/deleted
+
+#### Defined in
+
+[media/models.ts:75](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/media/models.ts#L75)
+
+___
+
+### subtitles
+
+• `Optional` **subtitles**: `Record`\<`string`, `any`\>
+
+#### Defined in
+
+[media/models.ts:76](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/media/models.ts#L76)

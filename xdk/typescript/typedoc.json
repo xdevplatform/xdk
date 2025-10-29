@@ -1,7 +1,7 @@
 {
   "entryPoints": ["src/index.ts"],
   "out": "docs",
-  "name": "X API SDK",
+  "name": "X API SDK v2.152",
   "includeVersion": true,
   "excludePrivate": true,
   "excludeProtected": true,
@@ -48,5 +48,11 @@
   },
   "searchInComments": true,
   "cleanOutputDir": true,
-  "plugin": ["typedoc-plugin-markdown"]
+  "plugin": ["typedoc-plugin-markdown"],
+  "exclude": [
+    "**/stream_listener.ts",
+    "**/oauth1_auth.ts",
+    "**/oauth2_auth.ts",
+    "**/crypto_utils.ts"
+  ]
 }

@@ -1,0 +1,36 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / MediaInitializeUploadOptions
+
+# Interface: MediaInitializeUploadOptions
+
+Options for initializeUpload method
+
+## Table of contents
+
+### Properties
+
+- [body](MediaInitializeUploadOptions.md#body)
+- [requestOptions](MediaInitializeUploadOptions.md#requestoptions)
+
+## Properties
+
+### body
+
+• `Optional` **body**: [`MediaInitializeUploadRequest`](MediaInitializeUploadRequest.md)
+
+Request body
+
+#### Defined in
+
+[media/client.ts:61](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/media/client.ts#L61)
+
+___
+
+### requestOptions
+
+• `Optional` **requestOptions**: [`RequestOptions`](RequestOptions.md)
+
+Additional request options
+
+#### Defined in
+
+[media/client.ts:64](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/media/client.ts#L64)

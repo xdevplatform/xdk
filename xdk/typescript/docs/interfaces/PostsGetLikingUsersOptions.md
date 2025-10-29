@@ -1,0 +1,88 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / PostsGetLikingUsersOptions
+
+# Interface: PostsGetLikingUsersOptions
+
+Options for getLikingUsers method
+
+## Table of contents
+
+### Properties
+
+- [maxResults](PostsGetLikingUsersOptions.md#maxresults)
+- [paginationToken](PostsGetLikingUsersOptions.md#paginationtoken)
+- [userfields](PostsGetLikingUsersOptions.md#userfields)
+- [expansions](PostsGetLikingUsersOptions.md#expansions)
+- [tweetfields](PostsGetLikingUsersOptions.md#tweetfields)
+- [requestOptions](PostsGetLikingUsersOptions.md#requestoptions)
+
+## Properties
+
+### maxResults
+
+• `Optional` **maxResults**: `number`
+
+The maximum number of results.
+
+#### Defined in
+
+[posts/client.ts:40](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L40)
+
+___
+
+### paginationToken
+
+• `Optional` **paginationToken**: `string`
+
+This parameter is used to get the next 'page' of results.
+
+#### Defined in
+
+[posts/client.ts:43](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L43)
+
+___
+
+### userfields
+
+• `Optional` **userfields**: `any`[]
+
+A comma separated list of User fields to display.
+
+#### Defined in
+
+[posts/client.ts:46](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L46)
+
+___
+
+### expansions
+
+• `Optional` **expansions**: `any`[]
+
+A comma separated list of fields to expand.
+
+#### Defined in
+
+[posts/client.ts:49](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L49)
+
+___
+
+### tweetfields
+
+• `Optional` **tweetfields**: `any`[]
+
+A comma separated list of Tweet fields to display.
+
+#### Defined in
+
+[posts/client.ts:52](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L52)
+
+___
+
+### requestOptions
+
+• `Optional` **requestOptions**: [`RequestOptions`](RequestOptions.md)
+
+Additional request options
+
+#### Defined in
+
+[posts/client.ts:55](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L55)

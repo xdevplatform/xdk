@@ -1,0 +1,21 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / PostsHideReplyRequest
+
+# Interface: PostsHideReplyRequest
+
+Request body for hideReply
+
+## Table of contents
+
+### Properties
+
+- [hidden](PostsHideReplyRequest.md#hidden)
+
+## Properties
+
+### hidden
+
+• `Optional` **hidden**: `boolean`
+
+#### Defined in
+
+[posts/models.ts:152](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L152)

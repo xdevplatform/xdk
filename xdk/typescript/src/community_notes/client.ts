@@ -9,17 +9,16 @@ import {
   Paginator,
   PostPaginator,
   UserPaginator,
-  ListPaginator,
-  IdPaginator,
+  EventPaginator,
 } from '../paginator.js';
 import {
   CommunityNotesSearchEligiblePostsResponse,
+  CommunityNotesDeleteResponse,
+  CommunityNotesEvaluateRequest,
+  CommunityNotesEvaluateResponse,
   CommunityNotesSearchWrittenResponse,
   CommunityNotesCreateRequest,
   CommunityNotesCreateResponse,
-  CommunityNotesEvaluateRequest,
-  CommunityNotesEvaluateResponse,
-  CommunityNotesDeleteResponse,
 } from './models.js';
 
 /**
@@ -55,6 +54,17 @@ export interface CommunityNotesSearchEligiblePostsOptions {
 }
 
 /**
+ * Options for evaluate method
+ */
+export interface CommunityNotesEvaluateOptions {
+  /** Request body */
+  body?: CommunityNotesEvaluateRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
  * Options for searchWritten method
  */
 export interface CommunityNotesSearchWrittenOptions {
@@ -83,17 +93,6 @@ export interface CommunityNotesCreateOptions {
 }
 
 /**
- * Options for evaluate method
- */
-export interface CommunityNotesEvaluateOptions {
-  /** Request body */
-  body?: CommunityNotesEvaluateRequest;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
  * Client for Community notes operations
  * 
  * This client provides methods for interacting with the Community notes endpoints
@@ -115,87 +114,21 @@ export class CommunityNotesClient {
   }
 
   /**
-   * Create a Community Note
-   * Creates a community note endpoint for LLM use case.* @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async create(
-    options: CommunityNotesCreateOptions = {}
-  ): Promise<CommunityNotesCreateResponse> {
-    // Destructure options
-
-    const {
-      body,
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build the path with path parameters
-    let path = '/2/notes';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...reqOpts,
-    };
-
-    return this.client.request<CommunityNotesCreateResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Evaluate a Community Note
-   * Endpoint to evaluate a community note.* @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async evaluate(
-    options: CommunityNotesEvaluateOptions = {}
-  ): Promise<CommunityNotesEvaluateResponse> {
-    // Destructure options
-
-    const {
-      body,
-
-      requestOptions: reqOpts = {},
-    } = options;
-
-    // Build the path with path parameters
-    let path = '/2/evaluate_note';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...reqOpts,
-    };
-
-    return this.client.request<CommunityNotesEvaluateResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
    * Delete a Community Note
    * Deletes a community note.
-   * @param id The community note id to delete.* @returns Promise with the API response
+
+
+   * @param id The community note id to delete.
+
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async delete(id: string): Promise<CommunityNotesDeleteResponse> {
     // Destructure options
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build the path with path parameters
     let path = '/2/notes/{id}';
@@ -218,12 +151,92 @@ export class CommunityNotesClient {
   }
 
   /**
+   * Evaluate a Community Note
+   * Endpoint to evaluate a community note.
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async evaluate(
+    options: CommunityNotesEvaluateOptions = {}
+  ): Promise<CommunityNotesEvaluateResponse> {
+    // Destructure options
+
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = options;
+
+    // Build the path with path parameters
+    let path = '/2/evaluate_note';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<CommunityNotesEvaluateResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Create a Community Note
+   * Creates a community note endpoint for LLM use case.
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async create(
+    options: CommunityNotesCreateOptions = {}
+  ): Promise<CommunityNotesCreateResponse> {
+    // Destructure options
+
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = options;
+
+    // Build the path with path parameters
+    let path = '/2/notes';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<CommunityNotesCreateResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Search for Posts Eligible for Community Notes
    * Returns all the posts that are eligible for community notes.
    * Returns a paginator for automatic pagination through all results.
-   * @param 
-   testMode: boolean
-   
+
+
+   * @param testMode If true, return a list of posts that are for the test. If false, return a list of posts that the bots can write proposed notes on the product.
+
+
    * @param options Options for the paginated request
    * @returns A paginator instance for iterating through all results
    */
@@ -250,7 +263,7 @@ export class CommunityNotesClient {
 
       placefields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -304,7 +317,7 @@ export class CommunityNotesClient {
 
       // Prepare request options
       const finalRequestOptions: RequestOptions = {
-        ...reqOpts,
+        ...requestOptions,
       };
 
       const response = await this.client.request<
@@ -336,9 +349,11 @@ export class CommunityNotesClient {
    * Search for Community Notes Written
    * Returns all the community notes written by the user.
    * Returns a paginator for automatic pagination through all results.
-   * @param 
-   testMode: boolean
-   
+
+
+   * @param testMode If true, return the notes the caller wrote for the test. If false, return the notes the caller wrote on the product.
+
+
    * @param options Options for the paginated request
    * @returns A paginator instance for iterating through all results
    */
@@ -355,7 +370,7 @@ export class CommunityNotesClient {
 
       notefields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -389,7 +404,7 @@ export class CommunityNotesClient {
 
       // Prepare request options
       const finalRequestOptions: RequestOptions = {
-        ...reqOpts,
+        ...requestOptions,
       };
 
       const response = await this.client.request<

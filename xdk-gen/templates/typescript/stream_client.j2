@@ -15,7 +15,6 @@ import {
 } from './models.js';
 
 {% for operation in operations -%}
-{% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
 /**
  * Options for {{ operation.operation_id | camel_case }} method
  */
@@ -32,10 +31,11 @@ export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}
     {% endif %}
     /** Additional request options */
     requestOptions?: RequestOptions;
+    /** Additional headers */
+    headers?: Record<string, string>;
     /** AbortSignal for cancelling the request */
     signal?: AbortSignal;
 }
-{% endif %}
 {% endfor %}
 
 export class {{ tag|pascal_case }}Client {
@@ -67,9 +67,7 @@ export class {{ tag|pascal_case }}Client {
         body: any,
         {% endif %}
         {# Options object for all optional parameters #}
-        {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
         options: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}StreamingOptions = {}
-        {% endif %}
     ): Promise<EventDrivenStream> {
         // Validate authentication requirements
         {% if operation.security %}
@@ -93,10 +91,10 @@ export class {{ tag|pascal_case }}Client {
             {% if operation.request_body and not operation.request_body.required %}
             body,
             {% endif %}
-            requestOptions: reqOpts = {}
+            requestOptions: requestOptions = {}
         } = options;
         {% else %}
-        const reqOpts = {};
+        const requestOptions = {};
         {% endif %}
 
         // Build query parameters
@@ -133,7 +131,7 @@ export class {{ tag|pascal_case }}Client {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    ...reqOpts.headers,
+                    ...(options.headers || {}),
                 },
                 {% if operation.request_body %}
                 body: JSON.stringify({% if operation.request_body.required %}body{% else %}body{% endif %}),
@@ -141,7 +139,7 @@ export class {{ tag|pascal_case }}Client {
                 signal: options.signal,
                 raw: true, // Get raw Response object for streaming
                 timeout: 0, // Disable timeout for streaming requests
-                ...reqOpts,
+                ...options,
             }
         ) as Response;
 
@@ -187,9 +185,7 @@ export class {{ tag|pascal_case }}Client {
         body: any,
         {% endif %}
         {# Options object for all optional parameters #}
-        {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
         options: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}StreamingOptions = {}
-        {% endif %}
     ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}any{% endif %}> {
         // Validate authentication requirements
         {% if operation.security %}
@@ -213,10 +209,10 @@ export class {{ tag|pascal_case }}Client {
             {% if operation.request_body and not operation.request_body.required %}
             body,
             {% endif %}
-            requestOptions: reqOpts = {}
+            requestOptions: requestOptions = {}
         } = options;
         {% else %}
-        const reqOpts = {};
+        const requestOptions = {};
         {% endif %}
 
         // Build query parameters
@@ -255,13 +251,13 @@ export class {{ tag|pascal_case }}Client {
         const finalRequestOptions: RequestOptions = {
             headers: {
                 'Content-Type': 'application/json',
-                ...reqOpts.headers,
+                ...(options.headers || {}),
             },
             signal: options.signal,
             {% if operation.request_body %}
             body: JSON.stringify({% if operation.request_body.required %}body{% else %}body{% endif %}),
             {% endif %}
-            ...reqOpts,
+            ...options,
         };
 
         // Make the request

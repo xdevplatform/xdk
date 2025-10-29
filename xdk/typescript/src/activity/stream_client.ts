@@ -7,13 +7,63 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  ActivityStreamResponse,
   ActivityUpdateSubscriptionResponse,
   ActivityDeleteSubscriptionResponse,
   ActivityGetSubscriptionsResponse,
   ActivityCreateSubscriptionResponse,
+  ActivityStreamResponse,
 } from './models.js';
 
+/**
+ * Options for updateSubscription method
+ */
+export interface ActivityUpdateSubscriptionStreamingOptions {
+  /** Request body */
+  body?: any;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for deleteSubscription method
+ */
+export interface ActivityDeleteSubscriptionStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getSubscriptions method
+ */
+export interface ActivityGetSubscriptionsStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for createSubscription method
+ */
+export interface ActivityCreateSubscriptionStreamingOptions {
+  /** Request body */
+  body?: any;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
 /**
  * Options for stream method
  */
@@ -29,32 +79,8 @@ export interface ActivityStreamStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-
-/**
- * Options for updateSubscription method
- */
-export interface ActivityUpdateSubscriptionStreamingOptions {
-  /** Request body */
-  body?: any;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-
-/**
- * Options for createSubscription method
- */
-export interface ActivityCreateSubscriptionStreamingOptions {
-  /** Request body */
-  body?: any;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
@@ -94,7 +120,7 @@ export class ActivityClient {
 
       endTime = undefined,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -122,13 +148,13 @@ export class ActivityClient {
     const response = (await this.client.request('GET', url, {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
 
       signal: options.signal,
       raw: true, // Get raw Response object for streaming
       timeout: 0, // Disable timeout for streaming requests
-      ...reqOpts,
+      ...options,
     })) as Response;
 
     // Handle errors
@@ -171,7 +197,7 @@ export class ActivityClient {
     const {
       body,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -186,13 +212,13 @@ export class ActivityClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
       body: JSON.stringify(body),
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -210,7 +236,8 @@ export class ActivityClient {
      * @returns Promise with the API response
      */
   async deleteSubscription(
-    subscriptionId: string
+    subscriptionId: string,
+    options: ActivityDeleteSubscriptionStreamingOptions = {}
   ): Promise<ActivityDeleteSubscriptionResponse> {
     // Validate authentication requirements
 
@@ -222,7 +249,7 @@ export class ActivityClient {
 
     // Destructure options with defaults
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -236,11 +263,11 @@ export class ActivityClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -257,7 +284,9 @@ export class ActivityClient {
      * 
      * @returns Promise with the API response
      */
-  async getSubscriptions(): Promise<ActivityGetSubscriptionsResponse> {
+  async getSubscriptions(
+    options: ActivityGetSubscriptionsStreamingOptions = {}
+  ): Promise<ActivityGetSubscriptionsResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -268,7 +297,7 @@ export class ActivityClient {
 
     // Destructure options with defaults
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -280,11 +309,11 @@ export class ActivityClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -317,7 +346,7 @@ export class ActivityClient {
     const {
       body,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -330,13 +359,13 @@ export class ActivityClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
       body: JSON.stringify(body),
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request

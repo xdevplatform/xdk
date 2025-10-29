@@ -7,15 +7,37 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  WebhooksGetStreamLinksResponse,
   WebhooksValidateResponse,
   WebhooksDeleteResponse,
   WebhooksGetResponse,
   WebhooksCreateResponse,
+  WebhooksGetStreamLinksResponse,
   WebhooksCreateStreamLinkResponse,
   WebhooksDeleteStreamLinkResponse,
 } from './models.js';
 
+/**
+ * Options for validate method
+ */
+export interface WebhooksValidateStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for delete method
+ */
+export interface WebhooksDeleteStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
 /**
  * Options for get method
  */
@@ -25,10 +47,11 @@ export interface WebhooksGetStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
-
 /**
  * Options for create method
  */
@@ -38,10 +61,22 @@ export interface WebhooksCreateStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
-
+/**
+ * Options for getStreamLinks method
+ */
+export interface WebhooksGetStreamLinksStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
 /**
  * Options for createStreamLink method
  */
@@ -66,6 +101,19 @@ export interface WebhooksCreateStreamLinkStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for deleteStreamLink method
+ */
+export interface WebhooksDeleteStreamLinkStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
@@ -78,56 +126,15 @@ export class WebhooksClient {
   }
 
   /**
-     * Get stream links
-     * Get a list of webhook links associated with a filtered stream ruleset.
-     * 
-     * @returns Promise with the API response
-     */
-  async getStreamLinks(): Promise<WebhooksGetStreamLinksResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getStreamLinks');
-
-    // Destructure options with defaults
-
-    const reqOpts = {};
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/tweets/search/webhooks`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<WebhooksGetStreamLinksResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
      * Validate webhook
      * Triggers a CRC check for a given webhook.
      * 
      * @returns Promise with the API response
      */
-  async validate(webhookId: string): Promise<WebhooksValidateResponse> {
+  async validate(
+    webhookId: string,
+    options: WebhooksValidateStreamingOptions = {}
+  ): Promise<WebhooksValidateResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -140,7 +147,7 @@ export class WebhooksClient {
 
     // Destructure options with defaults
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -154,11 +161,11 @@ export class WebhooksClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -175,7 +182,10 @@ export class WebhooksClient {
      * 
      * @returns Promise with the API response
      */
-  async delete(webhookId: string): Promise<WebhooksDeleteResponse> {
+  async delete(
+    webhookId: string,
+    options: WebhooksDeleteStreamingOptions = {}
+  ): Promise<WebhooksDeleteResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -188,7 +198,7 @@ export class WebhooksClient {
 
     // Destructure options with defaults
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -202,11 +212,11 @@ export class WebhooksClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -239,7 +249,7 @@ export class WebhooksClient {
     const {
       webhookConfigfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -256,11 +266,11 @@ export class WebhooksClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -295,7 +305,7 @@ export class WebhooksClient {
     const {
       body,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -308,18 +318,64 @@ export class WebhooksClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
       body: JSON.stringify(body),
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
     return this.client.request<WebhooksCreateResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get stream links
+     * Get a list of webhook links associated with a filtered stream ruleset.
+     * 
+     * @returns Promise with the API response
+     */
+  async getStreamLinks(
+    options: WebhooksGetStreamLinksStreamingOptions = {}
+  ): Promise<WebhooksGetStreamLinksResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getStreamLinks');
+
+    // Destructure options with defaults
+
+    const requestOptions = {};
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/tweets/search/webhooks`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<WebhooksGetStreamLinksResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -358,7 +414,7 @@ export class WebhooksClient {
 
       placefields = undefined,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -397,11 +453,11 @@ export class WebhooksClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -419,7 +475,8 @@ export class WebhooksClient {
      * @returns Promise with the API response
      */
   async deleteStreamLink(
-    webhookId: string
+    webhookId: string,
+    options: WebhooksDeleteStreamLinkStreamingOptions = {}
   ): Promise<WebhooksDeleteStreamLinkResponse> {
     // Validate authentication requirements
 
@@ -431,7 +488,7 @@ export class WebhooksClient {
 
     // Destructure options with defaults
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -445,11 +502,11 @@ export class WebhooksClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request

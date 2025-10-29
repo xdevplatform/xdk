@@ -1,0 +1,132 @@
+---
+title: "Streaming"
+description: "Real-time streaming with the TypeScript SDK"
+sidebarTitle: "Streaming"
+---
+
+# Streaming
+
+The TypeScript SDK provides real-time streaming capabilities for live data feeds.
+
+## Basic Streaming
+
+Connect to real-time streams:
+
+```typescript
+import { Client } from '@your-org/x-api-sdk';
+
+const client = new Client({
+  bearerToken: 'your-bearer-token'
+});
+
+// Stream tweets in real-time
+const stream = await client.stream.getTweetsStream({
+  tweetFields: ['created_at', 'author_id', 'text']
+});
+
+// Listen for tweets
+stream.on('tweet', (tweet) => {
+  console.log('New tweet:', tweet.text);
+});
+
+// Handle errors
+stream.on('error', (error) => {
+  console.error('Stream error:', error);
+});
+
+// Start streaming
+await stream.connect();
+```
+
+## Event-Driven Streaming
+
+Use the event-driven approach for better control:
+
+```typescript
+import { EventDrivenStream } from '@your-org/x-api-sdk';
+
+const stream = new EventDrivenStream({
+  endpoint: 'tweets/sample/stream',
+  bearerToken: 'your-bearer-token'
+});
+
+// Set up event handlers
+stream.onTweet((tweet) => {
+  console.log('Tweet received:', tweet.text);
+});
+
+stream.onError((error) => {
+  console.error('Stream error:', error);
+});
+
+stream.onConnect(() => {
+  console.log('Connected to stream');
+});
+
+stream.onDisconnect(() => {
+  console.log('Disconnected from stream');
+});
+
+// Connect to stream
+await stream.connect();
+```
+
+## Stream Management
+
+Control stream lifecycle:
+
+```typescript
+// Connect to stream
+await stream.connect();
+
+// Check connection status
+console.log('Connected:', stream.isConnected());
+
+// Disconnect from stream
+await stream.disconnect();
+
+// Reconnect after disconnect
+await stream.reconnect();
+```
+
+## Filtering Streams
+
+Apply filters to streams:
+
+```typescript
+// Stream with specific rules
+const filteredStream = await client.stream.getTweetsStream({
+  tweetFields: ['created_at', 'author_id', 'text'],
+  expansions: ['author_id'],
+  userFields: ['username', 'name']
+});
+
+// Add filtering rules
+await client.stream.addRules({
+  add: [
+    { value: 'typescript', tag: 'typescript-tweets' },
+    { value: 'javascript', tag: 'js-tweets' }
+  ]
+});
+```
+
+## Error Handling
+
+Handle streaming errors and reconnections:
+
+```typescript
+stream.on('error', (error) => {
+  if (error.code === 'ECONNRESET') {
+    console.log('Connection lost, reconnecting...');
+    stream.reconnect();
+  } else {
+    console.error('Stream error:', error);
+  }
+});
+
+// Handle rate limiting
+stream.on('rate_limit', (rateLimitInfo) => {
+  console.log('Rate limited, backing off...');
+  // Implement backoff strategy
+});
+```

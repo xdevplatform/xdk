@@ -1,0 +1,88 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / StreamGetRulesStreamingOptions
+
+# Interface: StreamGetRulesStreamingOptions
+
+Options for getRules method
+
+## Table of contents
+
+### Properties
+
+- [ids](StreamGetRulesStreamingOptions.md#ids)
+- [maxResults](StreamGetRulesStreamingOptions.md#maxresults)
+- [paginationToken](StreamGetRulesStreamingOptions.md#paginationtoken)
+- [requestOptions](StreamGetRulesStreamingOptions.md#requestoptions)
+- [headers](StreamGetRulesStreamingOptions.md#headers)
+- [signal](StreamGetRulesStreamingOptions.md#signal)
+
+## Properties
+
+### ids
+
+• `Optional` **ids**: `any`[]
+
+A comma-separated list of Rule IDs.
+
+#### Defined in
+
+[stream/stream_client.ts:304](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L304)
+
+___
+
+### maxResults
+
+• `Optional` **maxResults**: `number`
+
+The maximum number of results.
+
+#### Defined in
+
+[stream/stream_client.ts:307](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L307)
+
+___
+
+### paginationToken
+
+• `Optional` **paginationToken**: `string`
+
+This value is populated by passing the 'next_token' returned in a request to paginate through results.
+
+#### Defined in
+
+[stream/stream_client.ts:310](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L310)
+
+___
+
+### requestOptions
+
+• `Optional` **requestOptions**: [`RequestOptions`](RequestOptions.md)
+
+Additional request options
+
+#### Defined in
+
+[stream/stream_client.ts:313](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L313)
+
+___
+
+### headers
+
+• `Optional` **headers**: `Record`\<`string`, `string`\>
+
+Additional headers
+
+#### Defined in
+
+[stream/stream_client.ts:315](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L315)
+
+___
+
+### signal
+
+• `Optional` **signal**: `AbortSignal`
+
+AbortSignal for cancelling the request
+
+#### Defined in
+
+[stream/stream_client.ts:317](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/stream_client.ts#L317)

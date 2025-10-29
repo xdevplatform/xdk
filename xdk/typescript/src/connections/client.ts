@@ -9,8 +9,7 @@ import {
   Paginator,
   PostPaginator,
   UserPaginator,
-  ListPaginator,
-  IdPaginator,
+  EventPaginator,
 } from '../paginator.js';
 import { ConnectionsDeleteAllResponse } from './models.js';
 
@@ -37,13 +36,16 @@ export class ConnectionsClient {
 
   /**
    * Terminate all connections
-   * Terminates all active streaming connections for the authenticated application.* @returns Promise with the API response
+   * Terminates all active streaming connections for the authenticated application.
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async deleteAll(): Promise<ConnectionsDeleteAllResponse> {
     // Destructure options
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build the path with path parameters
     let path = '/2/connections/all';

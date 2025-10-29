@@ -1,0 +1,36 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / CommunityNotesCreateOptions
+
+# Interface: CommunityNotesCreateOptions
+
+Options for create method
+
+## Table of contents
+
+### Properties
+
+- [body](CommunityNotesCreateOptions.md#body)
+- [requestOptions](CommunityNotesCreateOptions.md#requestoptions)
+
+## Properties
+
+### body
+
+• `Optional` **body**: [`CommunityNotesCreateRequest`](CommunityNotesCreateRequest.md)
+
+Request body
+
+#### Defined in
+
+[community_notes/client.ts:89](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/community_notes/client.ts#L89)
+
+___
+
+### requestOptions
+
+• `Optional` **requestOptions**: [`RequestOptions`](RequestOptions.md)
+
+Additional request options
+
+#### Defined in
+
+[community_notes/client.ts:92](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/community_notes/client.ts#L92)

@@ -1,0 +1,32 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / MediaGetByMediaKeyResponse
+
+# Interface: MediaGetByMediaKeyResponse
+
+Response for getByMediaKey
+
+## Table of contents
+
+### Properties
+
+- [data](MediaGetByMediaKeyResponse.md#data)
+- [errors](MediaGetByMediaKeyResponse.md#errors)
+
+## Properties
+
+### data
+
+• **data**: `Record`\<`string`, `any`\>
+
+#### Defined in
+
+[media/models.ts:111](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/media/models.ts#L111)
+
+___
+
+### errors
+
+• `Optional` **errors**: `any`[]
+
+#### Defined in
+
+[media/models.ts:112](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/media/models.ts#L112)

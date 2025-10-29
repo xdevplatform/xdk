@@ -3,15 +3,6 @@
  */
 
 /**
- * Response for getStreamLinks
- */
-export interface WebhooksGetStreamLinksResponse {
-  /** The list of active webhook links for a given stream */
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
  * Response for validate
  */
 export interface WebhooksValidateResponse {
@@ -54,6 +45,15 @@ export interface WebhooksCreateResponse {
   /** The callback URL of the webhook. */
   url?: string;
   valid?: boolean;
+}
+
+/**
+ * Response for getStreamLinks
+ */
+export interface WebhooksGetStreamLinksResponse {
+  /** The list of active webhook links for a given stream */
+  data: Record<string, any>;
+  errors?: Array<any>;
 }
 
 /**

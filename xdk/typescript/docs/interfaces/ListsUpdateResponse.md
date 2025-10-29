@@ -1,0 +1,32 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / ListsUpdateResponse
+
+# Interface: ListsUpdateResponse
+
+Response for update
+
+## Table of contents
+
+### Properties
+
+- [data](ListsUpdateResponse.md#data)
+- [errors](ListsUpdateResponse.md#errors)
+
+## Properties
+
+### data
+
+• `Optional` **data**: `Record`\<`string`, `any`\>
+
+#### Defined in
+
+[lists/models.ts:74](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/lists/models.ts#L74)
+
+___
+
+### errors
+
+• `Optional` **errors**: `any`[]
+
+#### Defined in
+
+[lists/models.ts:75](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/lists/models.ts#L75)

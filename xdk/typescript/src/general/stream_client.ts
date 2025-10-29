@@ -8,6 +8,18 @@ import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import { GeneralGetOpenApiSpecResponse } from './models.js';
 
+/**
+ * Options for getOpenApiSpec method
+ */
+export interface GeneralGetOpenApiSpecStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
 export class GeneralClient {
   private client: Client;
 
@@ -21,12 +33,14 @@ export class GeneralClient {
      * 
      * @returns Promise with the API response
      */
-  async getOpenApiSpec(): Promise<GeneralGetOpenApiSpecResponse> {
+  async getOpenApiSpec(
+    options: GeneralGetOpenApiSpecStreamingOptions = {}
+  ): Promise<GeneralGetOpenApiSpecResponse> {
     // Validate authentication requirements
 
     // Destructure options with defaults
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -38,11 +52,11 @@ export class GeneralClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request

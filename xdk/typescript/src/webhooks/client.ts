@@ -9,16 +9,15 @@ import {
   Paginator,
   PostPaginator,
   UserPaginator,
-  ListPaginator,
-  IdPaginator,
+  EventPaginator,
 } from '../paginator.js';
 import {
-  WebhooksGetStreamLinksResponse,
   WebhooksValidateResponse,
   WebhooksDeleteResponse,
   WebhooksGetResponse,
   WebhooksCreateRequest,
   WebhooksCreateResponse,
+  WebhooksGetStreamLinksResponse,
   WebhooksCreateStreamLinkResponse,
   WebhooksDeleteStreamLinkResponse,
 } from './models.js';
@@ -93,43 +92,21 @@ export class WebhooksClient {
   }
 
   /**
-   * Get stream links
-   * Get a list of webhook links associated with a filtered stream ruleset.* @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getStreamLinks(): Promise<WebhooksGetStreamLinksResponse> {
-    // Destructure options
-
-    const reqOpts = {};
-
-    // Build the path with path parameters
-    let path = '/2/tweets/search/webhooks';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<WebhooksGetStreamLinksResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
    * Validate webhook
    * Triggers a CRC check for a given webhook.
-   * @param webhookId The ID of the webhook to check.* @returns Promise with the API response
+
+
+   * @param webhookId The ID of the webhook to check.
+
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async validate(webhookId: string): Promise<WebhooksValidateResponse> {
     // Destructure options
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build the path with path parameters
     let path = '/2/webhooks/{webhook_id}';
@@ -154,13 +131,19 @@ export class WebhooksClient {
   /**
    * Delete webhook
    * Deletes an existing webhook configuration.
-   * @param webhookId The ID of the webhook to delete.* @returns Promise with the API response
+
+
+   * @param webhookId The ID of the webhook to delete.
+
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async delete(webhookId: string): Promise<WebhooksDeleteResponse> {
     // Destructure options
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build the path with path parameters
     let path = '/2/webhooks/{webhook_id}';
@@ -184,7 +167,10 @@ export class WebhooksClient {
 
   /**
    * Get webhook
-   * Get a list of webhook configs associated with a client app.* @returns Promise with the API response
+   * Get a list of webhook configs associated with a client app.
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async get(options: WebhooksGetOptions = {}): Promise<WebhooksGetResponse> {
@@ -193,7 +179,7 @@ export class WebhooksClient {
     const {
       webhookConfigfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -208,7 +194,7 @@ export class WebhooksClient {
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      ...reqOpts,
+      ...requestOptions,
     };
 
     return this.client.request<WebhooksGetResponse>(
@@ -220,7 +206,10 @@ export class WebhooksClient {
 
   /**
    * Create webhook
-   * Creates a new webhook configuration.* @returns Promise with the API response
+   * Creates a new webhook configuration.
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async create(
@@ -231,7 +220,7 @@ export class WebhooksClient {
     const {
       body,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -244,7 +233,7 @@ export class WebhooksClient {
     const finalRequestOptions: RequestOptions = {
       body: body ? JSON.stringify(body) : undefined,
 
-      ...reqOpts,
+      ...requestOptions,
     };
 
     return this.client.request<WebhooksCreateResponse>(
@@ -255,9 +244,46 @@ export class WebhooksClient {
   }
 
   /**
+   * Get stream links
+   * Get a list of webhook links associated with a filtered stream ruleset.
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getStreamLinks(): Promise<WebhooksGetStreamLinksResponse> {
+    // Destructure options
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/tweets/search/webhooks';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<WebhooksGetStreamLinksResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Create stream link
    * Creates a link to deliver FilteredStream events to the given webhook.
-   * @param webhookId The webhook ID to link to your FilteredStream ruleset.* @returns Promise with the API response
+
+
+   * @param webhookId The webhook ID to link to your FilteredStream ruleset.
+
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async createStreamLink(
@@ -279,7 +305,7 @@ export class WebhooksClient {
 
       placefields = undefined,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -316,7 +342,7 @@ export class WebhooksClient {
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      ...reqOpts,
+      ...requestOptions,
     };
 
     return this.client.request<WebhooksCreateStreamLinkResponse>(
@@ -329,7 +355,13 @@ export class WebhooksClient {
   /**
    * Delete stream link
    * Deletes a link from FilteredStream events to the given webhook.
-   * @param webhookId The webhook ID to link to your FilteredStream ruleset.* @returns Promise with the API response
+
+
+   * @param webhookId The webhook ID to link to your FilteredStream ruleset.
+
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async deleteStreamLink(
@@ -337,7 +369,7 @@ export class WebhooksClient {
   ): Promise<WebhooksDeleteStreamLinkResponse> {
     // Destructure options
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build the path with path parameters
     let path = '/2/tweets/search/webhooks/{webhook_id}';

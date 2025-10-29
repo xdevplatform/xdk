@@ -10,8 +10,7 @@ import {
     Paginator, 
     PostPaginator, 
     UserPaginator, 
-    ListPaginator, 
-    IdPaginator 
+    EventPaginator
 } from '../paginator.js';
 import {
 {% for operation in operations -%}
@@ -72,12 +71,15 @@ export class {{ tag|pascal_case }}Client {
 {% if not (operation.parameters and (operation.parameters | selectattr('name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('name', 'equalto', 'next_token') | list | length > 0)) %}
   /**
    * {{ operation.summary | default("") }}{% if operation.description %}
-   * {{ operation.description }}{% endif %}{% for param in operation.parameters | selectattr('required') -%}
+   * {{ operation.description }}{% endif %}
+{% for param in operation.parameters | selectattr('required') %}
 {% if param.name %}
-   * @param {{ param.name | camel_case }} {% if param.description %}{{ param.description }}{% else %}{{ param.name }}{% endif %}{% endif -%}
-{% endfor -%}{% if operation.request_body and operation.request_body.required -%}
+   * @param {{ param.name | camel_case }} {% if param.description %}{{ param.description }}{% else %}{{ param.name }}{% endif %}
+{% endif %}
+{% endfor %}
+{% if operation.request_body and operation.request_body.required %}
    * @param body {% if operation.request_body.content and operation.request_body.content["application/json"] and operation.request_body.content["application/json"].schema and operation.request_body.content["application/json"].schema.description %}{{ operation.request_body.content["application/json"].schema.description }}{% else %}Request body{% endif %}
-{% endif -%}
+{% endif %}
    * @returns Promise with the API response
    */
     // Overload 1: Default behavior (unwrapped response)
@@ -108,10 +110,10 @@ export class {{ tag|pascal_case }}Client {
             {% if operation.request_body and not operation.request_body.required %}
             body,
             {% endif %}
-            requestOptions: reqOpts = {}
+            requestOptions: requestOptions = {}
         } = options;
         {% else %}
-        const reqOpts = {};
+        const requestOptions = {};
         {% endif %}
 
         // Build the path with path parameters
@@ -154,7 +156,7 @@ export class {{ tag|pascal_case }}Client {
             body: body ? JSON.stringify(body) : undefined,
             {% endif %}
             {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
-            ...reqOpts
+            ...requestOptions
             {% else %}
             // No optional parameters, using empty request options
             {% endif %}
@@ -176,9 +178,11 @@ export class {{ tag|pascal_case }}Client {
    * {{ operation.summary | default("") }}{% if operation.description %}
    * {{ operation.description }}{% endif %}
    * Returns a paginator for automatic pagination through all results.
-   * @param {% for param in operation.parameters | selectattr('required') %}
-   {% if param.name %}{{ param.name | camel_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %}{% if not loop.last %}, {% endif %}{% endif %}
-   {% endfor %}
+{% for param in operation.parameters | selectattr('required') %}
+{% if param.name %}
+   * @param {{ param.name | camel_case }} {% if param.description %}{{ param.description }}{% else %}{{ param.name }}{% endif %}
+{% endif %}
+{% endfor %}
    * @param options Options for the paginated request
    * @returns A paginator instance for iterating through all results
    */
@@ -195,7 +199,7 @@ export class {{ tag|pascal_case }}Client {
     {% else %}
     options: { requestOptions?: RequestOptions } = {}
     {% endif %}
-  ): Promise<{% if 'tweet' in operation.operation_id|lower or 'post' in operation.operation_id|lower %}PostPaginator{% elif 'user' in operation.operation_id|lower or 'users' in operation.operation_id|lower %}UserPaginator{% elif 'list' in operation.operation_id|lower %}ListPaginator{% elif 'id' in operation.operation_id|lower %}IdPaginator{% else %}Paginator<any>{% endif %}> {
+  ): Promise<{% if 'tweet' in operation.operation_id|lower or 'post' in operation.operation_id|lower %}PostPaginator{% elif 'user' in operation.operation_id|lower or 'users' in operation.operation_id|lower or 'list' in operation.operation_id|lower %}UserPaginator{% elif 'event' in operation.operation_id|lower or 'dm' in operation.operation_id|lower %}EventPaginator{% else %}Paginator<any>{% endif %}> {
     // Destructure options
     {% if operation.parameters | rejectattr('required') | list | length > 0 %}
     const {
@@ -204,10 +208,10 @@ export class {{ tag|pascal_case }}Client {
         {{ param.name | camel_case }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
         {% endif %}
         {% endfor %}
-        requestOptions: reqOpts = {}
+        requestOptions: requestOptions = {}
     } = options;
     {% else %}
-    const { requestOptions: reqOpts = {} } = options;
+    const { requestOptions: requestOptions = {} } = options;
     {% endif %}
 
     // Build the path with path parameters
@@ -260,7 +264,7 @@ export class {{ tag|pascal_case }}Client {
           {% elif operation.request_body and not operation.request_body.required %}
           body: body ? JSON.stringify(body) : undefined,
           {% endif %}
-          ...reqOpts
+          ...requestOptions
       };
 
       const response = await this.client.request<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}any{% endif %}>(
@@ -278,7 +282,7 @@ export class {{ tag|pascal_case }}Client {
     };
 
     // Create paginator and fetch first page
-    const paginator = new {% if 'tweet' in operation.operation_id|lower or 'post' in operation.operation_id|lower %}PostPaginator{% elif 'user' in operation.operation_id|lower or 'users' in operation.operation_id|lower %}UserPaginator{% elif 'list' in operation.operation_id|lower %}ListPaginator{% elif 'id' in operation.operation_id|lower %}IdPaginator{% else %}Paginator{% endif %}(fetchPage);
+    const paginator = new {% if 'tweet' in operation.operation_id|lower or 'post' in operation.operation_id|lower %}PostPaginator{% elif 'user' in operation.operation_id|lower or 'users' in operation.operation_id|lower or 'list' in operation.operation_id|lower %}UserPaginator{% elif 'event' in operation.operation_id|lower or 'dm' in operation.operation_id|lower %}EventPaginator{% else %}Paginator{% endif %}(fetchPage);
     
     // Fetch the first page immediately
     await paginator.fetchNext();

@@ -1,0 +1,206 @@
+---
+title: "Event Driven Stream"
+description: "Documentation for Event Driven Stream"
+sidebarTitle: "Event Driven Stream"
+---
+
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / EventDrivenStream
+
+# Class: EventDrivenStream
+
+## Table of contents
+
+### Constructors
+
+- [constructor](EventDrivenStream.md#constructor)
+
+### Accessors
+
+- [autoReconnectEnabled](EventDrivenStream.md#autoreconnectenabled)
+- [maxReconnectAttemptsCount](EventDrivenStream.md#maxreconnectattemptscount)
+
+### Methods
+
+- [connect](EventDrivenStream.md#connect)
+- [close](EventDrivenStream.md#close)
+- [on](EventDrivenStream.md#on)
+- [off](EventDrivenStream.md#off)
+- [[asyncIterator]](EventDrivenStream.md#[asynciterator])
+
+## Constructors
+
+### constructor
+
+• **new EventDrivenStream**(): [`EventDrivenStream`](EventDrivenStream.md)
+
+#### Returns
+
+[`EventDrivenStream`](EventDrivenStream.md)
+
+#### Defined in
+
+[stream/event_driven_stream.ts:45](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/event_driven_stream.ts#L45)
+
+## Accessors
+
+### autoReconnectEnabled
+
+• `get` **autoReconnectEnabled**(): `boolean`
+
+#### Returns
+
+`boolean`
+
+#### Defined in
+
+[stream/event_driven_stream.ts:275](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/event_driven_stream.ts#L275)
+
+• `set` **autoReconnectEnabled**(`enabled`): `void`
+
+Enable/disable auto-reconnect
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `enabled` | `boolean` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[stream/event_driven_stream.ts:271](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/event_driven_stream.ts#L271)
+
+___
+
+### maxReconnectAttemptsCount
+
+• `get` **maxReconnectAttemptsCount**(): `number`
+
+#### Returns
+
+`number`
+
+#### Defined in
+
+[stream/event_driven_stream.ts:286](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/event_driven_stream.ts#L286)
+
+• `set` **maxReconnectAttemptsCount**(`count`): `void`
+
+Set max reconnect attempts
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `count` | `number` |
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[stream/event_driven_stream.ts:282](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/event_driven_stream.ts#L282)
+
+## Methods
+
+### connect
+
+▸ **connect**(`webStream`): `Promise`\<`void`\>
+
+Initialize the stream with a Web ReadableStream
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `webStream` | `ReadableStream`\<`Uint8Array`\> |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Defined in
+
+[stream/event_driven_stream.ts:53](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/event_driven_stream.ts#L53)
+
+___
+
+### close
+
+▸ **close**(): `void`
+
+Close the stream
+
+#### Returns
+
+`void`
+
+#### Defined in
+
+[stream/event_driven_stream.ts:210](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/event_driven_stream.ts#L210)
+
+___
+
+### on
+
+▸ **on**(`event`, `listener`): `this`
+
+Add event listener
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | `string` |
+| `listener` | `Function` |
+
+#### Returns
+
+`this`
+
+#### Defined in
+
+[stream/event_driven_stream.ts:220](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/event_driven_stream.ts#L220)
+
+___
+
+### off
+
+▸ **off**(`event`, `listener`): `this`
+
+Remove event listener
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `event` | `string` |
+| `listener` | `Function` |
+
+#### Returns
+
+`this`
+
+#### Defined in
+
+[stream/event_driven_stream.ts:231](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/event_driven_stream.ts#L231)
+
+___
+
+### [asyncIterator]
+
+▸ **[asyncIterator]**(): `AsyncGenerator`\<[`StreamDataEvent`](../interfaces/StreamDataEvent.md), `void`, `unknown`\>
+
+Async iterator for tweets
+
+#### Returns
+
+`AsyncGenerator`\<[`StreamDataEvent`](../interfaces/StreamDataEvent.md), `void`, `unknown`\>
+
+#### Defined in
+
+[stream/event_driven_stream.ts:293](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/event_driven_stream.ts#L293)

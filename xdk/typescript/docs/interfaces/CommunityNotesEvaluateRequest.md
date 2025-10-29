@@ -1,0 +1,36 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / CommunityNotesEvaluateRequest
+
+# Interface: CommunityNotesEvaluateRequest
+
+Request body for evaluate
+
+## Table of contents
+
+### Properties
+
+- [noteText](CommunityNotesEvaluateRequest.md#notetext)
+- [postId](CommunityNotesEvaluateRequest.md#postid)
+
+## Properties
+
+### noteText
+
+• `Optional` **noteText**: `string`
+
+Text for the community note.
+
+#### Defined in
+
+[community_notes/models.ts:28](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/community_notes/models.ts#L28)
+
+___
+
+### postId
+
+• `Optional` **postId**: `string`
+
+Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers.
+
+#### Defined in
+
+[community_notes/models.ts:30](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/community_notes/models.ts#L30)

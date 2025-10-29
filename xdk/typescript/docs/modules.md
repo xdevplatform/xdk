@@ -1,0 +1,410 @@
+[X API SDK v2.152 - v1.0.0](README.md) / Exports
+
+# X API SDK v2.152 - v1.0.0
+
+## Table of contents
+
+### Client Classes
+
+- [Client](classes/Client.md)
+
+### Pagination Classes
+
+- [Paginator](classes/Paginator.md)
+
+### Other Classes
+
+- [ApiError](classes/ApiError.md)
+- [HttpClient](classes/HttpClient.md)
+- [PostPaginator](classes/PostPaginator.md)
+- [UserPaginator](classes/UserPaginator.md)
+- [EventPaginator](classes/EventPaginator.md)
+- [EventDrivenStream](classes/EventDrivenStream.md)
+- [StreamClient](classes/StreamClient.md)
+
+### Account activity Classes
+
+- [AccountActivityClient](classes/AccountActivityClient.md)
+
+### Activity Classes
+
+- [ActivityClient](classes/ActivityClient.md)
+
+### Communities Classes
+
+- [CommunitiesClient](classes/CommunitiesClient.md)
+
+### Community notes Classes
+
+- [CommunityNotesClient](classes/CommunityNotesClient.md)
+
+### Compliance Classes
+
+- [ComplianceClient](classes/ComplianceClient.md)
+
+### Connections Classes
+
+- [ConnectionsClient](classes/ConnectionsClient.md)
+
+### Direct messages Classes
+
+- [DirectMessagesClient](classes/DirectMessagesClient.md)
+
+### General Classes
+
+- [GeneralClient](classes/GeneralClient.md)
+
+### Lists Classes
+
+- [ListsClient](classes/ListsClient.md)
+
+### Media Classes
+
+- [MediaClient](classes/MediaClient.md)
+
+### Posts Classes
+
+- [PostsClient](classes/PostsClient.md)
+
+### Spaces Classes
+
+- [SpacesClient](classes/SpacesClient.md)
+
+### Trends Classes
+
+- [TrendsClient](classes/TrendsClient.md)
+
+### Usage Classes
+
+- [UsageClient](classes/UsageClient.md)
+
+### Users Classes
+
+- [UsersClient](classes/UsersClient.md)
+
+### Webhooks Classes
+
+- [WebhooksClient](classes/WebhooksClient.md)
+
+### Interfaces
+
+- [AccountActivityCreateSubscriptionOptions](interfaces/AccountActivityCreateSubscriptionOptions.md)
+- [AccountActivityDeleteSubscriptionResponse](interfaces/AccountActivityDeleteSubscriptionResponse.md)
+- [AccountActivityGetSubscriptionsResponse](interfaces/AccountActivityGetSubscriptionsResponse.md)
+- [AccountActivityValidateSubscriptionResponse](interfaces/AccountActivityValidateSubscriptionResponse.md)
+- [AccountActivityCreateSubscriptionRequest](interfaces/AccountActivityCreateSubscriptionRequest.md)
+- [AccountActivityCreateSubscriptionResponse](interfaces/AccountActivityCreateSubscriptionResponse.md)
+- [AccountActivityCreateReplayJobResponse](interfaces/AccountActivityCreateReplayJobResponse.md)
+- [AccountActivityGetSubscriptionCountResponse](interfaces/AccountActivityGetSubscriptionCountResponse.md)
+- [ActivityUpdateSubscriptionOptions](interfaces/ActivityUpdateSubscriptionOptions.md)
+- [ActivityCreateSubscriptionOptions](interfaces/ActivityCreateSubscriptionOptions.md)
+- [ActivityStreamOptions](interfaces/ActivityStreamOptions.md)
+- [ActivityUpdateSubscriptionRequest](interfaces/ActivityUpdateSubscriptionRequest.md)
+- [ActivityUpdateSubscriptionResponse](interfaces/ActivityUpdateSubscriptionResponse.md)
+- [ActivityDeleteSubscriptionResponse](interfaces/ActivityDeleteSubscriptionResponse.md)
+- [ActivityGetSubscriptionsResponse](interfaces/ActivityGetSubscriptionsResponse.md)
+- [ActivityCreateSubscriptionRequest](interfaces/ActivityCreateSubscriptionRequest.md)
+- [ActivityCreateSubscriptionResponse](interfaces/ActivityCreateSubscriptionResponse.md)
+- [ActivityStreamResponse](interfaces/ActivityStreamResponse.md)
+- [ClientConfig](interfaces/ClientConfig.md)
+- [RequestOptions](interfaces/RequestOptions.md)
+- [ApiResponse](interfaces/ApiResponse.md)
+- [PaginationMeta](interfaces/PaginationMeta.md)
+- [CommunitiesGetByIdOptions](interfaces/CommunitiesGetByIdOptions.md)
+- [CommunitiesSearchOptions](interfaces/CommunitiesSearchOptions.md)
+- [CommunitiesGetByIdResponse](interfaces/CommunitiesGetByIdResponse.md)
+- [CommunitiesSearchResponse](interfaces/CommunitiesSearchResponse.md)
+- [CommunityNotesSearchEligiblePostsOptions](interfaces/CommunityNotesSearchEligiblePostsOptions.md)
+- [CommunityNotesEvaluateOptions](interfaces/CommunityNotesEvaluateOptions.md)
+- [CommunityNotesSearchWrittenOptions](interfaces/CommunityNotesSearchWrittenOptions.md)
+- [CommunityNotesCreateOptions](interfaces/CommunityNotesCreateOptions.md)
+- [CommunityNotesSearchEligiblePostsResponse](interfaces/CommunityNotesSearchEligiblePostsResponse.md)
+- [CommunityNotesDeleteResponse](interfaces/CommunityNotesDeleteResponse.md)
+- [CommunityNotesEvaluateRequest](interfaces/CommunityNotesEvaluateRequest.md)
+- [CommunityNotesEvaluateResponse](interfaces/CommunityNotesEvaluateResponse.md)
+- [CommunityNotesSearchWrittenResponse](interfaces/CommunityNotesSearchWrittenResponse.md)
+- [CommunityNotesCreateRequest](interfaces/CommunityNotesCreateRequest.md)
+- [CommunityNotesCreateResponse](interfaces/CommunityNotesCreateResponse.md)
+- [ComplianceGetJobsOptions](interfaces/ComplianceGetJobsOptions.md)
+- [ComplianceGetJobsByIdOptions](interfaces/ComplianceGetJobsByIdOptions.md)
+- [ComplianceGetJobsResponse](interfaces/ComplianceGetJobsResponse.md)
+- [ComplianceCreateJobsRequest](interfaces/ComplianceCreateJobsRequest.md)
+- [ComplianceCreateJobsResponse](interfaces/ComplianceCreateJobsResponse.md)
+- [ComplianceGetJobsByIdResponse](interfaces/ComplianceGetJobsByIdResponse.md)
+- [ConnectionsDeleteAllResponse](interfaces/ConnectionsDeleteAllResponse.md)
+- [DirectMessagesGetEventsOptions](interfaces/DirectMessagesGetEventsOptions.md)
+- [DirectMessagesCreateByConversationIdOptions](interfaces/DirectMessagesCreateByConversationIdOptions.md)
+- [DirectMessagesGetEventsByParticipantIdOptions](interfaces/DirectMessagesGetEventsByParticipantIdOptions.md)
+- [DirectMessagesGetEventsByConversationIdOptions](interfaces/DirectMessagesGetEventsByConversationIdOptions.md)
+- [DirectMessagesGetEventsByIdOptions](interfaces/DirectMessagesGetEventsByIdOptions.md)
+- [DirectMessagesCreateConversationOptions](interfaces/DirectMessagesCreateConversationOptions.md)
+- [DirectMessagesCreateByParticipantIdOptions](interfaces/DirectMessagesCreateByParticipantIdOptions.md)
+- [DirectMessagesGetEventsResponse](interfaces/DirectMessagesGetEventsResponse.md)
+- [DirectMessagesCreateByConversationIdRequest](interfaces/DirectMessagesCreateByConversationIdRequest.md)
+- [DirectMessagesCreateByConversationIdResponse](interfaces/DirectMessagesCreateByConversationIdResponse.md)
+- [DirectMessagesGetEventsByParticipantIdResponse](interfaces/DirectMessagesGetEventsByParticipantIdResponse.md)
+- [DirectMessagesGetEventsByConversationIdResponse](interfaces/DirectMessagesGetEventsByConversationIdResponse.md)
+- [DirectMessagesGetEventsByIdResponse](interfaces/DirectMessagesGetEventsByIdResponse.md)
+- [DirectMessagesDeleteEventsResponse](interfaces/DirectMessagesDeleteEventsResponse.md)
+- [DirectMessagesCreateConversationRequest](interfaces/DirectMessagesCreateConversationRequest.md)
+- [DirectMessagesCreateConversationResponse](interfaces/DirectMessagesCreateConversationResponse.md)
+- [DirectMessagesCreateByParticipantIdRequest](interfaces/DirectMessagesCreateByParticipantIdRequest.md)
+- [DirectMessagesCreateByParticipantIdResponse](interfaces/DirectMessagesCreateByParticipantIdResponse.md)
+- [GeneralGetOpenApiSpecResponse](interfaces/GeneralGetOpenApiSpecResponse.md)
+- [HttpClientRequestOptions](interfaces/HttpClientRequestOptions.md)
+- [HttpResponse](interfaces/HttpResponse.md)
+- [ListsGetFollowersOptions](interfaces/ListsGetFollowersOptions.md)
+- [ListsGetMembersOptions](interfaces/ListsGetMembersOptions.md)
+- [ListsAddMemberOptions](interfaces/ListsAddMemberOptions.md)
+- [ListsGetPostsOptions](interfaces/ListsGetPostsOptions.md)
+- [ListsGetByIdOptions](interfaces/ListsGetByIdOptions.md)
+- [ListsUpdateOptions](interfaces/ListsUpdateOptions.md)
+- [ListsCreateOptions](interfaces/ListsCreateOptions.md)
+- [ListsGetFollowersResponse](interfaces/ListsGetFollowersResponse.md)
+- [ListsGetMembersResponse](interfaces/ListsGetMembersResponse.md)
+- [ListsAddMemberRequest](interfaces/ListsAddMemberRequest.md)
+- [ListsAddMemberResponse](interfaces/ListsAddMemberResponse.md)
+- [ListsGetPostsResponse](interfaces/ListsGetPostsResponse.md)
+- [ListsGetByIdResponse](interfaces/ListsGetByIdResponse.md)
+- [ListsUpdateRequest](interfaces/ListsUpdateRequest.md)
+- [ListsUpdateResponse](interfaces/ListsUpdateResponse.md)
+- [ListsDeleteResponse](interfaces/ListsDeleteResponse.md)
+- [ListsRemoveMemberByUserIdResponse](interfaces/ListsRemoveMemberByUserIdResponse.md)
+- [ListsCreateRequest](interfaces/ListsCreateRequest.md)
+- [ListsCreateResponse](interfaces/ListsCreateResponse.md)
+- [MediaGetAnalyticsOptions](interfaces/MediaGetAnalyticsOptions.md)
+- [MediaAppendUploadOptions](interfaces/MediaAppendUploadOptions.md)
+- [MediaInitializeUploadOptions](interfaces/MediaInitializeUploadOptions.md)
+- [MediaGetByMediaKeysOptions](interfaces/MediaGetByMediaKeysOptions.md)
+- [MediaCreateSubtitlesOptions](interfaces/MediaCreateSubtitlesOptions.md)
+- [MediaDeleteSubtitlesOptions](interfaces/MediaDeleteSubtitlesOptions.md)
+- [MediaGetByMediaKeyOptions](interfaces/MediaGetByMediaKeyOptions.md)
+- [MediaCreateMetadataOptions](interfaces/MediaCreateMetadataOptions.md)
+- [MediaGetUploadStatusOptions](interfaces/MediaGetUploadStatusOptions.md)
+- [MediaUploadOptions](interfaces/MediaUploadOptions.md)
+- [MediaFinalizeUploadResponse](interfaces/MediaFinalizeUploadResponse.md)
+- [MediaGetAnalyticsResponse](interfaces/MediaGetAnalyticsResponse.md)
+- [MediaAppendUploadRequest](interfaces/MediaAppendUploadRequest.md)
+- [MediaAppendUploadResponse](interfaces/MediaAppendUploadResponse.md)
+- [MediaInitializeUploadRequest](interfaces/MediaInitializeUploadRequest.md)
+- [MediaInitializeUploadResponse](interfaces/MediaInitializeUploadResponse.md)
+- [MediaGetByMediaKeysResponse](interfaces/MediaGetByMediaKeysResponse.md)
+- [MediaCreateSubtitlesRequest](interfaces/MediaCreateSubtitlesRequest.md)
+- [MediaCreateSubtitlesResponse](interfaces/MediaCreateSubtitlesResponse.md)
+- [MediaDeleteSubtitlesRequest](interfaces/MediaDeleteSubtitlesRequest.md)
+- [MediaDeleteSubtitlesResponse](interfaces/MediaDeleteSubtitlesResponse.md)
+- [MediaGetByMediaKeyResponse](interfaces/MediaGetByMediaKeyResponse.md)
+- [MediaCreateMetadataRequest](interfaces/MediaCreateMetadataRequest.md)
+- [MediaCreateMetadataResponse](interfaces/MediaCreateMetadataResponse.md)
+- [MediaGetUploadStatusResponse](interfaces/MediaGetUploadStatusResponse.md)
+- [MediaUploadRequest](interfaces/MediaUploadRequest.md)
+- [MediaUploadResponse](interfaces/MediaUploadResponse.md)
+- [PaginatedResponse](interfaces/PaginatedResponse.md)
+- [PostsGetLikingUsersOptions](interfaces/PostsGetLikingUsersOptions.md)
+- [PostsSearchRecentOptions](interfaces/PostsSearchRecentOptions.md)
+- [PostsGetInsightsHistoricalOptions](interfaces/PostsGetInsightsHistoricalOptions.md)
+- [PostsGetRepostedByOptions](interfaces/PostsGetRepostedByOptions.md)
+- [PostsGetByIdsOptions](interfaces/PostsGetByIdsOptions.md)
+- [PostsGetCountsAllOptions](interfaces/PostsGetCountsAllOptions.md)
+- [PostsGetAnalyticsOptions](interfaces/PostsGetAnalyticsOptions.md)
+- [PostsGetQuotedPostsOptions](interfaces/PostsGetQuotedPostsOptions.md)
+- [PostsGetInsights28HrOptions](interfaces/PostsGetInsights28HrOptions.md)
+- [PostsGetRepostsOptions](interfaces/PostsGetRepostsOptions.md)
+- [PostsGetCountsRecentOptions](interfaces/PostsGetCountsRecentOptions.md)
+- [PostsHideReplyOptions](interfaces/PostsHideReplyOptions.md)
+- [PostsGetByIdOptions](interfaces/PostsGetByIdOptions.md)
+- [PostsSearchAllOptions](interfaces/PostsSearchAllOptions.md)
+- [PostsGetLikingUsersResponse](interfaces/PostsGetLikingUsersResponse.md)
+- [PostsSearchRecentResponse](interfaces/PostsSearchRecentResponse.md)
+- [PostsGetInsightsHistoricalResponse](interfaces/PostsGetInsightsHistoricalResponse.md)
+- [PostsGetRepostedByResponse](interfaces/PostsGetRepostedByResponse.md)
+- [PostsGetByIdsResponse](interfaces/PostsGetByIdsResponse.md)
+- [PostsCreateRequest](interfaces/PostsCreateRequest.md)
+- [PostsCreateResponse](interfaces/PostsCreateResponse.md)
+- [PostsGetCountsAllResponse](interfaces/PostsGetCountsAllResponse.md)
+- [PostsGetAnalyticsResponse](interfaces/PostsGetAnalyticsResponse.md)
+- [PostsGetQuotedPostsResponse](interfaces/PostsGetQuotedPostsResponse.md)
+- [PostsGetInsights28HrResponse](interfaces/PostsGetInsights28HrResponse.md)
+- [PostsGetRepostsResponse](interfaces/PostsGetRepostsResponse.md)
+- [PostsGetCountsRecentResponse](interfaces/PostsGetCountsRecentResponse.md)
+- [PostsHideReplyRequest](interfaces/PostsHideReplyRequest.md)
+- [PostsHideReplyResponse](interfaces/PostsHideReplyResponse.md)
+- [PostsGetByIdResponse](interfaces/PostsGetByIdResponse.md)
+- [PostsDeleteResponse](interfaces/PostsDeleteResponse.md)
+- [PostsSearchAllResponse](interfaces/PostsSearchAllResponse.md)
+- [SpacesSearchOptions](interfaces/SpacesSearchOptions.md)
+- [SpacesGetBuyersOptions](interfaces/SpacesGetBuyersOptions.md)
+- [SpacesGetByCreatorIdsOptions](interfaces/SpacesGetByCreatorIdsOptions.md)
+- [SpacesGetPostsOptions](interfaces/SpacesGetPostsOptions.md)
+- [SpacesGetByIdsOptions](interfaces/SpacesGetByIdsOptions.md)
+- [SpacesGetByIdOptions](interfaces/SpacesGetByIdOptions.md)
+- [SpacesSearchResponse](interfaces/SpacesSearchResponse.md)
+- [SpacesGetBuyersResponse](interfaces/SpacesGetBuyersResponse.md)
+- [SpacesGetByCreatorIdsResponse](interfaces/SpacesGetByCreatorIdsResponse.md)
+- [SpacesGetPostsResponse](interfaces/SpacesGetPostsResponse.md)
+- [SpacesGetByIdsResponse](interfaces/SpacesGetByIdsResponse.md)
+- [SpacesGetByIdResponse](interfaces/SpacesGetByIdResponse.md)
+- [StreamDataEvent](interfaces/StreamDataEvent.md)
+- [StreamErrorEvent](interfaces/StreamErrorEvent.md)
+- [StreamPostsFirehosePtResponse](interfaces/StreamPostsFirehosePtResponse.md)
+- [StreamLikesSample10Response](interfaces/StreamLikesSample10Response.md)
+- [StreamPostsFirehoseEnResponse](interfaces/StreamPostsFirehoseEnResponse.md)
+- [StreamUsersComplianceResponse](interfaces/StreamUsersComplianceResponse.md)
+- [StreamLikesFirehoseResponse](interfaces/StreamLikesFirehoseResponse.md)
+- [StreamPostsComplianceResponse](interfaces/StreamPostsComplianceResponse.md)
+- [StreamPostsFirehoseJaResponse](interfaces/StreamPostsFirehoseJaResponse.md)
+- [StreamGetRuleCountsResponse](interfaces/StreamGetRuleCountsResponse.md)
+- [StreamPostsResponse](interfaces/StreamPostsResponse.md)
+- [StreamGetRulesResponse](interfaces/StreamGetRulesResponse.md)
+- [StreamUpdateRulesRequest](interfaces/StreamUpdateRulesRequest.md)
+- [StreamUpdateRulesResponse](interfaces/StreamUpdateRulesResponse.md)
+- [StreamLabelsComplianceResponse](interfaces/StreamLabelsComplianceResponse.md)
+- [StreamPostsSampleResponse](interfaces/StreamPostsSampleResponse.md)
+- [StreamPostsFirehoseResponse](interfaces/StreamPostsFirehoseResponse.md)
+- [StreamPostsSample10Response](interfaces/StreamPostsSample10Response.md)
+- [StreamLikesComplianceResponse](interfaces/StreamLikesComplianceResponse.md)
+- [StreamPostsFirehoseKoResponse](interfaces/StreamPostsFirehoseKoResponse.md)
+- [StreamPostsFirehosePtStreamingOptions](interfaces/StreamPostsFirehosePtStreamingOptions.md)
+- [StreamLikesSample10StreamingOptions](interfaces/StreamLikesSample10StreamingOptions.md)
+- [StreamPostsFirehoseEnStreamingOptions](interfaces/StreamPostsFirehoseEnStreamingOptions.md)
+- [StreamUsersComplianceStreamingOptions](interfaces/StreamUsersComplianceStreamingOptions.md)
+- [StreamLikesFirehoseStreamingOptions](interfaces/StreamLikesFirehoseStreamingOptions.md)
+- [StreamPostsComplianceStreamingOptions](interfaces/StreamPostsComplianceStreamingOptions.md)
+- [StreamPostsFirehoseJaStreamingOptions](interfaces/StreamPostsFirehoseJaStreamingOptions.md)
+- [StreamGetRuleCountsStreamingOptions](interfaces/StreamGetRuleCountsStreamingOptions.md)
+- [StreamPostsStreamingOptions](interfaces/StreamPostsStreamingOptions.md)
+- [StreamGetRulesStreamingOptions](interfaces/StreamGetRulesStreamingOptions.md)
+- [StreamUpdateRulesStreamingOptions](interfaces/StreamUpdateRulesStreamingOptions.md)
+- [StreamLabelsComplianceStreamingOptions](interfaces/StreamLabelsComplianceStreamingOptions.md)
+- [StreamPostsSampleStreamingOptions](interfaces/StreamPostsSampleStreamingOptions.md)
+- [StreamPostsFirehoseStreamingOptions](interfaces/StreamPostsFirehoseStreamingOptions.md)
+- [StreamPostsSample10StreamingOptions](interfaces/StreamPostsSample10StreamingOptions.md)
+- [StreamLikesComplianceStreamingOptions](interfaces/StreamLikesComplianceStreamingOptions.md)
+- [StreamPostsFirehoseKoStreamingOptions](interfaces/StreamPostsFirehoseKoStreamingOptions.md)
+- [TrendsGetByWoeidOptions](interfaces/TrendsGetByWoeidOptions.md)
+- [TrendsGetPersonalizedTrendsOptions](interfaces/TrendsGetPersonalizedTrendsOptions.md)
+- [TrendsGetByWoeidResponse](interfaces/TrendsGetByWoeidResponse.md)
+- [TrendsGetPersonalizedTrendsResponse](interfaces/TrendsGetPersonalizedTrendsResponse.md)
+- [UsageGetOptions](interfaces/UsageGetOptions.md)
+- [UsageGetResponse](interfaces/UsageGetResponse.md)
+- [UsersGetMentionsOptions](interfaces/UsersGetMentionsOptions.md)
+- [UsersGetBookmarksOptions](interfaces/UsersGetBookmarksOptions.md)
+- [UsersGetPinnedListsOptions](interfaces/UsersGetPinnedListsOptions.md)
+- [UsersGetTimelineOptions](interfaces/UsersGetTimelineOptions.md)
+- [UsersGetOwnedListsOptions](interfaces/UsersGetOwnedListsOptions.md)
+- [UsersLikePostOptions](interfaces/UsersLikePostOptions.md)
+- [UsersGetByIdsOptions](interfaces/UsersGetByIdsOptions.md)
+- [UsersGetByUsernameOptions](interfaces/UsersGetByUsernameOptions.md)
+- [UsersGetBlockingOptions](interfaces/UsersGetBlockingOptions.md)
+- [UsersSearchOptions](interfaces/UsersSearchOptions.md)
+- [UsersGetRepostsOfMeOptions](interfaces/UsersGetRepostsOfMeOptions.md)
+- [UsersGetByIdOptions](interfaces/UsersGetByIdOptions.md)
+- [UsersGetFollowersOptions](interfaces/UsersGetFollowersOptions.md)
+- [UsersGetFollowedListsOptions](interfaces/UsersGetFollowedListsOptions.md)
+- [UsersFollowListOptions](interfaces/UsersFollowListOptions.md)
+- [UsersGetListMembershipsOptions](interfaces/UsersGetListMembershipsOptions.md)
+- [UsersGetByUsernamesOptions](interfaces/UsersGetByUsernamesOptions.md)
+- [UsersGetMutingOptions](interfaces/UsersGetMutingOptions.md)
+- [UsersMuteOptions](interfaces/UsersMuteOptions.md)
+- [UsersRepostPostOptions](interfaces/UsersRepostPostOptions.md)
+- [UsersGetBookmarkFoldersOptions](interfaces/UsersGetBookmarkFoldersOptions.md)
+- [UsersGetPostsOptions](interfaces/UsersGetPostsOptions.md)
+- [UsersGetMeOptions](interfaces/UsersGetMeOptions.md)
+- [UsersGetLikedPostsOptions](interfaces/UsersGetLikedPostsOptions.md)
+- [UsersGetFollowingOptions](interfaces/UsersGetFollowingOptions.md)
+- [UsersFollowOptions](interfaces/UsersFollowOptions.md)
+- [UsersGetMentionsResponse](interfaces/UsersGetMentionsResponse.md)
+- [UsersGetBookmarksResponse](interfaces/UsersGetBookmarksResponse.md)
+- [UsersCreateBookmarkRequest](interfaces/UsersCreateBookmarkRequest.md)
+- [UsersCreateBookmarkResponse](interfaces/UsersCreateBookmarkResponse.md)
+- [UsersUnblockDmsResponse](interfaces/UsersUnblockDmsResponse.md)
+- [UsersGetBookmarksByFolderIdResponse](interfaces/UsersGetBookmarksByFolderIdResponse.md)
+- [UsersUnlikePostResponse](interfaces/UsersUnlikePostResponse.md)
+- [UsersGetPinnedListsResponse](interfaces/UsersGetPinnedListsResponse.md)
+- [UsersPinListRequest](interfaces/UsersPinListRequest.md)
+- [UsersPinListResponse](interfaces/UsersPinListResponse.md)
+- [UsersGetTimelineResponse](interfaces/UsersGetTimelineResponse.md)
+- [UsersGetOwnedListsResponse](interfaces/UsersGetOwnedListsResponse.md)
+- [UsersLikePostRequest](interfaces/UsersLikePostRequest.md)
+- [UsersLikePostResponse](interfaces/UsersLikePostResponse.md)
+- [UsersGetByIdsResponse](interfaces/UsersGetByIdsResponse.md)
+- [UsersUnfollowResponse](interfaces/UsersUnfollowResponse.md)
+- [UsersGetByUsernameResponse](interfaces/UsersGetByUsernameResponse.md)
+- [UsersGetBlockingResponse](interfaces/UsersGetBlockingResponse.md)
+- [UsersSearchResponse](interfaces/UsersSearchResponse.md)
+- [UsersGetRepostsOfMeResponse](interfaces/UsersGetRepostsOfMeResponse.md)
+- [UsersGetByIdResponse](interfaces/UsersGetByIdResponse.md)
+- [UsersDeleteBookmarkResponse](interfaces/UsersDeleteBookmarkResponse.md)
+- [UsersGetFollowersResponse](interfaces/UsersGetFollowersResponse.md)
+- [UsersGetFollowedListsResponse](interfaces/UsersGetFollowedListsResponse.md)
+- [UsersFollowListRequest](interfaces/UsersFollowListRequest.md)
+- [UsersFollowListResponse](interfaces/UsersFollowListResponse.md)
+- [UsersGetListMembershipsResponse](interfaces/UsersGetListMembershipsResponse.md)
+- [UsersGetByUsernamesResponse](interfaces/UsersGetByUsernamesResponse.md)
+- [UsersGetMutingResponse](interfaces/UsersGetMutingResponse.md)
+- [UsersMuteRequest](interfaces/UsersMuteRequest.md)
+- [UsersMuteResponse](interfaces/UsersMuteResponse.md)
+- [UsersUnpinListResponse](interfaces/UsersUnpinListResponse.md)
+- [UsersRepostPostRequest](interfaces/UsersRepostPostRequest.md)
+- [UsersRepostPostResponse](interfaces/UsersRepostPostResponse.md)
+- [UsersGetBookmarkFoldersResponse](interfaces/UsersGetBookmarkFoldersResponse.md)
+- [UsersGetPostsResponse](interfaces/UsersGetPostsResponse.md)
+- [UsersUnrepostPostResponse](interfaces/UsersUnrepostPostResponse.md)
+- [UsersGetMeResponse](interfaces/UsersGetMeResponse.md)
+- [UsersBlockDmsResponse](interfaces/UsersBlockDmsResponse.md)
+- [UsersGetLikedPostsResponse](interfaces/UsersGetLikedPostsResponse.md)
+- [UsersUnmuteResponse](interfaces/UsersUnmuteResponse.md)
+- [UsersGetFollowingResponse](interfaces/UsersGetFollowingResponse.md)
+- [UsersFollowRequest](interfaces/UsersFollowRequest.md)
+- [UsersFollowResponse](interfaces/UsersFollowResponse.md)
+- [UsersUnfollowListResponse](interfaces/UsersUnfollowListResponse.md)
+- [WebhooksGetOptions](interfaces/WebhooksGetOptions.md)
+- [WebhooksCreateOptions](interfaces/WebhooksCreateOptions.md)
+- [WebhooksCreateStreamLinkOptions](interfaces/WebhooksCreateStreamLinkOptions.md)
+- [WebhooksValidateResponse](interfaces/WebhooksValidateResponse.md)
+- [WebhooksDeleteResponse](interfaces/WebhooksDeleteResponse.md)
+- [WebhooksGetResponse](interfaces/WebhooksGetResponse.md)
+- [WebhooksCreateRequest](interfaces/WebhooksCreateRequest.md)
+- [WebhooksCreateResponse](interfaces/WebhooksCreateResponse.md)
+- [WebhooksGetStreamLinksResponse](interfaces/WebhooksGetStreamLinksResponse.md)
+- [WebhooksCreateStreamLinkResponse](interfaces/WebhooksCreateStreamLinkResponse.md)
+- [WebhooksDeleteStreamLinkResponse](interfaces/WebhooksDeleteStreamLinkResponse.md)
+
+### Variables
+
+- [httpClient](modules.md#httpclient)
+- [StreamEvent](modules.md#streamevent)
+
+## Variables
+
+### httpClient
+
+• `Const` **httpClient**: [`HttpClient`](classes/HttpClient.md)
+
+#### Defined in
+
+[http-client.ts:205](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/http-client.ts#L205)
+
+___
+
+### StreamEvent
+
+• `Const` **StreamEvent**: `Object`
+
+Event-driven streaming utilities for the X API.
+
+This module provides event-driven streaming interfaces that are more user-friendly
+than manual ReadableStream management.
+
+#### Type declaration
+
+| Name | Type |
+| :------ | :------ |
+| `Data` | `string` |
+| `KeepAlive` | `string` |
+| `Error` | `string` |
+| `Close` | `string` |
+
+#### Defined in
+
+[stream/event_driven_stream.ts:10](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/stream/event_driven_stream.ts#L10)

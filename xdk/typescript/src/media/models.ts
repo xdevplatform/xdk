@@ -3,6 +3,37 @@
  */
 
 /**
+ * Response for finalizeUpload
+ * A response from getting a media upload request status.
+ */
+export interface MediaFinalizeUploadResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getAnalytics
+ */
+export interface MediaGetAnalyticsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Request body for appendUpload
+ */
+export interface MediaAppendUploadRequest {}
+
+/**
+ * Response for appendUpload
+ * A response from getting a media upload request status.
+ */
+export interface MediaAppendUploadResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
  * Request body for initializeUpload
  */
 export interface MediaInitializeUploadRequest {
@@ -27,11 +58,10 @@ export interface MediaInitializeUploadResponse {
 }
 
 /**
- * Response for finalizeUpload
- * A response from getting a media upload request status.
+ * Response for getByMediaKeys
  */
-export interface MediaFinalizeUploadResponse {
-  data: Record<string, any>;
+export interface MediaGetByMediaKeysResponse {
+  data?: Array<any>;
   errors?: Array<any>;
 }
 
@@ -75,6 +105,31 @@ export interface MediaDeleteSubtitlesResponse {
 }
 
 /**
+ * Response for getByMediaKey
+ */
+export interface MediaGetByMediaKeyResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Request body for createMetadata
+ */
+export interface MediaCreateMetadataRequest {
+  /** The unique identifier of this Media. */
+  id?: string;
+  metadata?: Record<string, any>;
+}
+
+/**
+ * Response for createMetadata
+ */
+export interface MediaCreateMetadataResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
  * Response for getUploadStatus
  * A response from getting a media upload request status.
  */
@@ -103,60 +158,5 @@ export interface MediaUploadRequest {
  */
 export interface MediaUploadResponse {
   data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getByMediaKey
- */
-export interface MediaGetByMediaKeyResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getByMediaKeys
- */
-export interface MediaGetByMediaKeysResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getAnalytics
- */
-export interface MediaGetAnalyticsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-}
-
-/**
- * Request body for createMetadata
- */
-export interface MediaCreateMetadataRequest {
-  /** The unique identifier of this Media. */
-  id?: string;
-  metadata?: Record<string, any>;
-}
-
-/**
- * Response for createMetadata
- */
-export interface MediaCreateMetadataResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Request body for appendUpload
- */
-export interface MediaAppendUploadRequest {}
-
-/**
- * Response for appendUpload
- * A response from getting a media upload request status.
- */
-export interface MediaAppendUploadResponse {
-  data?: Record<string, any>;
   errors?: Array<any>;
 }

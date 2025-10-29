@@ -1,0 +1,36 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / ComplianceGetJobsByIdOptions
+
+# Interface: ComplianceGetJobsByIdOptions
+
+Options for getJobsById method
+
+## Table of contents
+
+### Properties
+
+- [complianceJobfields](ComplianceGetJobsByIdOptions.md#compliancejobfields)
+- [requestOptions](ComplianceGetJobsByIdOptions.md#requestoptions)
+
+## Properties
+
+### complianceJobfields
+
+• `Optional` **complianceJobfields**: `any`[]
+
+A comma separated list of ComplianceJob fields to display.
+
+#### Defined in
+
+[compliance/client.ts:40](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/compliance/client.ts#L40)
+
+___
+
+### requestOptions
+
+• `Optional` **requestOptions**: [`RequestOptions`](RequestOptions.md)
+
+Additional request options
+
+#### Defined in
+
+[compliance/client.ts:43](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/compliance/client.ts#L43)

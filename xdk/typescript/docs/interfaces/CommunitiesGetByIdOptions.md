@@ -1,0 +1,36 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / CommunitiesGetByIdOptions
+
+# Interface: CommunitiesGetByIdOptions
+
+Options for getById method
+
+## Table of contents
+
+### Properties
+
+- [communityfields](CommunitiesGetByIdOptions.md#communityfields)
+- [requestOptions](CommunitiesGetByIdOptions.md#requestoptions)
+
+## Properties
+
+### communityfields
+
+• `Optional` **communityfields**: `any`[]
+
+A comma separated list of Community fields to display.
+
+#### Defined in
+
+[communities/client.ts:24](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/communities/client.ts#L24)
+
+___
+
+### requestOptions
+
+• `Optional` **requestOptions**: [`RequestOptions`](RequestOptions.md)
+
+Additional request options
+
+#### Defined in
+
+[communities/client.ts:27](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/communities/client.ts#L27)

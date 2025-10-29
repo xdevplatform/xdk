@@ -1,0 +1,192 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / PostsCreateRequest
+
+# Interface: PostsCreateRequest
+
+Request body for create
+
+## Table of contents
+
+### Properties
+
+- [cardUri](PostsCreateRequest.md#carduri)
+- [communityId](PostsCreateRequest.md#communityid)
+- [directMessageDeepLink](PostsCreateRequest.md#directmessagedeeplink)
+- [editOptions](PostsCreateRequest.md#editoptions)
+- [forSuperFollowersOnly](PostsCreateRequest.md#forsuperfollowersonly)
+- [geo](PostsCreateRequest.md#geo)
+- [media](PostsCreateRequest.md#media)
+- [nullcast](PostsCreateRequest.md#nullcast)
+- [poll](PostsCreateRequest.md#poll)
+- [quoteTweetId](PostsCreateRequest.md#quotetweetid)
+- [reply](PostsCreateRequest.md#reply)
+- [replySettings](PostsCreateRequest.md#replysettings)
+- [shareWithFollowers](PostsCreateRequest.md#sharewithfollowers)
+- [text](PostsCreateRequest.md#text)
+
+## Properties
+
+### cardUri
+
+• `Optional` **cardUri**: `string`
+
+Card Uri Parameter. This is mutually exclusive from Quote Tweet Id, Poll, Media, and Direct Message Deep Link.
+
+#### Defined in
+
+[posts/models.ts:57](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L57)
+
+___
+
+### communityId
+
+• `Optional` **communityId**: `string`
+
+The unique identifier of this Community.
+
+#### Defined in
+
+[posts/models.ts:59](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L59)
+
+___
+
+### directMessageDeepLink
+
+• `Optional` **directMessageDeepLink**: `string`
+
+Link to take the conversation from the public timeline to a private Direct Message.
+
+#### Defined in
+
+[posts/models.ts:61](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L61)
+
+___
+
+### editOptions
+
+• **editOptions**: `Record`\<`string`, `any`\>
+
+Options for editing an existing Post. When provided, this request will edit the specified Post instead of creating a new one.
+
+#### Defined in
+
+[posts/models.ts:63](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L63)
+
+___
+
+### forSuperFollowersOnly
+
+• `Optional` **forSuperFollowersOnly**: `boolean`
+
+Exclusive Tweet for super followers.
+
+#### Defined in
+
+[posts/models.ts:65](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L65)
+
+___
+
+### geo
+
+• `Optional` **geo**: `Record`\<`string`, `any`\>
+
+Place ID being attached to the Tweet for geo location.
+
+#### Defined in
+
+[posts/models.ts:67](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L67)
+
+___
+
+### media
+
+• **media**: `Record`\<`string`, `any`\>
+
+Media information being attached to created Tweet. This is mutually exclusive from Quote Tweet Id, Poll, and Card URI.
+
+#### Defined in
+
+[posts/models.ts:69](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L69)
+
+___
+
+### nullcast
+
+• `Optional` **nullcast**: `boolean`
+
+Nullcasted (promoted-only) Posts do not appear in the public timeline and are not served to followers.
+
+#### Defined in
+
+[posts/models.ts:71](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L71)
+
+___
+
+### poll
+
+• **poll**: `Record`\<`string`, `any`\>
+
+Poll options for a Tweet with a poll. This is mutually exclusive from Media, Quote Tweet Id, and Card URI.
+
+#### Defined in
+
+[posts/models.ts:73](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L73)
+
+___
+
+### quoteTweetId
+
+• `Optional` **quoteTweetId**: `string`
+
+Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers.
+
+#### Defined in
+
+[posts/models.ts:75](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L75)
+
+___
+
+### reply
+
+• **reply**: `Record`\<`string`, `any`\>
+
+Tweet information of the Tweet being replied to.
+
+#### Defined in
+
+[posts/models.ts:77](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L77)
+
+___
+
+### replySettings
+
+• `Optional` **replySettings**: `string`
+
+Settings to indicate who can reply to the Tweet.
+
+#### Defined in
+
+[posts/models.ts:79](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L79)
+
+___
+
+### shareWithFollowers
+
+• `Optional` **shareWithFollowers**: `boolean`
+
+Share community post with followers too.
+
+#### Defined in
+
+[posts/models.ts:81](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L81)
+
+___
+
+### text
+
+• `Optional` **text**: `string`
+
+The content of the Tweet.
+
+#### Defined in
+
+[posts/models.ts:83](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/models.ts#L83)

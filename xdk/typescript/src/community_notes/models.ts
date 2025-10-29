@@ -13,6 +13,32 @@ export interface CommunityNotesSearchEligiblePostsResponse {
 }
 
 /**
+ * Response for delete
+ */
+export interface CommunityNotesDeleteResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Request body for evaluate
+ */
+export interface CommunityNotesEvaluateRequest {
+  /** Text for the community note. */
+  noteText?: string;
+  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
+  postId?: string;
+}
+
+/**
+ * Response for evaluate
+ */
+export interface CommunityNotesEvaluateResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
  * Response for searchWritten
  */
 export interface CommunityNotesSearchWrittenResponse {
@@ -38,31 +64,5 @@ export interface CommunityNotesCreateRequest {
  */
 export interface CommunityNotesCreateResponse {
   data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Request body for evaluate
- */
-export interface CommunityNotesEvaluateRequest {
-  /** Text for the community note. */
-  noteText?: string;
-  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  postId?: string;
-}
-
-/**
- * Response for evaluate
- */
-export interface CommunityNotesEvaluateResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for delete
- */
-export interface CommunityNotesDeleteResponse {
-  data: Record<string, any>;
   errors?: Array<any>;
 }

@@ -9,8 +9,7 @@ import {
   Paginator,
   PostPaginator,
   UserPaginator,
-  ListPaginator,
-  IdPaginator,
+  EventPaginator,
 } from '../paginator.js';
 import { UsageGetResponse } from './models.js';
 
@@ -51,7 +50,10 @@ export class UsageClient {
 
   /**
    * Get usage
-   * Retrieves usage statistics for Posts over a specified number of days.* @returns Promise with the API response
+   * Retrieves usage statistics for Posts over a specified number of days.
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async get(options: UsageGetOptions = {}): Promise<UsageGetResponse> {
@@ -62,7 +64,7 @@ export class UsageClient {
 
       usagefields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -81,7 +83,7 @@ export class UsageClient {
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      ...reqOpts,
+      ...requestOptions,
     };
 
     return this.client.request<UsageGetResponse>(

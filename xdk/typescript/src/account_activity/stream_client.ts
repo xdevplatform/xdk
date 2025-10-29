@@ -8,13 +8,46 @@ import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
   AccountActivityDeleteSubscriptionResponse,
-  AccountActivityCreateReplayJobResponse,
   AccountActivityGetSubscriptionsResponse,
   AccountActivityValidateSubscriptionResponse,
   AccountActivityCreateSubscriptionResponse,
+  AccountActivityCreateReplayJobResponse,
   AccountActivityGetSubscriptionCountResponse,
 } from './models.js';
 
+/**
+ * Options for deleteSubscription method
+ */
+export interface AccountActivityDeleteSubscriptionStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getSubscriptions method
+ */
+export interface AccountActivityGetSubscriptionsStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for validateSubscription method
+ */
+export interface AccountActivityValidateSubscriptionStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
 /**
  * Options for createSubscription method
  */
@@ -24,6 +57,30 @@ export interface AccountActivityCreateSubscriptionStreamingOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for createReplayJob method
+ */
+export interface AccountActivityCreateReplayJobStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getSubscriptionCount method
+ */
+export interface AccountActivityGetSubscriptionCountStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
@@ -43,7 +100,8 @@ export class AccountActivityClient {
      */
   async deleteSubscription(
     webhookId: string,
-    userId: string
+    userId: string,
+    options: AccountActivityDeleteSubscriptionStreamingOptions = {}
   ): Promise<AccountActivityDeleteSubscriptionResponse> {
     // Validate authentication requirements
 
@@ -55,7 +113,7 @@ export class AccountActivityClient {
 
     // Destructure options with defaults
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -71,74 +129,16 @@ export class AccountActivityClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
     return this.client.request<AccountActivityDeleteSubscriptionResponse>(
       'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Create replay job
-     * Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
-     * 
-     * @returns Promise with the API response
-     */
-  async createReplayJob(
-    webhookId: string,
-    fromDate: string,
-    toDate: string
-  ): Promise<AccountActivityCreateReplayJobResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'createReplayJob');
-
-    // Destructure options with defaults
-
-    const reqOpts = {};
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (fromDate !== undefined) {
-      params.append('from_date', String(fromDate));
-    }
-
-    if (toDate !== undefined) {
-      params.append('to_date', String(toDate));
-    }
-
-    // Build path parameters
-    let path = `/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all`;
-
-    path = path.replace(`{${'webhook_id'}}`, String(webhookId));
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...reqOpts.headers,
-      },
-      signal: options.signal,
-
-      ...reqOpts,
-    };
-
-    // Make the request
-    return this.client.request<AccountActivityCreateReplayJobResponse>(
-      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -151,7 +151,8 @@ export class AccountActivityClient {
      * @returns Promise with the API response
      */
   async getSubscriptions(
-    webhookId: string
+    webhookId: string,
+    options: AccountActivityGetSubscriptionsStreamingOptions = {}
   ): Promise<AccountActivityGetSubscriptionsResponse> {
     // Validate authentication requirements
 
@@ -163,7 +164,7 @@ export class AccountActivityClient {
 
     // Destructure options with defaults
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -177,11 +178,11 @@ export class AccountActivityClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -199,7 +200,8 @@ export class AccountActivityClient {
      * @returns Promise with the API response
      */
   async validateSubscription(
-    webhookId: string
+    webhookId: string,
+    options: AccountActivityValidateSubscriptionStreamingOptions = {}
   ): Promise<AccountActivityValidateSubscriptionResponse> {
     // Validate authentication requirements
 
@@ -216,7 +218,7 @@ export class AccountActivityClient {
 
     // Destructure options with defaults
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -230,11 +232,11 @@ export class AccountActivityClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
@@ -270,7 +272,7 @@ export class AccountActivityClient {
     const {
       body,
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build query parameters
@@ -285,17 +287,76 @@ export class AccountActivityClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
       body: JSON.stringify(body),
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request
     return this.client.request<AccountActivityCreateSubscriptionResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Create replay job
+     * Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
+     * 
+     * @returns Promise with the API response
+     */
+  async createReplayJob(
+    webhookId: string,
+    fromDate: string,
+    toDate: string,
+    options: AccountActivityCreateReplayJobStreamingOptions = {}
+  ): Promise<AccountActivityCreateReplayJobResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'createReplayJob');
+
+    // Destructure options with defaults
+
+    const requestOptions = {};
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (fromDate !== undefined) {
+      params.append('from_date', String(fromDate));
+    }
+
+    if (toDate !== undefined) {
+      params.append('to_date', String(toDate));
+    }
+
+    // Build path parameters
+    let path = `/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all`;
+
+    path = path.replace(`{${'webhook_id'}}`, String(webhookId));
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<AccountActivityCreateReplayJobResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -308,9 +369,9 @@ export class AccountActivityClient {
      * 
      * @returns Promise with the API response
      */
-  async getSubscriptionCount(): Promise<
-    AccountActivityGetSubscriptionCountResponse
-  > {
+  async getSubscriptionCount(
+    options: AccountActivityGetSubscriptionCountStreamingOptions = {}
+  ): Promise<AccountActivityGetSubscriptionCountResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -324,7 +385,7 @@ export class AccountActivityClient {
 
     // Destructure options with defaults
 
-    const reqOpts = {};
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -336,11 +397,11 @@ export class AccountActivityClient {
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...reqOpts.headers,
+        ...(options.headers || {}),
       },
       signal: options.signal,
 
-      ...reqOpts,
+      ...options,
     };
 
     // Make the request

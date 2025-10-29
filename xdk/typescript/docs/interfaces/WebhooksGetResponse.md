@@ -1,0 +1,43 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / WebhooksGetResponse
+
+# Interface: WebhooksGetResponse
+
+Response for get
+
+## Table of contents
+
+### Properties
+
+- [data](WebhooksGetResponse.md#data)
+- [errors](WebhooksGetResponse.md#errors)
+- [meta](WebhooksGetResponse.md#meta)
+
+## Properties
+
+### data
+
+• `Optional` **data**: `any`[]
+
+#### Defined in
+
+[webhooks/models.ts:25](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/webhooks/models.ts#L25)
+
+___
+
+### errors
+
+• `Optional` **errors**: `any`[]
+
+#### Defined in
+
+[webhooks/models.ts:26](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/webhooks/models.ts#L26)
+
+___
+
+### meta
+
+• `Optional` **meta**: `Record`\<`string`, `any`\>
+
+#### Defined in
+
+[webhooks/models.ts:27](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/webhooks/models.ts#L27)

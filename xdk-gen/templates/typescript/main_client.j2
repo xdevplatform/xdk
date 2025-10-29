@@ -9,9 +9,6 @@ import {
   Paginator, 
   PostPaginator, 
   UserPaginator, 
-  ListPaginator, 
-  IdPaginator,
-  WelcomeMessagePaginator,
   EventPaginator
 } from "./paginator.js";
 
@@ -177,15 +174,6 @@ export class Client {
    * Creates a new X API client instance
    * 
    * @param config - Configuration options for the client
-   * @param config.bearerToken - Bearer token for OAuth2 authentication
-   * @param config.accessToken - OAuth2 access token
-   * @param config.oauth1 - OAuth1 instance for authentication
-   * @param config.baseUrl - Base URL for API requests (defaults to https://api.x.com)
-   * @param config.timeout - Request timeout in milliseconds (defaults to 30000)
-   * @param config.retry - Whether to automatically retry failed requests (defaults to true)
-   * @param config.maxRetries - Maximum number of retry attempts (defaults to 3)
-   * @param config.headers - Custom headers to include in requests
-   * @param config.userAgent - User agent string (defaults to "x-api-sdk/1.0.0")
    * 
    * @example
    * ```typescript

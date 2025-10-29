@@ -9,8 +9,7 @@ import {
   Paginator,
   PostPaginator,
   UserPaginator,
-  ListPaginator,
-  IdPaginator,
+  EventPaginator,
 } from '../paginator.js';
 import {
   CommunitiesGetByIdResponse,
@@ -72,7 +71,13 @@ export class CommunitiesClient {
   /**
    * Get Community by ID
    * Retrieves details of a specific Community by its ID.
-   * @param id The ID of the Community.* @returns Promise with the API response
+
+
+   * @param id The ID of the Community.
+
+
+
+   * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async getById(
@@ -84,7 +89,7 @@ export class CommunitiesClient {
     const {
       communityfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -101,7 +106,7 @@ export class CommunitiesClient {
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      ...reqOpts,
+      ...requestOptions,
     };
 
     return this.client.request<CommunitiesGetByIdResponse>(
@@ -115,9 +120,11 @@ export class CommunitiesClient {
    * Search Communities
    * Retrieves a list of Communities matching the specified search query.
    * Returns a paginator for automatic pagination through all results.
-   * @param 
-   query: string
-   
+
+
+   * @param query Query to search communities.
+
+
    * @param options Options for the paginated request
    * @returns A paginator instance for iterating through all results
    */
@@ -136,7 +143,7 @@ export class CommunitiesClient {
 
       communityfields = [],
 
-      requestOptions: reqOpts = {},
+      requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
@@ -174,7 +181,7 @@ export class CommunitiesClient {
 
       // Prepare request options
       const finalRequestOptions: RequestOptions = {
-        ...reqOpts,
+        ...requestOptions,
       };
 
       const response = await this.client.request<CommunitiesSearchResponse>(

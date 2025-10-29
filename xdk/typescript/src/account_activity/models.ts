@@ -11,17 +11,6 @@ export interface AccountActivityDeleteSubscriptionResponse {
 }
 
 /**
- * Response for createReplayJob
- * Confirmation that the replay job request was accepted.
- */
-export interface AccountActivityCreateReplayJobResponse {
-  /** The UTC timestamp indicating when the replay job was created. */
-  createdAt?: string;
-  /** The unique identifier for the initiated replay job. */
-  jobId?: string;
-}
-
-/**
  * Response for getSubscriptions
  */
 export interface AccountActivityGetSubscriptionsResponse {
@@ -49,6 +38,17 @@ export interface AccountActivityCreateSubscriptionRequest {}
 export interface AccountActivityCreateSubscriptionResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
+}
+
+/**
+ * Response for createReplayJob
+ * Confirmation that the replay job request was accepted.
+ */
+export interface AccountActivityCreateReplayJobResponse {
+  /** The UTC timestamp indicating when the replay job was created. */
+  createdAt?: string;
+  /** The unique identifier for the initiated replay job. */
+  jobId?: string;
 }
 
 /**
