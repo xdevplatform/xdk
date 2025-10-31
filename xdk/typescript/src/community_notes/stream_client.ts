@@ -7,15 +7,30 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
+  SearchWrittenResponse,
   DeleteResponse,
   SearchEligiblePostsResponse,
-  EvaluateResponse,
   CreateResponse,
-  SearchWrittenResponse,
+  EvaluateResponse,
 } from './models.js';
 
 /**
+ * Options for searchWritten method
+ * 
+ * @public
+ */
+export interface SearchWrittenStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
  * Options for delete method
+ * 
+ * @public
  */
 export interface DeleteStreamingOptions {
   /** Additional request options */
@@ -27,6 +42,8 @@ export interface DeleteStreamingOptions {
 }
 /**
  * Options for searchEligiblePosts method
+ * 
+ * @public
  */
 export interface SearchEligiblePostsStreamingOptions {
   /** Additional request options */
@@ -37,21 +54,9 @@ export interface SearchEligiblePostsStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for evaluate method
- */
-export interface EvaluateStreamingOptions {
-  /** Request body */
-  body?: any;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
  * Options for create method
+ * 
+ * @public
  */
 export interface CreateStreamingOptions {
   /** Request body */
@@ -65,9 +70,14 @@ export interface CreateStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for searchWritten method
+ * Options for evaluate method
+ * 
+ * @public
  */
-export interface SearchWrittenStreamingOptions {
+export interface EvaluateStreamingOptions {
+  /** Request body */
+  body?: any;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -81,6 +91,54 @@ export class CommunityNotesClient {
 
   constructor(client: Client) {
     this.client = client;
+  }
+
+  /**
+     * Search for Community Notes Written
+     * Returns all the community notes written by the user.
+     * 
+     * @returns Promise with the API response
+     */
+  async searchWritten(
+    options: SearchWrittenStreamingOptions = {}
+  ): Promise<SearchWrittenResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'searchWritten');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/notes/search/notes_written`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<SearchWrittenResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 
   /**
@@ -181,60 +239,6 @@ export class CommunityNotesClient {
   }
 
   /**
-     * Evaluate a Community Note
-     * Endpoint to evaluate a community note.
-     * 
-     * @returns Promise with the API response
-     */
-  async evaluate(
-    options: EvaluateStreamingOptions = {}
-  ): Promise<EvaluateResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'evaluate');
-
-    // Destructure options with defaults
-
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/evaluate_note`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      body: JSON.stringify(body),
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<EvaluateResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
      * Create a Community Note
      * Creates a community note endpoint for LLM use case.
      * 
@@ -287,14 +291,14 @@ export class CommunityNotesClient {
   }
 
   /**
-     * Search for Community Notes Written
-     * Returns all the community notes written by the user.
+     * Evaluate a Community Note
+     * Endpoint to evaluate a community note.
      * 
      * @returns Promise with the API response
      */
-  async searchWritten(
-    options: SearchWrittenStreamingOptions = {}
-  ): Promise<SearchWrittenResponse> {
+  async evaluate(
+    options: EvaluateStreamingOptions = {}
+  ): Promise<EvaluateResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -303,17 +307,21 @@ export class CommunityNotesClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'searchWritten');
+    this.client.validateAuthentication(requiredAuthTypes, 'evaluate');
 
     // Destructure options with defaults
 
-    const { requestOptions: requestOptions = {} } = options;
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = options;
 
     // Build query parameters
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/notes/search/notes_written`;
+    let path = `/2/evaluate_note`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -323,12 +331,14 @@ export class CommunityNotesClient {
       },
       signal: options.signal,
 
+      body: JSON.stringify(body),
+
       ...options,
     };
 
     // Make the request
-    return this.client.request<SearchWrittenResponse>(
-      'GET',
+    return this.client.request<EvaluateResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

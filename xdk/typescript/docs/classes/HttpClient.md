@@ -32,7 +32,7 @@ Universal HTTP client that works in both Node.js and browser environments
 
 #### Defined in
 
-[http-client.ts:41](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/http-client.ts#L41)
+[http-client.ts:41](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L41)
 
 ## Methods
 
@@ -54,7 +54,7 @@ Create a new Headers instance
 
 #### Defined in
 
-[http-client.ts:91](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/http-client.ts#L91)
+[http-client.ts:91](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L91)
 
 ___
 
@@ -77,7 +77,7 @@ Make an HTTP request
 
 #### Defined in
 
-[http-client.ts:98](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/http-client.ts#L98)
+[http-client.ts:98](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L98)
 
 ___
 
@@ -100,7 +100,7 @@ Make a GET request
 
 #### Defined in
 
-[http-client.ts:135](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/http-client.ts#L135)
+[http-client.ts:135](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L135)
 
 ___
 
@@ -124,7 +124,7 @@ Make a POST request
 
 #### Defined in
 
-[http-client.ts:148](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/http-client.ts#L148)
+[http-client.ts:148](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L148)
 
 ___
 
@@ -148,7 +148,7 @@ Make a PUT request
 
 #### Defined in
 
-[http-client.ts:163](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/http-client.ts#L163)
+[http-client.ts:163](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L163)
 
 ___
 
@@ -171,7 +171,7 @@ Make a DELETE request
 
 #### Defined in
 
-[http-client.ts:178](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/http-client.ts#L178)
+[http-client.ts:178](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L178)
 
 ___
 
@@ -195,4 +195,4 @@ Make a PATCH request
 
 #### Defined in
 
-[http-client.ts:191](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/http-client.ts#L191)
+[http-client.ts:191](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L191)

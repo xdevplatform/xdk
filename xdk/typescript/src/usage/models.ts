@@ -1,12 +1,15 @@
 /**
  * Models for usage operations
  */
+import type * as Schemas from '../schemas.js';
+
+
+
+
 
 /**
  * Response for get
+ * 
+ * @public
  */
-export interface GetResponse {
-  /** Usage per client app */
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
+export type GetResponse = Schemas.Get2UsageTweetsResponse;

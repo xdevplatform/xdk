@@ -2,11 +2,11 @@
 
 # Class: CommunitiesClient
 
-Client for Communities operations
+Client for communities operations
 
-This client provides methods for interacting with the Communities endpoints
+This client provides methods for interacting with the communities endpoints
 of the X API. It handles authentication, request formatting, and response
-parsing for all Communities related operations.
+parsing for all communities related operations.
 
 ## Table of contents
 
@@ -25,7 +25,7 @@ parsing for all Communities related operations.
 
 • **new CommunitiesClient**(`client`): [`CommunitiesClient`](CommunitiesClient.md)
 
-Creates a new Communities client instance
+Creates a new communities client instance
 
 #### Parameters
 
@@ -39,57 +39,48 @@ Creates a new Communities client instance
 
 #### Defined in
 
-[communities/client.ts:67](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/communities/client.ts#L67)
+[communities/client.ts:43](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/communities/client.ts#L43)
 
 ## Methods
 
 ### getById
 
-▸ **getById**(`id`, `options?`): `Promise`\<[`CommunitiesGetByIdResponse`](../interfaces/CommunitiesGetByIdResponse.md)\>
+▸ **getById**(): `Promise`\<`any`\>
 
 Get Community by ID
 Retrieves details of a specific Community by its ID.
 
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the Community. |
-| `options` | [`CommunitiesGetByIdOptions`](../interfaces/CommunitiesGetByIdOptions.md) | - |
-
 #### Returns
 
-`Promise`\<[`CommunitiesGetByIdResponse`](../interfaces/CommunitiesGetByIdResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[communities/client.ts:83](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/communities/client.ts#L83)
+[communities/client.ts:57](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/communities/client.ts#L57)
 
 ___
 
 ### search
 
-▸ **search**(`query`, `options?`): `Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
+▸ **search**(`options?`): `Promise`\<`any`\>
 
 Search Communities
 Retrieves a list of Communities matching the specified search query.
-Returns a paginator for automatic pagination through all results.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `query` | `string` | Query to search communities. |
-| `options` | [`CommunitiesSearchOptions`](../interfaces/CommunitiesSearchOptions.md) | Options for the paginated request |
+| Name | Type |
+| :------ | :------ |
+| `options` | `SearchOptions` |
 
 #### Returns
 
-`Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
+`Promise`\<`any`\>
 
-A paginator instance for iterating through all results
+Promise with the API response
 
 #### Defined in
 
-[communities/client.ts:131](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/communities/client.ts#L131)
+[communities/client.ts:90](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/communities/client.ts#L90)

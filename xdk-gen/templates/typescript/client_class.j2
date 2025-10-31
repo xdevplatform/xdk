@@ -29,6 +29,8 @@ import {
 {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
 /**
  * Options for {{ operation.method_name }} method
+ * 
+ * @public
  */
 export interface {{ operation.class_name }}Options {
     {% for param in operation.parameters | rejectattr('required') %}

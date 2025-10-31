@@ -31,7 +31,7 @@ Array of items in the current page
 
 #### Defined in
 
-[paginator.ts:19](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/paginator.ts#L19)
+[paginator.ts:19](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L19)
 
 ___
 
@@ -51,7 +51,7 @@ Pagination metadata
 
 #### Defined in
 
-[paginator.ts:21](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/paginator.ts#L21)
+[paginator.ts:21](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L21)
 
 ___
 
@@ -63,7 +63,7 @@ Additional included objects (users, tweets, etc.)
 
 #### Defined in
 
-[paginator.ts:30](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/paginator.ts#L30)
+[paginator.ts:30](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L30)
 
 ___
 
@@ -75,4 +75,4 @@ Any errors in the response
 
 #### Defined in
 
-[paginator.ts:32](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/paginator.ts#L32)
+[paginator.ts:32](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L32)

@@ -1,403 +1,280 @@
 /**
  * Models for users operations
  */
+import type * as Schemas from '../schemas.js';
 
-/**
- * Response for unmuteUser
- */
-export interface UnmuteUserResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
 
-/**
- * Response for unlikePost
- */
-export interface UnlikePostResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
 
-/**
- * Response for getLikedPosts
- */
-export interface GetLikedPostsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
 
-/**
- * Response for getPosts
- */
-export interface GetPostsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getPinnedLists
- */
-export interface GetPinnedListsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for pinList
- */
-export interface PinListRequest {
-  /** The unique identifier of this List. */
-  listId?: string;
-}
-
-/**
- * Response for pinList
- */
-export interface PinListResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
 
 /**
  * Response for getOwnedLists
+ * 
+ * @public
  */
-export interface GetOwnedListsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getListMemberships
- */
-export interface GetListMembershipsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for repostPost
- */
-export interface RepostPostRequest {
-  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  tweetId?: string;
-}
-
-/**
- * Response for repostPost
- */
-export interface RepostPostResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getTimeline
- */
-export interface GetTimelineResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getFollowers
- */
-export interface GetFollowersResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getMentions
- */
-export interface GetMentionsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getBookmarkFolders
- */
-export interface GetBookmarkFoldersResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
+export type GetOwnedListsResponse = Schemas.Get2UsersIdOwnedListsResponse;
 /**
  * Response for blockDms
+ * 
+ * @public
  */
-export interface BlockDmsResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
+export type BlockDmsResponse = Schemas.UsersDMBlockCreateResponse;
 /**
- * Response for search
+ * Response for getLikedPosts
+ * 
+ * @public
  */
-export interface SearchResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getByUsernames
- */
-export interface GetByUsernamesResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for unfollowUser
- */
-export interface UnfollowUserResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for unpinList
- */
-export interface UnpinListResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getBlocking
- */
-export interface GetBlockingResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
+export type GetLikedPostsResponse = Schemas.Get2UsersIdLikedTweetsResponse;
 /**
  * Response for unrepostPost
+ * 
+ * @public
  */
-export interface UnrepostPostResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
+export type UnrepostPostResponse = Schemas.UsersRetweetsDeleteResponse;
 /**
- * Response for deleteBookmark
+ * Response for getMentions
+ * 
+ * @public
  */
-export interface DeleteBookmarkResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
+export type GetMentionsResponse = Schemas.Get2UsersIdMentionsResponse;
 /**
- * Response for getBookmarksByFolderId
+ * Response for unfollowUser
+ * 
+ * @public
  */
-export interface GetBookmarksByFolderIdResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getFollowing
- */
-export interface GetFollowingResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for followUser
- */
-export interface FollowUserRequest {
-  /** Unique identifier of this User. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  targetUserId?: string;
-}
-
-/**
- * Response for followUser
- */
-export interface FollowUserResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getBookmarks
- */
-export interface GetBookmarksResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for createBookmark
- */
-export interface CreateBookmarkRequest {
-  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  tweetId?: string;
-}
-
-/**
- * Response for createBookmark
- */
-export interface CreateBookmarkResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getByIds
- */
-export interface GetByIdsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Request body for likePost
- */
-export interface LikePostRequest {
-  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  tweetId?: string;
-}
-
-/**
- * Response for likePost
- */
-export interface LikePostResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getById
- */
-export interface GetByIdResponse {
-  /** The X User object. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for getByUsername
- */
-export interface GetByUsernameResponse {
-  /** The X User object. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for getMe
- */
-export interface GetMeResponse {
-  /** The X User object. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for getRepostsOfMe
- */
-export interface GetRepostsOfMeResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
+export type UnfollowUserResponse = Schemas.UsersFollowingDeleteResponse;
 /**
  * Response for unblockDms
+ * 
+ * @public
  */
-export interface UnblockDmsResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
+export type UnblockDmsResponse = Schemas.UsersDMUnBlockCreateResponse;
+/**
+ * Response for getByIds
+ * 
+ * @public
+ */
+export type GetByIdsResponse = Schemas.Get2UsersResponse;
+/**
+ * Response for unmuteUser
+ * 
+ * @public
+ */
+export type UnmuteUserResponse = Schemas.MuteUserMutationResponse;
+/**
+ * Response for getFollowing
+ * 
+ * @public
+ */
+export type GetFollowingResponse = Schemas.Get2UsersIdFollowingResponse;
+/**
+ * Request for followUser
+ * 
+ * @public
+ */
+export type FollowUserRequest = Schemas.UsersFollowingCreateRequest;
+/**
+ * Response for followUser
+ * 
+ * @public
+ */
+export type FollowUserResponse = Schemas.UsersFollowingCreateResponse;
+/**
+ * Response for getBookmarkFolders
+ * 
+ * @public
+ */
+export type GetBookmarkFoldersResponse = Schemas.BookmarkFoldersResponse;
+/**
+ * Response for getBookmarksByFolderId
+ * 
+ * @public
+ */
+export type GetBookmarksByFolderIdResponse = Schemas.BookmarkFolderPostsResponse;
+/**
+ * Response for getPosts
+ * 
+ * @public
+ */
+export type GetPostsResponse = Schemas.Get2UsersIdTweetsResponse;
+/**
+ * Response for getListMemberships
+ * 
+ * @public
+ */
+export type GetListMembershipsResponse = Schemas.Get2UsersIdListMembershipsResponse;
 /**
  * Response for unfollowList
+ * 
+ * @public
  */
-export interface UnfollowListResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
+export type UnfollowListResponse = Schemas.ListFollowedResponse;
+/**
+ * Response for getRepostsOfMe
+ * 
+ * @public
+ */
+export type GetRepostsOfMeResponse = Schemas.Get2UsersRepostsOfMeResponse;
+/**
+ * Response for getBlocking
+ * 
+ * @public
+ */
+export type GetBlockingResponse = Schemas.Get2UsersIdBlockingResponse;
+/**
+ * Response for search
+ * 
+ * @public
+ */
+export type SearchResponse = Schemas.Get2UsersSearchResponse;
+/**
+ * Response for getFollowers
+ * 
+ * @public
+ */
+export type GetFollowersResponse = Schemas.Get2UsersIdFollowersResponse;
+/**
+ * Response for getMe
+ * 
+ * @public
+ */
+export type GetMeResponse = Schemas.Get2UsersMeResponse;
+/**
+ * Response for getById
+ * 
+ * @public
+ */
+export type GetByIdResponse = Schemas.Get2UsersIdResponse;
+/**
+ * Response for getByUsernames
+ * 
+ * @public
+ */
+export type GetByUsernamesResponse = Schemas.Get2UsersByResponse;
+/**
+ * Response for getByUsername
+ * 
+ * @public
+ */
+export type GetByUsernameResponse = Schemas.Get2UsersByUsernameUsernameResponse;
+/**
+ * Response for getTimeline
+ * 
+ * @public
+ */
+export type GetTimelineResponse = Schemas.Get2UsersIdTimelinesReverseChronologicalResponse;
+/**
+ * Response for deleteBookmark
+ * 
+ * @public
+ */
+export type DeleteBookmarkResponse = Schemas.BookmarkMutationResponse;
+/**
+ * Response for getPinnedLists
+ * 
+ * @public
+ */
+export type GetPinnedListsResponse = Schemas.Get2UsersIdPinnedListsResponse;
+/**
+ * Request for pinList
+ * 
+ * @public
+ */
+export type PinListRequest = Schemas.ListPinnedRequest;
+/**
+ * Response for pinList
+ * 
+ * @public
+ */
+export type PinListResponse = Schemas.ListPinnedResponse;
+/**
+ * Response for unpinList
+ * 
+ * @public
+ */
+export type UnpinListResponse = Schemas.ListUnpinResponse;
 /**
  * Response for getFollowedLists
+ * 
+ * @public
  */
-export interface GetFollowedListsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
+export type GetFollowedListsResponse = Schemas.Get2UsersIdFollowedListsResponse;
 /**
- * Request body for followList
+ * Request for followList
+ * 
+ * @public
  */
-export interface FollowListRequest {
-  /** The unique identifier of this List. */
-  listId?: string;
-}
-
+export type FollowListRequest = Schemas.ListFollowedRequest;
 /**
  * Response for followList
+ * 
+ * @public
  */
-export interface FollowListResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
+export type FollowListResponse = Schemas.ListFollowedResponse;
+/**
+ * Request for repostPost
+ * 
+ * @public
+ */
+export type RepostPostRequest = Schemas.UsersRetweetsCreateRequest;
+/**
+ * Response for repostPost
+ * 
+ * @public
+ */
+export type RepostPostResponse = Schemas.UsersRetweetsCreateResponse;
+/**
+ * Request for likePost
+ * 
+ * @public
+ */
+export type LikePostRequest = Schemas.UsersLikesCreateRequest;
+/**
+ * Response for likePost
+ * 
+ * @public
+ */
+export type LikePostResponse = Schemas.UsersLikesCreateResponse;
 /**
  * Response for getMuting
+ * 
+ * @public
  */
-export interface GetMutingResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
+export type GetMutingResponse = Schemas.Get2UsersIdMutingResponse;
 
 /**
- * Request body for muteUser
+ * Request for muteUser
+ * 
+ * @public
  */
-export interface MuteUserRequest {
-  /** Unique identifier of this User. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  targetUserId?: string;
-}
-
+export type { MuteUserRequest as MuteUserRequest } from '../schemas.js';
 /**
  * Response for muteUser
+ * 
+ * @public
  */
-export interface MuteUserResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
+export type MuteUserResponse = Schemas.MuteUserMutationResponse;
+/**
+ * Response for getBookmarks
+ * 
+ * @public
+ */
+export type GetBookmarksResponse = Schemas.Get2UsersIdBookmarksResponse;
+/**
+ * Request for createBookmark
+ * 
+ * @public
+ */
+export type CreateBookmarkRequest = Schemas.BookmarkAddRequest;
+/**
+ * Response for createBookmark
+ * 
+ * @public
+ */
+export type CreateBookmarkResponse = Schemas.BookmarkMutationResponse;
+/**
+ * Response for unlikePost
+ * 
+ * @public
+ */
+export type UnlikePostResponse = Schemas.UsersLikesDeleteResponse;

@@ -1,187 +1,117 @@
 /**
  * Models for posts operations
  */
+import type * as Schemas from '../schemas.js';
 
-/**
- * Response for getById
- */
-export interface GetByIdResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
 
-/**
- * Response for delete
- */
-export interface DeleteResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
 
-/**
- * Response for getInsightsHistorical
- */
-export interface GetInsightsHistoricalResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-}
 
-/**
- * Response for searchAll
- */
-export interface SearchAllResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getCountsRecent
- */
-export interface GetCountsRecentResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getReposts
- */
-export interface GetRepostsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getQuoted
- */
-export interface GetQuotedResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getByIds
- */
-export interface GetByIdsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Request body for create
- */
-export interface CreateRequest {
-  /** Card Uri Parameter. This is mutually exclusive from Quote Tweet Id, Poll, Media, and Direct Message Deep Link. */
-  cardUri?: string;
-  /** The unique identifier of this Community. */
-  communityId?: string;
-  /** Link to take the conversation from the public timeline to a private Direct Message. */
-  directMessageDeepLink?: string;
-  /** Options for editing an existing Post. When provided, this request will edit the specified Post instead of creating a new one. */
-  editOptions: Record<string, any>;
-  /** Exclusive Tweet for super followers. */
-  forSuperFollowersOnly?: boolean;
-  /** Place ID being attached to the Tweet for geo location. */
-  geo?: Record<string, any>;
-  /** Media information being attached to created Tweet. This is mutually exclusive from Quote Tweet Id, Poll, and Card URI. */
-  media: Record<string, any>;
-  /** Nullcasted (promoted-only) Posts do not appear in the public timeline and are not served to followers. */
-  nullcast?: boolean;
-  /** Poll options for a Tweet with a poll. This is mutually exclusive from Media, Quote Tweet Id, and Card URI. */
-  poll: Record<string, any>;
-  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  quoteTweetId?: string;
-  /** Tweet information of the Tweet being replied to. */
-  reply: Record<string, any>;
-  /** Settings to indicate who can reply to the Tweet. */
-  replySettings?: string;
-  /** Share community post with followers too. */
-  shareWithFollowers?: boolean;
-  /** The content of the Tweet. */
-  text?: string;
-}
-
-/**
- * Response for create
- */
-export interface CreateResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for searchRecent
- */
-export interface SearchRecentResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getRepostedBy
- */
-export interface GetRepostedByResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getCountsAll
- */
-export interface GetCountsAllResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
 
 /**
  * Response for getInsights28hr
+ * 
+ * @public
  */
-export interface GetInsights28hrResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-}
-
+export type GetInsights28hrResponse = Schemas.Get2Insights28hrResponse;
 /**
- * Response for getAnalytics
+ * Response for getRepostedBy
+ * 
+ * @public
  */
-export interface GetAnalyticsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-}
-
+export type GetRepostedByResponse = Schemas.Get2TweetsIdRetweetedByResponse;
 /**
- * Request body for hideReply
+ * Request for hideReply
+ * 
+ * @public
  */
-export interface HideReplyRequest {
-  hidden?: boolean;
-}
-
+export type HideReplyRequest = Schemas.TweetHideRequest;
 /**
  * Response for hideReply
+ * 
+ * @public
  */
-export interface HideReplyResponse {
-  data?: Record<string, any>;
-}
-
+export type HideReplyResponse = Schemas.TweetHideResponse;
+/**
+ * Response for getAnalytics
+ * 
+ * @public
+ */
+export type GetAnalyticsResponse = Schemas.Analytics;
+/**
+ * Response for searchAll
+ * 
+ * @public
+ */
+export type SearchAllResponse = Schemas.Get2TweetsSearchAllResponse;
+/**
+ * Response for searchRecent
+ * 
+ * @public
+ */
+export type SearchRecentResponse = Schemas.Get2TweetsSearchRecentResponse;
+/**
+ * Response for getByIds
+ * 
+ * @public
+ */
+export type GetByIdsResponse = Schemas.Get2TweetsResponse;
+/**
+ * Request for create
+ * 
+ * @public
+ */
+export type CreateRequest = Schemas.TweetCreateRequest;
+/**
+ * Response for create
+ * 
+ * @public
+ */
+export type CreateResponse = Schemas.TweetCreateResponse;
+/**
+ * Response for getCountsAll
+ * 
+ * @public
+ */
+export type GetCountsAllResponse = Schemas.Get2TweetsCountsAllResponse;
 /**
  * Response for getLikingUsers
+ * 
+ * @public
  */
-export interface GetLikingUsersResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
+export type GetLikingUsersResponse = Schemas.Get2TweetsIdLikingUsersResponse;
+/**
+ * Response for getInsightsHistorical
+ * 
+ * @public
+ */
+export type GetInsightsHistoricalResponse = Schemas.Get2InsightsHistoricalResponse;
+/**
+ * Response for getReposts
+ * 
+ * @public
+ */
+export type GetRepostsResponse = Schemas.Get2TweetsIdRetweetsResponse;
+/**
+ * Response for getById
+ * 
+ * @public
+ */
+export type GetByIdResponse = Schemas.Get2TweetsIdResponse;
+/**
+ * Response for delete
+ * 
+ * @public
+ */
+export type DeleteResponse = Schemas.TweetDeleteResponse;
+/**
+ * Response for getCountsRecent
+ * 
+ * @public
+ */
+export type GetCountsRecentResponse = Schemas.Get2TweetsCountsRecentResponse;
+/**
+ * Response for getQuoted
+ * 
+ * @public
+ */
+export type GetQuotedResponse = Schemas.Get2TweetsIdQuoteTweetsResponse;

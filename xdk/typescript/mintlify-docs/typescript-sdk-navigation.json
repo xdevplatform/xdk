@@ -7,72 +7,176 @@
     "xdks/typescript/authentication",
     "xdks/typescript/pagination",
     "xdks/typescript/streaming",
-    "xdks/typescript/reference/Client",
     {
-      "group": "Core Features",
+      "group": "API Reference",
       "pages": [
-        "xdks/typescript/reference/Paginator"
-      ]
-    },
-    {
-      "group": "API Clients",
-      "pages": [
-        "xdks/typescript/reference/AccountActivityClient",
-        "xdks/typescript/reference/ActivityClient",
-        "xdks/typescript/reference/CommunitiesClient",
-        "xdks/typescript/reference/CommunityNotesClient",
-        "xdks/typescript/reference/ComplianceClient",
-        "xdks/typescript/reference/ConnectionsClient",
-        "xdks/typescript/reference/DirectMessagesClient",
-        "xdks/typescript/reference/GeneralClient",
-        "xdks/typescript/reference/HttpClient",
-        "xdks/typescript/reference/ListsClient",
-        "xdks/typescript/reference/MediaClient",
-        "xdks/typescript/reference/PostsClient",
-        "xdks/typescript/reference/SpacesClient",
-        "xdks/typescript/reference/TrendsClient",
-        "xdks/typescript/reference/UsageClient"
-      ]
-    },
-    {
-      "group": "Pagination",
-      "pages": [
-        "xdks/typescript/reference/EventPaginator",
-        "xdks/typescript/reference/PostPaginator",
-        "xdks/typescript/reference/UserPaginator"
-      ]
-    },
-    {
-      "group": "Streaming",
-      "pages": [
-        "xdks/typescript/reference/EventDrivenStream",
-        "xdks/typescript/reference/StreamClient",
-        "xdks/typescript/reference/ActivityStreamOptions",
-        "xdks/typescript/reference/ActivityStreamResponse",
-        "xdks/typescript/reference/StreamDataEvent",
-        "xdks/typescript/reference/StreamErrorEvent",
-        "xdks/typescript/reference/StreamGetRuleCountsResponse",
-        "xdks/typescript/reference/StreamGetRuleCountsStreamingOptions"
-      ]
-    },
-    {
-      "group": "Types & Interfaces",
-      "pages": [
-        "xdks/typescript/reference/ApiError",
-        "xdks/typescript/reference/AccountActivityCreateReplayJobResponse",
-        "xdks/typescript/reference/AccountActivityCreateSubscriptionOptions",
-        "xdks/typescript/reference/AccountActivityCreateSubscriptionRequest",
-        "xdks/typescript/reference/AccountActivityCreateSubscriptionResponse",
-        "xdks/typescript/reference/AccountActivityDeleteSubscriptionResponse",
-        "xdks/typescript/reference/AccountActivityGetSubscriptionCountResponse",
-        "xdks/typescript/reference/AccountActivityGetSubscriptionsResponse",
-        "xdks/typescript/reference/AccountActivityValidateSubscriptionResponse",
-        "xdks/typescript/reference/ActivityCreateSubscriptionOptions",
-        "xdks/typescript/reference/ActivityCreateSubscriptionRequest",
-        "xdks/typescript/reference/ActivityCreateSubscriptionResponse",
-        "xdks/typescript/reference/ActivityDeleteSubscriptionResponse",
-        "xdks/typescript/reference/ActivityGetSubscriptionsResponse",
-        "xdks/typescript/reference/ActivityUpdateSubscriptionOptions"
+        "xdks/typescript/reference/modules",
+        {
+          "group": "Interfaces",
+          "pages": [
+            {
+              "group": "Client",
+              "pages": [
+                "xdks/typescript/reference/interfaces/ClientConfig"
+              ]
+            },
+            {
+              "group": "Http",
+              "pages": [
+                "xdks/typescript/reference/interfaces/HttpClientRequestOptions",
+                "xdks/typescript/reference/interfaces/HttpResponse"
+              ]
+            },
+            {
+              "group": "Misc",
+              "pages": [
+                "xdks/typescript/reference/interfaces/ApiResponse",
+                "xdks/typescript/reference/interfaces/PaginatedResponse",
+                "xdks/typescript/reference/interfaces/PaginationMeta",
+                "xdks/typescript/reference/interfaces/RequestOptions"
+              ]
+            }
+          ]
+        },
+        {
+          "group": "Classes",
+          "pages": [
+            {
+              "group": "AccountActivity",
+              "pages": [
+                "xdks/typescript/reference/classes/AccountActivityClient"
+              ]
+            },
+            {
+              "group": "Activity",
+              "pages": [
+                "xdks/typescript/reference/classes/ActivityClient"
+              ]
+            },
+            {
+              "group": "Client",
+              "pages": [
+                "xdks/typescript/reference/classes/Client"
+              ]
+            },
+            {
+              "group": "Communities",
+              "pages": [
+                "xdks/typescript/reference/classes/CommunitiesClient"
+              ]
+            },
+            {
+              "group": "CommunityNotes",
+              "pages": [
+                "xdks/typescript/reference/classes/CommunityNotesClient"
+              ]
+            },
+            {
+              "group": "Compliance",
+              "pages": [
+                "xdks/typescript/reference/classes/ComplianceClient"
+              ]
+            },
+            {
+              "group": "Connections",
+              "pages": [
+                "xdks/typescript/reference/classes/ConnectionsClient"
+              ]
+            },
+            {
+              "group": "Core",
+              "pages": [
+                "xdks/typescript/reference/classes/ApiError"
+              ]
+            },
+            {
+              "group": "DirectMessages",
+              "pages": [
+                "xdks/typescript/reference/classes/DirectMessagesClient"
+              ]
+            },
+            {
+              "group": "General",
+              "pages": [
+                "xdks/typescript/reference/classes/GeneralClient"
+              ]
+            },
+            {
+              "group": "Http",
+              "pages": [
+                "xdks/typescript/reference/classes/HttpClient"
+              ]
+            },
+            {
+              "group": "Lists",
+              "pages": [
+                "xdks/typescript/reference/classes/ListsClient"
+              ]
+            },
+            {
+              "group": "Media",
+              "pages": [
+                "xdks/typescript/reference/classes/MediaClient"
+              ]
+            },
+            {
+              "group": "Pagination",
+              "pages": [
+                "xdks/typescript/reference/classes/EventPaginator",
+                "xdks/typescript/reference/classes/PostPaginator",
+                "xdks/typescript/reference/classes/UserPaginator"
+              ]
+            },
+            {
+              "group": "Paginator",
+              "pages": [
+                "xdks/typescript/reference/classes/Paginator"
+              ]
+            },
+            {
+              "group": "Posts",
+              "pages": [
+                "xdks/typescript/reference/classes/PostsClient"
+              ]
+            },
+            {
+              "group": "Spaces",
+              "pages": [
+                "xdks/typescript/reference/classes/SpacesClient"
+              ]
+            },
+            {
+              "group": "Stream",
+              "pages": [
+                "xdks/typescript/reference/classes/StreamClient"
+              ]
+            },
+            {
+              "group": "Trends",
+              "pages": [
+                "xdks/typescript/reference/classes/TrendsClient"
+              ]
+            },
+            {
+              "group": "Usage",
+              "pages": [
+                "xdks/typescript/reference/classes/UsageClient"
+              ]
+            },
+            {
+              "group": "Users",
+              "pages": [
+                "xdks/typescript/reference/classes/UsersClient"
+              ]
+            },
+            {
+              "group": "Webhooks",
+              "pages": [
+                "xdks/typescript/reference/classes/WebhooksClient"
+              ]
+            }
+          ]
+        }
       ]
     }
   ]

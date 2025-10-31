@@ -7,38 +7,18 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  GetByIdsResponse,
-  GetPostsResponse,
   GetByCreatorIdsResponse,
-  GetByIdResponse,
-  GetBuyersResponse,
   SearchResponse,
+  GetPostsResponse,
+  GetByIdResponse,
+  GetByIdsResponse,
+  GetBuyersResponse,
 } from './models.js';
 
 /**
- * Options for getByIds method
- */
-export interface GetByIdsStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getPosts method
- */
-export interface GetPostsStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
  * Options for getByCreatorIds method
+ * 
+ * @public
  */
 export interface GetByCreatorIdsStreamingOptions {
   /** Additional request options */
@@ -49,7 +29,35 @@ export interface GetByCreatorIdsStreamingOptions {
   signal?: AbortSignal;
 }
 /**
+ * Options for search method
+ * 
+ * @public
+ */
+export interface SearchStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getPosts method
+ * 
+ * @public
+ */
+export interface GetPostsStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
  * Options for getById method
+ * 
+ * @public
  */
 export interface GetByIdStreamingOptions {
   /** Additional request options */
@@ -60,9 +68,11 @@ export interface GetByIdStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for getBuyers method
+ * Options for getByIds method
+ * 
+ * @public
  */
-export interface GetBuyersStreamingOptions {
+export interface GetByIdsStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -71,9 +81,11 @@ export interface GetBuyersStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for search method
+ * Options for getBuyers method
+ * 
+ * @public
  */
-export interface SearchStreamingOptions {
+export interface GetBuyersStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -90,14 +102,14 @@ export class SpacesClient {
   }
 
   /**
-     * Get Spaces by IDs
-     * Retrieves details of multiple Spaces by their IDs.
+     * Get Spaces by creator IDs
+     * Retrieves details of Spaces created by specified User IDs.
      * 
      * @returns Promise with the API response
      */
-  async getByIds(
-    options: GetByIdsStreamingOptions = {}
-  ): Promise<GetByIdsResponse> {
+  async getByCreatorIds(
+    options: GetByCreatorIdsStreamingOptions = {}
+  ): Promise<GetByCreatorIdsResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -106,7 +118,7 @@ export class SpacesClient {
 
     requiredAuthTypes.push('OAuth2UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'getByIds');
+    this.client.validateAuthentication(requiredAuthTypes, 'getByCreatorIds');
 
     // Destructure options with defaults
 
@@ -116,7 +128,7 @@ export class SpacesClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/spaces`;
+    let path = `/2/spaces/by/creator_ids`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -130,7 +142,53 @@ export class SpacesClient {
     };
 
     // Make the request
-    return this.client.request<GetByIdsResponse>(
+    return this.client.request<GetByCreatorIdsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Search Spaces
+     * Retrieves a list of Spaces matching the specified search query.
+     * 
+     * @returns Promise with the API response
+     */
+  async search(options: SearchStreamingOptions = {}): Promise<SearchResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'search');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/spaces/search`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<SearchResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -186,54 +244,6 @@ export class SpacesClient {
   }
 
   /**
-     * Get Spaces by creator IDs
-     * Retrieves details of Spaces created by specified User IDs.
-     * 
-     * @returns Promise with the API response
-     */
-  async getByCreatorIds(
-    options: GetByCreatorIdsStreamingOptions = {}
-  ): Promise<GetByCreatorIdsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getByCreatorIds');
-
-    // Destructure options with defaults
-
-    const requestOptions = {};
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/spaces/by/creator_ids`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<GetByCreatorIdsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
      * Get space by ID
      * Retrieves details of a specific space by its ID.
      * 
@@ -282,6 +292,54 @@ export class SpacesClient {
   }
 
   /**
+     * Get Spaces by IDs
+     * Retrieves details of multiple Spaces by their IDs.
+     * 
+     * @returns Promise with the API response
+     */
+  async getByIds(
+    options: GetByIdsStreamingOptions = {}
+  ): Promise<GetByIdsResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getByIds');
+
+    // Destructure options with defaults
+
+    const requestOptions = {};
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/spaces`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<GetByIdsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
      * Get Space ticket buyers
      * Retrieves a list of Users who purchased tickets to a specific Space by its ID.
      * 
@@ -321,52 +379,6 @@ export class SpacesClient {
 
     // Make the request
     return this.client.request<GetBuyersResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Search Spaces
-     * Retrieves a list of Spaces matching the specified search query.
-     * 
-     * @returns Promise with the API response
-     */
-  async search(options: SearchStreamingOptions = {}): Promise<SearchResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'search');
-
-    // Destructure options with defaults
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/spaces/search`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<SearchResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

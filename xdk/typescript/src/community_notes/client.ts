@@ -12,17 +12,29 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
+  SearchWrittenResponse,
   DeleteResponse,
   SearchEligiblePostsResponse,
-  EvaluateRequest,
-  EvaluateResponse,
   CreateRequest,
   CreateResponse,
-  SearchWrittenResponse,
+  EvaluateRequest,
+  EvaluateResponse,
 } from './models.js';
 
 /**
+ * Options for searchWritten method
+ * 
+ * @public
+ */
+export interface SearchWrittenOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
  * Options for searchEligiblePosts method
+ * 
+ * @public
  */
 export interface SearchEligiblePostsOptions {
   /** Additional request options */
@@ -30,18 +42,9 @@ export interface SearchEligiblePostsOptions {
 }
 
 /**
- * Options for evaluate method
- */
-export interface EvaluateOptions {
-  /** Request body */
-  body?: EvaluateRequest;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
  * Options for create method
+ * 
+ * @public
  */
 export interface CreateOptions {
   /** Request body */
@@ -52,9 +55,14 @@ export interface CreateOptions {
 }
 
 /**
- * Options for searchWritten method
+ * Options for evaluate method
+ * 
+ * @public
  */
-export interface SearchWrittenOptions {
+export interface EvaluateOptions {
+  /** Request body */
+  body?: EvaluateRequest;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -78,6 +86,41 @@ export class CommunityNotesClient {
      */
   constructor(client: Client) {
     this.client = client;
+  }
+
+  /**
+   * Search for Community Notes Written
+   * Returns all the community notes written by the user.
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async searchWritten(
+    options: SearchWrittenOptions = {}
+  ): Promise<SearchWrittenResponse> {
+    // Destructure options
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build the path with path parameters
+    let path = '/2/notes/search/notes_written';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<SearchWrittenResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 
   /**
@@ -149,43 +192,6 @@ export class CommunityNotesClient {
   }
 
   /**
-   * Evaluate a Community Note
-   * Endpoint to evaluate a community note.
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async evaluate(options: EvaluateOptions = {}): Promise<EvaluateResponse> {
-    // Destructure options
-
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } = options;
-
-    // Build the path with path parameters
-    let path = '/2/evaluate_note';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...requestOptions,
-    };
-
-    return this.client.request<EvaluateResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
    * Create a Community Note
    * Creates a community note endpoint for LLM use case.
 
@@ -223,35 +229,37 @@ export class CommunityNotesClient {
   }
 
   /**
-   * Search for Community Notes Written
-   * Returns all the community notes written by the user.
-
-
+   * Evaluate a Community Note
+   * Endpoint to evaluate a community note.
 
 
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async searchWritten(
-    options: SearchWrittenOptions = {}
-  ): Promise<SearchWrittenResponse> {
+  async evaluate(options: EvaluateOptions = {}): Promise<EvaluateResponse> {
     // Destructure options
 
-    const { requestOptions: requestOptions = {} } = options;
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = options;
 
     // Build the path with path parameters
-    let path = '/2/notes/search/notes_written';
+    let path = '/2/evaluate_note';
 
     // Build query parameters
     const params = new URLSearchParams();
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
       ...requestOptions,
     };
 
-    return this.client.request<SearchWrittenResponse>(
-      'GET',
+    return this.client.request<EvaluateResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

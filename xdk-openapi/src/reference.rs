@@ -63,16 +63,22 @@ impl<T: Clone + Any> RefOrValue<T> {
     }
 }
 // Custom Serialize for RefOrValue
+// For references, we serialize both the $ref and resolved value so templates have both
 impl<T: Clone + Serialize + Any> Serialize for RefOrValue<T> {
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
         S: Serializer,
     {
-        match self.try_resolve() {
-            Ok(rc_value) => rc_value.as_ref().serialize(serializer),
-            Err(e) => Err(serde::ser::Error::custom(format!(
-                "Failed to resolve reference during serialization: {e:?}"
-            ))),
+        match self {
+            RefOrValue::Reference { path, .. } => {
+                // Preserve the reference path so templates can extract type names
+                // Templates will use the schema name from the $ref path
+                use serde::ser::SerializeMap;
+                let mut map = serializer.serialize_map(Some(1))?;
+                map.serialize_entry("$ref", path)?;
+                map.end()
+            }
+            RefOrValue::Value(value) => value.serialize(serializer),
         }
     }
 }

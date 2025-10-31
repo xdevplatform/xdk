@@ -1,19 +1,21 @@
 /**
  * Models for trends operations
  */
+import type * as Schemas from '../schemas.js';
+
+
+
+
 
 /**
  * Response for getPersonalized
+ * 
+ * @public
  */
-export interface GetPersonalizedResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-}
-
+export type GetPersonalizedResponse = Schemas.Get2UsersPersonalizedTrendsResponse;
 /**
  * Response for getByWoeid
+ * 
+ * @public
  */
-export interface GetByWoeidResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-}
+export type GetByWoeidResponse = Schemas.Get2TrendsByWoeidWoeidResponse;

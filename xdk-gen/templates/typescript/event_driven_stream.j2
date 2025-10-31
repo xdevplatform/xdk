@@ -28,7 +28,14 @@ export interface StreamErrorEvent {
   status?: number;
 }
 
-// Event-driven stream class
+/**
+ * Event-driven stream class for handling streaming data from the X API.
+ * 
+ * This class provides an event-driven interface for working with streaming endpoints,
+ * allowing you to listen to 'data', 'keepAlive', 'error', and 'close' events.
+ * 
+ * @public
+ */
 export class EventDrivenStream {
   private webStream: ReadableStream<Uint8Array> | null = null;
   private reader: ReadableStreamDefaultReader<Uint8Array> | null = null;

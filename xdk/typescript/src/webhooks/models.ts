@@ -1,73 +1,57 @@
 /**
  * Models for webhooks operations
  */
+import type * as Schemas from '../schemas.js';
 
-/**
- * Response for createStreamLink
- */
-export interface CreateStreamLinkResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
 
-/**
- * Response for deleteStreamLink
- */
-export interface DeleteStreamLinkResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
 
-/**
- * Response for getStreamLinks
- */
-export interface GetStreamLinksResponse {
-  /** The list of active webhook links for a given stream */
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
 
-/**
- * Response for get
- */
-export interface GetResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for create
- */
-export interface CreateRequest {
-  url?: string;
-}
-
-/**
- * Response for create
- * A Webhook Configuration
- */
-export interface CreateResponse {
-  createdAt?: string;
-  /** The unique identifier of this webhook config. */
-  id?: string;
-  /** The callback URL of the webhook. */
-  url?: string;
-  valid?: boolean;
-}
 
 /**
  * Response for validate
+ * 
+ * @public
  */
-export interface ValidateResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
+export type ValidateResponse = Schemas.WebhookConfigPutResponse;
 /**
  * Response for delete
+ * 
+ * @public
  */
-export interface DeleteResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
+export type DeleteResponse = Schemas.WebhookConfigDeleteResponse;
+/**
+ * Response for getStreamLinks
+ * 
+ * @public
+ */
+export type GetStreamLinksResponse = Schemas.WebhookLinksGetResponse;
+/**
+ * Response for get
+ * 
+ * @public
+ */
+export type GetResponse = Schemas.Get2WebhooksResponse;
+/**
+ * Request for create
+ * 
+ * @public
+ */
+export type CreateRequest = Schemas.WebhookConfigCreateRequest;
+/**
+ * Response for create
+ * 
+ * @public
+ */
+export type CreateResponse = Schemas.WebhookConfigCreateResponse;
+/**
+ * Response for createStreamLink
+ * 
+ * @public
+ */
+export type CreateStreamLinkResponse = Schemas.WebhookLinksCreateResponse;
+/**
+ * Response for deleteStreamLink
+ * 
+ * @public
+ */
+export type DeleteStreamLinkResponse = Schemas.WebhookLinksDeleteResponse;

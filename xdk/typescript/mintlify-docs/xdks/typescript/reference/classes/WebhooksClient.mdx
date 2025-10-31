@@ -1,0 +1,177 @@
+---
+title: "WebhooksClient"
+sidebarTitle: "WebhooksClient"
+---
+
+Client for webhooks operations
+
+This client provides methods for interacting with the webhooks endpoints
+of the X API. It handles authentication, request formatting, and response
+parsing for all webhooks related operations.
+
+## Constructors
+
+### constructor
+
+• **new WebhooksClient**(`client`): [`WebhooksClient`](/xdks/typescript/reference/classes/WebhooksClient)
+
+Creates a new webhooks client instance
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `client` | [`Client`](/xdks/typescript/reference/classes/Client) | The main X API client instance |
+
+#### Returns
+
+[`WebhooksClient`](/xdks/typescript/reference/classes/WebhooksClient)
+
+#### Defined in
+
+[webhooks/client.ts:65](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L65)
+
+## Methods
+
+### validate
+
+▸ **validate**(): `Promise`\<`any`\>
+
+Validate webhook
+Triggers a CRC check for a given webhook.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[webhooks/client.ts:79](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L79)
+
+___
+
+### delete
+
+▸ **delete**(): `Promise`\<`any`\>
+
+Delete webhook
+Deletes an existing webhook configuration.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[webhooks/client.ts:112](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L112)
+
+___
+
+### getStreamLinks
+
+▸ **getStreamLinks**(): `Promise`\<`any`\>
+
+Get stream links
+Get a list of webhook links associated with a filtered stream ruleset.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[webhooks/client.ts:143](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L143)
+
+___
+
+### get
+
+▸ **get**(): `Promise`\<`any`\>
+
+Get webhook
+Get a list of webhook configs associated with a client app.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[webhooks/client.ts:174](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L174)
+
+___
+
+### create
+
+▸ **create**(`options?`): `Promise`\<`any`\>
+
+Create webhook
+Creates a new webhook configuration.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `CreateOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[webhooks/client.ts:205](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L205)
+
+___
+
+### createStreamLink
+
+▸ **createStreamLink**(`options?`): `Promise`\<`any`\>
+
+Create stream link
+Creates a link to deliver FilteredStream events to the given webhook.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `CreateStreamLinkOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[webhooks/client.ts:244](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L244)
+
+___
+
+### deleteStreamLink
+
+▸ **deleteStreamLink**(): `Promise`\<`any`\>
+
+Delete stream link
+Deletes a link from FilteredStream events to the given webhook.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[webhooks/client.ts:279](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L279)

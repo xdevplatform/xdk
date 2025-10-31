@@ -1,95 +1,75 @@
 /**
  * Models for direct messages operations
  */
+import type * as Schemas from '../schemas.js';
 
-/**
- * Response for getEventsByConversationId
- */
-export interface GetEventsByConversationIdResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
+
+
+
 
 /**
  * Response for getEventsByParticipantId
+ * 
+ * @public
  */
-export interface GetEventsByParticipantIdResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
+export type GetEventsByParticipantIdResponse = Schemas.Get2DmConversationsWithParticipantIdDmEventsResponse;
 /**
- * Response for getEventsById
+ * Request for createByParticipantId
+ * 
+ * @public
  */
-export interface GetEventsByIdResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for deleteEvents
- */
-export interface DeleteEventsResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getEvents
- */
-export interface GetEventsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for createByParticipantId
- */
-export interface CreateByParticipantIdRequest {}
-
+export type CreateByParticipantIdRequest = Schemas.CreateMessageRequest;
 /**
  * Response for createByParticipantId
+ * 
+ * @public
  */
-export interface CreateByParticipantIdResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
+export type CreateByParticipantIdResponse = Schemas.CreateDmEventResponse;
 /**
- * Request body for createConversation
+ * Response for getEventsById
+ * 
+ * @public
  */
-export interface CreateConversationRequest {
-  /** The conversation type that is being created. */
-  conversationType?: string;
-  message?: any;
-  /** Participants for the DM Conversation. */
-  participantIds?: Array<any>;
-}
-
+export type GetEventsByIdResponse = Schemas.Get2DmEventsEventIdResponse;
 /**
- * Response for createConversation
+ * Response for deleteEvents
+ * 
+ * @public
  */
-export interface CreateConversationResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
+export type DeleteEventsResponse = Schemas.DeleteDmResponse;
 /**
- * Request body for createByConversationId
+ * Request for createByConversationId
+ * 
+ * @public
  */
-export interface CreateByConversationIdRequest {}
-
+export type CreateByConversationIdRequest = Schemas.CreateMessageRequest;
 /**
  * Response for createByConversationId
+ * 
+ * @public
  */
-export interface CreateByConversationIdResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
+export type CreateByConversationIdResponse = Schemas.CreateDmEventResponse;
+/**
+ * Request for createConversation
+ * 
+ * @public
+ */
+export type CreateConversationRequest = Schemas.CreateDmConversationRequest;
+/**
+ * Response for createConversation
+ * 
+ * @public
+ */
+export type CreateConversationResponse = Schemas.CreateDmEventResponse;
+/**
+ * Response for getEventsByConversationId
+ * 
+ * @public
+ */
+export type GetEventsByConversationIdResponse = Schemas.Get2DmConversationsIdDmEventsResponse;
+/**
+ * Response for getEvents
+ * 
+ * @public
+ */
+export type GetEventsResponse = Schemas.Get2DmEventsResponse;

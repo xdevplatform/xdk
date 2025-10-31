@@ -1,0 +1,76 @@
+---
+title: "CommunitiesClient"
+sidebarTitle: "CommunitiesClient"
+---
+
+Client for communities operations
+
+This client provides methods for interacting with the communities endpoints
+of the X API. It handles authentication, request formatting, and response
+parsing for all communities related operations.
+
+## Constructors
+
+### constructor
+
+• **new CommunitiesClient**(`client`): [`CommunitiesClient`](/xdks/typescript/reference/classes/CommunitiesClient)
+
+Creates a new communities client instance
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `client` | [`Client`](/xdks/typescript/reference/classes/Client) | The main X API client instance |
+
+#### Returns
+
+[`CommunitiesClient`](/xdks/typescript/reference/classes/CommunitiesClient)
+
+#### Defined in
+
+[communities/client.ts:43](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/communities/client.ts#L43)
+
+## Methods
+
+### getById
+
+▸ **getById**(): `Promise`\<`any`\>
+
+Get Community by ID
+Retrieves details of a specific Community by its ID.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[communities/client.ts:57](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/communities/client.ts#L57)
+
+___
+
+### search
+
+▸ **search**(`options?`): `Promise`\<`any`\>
+
+Search Communities
+Retrieves a list of Communities matching the specified search query.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `SearchOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[communities/client.ts:90](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/communities/client.ts#L90)

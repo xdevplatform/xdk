@@ -62,39 +62,39 @@ export type { StreamListener, TweetStreamListener } from './stream_listener.js';
 
 // Client modules (only export client classes to avoid duplicate type names)
 
-export { GeneralClient } from './general/client.js';
-
-export { TrendsClient } from './trends/client.js';
-
-export { UsageClient } from './usage/client.js';
-
 export { PostsClient } from './posts/client.js';
-
-export { WebhooksClient } from './webhooks/client.js';
 
 export { ActivityClient } from './activity/client.js';
 
+export { UsageClient } from './usage/client.js';
+
+export { UsersClient } from './users/client.js';
+
 export { SpacesClient } from './spaces/client.js';
 
-export { StreamClient } from './stream/client.js';
-
-export { CommunityNotesClient } from './community_notes/client.js';
-
-export { MediaClient } from './media/client.js';
-
-export { AccountActivityClient } from './account_activity/client.js';
+export { GeneralClient } from './general/client.js';
 
 export { ConnectionsClient } from './connections/client.js';
 
+export { CommunityNotesClient } from './community_notes/client.js';
+
+export { TrendsClient } from './trends/client.js';
+
+export { ListsClient } from './lists/client.js';
+
 export { DirectMessagesClient } from './direct_messages/client.js';
+
+export { WebhooksClient } from './webhooks/client.js';
+
+export { StreamClient } from './stream/client.js';
+
+export { AccountActivityClient } from './account_activity/client.js';
 
 export { CommunitiesClient } from './communities/client.js';
 
 export { ComplianceClient } from './compliance/client.js';
 
-export { ListsClient } from './lists/client.js';
-
-export { UsersClient } from './users/client.js';
+export { MediaClient } from './media/client.js';
 
 
 // Utilities

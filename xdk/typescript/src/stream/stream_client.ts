@@ -8,26 +8,28 @@ import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
   PostsSampleResponse,
-  PostsSample10Response,
-  GetRuleCountsResponse,
   PostsFirehoseEnResponse,
-  PostsResponse,
+  PostsSample10Response,
+  LikesFirehoseResponse,
+  GetRuleCountsResponse,
   LikesSample10Response,
+  PostsFirehoseResponse,
   PostsFirehoseKoResponse,
-  PostsComplianceResponse,
-  UsersComplianceResponse,
-  PostsFirehoseJaResponse,
   GetRulesResponse,
   UpdateRulesResponse,
-  PostsFirehosePtResponse,
-  LikesFirehoseResponse,
-  PostsFirehoseResponse,
-  LikesComplianceResponse,
   LabelsComplianceResponse,
+  PostsComplianceResponse,
+  UsersComplianceResponse,
+  PostsResponse,
+  LikesComplianceResponse,
+  PostsFirehosePtResponse,
+  PostsFirehoseJaResponse,
 } from './models.js';
 
 /**
  * Options for postsSample method
+ * 
+ * @public
  */
 export interface PostsSampleStreamingOptions {
   /** Additional request options */
@@ -38,29 +40,9 @@ export interface PostsSampleStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for postsSample10 method
- */
-export interface PostsSample10StreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getRuleCounts method
- */
-export interface GetRuleCountsStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
  * Options for postsFirehoseEn method
+ * 
+ * @public
  */
 export interface PostsFirehoseEnStreamingOptions {
   /** Additional request options */
@@ -71,9 +53,37 @@ export interface PostsFirehoseEnStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for posts method
+ * Options for postsSample10 method
+ * 
+ * @public
  */
-export interface PostsStreamingOptions {
+export interface PostsSample10StreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for likesFirehose method
+ * 
+ * @public
+ */
+export interface LikesFirehoseStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getRuleCounts method
+ * 
+ * @public
+ */
+export interface GetRuleCountsStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -83,6 +93,8 @@ export interface PostsStreamingOptions {
 }
 /**
  * Options for likesSample10 method
+ * 
+ * @public
  */
 export interface LikesSample10StreamingOptions {
   /** Additional request options */
@@ -93,7 +105,22 @@ export interface LikesSample10StreamingOptions {
   signal?: AbortSignal;
 }
 /**
+ * Options for postsFirehose method
+ * 
+ * @public
+ */
+export interface PostsFirehoseStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
  * Options for postsFirehoseKo method
+ * 
+ * @public
  */
 export interface PostsFirehoseKoStreamingOptions {
   /** Additional request options */
@@ -104,40 +131,9 @@ export interface PostsFirehoseKoStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for postsCompliance method
- */
-export interface PostsComplianceStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for usersCompliance method
- */
-export interface UsersComplianceStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for postsFirehoseJa method
- */
-export interface PostsFirehoseJaStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
  * Options for getRules method
+ * 
+ * @public
  */
 export interface GetRulesStreamingOptions {
   /** Additional request options */
@@ -149,6 +145,8 @@ export interface GetRulesStreamingOptions {
 }
 /**
  * Options for updateRules method
+ * 
+ * @public
  */
 export interface UpdateRulesStreamingOptions {
   /** Additional request options */
@@ -159,9 +157,11 @@ export interface UpdateRulesStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for postsFirehosePt method
+ * Options for labelsCompliance method
+ * 
+ * @public
  */
-export interface PostsFirehosePtStreamingOptions {
+export interface LabelsComplianceStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -170,9 +170,11 @@ export interface PostsFirehosePtStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for likesFirehose method
+ * Options for postsCompliance method
+ * 
+ * @public
  */
-export interface LikesFirehoseStreamingOptions {
+export interface PostsComplianceStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -181,9 +183,24 @@ export interface LikesFirehoseStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for postsFirehose method
+ * Options for usersCompliance method
+ * 
+ * @public
  */
-export interface PostsFirehoseStreamingOptions {
+export interface UsersComplianceStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for posts method
+ * 
+ * @public
+ */
+export interface PostsStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -193,6 +210,8 @@ export interface PostsFirehoseStreamingOptions {
 }
 /**
  * Options for likesCompliance method
+ * 
+ * @public
  */
 export interface LikesComplianceStreamingOptions {
   /** Additional request options */
@@ -203,9 +222,24 @@ export interface LikesComplianceStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for labelsCompliance method
+ * Options for postsFirehosePt method
+ * 
+ * @public
  */
-export interface LabelsComplianceStreamingOptions {
+export interface PostsFirehosePtStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for postsFirehoseJa method
+ * 
+ * @public
+ */
+export interface PostsFirehoseJaStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -251,69 +285,6 @@ export class StreamClient {
     // We need raw: true to get the raw Response object for streaming
     const url =
       '/2/tweets/sample/stream' +
-      (params.toString() ? `?${params.toString()}` : '');
-
-    // For streaming requests, we don't want to timeout the initial connection
-    // Instead, we'll handle timeouts at the stream level
-    const response = (await this.client.request('GET', url, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-
-      signal: options.signal,
-      raw: true, // Get raw Response object for streaming
-      timeout: 0, // Disable timeout for streaming requests
-      ...options,
-    })) as Response;
-
-    // Handle errors
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-
-    // Return the readable stream
-    // The response.body is the actual ReadableStream for streaming
-    if (!response.body) {
-      throw new Error('Response body is not available for streaming');
-    }
-
-    // Wrap the ReadableStream in an event-driven interface
-    const eventStream = new EventDrivenStream();
-    await eventStream.connect(response.body);
-    return eventStream;
-  }
-
-  /**
-     * Stream 10% sampled Posts
-     * Streams a 10% sample of public Posts in real-time.
-     * 
-     * Returns an event-driven stream that's easy to use.
-     * Use .on() to listen for events like 'data', 'error', 'close'.
-     * Also supports async iteration with for await...of.
-     */
-  async postsSample10(
-    options: PostsSample10StreamingOptions = {}
-  ): Promise<EventDrivenStream> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'postsSample10');
-
-    // Destructure options with defaults
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Make the authenticated request using the main client's request method
-    // We need raw: true to get the raw Response object for streaming
-    const url =
-      '/2/tweets/sample10/stream' +
       (params.toString() ? `?${params.toString()}` : '');
 
     // For streaming requests, we don't want to timeout the initial connection
@@ -411,21 +382,23 @@ export class StreamClient {
   }
 
   /**
-     * Stream filtered Posts
-     * Streams Posts in real-time matching the active rule set.
+     * Stream 10% sampled Posts
+     * Streams a 10% sample of public Posts in real-time.
      * 
      * Returns an event-driven stream that's easy to use.
      * Use .on() to listen for events like 'data', 'error', 'close'.
      * Also supports async iteration with for await...of.
      */
-  async posts(options: PostsStreamingOptions = {}): Promise<EventDrivenStream> {
+  async postsSample10(
+    options: PostsSample10StreamingOptions = {}
+  ): Promise<EventDrivenStream> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
 
     requiredAuthTypes.push('BearerToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'posts');
+    this.client.validateAuthentication(requiredAuthTypes, 'postsSample10');
 
     // Destructure options with defaults
 
@@ -437,7 +410,70 @@ export class StreamClient {
     // Make the authenticated request using the main client's request method
     // We need raw: true to get the raw Response object for streaming
     const url =
-      '/2/tweets/search/stream' +
+      '/2/tweets/sample10/stream' +
+      (params.toString() ? `?${params.toString()}` : '');
+
+    // For streaming requests, we don't want to timeout the initial connection
+    // Instead, we'll handle timeouts at the stream level
+    const response = (await this.client.request('GET', url, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+
+      signal: options.signal,
+      raw: true, // Get raw Response object for streaming
+      timeout: 0, // Disable timeout for streaming requests
+      ...options,
+    })) as Response;
+
+    // Handle errors
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    // Return the readable stream
+    // The response.body is the actual ReadableStream for streaming
+    if (!response.body) {
+      throw new Error('Response body is not available for streaming');
+    }
+
+    // Wrap the ReadableStream in an event-driven interface
+    const eventStream = new EventDrivenStream();
+    await eventStream.connect(response.body);
+    return eventStream;
+  }
+
+  /**
+     * Stream all Likes
+     * Streams all public Likes in real-time.
+     * 
+     * Returns an event-driven stream that's easy to use.
+     * Use .on() to listen for events like 'data', 'error', 'close'.
+     * Also supports async iteration with for await...of.
+     */
+  async likesFirehose(
+    options: LikesFirehoseStreamingOptions = {}
+  ): Promise<EventDrivenStream> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'likesFirehose');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Make the authenticated request using the main client's request method
+    // We need raw: true to get the raw Response object for streaming
+    const url =
+      '/2/likes/firehose/stream' +
       (params.toString() ? `?${params.toString()}` : '');
 
     // For streaming requests, we don't want to timeout the initial connection
@@ -535,6 +571,69 @@ export class StreamClient {
   }
 
   /**
+     * Stream all Posts
+     * Streams all public Posts in real-time.
+     * 
+     * Returns an event-driven stream that's easy to use.
+     * Use .on() to listen for events like 'data', 'error', 'close'.
+     * Also supports async iteration with for await...of.
+     */
+  async postsFirehose(
+    options: PostsFirehoseStreamingOptions = {}
+  ): Promise<EventDrivenStream> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'postsFirehose');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Make the authenticated request using the main client's request method
+    // We need raw: true to get the raw Response object for streaming
+    const url =
+      '/2/tweets/firehose/stream' +
+      (params.toString() ? `?${params.toString()}` : '');
+
+    // For streaming requests, we don't want to timeout the initial connection
+    // Instead, we'll handle timeouts at the stream level
+    const response = (await this.client.request('GET', url, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+
+      signal: options.signal,
+      raw: true, // Get raw Response object for streaming
+      timeout: 0, // Disable timeout for streaming requests
+      ...options,
+    })) as Response;
+
+    // Handle errors
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    // Return the readable stream
+    // The response.body is the actual ReadableStream for streaming
+    if (!response.body) {
+      throw new Error('Response body is not available for streaming');
+    }
+
+    // Wrap the ReadableStream in an event-driven interface
+    const eventStream = new EventDrivenStream();
+    await eventStream.connect(response.body);
+    return eventStream;
+  }
+
+  /**
      * Stream Korean Posts
      * Streams all public Korean-language Posts in real-time.
      * 
@@ -564,6 +663,69 @@ export class StreamClient {
     // We need raw: true to get the raw Response object for streaming
     const url =
       '/2/tweets/firehose/stream/lang/ko' +
+      (params.toString() ? `?${params.toString()}` : '');
+
+    // For streaming requests, we don't want to timeout the initial connection
+    // Instead, we'll handle timeouts at the stream level
+    const response = (await this.client.request('GET', url, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+
+      signal: options.signal,
+      raw: true, // Get raw Response object for streaming
+      timeout: 0, // Disable timeout for streaming requests
+      ...options,
+    })) as Response;
+
+    // Handle errors
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    // Return the readable stream
+    // The response.body is the actual ReadableStream for streaming
+    if (!response.body) {
+      throw new Error('Response body is not available for streaming');
+    }
+
+    // Wrap the ReadableStream in an event-driven interface
+    const eventStream = new EventDrivenStream();
+    await eventStream.connect(response.body);
+    return eventStream;
+  }
+
+  /**
+     * Stream Post labels
+     * Streams all labeling events applied to Posts.
+     * 
+     * Returns an event-driven stream that's easy to use.
+     * Use .on() to listen for events like 'data', 'error', 'close'.
+     * Also supports async iteration with for await...of.
+     */
+  async labelsCompliance(
+    options: LabelsComplianceStreamingOptions = {}
+  ): Promise<EventDrivenStream> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'labelsCompliance');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Make the authenticated request using the main client's request method
+    // We need raw: true to get the raw Response object for streaming
+    const url =
+      '/2/tweets/label/stream' +
       (params.toString() ? `?${params.toString()}` : '');
 
     // For streaming requests, we don't want to timeout the initial connection
@@ -724,23 +886,21 @@ export class StreamClient {
   }
 
   /**
-     * Stream Japanese Posts
-     * Streams all public Japanese-language Posts in real-time.
+     * Stream filtered Posts
+     * Streams Posts in real-time matching the active rule set.
      * 
      * Returns an event-driven stream that's easy to use.
      * Use .on() to listen for events like 'data', 'error', 'close'.
      * Also supports async iteration with for await...of.
      */
-  async postsFirehoseJa(
-    options: PostsFirehoseJaStreamingOptions = {}
-  ): Promise<EventDrivenStream> {
+  async posts(options: PostsStreamingOptions = {}): Promise<EventDrivenStream> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
 
     requiredAuthTypes.push('BearerToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'postsFirehoseJa');
+    this.client.validateAuthentication(requiredAuthTypes, 'posts');
 
     // Destructure options with defaults
 
@@ -752,196 +912,7 @@ export class StreamClient {
     // Make the authenticated request using the main client's request method
     // We need raw: true to get the raw Response object for streaming
     const url =
-      '/2/tweets/firehose/stream/lang/ja' +
-      (params.toString() ? `?${params.toString()}` : '');
-
-    // For streaming requests, we don't want to timeout the initial connection
-    // Instead, we'll handle timeouts at the stream level
-    const response = (await this.client.request('GET', url, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-
-      signal: options.signal,
-      raw: true, // Get raw Response object for streaming
-      timeout: 0, // Disable timeout for streaming requests
-      ...options,
-    })) as Response;
-
-    // Handle errors
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-
-    // Return the readable stream
-    // The response.body is the actual ReadableStream for streaming
-    if (!response.body) {
-      throw new Error('Response body is not available for streaming');
-    }
-
-    // Wrap the ReadableStream in an event-driven interface
-    const eventStream = new EventDrivenStream();
-    await eventStream.connect(response.body);
-    return eventStream;
-  }
-
-  /**
-     * Stream Portuguese Posts
-     * Streams all public Portuguese-language Posts in real-time.
-     * 
-     * Returns an event-driven stream that's easy to use.
-     * Use .on() to listen for events like 'data', 'error', 'close'.
-     * Also supports async iteration with for await...of.
-     */
-  async postsFirehosePt(
-    options: PostsFirehosePtStreamingOptions = {}
-  ): Promise<EventDrivenStream> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'postsFirehosePt');
-
-    // Destructure options with defaults
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Make the authenticated request using the main client's request method
-    // We need raw: true to get the raw Response object for streaming
-    const url =
-      '/2/tweets/firehose/stream/lang/pt' +
-      (params.toString() ? `?${params.toString()}` : '');
-
-    // For streaming requests, we don't want to timeout the initial connection
-    // Instead, we'll handle timeouts at the stream level
-    const response = (await this.client.request('GET', url, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-
-      signal: options.signal,
-      raw: true, // Get raw Response object for streaming
-      timeout: 0, // Disable timeout for streaming requests
-      ...options,
-    })) as Response;
-
-    // Handle errors
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-
-    // Return the readable stream
-    // The response.body is the actual ReadableStream for streaming
-    if (!response.body) {
-      throw new Error('Response body is not available for streaming');
-    }
-
-    // Wrap the ReadableStream in an event-driven interface
-    const eventStream = new EventDrivenStream();
-    await eventStream.connect(response.body);
-    return eventStream;
-  }
-
-  /**
-     * Stream all Likes
-     * Streams all public Likes in real-time.
-     * 
-     * Returns an event-driven stream that's easy to use.
-     * Use .on() to listen for events like 'data', 'error', 'close'.
-     * Also supports async iteration with for await...of.
-     */
-  async likesFirehose(
-    options: LikesFirehoseStreamingOptions = {}
-  ): Promise<EventDrivenStream> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'likesFirehose');
-
-    // Destructure options with defaults
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Make the authenticated request using the main client's request method
-    // We need raw: true to get the raw Response object for streaming
-    const url =
-      '/2/likes/firehose/stream' +
-      (params.toString() ? `?${params.toString()}` : '');
-
-    // For streaming requests, we don't want to timeout the initial connection
-    // Instead, we'll handle timeouts at the stream level
-    const response = (await this.client.request('GET', url, {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-
-      signal: options.signal,
-      raw: true, // Get raw Response object for streaming
-      timeout: 0, // Disable timeout for streaming requests
-      ...options,
-    })) as Response;
-
-    // Handle errors
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-
-    // Return the readable stream
-    // The response.body is the actual ReadableStream for streaming
-    if (!response.body) {
-      throw new Error('Response body is not available for streaming');
-    }
-
-    // Wrap the ReadableStream in an event-driven interface
-    const eventStream = new EventDrivenStream();
-    await eventStream.connect(response.body);
-    return eventStream;
-  }
-
-  /**
-     * Stream all Posts
-     * Streams all public Posts in real-time.
-     * 
-     * Returns an event-driven stream that's easy to use.
-     * Use .on() to listen for events like 'data', 'error', 'close'.
-     * Also supports async iteration with for await...of.
-     */
-  async postsFirehose(
-    options: PostsFirehoseStreamingOptions = {}
-  ): Promise<EventDrivenStream> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'postsFirehose');
-
-    // Destructure options with defaults
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Make the authenticated request using the main client's request method
-    // We need raw: true to get the raw Response object for streaming
-    const url =
-      '/2/tweets/firehose/stream' +
+      '/2/tweets/search/stream' +
       (params.toString() ? `?${params.toString()}` : '');
 
     // For streaming requests, we don't want to timeout the initial connection
@@ -1039,15 +1010,15 @@ export class StreamClient {
   }
 
   /**
-     * Stream Post labels
-     * Streams all labeling events applied to Posts.
+     * Stream Portuguese Posts
+     * Streams all public Portuguese-language Posts in real-time.
      * 
      * Returns an event-driven stream that's easy to use.
      * Use .on() to listen for events like 'data', 'error', 'close'.
      * Also supports async iteration with for await...of.
      */
-  async labelsCompliance(
-    options: LabelsComplianceStreamingOptions = {}
+  async postsFirehosePt(
+    options: PostsFirehosePtStreamingOptions = {}
   ): Promise<EventDrivenStream> {
     // Validate authentication requirements
 
@@ -1055,7 +1026,7 @@ export class StreamClient {
 
     requiredAuthTypes.push('BearerToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'labelsCompliance');
+    this.client.validateAuthentication(requiredAuthTypes, 'postsFirehosePt');
 
     // Destructure options with defaults
 
@@ -1067,7 +1038,70 @@ export class StreamClient {
     // Make the authenticated request using the main client's request method
     // We need raw: true to get the raw Response object for streaming
     const url =
-      '/2/tweets/label/stream' +
+      '/2/tweets/firehose/stream/lang/pt' +
+      (params.toString() ? `?${params.toString()}` : '');
+
+    // For streaming requests, we don't want to timeout the initial connection
+    // Instead, we'll handle timeouts at the stream level
+    const response = (await this.client.request('GET', url, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+
+      signal: options.signal,
+      raw: true, // Get raw Response object for streaming
+      timeout: 0, // Disable timeout for streaming requests
+      ...options,
+    })) as Response;
+
+    // Handle errors
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    // Return the readable stream
+    // The response.body is the actual ReadableStream for streaming
+    if (!response.body) {
+      throw new Error('Response body is not available for streaming');
+    }
+
+    // Wrap the ReadableStream in an event-driven interface
+    const eventStream = new EventDrivenStream();
+    await eventStream.connect(response.body);
+    return eventStream;
+  }
+
+  /**
+     * Stream Japanese Posts
+     * Streams all public Japanese-language Posts in real-time.
+     * 
+     * Returns an event-driven stream that's easy to use.
+     * Use .on() to listen for events like 'data', 'error', 'close'.
+     * Also supports async iteration with for await...of.
+     */
+  async postsFirehoseJa(
+    options: PostsFirehoseJaStreamingOptions = {}
+  ): Promise<EventDrivenStream> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'postsFirehoseJa');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Make the authenticated request using the main client's request method
+    // We need raw: true to get the raw Response object for streaming
+    const url =
+      '/2/tweets/firehose/stream/lang/ja' +
       (params.toString() ? `?${params.toString()}` : '');
 
     // For streaming requests, we don't want to timeout the initial connection

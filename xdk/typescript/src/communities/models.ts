@@ -1,21 +1,21 @@
 /**
  * Models for communities operations
  */
+import type * as Schemas from '../schemas.js';
 
-/**
- * Response for search
- */
-export interface SearchResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
+
+
+
 
 /**
  * Response for getById
+ * 
+ * @public
  */
-export interface GetByIdResponse {
-  /** A X Community is a curated group of Posts. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
+export type GetByIdResponse = Schemas.Get2CommunitiesIdResponse;
+/**
+ * Response for search
+ * 
+ * @public
+ */
+export type SearchResponse = Schemas.Get2CommunitiesSearchResponse;

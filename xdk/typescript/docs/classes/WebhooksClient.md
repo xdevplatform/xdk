@@ -2,11 +2,11 @@
 
 # Class: WebhooksClient
 
-Client for Webhooks operations
+Client for webhooks operations
 
-This client provides methods for interacting with the Webhooks endpoints
+This client provides methods for interacting with the webhooks endpoints
 of the X API. It handles authentication, request formatting, and response
-parsing for all Webhooks related operations.
+parsing for all webhooks related operations.
 
 ## Table of contents
 
@@ -18,9 +18,9 @@ parsing for all Webhooks related operations.
 
 - [validate](WebhooksClient.md#validate)
 - [delete](WebhooksClient.md#delete)
+- [getStreamLinks](WebhooksClient.md#getstreamlinks)
 - [get](WebhooksClient.md#get)
 - [create](WebhooksClient.md#create)
-- [getStreamLinks](WebhooksClient.md#getstreamlinks)
 - [createStreamLink](WebhooksClient.md#createstreamlink)
 - [deleteStreamLink](WebhooksClient.md#deletestreamlink)
 
@@ -30,7 +30,7 @@ parsing for all Webhooks related operations.
 
 • **new WebhooksClient**(`client`): [`WebhooksClient`](WebhooksClient.md)
 
-Creates a new Webhooks client instance
+Creates a new webhooks client instance
 
 #### Parameters
 
@@ -44,88 +44,89 @@ Creates a new Webhooks client instance
 
 #### Defined in
 
-[webhooks/client.ts:90](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/webhooks/client.ts#L90)
+[webhooks/client.ts:65](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L65)
 
 ## Methods
 
 ### validate
 
-▸ **validate**(`webhookId`): `Promise`\<[`WebhooksValidateResponse`](../interfaces/WebhooksValidateResponse.md)\>
+▸ **validate**(): `Promise`\<`any`\>
 
 Validate webhook
 Triggers a CRC check for a given webhook.
 
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `webhookId` | `string` | The ID of the webhook to check. |
-
 #### Returns
 
-`Promise`\<[`WebhooksValidateResponse`](../interfaces/WebhooksValidateResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[webhooks/client.ts:106](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/webhooks/client.ts#L106)
+[webhooks/client.ts:79](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L79)
 
 ___
 
 ### delete
 
-▸ **delete**(`webhookId`): `Promise`\<[`WebhooksDeleteResponse`](../interfaces/WebhooksDeleteResponse.md)\>
+▸ **delete**(): `Promise`\<`any`\>
 
 Delete webhook
 Deletes an existing webhook configuration.
 
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `webhookId` | `string` | The ID of the webhook to delete. |
-
 #### Returns
 
-`Promise`\<[`WebhooksDeleteResponse`](../interfaces/WebhooksDeleteResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[webhooks/client.ts:143](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/webhooks/client.ts#L143)
+[webhooks/client.ts:112](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L112)
+
+___
+
+### getStreamLinks
+
+▸ **getStreamLinks**(): `Promise`\<`any`\>
+
+Get stream links
+Get a list of webhook links associated with a filtered stream ruleset.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[webhooks/client.ts:143](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L143)
 
 ___
 
 ### get
 
-▸ **get**(`options?`): `Promise`\<[`WebhooksGetResponse`](../interfaces/WebhooksGetResponse.md)\>
+▸ **get**(): `Promise`\<`any`\>
 
 Get webhook
 Get a list of webhook configs associated with a client app.
 
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | [`WebhooksGetOptions`](../interfaces/WebhooksGetOptions.md) |
-
 #### Returns
 
-`Promise`\<[`WebhooksGetResponse`](../interfaces/WebhooksGetResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[webhooks/client.ts:176](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/webhooks/client.ts#L176)
+[webhooks/client.ts:174](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L174)
 
 ___
 
 ### create
 
-▸ **create**(`options?`): `Promise`\<[`WebhooksCreateResponse`](../interfaces/WebhooksCreateResponse.md)\>
+▸ **create**(`options?`): `Promise`\<`any`\>
 
 Create webhook
 Creates a new webhook configuration.
@@ -134,84 +135,58 @@ Creates a new webhook configuration.
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`WebhooksCreateOptions`](../interfaces/WebhooksCreateOptions.md) |
+| `options` | `CreateOptions` |
 
 #### Returns
 
-`Promise`\<[`WebhooksCreateResponse`](../interfaces/WebhooksCreateResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[webhooks/client.ts:215](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/webhooks/client.ts#L215)
-
-___
-
-### getStreamLinks
-
-▸ **getStreamLinks**(): `Promise`\<[`WebhooksGetStreamLinksResponse`](../interfaces/WebhooksGetStreamLinksResponse.md)\>
-
-Get stream links
-Get a list of webhook links associated with a filtered stream ruleset.
-
-#### Returns
-
-`Promise`\<[`WebhooksGetStreamLinksResponse`](../interfaces/WebhooksGetStreamLinksResponse.md)\>
-
-Promise with the API response
-
-#### Defined in
-
-[webhooks/client.ts:254](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/webhooks/client.ts#L254)
+[webhooks/client.ts:205](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L205)
 
 ___
 
 ### createStreamLink
 
-▸ **createStreamLink**(`webhookId`, `options?`): `Promise`\<[`WebhooksCreateStreamLinkResponse`](../interfaces/WebhooksCreateStreamLinkResponse.md)\>
+▸ **createStreamLink**(`options?`): `Promise`\<`any`\>
 
 Create stream link
 Creates a link to deliver FilteredStream events to the given webhook.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `webhookId` | `string` | The webhook ID to link to your FilteredStream ruleset. |
-| `options` | [`WebhooksCreateStreamLinkOptions`](../interfaces/WebhooksCreateStreamLinkOptions.md) | - |
+| Name | Type |
+| :------ | :------ |
+| `options` | `CreateStreamLinkOptions` |
 
 #### Returns
 
-`Promise`\<[`WebhooksCreateStreamLinkResponse`](../interfaces/WebhooksCreateStreamLinkResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[webhooks/client.ts:289](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/webhooks/client.ts#L289)
+[webhooks/client.ts:244](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L244)
 
 ___
 
 ### deleteStreamLink
 
-▸ **deleteStreamLink**(`webhookId`): `Promise`\<[`WebhooksDeleteStreamLinkResponse`](../interfaces/WebhooksDeleteStreamLinkResponse.md)\>
+▸ **deleteStreamLink**(): `Promise`\<`any`\>
 
 Delete stream link
 Deletes a link from FilteredStream events to the given webhook.
 
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `webhookId` | `string` | The webhook ID to link to your FilteredStream ruleset. |
-
 #### Returns
 
-`Promise`\<[`WebhooksDeleteStreamLinkResponse`](../interfaces/WebhooksDeleteStreamLinkResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[webhooks/client.ts:367](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/webhooks/client.ts#L367)
+[webhooks/client.ts:279](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/webhooks/client.ts#L279)

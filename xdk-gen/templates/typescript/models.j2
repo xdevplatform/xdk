@@ -1,49 +1,139 @@
 /**
  * Models for {{ tag.display_name }} operations
  */
+import type * as Schemas from '../schemas.js';
+
+{# Helper function to get TypeScript type from a property schema #}
+{% macro get_ts_type(prop_schema) -%}
+{%- if prop_schema is mapping -%}
+  {%- if prop_schema["$ref"] is defined -%}
+    {%- set ref_path = prop_schema["$ref"] -%}
+    {%- set ref_name = ref_path | schema_name_from_ref -%}
+    Schemas.{{ ref_name }}
+  {%- elif prop_schema.type == "array" -%}
+    {%- if prop_schema.items is defined -%}
+      {%- set item_type = get_ts_type(prop_schema.items) -%}
+      Array<{{ item_type }}>
+    {%- else -%}
+      Array<any>
+    {%- endif -%}
+  {%- elif prop_schema.type == "object" -%}
+    Record<string, any>
+  {%- elif prop_schema.type == "string" -%}
+    string
+  {%- elif prop_schema.type == "integer" or prop_schema.type == "number" -%}
+    number
+  {%- elif prop_schema.type == "boolean" -%}
+    boolean
+  {%- else -%}
+    any
+  {%- endif -%}
+{%- else -%}
+  any
+{%- endif -%}
+{%- endmacro %}
 
 {% for operation in operations -%}
 {% if operation.request_body -%}
 {% set content_type = "application/json" -%}
 {% if operation.request_body.content and operation.request_body.content[content_type] -%}
 {% set schema = operation.request_body.content[content_type].schema -%}
+{%- if schema is mapping and schema["$ref"] is defined -%}
+{# Handle schema reference - use the referenced type directly #}
+{% set ref_path = schema["$ref"] -%}
+{% set ref_name = ref_path | schema_name_from_ref %}
+{%- if operation.class_name + "Request" != ref_name -%}
 /**
- * Request body for {{ operation.method_name }}{% if schema and schema.description %}
+ * Request for {{ operation.method_name }}
+ * 
+ * @public
+ */
+export type {{ operation.class_name }}Request = Schemas.{{ ref_name }};
+{%- else -%}
+{# Type name matches - re-export from schemas to avoid circular reference #}
+/**
+ * Request for {{ operation.method_name }}
+ * 
+ * @public
+ */
+export type { {{ ref_name }} as {{ operation.class_name }}Request } from '../schemas.js';
+{%- endif -%}
+{%- elif schema is mapping and schema.properties is defined -%}
+{# Handle object schema with properties #}
+/**
+ * Request body for {{ operation.method_name }}{% if schema.description %}
  * {{ schema.description }}{% endif %}
  */
 export interface {{ operation.class_name }}Request {
-{% if schema and schema.properties -%}
+{% set required = schema.required or [] -%}
 {% for key in schema.properties -%}
-{% set prop = schema.properties[key] -%}
-{% if prop.description and prop.description != "none" and prop.description != "" -%}
-  /** {{ prop.description }} */
+{% set prop_schema = schema.properties[key] -%}
+{% set is_required = key in required -%}
+{% if prop_schema.description and prop_schema.description != "none" and prop_schema.description != "" -%}
+  /** {{ prop_schema.description }} */
 {% endif -%}
-  {{ key | camel_case }}{% if not prop.required %}?{% endif %}: {% if prop.type %}{{ prop.type | typescript_type }}{% else %}any{% endif %};
+  {{ key | camel_case }}{% if not is_required %}?{% endif %}: {{ get_ts_type(prop_schema) }};
 {% endfor -%}
-{% endif -%}
 }
+{%- endif -%}
 
 {% endif -%}
 {% endif -%}
-{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses -%}
+{% if operation.responses and ("200" in operation.responses or "201" in operation.responses) -%}
 {% set response = operation.responses["200"] if "200" in operation.responses else operation.responses["201"] -%}
-{% if response.content and "application/json" in response.content -%}
+{% if response and response.content and "application/json" in response.content -%}
 {% set schema = response.content["application/json"].schema -%}
+{%- if schema is mapping and schema["$ref"] is defined -%}
+{# Handle schema reference - use the referenced type directly #}
+{% set ref_path = schema["$ref"] -%}
+{% set ref_name = ref_path | schema_name_from_ref %}
+{%- if operation.class_name + "Response" != ref_name -%}
 /**
- * Response for {{ operation.method_name }}{% if schema and schema.description %}
+ * Response for {{ operation.method_name }}
+ * 
+ * @public
+ */
+export type {{ operation.class_name }}Response = Schemas.{{ ref_name }};
+{%- else -%}
+{# Type name matches - re-export from schemas to avoid circular reference #}
+/**
+ * Response for {{ operation.method_name }}
+ * 
+ * @public
+ */
+export type { {{ ref_name }} as {{ operation.class_name }}Response } from '../schemas.js';
+{%- endif -%}
+{%- elif schema is mapping and schema.properties is defined -%}
+{# Handle object schema with properties #}
+{% if schema.properties and schema.properties is mapping -%}
+/**
+ * Response for {{ operation.method_name }}{% if schema.description %}
  * {{ schema.description }}{% endif %}
+ * 
+ * @public
  */
 export interface {{ operation.class_name }}Response {
-{% if schema and schema.properties -%}
+{% set required = schema.required or [] -%}
 {% for key in schema.properties -%}
-{% set prop = schema.properties[key] -%}
-{% if prop.description and prop.description != "none" and prop.description != "" -%}
-  /** {{ prop.description }} */
+{% set prop_schema = schema.properties[key] -%}
+{% set is_required = key in required -%}
+{% if prop_schema.description and prop_schema.description != "none" and prop_schema.description != "" -%}
+  /** {{ prop_schema.description }} */
 {% endif -%}
-  {{ key | camel_case }}{% if not prop.required %}?{% endif %}: {% if prop.type %}{{ prop.type | typescript_type }}{% else %}any{% endif %};
+  {{ key | camel_case }}{% if not is_required %}?{% endif %}: {{ get_ts_type(prop_schema) }};
 {% endfor -%}
-{% endif -%}
 }
+{%- else -%}
+{# schema.properties is None, not a mapping, or empty - use type alias #}
+/**
+ * Response for {{ operation.method_name }}{% if schema.description %}
+ * {{ schema.description }}{% endif %}
+ * 
+ * @public
+ */
+export type {{ operation.class_name }}Response = Record<string, any>;
+{%- endif -%}
+{%- endif -%}
 
 {% endif -%}
 {% endif -%}

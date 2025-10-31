@@ -2,11 +2,11 @@
 
 # Class: CommunityNotesClient
 
-Client for Community notes operations
+Client for community notes operations
 
-This client provides methods for interacting with the Community notes endpoints
+This client provides methods for interacting with the community notes endpoints
 of the X API. It handles authentication, request formatting, and response
-parsing for all Community notes related operations.
+parsing for all community notes related operations.
 
 ## Table of contents
 
@@ -16,11 +16,11 @@ parsing for all Community notes related operations.
 
 ### Methods
 
-- [delete](CommunityNotesClient.md#delete)
-- [evaluate](CommunityNotesClient.md#evaluate)
-- [create](CommunityNotesClient.md#create)
-- [searchEligiblePosts](CommunityNotesClient.md#searcheligibleposts)
 - [searchWritten](CommunityNotesClient.md#searchwritten)
+- [delete](CommunityNotesClient.md#delete)
+- [searchEligiblePosts](CommunityNotesClient.md#searcheligibleposts)
+- [create](CommunityNotesClient.md#create)
+- [evaluate](CommunityNotesClient.md#evaluate)
 
 ## Constructors
 
@@ -28,7 +28,7 @@ parsing for all Community notes related operations.
 
 • **new CommunityNotesClient**(`client`): [`CommunityNotesClient`](CommunityNotesClient.md)
 
-Creates a new Community notes client instance
+Creates a new community notes client instance
 
 #### Parameters
 
@@ -42,63 +42,82 @@ Creates a new Community notes client instance
 
 #### Defined in
 
-[community_notes/client.ts:112](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/community_notes/client.ts#L112)
+[community_notes/client.ts:87](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/community_notes/client.ts#L87)
 
 ## Methods
 
-### delete
+### searchWritten
 
-▸ **delete**(`id`): `Promise`\<[`CommunityNotesDeleteResponse`](../interfaces/CommunityNotesDeleteResponse.md)\>
+▸ **searchWritten**(`options?`): `Promise`\<`any`\>
 
-Delete a Community Note
-Deletes a community note.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The community note id to delete. |
-
-#### Returns
-
-`Promise`\<[`CommunityNotesDeleteResponse`](../interfaces/CommunityNotesDeleteResponse.md)\>
-
-Promise with the API response
-
-#### Defined in
-
-[community_notes/client.ts:128](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/community_notes/client.ts#L128)
-
-___
-
-### evaluate
-
-▸ **evaluate**(`options?`): `Promise`\<[`CommunityNotesEvaluateResponse`](../interfaces/CommunityNotesEvaluateResponse.md)\>
-
-Evaluate a Community Note
-Endpoint to evaluate a community note.
+Search for Community Notes Written
+Returns all the community notes written by the user.
 
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`CommunityNotesEvaluateOptions`](../interfaces/CommunityNotesEvaluateOptions.md) |
+| `options` | `SearchWrittenOptions` |
 
 #### Returns
 
-`Promise`\<[`CommunityNotesEvaluateResponse`](../interfaces/CommunityNotesEvaluateResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[community_notes/client.ts:161](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/community_notes/client.ts#L161)
+[community_notes/client.ts:101](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/community_notes/client.ts#L101)
+
+___
+
+### delete
+
+▸ **delete**(): `Promise`\<`any`\>
+
+Delete a Community Note
+Deletes a community note.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[community_notes/client.ts:136](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/community_notes/client.ts#L136)
+
+___
+
+### searchEligiblePosts
+
+▸ **searchEligiblePosts**(`options?`): `Promise`\<`any`\>
+
+Search for Posts Eligible for Community Notes
+Returns all the posts that are eligible for community notes.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `SearchEligiblePostsOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[community_notes/client.ts:169](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/community_notes/client.ts#L169)
 
 ___
 
 ### create
 
-▸ **create**(`options?`): `Promise`\<[`CommunityNotesCreateResponse`](../interfaces/CommunityNotesCreateResponse.md)\>
+▸ **create**(`options?`): `Promise`\<`any`\>
 
 Create a Community Note
 Creates a community note endpoint for LLM use case.
@@ -107,68 +126,39 @@ Creates a community note endpoint for LLM use case.
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`CommunityNotesCreateOptions`](../interfaces/CommunityNotesCreateOptions.md) |
+| `options` | `CreateOptions` |
 
 #### Returns
 
-`Promise`\<[`CommunityNotesCreateResponse`](../interfaces/CommunityNotesCreateResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[community_notes/client.ts:200](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/community_notes/client.ts#L200)
+[community_notes/client.ts:202](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/community_notes/client.ts#L202)
 
 ___
 
-### searchEligiblePosts
+### evaluate
 
-▸ **searchEligiblePosts**(`testMode`, `options?`): `Promise`\<[`PostPaginator`](PostPaginator.md)\>
+▸ **evaluate**(`options?`): `Promise`\<`any`\>
 
-Search for Posts Eligible for Community Notes
-Returns all the posts that are eligible for community notes.
-Returns a paginator for automatic pagination through all results.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `testMode` | `boolean` | If true, return a list of posts that are for the test. If false, return a list of posts that the bots can write proposed notes on the product. |
-| `options` | [`CommunityNotesSearchEligiblePostsOptions`](../interfaces/CommunityNotesSearchEligiblePostsOptions.md) | Options for the paginated request |
-
-#### Returns
-
-`Promise`\<[`PostPaginator`](PostPaginator.md)\>
-
-A paginator instance for iterating through all results
-
-#### Defined in
-
-[community_notes/client.ts:243](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/community_notes/client.ts#L243)
-
-___
-
-### searchWritten
-
-▸ **searchWritten**(`testMode`, `options?`): `Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
-
-Search for Community Notes Written
-Returns all the community notes written by the user.
-Returns a paginator for automatic pagination through all results.
+Evaluate a Community Note
+Endpoint to evaluate a community note.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `testMode` | `boolean` | If true, return the notes the caller wrote for the test. If false, return the notes the caller wrote on the product. |
-| `options` | [`CommunityNotesSearchWrittenOptions`](../interfaces/CommunityNotesSearchWrittenOptions.md) | Options for the paginated request |
+| Name | Type |
+| :------ | :------ |
+| `options` | `EvaluateOptions` |
 
 #### Returns
 
-`Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
+`Promise`\<`any`\>
 
-A paginator instance for iterating through all results
+Promise with the API response
 
 #### Defined in
 
-[community_notes/client.ts:360](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/community_notes/client.ts#L360)
+[community_notes/client.ts:239](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/community_notes/client.ts#L239)

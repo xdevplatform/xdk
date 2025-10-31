@@ -6,7 +6,7 @@
   "excludePrivate": true,
   "excludeProtected": true,
   "excludeExternals": true,
-  "excludeInternal": true,
+  "excludeInternal": false,
   "readme": "README.md",
   "theme": "default",
   "navigation": {

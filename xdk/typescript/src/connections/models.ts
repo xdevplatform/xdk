@@ -1,11 +1,15 @@
 /**
  * Models for connections operations
  */
+import type * as Schemas from '../schemas.js';
+
+
+
+
 
 /**
  * Response for deleteAll
+ * 
+ * @public
  */
-export interface DeleteAllResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
+export type DeleteAllResponse = Schemas.KillAllConnectionsResponse;

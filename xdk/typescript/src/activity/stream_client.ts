@@ -9,13 +9,15 @@ import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
   UpdateSubscriptionResponse,
   DeleteSubscriptionResponse,
+  StreamResponse,
   GetSubscriptionsResponse,
   CreateSubscriptionResponse,
-  StreamResponse,
 } from './models.js';
 
 /**
  * Options for updateSubscription method
+ * 
+ * @public
  */
 export interface UpdateSubscriptionStreamingOptions {
   /** Request body */
@@ -30,6 +32,8 @@ export interface UpdateSubscriptionStreamingOptions {
 }
 /**
  * Options for deleteSubscription method
+ * 
+ * @public
  */
 export interface DeleteSubscriptionStreamingOptions {
   /** Additional request options */
@@ -40,7 +44,22 @@ export interface DeleteSubscriptionStreamingOptions {
   signal?: AbortSignal;
 }
 /**
+ * Options for stream method
+ * 
+ * @public
+ */
+export interface StreamStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
  * Options for getSubscriptions method
+ * 
+ * @public
  */
 export interface GetSubscriptionsStreamingOptions {
   /** Additional request options */
@@ -52,22 +71,13 @@ export interface GetSubscriptionsStreamingOptions {
 }
 /**
  * Options for createSubscription method
+ * 
+ * @public
  */
 export interface CreateSubscriptionStreamingOptions {
   /** Request body */
   body?: any;
 
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for stream method
- */
-export interface StreamStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */

@@ -17,6 +17,8 @@ import {
 {% for operation in operations -%}
 /**
  * Options for {{ operation.method_name }} method
+ * 
+ * @public
  */
 export interface {{ operation.class_name }}StreamingOptions {
     {% for param in operation.parameters | rejectattr('required') %}

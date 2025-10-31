@@ -49,7 +49,7 @@ Error.constructor
 
 #### Defined in
 
-[client.ts:120](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/client.ts#L120)
+[client.ts:118](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L118)
 
 ## Properties
 
@@ -59,7 +59,7 @@ Error.constructor
 
 #### Defined in
 
-[client.ts:115](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/client.ts#L115)
+[client.ts:113](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L113)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[client.ts:116](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/client.ts#L116)
+[client.ts:114](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L114)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[client.ts:117](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/client.ts#L117)
+[client.ts:115](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L115)
 
 ___
 
@@ -89,4 +89,4 @@ ___
 
 #### Defined in
 
-[client.ts:118](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/client.ts#L118)
+[client.ts:116](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L116)

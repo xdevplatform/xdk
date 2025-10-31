@@ -6,12 +6,14 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
-import { SearchResponse, GetByIdResponse } from './models.js';
+import { GetByIdResponse, SearchResponse } from './models.js';
 
 /**
- * Options for search method
+ * Options for getById method
+ * 
+ * @public
  */
-export interface SearchStreamingOptions {
+export interface GetByIdStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -20,9 +22,11 @@ export interface SearchStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for getById method
+ * Options for search method
+ * 
+ * @public
  */
-export interface GetByIdStreamingOptions {
+export interface SearchStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -36,52 +40,6 @@ export class CommunitiesClient {
 
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-     * Search Communities
-     * Retrieves a list of Communities matching the specified search query.
-     * 
-     * @returns Promise with the API response
-     */
-  async search(options: SearchStreamingOptions = {}): Promise<SearchResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'search');
-
-    // Destructure options with defaults
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/communities/search`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<SearchResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
   }
 
   /**
@@ -128,6 +86,52 @@ export class CommunitiesClient {
 
     // Make the request
     return this.client.request<GetByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Search Communities
+     * Retrieves a list of Communities matching the specified search query.
+     * 
+     * @returns Promise with the API response
+     */
+  async search(options: SearchStreamingOptions = {}): Promise<SearchResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'search');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/communities/search`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<SearchResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

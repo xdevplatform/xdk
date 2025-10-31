@@ -2,11 +2,11 @@
 
 # Class: TrendsClient
 
-Client for Trends operations
+Client for trends operations
 
-This client provides methods for interacting with the Trends endpoints
+This client provides methods for interacting with the trends endpoints
 of the X API. It handles authentication, request formatting, and response
-parsing for all Trends related operations.
+parsing for all trends related operations.
 
 ## Table of contents
 
@@ -16,8 +16,8 @@ parsing for all Trends related operations.
 
 ### Methods
 
+- [getPersonalized](TrendsClient.md#getpersonalized)
 - [getByWoeid](TrendsClient.md#getbywoeid)
-- [getPersonalizedTrends](TrendsClient.md#getpersonalizedtrends)
 
 ## Constructors
 
@@ -25,7 +25,7 @@ parsing for all Trends related operations.
 
 • **new TrendsClient**(`client`): [`TrendsClient`](TrendsClient.md)
 
-Creates a new Trends client instance
+Creates a new trends client instance
 
 #### Parameters
 
@@ -39,55 +39,48 @@ Creates a new Trends client instance
 
 #### Defined in
 
-[trends/client.ts:61](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/trends/client.ts#L61)
+[trends/client.ts:43](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/trends/client.ts#L43)
 
 ## Methods
 
+### getPersonalized
+
+▸ **getPersonalized**(): `Promise`\<`any`\>
+
+Get personalized Trends
+Retrieves personalized trending topics for the authenticated user.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[trends/client.ts:55](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/trends/client.ts#L55)
+
+___
+
 ### getByWoeid
 
-▸ **getByWoeid**(`woeid`, `options?`): `Promise`\<[`TrendsGetByWoeidResponse`](../interfaces/TrendsGetByWoeidResponse.md)\>
+▸ **getByWoeid**(`options?`): `Promise`\<`any`\>
 
 Get Trends by WOEID
 Retrieves trending topics for a specific location identified by its WOEID.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `woeid` | `number` | The WOEID of the place to lookup a trend for. |
-| `options` | [`TrendsGetByWoeidOptions`](../interfaces/TrendsGetByWoeidOptions.md) | - |
-
-#### Returns
-
-`Promise`\<[`TrendsGetByWoeidResponse`](../interfaces/TrendsGetByWoeidResponse.md)\>
-
-Promise with the API response
-
-#### Defined in
-
-[trends/client.ts:77](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/trends/client.ts#L77)
-
-___
-
-### getPersonalizedTrends
-
-▸ **getPersonalizedTrends**(`options?`): `Promise`\<[`TrendsGetPersonalizedTrendsResponse`](../interfaces/TrendsGetPersonalizedTrendsResponse.md)\>
-
-Get personalized Trends
-Retrieves personalized trending topics for the authenticated user.
-
-#### Parameters
-
 | Name | Type |
 | :------ | :------ |
-| `options` | [`TrendsGetPersonalizedTrendsOptions`](../interfaces/TrendsGetPersonalizedTrendsOptions.md) |
+| `options` | `GetByWoeidOptions` |
 
 #### Returns
 
-`Promise`\<[`TrendsGetPersonalizedTrendsResponse`](../interfaces/TrendsGetPersonalizedTrendsResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[trends/client.ts:127](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/trends/client.ts#L127)
+[trends/client.ts:88](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/trends/client.ts#L88)

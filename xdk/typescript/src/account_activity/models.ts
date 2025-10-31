@@ -1,61 +1,51 @@
 /**
  * Models for account activity operations
  */
+import type * as Schemas from '../schemas.js';
 
-/**
- * Response for getSubscriptionCount
- */
-export interface GetSubscriptionCountResponse {
-  /** The count of active subscriptions across all webhooks */
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
 
-/**
- * Response for getSubscriptions
- */
-export interface GetSubscriptionsResponse {
-  /** The list of active subscriptions for a specified webhook */
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
 
-/**
- * Response for createReplayJob
- * Confirmation that the replay job request was accepted.
- */
-export interface CreateReplayJobResponse {
-  /** The UTC timestamp indicating when the replay job was created. */
-  createdAt?: string;
-  /** The unique identifier for the initiated replay job. */
-  jobId?: string;
-}
 
-/**
- * Response for deleteSubscription
- */
-export interface DeleteSubscriptionResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
 
 /**
  * Response for validateSubscription
+ * 
+ * @public
  */
-export interface ValidateSubscriptionResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
+export type ValidateSubscriptionResponse = Schemas.SubscriptionsGetResponse;
 /**
- * Request body for createSubscription
+ * Request for createSubscription
+ * 
+ * @public
  */
-export interface CreateSubscriptionRequest {}
-
+export type CreateSubscriptionRequest = Schemas.SubscriptionsCreateRequest;
 /**
  * Response for createSubscription
+ * 
+ * @public
  */
-export interface CreateSubscriptionResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
+export type CreateSubscriptionResponse = Schemas.SubscriptionsCreateResponse;
+/**
+ * Response for getSubscriptions
+ * 
+ * @public
+ */
+export type GetSubscriptionsResponse = Schemas.SubscriptionsListGetResponse;
+/**
+ * Response for deleteSubscription
+ * 
+ * @public
+ */
+export type DeleteSubscriptionResponse = Schemas.SubscriptionsDeleteResponse;
+/**
+ * Response for getSubscriptionCount
+ * 
+ * @public
+ */
+export type GetSubscriptionCountResponse = Schemas.SubscriptionsCountGetResponse;
+/**
+ * Response for createReplayJob
+ * 
+ * @public
+ */
+export type CreateReplayJobResponse = Schemas.ReplayJobCreateResponse;

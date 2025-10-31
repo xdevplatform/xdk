@@ -1,155 +1,117 @@
 /**
  * Models for stream operations
  */
+import type * as Schemas from '../schemas.js';
+
+
+
+
 
 /**
  * Response for postsSample
+ * 
+ * @public
  */
-export interface PostsSampleResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for postsSample10
- */
-export interface PostsSample10Response {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for getRuleCounts
- */
-export interface GetRuleCountsResponse {
-  /** A count of user-provided stream filtering rules at the application and project levels. */
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
+export type PostsSampleResponse = Schemas.StreamingTweetResponse;
 /**
  * Response for postsFirehoseEn
+ * 
+ * @public
  */
-export interface PostsFirehoseEnResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
+export type PostsFirehoseEnResponse = Schemas.StreamingTweetResponse;
 /**
- * Response for posts
- * A Tweet or error that can be returned by the streaming Tweet API. The values returned with a successful streamed Tweet includes the user provided rules that the Tweet matched.
+ * Response for postsSample10
+ * 
+ * @public
  */
-export interface PostsResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  /** The list of rules which matched the Tweet */
-  matchingRules?: Array<any>;
-}
-
-/**
- * Response for likesSample10
- */
-export interface LikesSample10Response {
-  /** A Like event, with the tweet author user and the tweet being liked */
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for postsFirehoseKo
- */
-export interface PostsFirehoseKoResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for postsCompliance
- * Tweet compliance stream events.
- */
-export interface PostsComplianceResponse {}
-
-/**
- * Response for usersCompliance
- * User compliance stream events.
- */
-export interface UsersComplianceResponse {}
-
-/**
- * Response for postsFirehoseJa
- */
-export interface PostsFirehoseJaResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for getRules
- */
-export interface GetRulesResponse {
-  data?: Array<any>;
-  meta: Record<string, any>;
-}
-
-/**
- * Request body for updateRules
- */
-export interface UpdateRulesRequest {}
-
-/**
- * Response for updateRules
- * A response from modifying user-specified stream filtering rules.
- */
-export interface UpdateRulesResponse {
-  /** All user-specified stream filtering rules that were created. */
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta: Record<string, any>;
-}
-
-/**
- * Response for postsFirehosePt
- */
-export interface PostsFirehosePtResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
+export type PostsSample10Response = Schemas.Get2TweetsSample10StreamResponse;
 /**
  * Response for likesFirehose
+ * 
+ * @public
  */
-export interface LikesFirehoseResponse {
-  /** A Like event, with the tweet author user and the tweet being liked */
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
+export type LikesFirehoseResponse = Schemas.StreamingLikeResponseV2;
+/**
+ * Response for getRuleCounts
+ * 
+ * @public
+ */
+export type GetRuleCountsResponse = Schemas.Get2TweetsSearchStreamRulesCountsResponse;
+/**
+ * Response for likesSample10
+ * 
+ * @public
+ */
+export type LikesSample10Response = Schemas.StreamingLikeResponseV2;
 /**
  * Response for postsFirehose
+ * 
+ * @public
  */
-export interface PostsFirehoseResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
+export type PostsFirehoseResponse = Schemas.StreamingTweetResponse;
 /**
- * Response for likesCompliance
- * Likes compliance stream events.
+ * Response for postsFirehoseKo
+ * 
+ * @public
  */
-export interface LikesComplianceResponse {}
-
+export type PostsFirehoseKoResponse = Schemas.StreamingTweetResponse;
+/**
+ * Response for getRules
+ * 
+ * @public
+ */
+export type GetRulesResponse = Schemas.RulesLookupResponse;
+/**
+ * Request for updateRules
+ * 
+ * @public
+ */
+export type UpdateRulesRequest = Schemas.AddOrDeleteRulesRequest;
+/**
+ * Response for updateRules
+ * 
+ * @public
+ */
+export type UpdateRulesResponse = Schemas.AddOrDeleteRulesResponse;
 /**
  * Response for labelsCompliance
- * Tweet label stream events.
+ * 
+ * @public
  */
-export interface LabelsComplianceResponse {}
+export type LabelsComplianceResponse = Schemas.TweetLabelStreamResponse;
+/**
+ * Response for postsCompliance
+ * 
+ * @public
+ */
+export type PostsComplianceResponse = Schemas.TweetComplianceStreamResponse;
+/**
+ * Response for usersCompliance
+ * 
+ * @public
+ */
+export type UsersComplianceResponse = Schemas.UserComplianceStreamResponse;
+/**
+ * Response for posts
+ * 
+ * @public
+ */
+export type PostsResponse = Schemas.FilteredStreamingTweetResponse;
+/**
+ * Response for likesCompliance
+ * 
+ * @public
+ */
+export type LikesComplianceResponse = Schemas.LikesComplianceStreamResponse;
+/**
+ * Response for postsFirehosePt
+ * 
+ * @public
+ */
+export type PostsFirehosePtResponse = Schemas.StreamingTweetResponse;
+/**
+ * Response for postsFirehoseJa
+ * 
+ * @public
+ */
+export type PostsFirehoseJaResponse = Schemas.StreamingTweetResponse;

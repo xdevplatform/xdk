@@ -10,6 +10,8 @@ import { GetPersonalizedResponse, GetByWoeidResponse } from './models.js';
 
 /**
  * Options for getPersonalized method
+ * 
+ * @public
  */
 export interface GetPersonalizedStreamingOptions {
   /** Additional request options */
@@ -21,6 +23,8 @@ export interface GetPersonalizedStreamingOptions {
 }
 /**
  * Options for getByWoeid method
+ * 
+ * @public
  */
 export interface GetByWoeidStreamingOptions {
   /** Additional request options */

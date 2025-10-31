@@ -20,43 +20,10 @@ const MINTLIFY_CONFIG = {
   }
 };
 
-// Category mappings for better organization
-const CATEGORY_MAPPINGS = {
-  'Client': 'Getting Started',
-  'Pagination': 'Core Features',
-  'Streaming': 'Core Features',
-  'Authentication': 'Authentication',
-  'Models': 'API Reference',
-  'Utilities': 'Utilities',
-  'Other': 'API Reference'
-};
-
-// Method groupings for better navigation
-const METHOD_GROUPS = {
-  'users': 'Users',
-  'posts': 'Posts',
-  'lists': 'Lists',
-  'bookmarks': 'Bookmarks',
-  'communities': 'Communities',
-  'spaces': 'Spaces',
-  'trends': 'Trends',
-  'media': 'Media',
-  'webhooks': 'Webhooks',
-  'compliance': 'Compliance',
-  'usage': 'Usage',
-  'general': 'General',
-  'direct_messages': 'Direct Messages',
-  'account_activity': 'Account Activity',
-  'activity': 'Activity',
-  'connections': 'Connections',
-  'connection': 'Connection',
-  'community_notes': 'Community Notes',
-  'aaasubscriptions': 'AAA Subscriptions',
-  'stream': 'Streaming'
-};
+// (Removed legacy category mappings and method groups)
 
 // Helper function to generate Mintlify frontmatter
-function generateFrontmatter(title, description, category = 'API Reference', tag = 'api', sidebarTitle = null) {
+function generateFrontmatter(title, sidebarTitle = null) {
   // Clean up titles by removing generic type parameters for better readability
   const cleanTitle = (str) => {
     if (typeof str !== 'string') return str;
@@ -70,8 +37,7 @@ function generateFrontmatter(title, description, category = 'API Reference', tag
   };
 
   const frontmatter = {
-    title: cleanTitle(title),
-    description: cleanTitle(description)
+    title: cleanTitle(title)
   };
   
   if (sidebarTitle) {
@@ -81,7 +47,6 @@ function generateFrontmatter(title, description, category = 'API Reference', tag
   // Use simple quoted strings for clean frontmatter
   return `---
 title: "${cleanTitle(title)}"
-description: "${cleanTitle(description)}"
 ${sidebarTitle ? `sidebarTitle: "${cleanTitle(sidebarTitle)}"` : ''}
 ---
 
@@ -89,7 +54,7 @@ ${sidebarTitle ? `sidebarTitle: "${cleanTitle(sidebarTitle)}"` : ''}
 }
 
 // Helper function to clean and format markdown content
-function processMarkdownContent(content, title) {
+function processMarkdownContent(content, title, currentFilePath, knownTargets) {
   // Remove TypeDoc-specific elements that don't work well in Mintlify
   content = content
     // Remove TypeDoc navigation elements
@@ -101,11 +66,30 @@ function processMarkdownContent(content, title) {
     .replace(/```typescript\n/g, '```typescript\n')
     .replace(/```javascript\n/g, '```javascript\n')
     
-    // Fix internal links (convert to Mintlify format with xdks/typescript prefix)
-    .replace(/\[([^\]]+)\]\(\.\/([^)]+)\)/g, (match, text, link) => {
-      // Convert relative links to proper Mintlify paths
-      const cleanLink = link.replace('.md', '').replace('classes/', '').replace('interfaces/', '');
-      return `[${text}](/xdks/typescript/reference/${cleanLink})`;
+    // Remove TypeDoc breadcrumbs (README/Exports)
+    .replace(/^\[[^\]]+\]\([^\)]+\)\s*\/\s*\[Exports\]\([^\)]+\)\s*\/.*\n?/m, '')
+    // Remove modules breadcrumb variant: [..](..)/ Exports
+    .replace(/^\[[^\]]+\]\([^\)]+\)\s*\/\s*Exports\s*\n?/m, '')
+    // Fix internal links → absolute Mintlify paths, preserve TypeDoc subdirs
+    // Examples:
+    // [Client](classes/Client.md) → /xdks/typescript/reference/classes/Client
+    // [deleteSubscription](AccountActivityClient.md#deletesubscription) → /xdks/typescript/reference/AccountActivityClient#deletesubscription
+    .replace(/\[([^\]]+)\]\(([^)#]+?)(?:\.(?:md|mdx))?(#[^)]+)?\)/g, (match, text, rawLinkPath, hash) => {
+      // Skip absolute URLs (http, https, mailto, tel)
+      if (/^(?:https?:|mailto:|tel:)/i.test(rawLinkPath)) {
+        return match;
+      }
+      const anchor = hash || '';
+      const linkPath = rawLinkPath.replace(/\.(?:md|mdx)$/i, '');
+      const currentDir = currentFilePath ? currentFilePath.substring(0, currentFilePath.lastIndexOf('/')) : '';
+      // Normalize relative paths
+      const joined = path.posix.normalize(path.posix.join(currentDir || '', linkPath));
+      let targetPath = joined.replace(/^\.\/?/, '').replace(/^docs\//, '');
+      // If no directory segment and a known target exists for this base name, use it
+      if (!targetPath.includes('/') && knownTargets && knownTargets.has(targetPath)) {
+        targetPath = `${knownTargets.get(targetPath)}/${targetPath}`;
+      }
+      return `[${text}](/xdks/typescript/reference/${targetPath}${anchor})`;
     })
     
     // Fix method signatures
@@ -116,8 +100,260 @@ function processMarkdownContent(content, title) {
     
     // Fix parameter formatting
     .replace(/\*\*@param\s+(\w+)\s+(.*?)\*\*/g, '**@param** `$1` - $2')
+    // Replace package placeholder with real npm package
+    .replace(/@your-org\/x-api-sdk/g, '@xdevplatform/xdk')
+    .replace(/from\s+['"]x-api-sdk['"]/g, "from '@xdevplatform/xdk'")
     .replace(/\*\*@returns\s+(.*?)\*\*/g, '**@returns** $1')
     .replace(/\*\*@throws\s+(.*?)\*\*/g, '**@throws** $1');
+
+  // Remove the first H1 header to avoid duplicate titles (frontmatter title will be used)
+  content = content.replace(/^\s*#\s+[^\n]+\n+/, '');
+
+  // Remove explicit Table of contents blocks; Mintlify renders a sidebar TOC automatically
+  content = content.replace(/(^##\s+Table of contents\n[\s\S]*?)(?=^##\s+|^#\s+|\Z)/gmi, '');
+
+  // Convert Properties sections to Mintlify components (ResponseField/ParamField/Expandable)
+  // Check if this is an interface or class file
+  const isInterfaceOrClass = currentFilePath && (
+    currentFilePath.includes('interfaces/') || 
+    currentFilePath.includes('classes/')
+  );
+  
+  if (isInterfaceOrClass && content.includes('## Properties')) {
+    const useParamField = /Options\b/i.test(currentFilePath);
+    const fieldTag = useParamField ? 'ParamField' : 'ResponseField';
+    
+    // Helper to escape type strings for HTML attributes
+    const escapeType = (type) => String(type)
+      .replace(/\"/g, '"')
+      .replace(/"/g, '&quot;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/\{/g, '&#123;')
+      .replace(/\}/g, '&#125;');
+    
+    // Helper to parse inline object type (e.g., "{ name?: string; age: number }")
+    const parseInlineObject = (objStr) => {
+      // Remove outer braces and array brackets
+      let cleaned = objStr.trim().replace(/^\{/, '').replace(/\}\s*\[\]?\s*$/, '').trim();
+      if (!cleaned) return [];
+      
+      const props = [];
+      // Split by semicolons, but be careful with nested objects
+      let depth = 0;
+      let current = '';
+      const parts = [];
+      
+      for (let i = 0; i < cleaned.length; i++) {
+        const char = cleaned[i];
+        if (char === '{') depth++;
+        else if (char === '}') depth--;
+        else if (char === ';' && depth === 0) {
+          parts.push(current.trim());
+          current = '';
+          continue;
+        }
+        current += char;
+      }
+      if (current.trim()) parts.push(current.trim());
+      
+      for (const part of parts) {
+        // Match: name?: type or name: type
+        const match = part.match(/^\s*([^:?]+?)\??\s*:\s*(.+?)\s*$/);
+        if (match) {
+          const propName = match[1].trim();
+          let propType = match[2].trim();
+          const isOptional = part.includes('?') && !propType.includes('?');
+          
+          // Clean up type (remove extra braces if present)
+          propType = propType.replace(/^\{/, '').replace(/\}$/, '');
+          
+          props.push({
+            name: propName,
+            type: propType,
+            optional: isOptional
+          });
+        }
+      }
+      return props;
+    };
+    
+    // Convert markdown table to Expandable with child fields
+    const tableToExpandable = (tableLines, tagName) => {
+      const children = [];
+      for (const line of tableLines) {
+        const trimmed = line.trim();
+        // Skip header/separator rows
+        if (/^\|\s*:?-{2,}\s*\|/.test(trimmed) || /^\|\s*Name\s*\|\s*Type\s*\|\s*$/i.test(trimmed)) continue;
+        const m = trimmed.match(/^\|\s*`?([^`|]+?)`?\s*\|\s*(.+?)\s*\|$/);
+        if (!m) continue;
+        const fname = m[1].trim().replace(/\?$/, '');
+        let ftype = m[2].trim();
+        const isOptional = m[1].includes('?');
+        
+        // Remove ALL backticks and backslashes from type for parsing
+        // Backticks might be around the whole type or around individual parts
+        ftype = ftype.replace(/`/g, '').replace(/\\/g, '');
+        
+        // Check if type is Object[] with inline definition
+        if (/^\{[\s\S]*\}\s*\[\]\s*$/.test(ftype)) {
+          const objProps = parseInlineObject(ftype);
+          if (objProps.length > 0) {
+            const nested = objProps.map(p => {
+              const req = p.optional ? '' : ' required';
+              const cleanPType = p.type.replace(/\}\s*\[\]\s*$/, '').trim();
+              return `<${tagName} name="${p.name}" type="${escapeType(cleanPType)}"${req}>\n</${tagName}>`;
+            }).join('\n\n');
+            children.push(`<${tagName} name="${fname}" type="Object[]"${isOptional ? '' : ' required'}>\n<Expandable title="properties">\n${nested}\n</Expandable>\n</${tagName}>`);
+          } else {
+            children.push(`<${tagName} name="${fname}" type="Object[]"${isOptional ? '' : ' required'}>\n</${tagName}>`);
+          }
+        } else if (/^\{[\s\S]*\}$/.test(ftype)) {
+          // Nested object
+          const objProps = parseInlineObject(ftype);
+          if (objProps.length > 0) {
+            const nested = objProps.map(p => {
+              const req = p.optional ? '' : ' required';
+              return `<${tagName} name="${p.name}" type="${escapeType(p.type.trim())}"${req}>\n</${tagName}>`;
+            }).join('\n\n');
+            children.push(`<${tagName} name="${fname}" type="Object"${isOptional ? '' : ' required'}>\n<Expandable title="properties">\n${nested}\n</Expandable>\n</${tagName}>`);
+          } else {
+            children.push(`<${tagName} name="${fname}" type="Object"${isOptional ? '' : ' required'}>\n</${tagName}>`);
+          }
+        } else {
+          // Simple type
+          const cleanType = ftype;
+          children.push(`<${tagName} name="${fname}" type="${escapeType(cleanType)}"${isOptional ? '' : ' required'}>\n</${tagName}>`);
+        }
+      }
+      return children;
+    };
+    
+    // Convert each property section
+    // Find Properties section - match from ## Properties to end of content or next ## section
+    const propsIndex = content.indexOf('## Properties');
+    if (propsIndex !== -1) {
+      // Find where Properties section ends (next ## or end of content)
+      const afterProps = content.substring(propsIndex + '## Properties'.length);
+      const nextSection = afterProps.match(/^\s*\n+(.*?)(?=^##\s+|$)/s);
+      if (!nextSection) return content;
+      
+      const propsSection = nextSection[1];
+      const convertedProps = [];
+      
+      // Match each property using regex - be more flexible with matching
+      // Split by ### headers first to ensure we get complete property blocks
+      const propBlocks = propsSection.split(/(?=^###\s+)/m).filter(b => b.trim().startsWith('###'));
+      
+      for (const propBlock of propBlocks) {
+        const nameMatch = propBlock.match(/^###\s+([^\n]+)\n+/);
+        if (!nameMatch) continue;
+        
+        const propName = nameMatch[1].trim();
+        const propBody = propBlock.substring(nameMatch[0].length);
+          
+          // Check if optional
+          const isOptional = /•\s*`?Optional`?/.test(propBody);
+          
+          // Extract type first (before description extraction)
+          // Match: • Optional **name**: `type` or • **name**: type (with or without backticks)
+          // Handle cases like: `Object`, `\{ ... \}[]`, or inline types without backticks
+          const typePattern = /:\s*(?:`([^`]+)`|([^\n]+?))(?:\s*\n|$)/;
+          const typeMatch = propBody.match(typePattern);
+          let typeStr = 'any';
+          
+          if (typeMatch) {
+            // Prefer backtick-wrapped type, otherwise use unwrapped
+            typeStr = (typeMatch[1] || typeMatch[2] || '').trim();
+          }
+          
+          // Clean up type string - remove backslashes, backticks, and extract from markdown links
+          // Handle markdown link format: [`Type`](link) -> just use "Type"
+          typeStr = typeStr.replace(/\[`([^`]+)`\]\([^\)]+\)/g, '$1');
+          typeStr = typeStr.replace(/`/g, '').replace(/\\/g, '');
+          
+          // Extract description (text after type line, before "Type declaration" or "Defined in")
+          // First, find where the type line ends
+          const typeLineEnd = propBody.indexOf('\n', propBody.indexOf(':'));
+          const afterTypeLine = typeLineEnd !== -1 ? propBody.substring(typeLineEnd + 1) : propBody;
+          
+          // Then extract just the description part (before Type declaration or Defined in)
+          const descMatch = afterTypeLine.match(/^([\s\S]*?)(?:\n####\s+Type declaration|\n####\s+Defined in|\n___|\n###|$)/);
+          let description = descMatch ? descMatch[1].trim() : '';
+          
+          // Remove any leftover type line fragments
+          description = description
+            .replace(/^•\s*`?Optional`?\s*\*\*[^*]+\*\*:\s*`?[^`\n]+`?\s*\n*/, '')
+            .replace(/^•\s*\*\*[^*]+\*\*:\s*`?[^`\n]+`?\s*\n*/, '')
+            .replace(/^•\s*`?Optional`?\s*$/, '')
+            .trim();
+          
+          // Check if there's a Type declaration table
+          const typeDeclMatch = propBody.match(/####\s+Type declaration\s*\n+([\s\S]*?)(?=\n####\s+Defined in|\n___|\n###|$)/);
+          
+          if (typeDeclMatch) {
+            // Has table - convert to Expandable
+            const tableText = typeDeclMatch[1];
+            const tableLines = tableText.split('\n').filter(l => l.trim().startsWith('|'));
+            const children = tableToExpandable(tableLines, fieldTag);
+            
+            if (children.length > 0) {
+              const finalType = typeStr === 'Object' || typeStr.includes('Object') ? 'Object' : typeStr;
+              const requiredAttr = isOptional ? '' : ' required';
+              const expandableContent = children.join('\n\n');
+              const descPart = description ? `${description}\n\n` : '';
+              convertedProps.push(`<${fieldTag} name="${propName}" type="${escapeType(finalType)}"${requiredAttr}>\n${descPart}<Expandable title="properties">\n${expandableContent}\n</Expandable>\n</${fieldTag}>`);
+            } else {
+              const requiredAttr = isOptional ? '' : ' required';
+              const descPart = description ? `${description}\n\n` : '';
+              convertedProps.push(`<${fieldTag} name="${propName}" type="${escapeType(typeStr)}"${requiredAttr}>\n${descPart}</${fieldTag}>`);
+            }
+          } else if (/^\{[\s\S]*\}\s*\[\]\s*$/.test(typeStr.replace(/`/g, ''))) {
+            // Object[] with inline definition - remove backticks and backslashes
+            const cleanTypeStr = typeStr.replace(/`/g, '').replace(/\\/g, '');
+            const objProps = parseInlineObject(cleanTypeStr);
+            
+            // Clean description - remove any type definition remnants
+            description = description.replace(/\{[\s\S]*\}\s*\[\]\s*$/, '').trim();
+            
+            if (objProps.length > 0) {
+              const nested = objProps.map(p => {
+                const req = p.optional ? '' : ' required';
+                const cleanPType = p.type.replace(/\}\s*\[\]\s*$/, '').trim();
+                return `<${fieldTag} name="${p.name}" type="${escapeType(cleanPType)}"${req}>\n</${fieldTag}>`;
+              }).join('\n\n');
+              const requiredAttr = isOptional ? '' : ' required';
+              const descPart = description ? `${description}\n\n` : '';
+              convertedProps.push(`<${fieldTag} name="${propName}" type="Object[]"${requiredAttr}>\n${descPart}<Expandable title="properties">\n${nested}\n</Expandable>\n</${fieldTag}>`);
+            } else {
+              const requiredAttr = isOptional ? '' : ' required';
+              const descPart = description ? `${description}\n\n` : '';
+              convertedProps.push(`<${fieldTag} name="${propName}" type="Object[]"${requiredAttr}>\n${descPart}</${fieldTag}>`);
+            }
+          } else {
+            // Simple type or reference type
+            const cleanType = typeStr.replace(/^`|`$/g, '').replace(/\\/g, '');
+            const requiredAttr = isOptional ? '' : ' required';
+            const descPart = description ? `${description}\n\n` : '';
+            convertedProps.push(`<${fieldTag} name="${propName}" type="${escapeType(cleanType)}"${requiredAttr}>\n${descPart}</${fieldTag}>`);
+          }
+      }
+      
+      if (convertedProps.length > 0) {
+        // Replace the Properties section with converted content
+        const convertedContent = convertedProps.join('\n\n');
+        const beforeProps = content.substring(0, propsIndex);
+        const afterPropsStart = propsIndex + '## Properties'.length + nextSection[0].length;
+        const rest = content.substring(afterPropsStart);
+        content = beforeProps + '## Properties\n\n' + convertedContent + '\n' + rest;
+      }
+    }
+    
+    // Clean up "Defined in" sections and separators
+    content = content
+      .replace(/^####\s+Defined in[\s\S]*?(?=^###\s+|^##\s+|$)/gm, '')
+      .replace(/^___\s*$/gm, '');
+  }
 
   return content;
 }
@@ -129,32 +365,7 @@ function getCategoryFromPath(filePath) {
   if (filePath.includes('stream_client')) return 'Core Features';
   if (filePath.includes('interfaces/')) return 'API Reference';
   
-  // Check for specific modules
-  for (const [module, category] of Object.entries(METHOD_GROUPS)) {
-    if (filePath.includes(module)) {
-      return 'API Reference';
-    }
-  }
-  
   return 'API Reference';
-}
-
-// Helper function to generate a single tag from file path
-function generateTag(filePath, title) {
-  if (filePath.includes('Paginator')) return 'pagination';
-  if (filePath.includes('Client')) return 'client';
-  if (filePath.includes('stream')) return 'streaming';
-  if (filePath.includes('auth')) return 'authentication';
-  if (filePath.includes('interface')) return 'types';
-  
-  // Add module-specific tags
-  for (const module of Object.keys(METHOD_GROUPS)) {
-    if (filePath.includes(module)) {
-      return module.replace('_', '-');
-    }
-  }
-  
-  return 'api';
 }
 
 // Main processing function
@@ -181,13 +392,13 @@ async function processDocs() {
     
     // Create subdirectories with xdks/typescript prefix
     fs.mkdirSync(path.join(outputDir, 'xdks', 'typescript', 'reference'), { recursive: true });
-    fs.mkdirSync(path.join(outputDir, 'xdks', 'typescript', 'guides'), { recursive: true });
-    fs.mkdirSync(path.join(outputDir, 'xdks', 'typescript', 'assets'), { recursive: true });
     
     console.log('📝 Processing markdown files...');
     
-    // Process all markdown files recursively
+    // Process all markdown files
     const docsDir = 'docs';
+    
+    // Recursive function to get all files (for Node.js < 18)
     function getAllFiles(dir, fileList = []) {
       const files = fs.readdirSync(dir);
       files.forEach(file => {
@@ -201,7 +412,20 @@ async function processDocs() {
       });
       return fileList;
     }
+    
     const files = getAllFiles(docsDir);
+    
+    // Build map of known targets: baseName -> subdirectory (classes/interfaces/modules/enums)
+    const knownTargets = new Map();
+    for (const f of files) {
+      if (typeof f === 'string' && f.endsWith('.md')) {
+        const base = path.basename(f, '.md');
+        const dir = path.dirname(f).replace(/^\.$/, '');
+        if (!knownTargets.has(base) && dir && dir !== 'docs') {
+          knownTargets.set(base, dir);
+        }
+      }
+    }
     
     const processedFiles = [];
     const navigation = {
@@ -224,34 +448,26 @@ async function processDocs() {
           title = titleMatch[1];
         }
         
-        // Clean up title
+        // Clean up title (keep original class/interface names without inserting spaces)
         title = title
           .replace(/^Class\s+/, '')
           .replace(/^Interface\s+/, '')
           .replace(/^Type\s+/, '')
-          .replace(/([A-Z])/g, ' $1')
           .trim();
         
         const category = getCategoryFromPath(file);
-        const tag = generateTag(file, title);
-        const processedContent = processMarkdownContent(content, title);
+        const processedContent = processMarkdownContent(content, title, file, knownTargets);
         
     // Generate frontmatter with sidebarTitle
-    const frontmatter = generateFrontmatter(title, `Documentation for ${title}`, category, tag, title);
+    const frontmatter = generateFrontmatter(title, title);
         const finalContent = frontmatter + processedContent;
         
-        // Determine output path with xdks/typescript prefix
-        let outputPath;
-        if (file.includes('classes/')) {
-          const className = path.basename(file, '.md');
-          outputPath = path.join(outputDir, 'xdks', 'typescript', 'reference', `${className}.mdx`);
-        } else if (file.includes('interfaces/')) {
-          const interfaceName = path.basename(file, '.md');
-          outputPath = path.join(outputDir, 'xdks', 'typescript', 'reference', `${interfaceName}.mdx`);
-        } else {
-          const baseName = path.basename(file, '.md');
-          outputPath = path.join(outputDir, 'xdks', 'typescript', 'reference', `${baseName}.mdx`);
-        }
+        // Determine output path with xdks/typescript prefix, preserving TypeDoc subdirectories
+        const baseName = path.basename(file, '.md');
+        const subDir = path.dirname(file); // e.g., classes, interfaces, enums
+        const targetDir = path.join(outputDir, 'xdks', 'typescript', 'reference', subDir);
+        fs.mkdirSync(targetDir, { recursive: true });
+        const outputPath = path.join(targetDir, `${baseName}.mdx`);
         
         // Write processed file
         fs.writeFileSync(outputPath, finalContent);
@@ -262,11 +478,12 @@ async function processDocs() {
           originalPath: file
         });
         
-        // Add to navigation with xdks/typescript prefix
+        // Add to navigation with xdks/typescript prefix (preserve subdirectory)
         if (navigation[category]) {
+          const relativeRefPath = path.join(subDir, baseName).replace(/\\/g, '/');
           navigation[category].push({
             title,
-            url: `xdks/typescript/reference/${path.basename(outputPath, '.mdx')}`
+            url: `xdks/typescript/reference/${relativeRefPath}`
           });
         }
       }
@@ -277,44 +494,63 @@ async function processDocs() {
     
     // Overview page
     const overviewContent = `---
-title: "Overview"
-description: "TypeScript SDK for the X API - Comprehensive guide to getting started"
+title: "TypeScript XDK"
 sidebarTitle: "Overview"
 ---
-
-# TypeScript SDK for X API
 
 A comprehensive TypeScript SDK for the X API (formerly Twitter API) with advanced features including smart pagination, multiple authentication methods, real-time streaming, and full type safety.
 
 ## Key Features
 
-- **🔄 Smart Pagination**: Automatic pagination with async iteration support
-- **🔐 Multiple Authentication**: OAuth1, OAuth2, and Bearer token support  
-- **📡 Real-time Streaming**: Event-driven streaming with automatic reconnection
-- **📚 Full Type Safety**: Complete TypeScript definitions for all endpoints
-- **🎯 20+ API Modules**: Users, Posts, Lists, Bookmarks, Communities, and more
+- **🔐 Authentication**: User Context (OAuth1.0a, OAuth2.0), and App-Only (Bearer token) authentication
+- **🔄 Pagination**: Automatic pagination with async iteration support
+- **📡 Streaming**: Event-driven streaming with automatic reconnection
+- **📚 Type Safety**: Complete TypeScript definitions for all endpoints and parameters
+- **🎯 Full X API Support**: Users, Posts, Lists, Bookmarks, Communities, and more
 
 ## Quick Start
 
-\`\`\`typescript
-import { Client } from '@your-org/x-api-sdk';
+<CodeGroup dropdown>
 
-const client = new Client({
-  bearerToken: 'your-bearer-token'
-});
+\`\`\`typescript quickstart.ts theme={null}
+import { 
+  Client, 
+  type ClientConfig,
+  type UsersGetByUsernameResponse
+} from '@xdevplatform/xdk';
 
-// Get user information
-const user = await client.users.getMe();
-console.log(user.data.username);
+const config: ClientConfig = { bearerToken: 'your-bearer-token' };
+
+const client: Client = new Client(config);
+
+async function main(): Promise<void> {
+  const userResponse: UsersGetByUsernameResponse = await client.users.getByUsername('XDevelopers');
+  const username: string = userResponse.data?.username!;
+  console.log(username);
+}
+
+main();
 \`\`\`
+
+\`\`\`javascript quickstart.js theme={null}
+import { Client } from '@xdevplatform/xdk';
+
+const client = new Client({ bearerToken: 'your-bearer-token' });
+
+const userResponse = await client.users.getByUsername('XDevelopers');
+const username = userResponse.data.username;
+console.log(username);
+\`\`\`
+
+</CodeGroup>
 
 ## What's Next?
 
 - [Installation Guide](/xdks/typescript/install) - Set up the SDK in your project
 - [Authentication](/xdks/typescript/authentication) - Learn about different auth methods
-- [Pagination](/xdks/typescript/pagination) - Master data pagination
-- [Streaming](/xdks/typescript/streaming) - Real-time data streaming
-- [API Reference](/xdks/typescript/reference/Client) - Complete API documentation
+- [Pagination](/xdks/typescript/pagination) - Learn about data pagination
+- [Streaming](/xdks/typescript/streaming) - Learn about real-time data streaming
+- [API Reference](/xdks/typescript/reference/Client) - Read the complete API documentation
 `;
 
     fs.writeFileSync(path.join(outputDir, 'xdks', 'typescript', 'overview.mdx'), overviewContent);
@@ -322,31 +558,28 @@ console.log(user.data.username);
     // Install page
     const installContent = `---
 title: "Installation"
-description: "Install and set up the TypeScript SDK for X API"
 sidebarTitle: "Installation"
 ---
 
-# Installation
-
 Get started with the TypeScript SDK for X API in your project.
 
-## Install via npm
+## Install
 
-\`\`\`bash
-npm install @your-org/x-api-sdk
+<CodeGroup>
+
+\`\`\`bash npm theme={null}
+npm install @xdevplatform/xdk
 \`\`\`
 
-## Install via yarn
-
-\`\`\`bash
-yarn add @your-org/x-api-sdk
+\`\`\`bash yarn theme={null}
+yarn add @xdevplatform/xdk
 \`\`\`
 
-## Install via pnpm
-
-\`\`\`bash
-pnpm add @your-org/x-api-sdk
+\`\`\`bash pnpm theme={null}
+pnpm add @xdevplatform/xdk
 \`\`\`
+
+</CodeGroup>
 
 ## TypeScript Support
 
@@ -368,11 +601,8 @@ The SDK is written in TypeScript and includes full type definitions. No addition
     // Authentication page
     const authContent = `---
 title: "Authentication"
-description: "Authentication methods and setup for the TypeScript SDK"
 sidebarTitle: "Authentication"
 ---
-
-# Authentication
 
 The TypeScript SDK supports multiple authentication methods for different use cases.
 
@@ -380,64 +610,177 @@ The TypeScript SDK supports multiple authentication methods for different use ca
 
 For read-only operations and public data access:
 
-\`\`\`typescript
-import { Client } from '@your-org/x-api-sdk';
+<CodeGroup dropdown>
 
-const client = new Client({
-  bearerToken: 'your-bearer-token'
-});
+\`\`\`typescript quickstart.ts theme={null}
+import { 
+  Client, 
+  type ClientConfig,
+  type UsersGetByUsernameResponse
+} from '@xdevplatform/xdk';
 
-// Get public tweets
-const tweets = await client.posts.searchRecent({
-  query: 'typescript'
-});
+const config: ClientConfig = { bearerToken: 'your-bearer-token' };
+
+const client: Client = new Client(config);
+
+async function main(): Promise<void> {
+  const userResponse: UsersGetByUsernameResponse = await client.users.getByUsername('XDevelopers');
+  const username: string = userResponse.data?.username!;
+  console.log(username);
+}
+
+main();
 \`\`\`
 
-## OAuth 2.0 (User Context)
+\`\`\`javascript quickstart.js theme={null}
+import { Client } from '@xdevplatform/xdk';
 
-For user-specific operations:
+const client = new Client({ bearerToken: 'your-bearer-token' });
 
-\`\`\`typescript
-import { Client, OAuth2Auth } from '@your-org/x-api-sdk';
-
-const auth = new OAuth2Auth({
-  clientId: 'your-client-id',
-  clientSecret: 'your-client-secret',
-  redirectUri: 'http://localhost:3000/callback'
-});
-
-// Get authorization URL
-const authUrl = auth.getAuthorizationUrl();
-
-// After user authorization, exchange code for token
-const token = await auth.getAccessToken(authorizationCode);
-
-const client = new Client({
-  auth
-});
-
-// Access user-specific data
-const user = await client.users.getMe();
+const userResponse = await client.users.getByUsername('XDevelopers');
+const username = userResponse.data.username;
+console.log(username);
 \`\`\`
+
+</CodeGroup>
 
 ## OAuth 1.0a (User Context)
 
 For legacy applications or specific use cases:
 
-\`\`\`typescript
-import { Client, OAuth1Auth } from '@your-org/x-api-sdk';
+<CodeGroup dropdown>
 
-const auth = new OAuth1Auth({
+\`\`\`typescript oauth1.ts theme={null}
+import { 
+  Client, 
+  OAuth1,
+  type OAuth1Config,
+  type ClientConfig,
+  type UsersGetMeResponse
+} from '@xdevplatform/xdk';
+
+const oauth1Config: OAuth1Config = {
   apiKey: 'your-api-key',
   apiSecret: 'your-api-secret',
   accessToken: 'user-access-token',
   accessTokenSecret: 'user-access-token-secret'
+};
+
+const oauth1: OAuth1 = new OAuth1(oauth1Config);
+
+const config: ClientConfig = {
+  oauth1: oauth1,
+};
+
+const client: Client = new Client(config);
+
+async function main(): Promise<void> {
+  const response: UsersGetMeResponse = await client.users.getMe();
+
+  const me = response.data;
+  console.log(me);
+}
+
+main();
+
+\`\`\`
+
+\`\`\`javascript oauth1.js theme={null}
+import { 
+  Client, 
+  type ClientConfig,
+  type UsersGetByUsernameResponse
+} from '@xdevplatform/xdk';
+
+const config: ClientConfig = { bearerToken: 'your-bearer-token' };
+
+const client: Client = new Client(config);
+
+async function main(): Promise<void> {
+  const userResponse: UsersGetByUsernameResponse = await client.users.getByUsername('XDevelopers');
+  const username: string = userResponse.data?.username!;
+  console.log(username);
+}
+
+main();
+
+\`\`\`
+
+</CodeGroup>
+
+## OAuth 2.0 (User Context)
+
+For user-specific operations:
+
+<CodeGroup dropdown>
+
+\`\`\`typescript oauth2.ts theme={null}
+import { 
+  Client, 
+  OAuth2,
+  generateCodeVerifier,
+  generateCodeChallenge,
+  type OAuth2Config,
+  type ClientConfig,
+  type OAuth2Token
+} from '@xdevplatform/xdk';
+
+(async (): Promise<void> => {
+  const oauth2Config: OAuth2Config = {
+    clientId: 'your-client-id',
+    clientSecret: 'your-client-secret',
+    redirectUri: 'https://example.com',
+    scope: ['tweet.read', 'users.read', 'offline.access'],
+  };
+
+  const oauth2: OAuth2 = new OAuth2(oauth2Config);
+
+  const state: string = 'example-state';
+  const codeVerifier: string = generateCodeVerifier();
+  const codeChallenge: string = await generateCodeChallenge(codeVerifier);
+  
+  oauth2.setPkceParameters(codeVerifier, codeChallenge);
+  
+  const authUrl: string = await oauth2.getAuthorizationUrl(state);
+
+  const tokens: OAuth2Token = await oauth2.exchangeCode(authCode, codeVerifier);
+
+  const config: ClientConfig = {
+    accessToken: tokens.access_token,
+  };
+
+  const client: Client = new Client(config);
 });
 
-const client = new Client({
-  auth
+\`\`\`
+
+\`\`\`javascript oauth2.js theme={null}
+import { Client, OAuth2, generateCodeVerifier, generateCodeChallenge } from '@xdevplatform/xdk';
+
+(async () => {
+  const oauth2 = new OAuth2({
+    clientId: 'your-client-id',
+    clientSecret: 'your-client-secret',
+    redirectUri: 'https://example.com',
+    scope: ['tweet.read', 'users.read', 'offline.access'],
+  });
+
+  const state = 'example-state';
+  const codeVerifier = generateCodeVerifier();
+  const codeChallenge = await generateCodeChallenge(codeVerifier);
+  oauth2.setPkceParameters(codeVerifier, codeChallenge);
+  const authUrl = await oauth2.getAuthorizationUrl(state);
+
+  const tokens = await oauth2.exchangeCode(authCode, codeVerifier);
+
+  const client = new Client({ accessToken: tokens.access_token });
+
+  const response = await client.users.getMe();
+  const me = response.data;
+  console.log(me);
 });
 \`\`\`
+
 
 ## Environment Variables
 
@@ -450,13 +793,21 @@ X_API_CLIENT_ID=your-client-id
 X_API_CLIENT_SECRET=your-client-secret
 \`\`\`
 
-\`\`\`typescript
-import { Client } from '@your-org/x-api-sdk';
+<CodeGroup dropdown>
 
-const client = new Client({
-  bearerToken: process.env.X_API_BEARER_TOKEN
-});
+\`\`\`typescript env.ts theme={null}
+import { Client } from '@xdevplatform/xdk';
+
+const client = new Client({ bearerToken: process.env.X_API_BEARER_TOKEN });
 \`\`\`
+
+\`\`\`javascript env.js theme={null}
+import { Client } from '@xdevplatform/xdk';
+
+const client = new Client({ bearerToken: process.env.X_API_BEARER_TOKEN });
+\`\`\`
+
+</CodeGroup>
 `;
 
     fs.writeFileSync(path.join(outputDir, 'xdks', 'typescript', 'authentication.mdx'), authContent);
@@ -464,11 +815,8 @@ const client = new Client({
     // Pagination page
     const paginationContent = `---
 title: "Pagination"
-description: "Learn how to use pagination in the TypeScript SDK"
 sidebarTitle: "Pagination"
 ---
-
-# Pagination
 
 The TypeScript SDK provides powerful pagination capabilities for efficiently handling large datasets.
 
@@ -476,40 +824,74 @@ The TypeScript SDK provides powerful pagination capabilities for efficiently han
 
 Most endpoints that return lists support pagination:
 
-\`\`\`typescript
-import { Client } from '@your-org/x-api-sdk';
+<CodeGroup dropdown>
 
-const client = new Client({
-  bearerToken: 'your-bearer-token'
-});
+\`\`\`typescript basic.ts theme={null}
+import { Client, UserPaginator } from '@xdevplatform/xdk';
 
-// Get followers with pagination
-const followersPaginator = await client.users.getFollowers({
-  userId: 'user-id',
-  maxResults: 100
-});
-
-// Access pagination metadata
+const client: Client = new Client({ bearerToken: 'your-bearer-token' });
+const followersPaginator: UserPaginator = await client.users.getFollowers({ userId: 'user-id', maxResults: 100 });
 console.log('Has more pages:', !followersPaginator.done);
 console.log('Next token:', followersPaginator.meta?.next_token);
 \`\`\`
+
+\`\`\`javascript basic.js theme={null}
+import { Client } from '@xdevplatform/xdk';
+
+const client = new Client({ bearerToken: 'your-bearer-token' });
+const followersPaginator = await client.users.getFollowers({ userId: 'user-id', maxResults: 100 });
+console.log('Has more pages:', !followersPaginator.done);
+console.log('Next token:', followersPaginator.meta?.next_token);
+\`\`\`
+
+</CodeGroup>
 
 ## Async Iteration
 
 Iterate through all pages automatically:
 
-\`\`\`typescript
+<CodeGroup dropdown>
+
+\`\`\`typescript pagination-async.ts theme={null}
+import { User, UserPaginator } from '@xdevplatform/xdk';
+
 // Get all followers
+for await (const follower of (followersPaginator as UserPaginator)) {
+  const u: User = follower;
+  console.log(u.username);
+}
+\`\`\`
+
+\`\`\`javascript pagination-async.js theme={null}
+// Get all followers (JS)
 for await (const follower of followersPaginator) {
   console.log(follower.username);
 }
 \`\`\`
 
+</CodeGroup>
+
 ## Manual Page Control
 
 Control pagination manually:
 
-\`\`\`typescript
+<CodeGroup>
+
+\`\`\`typescript manual.ts theme={null}
+import { UserPaginator } from '@xdevplatform/xdk';
+
+// Get first page
+await (followersPaginator as UserPaginator).fetchNext();
+console.log('First page:', (followersPaginator as UserPaginator).items);
+
+// Get next page
+if (!(followersPaginator as UserPaginator).done) {
+  await (followersPaginator as UserPaginator).fetchNext();
+  console.log('Second page:', (followersPaginator as UserPaginator).items);
+}
+\`\`\`
+
+\`\`\`javascript manual.js theme={null}
 // Get first page
 await followersPaginator.fetchNext();
 console.log('First page:', followersPaginator.items);
@@ -521,11 +903,32 @@ if (!followersPaginator.done) {
 }
 \`\`\`
 
+</CodeGroup>
+
 ## Pagination Types
 
 Different endpoints return different paginator types:
 
-\`\`\`typescript
+<CodeGroup>
+
+\`\`\`typescript types.ts theme={null}
+import { Client, UserPaginator, PostPaginator, EventPaginator, User, Post } from '@xdevplatform/xdk';
+
+const client: Client = new Client({ bearerToken: 'your-bearer-token' });
+
+// User paginator for user-related endpoints
+const userPaginator: UserPaginator = await client.users.getFollowers({ userId: 'user-id' });
+const firstUser: User | undefined = userPaginator.users[0];
+
+// Post paginator for tweet/post endpoints
+const postPaginator: PostPaginator = await client.posts.getUserTweets({ userId: 'user-id' });
+const firstPost: Post | undefined = postPaginator.posts[0];
+
+// Event paginator for DM/event endpoints
+const eventPaginator: EventPaginator = await client.directMessages.getDmEvents({ userId: 'user-id' });
+\`\`\`
+
+\`\`\`javascript types.js theme={null}
 // User paginator for user-related endpoints
 const userPaginator = await client.users.getFollowers({ userId: 'user-id' });
 // userPaginator.users - array of User objects
@@ -539,11 +942,31 @@ const eventPaginator = await client.directMessages.getDmEvents({ userId: 'user-i
 // eventPaginator.events - array of DmEvent objects
 \`\`\`
 
+</CodeGroup>
+
 ## Error Handling
 
 Handle pagination errors gracefully:
 
-\`\`\`typescript
+<CodeGroup>
+
+\`\`\`typescript errors.ts theme={null}
+import { UserPaginator } from '@xdevplatform/xdk';
+
+try {
+  for await (const follower of (followersPaginator as UserPaginator)) {
+    console.log(follower.username);
+  }
+} catch (error) {
+  if ((followersPaginator as UserPaginator).rateLimited) {
+    console.log('Rate limited, waiting...');
+  } else {
+    console.error('Pagination error:', error);
+  }
+}
+\`\`\`
+
+\`\`\`javascript errors.js theme={null}
 try {
   for await (const follower of followersPaginator) {
     console.log(follower.username);
@@ -551,12 +974,13 @@ try {
 } catch (error) {
   if (followersPaginator.rateLimited) {
     console.log('Rate limited, waiting...');
-    // Handle rate limiting
   } else {
     console.error('Pagination error:', error);
   }
 }
 \`\`\`
+
+</CodeGroup>
 `;
 
     fs.writeFileSync(path.join(outputDir, 'xdks', 'typescript', 'pagination.mdx'), paginationContent);
@@ -564,11 +988,8 @@ try {
     // Streaming page
     const streamingContent = `---
 title: "Streaming"
-description: "Real-time streaming with the TypeScript SDK"
 sidebarTitle: "Streaming"
 ---
-
-# Streaming
 
 The TypeScript SDK provides real-time streaming capabilities for live data feeds.
 
@@ -576,64 +997,55 @@ The TypeScript SDK provides real-time streaming capabilities for live data feeds
 
 Connect to real-time streams:
 
-\`\`\`typescript
-import { Client } from '@your-org/x-api-sdk';
+<CodeGroup>
 
-const client = new Client({
-  bearerToken: 'your-bearer-token'
-});
+\`\`\`typescript stream.ts theme={null}
+import { Client } from '@xdevplatform/xdk';
 
-// Stream tweets in real-time
-const stream = await client.stream.getTweetsStream({
-  tweetFields: ['created_at', 'author_id', 'text']
-});
-
-// Listen for tweets
-stream.on('tweet', (tweet) => {
-  console.log('New tweet:', tweet.text);
-});
-
-// Handle errors
-stream.on('error', (error) => {
-  console.error('Stream error:', error);
-});
-
-// Start streaming
+const client: Client = new Client({ bearerToken: 'your-bearer-token' });
+const stream = await client.stream.getTweetsStream({ tweetFields: ['created_at', 'author_id', 'text'] });
+stream.on('tweet', (tweet) => console.log('New tweet:', tweet.text));
+stream.on('error', (error) => console.error('Stream error:', error));
 await stream.connect();
 \`\`\`
+
+\`\`\`javascript stream.js theme={null}
+import { Client } from '@xdevplatform/xdk';
+
+const client = new Client({ bearerToken: 'your-bearer-token' });
+const stream = await client.stream.getTweetsStream({ tweetFields: ['created_at'] });
+stream.on('tweet', (tweet) => console.log('New tweet:', tweet.text));
+await stream.connect();
+\`\`\`
+
+</CodeGroup>
 
 ## Event-Driven Streaming
 
 Use the event-driven approach for better control:
 
-\`\`\`typescript
-import { EventDrivenStream } from '@your-org/x-api-sdk';
+<CodeGroup>
 
-const stream = new EventDrivenStream({
-  endpoint: 'tweets/sample/stream',
-  bearerToken: 'your-bearer-token'
-});
+\`\`\`typescript events.ts theme={null}
+import { EventDrivenStream } from '@xdevplatform/xdk';
 
-// Set up event handlers
-stream.onTweet((tweet) => {
-  console.log('Tweet received:', tweet.text);
-});
-
-stream.onError((error) => {
-  console.error('Stream error:', error);
-});
-
-stream.onConnect(() => {
-  console.log('Connected to stream');
-});
-
-stream.onDisconnect(() => {
-  console.log('Disconnected from stream');
-});
-
-// Connect to stream
+const stream: EventDrivenStream = new EventDrivenStream({ endpoint: 'tweets/sample/stream', bearerToken: 'your-bearer-token' });
+stream.onTweet((tweet) => console.log('Tweet received:', tweet.text));
+stream.onError((error) => console.error('Stream error:', error));
+stream.onConnect(() => console.log('Connected to stream'));
+stream.onDisconnect(() => console.log('Disconnected from stream'));
 await stream.connect();
 \`\`\`
+
+\`\`\`javascript events.js theme={null}
+import { EventDrivenStream } from '@xdevplatform/xdk';
+
+const stream = new EventDrivenStream({ endpoint: 'tweets/sample/stream', bearerToken: 'your-bearer-token' });
+stream.onTweet((t) => console.log('Tweet received:', t.text));
+await stream.connect();
+\`\`\`
+
+</CodeGroup>
 
 ## Stream Management
 
@@ -698,129 +1110,96 @@ stream.on('rate_limit', (rateLimitInfo) => {
 
     fs.writeFileSync(path.join(outputDir, 'xdks', 'typescript', 'streaming.mdx'), streamingContent);
     
-    // Create main README.md for integration
-    console.log('📄 Creating main README.md...');
-    const mainReadme = `---
-title: "TypeScript SDK"
-description: "TypeScript SDK for the X API with comprehensive pagination, authentication, and streaming support."
----
-
-# TypeScript SDK
-
-A comprehensive TypeScript SDK for the X API (formerly Twitter API) with advanced features including:
-
-- **🔄 Smart Pagination**: Automatic pagination with async iteration support
-- **🔐 Multiple Authentication**: OAuth1, OAuth2, and Bearer token support
-- **📡 Real-time Streaming**: Event-driven streaming with automatic reconnection
-- **📚 Full Type Safety**: Complete TypeScript definitions for all endpoints
-- **🎯 20+ API Modules**: Users, Posts, Lists, Bookmarks, Communities, and more
-
-## Quick Start
-
-\`\`\`typescript
-import { Client } from 'x-api-sdk';
-
-const client = new Client({
-  bearerToken: 'your-bearer-token'
-});
-
-// Get user information
-const user = await client.users.getUser('783214');
-
-// Get followers with pagination
-const followers = await client.users.getFollowers('783214', {
-  maxResults: 10,
-  userFields: ['id', 'name', 'username']
-});
-
-// Iterate through followers
-for await (const follower of followers) {
-  console.log(follower.username);
-}
-\`\`\`
-
-## Installation
-
-\`\`\`bash
-npm install x-api-sdk
-\`\`\`
-
-## Features
-
-### 🔄 Smart Pagination
-The SDK provides intelligent pagination that automatically handles API pagination tokens and provides multiple ways to iterate through data:
-
-\`\`\`typescript
-// Automatic iteration
-for await (const follower of client.users.getFollowers('783214')) {
-  console.log(follower.username);
-}
-
-// Manual control
-const followers = await client.users.getFollowers('783214');
-await followers.fetchNext();
-console.log(followers.items.length);
-\`\`\`
-
-### 📡 Real-time Streaming
-Connect to real-time streams with automatic reconnection and error handling:
-
-\`\`\`typescript
-const stream = await client.stream.postsFirehose({
-  tweetFields: ['id', 'text', 'created_at']
-});
-
-stream.on('data', (tweet) => {
-  console.log('New tweet:', tweet.text);
-});
-\`\`\`
-
-### 🔐 Authentication
-Support for all X API authentication methods:
-
-\`\`\`typescript
-// Bearer token
-const client = new Client({ bearerToken: 'your-token' });
-
-// OAuth2
-const client = new Client({ accessToken: 'your-access-token' });
-
-// OAuth1
-const client = new Client({ oauth1: oauth1Instance });
-\`\`\`
-
-## API Reference
-
-Explore the complete API reference in the sidebar. The SDK includes clients for all major X API endpoints:
-
-- **Users**: User management, followers, following, search
-- **Posts**: Tweet management, search, analytics
-- **Lists**: List creation, management, members
-- **Bookmarks**: Bookmark management and retrieval
-- **Communities**: Community management and moderation
-- **Spaces**: Live audio spaces management
-- **Media**: Media upload and management
-- **Webhooks**: Webhook management and validation
-- **Compliance**: Data compliance and deletion
-- **Usage**: API usage and rate limit information
-
-## Support
-
-- **GitHub**: [${MINTLIFY_CONFIG.githubUrl}](${MINTLIFY_CONFIG.githubUrl})
-- **Documentation**: This site
-- **Issues**: [Report issues on GitHub](${MINTLIFY_CONFIG.githubUrl}/issues)
-
-## License
-
-MIT License - see the [GitHub repository](${MINTLIFY_CONFIG.githubUrl}) for details.
-`;
-
-    fs.writeFileSync(path.join(outputDir, 'README.md'), mainReadme);
-    
     // Create navigation structure for integration into existing Mintlify site
     console.log('⚙️ Creating navigation structure...');
-    
-    // Generate the TypeScript SDK navigation tab with groups
+
+    // Build API Reference groups from the generated files on disk
+    const refRoot = path.join(outputDir, 'xdks', 'typescript', 'reference');
+    const classesDir = path.join(refRoot, 'classes');
+    const interfacesDir = path.join(refRoot, 'interfaces');
+
+    const listFilesNoExt = (dir) => {
+      try {
+        return fs.readdirSync(dir)
+          .filter(f => f.endsWith('.mdx'))
+          .map(f => `xdks/typescript/reference/${path.basename(dir)}/${path.basename(f, '.mdx')}`);
+      } catch (_) {
+        return [];
+      }
+    };
+
+    const classesPages = listFilesNoExt(classesDir);
+    const interfacesPages = listFilesNoExt(interfacesDir);
+
+    // Build sub-groups for Classes and Interfaces
+    const MODULE_PREFIXES = [
+      'AccountActivity','Activity','Communities','CommunityNotes','Compliance','Connections',
+      'DirectMessages','General','Lists','Media','Posts','Spaces','Stream','Trends','Usage',
+      'Users','Webhooks','Http','OAuth','Client','Paginator','EventDrivenStream','StreamClient'
+    ];
+
+    function groupPages(pages, kind) {
+      const buckets = new Map();
+      for (const p of pages) {
+        const name = p.split('/').pop();
+        let group = null;
+        for (const pref of MODULE_PREFIXES) {
+          if (name.startsWith(pref)) { group = pref; break; }
+        }
+        if (!group) {
+          if (kind === 'classes') {
+            if (/Client$/.test(name)) group = 'Clients';
+            else if (/Stream/i.test(name)) group = 'Streaming';
+            else if (/Paginator$/.test(name)) group = 'Pagination';
+            else group = 'Core';
+          } else {
+            // interfaces
+            group = 'Misc';
+          }
+        }
+        if (!buckets.has(group)) buckets.set(group, []);
+        buckets.get(group).push(p);
+      }
+      // Sort pages within groups alphabetically
+      for (const [k, arr] of buckets) arr.sort();
+      // Convert to [{group, pages}]
+      return Array.from(buckets.entries()).sort((a,b)=>a[0].localeCompare(b[0])).map(([group, pages]) => ({ group, pages }));
+    }
+
+    const classGroups = groupPages(classesPages, 'classes');
+    const interfaceGroups = groupPages(interfacesPages, 'interfaces');
+
+    // Overwrite modules.mdx with an organized, expandable structure
+    const modulesOut = path.join(refRoot, 'modules.mdx');
+    // Derive original TypeDoc modules title from docs/modules.md
+    let typedocModulesTitle = 'Modules';
+    try {
+      const rawModules = fs.readFileSync(path.join('docs', 'modules.md'), 'utf8');
+      const m = rawModules.match(/^#\s+(.+)$/m);
+      if (m) typedocModulesTitle = m[1].trim();
+    } catch (_) {}
+    const renderGroupList = (groups) => groups.map(g => (
+      `  <Accordion title="${g.group}">\n` +
+      g.pages.map(p => `  - [${p.split('/').pop()}](/${p})`).join('\n') +
+      `\n  </Accordion>`
+    )).join('\n\n');
+
+    const modulesContent = `---\n`+
+`title: "${typedocModulesTitle}"\n`+
+`sidebarTitle: "${typedocModulesTitle}"\n`+
+`---\n\n`+
+`<AccordionGroup>\n\n`+
+`<Accordion title="Interfaces">\n\n`+
+renderGroupList(interfaceGroups)+`\n\n`+
+`</Accordion>\n\n`+
+`<Accordion title="Classes">\n\n`+
+renderGroupList(classGroups)+`\n\n`+
+`</Accordion>\n\n`+
+`</AccordionGroup>\n`;
+
+    fs.writeFileSync(modulesOut, modulesContent);
+
+    // Generate the TypeScript SDK navigation tab with requested structure
     const typescriptSdkNavigation = {
       tab: 'TypeScript SDK',
       hidden: true,
@@ -830,221 +1209,28 @@ MIT License - see the [GitHub repository](${MINTLIFY_CONFIG.githubUrl}) for deta
         'xdks/typescript/authentication',
         'xdks/typescript/pagination',
         'xdks/typescript/streaming',
-        'xdks/typescript/reference/Client',
         {
-          group: 'Core Features',
-          pages: navigation['Core Features'].slice(0, 5).map(item => item.url)
-        },
-        {
-          group: 'API Clients',
-          pages: navigation['API Reference'].filter(item => 
-            item.title.includes('Client') && !item.title.includes('Stream')
-          ).slice(0, 15).map(item => item.url)
-        },
-        {
-          group: 'Pagination',
-          pages: navigation['API Reference'].filter(item => 
-            item.title.includes('Paginator')
-          ).map(item => item.url)
-        },
-        {
-          group: 'Streaming',
-          pages: navigation['API Reference'].filter(item => 
-            item.title.includes('Stream')
-          ).slice(0, 8).map(item => item.url)
-        },
-        {
-          group: 'Types & Interfaces',
-          pages: navigation['API Reference'].filter(item => 
-            !item.title.includes('Client') && 
-            !item.title.includes('Paginator') && 
-            !item.title.includes('Stream')
-          ).slice(0, 15).map(item => item.url)
+          group: 'API Reference',
+          pages: [
+            'xdks/typescript/reference/modules',
+            {
+              group: 'Interfaces',
+              pages: interfaceGroups
+            },
+            {
+              group: 'Classes',
+              pages: classGroups
+            }
+          ]
         }
       ]
     };
-    
-    // Create a navigation snippet file
-    const navigationSnippet = `# TypeScript SDK Navigation Structure
-
-Add this to your existing mintlify.json tabs array:
-
-\`\`\`json
-${JSON.stringify(typescriptSdkNavigation, null, 2)}
-\`\`\`
-
-## Integration Instructions
-
-1. **Copy the navigation structure above** into your existing mintlify.json tabs array
-2. **Copy the generated files** from the xdk/ directory to your Mintlify site
-3. **Deploy** - Mintlify will automatically use the sidebarTitle from each file's frontmatter
-
-## File Structure
-
-The generated files should be placed in your Mintlify site as:
-- \`xdks/typescript/reference/\` - All API reference pages
-- \`xdks/typescript/guides/\` - Guide pages (currently empty)
-- \`xdks/typescript/assets/\` - Static assets
-
-## How It Works
-
-- **Tab Structure**: The TypeScript SDK appears as a tab in your Mintlify site
-- **Grouped Navigation**: Pages are organized into logical groups within the tab
-- **Sidebar Titles**: Each file's frontmatter includes \`sidebarTitle\` for clean sidebar display
-- **Mixed Structure**: Pages array can contain both URL strings and group objects
-- **Automatic Organization**: Mintlify automatically organizes pages by their frontmatter
-
-## Customization
-
-You can modify the navigation by:
-- Reordering the groups and URLs in the pages array
-- Adding or removing specific page URLs from groups
-- Adding new groups or removing existing ones
-- Modifying the sidebarTitle in individual file frontmatter
-
-## Notes
-
-- All internal links are already configured for the /xdks/typescript/ path structure
-- Page titles in the sidebar come from the \`sidebarTitle\` frontmatter field
-- The tab structure provides clean separation from your other documentation
-- Groups help organize related functionality for better discoverability
-`;
-
-    fs.writeFileSync(
-      path.join(outputDir, 'NAVIGATION_INTEGRATION.md'), 
-      navigationSnippet
-    );
     
     // Also create a JSON file for easy copy-paste
     fs.writeFileSync(
       path.join(outputDir, 'typescript-sdk-navigation.json'), 
       JSON.stringify(typescriptSdkNavigation, null, 2)
     );
-    
-    // Create a deployment guide
-    console.log('📋 Creating deployment guide...');
-    const deploymentGuide = `# TypeScript SDK Integration Guide
-
-## Integration into Existing Mintlify Site
-
-This guide shows how to integrate the TypeScript SDK documentation into your existing Mintlify site.
-
-### Step 1: Copy Files
-
-1. **Copy the xdk/ directory**: Copy the entire \`xdk/\` folder to your existing Mintlify site
-2. **Maintain directory structure**: Keep the \`xdks/typescript/\` structure intact
-
-### Step 2: Update Navigation
-
-1. **Open your existing mintlify.json**
-2. **Add the TypeScript SDK tab**: Copy the content from \`typescript-sdk-navigation.json\`
-3. **Insert into your tabs array**: Add it alongside your other tabs
-
-Example:
-\`\`\`json
-{
-  "tabs": [
-    {
-      "name": "Your Existing Tab",
-      "url": "/your-existing-page"
-    },
-    // Add the TypeScript SDK tab here
-    {
-      "tab": "TypeScript SDK",
-      "pages": [
-        "xdks/typescript/reference/Client",
-        {
-          "group": "Core Features",
-          "pages": [
-            "xdks/typescript/reference/Paginator"
-          ]
-        },
-        {
-          "group": "API Clients",
-          "pages": [
-            "xdks/typescript/reference/UsersClient",
-            "xdks/typescript/reference/PostsClient"
-          ]
-        }
-      ]
-    }
-  ]
-}
-\`\`\`
-
-### Step 3: Deploy
-
-1. **Commit changes**: Add the new files to your repository
-2. **Push to main branch**: Mintlify will automatically deploy the updates
-3. **Verify**: Check that the TypeScript SDK section appears in your sidebar
-
-## File Structure
-
-\`\`\`
-mintlify-docs/
-├── README.md                 # Main landing page
-├── mintlify.json            # Mintlify configuration
-├── xdk/                     # XDK documentation root
-│   └── typescript/          # TypeScript SDK documentation
-│       ├── reference/       # API reference pages
-│       │   ├── client.md   # Main client documentation
-│       │   ├── paginator.md # Pagination utilities
-│       │   ├── usersclient.md # Users API client
-│       │   └── ...         # Other API clients
-│       ├── guides/         # Guide pages
-│       └── assets/         # Static assets (logos, images)
-└── DEPLOYMENT.md            # This deployment guide
-\`\`\`
-
-## Customization
-
-### Branding
-- Update \`mintlify.json\` with your colors and logo
-- Add your favicon to the \`assets/\` folder
-- Update the main README.md with your specific information
-
-### Navigation
-- Modify the \`navigation\` array in \`mintlify.json\`
-- Reorder pages or create custom groupings
-- Add external links to your topbar
-
-### Content
-- Edit individual markdown files in \`reference/\`
-- Add custom pages in the root directory
-- Include images and diagrams in the \`assets/\` folder
-
-## Advanced Features
-
-### Search
-Mintlify automatically provides search functionality across all your documentation.
-
-### Code Examples
-All code examples are syntax-highlighted and copy-paste ready.
-
-### API Explorer
-Mintlify can automatically generate an API explorer from your OpenAPI spec.
-
-### Analytics
-Enable Mintlify analytics to track usage and popular pages.
-
-## Support
-
-- [Mintlify Documentation](https://mintlify.com/docs)
-- [Mintlify Discord](https://discord.gg/6W7x5n4S3x)
-- [Mintlify GitHub](https://github.com/mintlify/mintlify)
-`;
-
-    fs.writeFileSync(path.join(outputDir, 'DEPLOYMENT.md'), deploymentGuide);
-    
-    // Create a simple favicon placeholder
-    console.log('🎨 Creating placeholder assets...');
-    const faviconSvg = `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="32" height="32" rx="8" fill="#1DA1F2"/>
-<path d="M8 12h16v8H8z" fill="white"/>
-<circle cx="12" cy="16" r="2" fill="#1DA1F2"/>
-<circle cx="20" cy="16" r="2" fill="#1DA1F2"/>
-</svg>`;
-    fs.writeFileSync(path.join(outputDir, 'xdks', 'typescript', 'assets', 'favicon.svg'), faviconSvg);
     
     console.log('✅ TypeScript SDK documentation processed successfully!');
     console.log(`📁 Output directory: ${outputDir}/`);
@@ -1053,8 +1239,6 @@ Enable Mintlify analytics to track usage and popular pages.
     console.log('1. Copy the \'xdk/\' folder to your existing Mintlify site');
     console.log('2. Add the navigation structure from \'typescript-sdk-navigation.json\' to your mintlify.json');
     console.log('3. Push to your main branch to deploy');
-    console.log('\n📋 See INTEGRATION_GUIDE.md for detailed instructions');
-    console.log('📄 See NAVIGATION_INTEGRATION.md for navigation setup');
     
   } catch (error) {
     console.error('❌ Error processing documentation:', error.message);

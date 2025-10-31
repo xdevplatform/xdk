@@ -2,11 +2,11 @@
 
 # Class: UsageClient
 
-Client for Usage operations
+Client for usage operations
 
-This client provides methods for interacting with the Usage endpoints
+This client provides methods for interacting with the usage endpoints
 of the X API. It handles authentication, request formatting, and response
-parsing for all Usage related operations.
+parsing for all usage related operations.
 
 ## Table of contents
 
@@ -24,7 +24,7 @@ parsing for all Usage related operations.
 
 • **new UsageClient**(`client`): [`UsageClient`](UsageClient.md)
 
-Creates a new Usage client instance
+Creates a new usage client instance
 
 #### Parameters
 
@@ -38,13 +38,13 @@ Creates a new Usage client instance
 
 #### Defined in
 
-[usage/client.ts:47](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/usage/client.ts#L47)
+[usage/client.ts:43](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/usage/client.ts#L43)
 
 ## Methods
 
 ### get
 
-▸ **get**(`options?`): `Promise`\<[`UsageGetResponse`](../interfaces/UsageGetResponse.md)\>
+▸ **get**(`options?`): `Promise`\<`any`\>
 
 Get usage
 Retrieves usage statistics for Posts over a specified number of days.
@@ -53,14 +53,14 @@ Retrieves usage statistics for Posts over a specified number of days.
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`UsageGetOptions`](../interfaces/UsageGetOptions.md) |
+| `options` | `GetOptions` |
 
 #### Returns
 
-`Promise`\<[`UsageGetResponse`](../interfaces/UsageGetResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[usage/client.ts:59](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/usage/client.ts#L59)
+[usage/client.ts:55](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/usage/client.ts#L55)

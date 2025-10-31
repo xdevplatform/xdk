@@ -10,6 +10,8 @@ import { GetOpenApiSpecResponse } from './models.js';
 
 /**
  * Options for getOpenApiSpec method
+ * 
+ * @public
  */
 export interface GetOpenApiSpecStreamingOptions {
   /** Additional request options */

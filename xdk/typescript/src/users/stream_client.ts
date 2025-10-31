@@ -7,114 +7,50 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  UnmuteUserResponse,
-  UnlikePostResponse,
-  GetLikedPostsResponse,
-  GetPostsResponse,
-  GetPinnedListsResponse,
-  PinListResponse,
   GetOwnedListsResponse,
-  GetListMembershipsResponse,
-  RepostPostResponse,
-  GetTimelineResponse,
-  GetFollowersResponse,
-  GetMentionsResponse,
-  GetBookmarkFoldersResponse,
   BlockDmsResponse,
-  SearchResponse,
-  GetByUsernamesResponse,
-  UnfollowUserResponse,
-  UnpinListResponse,
-  GetBlockingResponse,
+  GetLikedPostsResponse,
   UnrepostPostResponse,
-  DeleteBookmarkResponse,
-  GetBookmarksByFolderIdResponse,
+  GetMentionsResponse,
+  UnfollowUserResponse,
+  UnblockDmsResponse,
+  GetByIdsResponse,
+  UnmuteUserResponse,
   GetFollowingResponse,
   FollowUserResponse,
-  GetBookmarksResponse,
-  CreateBookmarkResponse,
-  GetByIdsResponse,
-  LikePostResponse,
-  GetByIdResponse,
-  GetByUsernameResponse,
-  GetMeResponse,
-  GetRepostsOfMeResponse,
-  UnblockDmsResponse,
+  GetBookmarkFoldersResponse,
+  GetBookmarksByFolderIdResponse,
+  GetPostsResponse,
+  GetListMembershipsResponse,
   UnfollowListResponse,
+  GetRepostsOfMeResponse,
+  GetBlockingResponse,
+  SearchResponse,
+  GetFollowersResponse,
+  GetMeResponse,
+  GetByIdResponse,
+  GetByUsernamesResponse,
+  GetByUsernameResponse,
+  GetTimelineResponse,
+  DeleteBookmarkResponse,
+  GetPinnedListsResponse,
+  PinListResponse,
+  UnpinListResponse,
   GetFollowedListsResponse,
   FollowListResponse,
+  RepostPostResponse,
+  LikePostResponse,
   GetMutingResponse,
   MuteUserResponse,
+  GetBookmarksResponse,
+  CreateBookmarkResponse,
+  UnlikePostResponse,
 } from './models.js';
 
 /**
- * Options for unmuteUser method
- */
-export interface UnmuteUserStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for unlikePost method
- */
-export interface UnlikePostStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getLikedPosts method
- */
-export interface GetLikedPostsStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getPosts method
- */
-export interface GetPostsStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getPinnedLists method
- */
-export interface GetPinnedListsStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for pinList method
- */
-export interface PinListStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
  * Options for getOwnedLists method
+ * 
+ * @public
  */
 export interface GetOwnedListsStreamingOptions {
   /** Additional request options */
@@ -125,76 +61,9 @@ export interface GetOwnedListsStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for getListMemberships method
- */
-export interface GetListMembershipsStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for repostPost method
- */
-export interface RepostPostStreamingOptions {
-  /** Request body */
-  body?: any;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getTimeline method
- */
-export interface GetTimelineStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getFollowers method
- */
-export interface GetFollowersStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getMentions method
- */
-export interface GetMentionsStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getBookmarkFolders method
- */
-export interface GetBookmarkFoldersStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
  * Options for blockDms method
+ * 
+ * @public
  */
 export interface BlockDmsStreamingOptions {
   /** Additional request options */
@@ -205,53 +74,11 @@ export interface BlockDmsStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for search method
+ * Options for getLikedPosts method
+ * 
+ * @public
  */
-export interface SearchStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getByUsernames method
- */
-export interface GetByUsernamesStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for unfollowUser method
- */
-export interface UnfollowUserStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for unpinList method
- */
-export interface UnpinListStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getBlocking method
- */
-export interface GetBlockingStreamingOptions {
+export interface GetLikedPostsStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -261,6 +88,8 @@ export interface GetBlockingStreamingOptions {
 }
 /**
  * Options for unrepostPost method
+ * 
+ * @public
  */
 export interface UnrepostPostStreamingOptions {
   /** Additional request options */
@@ -271,9 +100,11 @@ export interface UnrepostPostStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for deleteBookmark method
+ * Options for getMentions method
+ * 
+ * @public
  */
-export interface DeleteBookmarkStreamingOptions {
+export interface GetMentionsStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -282,9 +113,50 @@ export interface DeleteBookmarkStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for getBookmarksByFolderId method
+ * Options for unfollowUser method
+ * 
+ * @public
  */
-export interface GetBookmarksByFolderIdStreamingOptions {
+export interface UnfollowUserStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for unblockDms method
+ * 
+ * @public
+ */
+export interface UnblockDmsStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getByIds method
+ * 
+ * @public
+ */
+export interface GetByIdsStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for unmuteUser method
+ * 
+ * @public
+ */
+export interface UnmuteUserStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -294,6 +166,8 @@ export interface GetBookmarksByFolderIdStreamingOptions {
 }
 /**
  * Options for getFollowing method
+ * 
+ * @public
  */
 export interface GetFollowingStreamingOptions {
   /** Additional request options */
@@ -305,6 +179,8 @@ export interface GetFollowingStreamingOptions {
 }
 /**
  * Options for followUser method
+ * 
+ * @public
  */
 export interface FollowUserStreamingOptions {
   /** Request body */
@@ -318,9 +194,11 @@ export interface FollowUserStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for getBookmarks method
+ * Options for getBookmarkFolders method
+ * 
+ * @public
  */
-export interface GetBookmarksStreamingOptions {
+export interface GetBookmarkFoldersStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -329,9 +207,11 @@ export interface GetBookmarksStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for createBookmark method
+ * Options for getBookmarksByFolderId method
+ * 
+ * @public
  */
-export interface CreateBookmarkStreamingOptions {
+export interface GetBookmarksByFolderIdStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -340,9 +220,11 @@ export interface CreateBookmarkStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for getByIds method
+ * Options for getPosts method
+ * 
+ * @public
  */
-export interface GetByIdsStreamingOptions {
+export interface GetPostsStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -351,67 +233,11 @@ export interface GetByIdsStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for likePost method
+ * Options for getListMemberships method
+ * 
+ * @public
  */
-export interface LikePostStreamingOptions {
-  /** Request body */
-  body?: any;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getById method
- */
-export interface GetByIdStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getByUsername method
- */
-export interface GetByUsernameStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getMe method
- */
-export interface GetMeStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getRepostsOfMe method
- */
-export interface GetRepostsOfMeStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for unblockDms method
- */
-export interface UnblockDmsStreamingOptions {
+export interface GetListMembershipsStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -421,6 +247,8 @@ export interface UnblockDmsStreamingOptions {
 }
 /**
  * Options for unfollowList method
+ * 
+ * @public
  */
 export interface UnfollowListStreamingOptions {
   /** Additional request options */
@@ -431,7 +259,178 @@ export interface UnfollowListStreamingOptions {
   signal?: AbortSignal;
 }
 /**
+ * Options for getRepostsOfMe method
+ * 
+ * @public
+ */
+export interface GetRepostsOfMeStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getBlocking method
+ * 
+ * @public
+ */
+export interface GetBlockingStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for search method
+ * 
+ * @public
+ */
+export interface SearchStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getFollowers method
+ * 
+ * @public
+ */
+export interface GetFollowersStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getMe method
+ * 
+ * @public
+ */
+export interface GetMeStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getById method
+ * 
+ * @public
+ */
+export interface GetByIdStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getByUsernames method
+ * 
+ * @public
+ */
+export interface GetByUsernamesStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getByUsername method
+ * 
+ * @public
+ */
+export interface GetByUsernameStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getTimeline method
+ * 
+ * @public
+ */
+export interface GetTimelineStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for deleteBookmark method
+ * 
+ * @public
+ */
+export interface DeleteBookmarkStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getPinnedLists method
+ * 
+ * @public
+ */
+export interface GetPinnedListsStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for pinList method
+ * 
+ * @public
+ */
+export interface PinListStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for unpinList method
+ * 
+ * @public
+ */
+export interface UnpinListStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
  * Options for getFollowedLists method
+ * 
+ * @public
  */
 export interface GetFollowedListsStreamingOptions {
   /** Additional request options */
@@ -443,6 +442,8 @@ export interface GetFollowedListsStreamingOptions {
 }
 /**
  * Options for followList method
+ * 
+ * @public
  */
 export interface FollowListStreamingOptions {
   /** Request body */
@@ -456,7 +457,41 @@ export interface FollowListStreamingOptions {
   signal?: AbortSignal;
 }
 /**
+ * Options for repostPost method
+ * 
+ * @public
+ */
+export interface RepostPostStreamingOptions {
+  /** Request body */
+  body?: any;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for likePost method
+ * 
+ * @public
+ */
+export interface LikePostStreamingOptions {
+  /** Request body */
+  body?: any;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
  * Options for getMuting method
+ * 
+ * @public
  */
 export interface GetMutingStreamingOptions {
   /** Additional request options */
@@ -468,11 +503,52 @@ export interface GetMutingStreamingOptions {
 }
 /**
  * Options for muteUser method
+ * 
+ * @public
  */
 export interface MuteUserStreamingOptions {
   /** Request body */
   body?: any;
 
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getBookmarks method
+ * 
+ * @public
+ */
+export interface GetBookmarksStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for createBookmark method
+ * 
+ * @public
+ */
+export interface CreateBookmarkStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for unlikePost method
+ * 
+ * @public
+ */
+export interface UnlikePostStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -489,33 +565,35 @@ export class UsersClient {
   }
 
   /**
-     * Unmute User
-     * Causes the authenticated user to unmute a specific user by their ID.
+     * Get owned Lists
+     * Retrieves a list of Lists owned by a specific User by their ID.
      * 
      * @returns Promise with the API response
      */
-  async unmuteUser(
-    options: UnmuteUserStreamingOptions = {}
-  ): Promise<UnmuteUserResponse> {
+  async getOwnedLists(
+    options: GetOwnedListsStreamingOptions = {}
+  ): Promise<GetOwnedListsResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
 
     requiredAuthTypes.push('OAuth2UserToken');
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'unmuteUser');
+    this.client.validateAuthentication(requiredAuthTypes, 'getOwnedLists');
 
     // Destructure options with defaults
 
-    const requestOptions = {};
+    const { requestOptions: requestOptions = {} } = options;
 
     // Build query parameters
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/users/{source_user_id}/muting/{target_user_id}`;
+    let path = `/2/users/{id}/owned_lists`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -529,22 +607,22 @@ export class UsersClient {
     };
 
     // Make the request
-    return this.client.request<UnmuteUserResponse>(
-      'DELETE',
+    return this.client.request<GetOwnedListsResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
   }
 
   /**
-     * Unlike Post
-     * Causes the authenticated user to Unlike a specific Post by its ID.
+     * Block DMs
+     * Blocks direct messages to or from a specific User by their ID for the authenticated user.
      * 
      * @returns Promise with the API response
      */
-  async unlikePost(
-    options: UnlikePostStreamingOptions = {}
-  ): Promise<UnlikePostResponse> {
+  async blockDms(
+    options: BlockDmsStreamingOptions = {}
+  ): Promise<BlockDmsResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -553,7 +631,7 @@ export class UsersClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'unlikePost');
+    this.client.validateAuthentication(requiredAuthTypes, 'blockDms');
 
     // Destructure options with defaults
 
@@ -563,7 +641,7 @@ export class UsersClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/users/{id}/likes/{tweet_id}`;
+    let path = `/2/users/{id}/dm/block`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -577,8 +655,8 @@ export class UsersClient {
     };
 
     // Make the request
-    return this.client.request<UnlikePostResponse>(
-      'DELETE',
+    return this.client.request<BlockDmsResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -633,64 +711,14 @@ export class UsersClient {
   }
 
   /**
-     * Get Posts
-     * Retrieves a list of posts authored by a specific User by their ID.
+     * Unrepost Post
+     * Causes the authenticated user to unrepost a specific Post by its ID.
      * 
      * @returns Promise with the API response
      */
-  async getPosts(
-    options: GetPostsStreamingOptions = {}
-  ): Promise<GetPostsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getPosts');
-
-    // Destructure options with defaults
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/{id}/tweets`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<GetPostsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get pinned Lists
-     * Retrieves a list of Lists pinned by the authenticated user.
-     * 
-     * @returns Promise with the API response
-     */
-  async getPinnedLists(
-    options: GetPinnedListsStreamingOptions = {}
-  ): Promise<GetPinnedListsResponse> {
+  async unrepostPost(
+    options: UnrepostPostStreamingOptions = {}
+  ): Promise<UnrepostPostResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -699,7 +727,7 @@ export class UsersClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'getPinnedLists');
+    this.client.validateAuthentication(requiredAuthTypes, 'unrepostPost');
 
     // Destructure options with defaults
 
@@ -709,7 +737,7 @@ export class UsersClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/users/{id}/pinned_lists`;
+    let path = `/2/users/{id}/retweets/{source_tweet_id}`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -723,311 +751,8 @@ export class UsersClient {
     };
 
     // Make the request
-    return this.client.request<GetPinnedListsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Pin List
-     * Causes the authenticated user to pin a specific List by its ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async pinList(
-    body: any,
-    options: PinListStreamingOptions = {}
-  ): Promise<PinListResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'pinList');
-
-    // Destructure options with defaults
-
-    const requestOptions = {};
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/{id}/pinned_lists`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      body: JSON.stringify(body),
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<PinListResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get owned Lists
-     * Retrieves a list of Lists owned by a specific User by their ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async getOwnedLists(
-    options: GetOwnedListsStreamingOptions = {}
-  ): Promise<GetOwnedListsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getOwnedLists');
-
-    // Destructure options with defaults
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/{id}/owned_lists`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<GetOwnedListsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get List memberships
-     * Retrieves a list of Lists that a specific User is a member of by their ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async getListMemberships(
-    options: GetListMembershipsStreamingOptions = {}
-  ): Promise<GetListMembershipsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getListMemberships');
-
-    // Destructure options with defaults
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/{id}/list_memberships`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<GetListMembershipsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Repost Post
-     * Causes the authenticated user to repost a specific Post by its ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async repostPost(
-    options: RepostPostStreamingOptions = {}
-  ): Promise<RepostPostResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'repostPost');
-
-    // Destructure options with defaults
-
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/{id}/retweets`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      body: JSON.stringify(body),
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<RepostPostResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get Timeline
-     * Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
-     * 
-     * @returns Promise with the API response
-     */
-  async getTimeline(
-    options: GetTimelineStreamingOptions = {}
-  ): Promise<GetTimelineResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getTimeline');
-
-    // Destructure options with defaults
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/{id}/timelines/reverse_chronological`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<GetTimelineResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get followers
-     * Retrieves a list of Users who follow a specific User by their ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async getFollowers(
-    options: GetFollowersStreamingOptions = {}
-  ): Promise<GetFollowersResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getFollowers');
-
-    // Destructure options with defaults
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/{id}/followers`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<GetFollowersResponse>(
-      'GET',
+    return this.client.request<UnrepostPostResponse>(
+      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -1084,196 +809,6 @@ export class UsersClient {
   }
 
   /**
-     * Get Bookmark folders
-     * Retrieves a list of Bookmark folders created by the authenticated user.
-     * 
-     * @returns Promise with the API response
-     */
-  async getBookmarkFolders(
-    options: GetBookmarkFoldersStreamingOptions = {}
-  ): Promise<GetBookmarkFoldersResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getBookmarkFolders');
-
-    // Destructure options with defaults
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/{id}/bookmarks/folders`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<GetBookmarkFoldersResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Block DMs
-     * Blocks direct messages to or from a specific User by their ID for the authenticated user.
-     * 
-     * @returns Promise with the API response
-     */
-  async blockDms(
-    options: BlockDmsStreamingOptions = {}
-  ): Promise<BlockDmsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'blockDms');
-
-    // Destructure options with defaults
-
-    const requestOptions = {};
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/{id}/dm/block`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<BlockDmsResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Search Users
-     * Retrieves a list of Users matching a search query.
-     * 
-     * @returns Promise with the API response
-     */
-  async search(options: SearchStreamingOptions = {}): Promise<SearchResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'search');
-
-    // Destructure options with defaults
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/search`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<SearchResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get Users by usernames
-     * Retrieves details of multiple Users by their usernames.
-     * 
-     * @returns Promise with the API response
-     */
-  async getByUsernames(
-    options: GetByUsernamesStreamingOptions = {}
-  ): Promise<GetByUsernamesResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getByUsernames');
-
-    // Destructure options with defaults
-
-    const requestOptions = {};
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/by`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<GetByUsernamesResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
      * Unfollow User
      * Causes the authenticated user to unfollow a specific user by their ID.
      * 
@@ -1322,14 +857,14 @@ export class UsersClient {
   }
 
   /**
-     * Unpin List
-     * Causes the authenticated user to unpin a specific List by its ID.
+     * Unblock DMs
+     * Unblocks direct messages to or from a specific User by their ID for the authenticated user.
      * 
      * @returns Promise with the API response
      */
-  async unpinList(
-    options: UnpinListStreamingOptions = {}
-  ): Promise<UnpinListResponse> {
+  async unblockDms(
+    options: UnblockDmsStreamingOptions = {}
+  ): Promise<UnblockDmsResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -1338,7 +873,7 @@ export class UsersClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'unpinList');
+    this.client.validateAuthentication(requiredAuthTypes, 'unblockDms');
 
     // Destructure options with defaults
 
@@ -1348,7 +883,7 @@ export class UsersClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/users/{id}/pinned_lists/{list_id}`;
+    let path = `/2/users/{id}/dm/unblock`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -1362,41 +897,43 @@ export class UsersClient {
     };
 
     // Make the request
-    return this.client.request<UnpinListResponse>(
-      'DELETE',
+    return this.client.request<UnblockDmsResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
   }
 
   /**
-     * Get blocking
-     * Retrieves a list of Users blocked by the specified User ID.
+     * Get Users by IDs
+     * Retrieves details of multiple Users by their IDs.
      * 
      * @returns Promise with the API response
      */
-  async getBlocking(
-    options: GetBlockingStreamingOptions = {}
-  ): Promise<GetBlockingResponse> {
+  async getByIds(
+    options: GetByIdsStreamingOptions = {}
+  ): Promise<GetByIdsResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
 
     requiredAuthTypes.push('OAuth2UserToken');
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'getBlocking');
+    this.client.validateAuthentication(requiredAuthTypes, 'getByIds');
 
     // Destructure options with defaults
 
-    const { requestOptions: requestOptions = {} } = options;
+    const requestOptions = {};
 
     // Build query parameters
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/users/{id}/blocking`;
+    let path = `/2/users`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -1410,7 +947,7 @@ export class UsersClient {
     };
 
     // Make the request
-    return this.client.request<GetBlockingResponse>(
+    return this.client.request<GetByIdsResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -1418,14 +955,14 @@ export class UsersClient {
   }
 
   /**
-     * Unrepost Post
-     * Causes the authenticated user to unrepost a specific Post by its ID.
+     * Unmute User
+     * Causes the authenticated user to unmute a specific user by their ID.
      * 
      * @returns Promise with the API response
      */
-  async unrepostPost(
-    options: UnrepostPostStreamingOptions = {}
-  ): Promise<UnrepostPostResponse> {
+  async unmuteUser(
+    options: UnmuteUserStreamingOptions = {}
+  ): Promise<UnmuteUserResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -1434,7 +971,7 @@ export class UsersClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'unrepostPost');
+    this.client.validateAuthentication(requiredAuthTypes, 'unmuteUser');
 
     // Destructure options with defaults
 
@@ -1444,7 +981,7 @@ export class UsersClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/users/{id}/retweets/{source_tweet_id}`;
+    let path = `/2/users/{source_user_id}/muting/{target_user_id}`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -1458,103 +995,8 @@ export class UsersClient {
     };
 
     // Make the request
-    return this.client.request<UnrepostPostResponse>(
+    return this.client.request<UnmuteUserResponse>(
       'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Delete Bookmark
-     * Removes a Post from the authenticated user’s Bookmarks by its ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async deleteBookmark(
-    options: DeleteBookmarkStreamingOptions = {}
-  ): Promise<DeleteBookmarkResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'deleteBookmark');
-
-    // Destructure options with defaults
-
-    const requestOptions = {};
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/{id}/bookmarks/{tweet_id}`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<DeleteBookmarkResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get Bookmarks by folder ID
-     * Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
-     * 
-     * @returns Promise with the API response
-     */
-  async getBookmarksByFolderId(
-    options: GetBookmarksByFolderIdStreamingOptions = {}
-  ): Promise<GetBookmarksByFolderIdResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    this.client.validateAuthentication(
-      requiredAuthTypes,
-      'getBookmarksByFolderId'
-    );
-
-    // Destructure options with defaults
-
-    const requestOptions = {};
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/{id}/bookmarks/folders/{folder_id}`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<GetBookmarksByFolderIdResponse>(
-      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -1665,21 +1107,21 @@ export class UsersClient {
   }
 
   /**
-     * Get Bookmarks
-     * Retrieves a list of Posts bookmarked by the authenticated user.
+     * Get Bookmark folders
+     * Retrieves a list of Bookmark folders created by the authenticated user.
      * 
      * @returns Promise with the API response
      */
-  async getBookmarks(
-    options: GetBookmarksStreamingOptions = {}
-  ): Promise<GetBookmarksResponse> {
+  async getBookmarkFolders(
+    options: GetBookmarkFoldersStreamingOptions = {}
+  ): Promise<GetBookmarkFoldersResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
 
     requiredAuthTypes.push('OAuth2UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'getBookmarks');
+    this.client.validateAuthentication(requiredAuthTypes, 'getBookmarkFolders');
 
     // Destructure options with defaults
 
@@ -1689,7 +1131,7 @@ export class UsersClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/users/{id}/bookmarks`;
+    let path = `/2/users/{id}/bookmarks/folders`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -1703,7 +1145,7 @@ export class UsersClient {
     };
 
     // Make the request
-    return this.client.request<GetBookmarksResponse>(
+    return this.client.request<GetBookmarkFoldersResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -1711,22 +1153,24 @@ export class UsersClient {
   }
 
   /**
-     * Create Bookmark
-     * Adds a post to the authenticated user’s bookmarks.
+     * Get Bookmarks by folder ID
+     * Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
      * 
      * @returns Promise with the API response
      */
-  async createBookmark(
-    body: any,
-    options: CreateBookmarkStreamingOptions = {}
-  ): Promise<CreateBookmarkResponse> {
+  async getBookmarksByFolderId(
+    options: GetBookmarksByFolderIdStreamingOptions = {}
+  ): Promise<GetBookmarksByFolderIdResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
 
     requiredAuthTypes.push('OAuth2UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'createBookmark');
+    this.client.validateAuthentication(
+      requiredAuthTypes,
+      'getBookmarksByFolderId'
+    );
 
     // Destructure options with defaults
 
@@ -1736,7 +1180,7 @@ export class UsersClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/users/{id}/bookmarks`;
+    let path = `/2/users/{id}/bookmarks/folders/{folder_id}`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -1746,28 +1190,26 @@ export class UsersClient {
       },
       signal: options.signal,
 
-      body: JSON.stringify(body),
-
       ...options,
     };
 
     // Make the request
-    return this.client.request<CreateBookmarkResponse>(
-      'POST',
+    return this.client.request<GetBookmarksByFolderIdResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
   }
 
   /**
-     * Get Users by IDs
-     * Retrieves details of multiple Users by their IDs.
+     * Get Posts
+     * Retrieves a list of posts authored by a specific User by their ID.
      * 
      * @returns Promise with the API response
      */
-  async getByIds(
-    options: GetByIdsStreamingOptions = {}
-  ): Promise<GetByIdsResponse> {
+  async getPosts(
+    options: GetPostsStreamingOptions = {}
+  ): Promise<GetPostsResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -1778,7 +1220,105 @@ export class UsersClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'getByIds');
+    this.client.validateAuthentication(requiredAuthTypes, 'getPosts');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/{id}/tweets`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<GetPostsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get List memberships
+     * Retrieves a list of Lists that a specific User is a member of by their ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getListMemberships(
+    options: GetListMembershipsStreamingOptions = {}
+  ): Promise<GetListMembershipsResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getListMemberships');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/{id}/list_memberships`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<GetListMembershipsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Unfollow List
+     * Causes the authenticated user to unfollow a specific List by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async unfollowList(
+    options: UnfollowListStreamingOptions = {}
+  ): Promise<UnfollowListResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'unfollowList');
 
     // Destructure options with defaults
 
@@ -1788,7 +1328,7 @@ export class UsersClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/users`;
+    let path = `/2/users/{id}/followed_lists/{list_id}`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -1802,22 +1342,22 @@ export class UsersClient {
     };
 
     // Make the request
-    return this.client.request<GetByIdsResponse>(
-      'GET',
+    return this.client.request<UnfollowListResponse>(
+      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
   }
 
   /**
-     * Like Post
-     * Causes the authenticated user to Like a specific Post by its ID.
+     * Get Reposts of me
+     * Retrieves a list of Posts that repost content from the authenticated user.
      * 
      * @returns Promise with the API response
      */
-  async likePost(
-    options: LikePostStreamingOptions = {}
-  ): Promise<LikePostResponse> {
+  async getRepostsOfMe(
+    options: GetRepostsOfMeStreamingOptions = {}
+  ): Promise<GetRepostsOfMeResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -1826,21 +1366,17 @@ export class UsersClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'likePost');
+    this.client.validateAuthentication(requiredAuthTypes, 'getRepostsOfMe');
 
     // Destructure options with defaults
 
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } = options;
+    const { requestOptions: requestOptions = {} } = options;
 
     // Build query parameters
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/users/{id}/likes`;
+    let path = `/2/users/reposts_of_me`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -1850,14 +1386,202 @@ export class UsersClient {
       },
       signal: options.signal,
 
-      body: JSON.stringify(body),
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<GetRepostsOfMeResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get blocking
+     * Retrieves a list of Users blocked by the specified User ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getBlocking(
+    options: GetBlockingStreamingOptions = {}
+  ): Promise<GetBlockingResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getBlocking');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/{id}/blocking`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
 
       ...options,
     };
 
     // Make the request
-    return this.client.request<LikePostResponse>(
-      'POST',
+    return this.client.request<GetBlockingResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Search Users
+     * Retrieves a list of Users matching a search query.
+     * 
+     * @returns Promise with the API response
+     */
+  async search(options: SearchStreamingOptions = {}): Promise<SearchResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'search');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/search`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<SearchResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get followers
+     * Retrieves a list of Users who follow a specific User by their ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getFollowers(
+    options: GetFollowersStreamingOptions = {}
+  ): Promise<GetFollowersResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getFollowers');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/{id}/followers`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<GetFollowersResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get my User
+     * Retrieves details of the authenticated user.
+     * 
+     * @returns Promise with the API response
+     */
+  async getMe(options: GetMeStreamingOptions = {}): Promise<GetMeResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getMe');
+
+    // Destructure options with defaults
+
+    const requestOptions = {};
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/me`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<GetMeResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -1907,6 +1631,56 @@ export class UsersClient {
 
     // Make the request
     return this.client.request<GetByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get Users by usernames
+     * Retrieves details of multiple Users by their usernames.
+     * 
+     * @returns Promise with the API response
+     */
+  async getByUsernames(
+    options: GetByUsernamesStreamingOptions = {}
+  ): Promise<GetByUsernamesResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getByUsernames');
+
+    // Destructure options with defaults
+
+    const requestOptions = {};
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/by`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<GetByUsernamesResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -1964,12 +1738,14 @@ export class UsersClient {
   }
 
   /**
-     * Get my User
-     * Retrieves details of the authenticated user.
+     * Get Timeline
+     * Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
      * 
      * @returns Promise with the API response
      */
-  async getMe(options: GetMeStreamingOptions = {}): Promise<GetMeResponse> {
+  async getTimeline(
+    options: GetTimelineStreamingOptions = {}
+  ): Promise<GetTimelineResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -1978,55 +1754,7 @@ export class UsersClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'getMe');
-
-    // Destructure options with defaults
-
-    const requestOptions = {};
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/users/me`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<GetMeResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get Reposts of me
-     * Retrieves a list of Posts that repost content from the authenticated user.
-     * 
-     * @returns Promise with the API response
-     */
-  async getRepostsOfMe(
-    options: GetRepostsOfMeStreamingOptions = {}
-  ): Promise<GetRepostsOfMeResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getRepostsOfMe');
+    this.client.validateAuthentication(requiredAuthTypes, 'getTimeline');
 
     // Destructure options with defaults
 
@@ -2036,7 +1764,7 @@ export class UsersClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/users/reposts_of_me`;
+    let path = `/2/users/{id}/timelines/reverse_chronological`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -2050,7 +1778,7 @@ export class UsersClient {
     };
 
     // Make the request
-    return this.client.request<GetRepostsOfMeResponse>(
+    return this.client.request<GetTimelineResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -2058,23 +1786,21 @@ export class UsersClient {
   }
 
   /**
-     * Unblock DMs
-     * Unblocks direct messages to or from a specific User by their ID for the authenticated user.
+     * Delete Bookmark
+     * Removes a Post from the authenticated user’s Bookmarks by its ID.
      * 
      * @returns Promise with the API response
      */
-  async unblockDms(
-    options: UnblockDmsStreamingOptions = {}
-  ): Promise<UnblockDmsResponse> {
+  async deleteBookmark(
+    options: DeleteBookmarkStreamingOptions = {}
+  ): Promise<DeleteBookmarkResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
 
     requiredAuthTypes.push('OAuth2UserToken');
 
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'unblockDms');
+    this.client.validateAuthentication(requiredAuthTypes, 'deleteBookmark');
 
     // Destructure options with defaults
 
@@ -2084,7 +1810,7 @@ export class UsersClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/users/{id}/dm/unblock`;
+    let path = `/2/users/{id}/bookmarks/{tweet_id}`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -2098,7 +1824,106 @@ export class UsersClient {
     };
 
     // Make the request
-    return this.client.request<UnblockDmsResponse>(
+    return this.client.request<DeleteBookmarkResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get pinned Lists
+     * Retrieves a list of Lists pinned by the authenticated user.
+     * 
+     * @returns Promise with the API response
+     */
+  async getPinnedLists(
+    options: GetPinnedListsStreamingOptions = {}
+  ): Promise<GetPinnedListsResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getPinnedLists');
+
+    // Destructure options with defaults
+
+    const requestOptions = {};
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/{id}/pinned_lists`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<GetPinnedListsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Pin List
+     * Causes the authenticated user to pin a specific List by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async pinList(
+    body: any,
+    options: PinListStreamingOptions = {}
+  ): Promise<PinListResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'pinList');
+
+    // Destructure options with defaults
+
+    const requestOptions = {};
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/{id}/pinned_lists`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      body: JSON.stringify(body),
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<PinListResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -2106,14 +1931,14 @@ export class UsersClient {
   }
 
   /**
-     * Unfollow List
-     * Causes the authenticated user to unfollow a specific List by its ID.
+     * Unpin List
+     * Causes the authenticated user to unpin a specific List by its ID.
      * 
      * @returns Promise with the API response
      */
-  async unfollowList(
-    options: UnfollowListStreamingOptions = {}
-  ): Promise<UnfollowListResponse> {
+  async unpinList(
+    options: UnpinListStreamingOptions = {}
+  ): Promise<UnpinListResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -2122,7 +1947,7 @@ export class UsersClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'unfollowList');
+    this.client.validateAuthentication(requiredAuthTypes, 'unpinList');
 
     // Destructure options with defaults
 
@@ -2132,7 +1957,7 @@ export class UsersClient {
     const params = new URLSearchParams();
 
     // Build path parameters
-    let path = `/2/users/{id}/followed_lists/{list_id}`;
+    let path = `/2/users/{id}/pinned_lists/{list_id}`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -2146,7 +1971,7 @@ export class UsersClient {
     };
 
     // Make the request
-    return this.client.request<UnfollowListResponse>(
+    return this.client.request<UnpinListResponse>(
       'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -2258,6 +2083,114 @@ export class UsersClient {
   }
 
   /**
+     * Repost Post
+     * Causes the authenticated user to repost a specific Post by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async repostPost(
+    options: RepostPostStreamingOptions = {}
+  ): Promise<RepostPostResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'repostPost');
+
+    // Destructure options with defaults
+
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/{id}/retweets`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      body: JSON.stringify(body),
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<RepostPostResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Like Post
+     * Causes the authenticated user to Like a specific Post by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async likePost(
+    options: LikePostStreamingOptions = {}
+  ): Promise<LikePostResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'likePost');
+
+    // Destructure options with defaults
+
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/{id}/likes`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      body: JSON.stringify(body),
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<LikePostResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
      * Get muting
      * Retrieves a list of Users muted by the authenticated user.
      * 
@@ -2354,6 +2287,149 @@ export class UsersClient {
     // Make the request
     return this.client.request<MuteUserResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get Bookmarks
+     * Retrieves a list of Posts bookmarked by the authenticated user.
+     * 
+     * @returns Promise with the API response
+     */
+  async getBookmarks(
+    options: GetBookmarksStreamingOptions = {}
+  ): Promise<GetBookmarksResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getBookmarks');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/{id}/bookmarks`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<GetBookmarksResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Create Bookmark
+     * Adds a post to the authenticated user’s bookmarks.
+     * 
+     * @returns Promise with the API response
+     */
+  async createBookmark(
+    body: any,
+    options: CreateBookmarkStreamingOptions = {}
+  ): Promise<CreateBookmarkResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'createBookmark');
+
+    // Destructure options with defaults
+
+    const requestOptions = {};
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/{id}/bookmarks`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      body: JSON.stringify(body),
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<CreateBookmarkResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Unlike Post
+     * Causes the authenticated user to Unlike a specific Post by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async unlikePost(
+    options: UnlikePostStreamingOptions = {}
+  ): Promise<UnlikePostResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'unlikePost');
+
+    // Destructure options with defaults
+
+    const requestOptions = {};
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/users/{id}/likes/{tweet_id}`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<UnlikePostResponse>(
+      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

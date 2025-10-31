@@ -1,0 +1,376 @@
+---
+title: "PostPaginator"
+sidebarTitle: "PostPaginator"
+---
+
+Paginator for posts
+
+## Hierarchy
+
+- [`Paginator`](/xdks/typescript/reference/classes/Paginator)\<`any`\>
+
+  ↳ **`PostPaginator`**
+
+## Constructors
+
+### constructor
+
+• **new PostPaginator**(`fetchPage`): [`PostPaginator`](/xdks/typescript/reference/classes/PostPaginator)
+
+Creates a new paginator instance
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `fetchPage` | (`token?`: `string`) => `Promise`\<[`PaginatedResponse`](/xdks/typescript/reference/interfaces/PaginatedResponse)\<`any`\>\> | Function that fetches a page of data given a pagination token |
+
+#### Returns
+
+[`PostPaginator`](/xdks/typescript/reference/classes/PostPaginator)
+
+#### Inherited from
+
+[Paginator](/xdks/typescript/reference/classes/Paginator).[constructor](/xdks/typescript/reference/classes/Paginator#constructor)
+
+#### Defined in
+
+[paginator.ts:87](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L87)
+
+## Accessors
+
+### items
+
+• `get` **items**(): `T`[]
+
+Get all fetched items
+
+#### Returns
+
+`T`[]
+
+#### Inherited from
+
+Paginator.items
+
+#### Defined in
+
+[paginator.ts:94](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L94)
+
+___
+
+### meta
+
+• `get` **meta**(): `any`
+
+Get current pagination metadata
+
+#### Returns
+
+`any`
+
+#### Inherited from
+
+Paginator.meta
+
+#### Defined in
+
+[paginator.ts:101](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L101)
+
+___
+
+### includes
+
+• `get` **includes**(): `undefined` \| `Record`\<`string`, `any`\>
+
+Get current includes data
+
+#### Returns
+
+`undefined` \| `Record`\<`string`, `any`\>
+
+#### Inherited from
+
+Paginator.includes
+
+#### Defined in
+
+[paginator.ts:108](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L108)
+
+___
+
+### errors
+
+• `get` **errors**(): `undefined` \| `any`[]
+
+Get current errors
+
+#### Returns
+
+`undefined` \| `any`[]
+
+#### Inherited from
+
+Paginator.errors
+
+#### Defined in
+
+[paginator.ts:115](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L115)
+
+___
+
+### done
+
+• `get` **done**(): `boolean`
+
+Check if pagination is done
+
+#### Returns
+
+`boolean`
+
+#### Inherited from
+
+Paginator.done
+
+#### Defined in
+
+[paginator.ts:122](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L122)
+
+___
+
+### rateLimited
+
+• `get` **rateLimited**(): `boolean`
+
+Check if rate limit was hit
+
+#### Returns
+
+`boolean`
+
+#### Inherited from
+
+Paginator.rateLimited
+
+#### Defined in
+
+[paginator.ts:129](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L129)
+
+___
+
+### posts
+
+• `get` **posts**(): `any`[]
+
+#### Returns
+
+`any`[]
+
+#### Defined in
+
+[paginator.ts:339](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L339)
+
+## Methods
+
+### fetchNext
+
+▸ **fetchNext**(): `Promise`\<`void`\>
+
+Fetch the next page and add items to current instance
+
+This method fetches the next page of data and appends the items to the
+current paginator instance. It updates the pagination state and metadata.
+
+#### Returns
+
+`Promise`\<`void`\>
+
+**`Example`**
+
+```typescript
+const followers = await client.users.getFollowers('783214');
+await followers.fetchNext(); // Fetch first page
+console.log(followers.items.length); // Number of followers
+
+if (!followers.done) {
+  await followers.fetchNext(); // Fetch second page
+  console.log(followers.items.length); // Total followers across pages
+}
+```
+
+**`Throws`**
+
+When the API request fails
+
+#### Inherited from
+
+[Paginator](/xdks/typescript/reference/classes/Paginator).[fetchNext](/xdks/typescript/reference/classes/Paginator#fetchnext)
+
+#### Defined in
+
+[paginator.ts:153](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L153)
+
+___
+
+### next
+
+▸ **next**(): `Promise`\<[`Paginator`](/xdks/typescript/reference/classes/Paginator)\<`any`\>\>
+
+Get next page as a new instance
+
+This method creates a new paginator instance that starts from the next page,
+without affecting the current paginator's state.
+
+#### Returns
+
+`Promise`\<[`Paginator`](/xdks/typescript/reference/classes/Paginator)\<`any`\>\>
+
+New paginator instance for the next page
+
+**`Example`**
+
+```typescript
+const followers = await client.users.getFollowers('783214');
+await followers.fetchNext(); // Fetch first page
+
+if (!followers.done) {
+  const nextPage = await followers.next(); // Get next page as new instance
+  console.log(followers.items.length); // Still first page
+  console.log(nextPage.items.length); // Second page
+}
+```
+
+#### Inherited from
+
+[Paginator](/xdks/typescript/reference/classes/Paginator).[next](/xdks/typescript/reference/classes/Paginator#next)
+
+#### Defined in
+
+[paginator.ts:208](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L208)
+
+___
+
+### fetchPrevious
+
+▸ **fetchPrevious**(): `Promise`\<`void`\>
+
+Fetch previous page (if supported)
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Inherited from
+
+[Paginator](/xdks/typescript/reference/classes/Paginator).[fetchPrevious](/xdks/typescript/reference/classes/Paginator#fetchprevious)
+
+#### Defined in
+
+[paginator.ts:222](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L222)
+
+___
+
+### previous
+
+▸ **previous**(): `Promise`\<[`Paginator`](/xdks/typescript/reference/classes/Paginator)\<`any`\>\>
+
+Get previous page as a new instance
+
+#### Returns
+
+`Promise`\<[`Paginator`](/xdks/typescript/reference/classes/Paginator)\<`any`\>\>
+
+#### Inherited from
+
+[Paginator](/xdks/typescript/reference/classes/Paginator).[previous](/xdks/typescript/reference/classes/Paginator#previous)
+
+#### Defined in
+
+[paginator.ts:257](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L257)
+
+___
+
+### fetchLast
+
+▸ **fetchLast**(`count`): `Promise`\<`void`\>
+
+Fetch up to a specified number of additional items
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `count` | `number` |
+
+#### Returns
+
+`Promise`\<`void`\>
+
+#### Inherited from
+
+[Paginator](/xdks/typescript/reference/classes/Paginator).[fetchLast](/xdks/typescript/reference/classes/Paginator#fetchlast)
+
+#### Defined in
+
+[paginator.ts:271](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L271)
+
+___
+
+### reset
+
+▸ **reset**(): `void`
+
+Reset paginator to initial state
+
+#### Returns
+
+`void`
+
+#### Inherited from
+
+[Paginator](/xdks/typescript/reference/classes/Paginator).[reset](/xdks/typescript/reference/classes/Paginator#reset)
+
+#### Defined in
+
+[paginator.ts:285](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L285)
+
+___
+
+### [iterator]
+
+▸ **[iterator]**(): `Iterator`\<`any`, `any`, `any`\>
+
+Iterator for all fetched items
+
+#### Returns
+
+`Iterator`\<`any`, `any`, `any`\>
+
+#### Inherited from
+
+[Paginator](/xdks/typescript/reference/classes/Paginator).[[iterator]](Paginator.md#[iterator])
+
+#### Defined in
+
+[paginator.ts:300](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L300)
+
+___
+
+### [asyncIterator]
+
+▸ **[asyncIterator]**(): `AsyncIterator`\<`any`, `any`, `any`\>
+
+Async iterator that fetches pages automatically
+
+#### Returns
+
+`AsyncIterator`\<`any`, `any`, `any`\>
+
+#### Inherited from
+
+[Paginator](/xdks/typescript/reference/classes/Paginator).[[asyncIterator]](Paginator.md#[asynciterator])
+
+#### Defined in
+
+[paginator.ts:309](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/paginator.ts#L309)

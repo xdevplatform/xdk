@@ -1,8 +1,16 @@
 /**
  * Models for general operations
  */
+import type * as Schemas from '../schemas.js';
+
+
+
+
+
 
 /**
  * Response for getOpenApiSpec
+ * 
+ * @public
  */
-export interface GetOpenApiSpecResponse {}
+export type GetOpenApiSpecResponse = Record<string, any>;

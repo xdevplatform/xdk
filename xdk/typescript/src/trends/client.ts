@@ -15,6 +15,8 @@ import { GetPersonalizedResponse, GetByWoeidResponse } from './models.js';
 
 /**
  * Options for getByWoeid method
+ * 
+ * @public
  */
 export interface GetByWoeidOptions {
   /** Additional request options */

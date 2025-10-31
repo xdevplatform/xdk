@@ -12,33 +12,34 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
+  GetPostsResponse,
+  GetFollowersResponse,
+  GetMembersResponse,
+  AddMemberRequest,
+  AddMemberResponse,
   GetByIdResponse,
   UpdateRequest,
   UpdateResponse,
   DeleteResponse,
-  GetFollowersResponse,
   RemoveMemberByUserIdResponse,
-  GetMembersResponse,
-  AddMemberRequest,
-  AddMemberResponse,
   CreateRequest,
   CreateResponse,
-  GetPostsResponse,
 } from './models.js';
 
 /**
- * Options for update method
+ * Options for getPosts method
+ * 
+ * @public
  */
-export interface UpdateOptions {
-  /** Request body */
-  body?: UpdateRequest;
-
+export interface GetPostsOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
  * Options for getFollowers method
+ * 
+ * @public
  */
 export interface GetFollowersOptions {
   /** Additional request options */
@@ -47,6 +48,8 @@ export interface GetFollowersOptions {
 
 /**
  * Options for getMembers method
+ * 
+ * @public
  */
 export interface GetMembersOptions {
   /** Additional request options */
@@ -55,6 +58,8 @@ export interface GetMembersOptions {
 
 /**
  * Options for addMember method
+ * 
+ * @public
  */
 export interface AddMemberOptions {
   /** Request body */
@@ -65,20 +70,27 @@ export interface AddMemberOptions {
 }
 
 /**
- * Options for create method
+ * Options for update method
+ * 
+ * @public
  */
-export interface CreateOptions {
+export interface UpdateOptions {
   /** Request body */
-  body?: CreateRequest;
+  body?: UpdateRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Options for getPosts method
+ * Options for create method
+ * 
+ * @public
  */
-export interface GetPostsOptions {
+export interface CreateOptions {
+  /** Request body */
+  body?: CreateRequest;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -102,6 +114,148 @@ export class ListsClient {
      */
   constructor(client: Client) {
     this.client = client;
+  }
+
+  /**
+   * Get List Posts
+   * Retrieves a list of Posts associated with a specific List by its ID.
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getPosts(options: GetPostsOptions = {}): Promise<GetPostsResponse> {
+    // Destructure options
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build the path with path parameters
+    let path = '/2/lists/{id}/tweets';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetPostsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get List followers
+   * Retrieves a list of Users who follow a specific List by its ID.
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getFollowers(
+    options: GetFollowersOptions = {}
+  ): Promise<GetFollowersResponse> {
+    // Destructure options
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build the path with path parameters
+    let path = '/2/lists/{id}/followers';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetFollowersResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get List members
+   * Retrieves a list of Users who are members of a specific List by its ID.
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getMembers(
+    options: GetMembersOptions = {}
+  ): Promise<GetMembersResponse> {
+    // Destructure options
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build the path with path parameters
+    let path = '/2/lists/{id}/members';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetMembersResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Add List member
+   * Adds a User to a specific List by its ID.
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async addMember(options: AddMemberOptions = {}): Promise<AddMemberResponse> {
+    // Destructure options
+
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = options;
+
+    // Build the path with path parameters
+    let path = '/2/lists/{id}/members';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<AddMemberResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 
   /**
@@ -210,41 +364,6 @@ export class ListsClient {
   }
 
   /**
-   * Get List followers
-   * Retrieves a list of Users who follow a specific List by its ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getFollowers(
-    options: GetFollowersOptions = {}
-  ): Promise<GetFollowersResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/lists/{id}/followers';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetFollowersResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
    * Remove List member
    * Removes a User from a specific List by its ID and the User’s ID.
 
@@ -274,80 +393,6 @@ export class ListsClient {
 
     return this.client.request<RemoveMemberByUserIdResponse>(
       'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get List members
-   * Retrieves a list of Users who are members of a specific List by its ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getMembers(
-    options: GetMembersOptions = {}
-  ): Promise<GetMembersResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/lists/{id}/members';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetMembersResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Add List member
-   * Adds a User to a specific List by its ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async addMember(options: AddMemberOptions = {}): Promise<AddMemberResponse> {
-    // Destructure options
-
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } = options;
-
-    // Build the path with path parameters
-    let path = '/2/lists/{id}/members';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...requestOptions,
-    };
-
-    return this.client.request<AddMemberResponse>(
-      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -385,39 +430,6 @@ export class ListsClient {
 
     return this.client.request<CreateResponse>(
       'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get List Posts
-   * Retrieves a list of Posts associated with a specific List by its ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getPosts(options: GetPostsOptions = {}): Promise<GetPostsResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/lists/{id}/tweets';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetPostsResponse>(
-      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

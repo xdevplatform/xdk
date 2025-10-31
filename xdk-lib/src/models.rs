@@ -187,6 +187,108 @@ impl ParameterInfo {
     }
 }
 
+/// Information about a schema property with type information
+#[derive(Debug, Serialize, Clone)]
+pub struct PropertyInfo {
+    /// Property name (original)
+    pub name: String,
+    /// TypeScript type name (e.g., "string", "number", "User", "Array<User>")
+    pub ts_type: String,
+    /// Whether the property is required
+    pub required: bool,
+    /// Property description
+    pub description: Option<String>,
+}
+
+impl PropertyInfo {
+    /// Extract TypeScript type from a schema
+    pub fn extract_ts_type_from_schema(schema: &RefOrValue<Schema>) -> String {
+        match schema {
+            RefOrValue::Reference { path, .. } => {
+                // Extract schema name from reference path
+                // e.g., "#/components/schemas/User" -> "User"
+                if path.starts_with("#/components/schemas/") {
+                    path.trim_start_matches("#/components/schemas/").to_string()
+                } else {
+                    "any".to_string()
+                }
+            }
+            RefOrValue::Value(Schema::Typed(typed)) => {
+                match typed.as_ref() {
+                    openapi::TypedSchema::String(_) => "string".to_string(),
+                    openapi::TypedSchema::Integer(_) => "number".to_string(),
+                    openapi::TypedSchema::Number(_) => "number".to_string(),
+                    openapi::TypedSchema::Boolean(_) => "boolean".to_string(),
+                    openapi::TypedSchema::Array(arr) => {
+                        // Handle array with item type
+                        if let Some(items) = &arr.items {
+                            let item_type = Self::extract_ts_type_from_schema(items);
+                            format!("Array<{}>", item_type)
+                        } else {
+                            "Array<any>".to_string()
+                        }
+                    }
+                    openapi::TypedSchema::Object(obj) => {
+                        // For object types, if they have additional properties but no explicit properties,
+                        // use Record<string, any>. Otherwise, we'd need to generate an inline type
+                        if obj.properties.is_none() || obj.properties.as_ref().map(|p| p.is_empty()).unwrap_or(true) {
+                            "Record<string, any>".to_string()
+                        } else {
+                            "Record<string, any>".to_string() // Inline objects need special handling
+                        }
+                    }
+                }
+            }
+            RefOrValue::Value(Schema::AnyOf(_)) | 
+            RefOrValue::Value(Schema::AllOf(_)) | 
+            RefOrValue::Value(Schema::OneOf(_)) | 
+            RefOrValue::Value(Schema::Not(_)) => {
+                // Complex schemas - for now, use any, but could be improved
+                "any".to_string()
+            }
+        }
+    }
+    
+    /// Extract properties from an object schema with type information
+    pub fn from_object_schema(
+        schema: &RefOrValue<Schema>,
+        required: &Option<Vec<String>>,
+    ) -> Option<HashMap<String, Self>> {
+        let schema_ref = match schema {
+            RefOrValue::Reference { .. } => {
+                // For references, we can't extract properties without resolving
+                // This should be handled differently - references should be the type name
+                return None;
+            }
+            RefOrValue::Value(s) => s,
+        };
+        
+        if let Schema::Typed(typed) = schema_ref {
+            if let openapi::TypedSchema::Object(obj) = typed.as_ref() {
+                if let Some(properties) = &obj.properties {
+                    let mut prop_info = HashMap::new();
+                    for (name, prop_schema) in properties {
+                        let ts_type = Self::extract_ts_type_from_schema(prop_schema);
+                        let is_required = required
+                            .as_ref()
+                            .map(|req| req.contains(name))
+                            .unwrap_or(false);
+                        
+                        prop_info.insert(name.clone(), Self {
+                            name: name.clone(),
+                            ts_type,
+                            required: is_required,
+                            description: None, // Could extract from schema base if needed
+                        });
+                    }
+                    return Some(prop_info);
+                }
+            }
+        }
+        None
+    }
+}
+
 /// Extract parameter type from parameter schema
 fn extract_param_type(param: &Parameter) -> String {
     if let Some(RefOrValue::Value(Schema::Typed(typed))) = &param.schema {
@@ -198,8 +300,13 @@ fn extract_param_type(param: &Parameter) -> String {
             openapi::TypedSchema::Array(_) => "array".to_string(),
             openapi::TypedSchema::Object(_) => "object".to_string(),
         }
-    } else if let Some(RefOrValue::Reference { .. }) = &param.schema {
-        "reference".to_string()
+    } else if let Some(RefOrValue::Reference { path, .. }) = &param.schema {
+        // Extract schema name from reference
+        if path.starts_with("#/components/schemas/") {
+            path.trim_start_matches("#/components/schemas/").to_string()
+        } else {
+            "reference".to_string()
+        }
     } else {
         "any".to_string()
     }

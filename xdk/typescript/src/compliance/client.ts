@@ -12,14 +12,16 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  GetJobsByIdResponse,
   GetJobsResponse,
   CreateJobsRequest,
   CreateJobsResponse,
+  GetJobsByIdResponse,
 } from './models.js';
 
 /**
  * Options for getJobs method
+ * 
+ * @public
  */
 export interface GetJobsOptions {
   /** Additional request options */
@@ -45,39 +47,6 @@ export class ComplianceClient {
      */
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-   * Get Compliance Job by ID
-   * Retrieves details of a specific Compliance Job by its ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getJobsById(): Promise<GetJobsByIdResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/compliance/jobs/{id}';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetJobsByIdResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
   }
 
   /**
@@ -118,7 +87,7 @@ export class ComplianceClient {
    * Creates a new Compliance Job for the specified job type.
 
 
-   * @param body A request to create a new batch compliance job.
+   * @param body Request body
 
    * @returns Promise with the API response
    */
@@ -143,6 +112,39 @@ export class ComplianceClient {
 
     return this.client.request<CreateJobsResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Compliance Job by ID
+   * Retrieves details of a specific Compliance Job by its ID.
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getJobsById(): Promise<GetJobsByIdResponse> {
+    // Destructure options
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/compliance/jobs/{id}';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<GetJobsByIdResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

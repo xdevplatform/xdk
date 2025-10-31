@@ -2,11 +2,11 @@
 
 # Class: PostsClient
 
-Client for Posts operations
+Client for posts operations
 
-This client provides methods for interacting with the Posts endpoints
+This client provides methods for interacting with the posts endpoints
 of the X API. It handles authentication, request formatting, and response
-parsing for all Posts related operations.
+parsing for all posts related operations.
 
 ## Table of contents
 
@@ -16,22 +16,22 @@ parsing for all Posts related operations.
 
 ### Methods
 
-- [getInsightsHistorical](PostsClient.md#getinsightshistorical)
+- [getInsights28hr](PostsClient.md#getinsights28hr)
+- [getRepostedBy](PostsClient.md#getrepostedby)
+- [hideReply](PostsClient.md#hidereply)
+- [getAnalytics](PostsClient.md#getanalytics)
+- [searchAll](PostsClient.md#searchall)
+- [searchRecent](PostsClient.md#searchrecent)
 - [getByIds](PostsClient.md#getbyids)
 - [create](PostsClient.md#create)
-- [getAnalytics](PostsClient.md#getanalytics)
-- [getInsights28Hr](PostsClient.md#getinsights28hr)
-- [hideReply](PostsClient.md#hidereply)
+- [getCountsAll](PostsClient.md#getcountsall)
+- [getLikingUsers](PostsClient.md#getlikingusers)
+- [getInsightsHistorical](PostsClient.md#getinsightshistorical)
+- [getReposts](PostsClient.md#getreposts)
 - [getById](PostsClient.md#getbyid)
 - [delete](PostsClient.md#delete)
-- [getLikingUsers](PostsClient.md#getlikingusers)
-- [searchRecent](PostsClient.md#searchrecent)
-- [getRepostedBy](PostsClient.md#getrepostedby)
-- [getCountsAll](PostsClient.md#getcountsall)
-- [getQuotedPosts](PostsClient.md#getquotedposts)
-- [getReposts](PostsClient.md#getreposts)
 - [getCountsRecent](PostsClient.md#getcountsrecent)
-- [searchAll](PostsClient.md#searchall)
+- [getQuoted](PostsClient.md#getquoted)
 
 ## Constructors
 
@@ -39,7 +39,7 @@ parsing for all Posts related operations.
 
 • **new PostsClient**(`client`): [`PostsClient`](PostsClient.md)
 
-Creates a new Posts client instance
+Creates a new posts client instance
 
 #### Parameters
 
@@ -53,69 +53,170 @@ Creates a new Posts client instance
 
 #### Defined in
 
-[posts/client.ts:425](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L425)
+[posts/client.ts:145](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L145)
 
 ## Methods
 
-### getInsightsHistorical
+### getInsights28hr
 
-▸ **getInsightsHistorical**(`tweetIds`, `endTime`, `startTime`, `granularity`, `requestedMetrics`, `options?`): `Promise`\<[`PostsGetInsightsHistoricalResponse`](../interfaces/PostsGetInsightsHistoricalResponse.md)\>
+▸ **getInsights28hr**(): `Promise`\<`any`\>
 
-Get historical Post insights
-Retrieves historical engagement metrics for specified Posts within a defined time range.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `tweetIds` | `any`[] | List of PostIds for historical metrics. |
-| `endTime` | `string` | YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range. |
-| `startTime` | `string` | YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range. |
-| `granularity` | `string` | granularity of metrics response. |
-| `requestedMetrics` | `any`[] | request metrics for historical request. |
-| `options` | [`PostsGetInsightsHistoricalOptions`](../interfaces/PostsGetInsightsHistoricalOptions.md) | - |
+Get 28-hour Post insights
+Retrieves engagement metrics for specified Posts over the last 28 hours.
 
 #### Returns
 
-`Promise`\<[`PostsGetInsightsHistoricalResponse`](../interfaces/PostsGetInsightsHistoricalResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[posts/client.ts:457](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L457)
+[posts/client.ts:163](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L163)
+
+___
+
+### getRepostedBy
+
+▸ **getRepostedBy**(`options?`): `Promise`\<`any`\>
+
+Get Reposted by
+Retrieves a list of Users who reposted a specific Post by its ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetRepostedByOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[posts/client.ts:196](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L196)
+
+___
+
+### hideReply
+
+▸ **hideReply**(`options?`): `Promise`\<`any`\>
+
+Hide reply
+Hides or unhides a reply to a conversation owned by the authenticated user.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `HideReplyOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[posts/client.ts:231](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L231)
+
+___
+
+### getAnalytics
+
+▸ **getAnalytics**(): `Promise`\<`any`\>
+
+Get Post analytics
+Retrieves analytics data for specified Posts within a defined time range.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[posts/client.ts:276](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L276)
+
+___
+
+### searchAll
+
+▸ **searchAll**(`options?`): `Promise`\<`any`\>
+
+Search all Posts
+Retrieves Posts from the full archive matching a search query.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `SearchAllOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[posts/client.ts:309](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L309)
+
+___
+
+### searchRecent
+
+▸ **searchRecent**(`options?`): `Promise`\<`any`\>
+
+Search recent Posts
+Retrieves Posts from the last 7 days matching a search query.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `SearchRecentOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[posts/client.ts:342](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L342)
 
 ___
 
 ### getByIds
 
-▸ **getByIds**(`ids`, `options?`): `Promise`\<[`PostsGetByIdsResponse`](../interfaces/PostsGetByIdsResponse.md)\>
+▸ **getByIds**(): `Promise`\<`any`\>
 
 Get Posts by IDs
 Retrieves details of multiple Posts by their IDs.
 
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `ids` | `any`[] | A comma separated list of Post IDs. Up to 100 are allowed in a single request. |
-| `options` | [`PostsGetByIdsOptions`](../interfaces/PostsGetByIdsOptions.md) | - |
-
 #### Returns
 
-`Promise`\<[`PostsGetByIdsResponse`](../interfaces/PostsGetByIdsResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[posts/client.ts:527](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L527)
+[posts/client.ts:377](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L377)
 
 ___
 
 ### create
 
-▸ **create**(`body`): `Promise`\<[`PostsCreateResponse`](../interfaces/PostsCreateResponse.md)\>
+▸ **create**(`body`): `Promise`\<`any`\>
 
 Create or Edit Post
 Creates a new Post for the authenticated user, or edits an existing Post when edit_options are provided.
@@ -124,364 +225,196 @@ Creates a new Post for the authenticated user, or edits an existing Post when ed
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `body` | [`PostsCreateRequest`](../interfaces/PostsCreateRequest.md) | Request body |
+| `body` | `any` | Request body |
 
 #### Returns
 
-`Promise`\<[`PostsCreateResponse`](../interfaces/PostsCreateResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[posts/client.ts:605](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L605)
-
-___
-
-### getAnalytics
-
-▸ **getAnalytics**(`ids`, `endTime`, `startTime`, `granularity`, `options?`): `Promise`\<[`PostsGetAnalyticsResponse`](../interfaces/PostsGetAnalyticsResponse.md)\>
-
-Get Post analytics
-Retrieves analytics data for specified Posts within a defined time range.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `ids` | `any`[] | A comma separated list of Post IDs. Up to 100 are allowed in a single request. |
-| `endTime` | `string` | YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range. |
-| `startTime` | `string` | YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range. |
-| `granularity` | `string` | The granularity for the search counts results. |
-| `options` | [`PostsGetAnalyticsOptions`](../interfaces/PostsGetAnalyticsOptions.md) | - |
-
-#### Returns
-
-`Promise`\<[`PostsGetAnalyticsResponse`](../interfaces/PostsGetAnalyticsResponse.md)\>
-
-Promise with the API response
-
-#### Defined in
-
-[posts/client.ts:654](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L654)
-
-___
-
-### getInsights28Hr
-
-▸ **getInsights28Hr**(`tweetIds`, `granularity`, `requestedMetrics`, `options?`): `Promise`\<[`PostsGetInsights28HrResponse`](../interfaces/PostsGetInsights28HrResponse.md)\>
-
-Get 28-hour Post insights
-Retrieves engagement metrics for specified Posts over the last 28 hours.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `tweetIds` | `any`[] | List of PostIds for 28hr metrics. |
-| `granularity` | `string` | granularity of metrics response. |
-| `requestedMetrics` | `any`[] | request metrics for historical request. |
-| `options` | [`PostsGetInsights28HrOptions`](../interfaces/PostsGetInsights28HrOptions.md) | - |
-
-#### Returns
-
-`Promise`\<[`PostsGetInsights28HrResponse`](../interfaces/PostsGetInsights28HrResponse.md)\>
-
-Promise with the API response
-
-#### Defined in
-
-[posts/client.ts:727](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L727)
-
-___
-
-### hideReply
-
-▸ **hideReply**(`tweetId`, `options?`): `Promise`\<[`PostsHideReplyResponse`](../interfaces/PostsHideReplyResponse.md)\>
-
-Hide reply
-Hides or unhides a reply to a conversation owned by the authenticated user.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `tweetId` | `string` | The ID of the reply that you want to hide or unhide. |
-| `options` | [`PostsHideReplyOptions`](../interfaces/PostsHideReplyOptions.md) | - |
-
-#### Returns
-
-`Promise`\<[`PostsHideReplyResponse`](../interfaces/PostsHideReplyResponse.md)\>
-
-Promise with the API response
-
-#### Defined in
-
-[posts/client.ts:787](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L787)
-
-___
-
-### getById
-
-▸ **getById**(`id`, `options?`): `Promise`\<[`PostsGetByIdResponse`](../interfaces/PostsGetByIdResponse.md)\>
-
-Get Post by ID
-Retrieves details of a specific Post by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | A single Post ID. |
-| `options` | [`PostsGetByIdOptions`](../interfaces/PostsGetByIdOptions.md) | - |
-
-#### Returns
-
-`Promise`\<[`PostsGetByIdResponse`](../interfaces/PostsGetByIdResponse.md)\>
-
-Promise with the API response
-
-#### Defined in
-
-[posts/client.ts:833](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L833)
-
-___
-
-### delete
-
-▸ **delete**(`id`): `Promise`\<[`PostsDeleteResponse`](../interfaces/PostsDeleteResponse.md)\>
-
-Delete Post
-Deletes a specific Post by its ID, if owned by the authenticated user.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the Post to be deleted. |
-
-#### Returns
-
-`Promise`\<[`PostsDeleteResponse`](../interfaces/PostsDeleteResponse.md)\>
-
-Promise with the API response
-
-#### Defined in
-
-[posts/client.ts:911](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L911)
-
-___
-
-### getLikingUsers
-
-▸ **getLikingUsers**(`id`, `options?`): `Promise`\<[`UserPaginator`](UserPaginator.md)\>
-
-Get Liking Users
-Retrieves a list of Users who liked a specific Post by its ID.
-Returns a paginator for automatic pagination through all results.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | A single Post ID. |
-| `options` | [`PostsGetLikingUsersOptions`](../interfaces/PostsGetLikingUsersOptions.md) | Options for the paginated request |
-
-#### Returns
-
-`Promise`\<[`UserPaginator`](UserPaginator.md)\>
-
-A paginator instance for iterating through all results
-
-#### Defined in
-
-[posts/client.ts:948](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L948)
-
-___
-
-### searchRecent
-
-▸ **searchRecent**(`query`, `options?`): `Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
-
-Search recent Posts
-Retrieves Posts from the last 7 days matching a search query.
-Returns a paginator for automatic pagination through all results.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `query` | `string` | One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length. |
-| `options` | [`PostsSearchRecentOptions`](../interfaces/PostsSearchRecentOptions.md) | Options for the paginated request |
-
-#### Returns
-
-`Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
-
-A paginator instance for iterating through all results
-
-#### Defined in
-
-[posts/client.ts:1043](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L1043)
-
-___
-
-### getRepostedBy
-
-▸ **getRepostedBy**(`id`, `options?`): `Promise`\<[`PostPaginator`](PostPaginator.md)\>
-
-Get Reposted by
-Retrieves a list of Users who reposted a specific Post by its ID.
-Returns a paginator for automatic pagination through all results.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | A single Post ID. |
-| `options` | [`PostsGetRepostedByOptions`](../interfaces/PostsGetRepostedByOptions.md) | Options for the paginated request |
-
-#### Returns
-
-`Promise`\<[`PostPaginator`](PostPaginator.md)\>
-
-A paginator instance for iterating through all results
-
-#### Defined in
-
-[posts/client.ts:1194](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L1194)
+[posts/client.ts:410](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L410)
 
 ___
 
 ### getCountsAll
 
-▸ **getCountsAll**(`query`, `options?`): `Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
+▸ **getCountsAll**(`options?`): `Promise`\<`any`\>
 
 Get count of all Posts
 Retrieves the count of Posts matching a search query from the full archive.
-Returns a paginator for automatic pagination through all results.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `query` | `string` | One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length. |
-| `options` | [`PostsGetCountsAllOptions`](../interfaces/PostsGetCountsAllOptions.md) | Options for the paginated request |
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetCountsAllOptions` |
 
 #### Returns
 
-`Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
+`Promise`\<`any`\>
 
-A paginator instance for iterating through all results
+Promise with the API response
 
 #### Defined in
 
-[posts/client.ts:1289](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L1289)
+[posts/client.ts:445](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L445)
 
 ___
 
-### getQuotedPosts
+### getLikingUsers
 
-▸ **getQuotedPosts**(`id`, `options?`): `Promise`\<[`PostPaginator`](PostPaginator.md)\>
+▸ **getLikingUsers**(`options?`): `Promise`\<`any`\>
 
-Get Quoted Posts
-Retrieves a list of Posts that quote a specific Post by its ID.
-Returns a paginator for automatic pagination through all results.
+Get Liking Users
+Retrieves a list of Users who liked a specific Post by its ID.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | A single Post ID. |
-| `options` | [`PostsGetQuotedPostsOptions`](../interfaces/PostsGetQuotedPostsOptions.md) | Options for the paginated request |
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetLikingUsersOptions` |
 
 #### Returns
 
-`Promise`\<[`PostPaginator`](PostPaginator.md)\>
+`Promise`\<`any`\>
 
-A paginator instance for iterating through all results
+Promise with the API response
 
 #### Defined in
 
-[posts/client.ts:1404](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L1404)
+[posts/client.ts:480](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L480)
+
+___
+
+### getInsightsHistorical
+
+▸ **getInsightsHistorical**(): `Promise`\<`any`\>
+
+Get historical Post insights
+Retrieves historical engagement metrics for specified Posts within a defined time range.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[posts/client.ts:523](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L523)
 
 ___
 
 ### getReposts
 
-▸ **getReposts**(`id`, `options?`): `Promise`\<[`PostPaginator`](PostPaginator.md)\>
+▸ **getReposts**(`options?`): `Promise`\<`any`\>
 
 Get Reposts
 Retrieves a list of Posts that repost a specific Post by its ID.
-Returns a paginator for automatic pagination through all results.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | A single Post ID. |
-| `options` | [`PostsGetRepostsOptions`](../interfaces/PostsGetRepostsOptions.md) | Options for the paginated request |
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetRepostsOptions` |
 
 #### Returns
 
-`Promise`\<[`PostPaginator`](PostPaginator.md)\>
+`Promise`\<`any`\>
 
-A paginator instance for iterating through all results
+Promise with the API response
 
 #### Defined in
 
-[posts/client.ts:1523](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L1523)
+[posts/client.ts:556](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L556)
+
+___
+
+### getById
+
+▸ **getById**(): `Promise`\<`any`\>
+
+Get Post by ID
+Retrieves details of a specific Post by its ID.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[posts/client.ts:591](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L591)
+
+___
+
+### delete
+
+▸ **delete**(): `Promise`\<`any`\>
+
+Delete Post
+Deletes a specific Post by its ID, if owned by the authenticated user.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[posts/client.ts:624](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L624)
 
 ___
 
 ### getCountsRecent
 
-▸ **getCountsRecent**(`query`, `options?`): `Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
+▸ **getCountsRecent**(`options?`): `Promise`\<`any`\>
 
 Get count of recent Posts
 Retrieves the count of Posts from the last 7 days matching a search query.
-Returns a paginator for automatic pagination through all results.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `query` | `string` | One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length. |
-| `options` | [`PostsGetCountsRecentOptions`](../interfaces/PostsGetCountsRecentOptions.md) | Options for the paginated request |
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetCountsRecentOptions` |
 
 #### Returns
 
-`Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
+`Promise`\<`any`\>
 
-A paginator instance for iterating through all results
+Promise with the API response
 
 #### Defined in
 
-[posts/client.ts:1636](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L1636)
+[posts/client.ts:657](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L657)
 
 ___
 
-### searchAll
+### getQuoted
 
-▸ **searchAll**(`query`, `options?`): `Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
+▸ **getQuoted**(`options?`): `Promise`\<`any`\>
 
-Search all Posts
-Retrieves Posts from the full archive matching a search query.
-Returns a paginator for automatic pagination through all results.
+Get Quoted Posts
+Retrieves a list of Posts that quote a specific Post by its ID.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `query` | `string` | One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length. |
-| `options` | [`PostsSearchAllOptions`](../interfaces/PostsSearchAllOptions.md) | Options for the paginated request |
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetQuotedOptions` |
 
 #### Returns
 
-`Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
+`Promise`\<`any`\>
 
-A paginator instance for iterating through all results
+Promise with the API response
 
 #### Defined in
 
-[posts/client.ts:1751](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/posts/client.ts#L1751)
+[posts/client.ts:692](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/posts/client.ts#L692)

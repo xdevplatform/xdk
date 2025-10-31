@@ -2,11 +2,11 @@
 
 # Class: ConnectionsClient
 
-Client for Connections operations
+Client for connections operations
 
-This client provides methods for interacting with the Connections endpoints
+This client provides methods for interacting with the connections endpoints
 of the X API. It handles authentication, request formatting, and response
-parsing for all Connections related operations.
+parsing for all connections related operations.
 
 ## Table of contents
 
@@ -24,7 +24,7 @@ parsing for all Connections related operations.
 
 • **new ConnectionsClient**(`client`): [`ConnectionsClient`](ConnectionsClient.md)
 
-Creates a new Connections client instance
+Creates a new connections client instance
 
 #### Parameters
 
@@ -38,23 +38,23 @@ Creates a new Connections client instance
 
 #### Defined in
 
-[connections/client.ts:33](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/connections/client.ts#L33)
+[connections/client.ts:33](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/connections/client.ts#L33)
 
 ## Methods
 
 ### deleteAll
 
-▸ **deleteAll**(): `Promise`\<[`ConnectionsDeleteAllResponse`](../interfaces/ConnectionsDeleteAllResponse.md)\>
+▸ **deleteAll**(): `Promise`\<`any`\>
 
 Terminate all connections
 Terminates all active streaming connections for the authenticated application.
 
 #### Returns
 
-`Promise`\<[`ConnectionsDeleteAllResponse`](../interfaces/ConnectionsDeleteAllResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[connections/client.ts:45](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/connections/client.ts#L45)
+[connections/client.ts:45](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/connections/client.ts#L45)

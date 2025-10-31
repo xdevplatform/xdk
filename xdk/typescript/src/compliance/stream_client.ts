@@ -7,24 +7,15 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  GetJobsByIdResponse,
   GetJobsResponse,
   CreateJobsResponse,
+  GetJobsByIdResponse,
 } from './models.js';
 
 /**
- * Options for getJobsById method
- */
-export interface GetJobsByIdStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
  * Options for getJobs method
+ * 
+ * @public
  */
 export interface GetJobsStreamingOptions {
   /** Additional request options */
@@ -36,8 +27,23 @@ export interface GetJobsStreamingOptions {
 }
 /**
  * Options for createJobs method
+ * 
+ * @public
  */
 export interface CreateJobsStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getJobsById method
+ * 
+ * @public
+ */
+export interface GetJobsByIdStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -51,52 +57,6 @@ export class ComplianceClient {
 
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-     * Get Compliance Job by ID
-     * Retrieves details of a specific Compliance Job by its ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async getJobsById(
-    options: GetJobsByIdStreamingOptions = {}
-  ): Promise<GetJobsByIdResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getJobsById');
-
-    // Destructure options with defaults
-
-    const requestOptions = {};
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/compliance/jobs/{id}`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<GetJobsByIdResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
   }
 
   /**
@@ -189,6 +149,52 @@ export class ComplianceClient {
     // Make the request
     return this.client.request<CreateJobsResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get Compliance Job by ID
+     * Retrieves details of a specific Compliance Job by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getJobsById(
+    options: GetJobsByIdStreamingOptions = {}
+  ): Promise<GetJobsByIdResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getJobsById');
+
+    // Destructure options with defaults
+
+    const requestOptions = {};
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/compliance/jobs/{id}`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<GetJobsByIdResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

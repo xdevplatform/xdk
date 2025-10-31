@@ -11,10 +11,12 @@ import {
   UserPaginator,
   EventPaginator,
 } from '../paginator.js';
-import { SearchResponse, GetByIdResponse } from './models.js';
+import { GetByIdResponse, SearchResponse } from './models.js';
 
 /**
  * Options for search method
+ * 
+ * @public
  */
 export interface SearchOptions {
   /** Additional request options */
@@ -40,39 +42,6 @@ export class CommunitiesClient {
      */
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-   * Search Communities
-   * Retrieves a list of Communities matching the specified search query.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async search(options: SearchOptions = {}): Promise<SearchResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/communities/search';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<SearchResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
   }
 
   /**
@@ -102,6 +71,39 @@ export class CommunitiesClient {
     };
 
     return this.client.request<GetByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Search Communities
+   * Retrieves a list of Communities matching the specified search query.
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async search(options: SearchOptions = {}): Promise<SearchResponse> {
+    // Destructure options
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build the path with path parameters
+    let path = '/2/communities/search';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<SearchResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

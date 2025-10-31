@@ -1,67 +1,51 @@
 /**
  * Models for activity operations
  */
+import type * as Schemas from '../schemas.js';
+
+
+
+
 
 /**
- * Request body for updateSubscription
+ * Request for updateSubscription
+ * 
+ * @public
  */
-export interface UpdateSubscriptionRequest {
-  tag?: string;
-  /** The unique identifier of this webhook config. */
-  webhookId?: string;
-}
-
+export type UpdateSubscriptionRequest = Schemas.ActivitySubscriptionUpdateRequest;
 /**
  * Response for updateSubscription
+ * 
+ * @public
  */
-export interface UpdateSubscriptionResponse {
-  data?: Record<string, any>;
-}
-
+export type UpdateSubscriptionResponse = Schemas.ActivitySubscriptionUpdateResponse;
 /**
  * Response for deleteSubscription
+ * 
+ * @public
  */
-export interface DeleteSubscriptionResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getSubscriptions
- */
-export interface GetSubscriptionsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for createSubscription
- */
-export interface CreateSubscriptionRequest {
-  eventType?: string;
-  /** An XAA subscription. */
-  filter?: Record<string, any>;
-  tag?: string;
-  /** The unique identifier of this webhook config. */
-  webhookId?: string;
-}
-
-/**
- * Response for createSubscription
- */
-export interface CreateSubscriptionResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
+export type DeleteSubscriptionResponse = Schemas.ActivitySubscriptionDeleteResponse;
 /**
  * Response for stream
- * An activity event or error that can be returned by the x activity streaming API.
+ * 
+ * @public
  */
-export interface StreamResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
+export type StreamResponse = Schemas.ActivityStreamingResponse;
+/**
+ * Response for getSubscriptions
+ * 
+ * @public
+ */
+export type GetSubscriptionsResponse = Schemas.ActivitySubscriptionGetResponse;
+/**
+ * Request for createSubscription
+ * 
+ * @public
+ */
+export type CreateSubscriptionRequest = Schemas.ActivitySubscriptionCreateRequest;
+/**
+ * Response for createSubscription
+ * 
+ * @public
+ */
+export type CreateSubscriptionResponse = Schemas.ActivitySubscriptionCreateResponse;

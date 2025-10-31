@@ -2,11 +2,11 @@
 
 # Class: AccountActivityClient
 
-Client for Account activity operations
+Client for account activity operations
 
-This client provides methods for interacting with the Account activity endpoints
+This client provides methods for interacting with the account activity endpoints
 of the X API. It handles authentication, request formatting, and response
-parsing for all Account activity related operations.
+parsing for all account activity related operations.
 
 ## Table of contents
 
@@ -16,12 +16,12 @@ parsing for all Account activity related operations.
 
 ### Methods
 
-- [deleteSubscription](AccountActivityClient.md#deletesubscription)
-- [getSubscriptions](AccountActivityClient.md#getsubscriptions)
 - [validateSubscription](AccountActivityClient.md#validatesubscription)
 - [createSubscription](AccountActivityClient.md#createsubscription)
-- [createReplayJob](AccountActivityClient.md#createreplayjob)
+- [getSubscriptions](AccountActivityClient.md#getsubscriptions)
+- [deleteSubscription](AccountActivityClient.md#deletesubscription)
 - [getSubscriptionCount](AccountActivityClient.md#getsubscriptioncount)
+- [createReplayJob](AccountActivityClient.md#createreplayjob)
 
 ## Constructors
 
@@ -29,7 +29,7 @@ parsing for all Account activity related operations.
 
 • **new AccountActivityClient**(`client`): [`AccountActivityClient`](AccountActivityClient.md)
 
-Creates a new Account activity client instance
+Creates a new account activity client instance
 
 #### Parameters
 
@@ -43,152 +43,124 @@ Creates a new Account activity client instance
 
 #### Defined in
 
-[account_activity/client.ts:52](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/account_activity/client.ts#L52)
+[account_activity/client.ts:54](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/account_activity/client.ts#L54)
 
 ## Methods
 
-### deleteSubscription
-
-▸ **deleteSubscription**(`webhookId`, `userId`): `Promise`\<[`AccountActivityDeleteSubscriptionResponse`](../interfaces/AccountActivityDeleteSubscriptionResponse.md)\>
-
-Delete subscription
-Deletes an Account Activity subscription for the given webhook and user ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `webhookId` | `string` | The webhook ID to check subscription against. |
-| `userId` | `string` | User ID to unsubscribe from. |
-
-#### Returns
-
-`Promise`\<[`AccountActivityDeleteSubscriptionResponse`](../interfaces/AccountActivityDeleteSubscriptionResponse.md)\>
-
-Promise with the API response
-
-#### Defined in
-
-[account_activity/client.ts:72](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/account_activity/client.ts#L72)
-
-___
-
-### getSubscriptions
-
-▸ **getSubscriptions**(`webhookId`): `Promise`\<[`AccountActivityGetSubscriptionsResponse`](../interfaces/AccountActivityGetSubscriptionsResponse.md)\>
-
-Get subscriptions
-Retrieves a list of all active subscriptions for a given webhook.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `webhookId` | `string` | The webhook ID to pull subscriptions for. |
-
-#### Returns
-
-`Promise`\<[`AccountActivityGetSubscriptionsResponse`](../interfaces/AccountActivityGetSubscriptionsResponse.md)\>
-
-Promise with the API response
-
-#### Defined in
-
-[account_activity/client.ts:115](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/account_activity/client.ts#L115)
-
-___
-
 ### validateSubscription
 
-▸ **validateSubscription**(`webhookId`): `Promise`\<[`AccountActivityValidateSubscriptionResponse`](../interfaces/AccountActivityValidateSubscriptionResponse.md)\>
+▸ **validateSubscription**(): `Promise`\<`any`\>
 
 Validate subscription
 Checks a user’s Account Activity subscription for a given webhook.
 
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `webhookId` | `string` | The webhook ID to check subscription against. |
-
 #### Returns
 
-`Promise`\<[`AccountActivityValidateSubscriptionResponse`](../interfaces/AccountActivityValidateSubscriptionResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[account_activity/client.ts:155](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/account_activity/client.ts#L155)
+[account_activity/client.ts:68](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/account_activity/client.ts#L68)
 
 ___
 
 ### createSubscription
 
-▸ **createSubscription**(`webhookId`, `options?`): `Promise`\<[`AccountActivityCreateSubscriptionResponse`](../interfaces/AccountActivityCreateSubscriptionResponse.md)\>
+▸ **createSubscription**(`options?`): `Promise`\<`any`\>
 
 Create subscription
 Creates an Account Activity subscription for the user and the given webhook.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `webhookId` | `string` | The webhook ID to check subscription against. |
-| `options` | [`AccountActivityCreateSubscriptionOptions`](../interfaces/AccountActivityCreateSubscriptionOptions.md) | - |
+| Name | Type |
+| :------ | :------ |
+| `options` | `CreateSubscriptionOptions` |
 
 #### Returns
 
-`Promise`\<[`AccountActivityCreateSubscriptionResponse`](../interfaces/AccountActivityCreateSubscriptionResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[account_activity/client.ts:194](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/account_activity/client.ts#L194)
+[account_activity/client.ts:101](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/account_activity/client.ts#L101)
 
 ___
 
-### createReplayJob
+### getSubscriptions
 
-▸ **createReplayJob**(`webhookId`, `fromDate`, `toDate`): `Promise`\<[`AccountActivityCreateReplayJobResponse`](../interfaces/AccountActivityCreateReplayJobResponse.md)\>
+▸ **getSubscriptions**(): `Promise`\<`any`\>
 
-Create replay job
-Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `webhookId` | `string` | The unique identifier for the webhook configuration. |
-| `fromDate` | `string` | The oldest (starting) UTC timestamp (inclusive) from which events will be provided, in `yyyymmddhhmm` format. |
-| `toDate` | `string` | The latest (ending) UTC timestamp (exclusive) up to which events will be provided, in `yyyymmddhhmm` format. |
+Get subscriptions
+Retrieves a list of all active subscriptions for a given webhook.
 
 #### Returns
 
-`Promise`\<[`AccountActivityCreateReplayJobResponse`](../interfaces/AccountActivityCreateReplayJobResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[account_activity/client.ts:248](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/account_activity/client.ts#L248)
+[account_activity/client.ts:142](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/account_activity/client.ts#L142)
+
+___
+
+### deleteSubscription
+
+▸ **deleteSubscription**(): `Promise`\<`any`\>
+
+Delete subscription
+Deletes an Account Activity subscription for the given webhook and user ID.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[account_activity/client.ts:178](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/account_activity/client.ts#L178)
 
 ___
 
 ### getSubscriptionCount
 
-▸ **getSubscriptionCount**(): `Promise`\<[`AccountActivityGetSubscriptionCountResponse`](../interfaces/AccountActivityGetSubscriptionCountResponse.md)\>
+▸ **getSubscriptionCount**(): `Promise`\<`any`\>
 
 Get subscription count
 Retrieves a count of currently active Account Activity subscriptions.
 
 #### Returns
 
-`Promise`\<[`AccountActivityGetSubscriptionCountResponse`](../interfaces/AccountActivityGetSubscriptionCountResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[account_activity/client.ts:294](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/account_activity/client.ts#L294)
+[account_activity/client.ts:210](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/account_activity/client.ts#L210)
+
+___
+
+### createReplayJob
+
+▸ **createReplayJob**(): `Promise`\<`any`\>
+
+Create replay job
+Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[account_activity/client.ts:247](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/account_activity/client.ts#L247)

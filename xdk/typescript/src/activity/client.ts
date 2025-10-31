@@ -15,14 +15,16 @@ import {
   UpdateSubscriptionRequest,
   UpdateSubscriptionResponse,
   DeleteSubscriptionResponse,
+  StreamResponse,
   GetSubscriptionsResponse,
   CreateSubscriptionRequest,
   CreateSubscriptionResponse,
-  StreamResponse,
 } from './models.js';
 
 /**
  * Options for updateSubscription method
+ * 
+ * @public
  */
 export interface UpdateSubscriptionOptions {
   /** Request body */
@@ -33,20 +35,24 @@ export interface UpdateSubscriptionOptions {
 }
 
 /**
- * Options for createSubscription method
+ * Options for stream method
+ * 
+ * @public
  */
-export interface CreateSubscriptionOptions {
-  /** Request body */
-  body?: CreateSubscriptionRequest;
-
+export interface StreamOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Options for stream method
+ * Options for createSubscription method
+ * 
+ * @public
  */
-export interface StreamOptions {
+export interface CreateSubscriptionOptions {
+  /** Request body */
+  body?: CreateSubscriptionRequest;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -147,6 +153,37 @@ export class ActivityClient {
   }
 
   /**
+   * Activity Stream
+   * Stream of X Activities
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async stream(options: StreamOptions = {}): Promise<StreamResponse> {
+    // Destructure options
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build the path with path parameters
+    let path = '/2/activity/stream';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<StreamResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Get X activity subscriptions
    * Get a list of active subscriptions for XAA
 
@@ -211,37 +248,6 @@ export class ActivityClient {
 
     return this.client.request<CreateSubscriptionResponse>(
       'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Activity Stream
-   * Stream of X Activities
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async stream(options: StreamOptions = {}): Promise<StreamResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/activity/stream';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<StreamResponse>(
-      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

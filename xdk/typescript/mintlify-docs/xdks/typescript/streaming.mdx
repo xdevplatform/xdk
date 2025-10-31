@@ -1,10 +1,7 @@
 ---
 title: "Streaming"
-description: "Real-time streaming with the TypeScript SDK"
 sidebarTitle: "Streaming"
 ---
-
-# Streaming
 
 The TypeScript SDK provides real-time streaming capabilities for live data feeds.
 
@@ -12,64 +9,55 @@ The TypeScript SDK provides real-time streaming capabilities for live data feeds
 
 Connect to real-time streams:
 
-```typescript
-import { Client } from '@your-org/x-api-sdk';
+<CodeGroup>
 
-const client = new Client({
-  bearerToken: 'your-bearer-token'
-});
+```typescript stream.ts theme={null}
+import { Client } from '@xdevplatform/xdk';
 
-// Stream tweets in real-time
-const stream = await client.stream.getTweetsStream({
-  tweetFields: ['created_at', 'author_id', 'text']
-});
-
-// Listen for tweets
-stream.on('tweet', (tweet) => {
-  console.log('New tweet:', tweet.text);
-});
-
-// Handle errors
-stream.on('error', (error) => {
-  console.error('Stream error:', error);
-});
-
-// Start streaming
+const client: Client = new Client({ bearerToken: 'your-bearer-token' });
+const stream = await client.stream.getTweetsStream({ tweetFields: ['created_at', 'author_id', 'text'] });
+stream.on('tweet', (tweet) => console.log('New tweet:', tweet.text));
+stream.on('error', (error) => console.error('Stream error:', error));
 await stream.connect();
 ```
+
+```javascript stream.js theme={null}
+import { Client } from '@xdevplatform/xdk';
+
+const client = new Client({ bearerToken: 'your-bearer-token' });
+const stream = await client.stream.getTweetsStream({ tweetFields: ['created_at'] });
+stream.on('tweet', (tweet) => console.log('New tweet:', tweet.text));
+await stream.connect();
+```
+
+</CodeGroup>
 
 ## Event-Driven Streaming
 
 Use the event-driven approach for better control:
 
-```typescript
-import { EventDrivenStream } from '@your-org/x-api-sdk';
+<CodeGroup>
 
-const stream = new EventDrivenStream({
-  endpoint: 'tweets/sample/stream',
-  bearerToken: 'your-bearer-token'
-});
+```typescript events.ts theme={null}
+import { EventDrivenStream } from '@xdevplatform/xdk';
 
-// Set up event handlers
-stream.onTweet((tweet) => {
-  console.log('Tweet received:', tweet.text);
-});
-
-stream.onError((error) => {
-  console.error('Stream error:', error);
-});
-
-stream.onConnect(() => {
-  console.log('Connected to stream');
-});
-
-stream.onDisconnect(() => {
-  console.log('Disconnected from stream');
-});
-
-// Connect to stream
+const stream: EventDrivenStream = new EventDrivenStream({ endpoint: 'tweets/sample/stream', bearerToken: 'your-bearer-token' });
+stream.onTweet((tweet) => console.log('Tweet received:', tweet.text));
+stream.onError((error) => console.error('Stream error:', error));
+stream.onConnect(() => console.log('Connected to stream'));
+stream.onDisconnect(() => console.log('Disconnected from stream'));
 await stream.connect();
 ```
+
+```javascript events.js theme={null}
+import { EventDrivenStream } from '@xdevplatform/xdk';
+
+const stream = new EventDrivenStream({ endpoint: 'tweets/sample/stream', bearerToken: 'your-bearer-token' });
+stream.onTweet((t) => console.log('Tweet received:', t.text));
+await stream.connect();
+```
+
+</CodeGroup>
 
 ## Stream Management
 

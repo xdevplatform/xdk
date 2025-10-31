@@ -2,11 +2,11 @@
 
 # Class: SpacesClient
 
-Client for Spaces operations
+Client for spaces operations
 
-This client provides methods for interacting with the Spaces endpoints
+This client provides methods for interacting with the spaces endpoints
 of the X API. It handles authentication, request formatting, and response
-parsing for all Spaces related operations.
+parsing for all spaces related operations.
 
 ## Table of contents
 
@@ -16,11 +16,11 @@ parsing for all Spaces related operations.
 
 ### Methods
 
-- [search](SpacesClient.md#search)
 - [getByCreatorIds](SpacesClient.md#getbycreatorids)
+- [search](SpacesClient.md#search)
 - [getPosts](SpacesClient.md#getposts)
-- [getByIds](SpacesClient.md#getbyids)
 - [getById](SpacesClient.md#getbyid)
+- [getByIds](SpacesClient.md#getbyids)
 - [getBuyers](SpacesClient.md#getbuyers)
 
 ## Constructors
@@ -29,7 +29,7 @@ parsing for all Spaces related operations.
 
 • **new SpacesClient**(`client`): [`SpacesClient`](SpacesClient.md)
 
-Creates a new Spaces client instance
+Creates a new spaces client instance
 
 #### Parameters
 
@@ -43,161 +43,136 @@ Creates a new Spaces client instance
 
 #### Defined in
 
-[spaces/client.ts:178](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/spaces/client.ts#L178)
+[spaces/client.ts:70](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/spaces/client.ts#L70)
 
 ## Methods
 
+### getByCreatorIds
+
+▸ **getByCreatorIds**(): `Promise`\<`any`\>
+
+Get Spaces by creator IDs
+Retrieves details of Spaces created by specified User IDs.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[spaces/client.ts:84](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/spaces/client.ts#L84)
+
+___
+
 ### search
 
-▸ **search**(`query`, `options?`): `Promise`\<[`SpacesSearchResponse`](../interfaces/SpacesSearchResponse.md)\>
+▸ **search**(`options?`): `Promise`\<`any`\>
 
 Search Spaces
 Retrieves a list of Spaces matching the specified search query.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `query` | `string` | The search query. |
-| `options` | [`SpacesSearchOptions`](../interfaces/SpacesSearchOptions.md) | - |
+| Name | Type |
+| :------ | :------ |
+| `options` | `SearchOptions` |
 
 #### Returns
 
-`Promise`\<[`SpacesSearchResponse`](../interfaces/SpacesSearchResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[spaces/client.ts:194](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/spaces/client.ts#L194)
-
-___
-
-### getByCreatorIds
-
-▸ **getByCreatorIds**(`userIds`, `options?`): `Promise`\<[`SpacesGetByCreatorIdsResponse`](../interfaces/SpacesGetByCreatorIdsResponse.md)\>
-
-Get Spaces by creator IDs
-Retrieves details of Spaces created by specified User IDs.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `userIds` | `any`[] | The IDs of Users to search through. |
-| `options` | [`SpacesGetByCreatorIdsOptions`](../interfaces/SpacesGetByCreatorIdsOptions.md) | - |
-
-#### Returns
-
-`Promise`\<[`SpacesGetByCreatorIdsResponse`](../interfaces/SpacesGetByCreatorIdsResponse.md)\>
-
-Promise with the API response
-
-#### Defined in
-
-[spaces/client.ts:274](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/spaces/client.ts#L274)
+[spaces/client.ts:117](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/spaces/client.ts#L117)
 
 ___
 
 ### getPosts
 
-▸ **getPosts**(`id`, `options?`): `Promise`\<[`SpacesGetPostsResponse`](../interfaces/SpacesGetPostsResponse.md)\>
+▸ **getPosts**(`options?`): `Promise`\<`any`\>
 
 Get Space Posts
 Retrieves a list of Posts shared in a specific Space by its ID.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the Space to be retrieved. |
-| `options` | [`SpacesGetPostsOptions`](../interfaces/SpacesGetPostsOptions.md) | - |
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetPostsOptions` |
 
 #### Returns
 
-`Promise`\<[`SpacesGetPostsResponse`](../interfaces/SpacesGetPostsResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[spaces/client.ts:342](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/spaces/client.ts#L342)
-
-___
-
-### getByIds
-
-▸ **getByIds**(`ids`, `options?`): `Promise`\<[`SpacesGetByIdsResponse`](../interfaces/SpacesGetByIdsResponse.md)\>
-
-Get Spaces by IDs
-Retrieves details of multiple Spaces by their IDs.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `ids` | `any`[] | The list of Space IDs to return. |
-| `options` | [`SpacesGetByIdsOptions`](../interfaces/SpacesGetByIdsOptions.md) | - |
-
-#### Returns
-
-`Promise`\<[`SpacesGetByIdsResponse`](../interfaces/SpacesGetByIdsResponse.md)\>
-
-Promise with the API response
-
-#### Defined in
-
-[spaces/client.ts:426](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/spaces/client.ts#L426)
+[spaces/client.ts:150](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/spaces/client.ts#L150)
 
 ___
 
 ### getById
 
-▸ **getById**(`id`, `options?`): `Promise`\<[`SpacesGetByIdResponse`](../interfaces/SpacesGetByIdResponse.md)\>
+▸ **getById**(): `Promise`\<`any`\>
 
 Get space by ID
 Retrieves details of a specific space by its ID.
 
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the Space to be retrieved. |
-| `options` | [`SpacesGetByIdOptions`](../interfaces/SpacesGetByIdOptions.md) | - |
-
 #### Returns
 
-`Promise`\<[`SpacesGetByIdResponse`](../interfaces/SpacesGetByIdResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[spaces/client.ts:494](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/spaces/client.ts#L494)
+[spaces/client.ts:183](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/spaces/client.ts#L183)
+
+___
+
+### getByIds
+
+▸ **getByIds**(): `Promise`\<`any`\>
+
+Get Spaces by IDs
+Retrieves details of multiple Spaces by their IDs.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[spaces/client.ts:216](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/spaces/client.ts#L216)
 
 ___
 
 ### getBuyers
 
-▸ **getBuyers**(`id`, `options?`): `Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
+▸ **getBuyers**(`options?`): `Promise`\<`any`\>
 
 Get Space ticket buyers
 Retrieves a list of Users who purchased tickets to a specific Space by its ID.
-Returns a paginator for automatic pagination through all results.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the Space to be retrieved. |
-| `options` | [`SpacesGetBuyersOptions`](../interfaces/SpacesGetBuyersOptions.md) | Options for the paginated request |
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetBuyersOptions` |
 
 #### Returns
 
-`Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
+`Promise`\<`any`\>
 
-A paginator instance for iterating through all results
+Promise with the API response
 
 #### Defined in
 
-[spaces/client.ts:560](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/spaces/client.ts#L560)
+[spaces/client.ts:249](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/spaces/client.ts#L249)

@@ -1,0 +1,51 @@
+---
+title: "GeneralClient"
+sidebarTitle: "GeneralClient"
+---
+
+Client for general operations
+
+This client provides methods for interacting with the general endpoints
+of the X API. It handles authentication, request formatting, and response
+parsing for all general related operations.
+
+## Constructors
+
+### constructor
+
+• **new GeneralClient**(`client`): [`GeneralClient`](/xdks/typescript/reference/classes/GeneralClient)
+
+Creates a new general client instance
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `client` | [`Client`](/xdks/typescript/reference/classes/Client) | The main X API client instance |
+
+#### Returns
+
+[`GeneralClient`](/xdks/typescript/reference/classes/GeneralClient)
+
+#### Defined in
+
+[general/client.ts:33](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/general/client.ts#L33)
+
+## Methods
+
+### getOpenApiSpec
+
+▸ **getOpenApiSpec**(): `Promise`\<`GetOpenApiSpecResponse`\>
+
+Get OpenAPI Spec.
+Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)
+
+#### Returns
+
+`Promise`\<`GetOpenApiSpecResponse`\>
+
+Promise with the API response
+
+#### Defined in
+
+[general/client.ts:45](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/general/client.ts#L45)

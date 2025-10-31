@@ -1,0 +1,39 @@
+---
+title: "ApiResponse"
+sidebarTitle: "ApiResponse"
+---
+
+Response wrapper with metadata
+
+## Type parameters
+
+| Name | Type |
+| :------ | :------ |
+| `T` | `any` |
+
+## Properties
+
+<ResponseField name="body" type="T" required>
+Response body
+
+</ResponseField>
+
+<ResponseField name="headers" type="Headers" required>
+Response headers
+
+</ResponseField>
+
+<ResponseField name="status" type="number" required>
+HTTP status code
+
+</ResponseField>
+
+<ResponseField name="statusText" type="string" required>
+HTTP status text
+
+</ResponseField>
+
+<ResponseField name="url" type="string" required>
+Response URL
+
+</ResponseField>

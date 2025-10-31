@@ -2,11 +2,11 @@
 
 # Class: ListsClient
 
-Client for Lists operations
+Client for lists operations
 
-This client provides methods for interacting with the Lists endpoints
+This client provides methods for interacting with the lists endpoints
 of the X API. It handles authentication, request formatting, and response
-parsing for all Lists related operations.
+parsing for all lists related operations.
 
 ## Table of contents
 
@@ -16,15 +16,15 @@ parsing for all Lists related operations.
 
 ### Methods
 
+- [getPosts](ListsClient.md#getposts)
+- [getFollowers](ListsClient.md#getfollowers)
+- [getMembers](ListsClient.md#getmembers)
 - [addMember](ListsClient.md#addmember)
 - [getById](ListsClient.md#getbyid)
 - [update](ListsClient.md#update)
 - [delete](ListsClient.md#delete)
 - [removeMemberByUserId](ListsClient.md#removememberbyuserid)
 - [create](ListsClient.md#create)
-- [getFollowers](ListsClient.md#getfollowers)
-- [getMembers](ListsClient.md#getmembers)
-- [getPosts](ListsClient.md#getposts)
 
 ## Constructors
 
@@ -32,7 +32,7 @@ parsing for all Lists related operations.
 
 • **new ListsClient**(`client`): [`ListsClient`](ListsClient.md)
 
-Creates a new Lists client instance
+Creates a new lists client instance
 
 #### Parameters
 
@@ -46,142 +46,195 @@ Creates a new Lists client instance
 
 #### Defined in
 
-[lists/client.ts:174](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/lists/client.ts#L174)
+[lists/client.ts:115](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L115)
 
 ## Methods
 
+### getPosts
+
+▸ **getPosts**(`options?`): `Promise`\<`any`\>
+
+Get List Posts
+Retrieves a list of Posts associated with a specific List by its ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetPostsOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[lists/client.ts:129](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L129)
+
+___
+
+### getFollowers
+
+▸ **getFollowers**(`options?`): `Promise`\<`any`\>
+
+Get List followers
+Retrieves a list of Users who follow a specific List by its ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetFollowersOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[lists/client.ts:162](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L162)
+
+___
+
+### getMembers
+
+▸ **getMembers**(`options?`): `Promise`\<`any`\>
+
+Get List members
+Retrieves a list of Users who are members of a specific List by its ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetMembersOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[lists/client.ts:197](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L197)
+
+___
+
 ### addMember
 
-▸ **addMember**(`id`, `options?`): `Promise`\<[`ListsAddMemberResponse`](../interfaces/ListsAddMemberResponse.md)\>
+▸ **addMember**(`options?`): `Promise`\<`any`\>
 
 Add List member
 Adds a User to a specific List by its ID.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the List for which to add a member. |
-| `options` | [`ListsAddMemberOptions`](../interfaces/ListsAddMemberOptions.md) | - |
+| Name | Type |
+| :------ | :------ |
+| `options` | `AddMemberOptions` |
 
 #### Returns
 
-`Promise`\<[`ListsAddMemberResponse`](../interfaces/ListsAddMemberResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[lists/client.ts:190](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/lists/client.ts#L190)
+[lists/client.ts:232](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L232)
 
 ___
 
 ### getById
 
-▸ **getById**(`id`, `options?`): `Promise`\<[`ListsGetByIdResponse`](../interfaces/ListsGetByIdResponse.md)\>
+▸ **getById**(): `Promise`\<`any`\>
 
 Get List by ID
 Retrieves details of a specific List by its ID.
 
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the List. |
-| `options` | [`ListsGetByIdOptions`](../interfaces/ListsGetByIdOptions.md) | - |
-
 #### Returns
 
-`Promise`\<[`ListsGetByIdResponse`](../interfaces/ListsGetByIdResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[lists/client.ts:236](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/lists/client.ts#L236)
+[lists/client.ts:271](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L271)
 
 ___
 
 ### update
 
-▸ **update**(`id`, `options?`): `Promise`\<[`ListsUpdateResponse`](../interfaces/ListsUpdateResponse.md)\>
+▸ **update**(`options?`): `Promise`\<`any`\>
 
 Update List
 Updates the details of a specific List owned by the authenticated user by its ID.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the List to modify. |
-| `options` | [`ListsUpdateOptions`](../interfaces/ListsUpdateOptions.md) | - |
+| Name | Type |
+| :------ | :------ |
+| `options` | `UpdateOptions` |
 
 #### Returns
 
-`Promise`\<[`ListsUpdateResponse`](../interfaces/ListsUpdateResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[lists/client.ts:296](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/lists/client.ts#L296)
+[lists/client.ts:304](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L304)
 
 ___
 
 ### delete
 
-▸ **delete**(`id`): `Promise`\<[`ListsDeleteResponse`](../interfaces/ListsDeleteResponse.md)\>
+▸ **delete**(): `Promise`\<`any`\>
 
 Delete List
 Deletes a specific List owned by the authenticated user by its ID.
 
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the List to delete. |
-
 #### Returns
 
-`Promise`\<[`ListsDeleteResponse`](../interfaces/ListsDeleteResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[lists/client.ts:342](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/lists/client.ts#L342)
+[lists/client.ts:343](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L343)
 
 ___
 
 ### removeMemberByUserId
 
-▸ **removeMemberByUserId**(`id`, `userId`): `Promise`\<[`ListsRemoveMemberByUserIdResponse`](../interfaces/ListsRemoveMemberByUserIdResponse.md)\>
+▸ **removeMemberByUserId**(): `Promise`\<`any`\>
 
 Remove List member
 Removes a User from a specific List by its ID and the User’s ID.
 
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the List to remove a member. |
-| `userId` | `string` | The ID of User that will be removed from the List. |
-
 #### Returns
 
-`Promise`\<[`ListsRemoveMemberByUserIdResponse`](../interfaces/ListsRemoveMemberByUserIdResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[lists/client.ts:383](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/lists/client.ts#L383)
+[lists/client.ts:378](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L378)
 
 ___
 
 ### create
 
-▸ **create**(`options?`): `Promise`\<[`ListsCreateResponse`](../interfaces/ListsCreateResponse.md)\>
+▸ **create**(`options?`): `Promise`\<`any`\>
 
 Create List
 Creates a new List for the authenticated user.
@@ -190,95 +243,14 @@ Creates a new List for the authenticated user.
 
 | Name | Type |
 | :------ | :------ |
-| `options` | [`ListsCreateOptions`](../interfaces/ListsCreateOptions.md) |
+| `options` | `CreateOptions` |
 
 #### Returns
 
-`Promise`\<[`ListsCreateResponse`](../interfaces/ListsCreateResponse.md)\>
+`Promise`\<`any`\>
 
 Promise with the API response
 
 #### Defined in
 
-[lists/client.ts:421](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/lists/client.ts#L421)
-
-___
-
-### getFollowers
-
-▸ **getFollowers**(`id`, `options?`): `Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
-
-Get List followers
-Retrieves a list of Users who follow a specific List by its ID.
-Returns a paginator for automatic pagination through all results.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the List. |
-| `options` | [`ListsGetFollowersOptions`](../interfaces/ListsGetFollowersOptions.md) | Options for the paginated request |
-
-#### Returns
-
-`Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
-
-A paginator instance for iterating through all results
-
-#### Defined in
-
-[lists/client.ts:462](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/lists/client.ts#L462)
-
-___
-
-### getMembers
-
-▸ **getMembers**(`id`, `options?`): `Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
-
-Get List members
-Retrieves a list of Users who are members of a specific List by its ID.
-Returns a paginator for automatic pagination through all results.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the List. |
-| `options` | [`ListsGetMembersOptions`](../interfaces/ListsGetMembersOptions.md) | Options for the paginated request |
-
-#### Returns
-
-`Promise`\<[`Paginator`](Paginator.md)\<`any`\>\>
-
-A paginator instance for iterating through all results
-
-#### Defined in
-
-[lists/client.ts:557](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/lists/client.ts#L557)
-
-___
-
-### getPosts
-
-▸ **getPosts**(`id`, `options?`): `Promise`\<[`PostPaginator`](PostPaginator.md)\>
-
-Get List Posts
-Retrieves a list of Posts associated with a specific List by its ID.
-Returns a paginator for automatic pagination through all results.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the List. |
-| `options` | [`ListsGetPostsOptions`](../interfaces/ListsGetPostsOptions.md) | Options for the paginated request |
-
-#### Returns
-
-`Promise`\<[`PostPaginator`](PostPaginator.md)\>
-
-A paginator instance for iterating through all results
-
-#### Defined in
-
-[lists/client.ts:652](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/lists/client.ts#L652)
+[lists/client.ts:409](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L409)

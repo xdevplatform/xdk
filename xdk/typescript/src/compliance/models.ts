@@ -1,41 +1,33 @@
 /**
  * Models for compliance operations
  */
+import type * as Schemas from '../schemas.js';
 
-/**
- * Response for getJobsById
- */
-export interface GetJobsByIdResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
+
+
+
 
 /**
  * Response for getJobs
+ * 
+ * @public
  */
-export interface GetJobsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
+export type GetJobsResponse = Schemas.Get2ComplianceJobsResponse;
 /**
- * Request body for createJobs
- * A request to create a new batch compliance job.
+ * Request for createJobs
+ * 
+ * @public
  */
-export interface CreateJobsRequest {
-  /** User-provided name for a compliance job. */
-  name?: string;
-  /** If true, this endpoint will return a pre-signed URL with resumable uploads enabled. */
-  resumable?: boolean;
-  /** Type of compliance job to list. */
-  type?: string;
-}
-
+export type CreateJobsRequest = Schemas.CreateComplianceJobRequest;
 /**
  * Response for createJobs
+ * 
+ * @public
  */
-export interface CreateJobsResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
+export type CreateJobsResponse = Schemas.CreateComplianceJobResponse;
+/**
+ * Response for getJobsById
+ * 
+ * @public
+ */
+export type GetJobsByIdResponse = Schemas.Get2ComplianceJobsIdResponse;

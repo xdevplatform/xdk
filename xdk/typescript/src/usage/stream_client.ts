@@ -10,6 +10,8 @@ import { GetResponse } from './models.js';
 
 /**
  * Options for get method
+ * 
+ * @public
  */
 export interface GetStreamingOptions {
   /** Additional request options */

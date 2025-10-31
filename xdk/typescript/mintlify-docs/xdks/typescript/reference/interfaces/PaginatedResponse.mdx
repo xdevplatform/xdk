@@ -1,0 +1,49 @@
+---
+title: "PaginatedResponse"
+sidebarTitle: "PaginatedResponse"
+---
+
+Paginated response interface
+
+Represents the structure of a paginated API response from the X API.
+
+## Type parameters
+
+| Name | Description |
+| :------ | :------ |
+| `T` | The type of items in the response |
+
+## Properties
+
+<ResponseField name="data" type="T[]" required>
+Array of items in the current page
+
+</ResponseField>
+
+<ResponseField name="meta" type="Object">
+Pagination metadata
+
+<Expandable title="properties">
+<ResponseField name="Name" type="Type | Description" required>
+</ResponseField>
+
+<ResponseField name="result_count" type="number | Number of results in the current page">
+</ResponseField>
+
+<ResponseField name="next_token" type="string | Token for fetching the next page">
+</ResponseField>
+
+<ResponseField name="previous_token" type="string | Token for fetching the previous page">
+</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseField name="includes" type="Record&lt;string, any&gt;">
+Additional included objects (users, tweets, etc.)
+
+</ResponseField>
+
+<ResponseField name="errors" type="any[]">
+Any errors in the response
+
+</ResponseField>

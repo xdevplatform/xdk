@@ -12,29 +12,23 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  GetEventsByConversationIdResponse,
   GetEventsByParticipantIdResponse,
-  GetEventsByIdResponse,
-  DeleteEventsResponse,
-  GetEventsResponse,
   CreateByParticipantIdRequest,
   CreateByParticipantIdResponse,
-  CreateConversationRequest,
-  CreateConversationResponse,
+  GetEventsByIdResponse,
+  DeleteEventsResponse,
   CreateByConversationIdRequest,
   CreateByConversationIdResponse,
+  CreateConversationRequest,
+  CreateConversationResponse,
+  GetEventsByConversationIdResponse,
+  GetEventsResponse,
 } from './models.js';
 
 /**
- * Options for getEventsByConversationId method
- */
-export interface GetEventsByConversationIdOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
  * Options for getEventsByParticipantId method
+ * 
+ * @public
  */
 export interface GetEventsByParticipantIdOptions {
   /** Additional request options */
@@ -42,15 +36,9 @@ export interface GetEventsByParticipantIdOptions {
 }
 
 /**
- * Options for getEvents method
- */
-export interface GetEventsOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
  * Options for createByParticipantId method
+ * 
+ * @public
  */
 export interface CreateByParticipantIdOptions {
   /** Request body */
@@ -61,7 +49,22 @@ export interface CreateByParticipantIdOptions {
 }
 
 /**
+ * Options for createByConversationId method
+ * 
+ * @public
+ */
+export interface CreateByConversationIdOptions {
+  /** Request body */
+  body?: CreateByConversationIdRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
  * Options for createConversation method
+ * 
+ * @public
  */
 export interface CreateConversationOptions {
   /** Request body */
@@ -72,12 +75,21 @@ export interface CreateConversationOptions {
 }
 
 /**
- * Options for createByConversationId method
+ * Options for getEventsByConversationId method
+ * 
+ * @public
  */
-export interface CreateByConversationIdOptions {
-  /** Request body */
-  body?: CreateByConversationIdRequest;
+export interface GetEventsByConversationIdOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
 
+/**
+ * Options for getEvents method
+ * 
+ * @public
+ */
+export interface GetEventsOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -113,41 +125,6 @@ export class DirectMessagesClient {
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getEventsByConversationId(
-    options: GetEventsByConversationIdOptions = {}
-  ): Promise<GetEventsByConversationIdResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/dm_conversations/{id}/dm_events';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetEventsByConversationIdResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get DM events for a DM conversation
-   * Retrieves direct message events for a specific conversation.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
   async getEventsByParticipantId(
     options: GetEventsByParticipantIdOptions = {}
   ): Promise<GetEventsByParticipantIdResponse> {
@@ -168,6 +145,47 @@ export class DirectMessagesClient {
 
     return this.client.request<GetEventsByParticipantIdResponse>(
       'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Create DM message by participant ID
+   * Sends a new direct message to a specific participant by their ID.
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async createByParticipantId(
+    options: CreateByParticipantIdOptions = {}
+  ): Promise<CreateByParticipantIdResponse> {
+    // Destructure options
+
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = options;
+
+    // Build the path with path parameters
+    let path = '/2/dm_conversations/with/{participant_id}/messages';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<CreateByParticipantIdResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -240,39 +258,8 @@ export class DirectMessagesClient {
   }
 
   /**
-   * Get DM events
-   * Retrieves a list of recent direct message events across all conversations.
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getEvents(options: GetEventsOptions = {}): Promise<GetEventsResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/dm_events';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetEventsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Create DM message by participant ID
-   * Sends a new direct message to a specific participant by their ID.
+   * Create DM message by conversation ID
+   * Sends a new direct message to a specific conversation by its ID.
 
 
 
@@ -280,9 +267,9 @@ export class DirectMessagesClient {
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async createByParticipantId(
-    options: CreateByParticipantIdOptions = {}
-  ): Promise<CreateByParticipantIdResponse> {
+  async createByConversationId(
+    options: CreateByConversationIdOptions = {}
+  ): Promise<CreateByConversationIdResponse> {
     // Destructure options
 
     const {
@@ -292,7 +279,7 @@ export class DirectMessagesClient {
     } = options;
 
     // Build the path with path parameters
-    let path = '/2/dm_conversations/with/{participant_id}/messages';
+    let path = '/2/dm_conversations/{dm_conversation_id}/messages';
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -304,7 +291,7 @@ export class DirectMessagesClient {
       ...requestOptions,
     };
 
-    return this.client.request<CreateByParticipantIdResponse>(
+    return this.client.request<CreateByConversationIdResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -351,8 +338,8 @@ export class DirectMessagesClient {
   }
 
   /**
-   * Create DM message by conversation ID
-   * Sends a new direct message to a specific conversation by its ID.
+   * Get DM events for a DM conversation
+   * Retrieves direct message events for a specific conversation.
 
 
 
@@ -360,32 +347,57 @@ export class DirectMessagesClient {
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async createByConversationId(
-    options: CreateByConversationIdOptions = {}
-  ): Promise<CreateByConversationIdResponse> {
+  async getEventsByConversationId(
+    options: GetEventsByConversationIdOptions = {}
+  ): Promise<GetEventsByConversationIdResponse> {
     // Destructure options
 
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } = options;
+    const { requestOptions: requestOptions = {} } = options;
 
     // Build the path with path parameters
-    let path = '/2/dm_conversations/{dm_conversation_id}/messages';
+    let path = '/2/dm_conversations/{id}/dm_events';
 
     // Build query parameters
     const params = new URLSearchParams();
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
       ...requestOptions,
     };
 
-    return this.client.request<CreateByConversationIdResponse>(
-      'POST',
+    return this.client.request<GetEventsByConversationIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get DM events
+   * Retrieves a list of recent direct message events across all conversations.
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getEvents(options: GetEventsOptions = {}): Promise<GetEventsResponse> {
+    // Destructure options
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build the path with path parameters
+    let path = '/2/dm_events';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetEventsResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

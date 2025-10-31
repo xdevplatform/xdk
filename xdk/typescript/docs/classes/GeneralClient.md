@@ -2,11 +2,11 @@
 
 # Class: GeneralClient
 
-Client for General operations
+Client for general operations
 
-This client provides methods for interacting with the General endpoints
+This client provides methods for interacting with the general endpoints
 of the X API. It handles authentication, request formatting, and response
-parsing for all General related operations.
+parsing for all general related operations.
 
 ## Table of contents
 
@@ -24,7 +24,7 @@ parsing for all General related operations.
 
 • **new GeneralClient**(`client`): [`GeneralClient`](GeneralClient.md)
 
-Creates a new General client instance
+Creates a new general client instance
 
 #### Parameters
 
@@ -38,23 +38,23 @@ Creates a new General client instance
 
 #### Defined in
 
-[general/client.ts:33](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/general/client.ts#L33)
+[general/client.ts:33](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/general/client.ts#L33)
 
 ## Methods
 
 ### getOpenApiSpec
 
-▸ **getOpenApiSpec**(): `Promise`\<[`GeneralGetOpenApiSpecResponse`](../interfaces/GeneralGetOpenApiSpecResponse.md)\>
+▸ **getOpenApiSpec**(): `Promise`\<`GetOpenApiSpecResponse`\>
 
 Get OpenAPI Spec.
 Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)
 
 #### Returns
 
-`Promise`\<[`GeneralGetOpenApiSpecResponse`](../interfaces/GeneralGetOpenApiSpecResponse.md)\>
+`Promise`\<`GetOpenApiSpecResponse`\>
 
 Promise with the API response
 
 #### Defined in
 
-[general/client.ts:45](https://github.com/xdevplatform/xdk/blob/ad4172ef5f68f089e0f077a190b271016dd35bf7/xdk/typescript/src/general/client.ts#L45)
+[general/client.ts:45](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/general/client.ts#L45)

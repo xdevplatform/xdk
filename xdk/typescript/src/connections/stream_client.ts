@@ -10,6 +10,8 @@ import { DeleteAllResponse } from './models.js';
 
 /**
  * Options for deleteAll method
+ * 
+ * @public
  */
 export interface DeleteAllStreamingOptions {
   /** Additional request options */

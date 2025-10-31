@@ -1,0 +1,886 @@
+---
+title: "UsersClient"
+sidebarTitle: "UsersClient"
+---
+
+Client for users operations
+
+This client provides methods for interacting with the users endpoints
+of the X API. It handles authentication, request formatting, and response
+parsing for all users related operations.
+
+## Constructors
+
+### constructor
+
+• **new UsersClient**(`client`): [`UsersClient`](/xdks/typescript/reference/classes/UsersClient)
+
+Creates a new users client instance
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `client` | [`Client`](/xdks/typescript/reference/classes/Client) | The main X API client instance |
+
+#### Returns
+
+[`UsersClient`](/xdks/typescript/reference/classes/UsersClient)
+
+#### Defined in
+
+[users/client.ts:294](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L294)
+
+## Methods
+
+### getOwnedLists
+
+▸ **getOwnedLists**(`options?`): `Promise`\<`any`\>
+
+Get owned Lists
+Retrieves a list of Lists owned by a specific User by their ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetOwnedListsOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:308](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L308)
+
+___
+
+### blockDms
+
+▸ **blockDms**(): `Promise`\<`any`\>
+
+Block DMs
+Blocks direct messages to or from a specific User by their ID for the authenticated user.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:343](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L343)
+
+___
+
+### getLikedPosts
+
+▸ **getLikedPosts**(`options?`): `Promise`\<`any`\>
+
+Get liked Posts
+Retrieves a list of Posts liked by a specific User by their ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetLikedPostsOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:376](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L376)
+
+___
+
+### unrepostPost
+
+▸ **unrepostPost**(): `Promise`\<`any`\>
+
+Unrepost Post
+Causes the authenticated user to unrepost a specific Post by its ID.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:413](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L413)
+
+___
+
+### getMentions
+
+▸ **getMentions**(`options?`): `Promise`\<`any`\>
+
+Get mentions
+Retrieves a list of Posts that mention a specific User by their ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetMentionsOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:446](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L446)
+
+___
+
+### unfollowUser
+
+▸ **unfollowUser**(): `Promise`\<`any`\>
+
+Unfollow User
+Causes the authenticated user to unfollow a specific user by their ID.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:483](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L483)
+
+___
+
+### unblockDms
+
+▸ **unblockDms**(): `Promise`\<`any`\>
+
+Unblock DMs
+Unblocks direct messages to or from a specific User by their ID for the authenticated user.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:516](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L516)
+
+___
+
+### getByIds
+
+▸ **getByIds**(): `Promise`\<`any`\>
+
+Get Users by IDs
+Retrieves details of multiple Users by their IDs.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:549](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L549)
+
+___
+
+### unmuteUser
+
+▸ **unmuteUser**(): `Promise`\<`any`\>
+
+Unmute User
+Causes the authenticated user to unmute a specific user by their ID.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:584](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L584)
+
+___
+
+### getFollowing
+
+▸ **getFollowing**(`options?`): `Promise`\<`any`\>
+
+Get following
+Retrieves a list of Users followed by a specific User by their ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetFollowingOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:617](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L617)
+
+___
+
+### followUser
+
+▸ **followUser**(`options?`): `Promise`\<`any`\>
+
+Follow User
+Causes the authenticated user to follow a specific user by their ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `FollowUserOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:652](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L652)
+
+___
+
+### getBookmarkFolders
+
+▸ **getBookmarkFolders**(`options?`): `Promise`\<`any`\>
+
+Get Bookmark folders
+Retrieves a list of Bookmark folders created by the authenticated user.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetBookmarkFoldersOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:693](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L693)
+
+___
+
+### getBookmarksByFolderId
+
+▸ **getBookmarksByFolderId**(): `Promise`\<`any`\>
+
+Get Bookmarks by folder ID
+Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:730](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L730)
+
+___
+
+### getPosts
+
+▸ **getPosts**(`options?`): `Promise`\<`any`\>
+
+Get Posts
+Retrieves a list of posts authored by a specific User by their ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetPostsOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:763](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L763)
+
+___
+
+### getListMemberships
+
+▸ **getListMemberships**(`options?`): `Promise`\<`any`\>
+
+Get List memberships
+Retrieves a list of Lists that a specific User is a member of by their ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetListMembershipsOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:796](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L796)
+
+___
+
+### unfollowList
+
+▸ **unfollowList**(): `Promise`\<`any`\>
+
+Unfollow List
+Causes the authenticated user to unfollow a specific List by its ID.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:833](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L833)
+
+___
+
+### getRepostsOfMe
+
+▸ **getRepostsOfMe**(`options?`): `Promise`\<`any`\>
+
+Get Reposts of me
+Retrieves a list of Posts that repost content from the authenticated user.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetRepostsOfMeOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:864](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L864)
+
+___
+
+### getBlocking
+
+▸ **getBlocking**(`options?`): `Promise`\<`any`\>
+
+Get blocking
+Retrieves a list of Users blocked by the specified User ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetBlockingOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:899](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L899)
+
+___
+
+### search
+
+▸ **search**(`options?`): `Promise`\<`any`\>
+
+Search Users
+Retrieves a list of Users matching a search query.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `SearchOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:934](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L934)
+
+___
+
+### getFollowers
+
+▸ **getFollowers**(`options?`): `Promise`\<`any`\>
+
+Get followers
+Retrieves a list of Users who follow a specific User by their ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetFollowersOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:967](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L967)
+
+___
+
+### getMe
+
+▸ **getMe**(): `Promise`\<`any`\>
+
+Get my User
+Retrieves details of the authenticated user.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1000](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1000)
+
+___
+
+### getById
+
+▸ **getById**(): `Promise`\<`any`\>
+
+Get User by ID
+Retrieves details of a specific User by their ID.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1033](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1033)
+
+___
+
+### getByUsernames
+
+▸ **getByUsernames**(): `Promise`\<`any`\>
+
+Get Users by usernames
+Retrieves details of multiple Users by their usernames.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1066](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1066)
+
+___
+
+### getByUsername
+
+▸ **getByUsername**(): `Promise`\<`any`\>
+
+Get User by username
+Retrieves details of a specific User by their username.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1099](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1099)
+
+___
+
+### getTimeline
+
+▸ **getTimeline**(`options?`): `Promise`\<`any`\>
+
+Get Timeline
+Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetTimelineOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1132](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1132)
+
+___
+
+### deleteBookmark
+
+▸ **deleteBookmark**(): `Promise`\<`any`\>
+
+Delete Bookmark
+Removes a Post from the authenticated user’s Bookmarks by its ID.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1169](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1169)
+
+___
+
+### getPinnedLists
+
+▸ **getPinnedLists**(): `Promise`\<`any`\>
+
+Get pinned Lists
+Retrieves a list of Lists pinned by the authenticated user.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1202](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1202)
+
+___
+
+### pinList
+
+▸ **pinList**(`body`): `Promise`\<`any`\>
+
+Pin List
+Causes the authenticated user to pin a specific List by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `body` | `any` | Request body |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1237](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1237)
+
+___
+
+### unpinList
+
+▸ **unpinList**(): `Promise`\<`any`\>
+
+Unpin List
+Causes the authenticated user to unpin a specific List by its ID.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1274](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1274)
+
+___
+
+### getFollowedLists
+
+▸ **getFollowedLists**(`options?`): `Promise`\<`any`\>
+
+Get followed Lists
+Retrieves a list of Lists followed by a specific User by their ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetFollowedListsOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1307](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1307)
+
+___
+
+### followList
+
+▸ **followList**(`options?`): `Promise`\<`any`\>
+
+Follow List
+Causes the authenticated user to follow a specific List by its ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `FollowListOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1342](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1342)
+
+___
+
+### repostPost
+
+▸ **repostPost**(`options?`): `Promise`\<`any`\>
+
+Repost Post
+Causes the authenticated user to repost a specific Post by its ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `RepostPostOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1383](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1383)
+
+___
+
+### likePost
+
+▸ **likePost**(`options?`): `Promise`\<`any`\>
+
+Like Post
+Causes the authenticated user to Like a specific Post by its ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `LikePostOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1424](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1424)
+
+___
+
+### getMuting
+
+▸ **getMuting**(`options?`): `Promise`\<`any`\>
+
+Get muting
+Retrieves a list of Users muted by the authenticated user.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetMutingOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1463](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1463)
+
+___
+
+### muteUser
+
+▸ **muteUser**(`options?`): `Promise`\<`any`\>
+
+Mute User
+Causes the authenticated user to mute a specific User by their ID.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `MuteUserOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1496](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1496)
+
+___
+
+### getBookmarks
+
+▸ **getBookmarks**(`options?`): `Promise`\<`any`\>
+
+Get Bookmarks
+Retrieves a list of Posts bookmarked by the authenticated user.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetBookmarksOptions` |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1535](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1535)
+
+___
+
+### createBookmark
+
+▸ **createBookmark**(`body`): `Promise`\<`any`\>
+
+Create Bookmark
+Adds a post to the authenticated user’s bookmarks.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `body` | `any` | Request body |
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1572](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1572)
+
+___
+
+### unlikePost
+
+▸ **unlikePost**(): `Promise`\<`any`\>
+
+Unlike Post
+Causes the authenticated user to Unlike a specific Post by its ID.
+
+#### Returns
+
+`Promise`\<`any`\>
+
+Promise with the API response
+
+#### Defined in
+
+[users/client.ts:1611](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/users/client.ts#L1611)

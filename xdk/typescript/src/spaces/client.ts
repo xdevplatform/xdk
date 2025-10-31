@@ -12,16 +12,28 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  GetByIdsResponse,
-  GetPostsResponse,
   GetByCreatorIdsResponse,
-  GetByIdResponse,
-  GetBuyersResponse,
   SearchResponse,
+  GetPostsResponse,
+  GetByIdResponse,
+  GetByIdsResponse,
+  GetBuyersResponse,
 } from './models.js';
 
 /**
+ * Options for search method
+ * 
+ * @public
+ */
+export interface SearchOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
  * Options for getPosts method
+ * 
+ * @public
  */
 export interface GetPostsOptions {
   /** Additional request options */
@@ -30,16 +42,10 @@ export interface GetPostsOptions {
 
 /**
  * Options for getBuyers method
+ * 
+ * @public
  */
 export interface GetBuyersOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for search method
- */
-export interface SearchOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -66,8 +72,8 @@ export class SpacesClient {
   }
 
   /**
-   * Get Spaces by IDs
-   * Retrieves details of multiple Spaces by their IDs.
+   * Get Spaces by creator IDs
+   * Retrieves details of Spaces created by specified User IDs.
 
 
 
@@ -75,13 +81,13 @@ export class SpacesClient {
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getByIds(): Promise<GetByIdsResponse> {
+  async getByCreatorIds(): Promise<GetByCreatorIdsResponse> {
     // Destructure options
 
     const requestOptions = {};
 
     // Build the path with path parameters
-    let path = '/2/spaces';
+    let path = '/2/spaces/by/creator_ids';
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -91,7 +97,40 @@ export class SpacesClient {
       // No optional parameters, using empty request options
     };
 
-    return this.client.request<GetByIdsResponse>(
+    return this.client.request<GetByCreatorIdsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Search Spaces
+   * Retrieves a list of Spaces matching the specified search query.
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async search(options: SearchOptions = {}): Promise<SearchResponse> {
+    // Destructure options
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build the path with path parameters
+    let path = '/2/spaces/search';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<SearchResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -132,39 +171,6 @@ export class SpacesClient {
   }
 
   /**
-   * Get Spaces by creator IDs
-   * Retrieves details of Spaces created by specified User IDs.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getByCreatorIds(): Promise<GetByCreatorIdsResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/spaces/by/creator_ids';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetByCreatorIdsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
    * Get space by ID
    * Retrieves details of a specific space by its ID.
 
@@ -198,6 +204,39 @@ export class SpacesClient {
   }
 
   /**
+   * Get Spaces by IDs
+   * Retrieves details of multiple Spaces by their IDs.
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByIds(): Promise<GetByIdsResponse> {
+    // Destructure options
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/spaces';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<GetByIdsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Get Space ticket buyers
    * Retrieves a list of Users who purchased tickets to a specific Space by its ID.
 
@@ -224,39 +263,6 @@ export class SpacesClient {
     };
 
     return this.client.request<GetBuyersResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Search Spaces
-   * Retrieves a list of Spaces matching the specified search query.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async search(options: SearchOptions = {}): Promise<SearchResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/spaces/search';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<SearchResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
