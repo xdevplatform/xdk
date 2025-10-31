@@ -9,4 +9,4 @@ Generated automatically - do not edit manually.
 
 from .client import CommunitiesClient
 
-__all__ = ["CommunitiesClient"]
+__all__ = ["CommunitiesClient"] 

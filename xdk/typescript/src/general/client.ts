@@ -1,7 +1,7 @@
 /**
- * General client for the X API.
+ * general client for the X API.
  *
- * This module provides a client for interacting with the General endpoints of the X API.
+ * This module provides a client for interacting with the general endpoints of the X API.
  */
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
@@ -11,22 +11,22 @@ import {
   UserPaginator,
   EventPaginator,
 } from '../paginator.js';
-import { GeneralGetOpenApiSpecResponse } from './models.js';
+import { GetOpenApiSpecResponse } from './models.js';
 
 /**
- * Client for General operations
+ * Client for general operations
  * 
- * This client provides methods for interacting with the General endpoints
+ * This client provides methods for interacting with the general endpoints
  * of the X API. It handles authentication, request formatting, and response
- * parsing for all General related operations.
+ * parsing for all general related operations.
  * 
- * @category General
+ * @category general
  */
 export class GeneralClient {
   private client: Client;
 
   /**
-     * Creates a new General client instance
+     * Creates a new general client instance
      * 
      * @param client - The main X API client instance
      */
@@ -42,7 +42,7 @@ export class GeneralClient {
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getOpenApiSpec(): Promise<GeneralGetOpenApiSpecResponse> {
+  async getOpenApiSpec(): Promise<GetOpenApiSpecResponse> {
     // Destructure options
 
     const requestOptions = {};
@@ -58,7 +58,7 @@ export class GeneralClient {
       // No optional parameters, using empty request options
     };
 
-    return this.client.request<GeneralGetOpenApiSpecResponse>(
+    return this.client.request<GetOpenApiSpecResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

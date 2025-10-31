@@ -2,8 +2,12 @@
 ///
 /// This file implements the TypeScript generator using the `language!` macro.
 /// It defines filters for TypeScript-specific formatting and implements the generator.
-use crate::common::casing::{pascal_case, camel_case, snake_case};
-use xdk_lib::language;
+use xdk_lib::{Casing, language, pascal_case, camel_case};
+
+/// Helper function for snake_case conversion (for use as a filter)
+fn snake_case(value: &str) -> String {
+    Casing::Snake.convert_string(value)
+}
 
 /// MiniJinja filter for converting to TypeScript types
 fn typescript_type(value: &str) -> String {
@@ -31,6 +35,10 @@ fn last_part(value: &str) -> String {
 language! {
     name: TypeScript,
     filters: [camel_case, pascal_case, snake_case, typescript_type, last_part],
+    class_casing: Casing::Pascal,
+    operation_casing: Casing::Camel,
+    import_casing: Casing::Snake,
+    variable_casing: Casing::Camel,
     render: [
         multiple {
             render "models" => "src/{}/models.ts",
@@ -53,5 +61,8 @@ language! {
         render "typedoc.json" => "typedoc.json",
         render "generate_docs" => "scripts/generate-docs.js",
         render "readme" => "README.md"
+    ],
+    tests: [
+        multiple {},
     ]
 } 

@@ -1,8 +1,8 @@
 /**
- * Models for General operations
+ * Models for general operations
  */
 
 /**
  * Response for getOpenApiSpec
  */
-export interface GeneralGetOpenApiSpecResponse {}
+export interface GetOpenApiSpecResponse {}

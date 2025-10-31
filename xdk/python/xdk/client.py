@@ -14,54 +14,55 @@ from typing import Dict, List, Optional, Union, Any, Callable
 from .oauth2_auth import OAuth2PKCEAuth
 from .paginator import Cursor, cursor, PaginationError
 
-from .stream.client import StreamClient
-
-from .users.client import UsersClient
-
-from .lists.client import ListsClient
-
 from .connections.client import ConnectionsClient
 
-from .usage.client import UsageClient
-
-from .direct_messages.client import DirectMessagesClient
-
-from .general.client import GeneralClient
+from .webhooks.client import WebhooksClient
 
 from .spaces.client import SpacesClient
 
-from .account_activity.client import AccountActivityClient
+from .trends.client import TrendsClient
 
-from .community_notes.client import CommunityNotesClient
+from .usage.client import UsageClient
 
 from .posts.client import PostsClient
 
-from .communities.client import CommunitiesClient
-
 from .media.client import MediaClient
 
-from .trends.client import TrendsClient
+from .users.client import UsersClient
+
+from .community_notes.client import CommunityNotesClient
+
+from .lists.client import ListsClient
+
+from .communities.client import CommunitiesClient
 
 from .compliance.client import ComplianceClient
 
-from .webhooks.client import WebhooksClient
+from .stream.client import StreamClient
+
+from .direct_messages.client import DirectMessagesClient
+
+from .activity.client import ActivityClient
+
+from .general.client import GeneralClient
+
+from .account_activity.client import AccountActivityClient
+
 
 
 class Client:
     """Client for interacting with the X API."""
 
-
-    def __init__(
-        self,
-        base_url: str = "https://api.twitter.com",
-        bearer_token: str = None,
-        client_id: str = None,
-        client_secret: str = None,
-        redirect_uri: str = None,
-        token: Dict[str, Any] = None,
-        scope: str = None,
-    ):
+    def __init__(self, 
+                 base_url: str = "https://api.twitter.com", 
+                 bearer_token: str = None, 
+                 client_id: str = None, 
+                 client_secret: str = None,
+                 redirect_uri: str = None,
+                 token: Dict[str, Any] = None,
+                 scope: str = None):
         """Initialize the X API client.
+
         Args:
             base_url: The base URL for the X API.
             bearer_token: The bearer token for the X API.
@@ -74,6 +75,7 @@ class Client:
         self.session = requests.Session()
         self.base_url = base_url
         self.bearer_token = bearer_token
+        
         # Set up OAuth2 PKCE authentication if credentials are provided
         self.oauth2_auth = None
         if client_id or token:
@@ -83,77 +85,87 @@ class Client:
                 client_secret=client_secret,
                 redirect_uri=redirect_uri,
                 token=token,
-                scope=scope,
+                scope=scope
             )
+        
         # Initialize clients for each tag
-        self.stream = StreamClient(self)
-        self.users = UsersClient(self)
-        self.lists = ListsClient(self)
+        
         self.connections = ConnectionsClient(self)
-        self.usage = UsageClient(self)
-        self.direct_messages = DirectMessagesClient(self)
-        self.general = GeneralClient(self)
-        self.spaces = SpacesClient(self)
-        self.account_activity = AccountActivityClient(self)
-        self.community_notes = CommunityNotesClient(self)
-        self.posts = PostsClient(self)
-        self.communities = CommunitiesClient(self)
-        self.media = MediaClient(self)
-        self.trends = TrendsClient(self)
-        self.compliance = ComplianceClient(self)
+        
         self.webhooks = WebhooksClient(self)
-
+        
+        self.spaces = SpacesClient(self)
+        
+        self.trends = TrendsClient(self)
+        
+        self.usage = UsageClient(self)
+        
+        self.posts = PostsClient(self)
+        
+        self.media = MediaClient(self)
+        
+        self.users = UsersClient(self)
+        
+        self.community_notes = CommunityNotesClient(self)
+        
+        self.lists = ListsClient(self)
+        
+        self.communities = CommunitiesClient(self)
+        
+        self.compliance = ComplianceClient(self)
+        
+        self.stream = StreamClient(self)
+        
+        self.direct_messages = DirectMessagesClient(self)
+        
+        self.activity = ActivityClient(self)
+        
+        self.general = GeneralClient(self)
+        
+        self.account_activity = AccountActivityClient(self)
+        
+    
     @property
-
-
     def oauth2_session(self):
         """Get the OAuth2 session if available."""
         if self.oauth2_auth:
             return self.oauth2_auth.oauth2_session
         return None
-
+    
     @property
-
-
     def token(self):
         """Get the current OAuth2 token if available."""
         if self.oauth2_auth:
             return self.oauth2_auth.token
         return None
-
+    
     @property
-
-
     def access_token(self):
         """Get the current access token if available."""
         if self.oauth2_auth:
             return self.oauth2_auth.access_token
         return None
-
-
+    
     def get_authorization_url(self):
         """Get the authorization URL for the OAuth2 PKCE flow."""
         if not self.oauth2_auth:
             raise ValueError("OAuth2 credentials not configured")
         return self.oauth2_auth.get_authorization_url()
-
-
+    
     def fetch_token(self, authorization_response):
         """Fetch token using authorization response."""
         if not self.oauth2_auth:
             raise ValueError("OAuth2 credentials not configured")
         return self.oauth2_auth.fetch_token(authorization_response)
-
-
+    
     def refresh_token(self):
         """Refresh the OAuth2 token."""
         if not self.oauth2_auth:
             raise ValueError("OAuth2 credentials not configured")
         return self.oauth2_auth.refresh_token()
-
-
+    
     def is_token_expired(self):
         """Check if the OAuth2 token is expired."""
         if not self.oauth2_auth:
             return True
-        return self.oauth2_auth.is_token_expired()
+        return self.oauth2_auth.is_token_expired() 

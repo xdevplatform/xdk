@@ -11,4 +11,4 @@ from .client import Client
 from .paginator import Cursor, cursor, PaginationError
 
 __version__ = "0.1.0"
-__all__ = ["Client", "Cursor", "cursor", "PaginationError"]
+__all__ = ["Client", "Cursor", "cursor", "PaginationError"] 

@@ -13,12 +13,12 @@ import {
 } from "./paginator.js";
 
 {% for tag in tags %}
-{% if tag != 'Stream' %}
-import { {{ tag | pascal_case }}Client } from "./{{ tag | snake_case }}/index.js";
+{% if tag.class_name != 'Stream' %}
+import { {{ tag.class_name }}Client } from "./{{ tag.import_name }}/index.js";
+{% else %}
+import { StreamClient } from "./stream/client.js";
 {% endif %}
 {% endfor %}
-
-// Import the new event-driven StreamClient
 
 /**
  * Configuration options for the X API client
@@ -166,8 +166,8 @@ export class Client {
   readonly httpClient = httpClient;
 
 {% for tag in tags %}
-  /** {{ tag }} client */
-  readonly {{ tag | snake_case }}: {{ tag | pascal_case }}Client;
+  /** {{ tag.display_name }} client */
+  readonly {{ tag.property_name }}: {{ tag.class_name }}Client;
 {% endfor %}
 
   /**
@@ -224,7 +224,7 @@ export class Client {
     this.headers = httpClient.createHeaders(defaultHeaders);
 
 {% for tag in tags %}
-    this.{{ tag | snake_case }} = new {{ tag | pascal_case }}Client(this);
+    this.{{ tag.property_name }} = new {{ tag.class_name }}Client(this);
 {% endfor %}
   }
 

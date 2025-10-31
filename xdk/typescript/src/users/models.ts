@@ -1,72 +1,47 @@
 /**
- * Models for Users operations
+ * Models for users operations
  */
 
 /**
- * Response for getMentions
+ * Response for unmuteUser
  */
-export interface UsersGetMentionsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getBookmarks
- */
-export interface UsersGetBookmarksResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for createBookmark
- */
-export interface UsersCreateBookmarkRequest {
-  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  tweetId?: string;
-}
-
-/**
- * Response for createBookmark
- */
-export interface UsersCreateBookmarkResponse {
+export interface UnmuteUserResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
-}
-
-/**
- * Response for unblockDms
- */
-export interface UsersUnblockDmsResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getBookmarksByFolderId
- */
-export interface UsersGetBookmarksByFolderIdResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
 }
 
 /**
  * Response for unlikePost
  */
-export interface UsersUnlikePostResponse {
+export interface UnlikePostResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
+ * Response for getLikedPosts
+ */
+export interface GetLikedPostsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getPosts
+ */
+export interface GetPostsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
  * Response for getPinnedLists
  */
-export interface UsersGetPinnedListsResponse {
+export interface GetPinnedListsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -76,7 +51,7 @@ export interface UsersGetPinnedListsResponse {
 /**
  * Request body for pinList
  */
-export interface UsersPinListRequest {
+export interface PinListRequest {
   /** The unique identifier of this List. */
   listId?: string;
 }
@@ -84,7 +59,43 @@ export interface UsersPinListRequest {
 /**
  * Response for pinList
  */
-export interface UsersPinListResponse {
+export interface PinListResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getOwnedLists
+ */
+export interface GetOwnedListsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getListMemberships
+ */
+export interface GetListMembershipsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Request body for repostPost
+ */
+export interface RepostPostRequest {
+  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
+  tweetId?: string;
+}
+
+/**
+ * Response for repostPost
+ */
+export interface RepostPostResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
@@ -92,118 +103,17 @@ export interface UsersPinListResponse {
 /**
  * Response for getTimeline
  */
-export interface UsersGetTimelineResponse {
+export interface GetTimelineResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
   meta?: Record<string, any>;
-}
-
-/**
- * Response for getOwnedLists
- */
-export interface UsersGetOwnedListsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for likePost
- */
-export interface UsersLikePostRequest {
-  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  tweetId?: string;
-}
-
-/**
- * Response for likePost
- */
-export interface UsersLikePostResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getByIds
- */
-export interface UsersGetByIdsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for unfollow
- */
-export interface UsersUnfollowResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getByUsername
- */
-export interface UsersGetByUsernameResponse {
-  /** The X User object. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for getBlocking
- */
-export interface UsersGetBlockingResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for search
- */
-export interface UsersSearchResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getRepostsOfMe
- */
-export interface UsersGetRepostsOfMeResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getById
- */
-export interface UsersGetByIdResponse {
-  /** The X User object. */
-  data: Record<string, any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-}
-
-/**
- * Response for deleteBookmark
- */
-export interface UsersDeleteBookmarkResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
 }
 
 /**
  * Response for getFollowers
  */
-export interface UsersGetFollowersResponse {
+export interface GetFollowersResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -211,9 +121,9 @@ export interface UsersGetFollowersResponse {
 }
 
 /**
- * Response for getFollowedLists
+ * Response for getMentions
  */
-export interface UsersGetFollowedListsResponse {
+export interface GetMentionsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -221,25 +131,26 @@ export interface UsersGetFollowedListsResponse {
 }
 
 /**
- * Request body for followList
+ * Response for getBookmarkFolders
  */
-export interface UsersFollowListRequest {
-  /** The unique identifier of this List. */
-  listId?: string;
+export interface GetBookmarkFoldersResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  meta?: Record<string, any>;
 }
 
 /**
- * Response for followList
+ * Response for blockDms
  */
-export interface UsersFollowListResponse {
+export interface BlockDmsResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
- * Response for getListMemberships
+ * Response for search
  */
-export interface UsersGetListMembershipsResponse {
+export interface SearchResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -249,34 +160,16 @@ export interface UsersGetListMembershipsResponse {
 /**
  * Response for getByUsernames
  */
-export interface UsersGetByUsernamesResponse {
+export interface GetByUsernamesResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
 }
 
 /**
- * Response for getMuting
+ * Response for unfollowUser
  */
-export interface UsersGetMutingResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for mute
- */
-export interface UsersMuteRequest {
-  /** Unique identifier of this User. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  targetUserId?: string;
-}
-
-/**
- * Response for mute
- */
-export interface UsersMuteResponse {
+export interface UnfollowUserResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
@@ -284,40 +177,15 @@ export interface UsersMuteResponse {
 /**
  * Response for unpinList
  */
-export interface UsersUnpinListResponse {
+export interface UnpinListResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
- * Request body for repostPost
+ * Response for getBlocking
  */
-export interface UsersRepostPostRequest {
-  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  tweetId?: string;
-}
-
-/**
- * Response for repostPost
- */
-export interface UsersRepostPostResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getBookmarkFolders
- */
-export interface UsersGetBookmarkFoldersResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getPosts
- */
-export interface UsersGetPostsResponse {
+export interface GetBlockingResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -327,15 +195,109 @@ export interface UsersGetPostsResponse {
 /**
  * Response for unrepostPost
  */
-export interface UsersUnrepostPostResponse {
+export interface UnrepostPostResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
- * Response for getMe
+ * Response for deleteBookmark
  */
-export interface UsersGetMeResponse {
+export interface DeleteBookmarkResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getBookmarksByFolderId
+ */
+export interface GetBookmarksByFolderIdResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for getFollowing
+ */
+export interface GetFollowingResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Request body for followUser
+ */
+export interface FollowUserRequest {
+  /** Unique identifier of this User. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
+  targetUserId?: string;
+}
+
+/**
+ * Response for followUser
+ */
+export interface FollowUserResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getBookmarks
+ */
+export interface GetBookmarksResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Request body for createBookmark
+ */
+export interface CreateBookmarkRequest {
+  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
+  tweetId?: string;
+}
+
+/**
+ * Response for createBookmark
+ */
+export interface CreateBookmarkResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getByIds
+ */
+export interface GetByIdsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+}
+
+/**
+ * Request body for likePost
+ */
+export interface LikePostRequest {
+  /** Unique identifier of this Tweet. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
+  tweetId?: string;
+}
+
+/**
+ * Response for likePost
+ */
+export interface LikePostResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getById
+ */
+export interface GetByIdResponse {
   /** The X User object. */
   data: Record<string, any>;
   errors?: Array<any>;
@@ -343,17 +305,29 @@ export interface UsersGetMeResponse {
 }
 
 /**
- * Response for blockDms
+ * Response for getByUsername
  */
-export interface UsersBlockDmsResponse {
-  data?: Record<string, any>;
+export interface GetByUsernameResponse {
+  /** The X User object. */
+  data: Record<string, any>;
   errors?: Array<any>;
+  includes?: Record<string, any>;
 }
 
 /**
- * Response for getLikedPosts
+ * Response for getMe
  */
-export interface UsersGetLikedPostsResponse {
+export interface GetMeResponse {
+  /** The X User object. */
+  data: Record<string, any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+}
+
+/**
+ * Response for getRepostsOfMe
+ */
+export interface GetRepostsOfMeResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -361,35 +335,9 @@ export interface UsersGetLikedPostsResponse {
 }
 
 /**
- * Response for unmute
+ * Response for unblockDms
  */
-export interface UsersUnmuteResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getFollowing
- */
-export interface UsersGetFollowingResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for follow
- */
-export interface UsersFollowRequest {
-  /** Unique identifier of this User. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  targetUserId?: string;
-}
-
-/**
- * Response for follow
- */
-export interface UsersFollowResponse {
+export interface UnblockDmsResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
@@ -397,7 +345,59 @@ export interface UsersFollowResponse {
 /**
  * Response for unfollowList
  */
-export interface UsersUnfollowListResponse {
+export interface UnfollowListResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getFollowedLists
+ */
+export interface GetFollowedListsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Request body for followList
+ */
+export interface FollowListRequest {
+  /** The unique identifier of this List. */
+  listId?: string;
+}
+
+/**
+ * Response for followList
+ */
+export interface FollowListResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getMuting
+ */
+export interface GetMutingResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Request body for muteUser
+ */
+export interface MuteUserRequest {
+  /** Unique identifier of this User. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
+  targetUserId?: string;
+}
+
+/**
+ * Response for muteUser
+ */
+export interface MuteUserResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }

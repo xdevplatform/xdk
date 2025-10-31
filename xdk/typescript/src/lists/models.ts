@@ -1,57 +1,11 @@
 /**
- * Models for Lists operations
+ * Models for lists operations
  */
-
-/**
- * Response for getFollowers
- */
-export interface ListsGetFollowersResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getMembers
- */
-export interface ListsGetMembersResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Request body for addMember
- */
-export interface ListsAddMemberRequest {
-  /** Unique identifier of this User. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
-  userId?: string;
-}
-
-/**
- * Response for addMember
- */
-export interface ListsAddMemberResponse {
-  data?: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getPosts
- */
-export interface ListsGetPostsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
 
 /**
  * Response for getById
  */
-export interface ListsGetByIdResponse {
+export interface GetByIdResponse {
   /** A X List is a curated group of accounts. */
   data: Record<string, any>;
   errors?: Array<any>;
@@ -61,7 +15,7 @@ export interface ListsGetByIdResponse {
 /**
  * Request body for update
  */
-export interface ListsUpdateRequest {
+export interface UpdateRequest {
   description?: string;
   name?: string;
   private?: boolean;
@@ -70,7 +24,7 @@ export interface ListsUpdateRequest {
 /**
  * Response for update
  */
-export interface ListsUpdateResponse {
+export interface UpdateResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
@@ -78,15 +32,51 @@ export interface ListsUpdateResponse {
 /**
  * Response for delete
  */
-export interface ListsDeleteResponse {
+export interface DeleteResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
+ * Response for getFollowers
+ */
+export interface GetFollowersResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
  * Response for removeMemberByUserId
  */
-export interface ListsRemoveMemberByUserIdResponse {
+export interface RemoveMemberByUserIdResponse {
+  data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getMembers
+ */
+export interface GetMembersResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Request body for addMember
+ */
+export interface AddMemberRequest {
+  /** Unique identifier of this User. This is returned as a string in order to avoid complications with languages and tools that cannot handle large integers. */
+  userId?: string;
+}
+
+/**
+ * Response for addMember
+ */
+export interface AddMemberResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
@@ -94,7 +84,7 @@ export interface ListsRemoveMemberByUserIdResponse {
 /**
  * Request body for create
  */
-export interface ListsCreateRequest {
+export interface CreateRequest {
   description?: string;
   name?: string;
   private?: boolean;
@@ -103,8 +93,18 @@ export interface ListsCreateRequest {
 /**
  * Response for create
  */
-export interface ListsCreateResponse {
+export interface CreateResponse {
   /** A X List is a curated group of accounts. */
   data: Record<string, any>;
   errors?: Array<any>;
+}
+
+/**
+ * Response for getPosts
+ */
+export interface GetPostsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
 }

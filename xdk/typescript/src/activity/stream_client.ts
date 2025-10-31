@@ -7,17 +7,17 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  ActivityUpdateSubscriptionResponse,
-  ActivityDeleteSubscriptionResponse,
-  ActivityGetSubscriptionsResponse,
-  ActivityCreateSubscriptionResponse,
-  ActivityStreamResponse,
+  UpdateSubscriptionResponse,
+  DeleteSubscriptionResponse,
+  GetSubscriptionsResponse,
+  CreateSubscriptionResponse,
+  StreamResponse,
 } from './models.js';
 
 /**
  * Options for updateSubscription method
  */
-export interface ActivityUpdateSubscriptionStreamingOptions {
+export interface UpdateSubscriptionStreamingOptions {
   /** Request body */
   body?: any;
 
@@ -31,7 +31,7 @@ export interface ActivityUpdateSubscriptionStreamingOptions {
 /**
  * Options for deleteSubscription method
  */
-export interface ActivityDeleteSubscriptionStreamingOptions {
+export interface DeleteSubscriptionStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -42,7 +42,7 @@ export interface ActivityDeleteSubscriptionStreamingOptions {
 /**
  * Options for getSubscriptions method
  */
-export interface ActivityGetSubscriptionsStreamingOptions {
+export interface GetSubscriptionsStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -53,7 +53,7 @@ export interface ActivityGetSubscriptionsStreamingOptions {
 /**
  * Options for createSubscription method
  */
-export interface ActivityCreateSubscriptionStreamingOptions {
+export interface CreateSubscriptionStreamingOptions {
   /** Request body */
   body?: any;
 
@@ -67,16 +67,7 @@ export interface ActivityCreateSubscriptionStreamingOptions {
 /**
  * Options for stream method
  */
-export interface ActivityStreamStreamingOptions {
-  /** The number of minutes of backfill requested. */
-  backfillMinutes?: number;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. */
-  startTime?: string;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
-  endTime?: string;
-
+export interface StreamStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -101,7 +92,7 @@ export class ActivityClient {
      * Also supports async iteration with for await...of.
      */
   async stream(
-    options: ActivityStreamStreamingOptions = {}
+    options: StreamStreamingOptions = {}
   ): Promise<EventDrivenStream> {
     // Validate authentication requirements
 
@@ -113,30 +104,10 @@ export class ActivityClient {
 
     // Destructure options with defaults
 
-    const {
-      backfillMinutes = undefined,
-
-      startTime = undefined,
-
-      endTime = undefined,
-
-      requestOptions: requestOptions = {},
-    } = options;
+    const { requestOptions: requestOptions = {} } = options;
 
     // Build query parameters
     const params = new URLSearchParams();
-
-    if (backfillMinutes !== undefined) {
-      params.append('backfill_minutes', String(backfillMinutes));
-    }
-
-    if (startTime !== undefined) {
-      params.append('start_time', String(startTime));
-    }
-
-    if (endTime !== undefined) {
-      params.append('end_time', String(endTime));
-    }
 
     // Make the authenticated request using the main client's request method
     // We need raw: true to get the raw Response object for streaming
@@ -181,9 +152,8 @@ export class ActivityClient {
      * @returns Promise with the API response
      */
   async updateSubscription(
-    subscriptionId: string,
-    options: ActivityUpdateSubscriptionStreamingOptions = {}
-  ): Promise<ActivityUpdateSubscriptionResponse> {
+    options: UpdateSubscriptionStreamingOptions = {}
+  ): Promise<UpdateSubscriptionResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -206,8 +176,6 @@ export class ActivityClient {
     // Build path parameters
     let path = `/2/activity/subscriptions/{subscription_id}`;
 
-    path = path.replace(`{${'subscription_id'}}`, String(subscriptionId));
-
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       headers: {
@@ -222,7 +190,7 @@ export class ActivityClient {
     };
 
     // Make the request
-    return this.client.request<ActivityUpdateSubscriptionResponse>(
+    return this.client.request<UpdateSubscriptionResponse>(
       'PUT',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -236,9 +204,8 @@ export class ActivityClient {
      * @returns Promise with the API response
      */
   async deleteSubscription(
-    subscriptionId: string,
-    options: ActivityDeleteSubscriptionStreamingOptions = {}
-  ): Promise<ActivityDeleteSubscriptionResponse> {
+    options: DeleteSubscriptionStreamingOptions = {}
+  ): Promise<DeleteSubscriptionResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -257,8 +224,6 @@ export class ActivityClient {
     // Build path parameters
     let path = `/2/activity/subscriptions/{subscription_id}`;
 
-    path = path.replace(`{${'subscription_id'}}`, String(subscriptionId));
-
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       headers: {
@@ -271,7 +236,7 @@ export class ActivityClient {
     };
 
     // Make the request
-    return this.client.request<ActivityDeleteSubscriptionResponse>(
+    return this.client.request<DeleteSubscriptionResponse>(
       'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -285,8 +250,8 @@ export class ActivityClient {
      * @returns Promise with the API response
      */
   async getSubscriptions(
-    options: ActivityGetSubscriptionsStreamingOptions = {}
-  ): Promise<ActivityGetSubscriptionsResponse> {
+    options: GetSubscriptionsStreamingOptions = {}
+  ): Promise<GetSubscriptionsResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -317,7 +282,7 @@ export class ActivityClient {
     };
 
     // Make the request
-    return this.client.request<ActivityGetSubscriptionsResponse>(
+    return this.client.request<GetSubscriptionsResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -331,8 +296,8 @@ export class ActivityClient {
      * @returns Promise with the API response
      */
   async createSubscription(
-    options: ActivityCreateSubscriptionStreamingOptions = {}
-  ): Promise<ActivityCreateSubscriptionResponse> {
+    options: CreateSubscriptionStreamingOptions = {}
+  ): Promise<CreateSubscriptionResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -369,7 +334,7 @@ export class ActivityClient {
     };
 
     // Make the request
-    return this.client.request<ActivityCreateSubscriptionResponse>(
+    return this.client.request<CreateSubscriptionResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

@@ -1,8 +1,8 @@
-{% if tag != 'Stream' %}
+{% if tag.class_name != 'Stream' %}
 /**
- * {{ tag }} client for the X API.
+ * {{ tag.display_name }} client for the X API.
  *
- * This module provides a client for interacting with the {{ tag }} endpoints of the X API.
+ * This module provides a client for interacting with the {{ tag.display_name }} endpoints of the X API.
  */
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
@@ -15,12 +15,12 @@ import {
 import {
 {% for operation in operations -%}
 {% if operation.request_body -%}
-    {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request,
+    {{ operation.class_name }}Request,
 {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses -%}
-    {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response,
+    {{ operation.class_name }}Response,
 {% endif -%}
 {% elif operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses -%}
-    {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response,
+    {{ operation.class_name }}Response,
 {% endif -%}
 {% endfor -%}
 } from './models.js';
@@ -28,9 +28,9 @@ import {
 {% for operation in operations -%}
 {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
 /**
- * Options for {{ operation.operation_id | camel_case }} method
+ * Options for {{ operation.method_name }} method
  */
-export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Options {
+export interface {{ operation.class_name }}Options {
     {% for param in operation.parameters | rejectattr('required') %}
     {% if param.name %}
     /** {% if param.description %}{{ param.description }}{% else %}{{ param.name }}{% endif %} */
@@ -39,7 +39,7 @@ export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}
     {% endfor %}
     {% if operation.request_body and not operation.request_body.required %}
     /** Request body */
-    body?: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request;
+    body?: {{ operation.class_name }}Request;
     {% endif %}
     /** Additional request options */
     requestOptions?: RequestOptions;
@@ -48,19 +48,19 @@ export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}
 {% endfor %}
 
 /**
- * Client for {{ tag }} operations
+ * Client for {{ tag.display_name }} operations
  * 
- * This client provides methods for interacting with the {{ tag }} endpoints
+ * This client provides methods for interacting with the {{ tag.display_name }} endpoints
  * of the X API. It handles authentication, request formatting, and response
- * parsing for all {{ tag }} related operations.
+ * parsing for all {{ tag.display_name }} related operations.
  * 
- * @category {{ tag }}
+ * @category {{ tag.display_name }}
  */
-export class {{ tag|pascal_case }}Client {
+export class {{ tag.class_name }}Client {
     private client: Client;
 
     /**
-     * Creates a new {{ tag }} client instance
+     * Creates a new {{ tag.display_name }} client instance
      * 
      * @param client - The main X API client instance
      */
@@ -83,7 +83,7 @@ export class {{ tag|pascal_case }}Client {
    * @returns Promise with the API response
    */
     // Overload 1: Default behavior (unwrapped response)
-    async {{ operation.operation_id | camel_case }}(
+    async {{ operation.method_name }}(
         {# Required parameters #}
         {% for param in operation.parameters | selectattr('required') %}
         {% if param.name %}
@@ -92,13 +92,13 @@ export class {{ tag|pascal_case }}Client {
         {% endfor %}
         {# Required request body #}
         {% if operation.request_body and operation.request_body.required %}
-        body: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request,
+        body: {{ operation.class_name }}Request,
         {% endif %}
         {# Options object for all optional parameters #}
         {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
-        options: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Options = {}
+        options: {{ operation.class_name }}Options = {}
         {% endif %}
-    ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}any{% endif %}> {
+    ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}> {
         // Destructure options
         {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
         const {
@@ -162,7 +162,7 @@ export class {{ tag|pascal_case }}Client {
             {% endif %}
         };
 
-        return this.client.request<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}any{% endif %}>(
+        return this.client.request<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>(
             '{{ operation.method | upper }}',
             path + (params.toString() ? `?${params.toString()}` : ''),
             finalRequestOptions
@@ -186,7 +186,7 @@ export class {{ tag|pascal_case }}Client {
    * @param options Options for the paginated request
    * @returns A paginator instance for iterating through all results
    */
-  async {{ operation.operation_id | camel_case }}(
+  async {{ operation.method_name }}(
     {# Required parameters #}
     {% for param in operation.parameters | selectattr('required') %}
     {% if param.name %}
@@ -195,11 +195,11 @@ export class {{ tag|pascal_case }}Client {
     {% endfor %}
     {# Options object for all optional parameters #}
     {% if operation.parameters | rejectattr('required') | list | length > 0 %}
-    options: {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Options = {}
+    options: {{ operation.class_name }}Options = {}
     {% else %}
     options: { requestOptions?: RequestOptions } = {}
     {% endif %}
-  ): Promise<{% if 'tweet' in operation.operation_id|lower or 'post' in operation.operation_id|lower %}PostPaginator{% elif 'user' in operation.operation_id|lower or 'users' in operation.operation_id|lower or 'list' in operation.operation_id|lower %}UserPaginator{% elif 'event' in operation.operation_id|lower or 'dm' in operation.operation_id|lower %}EventPaginator{% else %}Paginator<any>{% endif %}> {
+  ): Promise<{% if 'tweet' in operation.method_name|lower or 'post' in operation.method_name|lower %}PostPaginator{% elif 'user' in operation.method_name|lower or 'users' in operation.method_name|lower or 'list' in operation.method_name|lower %}UserPaginator{% elif 'event' in operation.method_name|lower or 'dm' in operation.method_name|lower %}EventPaginator{% else %}Paginator<any>{% endif %}> {
     // Destructure options
     {% if operation.parameters | rejectattr('required') | list | length > 0 %}
     const {
@@ -267,7 +267,7 @@ export class {{ tag|pascal_case }}Client {
           ...requestOptions
       };
 
-      const response = await this.client.request<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response{% else %}any{% endif %}>(
+      const response = await this.client.request<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>(
           '{{ operation.method | upper }}',
           path + (params.toString() ? `?${params.toString()}` : ''),
           finalRequestOptions
@@ -282,7 +282,7 @@ export class {{ tag|pascal_case }}Client {
     };
 
     // Create paginator and fetch first page
-    const paginator = new {% if 'tweet' in operation.operation_id|lower or 'post' in operation.operation_id|lower %}PostPaginator{% elif 'user' in operation.operation_id|lower or 'users' in operation.operation_id|lower or 'list' in operation.operation_id|lower %}UserPaginator{% elif 'event' in operation.operation_id|lower or 'dm' in operation.operation_id|lower %}EventPaginator{% else %}Paginator{% endif %}(fetchPage);
+    const paginator = new {% if 'tweet' in operation.method_name|lower or 'post' in operation.method_name|lower %}PostPaginator{% elif 'user' in operation.method_name|lower or 'users' in operation.method_name|lower or 'list' in operation.method_name|lower %}UserPaginator{% elif 'event' in operation.method_name|lower or 'dm' in operation.method_name|lower %}EventPaginator{% else %}Paginator{% endif %}(fetchPage);
     
     // Fetch the first page immediately
     await paginator.fetchNext();

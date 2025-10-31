@@ -1,44 +1,21 @@
 /**
- * Models for Direct messages operations
+ * Models for direct messages operations
  */
 
 /**
- * Response for getEvents
+ * Response for getEventsByConversationId
  */
-export interface DirectMessagesGetEventsResponse {
+export interface GetEventsByConversationIdResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
   meta?: Record<string, any>;
-}
-
-/**
- * Request body for createByConversationId
- */
-export interface DirectMessagesCreateByConversationIdRequest {}
-
-/**
- * Response for createByConversationId
- */
-export interface DirectMessagesCreateByConversationIdResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
 }
 
 /**
  * Response for getEventsByParticipantId
  */
-export interface DirectMessagesGetEventsByParticipantIdResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getEventsByConversationId
- */
-export interface DirectMessagesGetEventsByConversationIdResponse {
+export interface GetEventsByParticipantIdResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -48,7 +25,7 @@ export interface DirectMessagesGetEventsByConversationIdResponse {
 /**
  * Response for getEventsById
  */
-export interface DirectMessagesGetEventsByIdResponse {
+export interface GetEventsByIdResponse {
   data: Record<string, any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -57,15 +34,38 @@ export interface DirectMessagesGetEventsByIdResponse {
 /**
  * Response for deleteEvents
  */
-export interface DirectMessagesDeleteEventsResponse {
+export interface DeleteEventsResponse {
   data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getEvents
+ */
+export interface GetEventsResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Request body for createByParticipantId
+ */
+export interface CreateByParticipantIdRequest {}
+
+/**
+ * Response for createByParticipantId
+ */
+export interface CreateByParticipantIdResponse {
+  data: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
  * Request body for createConversation
  */
-export interface DirectMessagesCreateConversationRequest {
+export interface CreateConversationRequest {
   /** The conversation type that is being created. */
   conversationType?: string;
   message?: any;
@@ -76,20 +76,20 @@ export interface DirectMessagesCreateConversationRequest {
 /**
  * Response for createConversation
  */
-export interface DirectMessagesCreateConversationResponse {
+export interface CreateConversationResponse {
   data: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
- * Request body for createByParticipantId
+ * Request body for createByConversationId
  */
-export interface DirectMessagesCreateByParticipantIdRequest {}
+export interface CreateByConversationIdRequest {}
 
 /**
- * Response for createByParticipantId
+ * Response for createByConversationId
  */
-export interface DirectMessagesCreateByParticipantIdResponse {
+export interface CreateByConversationIdResponse {
   data: Record<string, any>;
   errors?: Array<any>;
 }

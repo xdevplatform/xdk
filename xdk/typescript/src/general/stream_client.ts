@@ -6,12 +6,12 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
-import { GeneralGetOpenApiSpecResponse } from './models.js';
+import { GetOpenApiSpecResponse } from './models.js';
 
 /**
  * Options for getOpenApiSpec method
  */
-export interface GeneralGetOpenApiSpecStreamingOptions {
+export interface GetOpenApiSpecStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -34,8 +34,8 @@ export class GeneralClient {
      * @returns Promise with the API response
      */
   async getOpenApiSpec(
-    options: GeneralGetOpenApiSpecStreamingOptions = {}
-  ): Promise<GeneralGetOpenApiSpecResponse> {
+    options: GetOpenApiSpecStreamingOptions = {}
+  ): Promise<GetOpenApiSpecResponse> {
     // Validate authentication requirements
 
     // Destructure options with defaults
@@ -60,7 +60,7 @@ export class GeneralClient {
     };
 
     // Make the request
-    return this.client.request<GeneralGetOpenApiSpecResponse>(
+    return this.client.request<GetOpenApiSpecResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

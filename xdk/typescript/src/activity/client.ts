@@ -1,7 +1,7 @@
 /**
- * Activity client for the X API.
+ * activity client for the X API.
  *
- * This module provides a client for interacting with the Activity endpoints of the X API.
+ * This module provides a client for interacting with the activity endpoints of the X API.
  */
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
@@ -12,21 +12,21 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  ActivityUpdateSubscriptionRequest,
-  ActivityUpdateSubscriptionResponse,
-  ActivityDeleteSubscriptionResponse,
-  ActivityGetSubscriptionsResponse,
-  ActivityCreateSubscriptionRequest,
-  ActivityCreateSubscriptionResponse,
-  ActivityStreamResponse,
+  UpdateSubscriptionRequest,
+  UpdateSubscriptionResponse,
+  DeleteSubscriptionResponse,
+  GetSubscriptionsResponse,
+  CreateSubscriptionRequest,
+  CreateSubscriptionResponse,
+  StreamResponse,
 } from './models.js';
 
 /**
  * Options for updateSubscription method
  */
-export interface ActivityUpdateSubscriptionOptions {
+export interface UpdateSubscriptionOptions {
   /** Request body */
-  body?: ActivityUpdateSubscriptionRequest;
+  body?: UpdateSubscriptionRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -35,9 +35,9 @@ export interface ActivityUpdateSubscriptionOptions {
 /**
  * Options for createSubscription method
  */
-export interface ActivityCreateSubscriptionOptions {
+export interface CreateSubscriptionOptions {
   /** Request body */
-  body?: ActivityCreateSubscriptionRequest;
+  body?: CreateSubscriptionRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -46,34 +46,25 @@ export interface ActivityCreateSubscriptionOptions {
 /**
  * Options for stream method
  */
-export interface ActivityStreamOptions {
-  /** The number of minutes of backfill requested. */
-  backfillMinutes?: number;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. */
-  startTime?: string;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
-  endTime?: string;
-
+export interface StreamOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Client for Activity operations
+ * Client for activity operations
  * 
- * This client provides methods for interacting with the Activity endpoints
+ * This client provides methods for interacting with the activity endpoints
  * of the X API. It handles authentication, request formatting, and response
- * parsing for all Activity related operations.
+ * parsing for all activity related operations.
  * 
- * @category Activity
+ * @category activity
  */
 export class ActivityClient {
   private client: Client;
 
   /**
-     * Creates a new Activity client instance
+     * Creates a new activity client instance
      * 
      * @param client - The main X API client instance
      */
@@ -86,17 +77,14 @@ export class ActivityClient {
    * Updates a subscription for an X activity event
 
 
-   * @param subscriptionId The ID of the subscription to update.
-
 
 
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async updateSubscription(
-    subscriptionId: string,
-    options: ActivityUpdateSubscriptionOptions = {}
-  ): Promise<ActivityUpdateSubscriptionResponse> {
+    options: UpdateSubscriptionOptions = {}
+  ): Promise<UpdateSubscriptionResponse> {
     // Destructure options
 
     const {
@@ -108,11 +96,6 @@ export class ActivityClient {
     // Build the path with path parameters
     let path = '/2/activity/subscriptions/{subscription_id}';
 
-    path = path.replace(
-      '{subscription_id}',
-      encodeURIComponent(String(subscriptionId))
-    );
-
     // Build query parameters
     const params = new URLSearchParams();
 
@@ -123,7 +106,7 @@ export class ActivityClient {
       ...requestOptions,
     };
 
-    return this.client.request<ActivityUpdateSubscriptionResponse>(
+    return this.client.request<UpdateSubscriptionResponse>(
       'PUT',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -135,27 +118,18 @@ export class ActivityClient {
    * Deletes a subscription for an X activity event
 
 
-   * @param subscriptionId The ID of the subscription to delete.
-
 
 
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async deleteSubscription(
-    subscriptionId: string
-  ): Promise<ActivityDeleteSubscriptionResponse> {
+  async deleteSubscription(): Promise<DeleteSubscriptionResponse> {
     // Destructure options
 
     const requestOptions = {};
 
     // Build the path with path parameters
     let path = '/2/activity/subscriptions/{subscription_id}';
-
-    path = path.replace(
-      '{subscription_id}',
-      encodeURIComponent(String(subscriptionId))
-    );
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -165,7 +139,7 @@ export class ActivityClient {
       // No optional parameters, using empty request options
     };
 
-    return this.client.request<ActivityDeleteSubscriptionResponse>(
+    return this.client.request<DeleteSubscriptionResponse>(
       'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -180,7 +154,7 @@ export class ActivityClient {
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getSubscriptions(): Promise<ActivityGetSubscriptionsResponse> {
+  async getSubscriptions(): Promise<GetSubscriptionsResponse> {
     // Destructure options
 
     const requestOptions = {};
@@ -196,7 +170,7 @@ export class ActivityClient {
       // No optional parameters, using empty request options
     };
 
-    return this.client.request<ActivityGetSubscriptionsResponse>(
+    return this.client.request<GetSubscriptionsResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -212,8 +186,8 @@ export class ActivityClient {
    */
   // Overload 1: Default behavior (unwrapped response)
   async createSubscription(
-    options: ActivityCreateSubscriptionOptions = {}
-  ): Promise<ActivityCreateSubscriptionResponse> {
+    options: CreateSubscriptionOptions = {}
+  ): Promise<CreateSubscriptionResponse> {
     // Destructure options
 
     const {
@@ -235,7 +209,7 @@ export class ActivityClient {
       ...requestOptions,
     };
 
-    return this.client.request<ActivityCreateSubscriptionResponse>(
+    return this.client.request<CreateSubscriptionResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -250,20 +224,10 @@ export class ActivityClient {
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async stream(
-    options: ActivityStreamOptions = {}
-  ): Promise<ActivityStreamResponse> {
+  async stream(options: StreamOptions = {}): Promise<StreamResponse> {
     // Destructure options
 
-    const {
-      backfillMinutes = undefined,
-
-      startTime = undefined,
-
-      endTime = undefined,
-
-      requestOptions: requestOptions = {},
-    } = options;
+    const { requestOptions: requestOptions = {} } = options;
 
     // Build the path with path parameters
     let path = '/2/activity/stream';
@@ -271,24 +235,12 @@ export class ActivityClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (backfillMinutes !== undefined) {
-      params.append('backfill_minutes', String(backfillMinutes));
-    }
-
-    if (startTime !== undefined) {
-      params.append('start_time', String(startTime));
-    }
-
-    if (endTime !== undefined) {
-      params.append('end_time', String(endTime));
-    }
-
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       ...requestOptions,
     };
 
-    return this.client.request<ActivityStreamResponse>(
+    return this.client.request<StreamResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

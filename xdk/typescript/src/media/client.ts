@@ -1,7 +1,7 @@
 /**
- * Media client for the X API.
+ * media client for the X API.
  *
- * This module provides a client for interacting with the Media endpoints of the X API.
+ * This module provides a client for interacting with the media endpoints of the X API.
  */
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
@@ -12,64 +12,39 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  MediaFinalizeUploadResponse,
-  MediaGetAnalyticsResponse,
-  MediaAppendUploadRequest,
-  MediaAppendUploadResponse,
-  MediaInitializeUploadRequest,
-  MediaInitializeUploadResponse,
-  MediaGetByMediaKeysResponse,
-  MediaCreateSubtitlesRequest,
-  MediaCreateSubtitlesResponse,
-  MediaDeleteSubtitlesRequest,
-  MediaDeleteSubtitlesResponse,
-  MediaGetByMediaKeyResponse,
-  MediaCreateMetadataRequest,
-  MediaCreateMetadataResponse,
-  MediaGetUploadStatusResponse,
-  MediaUploadRequest,
-  MediaUploadResponse,
+  GetUploadStatusResponse,
+  UploadRequest,
+  UploadResponse,
+  CreateSubtitlesRequest,
+  CreateSubtitlesResponse,
+  DeleteSubtitlesRequest,
+  DeleteSubtitlesResponse,
+  GetByKeyResponse,
+  GetByKeysResponse,
+  AppendUploadRequest,
+  AppendUploadResponse,
+  FinalizeUploadResponse,
+  CreateMetadataRequest,
+  CreateMetadataResponse,
+  InitializeUploadRequest,
+  InitializeUploadResponse,
+  GetAnalyticsResponse,
 } from './models.js';
 
 /**
- * Options for getAnalytics method
+ * Options for getUploadStatus method
  */
-export interface MediaGetAnalyticsOptions {
-  /** A comma separated list of MediaAnalytics fields to display. */
-  mediaAnalyticsfields?: Array<any>;
-
+export interface GetUploadStatusOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Options for appendUpload method
+ * Options for upload method
  */
-export interface MediaAppendUploadOptions {
+export interface UploadOptions {
   /** Request body */
-  body?: MediaAppendUploadRequest;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for initializeUpload method
- */
-export interface MediaInitializeUploadOptions {
-  /** Request body */
-  body?: MediaInitializeUploadRequest;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getByMediaKeys method
- */
-export interface MediaGetByMediaKeysOptions {
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
+  body?: UploadRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -78,9 +53,9 @@ export interface MediaGetByMediaKeysOptions {
 /**
  * Options for createSubtitles method
  */
-export interface MediaCreateSubtitlesOptions {
+export interface CreateSubtitlesOptions {
   /** Request body */
-  body?: MediaCreateSubtitlesRequest;
+  body?: CreateSubtitlesRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -89,20 +64,20 @@ export interface MediaCreateSubtitlesOptions {
 /**
  * Options for deleteSubtitles method
  */
-export interface MediaDeleteSubtitlesOptions {
+export interface DeleteSubtitlesOptions {
   /** Request body */
-  body?: MediaDeleteSubtitlesRequest;
+  body?: DeleteSubtitlesRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Options for getByMediaKey method
+ * Options for appendUpload method
  */
-export interface MediaGetByMediaKeyOptions {
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
+export interface AppendUploadOptions {
+  /** Request body */
+  body?: AppendUploadRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -111,50 +86,39 @@ export interface MediaGetByMediaKeyOptions {
 /**
  * Options for createMetadata method
  */
-export interface MediaCreateMetadataOptions {
+export interface CreateMetadataOptions {
   /** Request body */
-  body?: MediaCreateMetadataRequest;
+  body?: CreateMetadataRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Options for getUploadStatus method
+ * Options for initializeUpload method
  */
-export interface MediaGetUploadStatusOptions {
-  /** The command for the media upload request. */
-  command?: string;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for upload method
- */
-export interface MediaUploadOptions {
+export interface InitializeUploadOptions {
   /** Request body */
-  body?: MediaUploadRequest;
+  body?: InitializeUploadRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Client for Media operations
+ * Client for media operations
  * 
- * This client provides methods for interacting with the Media endpoints
+ * This client provides methods for interacting with the media endpoints
  * of the X API. It handles authentication, request formatting, and response
- * parsing for all Media related operations.
+ * parsing for all media related operations.
  * 
- * @category Media
+ * @category media
  */
 export class MediaClient {
   private client: Client;
 
   /**
-     * Creates a new Media client instance
+     * Creates a new media client instance
      * 
      * @param client - The main X API client instance
      */
@@ -163,113 +127,34 @@ export class MediaClient {
   }
 
   /**
-   * Finalize Media upload
-   * Finalizes a Media upload request.
+   * Get Media upload status
+   * Retrieves the status of a Media upload by its ID.
 
-
-   * @param id The media id of the targeted media to finalize.
 
 
 
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async finalizeUpload(id: string): Promise<MediaFinalizeUploadResponse> {
+  async getUploadStatus(
+    options: GetUploadStatusOptions = {}
+  ): Promise<GetUploadStatusResponse> {
     // Destructure options
 
-    const requestOptions = {};
+    const { requestOptions: requestOptions = {} } = options;
 
     // Build the path with path parameters
-    let path = '/2/media/upload/{id}/finalize';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
+    let path = '/2/media/upload';
 
     // Build query parameters
     const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<MediaFinalizeUploadResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Media analytics
-   * Retrieves analytics data for media.
-
-
-   * @param mediaKeys A comma separated list of Media Keys. Up to 100 are allowed in a single request.
-
-
-
-   * @param endTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
-
-
-
-   * @param startTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
-
-
-
-   * @param granularity The granularity for the search counts results.
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getAnalytics(
-    mediaKeys: Array<any>,
-    endTime: string,
-    startTime: string,
-    granularity: string,
-    options: MediaGetAnalyticsOptions = {}
-  ): Promise<MediaGetAnalyticsResponse> {
-    // Destructure options
-
-    const {
-      mediaAnalyticsfields = [],
-
-      requestOptions: requestOptions = {},
-    } = options;
-
-    // Build the path with path parameters
-    let path = '/2/media/analytics';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (mediaKeys !== undefined) {
-      params.append('media_keys', mediaKeys.join(','));
-    }
-
-    if (endTime !== undefined) {
-      params.append('end_time', String(endTime));
-    }
-
-    if (startTime !== undefined) {
-      params.append('start_time', String(startTime));
-    }
-
-    if (granularity !== undefined) {
-      params.append('granularity', String(granularity));
-    }
-
-    if (mediaAnalyticsfields !== undefined) {
-      params.append('media_analytics.fields', mediaAnalyticsfields.join(','));
-    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       ...requestOptions,
     };
 
-    return this.client.request<MediaGetAnalyticsResponse>(
+    return this.client.request<GetUploadStatusResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -277,21 +162,14 @@ export class MediaClient {
   }
 
   /**
-   * Append Media upload
-   * Appends data to a Media upload request.
-
-
-   * @param id The media identifier for the media to perform the append operation.
-
+   * Upload media
+   * Uploads a media file for use in posts or other content.
 
 
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async appendUpload(
-    id: string,
-    options: MediaAppendUploadOptions = {}
-  ): Promise<MediaAppendUploadResponse> {
+  async upload(options: UploadOptions = {}): Promise<UploadResponse> {
     // Destructure options
 
     const {
@@ -301,9 +179,7 @@ export class MediaClient {
     } = options;
 
     // Build the path with path parameters
-    let path = '/2/media/upload/{id}/append';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
+    let path = '/2/media/upload';
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -315,97 +191,8 @@ export class MediaClient {
       ...requestOptions,
     };
 
-    return this.client.request<MediaAppendUploadResponse>(
+    return this.client.request<UploadResponse>(
       'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Initialize media upload
-   * Initializes a media upload.
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async initializeUpload(
-    options: MediaInitializeUploadOptions = {}
-  ): Promise<MediaInitializeUploadResponse> {
-    // Destructure options
-
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } = options;
-
-    // Build the path with path parameters
-    let path = '/2/media/upload/initialize';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...requestOptions,
-    };
-
-    return this.client.request<MediaInitializeUploadResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Media by media keys
-   * Retrieves details of Media files by their media keys.
-
-
-   * @param mediaKeys A comma separated list of Media Keys. Up to 100 are allowed in a single request.
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getByMediaKeys(
-    mediaKeys: Array<any>,
-    options: MediaGetByMediaKeysOptions = {}
-  ): Promise<MediaGetByMediaKeysResponse> {
-    // Destructure options
-
-    const {
-      mediafields = [],
-
-      requestOptions: requestOptions = {},
-    } = options;
-
-    // Build the path with path parameters
-    let path = '/2/media';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (mediaKeys !== undefined) {
-      params.append('media_keys', mediaKeys.join(','));
-    }
-
-    if (mediafields !== undefined) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<MediaGetByMediaKeysResponse>(
-      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -420,8 +207,8 @@ export class MediaClient {
    */
   // Overload 1: Default behavior (unwrapped response)
   async createSubtitles(
-    options: MediaCreateSubtitlesOptions = {}
-  ): Promise<MediaCreateSubtitlesResponse> {
+    options: CreateSubtitlesOptions = {}
+  ): Promise<CreateSubtitlesResponse> {
     // Destructure options
 
     const {
@@ -443,7 +230,7 @@ export class MediaClient {
       ...requestOptions,
     };
 
-    return this.client.request<MediaCreateSubtitlesResponse>(
+    return this.client.request<CreateSubtitlesResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -459,8 +246,8 @@ export class MediaClient {
    */
   // Overload 1: Default behavior (unwrapped response)
   async deleteSubtitles(
-    options: MediaDeleteSubtitlesOptions = {}
-  ): Promise<MediaDeleteSubtitlesResponse> {
+    options: DeleteSubtitlesOptions = {}
+  ): Promise<DeleteSubtitlesResponse> {
     // Destructure options
 
     const {
@@ -482,7 +269,7 @@ export class MediaClient {
       ...requestOptions,
     };
 
-    return this.client.request<MediaDeleteSubtitlesResponse>(
+    return this.client.request<DeleteSubtitlesResponse>(
       'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -494,44 +281,136 @@ export class MediaClient {
    * Retrieves details of a specific Media file by its media key.
 
 
-   * @param mediaKey A single Media Key.
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByKey(): Promise<GetByKeyResponse> {
+    // Destructure options
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/media/{media_key}';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<GetByKeyResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Media by media keys
+   * Retrieves details of Media files by their media keys.
+
 
 
 
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getByMediaKey(
-    mediaKey: string,
-    options: MediaGetByMediaKeyOptions = {}
-  ): Promise<MediaGetByMediaKeyResponse> {
+  async getByKeys(): Promise<GetByKeysResponse> {
+    // Destructure options
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/media';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<GetByKeysResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Append Media upload
+   * Appends data to a Media upload request.
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async appendUpload(
+    options: AppendUploadOptions = {}
+  ): Promise<AppendUploadResponse> {
     // Destructure options
 
     const {
-      mediafields = [],
+      body,
 
       requestOptions: requestOptions = {},
     } = options;
 
     // Build the path with path parameters
-    let path = '/2/media/{media_key}';
-
-    path = path.replace('{media_key}', encodeURIComponent(String(mediaKey)));
+    let path = '/2/media/upload/{id}/append';
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (mediafields !== undefined) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
       ...requestOptions,
     };
 
-    return this.client.request<MediaGetByMediaKeyResponse>(
-      'GET',
+    return this.client.request<AppendUploadResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Finalize Media upload
+   * Finalizes a Media upload request.
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async finalizeUpload(): Promise<FinalizeUploadResponse> {
+    // Destructure options
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/media/upload/{id}/finalize';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<FinalizeUploadResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -546,8 +425,8 @@ export class MediaClient {
    */
   // Overload 1: Default behavior (unwrapped response)
   async createMetadata(
-    options: MediaCreateMetadataOptions = {}
-  ): Promise<MediaCreateMetadataResponse> {
+    options: CreateMetadataOptions = {}
+  ): Promise<CreateMetadataResponse> {
     // Destructure options
 
     const {
@@ -569,7 +448,7 @@ export class MediaClient {
       ...requestOptions,
     };
 
-    return this.client.request<MediaCreateMetadataResponse>(
+    return this.client.request<CreateMetadataResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -577,64 +456,16 @@ export class MediaClient {
   }
 
   /**
-   * Get Media upload status
-   * Retrieves the status of a Media upload by its ID.
-
-
-   * @param mediaId Media id for the requested media upload status.
-
+   * Initialize media upload
+   * Initializes a media upload.
 
 
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getUploadStatus(
-    mediaId: string,
-    options: MediaGetUploadStatusOptions = {}
-  ): Promise<MediaGetUploadStatusResponse> {
-    // Destructure options
-
-    const {
-      command = undefined,
-
-      requestOptions: requestOptions = {},
-    } = options;
-
-    // Build the path with path parameters
-    let path = '/2/media/upload';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (mediaId !== undefined) {
-      params.append('media_id', String(mediaId));
-    }
-
-    if (command !== undefined) {
-      params.append('command', String(command));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<MediaGetUploadStatusResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Upload media
-   * Uploads a media file for use in posts or other content.
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async upload(options: MediaUploadOptions = {}): Promise<MediaUploadResponse> {
+  async initializeUpload(
+    options: InitializeUploadOptions = {}
+  ): Promise<InitializeUploadResponse> {
     // Destructure options
 
     const {
@@ -644,7 +475,7 @@ export class MediaClient {
     } = options;
 
     // Build the path with path parameters
-    let path = '/2/media/upload';
+    let path = '/2/media/upload/initialize';
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -656,8 +487,47 @@ export class MediaClient {
       ...requestOptions,
     };
 
-    return this.client.request<MediaUploadResponse>(
+    return this.client.request<InitializeUploadResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Media analytics
+   * Retrieves analytics data for media.
+
+
+
+
+
+
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getAnalytics(): Promise<GetAnalyticsResponse> {
+    // Destructure options
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/media/analytics';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<GetAnalyticsResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

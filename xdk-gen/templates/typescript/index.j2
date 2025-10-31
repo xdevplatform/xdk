@@ -60,9 +60,9 @@ export { CryptoUtils, hmacSha1, generateNonce, generateTimestamp, generateCodeVe
 // Streaming
 export type { StreamListener, TweetStreamListener } from './stream_listener.js';
 
-// Client modules and their types
+// Client modules (only export client classes to avoid duplicate type names)
 {% for tag in tags %}
-export * from './{{ tag | snake_case }}/index.js';
+export { {{ tag.class_name }}Client } from './{{ tag.import_name }}/client.js';
 {% endfor %}
 
 // Utilities

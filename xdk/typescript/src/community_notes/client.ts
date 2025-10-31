@@ -1,7 +1,7 @@
 /**
- * Community notes client for the X API.
+ * community notes client for the X API.
  *
- * This module provides a client for interacting with the Community notes endpoints of the X API.
+ * This module provides a client for interacting with the community notes endpoints of the X API.
  */
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
@@ -12,43 +12,19 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  CommunityNotesSearchEligiblePostsResponse,
-  CommunityNotesDeleteResponse,
-  CommunityNotesEvaluateRequest,
-  CommunityNotesEvaluateResponse,
-  CommunityNotesSearchWrittenResponse,
-  CommunityNotesCreateRequest,
-  CommunityNotesCreateResponse,
+  DeleteResponse,
+  SearchEligiblePostsResponse,
+  EvaluateRequest,
+  EvaluateResponse,
+  CreateRequest,
+  CreateResponse,
+  SearchWrittenResponse,
 } from './models.js';
 
 /**
  * Options for searchEligiblePosts method
  */
-export interface CommunityNotesSearchEligiblePostsOptions {
-  /** Pagination token to get next set of posts eligible for notes. */
-  paginationToken?: string;
-
-  /** Max results to return. */
-  maxResults?: number;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
-
-  /** A comma separated list of Poll fields to display. */
-  pollfields?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Place fields to display. */
-  placefields?: Array<any>;
-
+export interface SearchEligiblePostsOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -56,26 +32,9 @@ export interface CommunityNotesSearchEligiblePostsOptions {
 /**
  * Options for evaluate method
  */
-export interface CommunityNotesEvaluateOptions {
+export interface EvaluateOptions {
   /** Request body */
-  body?: CommunityNotesEvaluateRequest;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for searchWritten method
- */
-export interface CommunityNotesSearchWrittenOptions {
-  /** Pagination token to get next set of posts eligible for notes. */
-  paginationToken?: string;
-
-  /** Max results to return. */
-  maxResults?: number;
-
-  /** A comma separated list of Note fields to display. */
-  notefields?: Array<any>;
+  body?: EvaluateRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -84,28 +43,36 @@ export interface CommunityNotesSearchWrittenOptions {
 /**
  * Options for create method
  */
-export interface CommunityNotesCreateOptions {
+export interface CreateOptions {
   /** Request body */
-  body?: CommunityNotesCreateRequest;
+  body?: CreateRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Client for Community notes operations
+ * Options for searchWritten method
+ */
+export interface SearchWrittenOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Client for community notes operations
  * 
- * This client provides methods for interacting with the Community notes endpoints
+ * This client provides methods for interacting with the community notes endpoints
  * of the X API. It handles authentication, request formatting, and response
- * parsing for all Community notes related operations.
+ * parsing for all community notes related operations.
  * 
- * @category Community notes
+ * @category community notes
  */
 export class CommunityNotesClient {
   private client: Client;
 
   /**
-     * Creates a new Community notes client instance
+     * Creates a new community notes client instance
      * 
      * @param client - The main X API client instance
      */
@@ -118,22 +85,18 @@ export class CommunityNotesClient {
    * Deletes a community note.
 
 
-   * @param id The community note id to delete.
-
 
 
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async delete(id: string): Promise<CommunityNotesDeleteResponse> {
+  async delete(): Promise<DeleteResponse> {
     // Destructure options
 
     const requestOptions = {};
 
     // Build the path with path parameters
     let path = '/2/notes/{id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -143,8 +106,43 @@ export class CommunityNotesClient {
       // No optional parameters, using empty request options
     };
 
-    return this.client.request<CommunityNotesDeleteResponse>(
+    return this.client.request<DeleteResponse>(
       'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Search for Posts Eligible for Community Notes
+   * Returns all the posts that are eligible for community notes.
+
+
+
+
+   * @returns Promise with the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async searchEligiblePosts(
+    options: SearchEligiblePostsOptions = {}
+  ): Promise<SearchEligiblePostsResponse> {
+    // Destructure options
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build the path with path parameters
+    let path = '/2/notes/search/posts_eligible_for_notes';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<SearchEligiblePostsResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -158,9 +156,7 @@ export class CommunityNotesClient {
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async evaluate(
-    options: CommunityNotesEvaluateOptions = {}
-  ): Promise<CommunityNotesEvaluateResponse> {
+  async evaluate(options: EvaluateOptions = {}): Promise<EvaluateResponse> {
     // Destructure options
 
     const {
@@ -182,7 +178,7 @@ export class CommunityNotesClient {
       ...requestOptions,
     };
 
-    return this.client.request<CommunityNotesEvaluateResponse>(
+    return this.client.request<EvaluateResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -197,9 +193,7 @@ export class CommunityNotesClient {
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async create(
-    options: CommunityNotesCreateOptions = {}
-  ): Promise<CommunityNotesCreateResponse> {
+  async create(options: CreateOptions = {}): Promise<CreateResponse> {
     // Destructure options
 
     const {
@@ -221,7 +215,7 @@ export class CommunityNotesClient {
       ...requestOptions,
     };
 
-    return this.client.request<CommunityNotesCreateResponse>(
+    return this.client.request<CreateResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -229,206 +223,37 @@ export class CommunityNotesClient {
   }
 
   /**
-   * Search for Posts Eligible for Community Notes
-   * Returns all the posts that are eligible for community notes.
-   * Returns a paginator for automatic pagination through all results.
-
-
-   * @param testMode If true, return a list of posts that are for the test. If false, return a list of posts that the bots can write proposed notes on the product.
-
-
-   * @param options Options for the paginated request
-   * @returns A paginator instance for iterating through all results
-   */
-  async searchEligiblePosts(
-    testMode: boolean,
-    options: CommunityNotesSearchEligiblePostsOptions = {}
-  ): Promise<PostPaginator> {
-    // Destructure options
-
-    const {
-      paginationToken = undefined,
-
-      maxResults = undefined,
-
-      tweetfields = [],
-
-      expansions = [],
-
-      mediafields = [],
-
-      pollfields = [],
-
-      userfields = [],
-
-      placefields = [],
-
-      requestOptions: requestOptions = {},
-    } = options;
-
-    // Build the path with path parameters
-    let path = '/2/notes/search/posts_eligible_for_notes';
-
-    // Create the fetch function for the paginator
-    const fetchPage = async (paginationToken?: string) => {
-      // Build query parameters
-      const params = new URLSearchParams();
-
-      if (testMode !== undefined) {
-        params.append('test_mode', String(testMode));
-      }
-
-      if (paginationToken !== undefined) {
-        params.append('pagination_token', String(paginationToken));
-      }
-
-      if (maxResults !== undefined) {
-        params.append('max_results', String(maxResults));
-      }
-
-      if (tweetfields !== undefined) {
-        params.append('tweet.fields', tweetfields.join(','));
-      }
-
-      if (expansions !== undefined) {
-        params.append('expansions', expansions.join(','));
-      }
-
-      if (mediafields !== undefined) {
-        params.append('media.fields', mediafields.join(','));
-      }
-
-      if (pollfields !== undefined) {
-        params.append('poll.fields', pollfields.join(','));
-      }
-
-      if (userfields !== undefined) {
-        params.append('user.fields', userfields.join(','));
-      }
-
-      if (placefields !== undefined) {
-        params.append('place.fields', placefields.join(','));
-      }
-
-      // Add pagination token if provided
-      if (paginationToken) {
-        params.set('pagination_token', paginationToken);
-      }
-
-      // Prepare request options
-      const finalRequestOptions: RequestOptions = {
-        ...requestOptions,
-      };
-
-      const response = await this.client.request<
-        CommunityNotesSearchEligiblePostsResponse
-      >(
-        'GET',
-        path + (params.toString() ? `?${params.toString()}` : ''),
-        finalRequestOptions
-      );
-
-      return {
-        data: Array.isArray(response.data) ? response.data : [],
-        meta: (response as any).meta,
-        includes: (response as any).includes,
-        errors: (response as any).errors,
-      };
-    };
-
-    // Create paginator and fetch first page
-    const paginator = new PostPaginator(fetchPage);
-
-    // Fetch the first page immediately
-    await paginator.fetchNext();
-
-    return paginator;
-  }
-
-  /**
    * Search for Community Notes Written
    * Returns all the community notes written by the user.
-   * Returns a paginator for automatic pagination through all results.
 
 
-   * @param testMode If true, return the notes the caller wrote for the test. If false, return the notes the caller wrote on the product.
 
 
-   * @param options Options for the paginated request
-   * @returns A paginator instance for iterating through all results
+   * @returns Promise with the API response
    */
+  // Overload 1: Default behavior (unwrapped response)
   async searchWritten(
-    testMode: boolean,
-    options: CommunityNotesSearchWrittenOptions = {}
-  ): Promise<Paginator<any>> {
+    options: SearchWrittenOptions = {}
+  ): Promise<SearchWrittenResponse> {
     // Destructure options
 
-    const {
-      paginationToken = undefined,
-
-      maxResults = undefined,
-
-      notefields = [],
-
-      requestOptions: requestOptions = {},
-    } = options;
+    const { requestOptions: requestOptions = {} } = options;
 
     // Build the path with path parameters
     let path = '/2/notes/search/notes_written';
 
-    // Create the fetch function for the paginator
-    const fetchPage = async (paginationToken?: string) => {
-      // Build query parameters
-      const params = new URLSearchParams();
+    // Build query parameters
+    const params = new URLSearchParams();
 
-      if (testMode !== undefined) {
-        params.append('test_mode', String(testMode));
-      }
-
-      if (paginationToken !== undefined) {
-        params.append('pagination_token', String(paginationToken));
-      }
-
-      if (maxResults !== undefined) {
-        params.append('max_results', String(maxResults));
-      }
-
-      if (notefields !== undefined) {
-        params.append('note.fields', notefields.join(','));
-      }
-
-      // Add pagination token if provided
-      if (paginationToken) {
-        params.set('pagination_token', paginationToken);
-      }
-
-      // Prepare request options
-      const finalRequestOptions: RequestOptions = {
-        ...requestOptions,
-      };
-
-      const response = await this.client.request<
-        CommunityNotesSearchWrittenResponse
-      >(
-        'GET',
-        path + (params.toString() ? `?${params.toString()}` : ''),
-        finalRequestOptions
-      );
-
-      return {
-        data: Array.isArray(response.data) ? response.data : [],
-        meta: (response as any).meta,
-        includes: (response as any).includes,
-        errors: (response as any).errors,
-      };
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
     };
 
-    // Create paginator and fetch first page
-    const paginator = new Paginator(fetchPage);
-
-    // Fetch the first page immediately
-    await paginator.fetchNext();
-
-    return paginator;
+    return this.client.request<SearchWrittenResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 }

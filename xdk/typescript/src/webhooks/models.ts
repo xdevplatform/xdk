@@ -1,27 +1,36 @@
 /**
- * Models for Webhooks operations
+ * Models for webhooks operations
  */
 
 /**
- * Response for validate
+ * Response for createStreamLink
  */
-export interface WebhooksValidateResponse {
+export interface CreateStreamLinkResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
- * Response for delete
+ * Response for deleteStreamLink
  */
-export interface WebhooksDeleteResponse {
+export interface DeleteStreamLinkResponse {
   data?: Record<string, any>;
+  errors?: Array<any>;
+}
+
+/**
+ * Response for getStreamLinks
+ */
+export interface GetStreamLinksResponse {
+  /** The list of active webhook links for a given stream */
+  data: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
  * Response for get
  */
-export interface WebhooksGetResponse {
+export interface GetResponse {
   data?: Array<any>;
   errors?: Array<any>;
   meta?: Record<string, any>;
@@ -30,7 +39,7 @@ export interface WebhooksGetResponse {
 /**
  * Request body for create
  */
-export interface WebhooksCreateRequest {
+export interface CreateRequest {
   url?: string;
 }
 
@@ -38,7 +47,7 @@ export interface WebhooksCreateRequest {
  * Response for create
  * A Webhook Configuration
  */
-export interface WebhooksCreateResponse {
+export interface CreateResponse {
   createdAt?: string;
   /** The unique identifier of this webhook config. */
   id?: string;
@@ -48,26 +57,17 @@ export interface WebhooksCreateResponse {
 }
 
 /**
- * Response for getStreamLinks
+ * Response for validate
  */
-export interface WebhooksGetStreamLinksResponse {
-  /** The list of active webhook links for a given stream */
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for createStreamLink
- */
-export interface WebhooksCreateStreamLinkResponse {
+export interface ValidateResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }
 
 /**
- * Response for deleteStreamLink
+ * Response for delete
  */
-export interface WebhooksDeleteStreamLinkResponse {
+export interface DeleteResponse {
   data?: Record<string, any>;
   errors?: Array<any>;
 }

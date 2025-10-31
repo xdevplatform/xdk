@@ -1,19 +1,19 @@
 /**
- * Models for Trends operations
+ * Models for trends operations
  */
 
 /**
- * Response for getByWoeid
+ * Response for getPersonalized
  */
-export interface TrendsGetByWoeidResponse {
+export interface GetPersonalizedResponse {
   data?: Array<any>;
   errors?: Array<any>;
 }
 
 /**
- * Response for getPersonalizedTrends
+ * Response for getByWoeid
  */
-export interface TrendsGetPersonalizedTrendsResponse {
+export interface GetByWoeidResponse {
   data?: Array<any>;
   errors?: Array<any>;
 }

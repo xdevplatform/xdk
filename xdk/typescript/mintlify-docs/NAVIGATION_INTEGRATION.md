@@ -63,7 +63,6 @@ Add this to your existing mintlify.json tabs array:
     {
       "group": "Types & Interfaces",
       "pages": [
-        "xdks/typescript/reference/modules",
         "xdks/typescript/reference/ApiError",
         "xdks/typescript/reference/AccountActivityCreateReplayJobResponse",
         "xdks/typescript/reference/AccountActivityCreateSubscriptionOptions",
@@ -77,7 +76,8 @@ Add this to your existing mintlify.json tabs array:
         "xdks/typescript/reference/ActivityCreateSubscriptionRequest",
         "xdks/typescript/reference/ActivityCreateSubscriptionResponse",
         "xdks/typescript/reference/ActivityDeleteSubscriptionResponse",
-        "xdks/typescript/reference/ActivityGetSubscriptionsResponse"
+        "xdks/typescript/reference/ActivityGetSubscriptionsResponse",
+        "xdks/typescript/reference/ActivityUpdateSubscriptionOptions"
       ]
     }
   ]

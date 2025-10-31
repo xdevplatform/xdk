@@ -6,18 +6,12 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
-import { UsageGetResponse } from './models.js';
+import { GetResponse } from './models.js';
 
 /**
  * Options for get method
  */
-export interface UsageGetStreamingOptions {
-  /** The number of days for which you need usage for. */
-  days?: number;
-
-  /** A comma separated list of Usage fields to display. */
-  usagefields?: Array<any>;
-
+export interface GetStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -39,7 +33,7 @@ export class UsageClient {
      * 
      * @returns Promise with the API response
      */
-  async get(options: UsageGetStreamingOptions = {}): Promise<UsageGetResponse> {
+  async get(options: GetStreamingOptions = {}): Promise<GetResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -50,24 +44,10 @@ export class UsageClient {
 
     // Destructure options with defaults
 
-    const {
-      days = undefined,
-
-      usagefields = [],
-
-      requestOptions: requestOptions = {},
-    } = options;
+    const { requestOptions: requestOptions = {} } = options;
 
     // Build query parameters
     const params = new URLSearchParams();
-
-    if (days !== undefined) {
-      params.append('days', String(days));
-    }
-
-    if (usagefields !== undefined) {
-      params.append('usage.fields', usagefields.join(','));
-    }
 
     // Build path parameters
     let path = `/2/usage/tweets`;
@@ -84,7 +64,7 @@ export class UsageClient {
     };
 
     // Make the request
-    return this.client.request<UsageGetResponse>(
+    return this.client.request<GetResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

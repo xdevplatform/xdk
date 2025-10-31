@@ -1,11 +1,11 @@
 /**
- * Models for Usage operations
+ * Models for usage operations
  */
 
 /**
  * Response for get
  */
-export interface UsageGetResponse {
+export interface GetResponse {
   /** Usage per client app */
   data?: Record<string, any>;
   errors?: Array<any>;

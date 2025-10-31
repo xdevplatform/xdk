@@ -1,11 +1,19 @@
 /**
- * Models for Compliance operations
+ * Models for compliance operations
  */
+
+/**
+ * Response for getJobsById
+ */
+export interface GetJobsByIdResponse {
+  data: Record<string, any>;
+  errors?: Array<any>;
+}
 
 /**
  * Response for getJobs
  */
-export interface ComplianceGetJobsResponse {
+export interface GetJobsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   meta?: Record<string, any>;
@@ -15,7 +23,7 @@ export interface ComplianceGetJobsResponse {
  * Request body for createJobs
  * A request to create a new batch compliance job.
  */
-export interface ComplianceCreateJobsRequest {
+export interface CreateJobsRequest {
   /** User-provided name for a compliance job. */
   name?: string;
   /** If true, this endpoint will return a pre-signed URL with resumable uploads enabled. */
@@ -27,15 +35,7 @@ export interface ComplianceCreateJobsRequest {
 /**
  * Response for createJobs
  */
-export interface ComplianceCreateJobsResponse {
-  data: Record<string, any>;
-  errors?: Array<any>;
-}
-
-/**
- * Response for getJobsById
- */
-export interface ComplianceGetJobsByIdResponse {
+export interface CreateJobsResponse {
   data: Record<string, any>;
   errors?: Array<any>;
 }

@@ -1,7 +1,7 @@
 /**
- * Connections client for the X API.
+ * connections client for the X API.
  *
- * This module provides a client for interacting with the Connections endpoints of the X API.
+ * This module provides a client for interacting with the connections endpoints of the X API.
  */
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
@@ -11,22 +11,22 @@ import {
   UserPaginator,
   EventPaginator,
 } from '../paginator.js';
-import { ConnectionsDeleteAllResponse } from './models.js';
+import { DeleteAllResponse } from './models.js';
 
 /**
- * Client for Connections operations
+ * Client for connections operations
  * 
- * This client provides methods for interacting with the Connections endpoints
+ * This client provides methods for interacting with the connections endpoints
  * of the X API. It handles authentication, request formatting, and response
- * parsing for all Connections related operations.
+ * parsing for all connections related operations.
  * 
- * @category Connections
+ * @category connections
  */
 export class ConnectionsClient {
   private client: Client;
 
   /**
-     * Creates a new Connections client instance
+     * Creates a new connections client instance
      * 
      * @param client - The main X API client instance
      */
@@ -42,7 +42,7 @@ export class ConnectionsClient {
    * @returns Promise with the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async deleteAll(): Promise<ConnectionsDeleteAllResponse> {
+  async deleteAll(): Promise<DeleteAllResponse> {
     // Destructure options
 
     const requestOptions = {};
@@ -58,7 +58,7 @@ export class ConnectionsClient {
       // No optional parameters, using empty request options
     };
 
-    return this.client.request<ConnectionsDeleteAllResponse>(
+    return this.client.request<DeleteAllResponse>(
       'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

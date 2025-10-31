@@ -13,10 +13,44 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
+
+
+
+
+
+
+
 # Models for get_open_api_spec
+
+
+
+
+
+
 
 
 class GetOpenApiSpecResponse(BaseModel):
     """Response model for get_open_api_spec"""
+    
 
     model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  

@@ -1,21 +1,20 @@
 /**
- * Models for Spaces operations
+ * Models for spaces operations
  */
 
 /**
- * Response for search
+ * Response for getByIds
  */
-export interface SpacesSearchResponse {
+export interface GetByIdsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
-  meta?: Record<string, any>;
 }
 
 /**
- * Response for getBuyers
+ * Response for getPosts
  */
-export interface SpacesGetBuyersResponse {
+export interface GetPostsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
@@ -25,37 +24,38 @@ export interface SpacesGetBuyersResponse {
 /**
  * Response for getByCreatorIds
  */
-export interface SpacesGetByCreatorIdsResponse {
+export interface GetByCreatorIdsResponse {
   data?: Array<any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
   meta?: Record<string, any>;
-}
-
-/**
- * Response for getPosts
- */
-export interface SpacesGetPostsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
-  meta?: Record<string, any>;
-}
-
-/**
- * Response for getByIds
- */
-export interface SpacesGetByIdsResponse {
-  data?: Array<any>;
-  errors?: Array<any>;
-  includes?: Record<string, any>;
 }
 
 /**
  * Response for getById
  */
-export interface SpacesGetByIdResponse {
+export interface GetByIdResponse {
   data: Record<string, any>;
   errors?: Array<any>;
   includes?: Record<string, any>;
+}
+
+/**
+ * Response for getBuyers
+ */
+export interface GetBuyersResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
+}
+
+/**
+ * Response for search
+ */
+export interface SearchResponse {
+  data?: Array<any>;
+  errors?: Array<any>;
+  includes?: Record<string, any>;
+  meta?: Record<string, any>;
 }

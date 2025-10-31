@@ -60,41 +60,41 @@ export { CryptoUtils, hmacSha1, generateNonce, generateTimestamp, generateCodeVe
 // Streaming
 export type { StreamListener, TweetStreamListener } from './stream_listener.js';
 
-// Client modules and their types
+// Client modules (only export client classes to avoid duplicate type names)
 
-export * from './community_notes/index.js';
+export { GeneralClient } from './general/client.js';
 
-export * from './communities/index.js';
+export { TrendsClient } from './trends/client.js';
 
-export * from './stream/index.js';
+export { UsageClient } from './usage/client.js';
 
-export * from './general/index.js';
+export { PostsClient } from './posts/client.js';
 
-export * from './users/index.js';
+export { WebhooksClient } from './webhooks/client.js';
 
-export * from './compliance/index.js';
+export { ActivityClient } from './activity/client.js';
 
-export * from './direct_messages/index.js';
+export { SpacesClient } from './spaces/client.js';
 
-export * from './trends/index.js';
+export { StreamClient } from './stream/client.js';
 
-export * from './media/index.js';
+export { CommunityNotesClient } from './community_notes/client.js';
 
-export * from './usage/index.js';
+export { MediaClient } from './media/client.js';
 
-export * from './activity/index.js';
+export { AccountActivityClient } from './account_activity/client.js';
 
-export * from './account_activity/index.js';
+export { ConnectionsClient } from './connections/client.js';
 
-export * from './lists/index.js';
+export { DirectMessagesClient } from './direct_messages/client.js';
 
-export * from './posts/index.js';
+export { CommunitiesClient } from './communities/client.js';
 
-export * from './connections/index.js';
+export { ComplianceClient } from './compliance/client.js';
 
-export * from './webhooks/index.js';
+export { ListsClient } from './lists/client.js';
 
-export * from './spaces/index.js';
+export { UsersClient } from './users/client.js';
 
 
 // Utilities

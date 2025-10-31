@@ -9,4 +9,4 @@ Generated automatically - do not edit manually.
 
 from .client import StreamClient
 
-__all__ = ["StreamClient"]
+__all__ = ["StreamClient"] 

@@ -7,41 +7,17 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  CommunityNotesSearchEligiblePostsResponse,
-  CommunityNotesDeleteResponse,
-  CommunityNotesEvaluateResponse,
-  CommunityNotesSearchWrittenResponse,
-  CommunityNotesCreateResponse,
+  DeleteResponse,
+  SearchEligiblePostsResponse,
+  EvaluateResponse,
+  CreateResponse,
+  SearchWrittenResponse,
 } from './models.js';
 
 /**
- * Options for searchEligiblePosts method
+ * Options for delete method
  */
-export interface CommunityNotesSearchEligiblePostsStreamingOptions {
-  /** Pagination token to get next set of posts eligible for notes. */
-  paginationToken?: string;
-
-  /** Max results to return. */
-  maxResults?: number;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
-
-  /** A comma separated list of Poll fields to display. */
-  pollfields?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Place fields to display. */
-  placefields?: Array<any>;
-
+export interface DeleteStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -50,9 +26,9 @@ export interface CommunityNotesSearchEligiblePostsStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for delete method
+ * Options for searchEligiblePosts method
  */
-export interface CommunityNotesDeleteStreamingOptions {
+export interface SearchEligiblePostsStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -63,7 +39,21 @@ export interface CommunityNotesDeleteStreamingOptions {
 /**
  * Options for evaluate method
  */
-export interface CommunityNotesEvaluateStreamingOptions {
+export interface EvaluateStreamingOptions {
+  /** Request body */
+  body?: any;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for create method
+ */
+export interface CreateStreamingOptions {
   /** Request body */
   body?: any;
 
@@ -77,30 +67,7 @@ export interface CommunityNotesEvaluateStreamingOptions {
 /**
  * Options for searchWritten method
  */
-export interface CommunityNotesSearchWrittenStreamingOptions {
-  /** Pagination token to get next set of posts eligible for notes. */
-  paginationToken?: string;
-
-  /** Max results to return. */
-  maxResults?: number;
-
-  /** A comma separated list of Note fields to display. */
-  notefields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for create method
- */
-export interface CommunityNotesCreateStreamingOptions {
-  /** Request body */
-  body?: any;
-
+export interface SearchWrittenStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -117,121 +84,12 @@ export class CommunityNotesClient {
   }
 
   /**
-     * Search for Posts Eligible for Community Notes
-     * Returns all the posts that are eligible for community notes.
-     * 
-     * @returns Promise with the API response
-     */
-  async searchEligiblePosts(
-    testMode: boolean,
-    options: CommunityNotesSearchEligiblePostsStreamingOptions = {}
-  ): Promise<CommunityNotesSearchEligiblePostsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(
-      requiredAuthTypes,
-      'searchEligiblePosts'
-    );
-
-    // Destructure options with defaults
-
-    const {
-      paginationToken = undefined,
-
-      maxResults = undefined,
-
-      tweetfields = [],
-
-      expansions = [],
-
-      mediafields = [],
-
-      pollfields = [],
-
-      userfields = [],
-
-      placefields = [],
-
-      requestOptions: requestOptions = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (testMode !== undefined) {
-      params.append('test_mode', String(testMode));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (mediafields !== undefined) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
-    if (pollfields !== undefined) {
-      params.append('poll.fields', pollfields.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (placefields !== undefined) {
-      params.append('place.fields', placefields.join(','));
-    }
-
-    // Build path parameters
-    let path = `/2/notes/search/posts_eligible_for_notes`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<CommunityNotesSearchEligiblePostsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
      * Delete a Community Note
      * Deletes a community note.
      * 
      * @returns Promise with the API response
      */
-  async delete(
-    id: string,
-    options: CommunityNotesDeleteStreamingOptions = {}
-  ): Promise<CommunityNotesDeleteResponse> {
+  async delete(options: DeleteStreamingOptions = {}): Promise<DeleteResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -252,7 +110,56 @@ export class CommunityNotesClient {
     // Build path parameters
     let path = `/2/notes/{id}`;
 
-    path = path.replace(`{${'id'}}`, String(id));
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<DeleteResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Search for Posts Eligible for Community Notes
+     * Returns all the posts that are eligible for community notes.
+     * 
+     * @returns Promise with the API response
+     */
+  async searchEligiblePosts(
+    options: SearchEligiblePostsStreamingOptions = {}
+  ): Promise<SearchEligiblePostsResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(
+      requiredAuthTypes,
+      'searchEligiblePosts'
+    );
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/notes/search/posts_eligible_for_notes`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -266,8 +173,8 @@ export class CommunityNotesClient {
     };
 
     // Make the request
-    return this.client.request<CommunityNotesDeleteResponse>(
-      'DELETE',
+    return this.client.request<SearchEligiblePostsResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -280,8 +187,8 @@ export class CommunityNotesClient {
      * @returns Promise with the API response
      */
   async evaluate(
-    options: CommunityNotesEvaluateStreamingOptions = {}
-  ): Promise<CommunityNotesEvaluateResponse> {
+    options: EvaluateStreamingOptions = {}
+  ): Promise<EvaluateResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -320,81 +227,8 @@ export class CommunityNotesClient {
     };
 
     // Make the request
-    return this.client.request<CommunityNotesEvaluateResponse>(
+    return this.client.request<EvaluateResponse>(
       'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Search for Community Notes Written
-     * Returns all the community notes written by the user.
-     * 
-     * @returns Promise with the API response
-     */
-  async searchWritten(
-    testMode: boolean,
-    options: CommunityNotesSearchWrittenStreamingOptions = {}
-  ): Promise<CommunityNotesSearchWrittenResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'searchWritten');
-
-    // Destructure options with defaults
-
-    const {
-      paginationToken = undefined,
-
-      maxResults = undefined,
-
-      notefields = [],
-
-      requestOptions: requestOptions = {},
-    } = options;
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (testMode !== undefined) {
-      params.append('test_mode', String(testMode));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (notefields !== undefined) {
-      params.append('note.fields', notefields.join(','));
-    }
-
-    // Build path parameters
-    let path = `/2/notes/search/notes_written`;
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      signal: options.signal,
-
-      ...options,
-    };
-
-    // Make the request
-    return this.client.request<CommunityNotesSearchWrittenResponse>(
-      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -406,9 +240,7 @@ export class CommunityNotesClient {
      * 
      * @returns Promise with the API response
      */
-  async create(
-    options: CommunityNotesCreateStreamingOptions = {}
-  ): Promise<CommunityNotesCreateResponse> {
+  async create(options: CreateStreamingOptions = {}): Promise<CreateResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -447,8 +279,56 @@ export class CommunityNotesClient {
     };
 
     // Make the request
-    return this.client.request<CommunityNotesCreateResponse>(
+    return this.client.request<CreateResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Search for Community Notes Written
+     * Returns all the community notes written by the user.
+     * 
+     * @returns Promise with the API response
+     */
+  async searchWritten(
+    options: SearchWrittenStreamingOptions = {}
+  ): Promise<SearchWrittenResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'searchWritten');
+
+    // Destructure options with defaults
+
+    const { requestOptions: requestOptions = {} } = options;
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Build path parameters
+    let path = `/2/notes/search/notes_written`;
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      signal: options.signal,
+
+      ...options,
+    };
+
+    // Make the request
+    return this.client.request<SearchWrittenResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

@@ -55,20 +55,12 @@ pub struct Metadata {
 
 impl OperationInfo {
     /// Get parameters sorted by required status (required first, then optional)
-    pub fn sorted_parameters(&self) -> Option<Vec<RefOrValue<Parameter>>> {
+    pub fn sorted_parameters(&self) -> Option<Vec<ParameterInfo>> {
         self.parameters.as_ref().map(|params| {
             let mut sorted_params = params.clone();
             sorted_params.sort_by(|a, b| {
-                let a_required = match a {
-                    RefOrValue::Value(param) => param.required.unwrap_or(false),
-                    RefOrValue::Reference { .. } => false, // Treat refs as optional for sorting
-                };
-                let b_required = match b {
-                    RefOrValue::Value(param) => param.required.unwrap_or(false),
-                    RefOrValue::Reference { .. } => false,
-                };
                 // Sort required first (true comes before false)
-                b_required.cmp(&a_required)
+                b.required.cmp(&a.required)
             });
             sorted_params
         })

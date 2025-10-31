@@ -6,12 +6,12 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
-import { ConnectionsDeleteAllResponse } from './models.js';
+import { DeleteAllResponse } from './models.js';
 
 /**
  * Options for deleteAll method
  */
-export interface ConnectionsDeleteAllStreamingOptions {
+export interface DeleteAllStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -34,8 +34,8 @@ export class ConnectionsClient {
      * @returns Promise with the API response
      */
   async deleteAll(
-    options: ConnectionsDeleteAllStreamingOptions = {}
-  ): Promise<ConnectionsDeleteAllResponse> {
+    options: DeleteAllStreamingOptions = {}
+  ): Promise<DeleteAllResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -66,7 +66,7 @@ export class ConnectionsClient {
     };
 
     // Make the request
-    return this.client.request<ConnectionsDeleteAllResponse>(
+    return this.client.request<DeleteAllResponse>(
       'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

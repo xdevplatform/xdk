@@ -1,5 +1,5 @@
 /**
- * Models for {{ tag }} operations
+ * Models for {{ tag.display_name }} operations
  */
 
 {% for operation in operations -%}
@@ -8,10 +8,10 @@
 {% if operation.request_body.content and operation.request_body.content[content_type] -%}
 {% set schema = operation.request_body.content[content_type].schema -%}
 /**
- * Request body for {{ operation.operation_id }}{% if schema and schema.description %}
+ * Request body for {{ operation.method_name }}{% if schema and schema.description %}
  * {{ schema.description }}{% endif %}
  */
-export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Request {
+export interface {{ operation.class_name }}Request {
 {% if schema and schema.properties -%}
 {% for key in schema.properties -%}
 {% set prop = schema.properties[key] -%}
@@ -30,10 +30,10 @@ export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}
 {% if response.content and "application/json" in response.content -%}
 {% set schema = response.content["application/json"].schema -%}
 /**
- * Response for {{ operation.operation_id }}{% if schema and schema.description %}
+ * Response for {{ operation.method_name }}{% if schema and schema.description %}
  * {{ schema.description }}{% endif %}
  */
-export interface {{ tag|pascal_case }}{{ operation.operation_id | pascal_case }}Response {
+export interface {{ operation.class_name }}Response {
 {% if schema and schema.properties -%}
 {% for key in schema.properties -%}
 {% set prop = schema.properties[key] -%}

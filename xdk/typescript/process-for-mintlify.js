@@ -160,9 +160,17 @@ function generateTag(filePath, title) {
 // Main processing function
 async function processDocs() {
   try {
-    // First, generate the documentation
+    // First, try to generate the documentation, but skip if it fails (e.g., Node version mismatch)
     console.log('📚 Generating documentation...');
-    execSync('npm run docs:build', { stdio: 'inherit' });
+    try {
+      execSync('npm run docs:build', { stdio: 'inherit' });
+    } catch (error) {
+      console.log('⚠️  TypeDoc generation failed (likely Node version issue), using existing docs if available...');
+      if (!fs.existsSync('docs') || fs.readdirSync('docs').length === 0) {
+        throw new Error('No documentation found and TypeDoc generation failed. Please upgrade Node.js to 16+ or generate docs manually.');
+      }
+      console.log('✅ Using existing documentation files');
+    }
     
     // Create output directory
     const outputDir = MINTLIFY_CONFIG.outputDir;
@@ -178,9 +186,22 @@ async function processDocs() {
     
     console.log('📝 Processing markdown files...');
     
-    // Process all markdown files
+    // Process all markdown files recursively
     const docsDir = 'docs';
-    const files = fs.readdirSync(docsDir, { recursive: true });
+    function getAllFiles(dir, fileList = []) {
+      const files = fs.readdirSync(dir);
+      files.forEach(file => {
+        const filePath = path.join(dir, file);
+        if (fs.statSync(filePath).isDirectory()) {
+          getAllFiles(filePath, fileList);
+        } else if (file.endsWith('.md')) {
+          // Store relative path from docsDir
+          fileList.push(path.relative(docsDir, filePath));
+        }
+      });
+      return fileList;
+    }
+    const files = getAllFiles(docsDir);
     
     const processedFiles = [];
     const navigation = {
