@@ -30,7 +30,7 @@ Response body
 
 #### Defined in
 
-[client.ts:149](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L149)
+[client.ts:149](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L149)
 
 ___
 
@@ -42,7 +42,7 @@ Response headers
 
 #### Defined in
 
-[client.ts:151](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L151)
+[client.ts:151](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L151)
 
 ___
 
@@ -54,7 +54,7 @@ HTTP status code
 
 #### Defined in
 
-[client.ts:153](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L153)
+[client.ts:153](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L153)
 
 ___
 
@@ -66,7 +66,7 @@ HTTP status text
 
 #### Defined in
 
-[client.ts:155](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L155)
+[client.ts:155](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L155)
 
 ___
 
@@ -78,4 +78,4 @@ Response URL
 
 #### Defined in
 
-[client.ts:157](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L157)
+[client.ts:157](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L157)

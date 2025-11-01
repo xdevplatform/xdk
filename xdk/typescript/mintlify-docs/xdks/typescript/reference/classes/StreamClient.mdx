@@ -21,9 +21,129 @@ sidebarTitle: "StreamClient"
 
 #### Defined in
 
-[stream/stream_client.ts:254](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L254)
+[stream/stream_client.ts:560](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L560)
 
 ## Methods
+
+### usersCompliance
+
+▸ **usersCompliance**(`partition`, `options?`): `Promise`\<`EventDrivenStream`\>
+
+Stream Users compliance data
+Streams all compliance data related to Users.
+
+Returns an event-driven stream that's easy to use.
+Use .on() to listen for events like 'data', 'error', 'close'.
+Also supports async iteration with for await...of.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `partition` | `number` | The partition number. |
+| `options` | `UsersComplianceStreamingOptions` | - |
+
+#### Returns
+
+`Promise`\<`EventDrivenStream`\>
+
+Event-driven stream for handling streaming data
+
+#### Defined in
+
+[stream/stream_client.ts:580](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L580)
+
+___
+
+### postsFirehoseKo
+
+▸ **postsFirehoseKo**(`partition`, `options?`): `Promise`\<`EventDrivenStream`\>
+
+Stream Korean Posts
+Streams all public Korean-language Posts in real-time.
+
+Returns an event-driven stream that's easy to use.
+Use .on() to listen for events like 'data', 'error', 'close'.
+Also supports async iteration with for await...of.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `partition` | `number` | The partition number. |
+| `options` | `PostsFirehoseKoStreamingOptions` | - |
+
+#### Returns
+
+`Promise`\<`EventDrivenStream`\>
+
+Event-driven stream for handling streaming data
+
+#### Defined in
+
+[stream/stream_client.ts:678](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L678)
+
+___
+
+### postsFirehosePt
+
+▸ **postsFirehosePt**(`partition`, `options?`): `Promise`\<`EventDrivenStream`\>
+
+Stream Portuguese Posts
+Streams all public Portuguese-language Posts in real-time.
+
+Returns an event-driven stream that's easy to use.
+Use .on() to listen for events like 'data', 'error', 'close'.
+Also supports async iteration with for await...of.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `partition` | `number` | The partition number. |
+| `options` | `PostsFirehosePtStreamingOptions` | - |
+
+#### Returns
+
+`Promise`\<`EventDrivenStream`\>
+
+Event-driven stream for handling streaming data
+
+#### Defined in
+
+[stream/stream_client.ts:812](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L812)
+
+___
+
+### postsSample10
+
+▸ **postsSample10**(`partition`, `options?`): `Promise`\<`EventDrivenStream`\>
+
+Stream 10% sampled Posts
+Streams a 10% sample of public Posts in real-time.
+
+Returns an event-driven stream that's easy to use.
+Use .on() to listen for events like 'data', 'error', 'close'.
+Also supports async iteration with for await...of.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `partition` | `number` | The partition number. |
+| `options` | `PostsSample10StreamingOptions` | - |
+
+#### Returns
+
+`Promise`\<`EventDrivenStream`\>
+
+Event-driven stream for handling streaming data
+
+#### Defined in
+
+[stream/stream_client.ts:946](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L946)
+
+___
 
 ### postsSample
 
@@ -46,96 +166,17 @@ Also supports async iteration with for await...of.
 
 `Promise`\<`EventDrivenStream`\>
 
-#### Defined in
-
-[stream/stream_client.ts:266](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L266)
-
-___
-
-### postsFirehoseEn
-
-▸ **postsFirehoseEn**(`options?`): `Promise`\<`EventDrivenStream`\>
-
-Stream English Posts
-Streams all public English-language Posts in real-time.
-
-Returns an event-driven stream that's easy to use.
-Use .on() to listen for events like 'data', 'error', 'close'.
-Also supports async iteration with for await...of.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `PostsFirehoseEnStreamingOptions` |
-
-#### Returns
-
-`Promise`\<`EventDrivenStream`\>
+Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:329](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L329)
-
-___
-
-### postsSample10
-
-▸ **postsSample10**(`options?`): `Promise`\<`EventDrivenStream`\>
-
-Stream 10% sampled Posts
-Streams a 10% sample of public Posts in real-time.
-
-Returns an event-driven stream that's easy to use.
-Use .on() to listen for events like 'data', 'error', 'close'.
-Also supports async iteration with for await...of.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `PostsSample10StreamingOptions` |
-
-#### Returns
-
-`Promise`\<`EventDrivenStream`\>
-
-#### Defined in
-
-[stream/stream_client.ts:392](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L392)
-
-___
-
-### likesFirehose
-
-▸ **likesFirehose**(`options?`): `Promise`\<`EventDrivenStream`\>
-
-Stream all Likes
-Streams all public Likes in real-time.
-
-Returns an event-driven stream that's easy to use.
-Use .on() to listen for events like 'data', 'error', 'close'.
-Also supports async iteration with for await...of.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `LikesFirehoseStreamingOptions` |
-
-#### Returns
-
-`Promise`\<`EventDrivenStream`\>
-
-#### Defined in
-
-[stream/stream_client.ts:455](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L455)
+[stream/stream_client.ts:1076](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L1076)
 
 ___
 
 ### likesSample10
 
-▸ **likesSample10**(`options?`): `Promise`\<`EventDrivenStream`\>
+▸ **likesSample10**(`partition`, `options?`): `Promise`\<`EventDrivenStream`\>
 
 Stream sampled Likes
 Streams a 10% sample of public Likes in real-time.
@@ -146,152 +187,20 @@ Also supports async iteration with for await...of.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | `LikesSample10StreamingOptions` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `partition` | `number` | The partition number. |
+| `options` | `LikesSample10StreamingOptions` | - |
 
 #### Returns
 
 `Promise`\<`EventDrivenStream`\>
 
-#### Defined in
-
-[stream/stream_client.ts:518](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L518)
-
-___
-
-### postsFirehose
-
-▸ **postsFirehose**(`options?`): `Promise`\<`EventDrivenStream`\>
-
-Stream all Posts
-Streams all public Posts in real-time.
-
-Returns an event-driven stream that's easy to use.
-Use .on() to listen for events like 'data', 'error', 'close'.
-Also supports async iteration with for await...of.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `PostsFirehoseStreamingOptions` |
-
-#### Returns
-
-`Promise`\<`EventDrivenStream`\>
+Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:581](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L581)
-
-___
-
-### postsFirehoseKo
-
-▸ **postsFirehoseKo**(`options?`): `Promise`\<`EventDrivenStream`\>
-
-Stream Korean Posts
-Streams all public Korean-language Posts in real-time.
-
-Returns an event-driven stream that's easy to use.
-Use .on() to listen for events like 'data', 'error', 'close'.
-Also supports async iteration with for await...of.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `PostsFirehoseKoStreamingOptions` |
-
-#### Returns
-
-`Promise`\<`EventDrivenStream`\>
-
-#### Defined in
-
-[stream/stream_client.ts:644](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L644)
-
-___
-
-### labelsCompliance
-
-▸ **labelsCompliance**(`options?`): `Promise`\<`EventDrivenStream`\>
-
-Stream Post labels
-Streams all labeling events applied to Posts.
-
-Returns an event-driven stream that's easy to use.
-Use .on() to listen for events like 'data', 'error', 'close'.
-Also supports async iteration with for await...of.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `LabelsComplianceStreamingOptions` |
-
-#### Returns
-
-`Promise`\<`EventDrivenStream`\>
-
-#### Defined in
-
-[stream/stream_client.ts:707](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L707)
-
-___
-
-### postsCompliance
-
-▸ **postsCompliance**(`options?`): `Promise`\<`EventDrivenStream`\>
-
-Stream Posts compliance data
-Streams all compliance data related to Posts.
-
-Returns an event-driven stream that's easy to use.
-Use .on() to listen for events like 'data', 'error', 'close'.
-Also supports async iteration with for await...of.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `PostsComplianceStreamingOptions` |
-
-#### Returns
-
-`Promise`\<`EventDrivenStream`\>
-
-#### Defined in
-
-[stream/stream_client.ts:770](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L770)
-
-___
-
-### usersCompliance
-
-▸ **usersCompliance**(`options?`): `Promise`\<`EventDrivenStream`\>
-
-Stream Users compliance data
-Streams all compliance data related to Users.
-
-Returns an event-driven stream that's easy to use.
-Use .on() to listen for events like 'data', 'error', 'close'.
-Also supports async iteration with for await...of.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `UsersComplianceStreamingOptions` |
-
-#### Returns
-
-`Promise`\<`EventDrivenStream`\>
-
-#### Defined in
-
-[stream/stream_client.ts:833](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L833)
+[stream/stream_client.ts:1195](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L1195)
 
 ___
 
@@ -316,9 +225,100 @@ Also supports async iteration with for await...of.
 
 `Promise`\<`EventDrivenStream`\>
 
+Event-driven stream for handling streaming data
+
 #### Defined in
 
-[stream/stream_client.ts:896](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L896)
+[stream/stream_client.ts:1316](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L1316)
+
+___
+
+### labelsCompliance
+
+▸ **labelsCompliance**(`options?`): `Promise`\<`EventDrivenStream`\>
+
+Stream Post labels
+Streams all labeling events applied to Posts.
+
+Returns an event-driven stream that's easy to use.
+Use .on() to listen for events like 'data', 'error', 'close'.
+Also supports async iteration with for await...of.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `LabelsComplianceStreamingOptions` |
+
+#### Returns
+
+`Promise`\<`EventDrivenStream`\>
+
+Event-driven stream for handling streaming data
+
+#### Defined in
+
+[stream/stream_client.ts:1441](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L1441)
+
+___
+
+### postsFirehose
+
+▸ **postsFirehose**(`partition`, `options?`): `Promise`\<`EventDrivenStream`\>
+
+Stream all Posts
+Streams all public Posts in real-time.
+
+Returns an event-driven stream that's easy to use.
+Use .on() to listen for events like 'data', 'error', 'close'.
+Also supports async iteration with for await...of.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `partition` | `number` | The partition number. |
+| `options` | `PostsFirehoseStreamingOptions` | - |
+
+#### Returns
+
+`Promise`\<`EventDrivenStream`\>
+
+Event-driven stream for handling streaming data
+
+#### Defined in
+
+[stream/stream_client.ts:1536](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L1536)
+
+___
+
+### likesFirehose
+
+▸ **likesFirehose**(`partition`, `options?`): `Promise`\<`EventDrivenStream`\>
+
+Stream all Likes
+Streams all public Likes in real-time.
+
+Returns an event-driven stream that's easy to use.
+Use .on() to listen for events like 'data', 'error', 'close'.
+Also supports async iteration with for await...of.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `partition` | `number` | The partition number. |
+| `options` | `LikesFirehoseStreamingOptions` | - |
+
+#### Returns
+
+`Promise`\<`EventDrivenStream`\>
+
+Event-driven stream for handling streaming data
+
+#### Defined in
+
+[stream/stream_client.ts:1670](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L1670)
 
 ___
 
@@ -343,42 +343,17 @@ Also supports async iteration with for await...of.
 
 `Promise`\<`EventDrivenStream`\>
 
-#### Defined in
-
-[stream/stream_client.ts:957](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L957)
-
-___
-
-### postsFirehosePt
-
-▸ **postsFirehosePt**(`options?`): `Promise`\<`EventDrivenStream`\>
-
-Stream Portuguese Posts
-Streams all public Portuguese-language Posts in real-time.
-
-Returns an event-driven stream that's easy to use.
-Use .on() to listen for events like 'data', 'error', 'close'.
-Also supports async iteration with for await...of.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `PostsFirehosePtStreamingOptions` |
-
-#### Returns
-
-`Promise`\<`EventDrivenStream`\>
+Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:1020](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L1020)
+[stream/stream_client.ts:1791](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L1791)
 
 ___
 
 ### postsFirehoseJa
 
-▸ **postsFirehoseJa**(`options?`): `Promise`\<`EventDrivenStream`\>
+▸ **postsFirehoseJa**(`partition`, `options?`): `Promise`\<`EventDrivenStream`\>
 
 Stream Japanese Posts
 Streams all public Japanese-language Posts in real-time.
@@ -389,23 +364,86 @@ Also supports async iteration with for await...of.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | `PostsFirehoseJaStreamingOptions` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `partition` | `number` | The partition number. |
+| `options` | `PostsFirehoseJaStreamingOptions` | - |
 
 #### Returns
 
 `Promise`\<`EventDrivenStream`\>
 
+Event-driven stream for handling streaming data
+
 #### Defined in
 
-[stream/stream_client.ts:1083](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L1083)
+[stream/stream_client.ts:1886](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L1886)
+
+___
+
+### postsCompliance
+
+▸ **postsCompliance**(`partition`, `options?`): `Promise`\<`EventDrivenStream`\>
+
+Stream Posts compliance data
+Streams all compliance data related to Posts.
+
+Returns an event-driven stream that's easy to use.
+Use .on() to listen for events like 'data', 'error', 'close'.
+Also supports async iteration with for await...of.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `partition` | `number` | The partition number. |
+| `options` | `PostsComplianceStreamingOptions` | - |
+
+#### Returns
+
+`Promise`\<`EventDrivenStream`\>
+
+Event-driven stream for handling streaming data
+
+#### Defined in
+
+[stream/stream_client.ts:2020](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L2020)
+
+___
+
+### postsFirehoseEn
+
+▸ **postsFirehoseEn**(`partition`, `options?`): `Promise`\<`EventDrivenStream`\>
+
+Stream English Posts
+Streams all public English-language Posts in real-time.
+
+Returns an event-driven stream that's easy to use.
+Use .on() to listen for events like 'data', 'error', 'close'.
+Also supports async iteration with for await...of.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `partition` | `number` | The partition number. |
+| `options` | `PostsFirehoseEnStreamingOptions` | - |
+
+#### Returns
+
+`Promise`\<`EventDrivenStream`\>
+
+Event-driven stream for handling streaming data
+
+#### Defined in
+
+[stream/stream_client.ts:2118](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L2118)
 
 ___
 
 ### getRuleCounts
 
-▸ **getRuleCounts**(`options?`): `Promise`\<`any`\>
+▸ **getRuleCounts**(`options?`): `Promise`\<[`Get2TweetsSearchStreamRulesCountsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2TweetsSearchStreamRulesCountsResponse)\>
 
 Get stream rule counts
 Retrieves the count of rules in the active rule set for the filtered stream.
@@ -418,19 +456,19 @@ Retrieves the count of rules in the active rule set for the filtered stream.
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`Get2TweetsSearchStreamRulesCountsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2TweetsSearchStreamRulesCountsResponse)\>
 
 Promise with the API response
 
 #### Defined in
 
-[stream/stream_client.ts:1144](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L1144)
+[stream/stream_client.ts:2242](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L2242)
 
 ___
 
 ### getRules
 
-▸ **getRules**(`options?`): `Promise`\<`any`\>
+▸ **getRules**(`options?`): `Promise`\<[`RulesLookupResponse`](/xdks/typescript/reference/interfaces/Schemas.RulesLookupResponse)\>
 
 Get stream rules
 Retrieves the active rule set or a subset of rules for the filtered stream.
@@ -443,19 +481,19 @@ Retrieves the active rule set or a subset of rules for the filtered stream.
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`RulesLookupResponse`](/xdks/typescript/reference/interfaces/Schemas.RulesLookupResponse)\>
 
 Promise with the API response
 
 #### Defined in
 
-[stream/stream_client.ts:1190](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L1190)
+[stream/stream_client.ts:2299](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L2299)
 
 ___
 
 ### updateRules
 
-▸ **updateRules**(`body`, `options?`): `Promise`\<`any`\>
+▸ **updateRules**(`body`, `options?`): `Promise`\<[`AddOrDeleteRulesResponse`](/xdks/typescript/reference/interfaces/Schemas.AddOrDeleteRulesResponse)\>
 
 Update stream rules
 Adds or deletes rules from the active rule set for the filtered stream.
@@ -469,10 +507,10 @@ Adds or deletes rules from the active rule set for the filtered stream.
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`AddOrDeleteRulesResponse`](/xdks/typescript/reference/interfaces/Schemas.AddOrDeleteRulesResponse)\>
 
 Promise with the API response
 
 #### Defined in
 
-[stream/stream_client.ts:1236](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/stream/stream_client.ts#L1236)
+[stream/stream_client.ts:2368](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/stream/stream_client.ts#L2368)

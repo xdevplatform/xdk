@@ -17,14 +17,14 @@ parsing for all lists related operations.
 ### Methods
 
 - [getPosts](ListsClient.md#getposts)
-- [getFollowers](ListsClient.md#getfollowers)
-- [getMembers](ListsClient.md#getmembers)
-- [addMember](ListsClient.md#addmember)
+- [removeMemberByUserId](ListsClient.md#removememberbyuserid)
 - [getById](ListsClient.md#getbyid)
 - [update](ListsClient.md#update)
 - [delete](ListsClient.md#delete)
-- [removeMemberByUserId](ListsClient.md#removememberbyuserid)
 - [create](ListsClient.md#create)
+- [getFollowers](ListsClient.md#getfollowers)
+- [getMembers](ListsClient.md#getmembers)
+- [addMember](ListsClient.md#addmember)
 
 ## Constructors
 
@@ -46,195 +46,142 @@ Creates a new lists client instance
 
 #### Defined in
 
-[lists/client.ts:115](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L115)
+[lists/client.ts:188](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L188)
 
 ## Methods
 
 ### getPosts
 
-▸ **getPosts**(`options?`): `Promise`\<`any`\>
+▸ **getPosts**(`id`, `options?`): `Promise`\<[`Get2ListsIdTweetsResponse`](../interfaces/Schemas.Get2ListsIdTweetsResponse.md)\>
 
 Get List Posts
 Retrieves a list of Posts associated with a specific List by its ID.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | `GetPostsOptions` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the List. |
+| `options` | `GetPostsOptions` | - |
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`Get2ListsIdTweetsResponse`](../interfaces/Schemas.Get2ListsIdTweetsResponse.md)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:129](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L129)
+[lists/client.ts:205](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L205)
 
 ___
 
-### getFollowers
+### removeMemberByUserId
 
-▸ **getFollowers**(`options?`): `Promise`\<`any`\>
+▸ **removeMemberByUserId**(`id`, `userId`): `Promise`\<[`ListMutateResponse`](../interfaces/Schemas.ListMutateResponse.md)\>
 
-Get List followers
-Retrieves a list of Users who follow a specific List by its ID.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `GetFollowersOptions` |
-
-#### Returns
-
-`Promise`\<`any`\>
-
-Promise with the API response
-
-#### Defined in
-
-[lists/client.ts:162](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L162)
-
-___
-
-### getMembers
-
-▸ **getMembers**(`options?`): `Promise`\<`any`\>
-
-Get List members
-Retrieves a list of Users who are members of a specific List by its ID.
+Remove List member
+Removes a User from a specific List by its ID and the User’s ID.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | `GetMembersOptions` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the List to remove a member. |
+| `userId` | `string` | The ID of User that will be removed from the List. |
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`ListMutateResponse`](../interfaces/Schemas.ListMutateResponse.md)\>
 
-Promise with the API response
-
-#### Defined in
-
-[lists/client.ts:197](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L197)
-
-___
-
-### addMember
-
-▸ **addMember**(`options?`): `Promise`\<`any`\>
-
-Add List member
-Adds a User to a specific List by its ID.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `AddMemberOptions` |
-
-#### Returns
-
-`Promise`\<`any`\>
-
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:232](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L232)
+[lists/client.ts:301](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L301)
 
 ___
 
 ### getById
 
-▸ **getById**(): `Promise`\<`any`\>
+▸ **getById**(`id`, `options?`): `Promise`\<[`Get2ListsIdResponse`](../interfaces/Schemas.Get2ListsIdResponse.md)\>
 
 Get List by ID
 Retrieves details of a specific List by its ID.
 
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the List. |
+| `options` | `GetByIdOptions` | - |
+
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`Get2ListsIdResponse`](../interfaces/Schemas.Get2ListsIdResponse.md)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:271](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L271)
+[lists/client.ts:344](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L344)
 
 ___
 
 ### update
 
-▸ **update**(`options?`): `Promise`\<`any`\>
+▸ **update**(`id`, `options?`): `Promise`\<[`ListUpdateResponse`](../interfaces/Schemas.ListUpdateResponse.md)\>
 
 Update List
 Updates the details of a specific List owned by the authenticated user by its ID.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | `UpdateOptions` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the List to modify. |
+| `options` | `UpdateOptions` | - |
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`ListUpdateResponse`](../interfaces/Schemas.ListUpdateResponse.md)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:304](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L304)
+[lists/client.ts:406](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L406)
 
 ___
 
 ### delete
 
-▸ **delete**(): `Promise`\<`any`\>
+▸ **delete**(`id`): `Promise`\<[`ListDeleteResponse`](../interfaces/Schemas.ListDeleteResponse.md)\>
 
 Delete List
 Deletes a specific List owned by the authenticated user by its ID.
 
-#### Returns
+#### Parameters
 
-`Promise`\<`any`\>
-
-Promise with the API response
-
-#### Defined in
-
-[lists/client.ts:343](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L343)
-
-___
-
-### removeMemberByUserId
-
-▸ **removeMemberByUserId**(): `Promise`\<`any`\>
-
-Remove List member
-Removes a User from a specific List by its ID and the User’s ID.
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the List to delete. |
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`ListDeleteResponse`](../interfaces/Schemas.ListDeleteResponse.md)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:378](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L378)
+[lists/client.ts:454](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L454)
 
 ___
 
 ### create
 
-▸ **create**(`options?`): `Promise`\<`any`\>
+▸ **create**(`options?`): `Promise`\<[`ListCreateResponse`](../interfaces/Schemas.ListCreateResponse.md)\>
 
 Create List
 Creates a new List for the authenticated user.
@@ -247,10 +194,88 @@ Creates a new List for the authenticated user.
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`ListCreateResponse`](../interfaces/Schemas.ListCreateResponse.md)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:409](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/lists/client.ts#L409)
+[lists/client.ts:488](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L488)
+
+___
+
+### getFollowers
+
+▸ **getFollowers**(`id`, `options?`): `Promise`\<[`Get2ListsIdFollowersResponse`](../interfaces/Schemas.Get2ListsIdFollowersResponse.md)\>
+
+Get List followers
+Retrieves a list of Users who follow a specific List by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the List. |
+| `options` | `GetFollowersOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2ListsIdFollowersResponse`](../interfaces/Schemas.Get2ListsIdFollowersResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[lists/client.ts:531](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L531)
+
+___
+
+### getMembers
+
+▸ **getMembers**(`id`, `options?`): `Promise`\<[`Get2ListsIdMembersResponse`](../interfaces/Schemas.Get2ListsIdMembersResponse.md)\>
+
+Get List members
+Retrieves a list of Users who are members of a specific List by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the List. |
+| `options` | `GetMembersOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2ListsIdMembersResponse`](../interfaces/Schemas.Get2ListsIdMembersResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[lists/client.ts:605](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L605)
+
+___
+
+### addMember
+
+▸ **addMember**(`id`, `options?`): `Promise`\<[`ListMutateResponse`](../interfaces/Schemas.ListMutateResponse.md)\>
+
+Add List member
+Adds a User to a specific List by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the List for which to add a member. |
+| `options` | `AddMemberOptions` | - |
+
+#### Returns
+
+`Promise`\<[`ListMutateResponse`](../interfaces/Schemas.ListMutateResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[lists/client.ts:679](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L679)

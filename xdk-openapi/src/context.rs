@@ -126,6 +126,45 @@ impl OpenApiContext {
         );
     }
 
+    /// Gets all schema names from the context
+    pub fn get_schema_names(&self) -> Vec<String> {
+        self.components
+            .iter()
+            .filter_map(|(path, component)| {
+                if path.starts_with("#/components/schemas/") {
+                    match component {
+                        StoredComponent::Schema(_) => {
+                            path.strip_prefix("#/components/schemas/").map(|s| s.to_string())
+                        }
+                        _ => None,
+                    }
+                } else {
+                    None
+                }
+            })
+            .collect()
+    }
+
+    /// Gets all schemas with their names and definitions
+    pub fn get_schemas(&self) -> Vec<(String, Schema)> {
+        self.components
+            .iter()
+            .filter_map(|(path, component)| {
+                if path.starts_with("#/components/schemas/") {
+                    match component {
+                        StoredComponent::Schema(rc) => {
+                            path.strip_prefix("#/components/schemas/")
+                                .map(|name| (name.to_string(), rc.as_ref().clone()))
+                        }
+                        _ => None,
+                    }
+                } else {
+                    None
+                }
+            })
+            .collect()
+    }
+
     /// Resolves a reference to a component with type checking (safe version)
     pub fn resolve_reference<T>(&self, reference: &str) -> Result<Rc<T>>
     where

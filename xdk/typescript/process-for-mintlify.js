@@ -656,7 +656,7 @@ import {
   OAuth1,
   type OAuth1Config,
   type ClientConfig,
-  type UsersGetMeResponse
+  type Users
 } from '@xdevplatform/xdk';
 
 const oauth1Config: OAuth1Config = {
@@ -675,7 +675,7 @@ const config: ClientConfig = {
 const client: Client = new Client(config);
 
 async function main(): Promise<void> {
-  const response: UsersGetMeResponse = await client.users.getMe();
+  const response: Users.GetMeResponse = await client.users.getMe();
 
   const me = response.data;
   console.log(me);
@@ -781,6 +781,7 @@ import { Client, OAuth2, generateCodeVerifier, generateCodeChallenge } from '@xd
 });
 \`\`\`
 
+</CodeGroup>
 
 ## Environment Variables
 

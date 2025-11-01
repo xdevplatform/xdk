@@ -3,6 +3,7 @@
 /// This file implements the TypeScript generator using the `language!` macro.
 /// It defines filters for TypeScript-specific formatting and implements the generator.
 use xdk_lib::{Casing, language, pascal_case, camel_case};
+use serde::Serialize;
 
 /// Helper function for snake_case conversion (for use as a filter)
 fn snake_case(value: &str) -> String {
@@ -49,12 +50,25 @@ fn extract_schema_name_from_ref(path: &str) -> Option<String> {
     }
 }
 
+/// Context for rendering schemas template
+#[derive(Debug, Serialize)]
+struct SchemasContext {
+    schemas: Vec<SchemaInfo>,
+}
+
+/// Information about a schema for template rendering
+#[derive(Debug, Serialize)]
+struct SchemaInfo {
+    name: String,
+    schema: xdk_openapi::Schema,
+}
+
 /*
     This is the main generator for the TypeScript SDK
     It declares the templates and filters used as well as the rendering logic
 */
 language! {
-    name: TypeScript,
+    name: TypeScriptBase,
     filters: [camel_case, pascal_case, snake_case, typescript_type, last_part, schema_name_from_ref],
     class_casing: Casing::Pascal,
     operation_casing: Casing::Camel,
@@ -86,4 +100,45 @@ language! {
     tests: [
         multiple {},
     ]
+}
+
+/// TypeScript generator with custom schema generation
+pub struct TypeScript;
+
+impl xdk_lib::generator::LanguageGenerator for TypeScript {
+    fn name(&self) -> String {
+        "typescript".to_string()
+    }
+
+    fn add_filters(&self, env: &mut minijinja::Environment) {
+        TypeScriptBase.add_filters(env);
+    }
+
+    fn generate(
+        &self,
+        env: &minijinja::Environment,
+        operations: &std::collections::HashMap<Vec<String>, Vec<xdk_lib::models::OperationGroup>>,
+        output_dir: &std::path::Path,
+    ) -> xdk_lib::Result<()> {
+        // First, generate all standard templates using the base generator
+        TypeScriptBase.generate(env, operations, output_dir)?;
+
+        // Then generate schemas.ts from OpenAPI components
+        // Extract schemas with their definitions from the OpenAPI context
+        let schemas: Vec<SchemaInfo> = xdk_openapi::OpenApiContextGuard::with_context(|ctx| {
+            ctx.get_schemas()
+                .into_iter()
+                .map(|(name, schema)| SchemaInfo { name, schema })
+                .collect()
+        }).unwrap_or_default();
+
+        if !schemas.is_empty() {
+            let context = SchemasContext { schemas };
+            let content = xdk_lib::templates::render_template(env, "schemas", &context)?;
+            let schemas_path = output_dir.join("src/schemas.ts");
+            std::fs::write(&schemas_path, content)?;
+        }
+
+        Ok(())
+    }
 } 

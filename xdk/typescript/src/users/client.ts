@@ -12,79 +12,273 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  GetOwnedListsResponse,
-  BlockDmsResponse,
-  GetLikedPostsResponse,
-  UnrepostPostResponse,
-  GetMentionsResponse,
-  UnfollowUserResponse,
-  UnblockDmsResponse,
-  GetByIdsResponse,
-  UnmuteUserResponse,
-  GetFollowingResponse,
-  FollowUserRequest,
-  FollowUserResponse,
-  GetBookmarkFoldersResponse,
-  GetBookmarksByFolderIdResponse,
-  GetPostsResponse,
-  GetListMembershipsResponse,
-  UnfollowListResponse,
-  GetRepostsOfMeResponse,
-  GetBlockingResponse,
-  SearchResponse,
   GetFollowersResponse,
-  GetMeResponse,
-  GetByIdResponse,
-  GetByUsernamesResponse,
-  GetByUsernameResponse,
-  GetTimelineResponse,
-  DeleteBookmarkResponse,
-  GetPinnedListsResponse,
-  PinListRequest,
-  PinListResponse,
-  UnpinListResponse,
-  GetFollowedListsResponse,
-  FollowListRequest,
-  FollowListResponse,
-  RepostPostRequest,
-  RepostPostResponse,
-  LikePostRequest,
-  LikePostResponse,
+  GetPostsResponse,
   GetMutingResponse,
   MuteUserRequest,
   MuteUserResponse,
+  UnfollowListResponse,
+  GetBlockingResponse,
+  GetRepostsOfMeResponse,
   GetBookmarksResponse,
   CreateBookmarkRequest,
   CreateBookmarkResponse,
+  UnblockDmsResponse,
+  GetByUsernameResponse,
+  GetFollowingResponse,
+  FollowUserRequest,
+  FollowUserResponse,
+  BlockDmsResponse,
+  GetListMembershipsResponse,
+  DeleteBookmarkResponse,
+  SearchResponse,
+  GetByUsernamesResponse,
+  GetFollowedListsResponse,
+  FollowListRequest,
+  FollowListResponse,
+  GetOwnedListsResponse,
+  GetLikedPostsResponse,
+  GetBookmarksByFolderIdResponse,
+  UnfollowUserResponse,
+  UnmuteUserResponse,
+  GetByIdsResponse,
   UnlikePostResponse,
+  LikePostRequest,
+  LikePostResponse,
+  UnrepostPostResponse,
+  GetBookmarkFoldersResponse,
+  RepostPostRequest,
+  RepostPostResponse,
+  GetTimelineResponse,
+  GetMentionsResponse,
+  UnpinListResponse,
+  GetMeResponse,
+  GetByIdResponse,
+  GetPinnedListsResponse,
+  PinListRequest,
+  PinListResponse,
 } from './models.js';
 
 /**
- * Options for getOwnedLists method
+ * Options for getFollowers method
  * 
  * @public
  */
-export interface GetOwnedListsOptions {
+export interface GetFollowersOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get a specified 'page' of results. */
+  paginationToken?: any;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Options for getLikedPosts method
+ * Options for getPosts method
  * 
  * @public
  */
-export interface GetLikedPostsOptions {
+export interface GetPostsOptions {
+  /** The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified. */
+  sinceId?: any;
+
+  /** The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified. */
+  untilId?: any;
+
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. */
+  paginationToken?: any;
+
+  /** The set of entities to exclude (e.g. 'replies' or 'retweets'). */
+  exclude?: Array<any>;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since_id parameter takes precedence if it is also specified. */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until_id parameter takes precedence if it is also specified. */
+  endTime?: string;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. */
+  placefields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Options for getMentions method
+ * Options for getMuting method
  * 
  * @public
  */
-export interface GetMentionsOptions {
+export interface GetMutingOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. */
+  paginationToken?: any;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for muteUser method
+ * 
+ * @public
+ */
+export interface MuteUserOptions {
+  /** Request body */
+  body?: MuteUserRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getBlocking method
+ * 
+ * @public
+ */
+export interface GetBlockingOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get a specified 'page' of results. */
+  paginationToken?: any;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getRepostsOfMe method
+ * 
+ * @public
+ */
+export interface GetRepostsOfMeOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. */
+  paginationToken?: any;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. */
+  placefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getBookmarks method
+ * 
+ * @public
+ */
+export interface GetBookmarksOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. */
+  paginationToken?: any;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. */
+  placefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getByUsername method
+ * 
+ * @public
+ */
+export interface GetByUsernameOptions {
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -95,6 +289,21 @@ export interface GetMentionsOptions {
  * @public
  */
 export interface GetFollowingOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get a specified 'page' of results. */
+  paginationToken?: any;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -113,51 +322,26 @@ export interface FollowUserOptions {
 }
 
 /**
- * Options for getBookmarkFolders method
- * 
- * @public
- */
-export interface GetBookmarkFoldersOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getPosts method
- * 
- * @public
- */
-export interface GetPostsOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
  * Options for getListMemberships method
  * 
  * @public
  */
 export interface GetListMembershipsOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
+  /** The maximum number of results. */
+  maxResults?: number;
 
-/**
- * Options for getRepostsOfMe method
- * 
- * @public
- */
-export interface GetRepostsOfMeOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
+  /** This parameter is used to get a specified 'page' of results. */
+  paginationToken?: any;
 
-/**
- * Options for getBlocking method
- * 
- * @public
- */
-export interface GetBlockingOptions {
+  /** A comma separated list of List fields to display. */
+  listfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -168,26 +352,40 @@ export interface GetBlockingOptions {
  * @public
  */
 export interface SearchOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+  nextToken?: any;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Options for getFollowers method
+ * Options for getByUsernames method
  * 
  * @public
  */
-export interface GetFollowersOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
+export interface GetByUsernamesOptions {
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
 
-/**
- * Options for getTimeline method
- * 
- * @public
- */
-export interface GetTimelineOptions {
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -198,6 +396,21 @@ export interface GetTimelineOptions {
  * @public
  */
 export interface GetFollowedListsOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get a specified 'page' of results. */
+  paginationToken?: any;
+
+  /** A comma separated list of List fields to display. */
+  listfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -216,13 +429,78 @@ export interface FollowListOptions {
 }
 
 /**
- * Options for repostPost method
+ * Options for getOwnedLists method
  * 
  * @public
  */
-export interface RepostPostOptions {
-  /** Request body */
-  body?: RepostPostRequest;
+export interface GetOwnedListsOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get a specified 'page' of results. */
+  paginationToken?: any;
+
+  /** A comma separated list of List fields to display. */
+  listfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getLikedPosts method
+ * 
+ * @public
+ */
+export interface GetLikedPostsOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. */
+  paginationToken?: any;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. */
+  placefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getByIds method
+ * 
+ * @public
+ */
+export interface GetByIdsOptions {
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -242,34 +520,182 @@ export interface LikePostOptions {
 }
 
 /**
- * Options for getMuting method
+ * Options for getBookmarkFolders method
  * 
  * @public
  */
-export interface GetMutingOptions {
+export interface GetBookmarkFoldersOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. */
+  paginationToken?: any;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Options for muteUser method
+ * Options for repostPost method
  * 
  * @public
  */
-export interface MuteUserOptions {
+export interface RepostPostOptions {
   /** Request body */
-  body?: MuteUserRequest;
+  body?: RepostPostRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Options for getBookmarks method
+ * Options for getTimeline method
  * 
  * @public
  */
-export interface GetBookmarksOptions {
+export interface GetTimelineOptions {
+  /** The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified. */
+  sinceId?: any;
+
+  /** The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified. */
+  untilId?: any;
+
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. */
+  paginationToken?: any;
+
+  /** The set of entities to exclude (e.g. 'replies' or 'retweets'). */
+  exclude?: Array<any>;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since_id parameter takes precedence if it is also specified. */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until_id parameter takes precedence if it is also specified. */
+  endTime?: string;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. */
+  placefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getMentions method
+ * 
+ * @public
+ */
+export interface GetMentionsOptions {
+  /** The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified. */
+  sinceId?: any;
+
+  /** The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified. */
+  untilId?: any;
+
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. */
+  paginationToken?: any;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since_id parameter takes precedence if it is also specified. */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until_id parameter takes precedence if it is also specified. */
+  endTime?: string;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. */
+  placefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getMe method
+ * 
+ * @public
+ */
+export interface GetMeOptions {
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getById method
+ * 
+ * @public
+ */
+export interface GetByIdOptions {
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getPinnedLists method
+ * 
+ * @public
+ */
+export interface GetPinnedListsOptions {
+  /** A comma separated list of List fields to display. */
+  listfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -296,686 +722,66 @@ export class UsersClient {
   }
 
   /**
-   * Get owned Lists
-   * Retrieves a list of Lists owned by a specific User by their ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getOwnedLists(
-    options: GetOwnedListsOptions = {}
-  ): Promise<GetOwnedListsResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/owned_lists';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetOwnedListsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Block DMs
-   * Blocks direct messages to or from a specific User by their ID for the authenticated user.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async blockDms(): Promise<BlockDmsResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/dm/block';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<BlockDmsResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get liked Posts
-   * Retrieves a list of Posts liked by a specific User by their ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getLikedPosts(
-    options: GetLikedPostsOptions = {}
-  ): Promise<GetLikedPostsResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/liked_tweets';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetLikedPostsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Unrepost Post
-   * Causes the authenticated user to unrepost a specific Post by its ID.
-
-
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async unrepostPost(): Promise<UnrepostPostResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/retweets/{source_tweet_id}';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<UnrepostPostResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get mentions
-   * Retrieves a list of Posts that mention a specific User by their ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getMentions(
-    options: GetMentionsOptions = {}
-  ): Promise<GetMentionsResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/mentions';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetMentionsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Unfollow User
-   * Causes the authenticated user to unfollow a specific user by their ID.
-
-
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async unfollowUser(): Promise<UnfollowUserResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{source_user_id}/following/{target_user_id}';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<UnfollowUserResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Unblock DMs
-   * Unblocks direct messages to or from a specific User by their ID for the authenticated user.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async unblockDms(): Promise<UnblockDmsResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/dm/unblock';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<UnblockDmsResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Users by IDs
-   * Retrieves details of multiple Users by their IDs.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getByIds(): Promise<GetByIdsResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetByIdsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Unmute User
-   * Causes the authenticated user to unmute a specific user by their ID.
-
-
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async unmuteUser(): Promise<UnmuteUserResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{source_user_id}/muting/{target_user_id}';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<UnmuteUserResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get following
-   * Retrieves a list of Users followed by a specific User by their ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getFollowing(
-    options: GetFollowingOptions = {}
-  ): Promise<GetFollowingResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/following';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetFollowingResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Follow User
-   * Causes the authenticated user to follow a specific user by their ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async followUser(
-    options: FollowUserOptions = {}
-  ): Promise<FollowUserResponse> {
-    // Destructure options
-
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/following';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...requestOptions,
-    };
-
-    return this.client.request<FollowUserResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Bookmark folders
-   * Retrieves a list of Bookmark folders created by the authenticated user.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getBookmarkFolders(
-    options: GetBookmarkFoldersOptions = {}
-  ): Promise<GetBookmarkFoldersResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/bookmarks/folders';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetBookmarkFoldersResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Bookmarks by folder ID
-   * Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
-
-
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getBookmarksByFolderId(): Promise<GetBookmarksByFolderIdResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/bookmarks/folders/{folder_id}';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetBookmarksByFolderIdResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Posts
-   * Retrieves a list of posts authored by a specific User by their ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getPosts(options: GetPostsOptions = {}): Promise<GetPostsResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/tweets';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetPostsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get List memberships
-   * Retrieves a list of Lists that a specific User is a member of by their ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getListMemberships(
-    options: GetListMembershipsOptions = {}
-  ): Promise<GetListMembershipsResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/list_memberships';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetListMembershipsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Unfollow List
-   * Causes the authenticated user to unfollow a specific List by its ID.
-
-
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async unfollowList(): Promise<UnfollowListResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/followed_lists/{list_id}';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<UnfollowListResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Reposts of me
-   * Retrieves a list of Posts that repost content from the authenticated user.
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getRepostsOfMe(
-    options: GetRepostsOfMeOptions = {}
-  ): Promise<GetRepostsOfMeResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/reposts_of_me';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetRepostsOfMeResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get blocking
-   * Retrieves a list of Users blocked by the specified User ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getBlocking(
-    options: GetBlockingOptions = {}
-  ): Promise<GetBlockingResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/blocking';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetBlockingResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Search Users
-   * Retrieves a list of Users matching a search query.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async search(options: SearchOptions = {}): Promise<SearchResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/search';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<SearchResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
    * Get followers
    * Retrieves a list of Users who follow a specific User by their ID.
 
 
+   * @param id The ID of the User to lookup.
 
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<GetFollowersResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async getFollowers(
+    id: string,
     options: GetFollowersOptions = {}
   ): Promise<GetFollowersResponse> {
-    // Destructure options
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const { requestOptions: requestOptions = {} } = options;
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/users/{id}/followers';
 
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
     // Build query parameters
     const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -990,461 +796,122 @@ export class UsersClient {
   }
 
   /**
-   * Get my User
-   * Retrieves details of the authenticated user.
+   * Get Posts
+   * Retrieves a list of posts authored by a specific User by their ID.
 
 
-   * @returns Promise with the API response
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getMe(): Promise<GetMeResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/me';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetMeResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get User by ID
-   * Retrieves details of a specific User by their ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getById(): Promise<GetByIdResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetByIdResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Users by usernames
-   * Retrieves details of multiple Users by their usernames.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getByUsernames(): Promise<GetByUsernamesResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/by';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetByUsernamesResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get User by username
-   * Retrieves details of a specific User by their username.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getByUsername(): Promise<GetByUsernameResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/by/username/{username}';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetByUsernameResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Timeline
-   * Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getTimeline(
-    options: GetTimelineOptions = {}
-  ): Promise<GetTimelineResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/timelines/reverse_chronological';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetTimelineResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Delete Bookmark
-   * Removes a Post from the authenticated user’s Bookmarks by its ID.
-
-
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async deleteBookmark(): Promise<DeleteBookmarkResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/bookmarks/{tweet_id}';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<DeleteBookmarkResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get pinned Lists
-   * Retrieves a list of Lists pinned by the authenticated user.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getPinnedLists(): Promise<GetPinnedListsResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/pinned_lists';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetPinnedListsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Pin List
-   * Causes the authenticated user to pin a specific List by its ID.
-
-
-
-
-   * @param body Request body
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async pinList(body: PinListRequest): Promise<PinListResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/pinned_lists';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: JSON.stringify(body || {}),
-
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<PinListResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Unpin List
-   * Causes the authenticated user to unpin a specific List by its ID.
-
-
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async unpinList(): Promise<UnpinListResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/pinned_lists/{list_id}';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<UnpinListResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get followed Lists
-   * Retrieves a list of Lists followed by a specific User by their ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getFollowedLists(
-    options: GetFollowedListsOptions = {}
-  ): Promise<GetFollowedListsResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/followed_lists';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetFollowedListsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Follow List
-   * Causes the authenticated user to follow a specific List by its ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async followList(
-    options: FollowListOptions = {}
-  ): Promise<FollowListResponse> {
-    // Destructure options
+  async getPosts(
+    id: string,
+    options: GetPostsOptions = {}
+  ): Promise<GetPostsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
 
     const {
-      body,
+      sinceId = undefined,
+
+      untilId = undefined,
+
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      exclude = [],
+
+      startTime = undefined,
+
+      endTime = undefined,
+
+      tweetfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      pollfields = [],
+
+      userfields = [],
+
+      placefields = [],
 
       requestOptions: requestOptions = {},
-    } = options;
+    } =
+      options || {};
 
     // Build the path with path parameters
-    let path = '/2/users/{id}/followed_lists';
+    let path = '/2/users/{id}/tweets';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
+    if (sinceId !== undefined) {
+      params.append('since_id', String(sinceId));
+    }
 
-      ...requestOptions,
-    };
+    if (untilId !== undefined) {
+      params.append('until_id', String(untilId));
+    }
 
-    return this.client.request<FollowListResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
 
-  /**
-   * Repost Post
-   * Causes the authenticated user to repost a specific Post by its ID.
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
 
+    if (exclude !== undefined) {
+      params.append('exclude', exclude.join(','));
+    }
 
+    if (startTime !== undefined) {
+      params.append('start_time', String(startTime));
+    }
 
+    if (endTime !== undefined) {
+      params.append('end_time', String(endTime));
+    }
 
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async repostPost(
-    options: RepostPostOptions = {}
-  ): Promise<RepostPostResponse> {
-    // Destructure options
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
 
-    const {
-      body,
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
 
-      requestOptions: requestOptions = {},
-    } = options;
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
 
-    // Build the path with path parameters
-    let path = '/2/users/{id}/retweets';
+    if (pollfields !== undefined) {
+      params.append('poll.fields', pollfields.join(','));
+    }
 
-    // Build query parameters
-    const params = new URLSearchParams();
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
 
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...requestOptions,
-    };
-
-    return this.client.request<RepostPostResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Like Post
-   * Causes the authenticated user to Like a specific Post by its ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async likePost(options: LikePostOptions = {}): Promise<LikePostResponse> {
-    // Destructure options
-
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } = options;
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/likes';
-
-    // Build query parameters
-    const params = new URLSearchParams();
+    if (placefields !== undefined) {
+      params.append('place.fields', placefields.join(','));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
       ...requestOptions,
     };
 
-    return this.client.request<LikePostResponse>(
-      'POST',
+    return this.client.request<GetPostsResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -1455,21 +922,62 @@ export class UsersClient {
    * Retrieves a list of Users muted by the authenticated user.
 
 
+   * @param id The ID of the authenticated source User for whom to return results.
 
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<GetMutingResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getMuting(options: GetMutingOptions = {}): Promise<GetMutingResponse> {
-    // Destructure options
+  async getMuting(
+    id: string,
+    options: GetMutingOptions = {}
+  ): Promise<GetMutingResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const { requestOptions: requestOptions = {} } = options;
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/users/{id}/muting';
 
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
     // Build query parameters
     const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -1488,22 +996,31 @@ export class UsersClient {
    * Causes the authenticated user to mute a specific User by their ID.
 
 
+   * @param id The ID of the authenticated source User that is requesting to mute the target User.
 
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<MuteUserResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async muteUser(options: MuteUserOptions = {}): Promise<MuteUserResponse> {
-    // Destructure options
+  async muteUser(
+    id: string,
+    options: MuteUserOptions = {}
+  ): Promise<MuteUserResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
 
     const {
       body,
 
       requestOptions: requestOptions = {},
-    } = options;
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/users/{id}/muting';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -1523,27 +1040,290 @@ export class UsersClient {
   }
 
   /**
+   * Unfollow List
+   * Causes the authenticated user to unfollow a specific List by its ID.
+
+
+   * @param id The ID of the authenticated source User that will unfollow the List.
+
+
+
+   * @param listId The ID of the List to unfollow.
+
+
+
+
+   * @returns {Promise<UnfollowListResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async unfollowList(
+    id: string,
+    listId: string
+  ): Promise<UnfollowListResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/followed_lists/{list_id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    path = path.replace('{list_id}', encodeURIComponent(String(listId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<UnfollowListResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get blocking
+   * Retrieves a list of Users blocked by the specified User ID.
+
+
+   * @param id The ID of the authenticated source User for whom to return results.
+
+
+
+
+   * @returns {Promise<GetBlockingResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getBlocking(
+    id: string,
+    options: GetBlockingOptions = {}
+  ): Promise<GetBlockingResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/blocking';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetBlockingResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Reposts of me
+   * Retrieves a list of Posts that repost content from the authenticated user.
+
+
+
+   * @returns {Promise<GetRepostsOfMeResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getRepostsOfMe(
+    options: GetRepostsOfMeOptions = {}
+  ): Promise<GetRepostsOfMeResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      tweetfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      pollfields = [],
+
+      userfields = [],
+
+      placefields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/reposts_of_me';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (pollfields !== undefined) {
+      params.append('poll.fields', pollfields.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (placefields !== undefined) {
+      params.append('place.fields', placefields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetRepostsOfMeResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Get Bookmarks
    * Retrieves a list of Posts bookmarked by the authenticated user.
 
 
+   * @param id The ID of the authenticated source User for whom to return results.
 
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<GetBookmarksResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async getBookmarks(
+    id: string,
     options: GetBookmarksOptions = {}
   ): Promise<GetBookmarksResponse> {
-    // Destructure options
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const { requestOptions: requestOptions = {} } = options;
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      tweetfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      pollfields = [],
+
+      userfields = [],
+
+      placefields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/users/{id}/bookmarks';
 
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
     // Build query parameters
     const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (pollfields !== undefined) {
+      params.append('poll.fields', pollfields.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (placefields !== undefined) {
+      params.append('place.fields', placefields.join(','));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -1562,22 +1342,28 @@ export class UsersClient {
    * Adds a post to the authenticated user’s bookmarks.
 
 
+   * @param id The ID of the authenticated source User for whom to add bookmarks.
+
+
 
 
    * @param body Request body
 
-   * @returns Promise with the API response
+   * @returns {Promise<CreateBookmarkResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async createBookmark(
+    id: string,
     body: CreateBookmarkRequest
   ): Promise<CreateBookmarkResponse> {
-    // Destructure options
+    // Destructure options (exclude path parameters, they're already function params)
 
     const requestOptions = {};
 
     // Build the path with path parameters
     let path = '/2/users/{id}/bookmarks';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -1597,24 +1383,1059 @@ export class UsersClient {
   }
 
   /**
+   * Unblock DMs
+   * Unblocks direct messages to or from a specific User by their ID for the authenticated user.
+
+
+   * @param id The ID of the target User that the authenticated user requesting to unblock dms for.
+
+
+
+
+   * @returns {Promise<UnblockDmsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async unblockDms(id: string): Promise<UnblockDmsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/dm/unblock';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<UnblockDmsResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get User by username
+   * Retrieves details of a specific User by their username.
+
+
+   * @param username A username.
+
+
+
+
+   * @returns {Promise<GetByUsernameResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByUsername(
+    username: string,
+    options: GetByUsernameOptions = {}
+  ): Promise<GetByUsernameResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/by/username/{username}';
+
+    path = path.replace('{username}', encodeURIComponent(String(username)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetByUsernameResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get following
+   * Retrieves a list of Users followed by a specific User by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetFollowingResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getFollowing(
+    id: string,
+    options: GetFollowingOptions = {}
+  ): Promise<GetFollowingResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/following';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetFollowingResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Follow User
+   * Causes the authenticated user to follow a specific user by their ID.
+
+
+   * @param id The ID of the authenticated source User that is requesting to follow the target User.
+
+
+
+
+   * @returns {Promise<FollowUserResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async followUser(
+    id: string,
+    options: FollowUserOptions = {}
+  ): Promise<FollowUserResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/following';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<FollowUserResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Block DMs
+   * Blocks direct messages to or from a specific User by their ID for the authenticated user.
+
+
+   * @param id The ID of the target User that the authenticated user requesting to block dms for.
+
+
+
+
+   * @returns {Promise<BlockDmsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async blockDms(id: string): Promise<BlockDmsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/dm/block';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<BlockDmsResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get List memberships
+   * Retrieves a list of Lists that a specific User is a member of by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetListMembershipsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getListMemberships(
+    id: string,
+    options: GetListMembershipsOptions = {}
+  ): Promise<GetListMembershipsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      listfields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/list_memberships';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (listfields !== undefined) {
+      params.append('list.fields', listfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetListMembershipsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Delete Bookmark
+   * Removes a Post from the authenticated user’s Bookmarks by its ID.
+
+
+   * @param id The ID of the authenticated source User whose bookmark is to be removed.
+
+
+
+   * @param tweetId The ID of the Post that the source User is removing from bookmarks.
+
+
+
+
+   * @returns {Promise<DeleteBookmarkResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async deleteBookmark(
+    id: string,
+    tweetId: string
+  ): Promise<DeleteBookmarkResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/bookmarks/{tweet_id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    path = path.replace('{tweet_id}', encodeURIComponent(String(tweetId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<DeleteBookmarkResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Search Users
+   * Retrieves a list of Users matching a search query.
+
+
+
+   * @param query TThe the query string by which to query for users.
+
+
+
+   * @returns {Promise<SearchResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async search(
+    query: any,
+    options: SearchOptions = {}
+  ): Promise<SearchResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxResults = undefined,
+
+      nextToken = undefined,
+
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/search';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (query !== undefined) {
+      params.append('query', String(query));
+    }
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (nextToken !== undefined) {
+      params.append('next_token', String(nextToken));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<SearchResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Users by usernames
+   * Retrieves details of multiple Users by their usernames.
+
+
+
+   * @param usernames A list of usernames, comma-separated.
+
+
+
+   * @returns {Promise<GetByUsernamesResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByUsernames(
+    usernames: Array<any>,
+    options: GetByUsernamesOptions = {}
+  ): Promise<GetByUsernamesResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/by';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (usernames !== undefined) {
+      params.append('usernames', usernames.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetByUsernamesResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get followed Lists
+   * Retrieves a list of Lists followed by a specific User by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetFollowedListsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getFollowedLists(
+    id: string,
+    options: GetFollowedListsOptions = {}
+  ): Promise<GetFollowedListsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      listfields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/followed_lists';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (listfields !== undefined) {
+      params.append('list.fields', listfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetFollowedListsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Follow List
+   * Causes the authenticated user to follow a specific List by its ID.
+
+
+   * @param id The ID of the authenticated source User that will follow the List.
+
+
+
+
+   * @returns {Promise<FollowListResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async followList(
+    id: string,
+    options: FollowListOptions = {}
+  ): Promise<FollowListResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/followed_lists';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<FollowListResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get owned Lists
+   * Retrieves a list of Lists owned by a specific User by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetOwnedListsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getOwnedLists(
+    id: string,
+    options: GetOwnedListsOptions = {}
+  ): Promise<GetOwnedListsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      listfields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/owned_lists';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (listfields !== undefined) {
+      params.append('list.fields', listfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetOwnedListsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get liked Posts
+   * Retrieves a list of Posts liked by a specific User by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetLikedPostsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getLikedPosts(
+    id: string,
+    options: GetLikedPostsOptions = {}
+  ): Promise<GetLikedPostsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      tweetfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      pollfields = [],
+
+      userfields = [],
+
+      placefields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/liked_tweets';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (pollfields !== undefined) {
+      params.append('poll.fields', pollfields.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (placefields !== undefined) {
+      params.append('place.fields', placefields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetLikedPostsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Bookmarks by folder ID
+   * Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
+
+
+   * @param id The ID of the authenticated source User for whom to return results.
+
+
+
+   * @param folderId The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.
+
+
+
+
+   * @returns {Promise<GetBookmarksByFolderIdResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getBookmarksByFolderId(
+    id: string,
+    folderId: string
+  ): Promise<GetBookmarksByFolderIdResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/bookmarks/folders/{folder_id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    path = path.replace('{folder_id}', encodeURIComponent(String(folderId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<GetBookmarksByFolderIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Unfollow User
+   * Causes the authenticated user to unfollow a specific user by their ID.
+
+
+   * @param sourceUserId The ID of the authenticated source User that is requesting to unfollow the target User.
+
+
+
+   * @param targetUserId The ID of the User that the source User is requesting to unfollow.
+
+
+
+
+   * @returns {Promise<UnfollowUserResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async unfollowUser(
+    sourceUserId: string,
+    targetUserId: string
+  ): Promise<UnfollowUserResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{source_user_id}/following/{target_user_id}';
+
+    path = path.replace(
+      '{source_user_id}',
+      encodeURIComponent(String(sourceUserId))
+    );
+
+    path = path.replace(
+      '{target_user_id}',
+      encodeURIComponent(String(targetUserId))
+    );
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<UnfollowUserResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Unmute User
+   * Causes the authenticated user to unmute a specific user by their ID.
+
+
+   * @param sourceUserId The ID of the authenticated source User that is requesting to unmute the target User.
+
+
+
+   * @param targetUserId The ID of the User that the source User is requesting to unmute.
+
+
+
+
+   * @returns {Promise<UnmuteUserResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async unmuteUser(
+    sourceUserId: string,
+    targetUserId: string
+  ): Promise<UnmuteUserResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{source_user_id}/muting/{target_user_id}';
+
+    path = path.replace(
+      '{source_user_id}',
+      encodeURIComponent(String(sourceUserId))
+    );
+
+    path = path.replace(
+      '{target_user_id}',
+      encodeURIComponent(String(targetUserId))
+    );
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<UnmuteUserResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Users by IDs
+   * Retrieves details of multiple Users by their IDs.
+
+
+
+   * @param ids A list of User IDs, comma-separated. You can specify up to 100 IDs.
+
+
+
+   * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByIds(
+    ids: Array<any>,
+    options: GetByIdsOptions = {}
+  ): Promise<GetByIdsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (ids !== undefined) {
+      params.append('ids', ids.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetByIdsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Unlike Post
    * Causes the authenticated user to Unlike a specific Post by its ID.
 
 
+   * @param id The ID of the authenticated source User that is requesting to unlike the Post.
+
+
+
+   * @param tweetId The ID of the Post that the User is requesting to unlike.
 
 
 
 
-   * @returns Promise with the API response
+   * @returns {Promise<UnlikePostResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async unlikePost(): Promise<UnlikePostResponse> {
-    // Destructure options
+  async unlikePost(id: string, tweetId: string): Promise<UnlikePostResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
 
     const requestOptions = {};
 
     // Build the path with path parameters
     let path = '/2/users/{id}/likes/{tweet_id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    path = path.replace('{tweet_id}', encodeURIComponent(String(tweetId)));
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -1626,6 +2447,709 @@ export class UsersClient {
 
     return this.client.request<UnlikePostResponse>(
       'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Like Post
+   * Causes the authenticated user to Like a specific Post by its ID.
+
+
+   * @param id The ID of the authenticated source User that is requesting to like the Post.
+
+
+
+
+   * @returns {Promise<LikePostResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async likePost(
+    id: string,
+    options: LikePostOptions = {}
+  ): Promise<LikePostResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/likes';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<LikePostResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Unrepost Post
+   * Causes the authenticated user to unrepost a specific Post by its ID.
+
+
+   * @param id The ID of the authenticated source User that is requesting to repost the Post.
+
+
+
+   * @param sourceTweetId The ID of the Post that the User is requesting to unretweet.
+
+
+
+
+   * @returns {Promise<UnrepostPostResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async unrepostPost(
+    id: string,
+    sourceTweetId: string
+  ): Promise<UnrepostPostResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/retweets/{source_tweet_id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    path = path.replace(
+      '{source_tweet_id}',
+      encodeURIComponent(String(sourceTweetId))
+    );
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<UnrepostPostResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Bookmark folders
+   * Retrieves a list of Bookmark folders created by the authenticated user.
+
+
+   * @param id The ID of the authenticated source User for whom to return results.
+
+
+
+
+   * @returns {Promise<GetBookmarkFoldersResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getBookmarkFolders(
+    id: string,
+    options: GetBookmarkFoldersOptions = {}
+  ): Promise<GetBookmarkFoldersResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/bookmarks/folders';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetBookmarkFoldersResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Repost Post
+   * Causes the authenticated user to repost a specific Post by its ID.
+
+
+   * @param id The ID of the authenticated source User that is requesting to repost the Post.
+
+
+
+
+   * @returns {Promise<RepostPostResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async repostPost(
+    id: string,
+    options: RepostPostOptions = {}
+  ): Promise<RepostPostResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/retweets';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<RepostPostResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Timeline
+   * Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
+
+
+   * @param id The ID of the authenticated source User to list Reverse Chronological Timeline Posts of.
+
+
+
+
+   * @returns {Promise<GetTimelineResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getTimeline(
+    id: string,
+    options: GetTimelineOptions = {}
+  ): Promise<GetTimelineResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      sinceId = undefined,
+
+      untilId = undefined,
+
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      exclude = [],
+
+      startTime = undefined,
+
+      endTime = undefined,
+
+      tweetfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      pollfields = [],
+
+      userfields = [],
+
+      placefields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/timelines/reverse_chronological';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (sinceId !== undefined) {
+      params.append('since_id', String(sinceId));
+    }
+
+    if (untilId !== undefined) {
+      params.append('until_id', String(untilId));
+    }
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (exclude !== undefined) {
+      params.append('exclude', exclude.join(','));
+    }
+
+    if (startTime !== undefined) {
+      params.append('start_time', String(startTime));
+    }
+
+    if (endTime !== undefined) {
+      params.append('end_time', String(endTime));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (pollfields !== undefined) {
+      params.append('poll.fields', pollfields.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (placefields !== undefined) {
+      params.append('place.fields', placefields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetTimelineResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get mentions
+   * Retrieves a list of Posts that mention a specific User by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetMentionsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getMentions(
+    id: string,
+    options: GetMentionsOptions = {}
+  ): Promise<GetMentionsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      sinceId = undefined,
+
+      untilId = undefined,
+
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      startTime = undefined,
+
+      endTime = undefined,
+
+      tweetfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      pollfields = [],
+
+      userfields = [],
+
+      placefields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/mentions';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (sinceId !== undefined) {
+      params.append('since_id', String(sinceId));
+    }
+
+    if (untilId !== undefined) {
+      params.append('until_id', String(untilId));
+    }
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (startTime !== undefined) {
+      params.append('start_time', String(startTime));
+    }
+
+    if (endTime !== undefined) {
+      params.append('end_time', String(endTime));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (pollfields !== undefined) {
+      params.append('poll.fields', pollfields.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (placefields !== undefined) {
+      params.append('place.fields', placefields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetMentionsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Unpin List
+   * Causes the authenticated user to unpin a specific List by its ID.
+
+
+   * @param id The ID of the authenticated source User for whom to return results.
+
+
+
+   * @param listId The ID of the List to unpin.
+
+
+
+
+   * @returns {Promise<UnpinListResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async unpinList(id: string, listId: string): Promise<UnpinListResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/pinned_lists/{list_id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    path = path.replace('{list_id}', encodeURIComponent(String(listId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<UnpinListResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get my User
+   * Retrieves details of the authenticated user.
+
+
+
+   * @returns {Promise<GetMeResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getMe(options: GetMeOptions = {}): Promise<GetMeResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/me';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetMeResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get User by ID
+   * Retrieves details of a specific User by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getById(
+    id: string,
+    options: GetByIdOptions = {}
+  ): Promise<GetByIdResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get pinned Lists
+   * Retrieves a list of Lists pinned by the authenticated user.
+
+
+   * @param id The ID of the authenticated source User for whom to return results.
+
+
+
+
+   * @returns {Promise<GetPinnedListsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getPinnedLists(
+    id: string,
+    options: GetPinnedListsOptions = {}
+  ): Promise<GetPinnedListsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      listfields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/pinned_lists';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (listfields !== undefined) {
+      params.append('list.fields', listfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetPinnedListsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Pin List
+   * Causes the authenticated user to pin a specific List by its ID.
+
+
+   * @param id The ID of the authenticated source User that will pin the List.
+
+
+
+
+   * @param body Request body
+
+   * @returns {Promise<PinListResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async pinList(id: string, body: PinListRequest): Promise<PinListResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/pinned_lists';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: JSON.stringify(body || {}),
+
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<PinListResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

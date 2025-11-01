@@ -39,11 +39,12 @@ export class ConnectionsClient {
    * Terminates all active streaming connections for the authenticated application.
 
 
-   * @returns Promise with the API response
+
+   * @returns {Promise<DeleteAllResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async deleteAll(): Promise<DeleteAllResponse> {
-    // Destructure options
+    // Destructure options (exclude path parameters, they're already function params)
 
     const requestOptions = {};
 

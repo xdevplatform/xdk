@@ -33,10 +33,10 @@ import {
  * @public
  */
 export interface {{ operation.class_name }}Options {
-    {% for param in operation.parameters | rejectattr('required') %}
-    {% if param.name %}
-    /** {% if param.description %}{{ param.description }}{% else %}{{ param.name }}{% endif %} */
-    {{ param.name | camel_case }}?: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %};
+    {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+    {% if param.variable_name %}
+    /** {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %} */
+    {{ param.variable_name }}?: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %};
     {% endif %}
     {% endfor %}
     {% if operation.request_body and not operation.request_body.required %}
@@ -74,22 +74,33 @@ export class {{ tag.class_name }}Client {
   /**
    * {{ operation.summary | default("") }}{% if operation.description %}
    * {{ operation.description }}{% endif %}
-{% for param in operation.parameters | selectattr('required') %}
-{% if param.name %}
-   * @param {{ param.name | camel_case }} {% if param.description %}{{ param.description }}{% else %}{{ param.name }}{% endif %}
+{% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+{% if param.variable_name %}
+   * @param {{ param.variable_name }} {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
+{% endif %}
+{% endfor %}
+{% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+{% if param.variable_name %}
+   * @param {{ param.variable_name }} {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
 {% endif %}
 {% endfor %}
 {% if operation.request_body and operation.request_body.required %}
    * @param body {% if operation.request_body.content and operation.request_body.content["application/json"] and operation.request_body.content["application/json"].schema and operation.request_body.content["application/json"].schema.description %}{{ operation.request_body.content["application/json"].schema.description }}{% else %}Request body{% endif %}
 {% endif %}
-   * @returns Promise with the API response
+   * @returns {Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>} Promise resolving to the API response
    */
     // Overload 1: Default behavior (unwrapped response)
     async {{ operation.method_name }}(
-        {# Required parameters #}
-        {% for param in operation.parameters | selectattr('required') %}
-        {% if param.name %}
-        {{ param.name | camel_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
+        {# Path parameters are always required - use location field #}
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}string{% endif %},
+        {% endif %}
+        {% endfor %}
+        {# Required query/header parameters (but not path, since those are already included above) #}
+        {% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
         {% endif %}
         {% endfor %}
         {# Required request body #}
@@ -97,53 +108,53 @@ export class {{ tag.class_name }}Client {
         body: {{ operation.class_name }}Request,
         {% endif %}
         {# Options object for all optional parameters #}
-        {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
         options: {{ operation.class_name }}Options = {}
         {% endif %}
     ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}> {
-        // Destructure options
-        {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        // Destructure options (exclude path parameters, they're already function params)
+        {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
         const {
-            {% for param in operation.parameters | rejectattr('required') %}
-            {% if param.name %}
-            {{ param.name | camel_case }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
+            {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+            {% if param.variable_name %}
+            {{ param.variable_name }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
             {% endif %}
             {% endfor %}
             {% if operation.request_body and not operation.request_body.required %}
             body,
             {% endif %}
             requestOptions: requestOptions = {}
-        } = options;
+        } = options || {};
         {% else %}
         const requestOptions = {};
         {% endif %}
 
         // Build the path with path parameters
         let path = '{{ operation.path }}';
-        {% for param in operation.parameters | selectattr('in', 'equalto', 'path') %}
-        {% if param.name %}
-        path = path.replace('{{ '{' }}{{ param.name }}{{ '}' }}', encodeURIComponent(String({{ param.name | camel_case }})));
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        path = path.replace('{{ '{' }}{{ param.original_name }}{{ '}' }}', encodeURIComponent(String({{ param.variable_name }})));
         {% endif %}
         {% endfor %}
 
         // Build query parameters
         const params = new URLSearchParams();
-        {% for param in operation.parameters | selectattr('in', 'equalto', 'query') %}
-        {% if param.name %}
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'query') %}
+        {% if param.variable_name %}
         {% if param.required %}
-        if ({{ param.name | camel_case }} !== undefined) {
+        if ({{ param.variable_name }} !== undefined) {
             {% if param.schema and param.schema.type == 'array' %}
-            params.append('{{ param.name }}', {{ param.name | camel_case }}.join(','));
+            params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
             {% else %}
-            params.append('{{ param.name }}', String({{ param.name | camel_case }}));
+            params.append('{{ param.original_name }}', String({{ param.variable_name }}));
             {% endif %}
         }
         {% else %}
-        if ({{ param.name | camel_case }} !== undefined) {
+        if ({{ param.variable_name }} !== undefined) {
             {% if param.schema and param.schema.type == 'array' %}
-            params.append('{{ param.name }}', {{ param.name | camel_case }}.join(','));
+            params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
             {% else %}
-            params.append('{{ param.name }}', String({{ param.name | camel_case }}));
+            params.append('{{ param.original_name }}', String({{ param.variable_name }}));
             {% endif %}
         }
         {% endif %}
@@ -180,47 +191,58 @@ export class {{ tag.class_name }}Client {
    * {{ operation.summary | default("") }}{% if operation.description %}
    * {{ operation.description }}{% endif %}
    * Returns a paginator for automatic pagination through all results.
-{% for param in operation.parameters | selectattr('required') %}
-{% if param.name %}
-   * @param {{ param.name | camel_case }} {% if param.description %}{{ param.description }}{% else %}{{ param.name }}{% endif %}
+{% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+{% if param.variable_name %}
+   * @param {{ param.variable_name }} {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
+{% endif %}
+{% endfor %}
+{% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+{% if param.variable_name %}
+   * @param {{ param.variable_name }} {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
 {% endif %}
 {% endfor %}
    * @param options Options for the paginated request
    * @returns A paginator instance for iterating through all results
    */
   async {{ operation.method_name }}(
-    {# Required parameters #}
-    {% for param in operation.parameters | selectattr('required') %}
-    {% if param.name %}
-    {{ param.name | camel_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
+    {# Path parameters are always required #}
+    {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+    {% if param.variable_name %}
+    {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}string{% endif %},
+    {% endif %}
+    {% endfor %}
+    {# Required query/header parameters (but not path) #}
+    {% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+    {% if param.variable_name %}
+    {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
     {% endif %}
     {% endfor %}
     {# Options object for all optional parameters #}
-    {% if operation.parameters | rejectattr('required') | list | length > 0 %}
+    {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 %}
     options: {{ operation.class_name }}Options = {}
     {% else %}
     options: { requestOptions?: RequestOptions } = {}
     {% endif %}
   ): Promise<{% if 'tweet' in operation.method_name|lower or 'post' in operation.method_name|lower %}PostPaginator{% elif 'user' in operation.method_name|lower or 'users' in operation.method_name|lower or 'list' in operation.method_name|lower %}UserPaginator{% elif 'event' in operation.method_name|lower or 'dm' in operation.method_name|lower %}EventPaginator{% else %}Paginator<any>{% endif %}> {
-    // Destructure options
-    {% if operation.parameters | rejectattr('required') | list | length > 0 %}
+    // Destructure options (exclude path parameters)
+    {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 %}
     const {
-        {% for param in operation.parameters | rejectattr('required') %}
-        {% if param.name %}
-        {{ param.name | camel_case }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
+        {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
         {% endif %}
         {% endfor %}
         requestOptions: requestOptions = {}
-    } = options;
+    } = options || {};
     {% else %}
     const { requestOptions: requestOptions = {} } = options;
     {% endif %}
 
     // Build the path with path parameters
     let path = '{{ operation.path }}';
-    {% for param in operation.parameters | selectattr('in', 'equalto', 'path') %}
-    {% if param.name %}
-    path = path.replace('{{ '{' }}{{ param.name }}{{ '}' }}', encodeURIComponent(String({{ param.name | camel_case }})));
+    {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+    {% if param.variable_name %}
+    path = path.replace('{{ '{' }}{{ param.original_name }}{{ '}' }}', encodeURIComponent(String({{ param.variable_name }})));
     {% endif %}
     {% endfor %}
 
@@ -228,22 +250,22 @@ export class {{ tag.class_name }}Client {
     const fetchPage = async (paginationToken?: string) => {
       // Build query parameters
       const params = new URLSearchParams();
-      {% for param in operation.parameters | selectattr('in', 'equalto', 'query') %}
-      {% if param.name %}
+      {% for param in operation.parameters | selectattr('location', 'equalto', 'query') %}
+      {% if param.variable_name %}
       {% if param.required %}
-      if ({{ param.name | camel_case }} !== undefined) {
+      if ({{ param.variable_name }} !== undefined) {
           {% if param.schema and param.schema.type == 'array' %}
-          params.append('{{ param.name }}', {{ param.name | camel_case }}.join(','));
+          params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
           {% else %}
-          params.append('{{ param.name }}', String({{ param.name | camel_case }}));
+          params.append('{{ param.original_name }}', String({{ param.variable_name }}));
           {% endif %}
       }
       {% else %}
-      if ({{ param.name | camel_case }} !== undefined) {
+      if ({{ param.variable_name }} !== undefined) {
           {% if param.schema and param.schema.type == 'array' %}
-          params.append('{{ param.name }}', {{ param.name | camel_case }}.join(','));
+          params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
           {% else %}
-          params.append('{{ param.name }}', String({{ param.name | camel_case }}));
+          params.append('{{ param.original_name }}', String({{ param.variable_name }}));
           {% endif %}
       }
       {% endif %}

@@ -14,6 +14,9 @@ import { GetPersonalizedResponse, GetByWoeidResponse } from './models.js';
  * @public
  */
 export interface GetPersonalizedStreamingOptions {
+  /** A comma separated list of PersonalizedTrend fields to display. */
+  personalizedTrendfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -27,6 +30,12 @@ export interface GetPersonalizedStreamingOptions {
  * @public
  */
 export interface GetByWoeidStreamingOptions {
+  /** The maximum number of results. */
+  maxTrends?: number;
+
+  /** A comma separated list of Trend fields to display. */
+  trendfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -61,25 +70,39 @@ export class TrendsClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'getPersonalized');
 
-    // Destructure options with defaults
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const requestOptions = {};
+    const {
+      personalizedTrendfields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/personalized_trends';
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    // Build path parameters
-    let path = `/2/users/personalized_trends`;
+    if (personalizedTrendfields !== undefined) {
+      params.append(
+        'personalized_trend.fields',
+        personalizedTrendfields.join(',')
+      );
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...(options.headers || {}),
+        ...headers,
       },
-      signal: options.signal,
+      signal: signal,
 
-      ...options,
+      ...requestOptions,
     };
 
     // Make the request
@@ -97,6 +120,7 @@ export class TrendsClient {
      * @returns Promise with the API response
      */
   async getByWoeid(
+    woeid: number,
     options: GetByWoeidStreamingOptions = {}
   ): Promise<GetByWoeidResponse> {
     // Validate authentication requirements
@@ -107,25 +131,44 @@ export class TrendsClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'getByWoeid');
 
-    // Destructure options with defaults
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const { requestOptions: requestOptions = {} } = options;
+    const {
+      maxTrends = undefined,
+
+      trendfields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/trends/by/woeid/{woeid}';
+
+    path = path.replace('{woeid}', encodeURIComponent(String(woeid)));
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    // Build path parameters
-    let path = `/2/trends/by/woeid/{woeid}`;
+    if (maxTrends !== undefined) {
+      params.append('max_trends', String(maxTrends));
+    }
+
+    if (trendfields !== undefined) {
+      params.append('trend.fields', trendfields.join(','));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...(options.headers || {}),
+        ...headers,
       },
-      signal: options.signal,
+      signal: signal,
 
-      ...options,
+      ...requestOptions,
     };
 
     // Make the request

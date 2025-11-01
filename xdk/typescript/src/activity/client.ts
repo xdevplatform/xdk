@@ -12,14 +12,33 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
+  StreamResponse,
   UpdateSubscriptionRequest,
   UpdateSubscriptionResponse,
   DeleteSubscriptionResponse,
-  StreamResponse,
   GetSubscriptionsResponse,
   CreateSubscriptionRequest,
   CreateSubscriptionResponse,
 } from './models.js';
+
+/**
+ * Options for stream method
+ * 
+ * @public
+ */
+export interface StreamOptions {
+  /** The number of minutes of backfill requested. */
+  backfillMinutes?: number;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
+  endTime?: string;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
 
 /**
  * Options for updateSubscription method
@@ -30,16 +49,6 @@ export interface UpdateSubscriptionOptions {
   /** Request body */
   body?: UpdateSubscriptionRequest;
 
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for stream method
- * 
- * @public
- */
-export interface StreamOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -79,28 +88,91 @@ export class ActivityClient {
   }
 
   /**
+   * Activity Stream
+   * Stream of X Activities
+
+
+
+   * @returns {Promise<StreamResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async stream(options: StreamOptions = {}): Promise<StreamResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      backfillMinutes = undefined,
+
+      startTime = undefined,
+
+      endTime = undefined,
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/activity/stream';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (backfillMinutes !== undefined) {
+      params.append('backfill_minutes', String(backfillMinutes));
+    }
+
+    if (startTime !== undefined) {
+      params.append('start_time', String(startTime));
+    }
+
+    if (endTime !== undefined) {
+      params.append('end_time', String(endTime));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<StreamResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Update X activity subscription
    * Updates a subscription for an X activity event
 
 
+   * @param subscriptionId The ID of the subscription to update.
 
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<UpdateSubscriptionResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async updateSubscription(
+    subscriptionId: string,
     options: UpdateSubscriptionOptions = {}
   ): Promise<UpdateSubscriptionResponse> {
-    // Destructure options
+    // Destructure options (exclude path parameters, they're already function params)
 
     const {
       body,
 
       requestOptions: requestOptions = {},
-    } = options;
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/activity/subscriptions/{subscription_id}';
+
+    path = path.replace(
+      '{subscription_id}',
+      encodeURIComponent(String(subscriptionId))
+    );
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -124,18 +196,28 @@ export class ActivityClient {
    * Deletes a subscription for an X activity event
 
 
+   * @param subscriptionId The ID of the subscription to delete.
 
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<DeleteSubscriptionResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async deleteSubscription(): Promise<DeleteSubscriptionResponse> {
-    // Destructure options
+  async deleteSubscription(
+    subscriptionId: string
+  ): Promise<DeleteSubscriptionResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
 
     const requestOptions = {};
 
     // Build the path with path parameters
     let path = '/2/activity/subscriptions/{subscription_id}';
+
+    path = path.replace(
+      '{subscription_id}',
+      encodeURIComponent(String(subscriptionId))
+    );
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -153,46 +235,16 @@ export class ActivityClient {
   }
 
   /**
-   * Activity Stream
-   * Stream of X Activities
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async stream(options: StreamOptions = {}): Promise<StreamResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/activity/stream';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<StreamResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
    * Get X activity subscriptions
    * Get a list of active subscriptions for XAA
 
 
-   * @returns Promise with the API response
+
+   * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async getSubscriptions(): Promise<GetSubscriptionsResponse> {
-    // Destructure options
+    // Destructure options (exclude path parameters, they're already function params)
 
     const requestOptions = {};
 
@@ -219,19 +271,21 @@ export class ActivityClient {
    * Creates a subscription for an X activity event
 
 
-   * @returns Promise with the API response
+
+   * @returns {Promise<CreateSubscriptionResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async createSubscription(
     options: CreateSubscriptionOptions = {}
   ): Promise<CreateSubscriptionResponse> {
-    // Destructure options
+    // Destructure options (exclude path parameters, they're already function params)
 
     const {
       body,
 
       requestOptions: requestOptions = {},
-    } = options;
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/activity/subscriptions';

@@ -4,6 +4,27 @@
 
 ## Table of contents
 
+### Namespaces
+
+- [AccountActivity](modules/AccountActivity.md)
+- [Activity](modules/Activity.md)
+- [Communities](modules/Communities.md)
+- [CommunityNotes](modules/CommunityNotes.md)
+- [Compliance](modules/Compliance.md)
+- [Connections](modules/Connections.md)
+- [DirectMessages](modules/DirectMessages.md)
+- [General](modules/General.md)
+- [Lists](modules/Lists.md)
+- [Media](modules/Media.md)
+- [Posts](modules/Posts.md)
+- [Schemas](modules/Schemas.md)
+- [Spaces](modules/Spaces.md)
+- [Stream](modules/Stream.md)
+- [Trends](modules/Trends.md)
+- [Usage](modules/Usage.md)
+- [Users](modules/Users.md)
+- [Webhooks](modules/Webhooks.md)
+
 ### Client Classes
 
 - [Client](classes/Client.md)
@@ -107,4 +128,4 @@
 
 #### Defined in
 
-[http-client.ts:205](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L205)
+[http-client.ts:205](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/http-client.ts#L205)

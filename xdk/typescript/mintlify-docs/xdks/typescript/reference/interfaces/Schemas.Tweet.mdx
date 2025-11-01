@@ -1,0 +1,126 @@
+---
+title: "Tweet"
+sidebarTitle: "Tweet"
+---
+
+[Schemas](/xdks/typescript/reference/modules/Schemas).Tweet
+
+## Properties
+
+<ResponseField name="attachments" type="Record&lt;string, any&gt;">
+Specifies the type of attachments (if any) present in this Tweet.
+
+</ResponseField>
+
+<ResponseField name="authorId" type="string">
+</ResponseField>
+
+<ResponseField name="communityId" type="string">
+</ResponseField>
+
+<ResponseField name="contextAnnotations" type="ContextAnnotation[]">
+none
+
+</ResponseField>
+
+<ResponseField name="conversationId" type="string">
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+Creation time of the Tweet.
+
+</ResponseField>
+
+<ResponseField name="displayTextRange" type="DisplayTextRange">
+</ResponseField>
+
+<ResponseField name="editControls" type="Record&lt;string, any&gt;">
+none
+
+</ResponseField>
+
+<ResponseField name="editHistoryTweetIds" type="string[]">
+A list of Tweet Ids in this Tweet chain.
+
+</ResponseField>
+
+<ResponseField name="entities" type="FullTextEntities">
+</ResponseField>
+
+<ResponseField name="geo" type="Record&lt;string, any&gt;">
+The location tagged on the Tweet, if the user provided one.
+
+</ResponseField>
+
+<ResponseField name="id" type="string">
+</ResponseField>
+
+<ResponseField name="inReplyToUserId" type="string">
+</ResponseField>
+
+<ResponseField name="lang" type="string">
+Language of the Tweet, if detected by X. Returned as a BCP47 language tag.
+
+</ResponseField>
+
+<ResponseField name="nonPublicMetrics" type="Record&lt;string, any&gt;">
+Nonpublic engagement metrics for the Tweet at the time of the request.
+
+</ResponseField>
+
+<ResponseField name="noteTweet" type="Record&lt;string, any&gt;">
+The full-content of the Tweet, including text beyond 280 characters.
+
+</ResponseField>
+
+<ResponseField name="organicMetrics" type="Record&lt;string, any&gt;">
+Organic nonpublic engagement metrics for the Tweet at the time of the request.
+
+</ResponseField>
+
+<ResponseField name="possiblySensitive" type="boolean">
+Indicates if this Tweet contains URLs marked as sensitive, for example content suitable for mature audiences.
+
+</ResponseField>
+
+<ResponseField name="promotedMetrics" type="Record&lt;string, any&gt;">
+Promoted nonpublic engagement metrics for the Tweet at the time of the request.
+
+</ResponseField>
+
+<ResponseField name="publicMetrics" type="Record&lt;string, any&gt;">
+Engagement metrics for the Tweet at the time of the request.
+
+</ResponseField>
+
+<ResponseField name="referencedTweets" type="Record&lt;string, any&gt;[]">
+A list of Posts this Tweet refers to. For example, if the parent Tweet is a Retweet, a Quoted Tweet or a Reply, it will include the related Tweet referenced to by its parent.
+
+</ResponseField>
+
+<ResponseField name="replySettings" type="ReplySettingsWithVerifiedUsers">
+</ResponseField>
+
+<ResponseField name="scopes" type="Record&lt;string, any&gt;">
+The scopes for this tweet
+
+</ResponseField>
+
+<ResponseField name="source" type="string">
+This is deprecated.
+
+</ResponseField>
+
+<ResponseField name="suggestedSourceLinks" type="any[]">
+none
+
+</ResponseField>
+
+<ResponseField name="text" type="string">
+</ResponseField>
+
+<ResponseField name="username" type="string">
+</ResponseField>
+
+<ResponseField name="withheld" type="TweetWithheld">
+</ResponseField>

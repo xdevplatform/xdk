@@ -14,11 +14,36 @@ import {
 import { GetByIdResponse, SearchResponse } from './models.js';
 
 /**
+ * Options for getById method
+ * 
+ * @public
+ */
+export interface GetByIdOptions {
+  /** A comma separated list of Community fields to display. */
+  communityfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
  * Options for search method
  * 
  * @public
  */
 export interface SearchOptions {
+  /** The maximum number of search results to be returned by a request. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+  nextToken?: any;
+
+  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+  paginationToken?: any;
+
+  /** A comma separated list of Community fields to display. */
+  communityfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -49,25 +74,42 @@ export class CommunitiesClient {
    * Retrieves details of a specific Community by its ID.
 
 
+   * @param id The ID of the Community.
 
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getById(): Promise<GetByIdResponse> {
-    // Destructure options
+  async getById(
+    id: string,
+    options: GetByIdOptions = {}
+  ): Promise<GetByIdResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const requestOptions = {};
+    const {
+      communityfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/communities/{id}';
 
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
     // Build query parameters
     const params = new URLSearchParams();
 
+    if (communityfields !== undefined) {
+      params.append('community.fields', communityfields.join(','));
+    }
+
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
+      ...requestOptions,
     };
 
     return this.client.request<GetByIdResponse>(
@@ -83,20 +125,57 @@ export class CommunitiesClient {
 
 
 
+   * @param query Query to search communities.
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<SearchResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async search(options: SearchOptions = {}): Promise<SearchResponse> {
-    // Destructure options
+  async search(
+    query: string,
+    options: SearchOptions = {}
+  ): Promise<SearchResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const { requestOptions: requestOptions = {} } = options;
+    const {
+      maxResults = undefined,
+
+      nextToken = undefined,
+
+      paginationToken = undefined,
+
+      communityfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/communities/search';
 
     // Build query parameters
     const params = new URLSearchParams();
+
+    if (query !== undefined) {
+      params.append('query', String(query));
+    }
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (nextToken !== undefined) {
+      params.append('next_token', String(nextToken));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (communityfields !== undefined) {
+      params.append('community.fields', communityfields.join(','));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {

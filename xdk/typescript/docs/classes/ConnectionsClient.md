@@ -38,23 +38,23 @@ Creates a new connections client instance
 
 #### Defined in
 
-[connections/client.ts:33](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/connections/client.ts#L33)
+[connections/client.ts:33](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/connections/client.ts#L33)
 
 ## Methods
 
 ### deleteAll
 
-▸ **deleteAll**(): `Promise`\<`any`\>
+▸ **deleteAll**(): `Promise`\<[`KillAllConnectionsResponse`](../interfaces/Schemas.KillAllConnectionsResponse.md)\>
 
 Terminate all connections
 Terminates all active streaming connections for the authenticated application.
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`KillAllConnectionsResponse`](../interfaces/Schemas.KillAllConnectionsResponse.md)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[connections/client.ts:45](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/connections/client.ts#L45)
+[connections/client.ts:46](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/connections/client.ts#L46)

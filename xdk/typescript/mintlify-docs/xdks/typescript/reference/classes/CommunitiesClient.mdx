@@ -29,48 +29,56 @@ Creates a new communities client instance
 
 #### Defined in
 
-[communities/client.ts:43](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/communities/client.ts#L43)
+[communities/client.ts:68](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/communities/client.ts#L68)
 
 ## Methods
 
 ### getById
 
-▸ **getById**(): `Promise`\<`any`\>
+▸ **getById**(`id`, `options?`): `Promise`\<[`Get2CommunitiesIdResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2CommunitiesIdResponse)\>
 
 Get Community by ID
 Retrieves details of a specific Community by its ID.
 
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the Community. |
+| `options` | `GetByIdOptions` | - |
+
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`Get2CommunitiesIdResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2CommunitiesIdResponse)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[communities/client.ts:57](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/communities/client.ts#L57)
+[communities/client.ts:85](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/communities/client.ts#L85)
 
 ___
 
 ### search
 
-▸ **search**(`options?`): `Promise`\<`any`\>
+▸ **search**(`query`, `options?`): `Promise`\<[`Get2CommunitiesSearchResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2CommunitiesSearchResponse)\>
 
 Search Communities
 Retrieves a list of Communities matching the specified search query.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | `SearchOptions` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `query` | `string` | Query to search communities. |
+| `options` | `SearchOptions` | - |
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`Get2CommunitiesSearchResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2CommunitiesSearchResponse)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[communities/client.ts:90](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/communities/client.ts#L90)
+[communities/client.ts:135](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/communities/client.ts#L135)

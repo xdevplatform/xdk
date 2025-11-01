@@ -7,13 +7,35 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
+  StreamResponse,
   UpdateSubscriptionResponse,
   DeleteSubscriptionResponse,
-  StreamResponse,
   GetSubscriptionsResponse,
   CreateSubscriptionResponse,
 } from './models.js';
 
+/**
+ * Options for stream method
+ * 
+ * @public
+ */
+export interface StreamStreamingOptions {
+  /** The number of minutes of backfill requested. */
+  backfillMinutes?: number;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
+  endTime?: string;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
 /**
  * Options for updateSubscription method
  * 
@@ -36,19 +58,6 @@ export interface UpdateSubscriptionStreamingOptions {
  * @public
  */
 export interface DeleteSubscriptionStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for stream method
- * 
- * @public
- */
-export interface StreamStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -100,6 +109,10 @@ export class ActivityClient {
      * Returns an event-driven stream that's easy to use.
      * Use .on() to listen for events like 'data', 'error', 'close'.
      * Also supports async iteration with for await...of.
+
+
+
+     * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
      */
   async stream(
     options: StreamStreamingOptions = {}
@@ -112,30 +125,55 @@ export class ActivityClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'stream');
 
-    // Destructure options with defaults
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const { requestOptions: requestOptions = {} } = options;
+    const {
+      backfillMinutes = undefined,
+
+      startTime = undefined,
+
+      endTime = undefined,
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/activity/stream';
 
     // Build query parameters
     const params = new URLSearchParams();
 
+    if (backfillMinutes !== undefined) {
+      params.append('backfill_minutes', String(backfillMinutes));
+    }
+
+    if (startTime !== undefined) {
+      params.append('start_time', String(startTime));
+    }
+
+    if (endTime !== undefined) {
+      params.append('end_time', String(endTime));
+    }
+
     // Make the authenticated request using the main client's request method
     // We need raw: true to get the raw Response object for streaming
-    const url =
-      '/2/activity/stream' + (params.toString() ? `?${params.toString()}` : '');
+    const url = path + (params.toString() ? `?${params.toString()}` : '');
 
     // For streaming requests, we don't want to timeout the initial connection
     // Instead, we'll handle timeouts at the stream level
     const response = (await this.client.request('GET', url, {
       headers: {
         'Content-Type': 'application/json',
-        ...(options.headers || {}),
+        ...headers,
       },
 
-      signal: options.signal,
+      signal: signal,
       raw: true, // Get raw Response object for streaming
       timeout: 0, // Disable timeout for streaming requests
-      ...options,
+      ...requestOptions,
     })) as Response;
 
     // Handle errors
@@ -162,6 +200,7 @@ export class ActivityClient {
      * @returns Promise with the API response
      */
   async updateSubscription(
+    subscriptionId: string,
     options: UpdateSubscriptionStreamingOptions = {}
   ): Promise<UpdateSubscriptionResponse> {
     // Validate authentication requirements
@@ -172,31 +211,39 @@ export class ActivityClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'updateSubscription');
 
-    // Destructure options with defaults
+    // Destructure options (exclude path parameters, they're already function params)
 
     const {
       body,
 
+      headers = {},
+      signal,
       requestOptions: requestOptions = {},
-    } = options;
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/activity/subscriptions/{subscription_id}';
+
+    path = path.replace(
+      '{subscription_id}',
+      encodeURIComponent(String(subscriptionId))
+    );
 
     // Build query parameters
     const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/activity/subscriptions/{subscription_id}`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...(options.headers || {}),
+        ...headers,
       },
-      signal: options.signal,
+      signal: signal,
 
       body: JSON.stringify(body),
 
-      ...options,
+      ...requestOptions,
     };
 
     // Make the request
@@ -214,6 +261,7 @@ export class ActivityClient {
      * @returns Promise with the API response
      */
   async deleteSubscription(
+    subscriptionId: string,
     options: DeleteSubscriptionStreamingOptions = {}
   ): Promise<DeleteSubscriptionResponse> {
     // Validate authentication requirements
@@ -224,25 +272,30 @@ export class ActivityClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'deleteSubscription');
 
-    // Destructure options with defaults
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const requestOptions = {};
+    const { headers = {}, signal, requestOptions = {} } = options || {};
+
+    // Build the path with path parameters
+    let path = '/2/activity/subscriptions/{subscription_id}';
+
+    path = path.replace(
+      '{subscription_id}',
+      encodeURIComponent(String(subscriptionId))
+    );
 
     // Build query parameters
     const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/activity/subscriptions/{subscription_id}`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...(options.headers || {}),
+        ...headers,
       },
-      signal: options.signal,
+      signal: signal,
 
-      ...options,
+      ...requestOptions,
     };
 
     // Make the request
@@ -270,25 +323,25 @@ export class ActivityClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'getSubscriptions');
 
-    // Destructure options with defaults
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const requestOptions = {};
+    const { headers = {}, signal, requestOptions = {} } = options || {};
+
+    // Build the path with path parameters
+    let path = '/2/activity/subscriptions';
 
     // Build query parameters
     const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/activity/subscriptions`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...(options.headers || {}),
+        ...headers,
       },
-      signal: options.signal,
+      signal: signal,
 
-      ...options,
+      ...requestOptions,
     };
 
     // Make the request
@@ -316,31 +369,34 @@ export class ActivityClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'createSubscription');
 
-    // Destructure options with defaults
+    // Destructure options (exclude path parameters, they're already function params)
 
     const {
       body,
 
+      headers = {},
+      signal,
       requestOptions: requestOptions = {},
-    } = options;
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/activity/subscriptions';
 
     // Build query parameters
     const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/activity/subscriptions`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...(options.headers || {}),
+        ...headers,
       },
-      signal: options.signal,
+      signal: signal,
 
       body: JSON.stringify(body),
 
-      ...options,
+      ...requestOptions,
     };
 
     // Make the request

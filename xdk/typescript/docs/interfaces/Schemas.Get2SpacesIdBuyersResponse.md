@@ -1,0 +1,60 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / Get2SpacesIdBuyersResponse
+
+# Interface: Get2SpacesIdBuyersResponse
+
+[Schemas](../modules/Schemas.md).Get2SpacesIdBuyersResponse
+
+## Table of contents
+
+### Properties
+
+- [data](Schemas.Get2SpacesIdBuyersResponse.md#data)
+- [errors](Schemas.Get2SpacesIdBuyersResponse.md#errors)
+- [includes](Schemas.Get2SpacesIdBuyersResponse.md#includes)
+- [meta](Schemas.Get2SpacesIdBuyersResponse.md#meta)
+
+## Properties
+
+### data
+
+• `Optional` **data**: [`User`](Schemas.User.md)[]
+
+none
+
+#### Defined in
+
+[schemas.ts:925](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L925)
+
+___
+
+### errors
+
+• `Optional` **errors**: [`Problem`](Schemas.Problem.md)[]
+
+none
+
+#### Defined in
+
+[schemas.ts:926](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L926)
+
+___
+
+### includes
+
+• `Optional` **includes**: [`Expansions`](Schemas.Expansions.md)
+
+#### Defined in
+
+[schemas.ts:927](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L927)
+
+___
+
+### meta
+
+• `Optional` **meta**: `Record`\<`string`, `any`\>
+
+none
+
+#### Defined in
+
+[schemas.ts:928](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L928)

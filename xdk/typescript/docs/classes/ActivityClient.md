@@ -16,9 +16,9 @@ parsing for all activity related operations.
 
 ### Methods
 
+- [stream](ActivityClient.md#stream)
 - [updateSubscription](ActivityClient.md#updatesubscription)
 - [deleteSubscription](ActivityClient.md#deletesubscription)
-- [stream](ActivityClient.md#stream)
 - [getSubscriptions](ActivityClient.md#getsubscriptions)
 - [createSubscription](ActivityClient.md#createsubscription)
 
@@ -42,57 +42,13 @@ Creates a new activity client instance
 
 #### Defined in
 
-[activity/client.ts:77](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/activity/client.ts#L77)
+[activity/client.ts:86](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/activity/client.ts#L86)
 
 ## Methods
 
-### updateSubscription
-
-▸ **updateSubscription**(`options?`): `Promise`\<`any`\>
-
-Update X activity subscription
-Updates a subscription for an X activity event
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `UpdateSubscriptionOptions` |
-
-#### Returns
-
-`Promise`\<`any`\>
-
-Promise with the API response
-
-#### Defined in
-
-[activity/client.ts:91](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/activity/client.ts#L91)
-
-___
-
-### deleteSubscription
-
-▸ **deleteSubscription**(): `Promise`\<`any`\>
-
-Deletes X activity subscription
-Deletes a subscription for an X activity event
-
-#### Returns
-
-`Promise`\<`any`\>
-
-Promise with the API response
-
-#### Defined in
-
-[activity/client.ts:132](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/activity/client.ts#L132)
-
-___
-
 ### stream
 
-▸ **stream**(`options?`): `Promise`\<`any`\>
+▸ **stream**(`options?`): `Promise`\<[`ActivityStreamingResponse`](../interfaces/Schemas.ActivityStreamingResponse.md)\>
 
 Activity Stream
 Stream of X Activities
@@ -105,38 +61,89 @@ Stream of X Activities
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`ActivityStreamingResponse`](../interfaces/Schemas.ActivityStreamingResponse.md)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[activity/client.ts:163](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/activity/client.ts#L163)
+[activity/client.ts:99](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/activity/client.ts#L99)
+
+___
+
+### updateSubscription
+
+▸ **updateSubscription**(`subscriptionId`, `options?`): `Promise`\<[`ActivitySubscriptionUpdateResponse`](../interfaces/Schemas.ActivitySubscriptionUpdateResponse.md)\>
+
+Update X activity subscription
+Updates a subscription for an X activity event
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subscriptionId` | `string` | The ID of the subscription to update. |
+| `options` | `UpdateSubscriptionOptions` | - |
+
+#### Returns
+
+`Promise`\<[`ActivitySubscriptionUpdateResponse`](../interfaces/Schemas.ActivitySubscriptionUpdateResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[activity/client.ts:156](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/activity/client.ts#L156)
+
+___
+
+### deleteSubscription
+
+▸ **deleteSubscription**(`subscriptionId`): `Promise`\<[`ActivitySubscriptionDeleteResponse`](../interfaces/Schemas.ActivitySubscriptionDeleteResponse.md)\>
+
+Deletes X activity subscription
+Deletes a subscription for an X activity event
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `subscriptionId` | `string` | The ID of the subscription to delete. |
+
+#### Returns
+
+`Promise`\<[`ActivitySubscriptionDeleteResponse`](../interfaces/Schemas.ActivitySubscriptionDeleteResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[activity/client.ts:207](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/activity/client.ts#L207)
 
 ___
 
 ### getSubscriptions
 
-▸ **getSubscriptions**(): `Promise`\<`any`\>
+▸ **getSubscriptions**(): `Promise`\<[`ActivitySubscriptionGetResponse`](../interfaces/Schemas.ActivitySubscriptionGetResponse.md)\>
 
 Get X activity subscriptions
 Get a list of active subscriptions for XAA
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`ActivitySubscriptionGetResponse`](../interfaces/Schemas.ActivitySubscriptionGetResponse.md)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[activity/client.ts:194](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/activity/client.ts#L194)
+[activity/client.ts:246](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/activity/client.ts#L246)
 
 ___
 
 ### createSubscription
 
-▸ **createSubscription**(`options?`): `Promise`\<`any`\>
+▸ **createSubscription**(`options?`): `Promise`\<[`ActivitySubscriptionCreateResponse`](../interfaces/Schemas.ActivitySubscriptionCreateResponse.md)\>
 
 Create X activity subscription
 Creates a subscription for an X activity event
@@ -149,10 +156,10 @@ Creates a subscription for an X activity event
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`ActivitySubscriptionCreateResponse`](../interfaces/Schemas.ActivitySubscriptionCreateResponse.md)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[activity/client.ts:225](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/activity/client.ts#L225)
+[activity/client.ts:278](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/activity/client.ts#L278)

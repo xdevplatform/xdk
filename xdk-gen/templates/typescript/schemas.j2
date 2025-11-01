@@ -1,0 +1,173 @@
+/**
+ * OpenAPI Schema Types
+ * Auto-generated from OpenAPI components/schemas
+ */
+
+{# Helper macro to get TypeScript type from a property schema #}
+{% macro get_ts_type(prop_schema) -%}
+{%- if prop_schema is mapping -%}
+  {%- if prop_schema["$ref"] is defined -%}
+    {%- set ref_path = prop_schema["$ref"] -%}
+    {%- set ref_name = ref_path | schema_name_from_ref | replace("-", "_") -%}
+    {{ ref_name }}
+  {%- elif prop_schema.type == "array" -%}
+    {%- if prop_schema.items is defined -%}
+      {%- set item_type = get_ts_type(prop_schema.items) -%}
+      Array<{{ item_type }}>
+    {%- else -%}
+      Array<any>
+    {%- endif -%}
+  {%- elif prop_schema.type == "object" -%}
+    Record<string, any>
+  {%- elif prop_schema.type == "string" -%}
+    {%- if prop_schema.enum is defined and prop_schema.enum is iterable and prop_schema.enum is not none and prop_schema.enum | length > 0 -%}
+      {% for val in prop_schema.enum %}{% if not loop.first %} | {% endif %}"{{ val | string }}"{% endfor %}
+    {%- else -%}
+      string
+    {%- endif -%}
+  {%- elif prop_schema.type == "integer" or prop_schema.type == "number" -%}
+    number
+  {%- elif prop_schema.type == "boolean" -%}
+    boolean
+  {%- else -%}
+    any
+  {%- endif -%}
+{%- else -%}
+  any
+{%- endif -%}
+{%- endmacro %}
+
+{% for schema_info in schemas | sort(attribute='name') -%}
+{% set schema_name = schema_info.name | replace("-", "_") -%}
+{% set schema = schema_info.schema -%}
+{# Schema is an untagged enum, so it serializes as the inner variant directly #}
+{%- if schema.type is defined -%}
+  {# Typed schema (has type field) #}
+  {%- if schema.type == "object" -%}
+    {# Object schema #}
+    {%- if schema.properties is defined and schema.properties is mapping and schema.properties is not none and schema.properties | length > 0 -%}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export interface {{ schema_name }} {
+      {%- set required = schema.required or [] -%}
+      {%- for key in schema.properties -%}
+      {%- set prop_schema = schema.properties[key] -%}
+      {%- set is_required = key in required -%}
+      {%- if prop_schema is mapping and prop_schema.description is defined and prop_schema.description != "none" and prop_schema.description != "" -%}
+  /** {{ prop_schema.description }} */
+      {%- endif -%}
+  {{ key | camel_case }}{% if not is_required %}?{% endif %}: {{ get_ts_type(prop_schema) }};
+      {%- endfor -%}
+
+}
+    {%- else -%}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export type {{ schema_name }} = Record<string, any>;
+    {%- endif -%}
+  {%- elif schema.type == "array" -%}
+    {# Array schema #}
+    {%- if schema.items is defined -%}
+      {%- set item_type = get_ts_type(schema.items) -%}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export type {{ schema_name }} = Array<{{ item_type }}>;
+    {%- else -%}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export type {{ schema_name }} = Array<any>;
+    {%- endif -%}
+  {%- elif schema.type == "string" -%}
+    {# String schema #}
+    {%- if schema.enum is defined and schema.enum is iterable and schema.enum is not none and schema.enum | length > 0 -%}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export type {{ schema_name }} = {% for val in schema.enum %}{% if not loop.first %} | {% endif %}"{{ val | string }}"{% endfor %};
+    {%- else -%}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export type {{ schema_name }} = string;
+    {%- endif -%}
+  {%- elif schema.type == "integer" or schema.type == "number" -%}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export type {{ schema_name }} = number;
+  {%- elif schema.type == "boolean" -%}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export type {{ schema_name }} = boolean;
+  {%- else -%}
+    {# Unknown typed schema #}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export type {{ schema_name }} = any;
+  {%- endif -%}
+{%- elif schema.anyOf is defined -%}
+  {# AnyOf schema - use union type #}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export type {{ schema_name }} = any;
+{%- elif schema.allOf is defined -%}
+  {# AllOf schema - intersection type would be ideal but complex, use any for now #}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export type {{ schema_name }} = any;
+{%- elif schema.oneOf is defined -%}
+  {# OneOf schema - use union type #}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export type {{ schema_name }} = any;
+{%- elif schema.not is defined -%}
+  {# Not schema - complex to represent in TypeScript, use any #}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export type {{ schema_name }} = any;
+{%- else -%}
+  {# Fallback for any other case #}
+/**
+{% if schema.description %}{{ schema.description }}{% else %}Schema type for {{ schema_info.name }}{% endif %}
+ *
+ * @public
+ */
+export type {{ schema_name }} = any;
+{%- endif -%}
+{% endfor %}

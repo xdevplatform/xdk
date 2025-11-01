@@ -12,13 +12,60 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
+  GetBuyersResponse,
   GetByCreatorIdsResponse,
   SearchResponse,
-  GetPostsResponse,
   GetByIdResponse,
+  GetPostsResponse,
   GetByIdsResponse,
-  GetBuyersResponse,
 } from './models.js';
+
+/**
+ * Options for getBuyers method
+ * 
+ * @public
+ */
+export interface GetBuyersOptions {
+  /** This parameter is used to get a specified 'page' of results. */
+  paginationToken?: any;
+
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getByCreatorIds method
+ * 
+ * @public
+ */
+export interface GetByCreatorIdsOptions {
+  /** A comma separated list of Space fields to display. */
+  spacefields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Topic fields to display. */
+  topicfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
 
 /**
  * Options for search method
@@ -26,6 +73,46 @@ import {
  * @public
  */
 export interface SearchOptions {
+  /** The state of Spaces to search for. */
+  state?: string;
+
+  /** The number of results to return. */
+  maxResults?: number;
+
+  /** A comma separated list of Space fields to display. */
+  spacefields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Topic fields to display. */
+  topicfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getById method
+ * 
+ * @public
+ */
+export interface GetByIdOptions {
+  /** A comma separated list of Space fields to display. */
+  spacefields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Topic fields to display. */
+  topicfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -36,16 +123,49 @@ export interface SearchOptions {
  * @public
  */
 export interface GetPostsOptions {
+  /** The number of Posts to fetch from the provided space. If not provided, the value will default to the maximum of 100. */
+  maxResults?: number;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. */
+  placefields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
 
 /**
- * Options for getBuyers method
+ * Options for getByIds method
  * 
  * @public
  */
-export interface GetBuyersOptions {
+export interface GetByIdsOptions {
+  /** A comma separated list of Space fields to display. */
+  spacefields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Topic fields to display. */
+  topicfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -72,19 +192,110 @@ export class SpacesClient {
   }
 
   /**
+   * Get Space ticket buyers
+   * Retrieves a list of Users who purchased tickets to a specific Space by its ID.
+
+
+   * @param id The ID of the Space to be retrieved.
+
+
+
+
+   * @returns {Promise<GetBuyersResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getBuyers(
+    id: string,
+    options: GetBuyersOptions = {}
+  ): Promise<GetBuyersResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      paginationToken = undefined,
+
+      maxResults = undefined,
+
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/spaces/{id}/buyers';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetBuyersResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Get Spaces by creator IDs
    * Retrieves details of Spaces created by specified User IDs.
 
 
 
+   * @param userIds The IDs of Users to search through.
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<GetByCreatorIdsResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getByCreatorIds(): Promise<GetByCreatorIdsResponse> {
-    // Destructure options
+  async getByCreatorIds(
+    userIds: Array<any>,
+    options: GetByCreatorIdsOptions = {}
+  ): Promise<GetByCreatorIdsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const requestOptions = {};
+    const {
+      spacefields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      topicfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/spaces/by/creator_ids';
@@ -92,9 +303,29 @@ export class SpacesClient {
     // Build query parameters
     const params = new URLSearchParams();
 
+    if (userIds !== undefined) {
+      params.append('user_ids', userIds.join(','));
+    }
+
+    if (spacefields !== undefined) {
+      params.append('space.fields', spacefields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (topicfields !== undefined) {
+      params.append('topic.fields', topicfields.join(','));
+    }
+
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
+      ...requestOptions,
     };
 
     return this.client.request<GetByCreatorIdsResponse>(
@@ -110,20 +341,69 @@ export class SpacesClient {
 
 
 
+   * @param query The search query.
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<SearchResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async search(options: SearchOptions = {}): Promise<SearchResponse> {
-    // Destructure options
+  async search(
+    query: string,
+    options: SearchOptions = {}
+  ): Promise<SearchResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const { requestOptions: requestOptions = {} } = options;
+    const {
+      state = undefined,
+
+      maxResults = undefined,
+
+      spacefields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      topicfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/spaces/search';
 
     // Build query parameters
     const params = new URLSearchParams();
+
+    if (query !== undefined) {
+      params.append('query', String(query));
+    }
+
+    if (state !== undefined) {
+      params.append('state', String(state));
+    }
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (spacefields !== undefined) {
+      params.append('space.fields', spacefields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (topicfields !== undefined) {
+      params.append('topic.fields', topicfields.join(','));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -138,25 +418,146 @@ export class SpacesClient {
   }
 
   /**
+   * Get space by ID
+   * Retrieves details of a specific space by its ID.
+
+
+   * @param id The ID of the Space to be retrieved.
+
+
+
+
+   * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getById(
+    id: string,
+    options: GetByIdOptions = {}
+  ): Promise<GetByIdResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      spacefields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      topicfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/spaces/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (spacefields !== undefined) {
+      params.append('space.fields', spacefields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (topicfields !== undefined) {
+      params.append('topic.fields', topicfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Get Space Posts
    * Retrieves a list of Posts shared in a specific Space by its ID.
 
 
+   * @param id The ID of the Space to be retrieved.
 
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getPosts(options: GetPostsOptions = {}): Promise<GetPostsResponse> {
-    // Destructure options
+  async getPosts(
+    id: string,
+    options: GetPostsOptions = {}
+  ): Promise<GetPostsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const { requestOptions: requestOptions = {} } = options;
+    const {
+      maxResults = undefined,
+
+      tweetfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      pollfields = [],
+
+      userfields = [],
+
+      placefields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/spaces/{id}/tweets';
 
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
     // Build query parameters
     const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (pollfields !== undefined) {
+      params.append('poll.fields', pollfields.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (placefields !== undefined) {
+      params.append('place.fields', placefields.join(','));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -171,52 +572,36 @@ export class SpacesClient {
   }
 
   /**
-   * Get space by ID
-   * Retrieves details of a specific space by its ID.
-
-
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getById(): Promise<GetByIdResponse> {
-    // Destructure options
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/spaces/{id}';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetByIdResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
    * Get Spaces by IDs
    * Retrieves details of multiple Spaces by their IDs.
 
 
 
+   * @param ids The list of Space IDs to return.
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getByIds(): Promise<GetByIdsResponse> {
-    // Destructure options
+  async getByIds(
+    ids: Array<any>,
+    options: GetByIdsOptions = {}
+  ): Promise<GetByIdsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const requestOptions = {};
+    const {
+      spacefields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      topicfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/spaces';
@@ -224,45 +609,32 @@ export class SpacesClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
+    if (ids !== undefined) {
+      params.append('ids', ids.join(','));
+    }
 
-    return this.client.request<GetByIdsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
+    if (spacefields !== undefined) {
+      params.append('space.fields', spacefields.join(','));
+    }
 
-  /**
-   * Get Space ticket buyers
-   * Retrieves a list of Users who purchased tickets to a specific Space by its ID.
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
 
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
 
-
-
-   * @returns Promise with the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getBuyers(options: GetBuyersOptions = {}): Promise<GetBuyersResponse> {
-    // Destructure options
-
-    const { requestOptions: requestOptions = {} } = options;
-
-    // Build the path with path parameters
-    let path = '/2/spaces/{id}/buyers';
-
-    // Build query parameters
-    const params = new URLSearchParams();
+    if (topicfields !== undefined) {
+      params.append('topic.fields', topicfields.join(','));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       ...requestOptions,
     };
 
-    return this.client.request<GetBuyersResponse>(
+    return this.client.request<GetByIdsResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

@@ -60,9 +60,14 @@ export { CryptoUtils, hmacSha1, generateNonce, generateTimestamp, generateCodeVe
 // Streaming
 export type { StreamListener, TweetStreamListener } from './stream_listener.js';
 
-// Client modules (only export client classes to avoid duplicate type names)
+// Schema types (export all OpenAPI schema types)
+export * as Schemas from './schemas.js';
+
+// Client modules (export client classes and types)
 {% for tag in tags %}
 export { {{ tag.class_name }}Client } from './{{ tag.import_name }}/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as {{ tag.class_name }} from './{{ tag.import_name }}/models.js';
 {% endfor %}
 
 // Utilities

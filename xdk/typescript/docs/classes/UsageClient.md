@@ -38,13 +38,13 @@ Creates a new usage client instance
 
 #### Defined in
 
-[usage/client.ts:43](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/usage/client.ts#L43)
+[usage/client.ts:49](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/usage/client.ts#L49)
 
 ## Methods
 
 ### get
 
-▸ **get**(`options?`): `Promise`\<`any`\>
+▸ **get**(`options?`): `Promise`\<[`Get2UsageTweetsResponse`](../interfaces/Schemas.Get2UsageTweetsResponse.md)\>
 
 Get usage
 Retrieves usage statistics for Posts over a specified number of days.
@@ -57,10 +57,10 @@ Retrieves usage statistics for Posts over a specified number of days.
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`Get2UsageTweetsResponse`](../interfaces/Schemas.Get2UsageTweetsResponse.md)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[usage/client.ts:55](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/usage/client.ts#L55)
+[usage/client.ts:62](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/usage/client.ts#L62)

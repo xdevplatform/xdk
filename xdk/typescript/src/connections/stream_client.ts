@@ -46,25 +46,25 @@ export class ConnectionsClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'deleteAll');
 
-    // Destructure options with defaults
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const requestOptions = {};
+    const { headers = {}, signal, requestOptions = {} } = options || {};
+
+    // Build the path with path parameters
+    let path = '/2/connections/all';
 
     // Build query parameters
     const params = new URLSearchParams();
-
-    // Build path parameters
-    let path = `/2/connections/all`;
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...(options.headers || {}),
+        ...headers,
       },
-      signal: options.signal,
+      signal: signal,
 
-      ...options,
+      ...requestOptions,
     };
 
     // Make the request

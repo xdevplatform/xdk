@@ -39,11 +39,12 @@ export class GeneralClient {
    * Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)
 
 
-   * @returns Promise with the API response
+
+   * @returns {Promise<GetOpenApiSpecResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async getOpenApiSpec(): Promise<GetOpenApiSpecResponse> {
-    // Destructure options
+    // Destructure options (exclude path parameters, they're already function params)
 
     const requestOptions = {};
 

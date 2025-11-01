@@ -60,41 +60,78 @@ export { CryptoUtils, hmacSha1, generateNonce, generateTimestamp, generateCodeVe
 // Streaming
 export type { StreamListener, TweetStreamListener } from './stream_listener.js';
 
-// Client modules (only export client classes to avoid duplicate type names)
+// Schema types (export all OpenAPI schema types)
+export * as Schemas from './schemas.js';
 
-export { PostsClient } from './posts/client.js';
-
-export { ActivityClient } from './activity/client.js';
-
-export { UsageClient } from './usage/client.js';
-
-export { UsersClient } from './users/client.js';
-
-export { SpacesClient } from './spaces/client.js';
-
-export { GeneralClient } from './general/client.js';
-
-export { ConnectionsClient } from './connections/client.js';
-
-export { CommunityNotesClient } from './community_notes/client.js';
-
-export { TrendsClient } from './trends/client.js';
+// Client modules (export client classes and types)
 
 export { ListsClient } from './lists/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as Lists from './lists/models.js';
 
 export { DirectMessagesClient } from './direct_messages/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as DirectMessages from './direct_messages/models.js';
+
+export { UsageClient } from './usage/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as Usage from './usage/models.js';
 
 export { WebhooksClient } from './webhooks/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as Webhooks from './webhooks/models.js';
+
+export { TrendsClient } from './trends/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as Trends from './trends/models.js';
+
+export { CommunityNotesClient } from './community_notes/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as CommunityNotes from './community_notes/models.js';
 
 export { StreamClient } from './stream/client.js';
-
-export { AccountActivityClient } from './account_activity/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as Stream from './stream/models.js';
 
 export { CommunitiesClient } from './communities/client.js';
-
-export { ComplianceClient } from './compliance/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as Communities from './communities/models.js';
 
 export { MediaClient } from './media/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as Media from './media/models.js';
+
+export { ConnectionsClient } from './connections/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as Connections from './connections/models.js';
+
+export { ComplianceClient } from './compliance/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as Compliance from './compliance/models.js';
+
+export { GeneralClient } from './general/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as General from './general/models.js';
+
+export { UsersClient } from './users/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as Users from './users/models.js';
+
+export { ActivityClient } from './activity/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as Activity from './activity/models.js';
+
+export { AccountActivityClient } from './account_activity/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as AccountActivity from './account_activity/models.js';
+
+export { PostsClient } from './posts/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as Posts from './posts/models.js';
+
+export { SpacesClient } from './spaces/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as Spaces from './spaces/models.js';
 
 
 // Utilities

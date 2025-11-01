@@ -14,6 +14,12 @@ import { GetResponse } from './models.js';
  * @public
  */
 export interface GetStreamingOptions {
+  /** The number of days for which you need usage for. */
+  days?: number;
+
+  /** A comma separated list of Usage fields to display. */
+  usagefields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -44,25 +50,42 @@ export class UsageClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'get');
 
-    // Destructure options with defaults
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const { requestOptions: requestOptions = {} } = options;
+    const {
+      days = undefined,
+
+      usagefields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/usage/tweets';
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    // Build path parameters
-    let path = `/2/usage/tweets`;
+    if (days !== undefined) {
+      params.append('days', String(days));
+    }
+
+    if (usagefields !== undefined) {
+      params.append('usage.fields', usagefields.join(','));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       headers: {
         'Content-Type': 'application/json',
-        ...(options.headers || {}),
+        ...headers,
       },
-      signal: options.signal,
+      signal: signal,
 
-      ...options,
+      ...requestOptions,
     };
 
     // Make the request

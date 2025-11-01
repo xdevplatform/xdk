@@ -39,48 +39,55 @@ Creates a new trends client instance
 
 #### Defined in
 
-[trends/client.ts:43](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/trends/client.ts#L43)
+[trends/client.ts:62](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/trends/client.ts#L62)
 
 ## Methods
 
 ### getPersonalized
 
-▸ **getPersonalized**(): `Promise`\<`any`\>
+▸ **getPersonalized**(`options?`): `Promise`\<[`Get2UsersPersonalizedTrendsResponse`](../interfaces/Schemas.Get2UsersPersonalizedTrendsResponse.md)\>
 
 Get personalized Trends
 Retrieves personalized trending topics for the authenticated user.
 
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetPersonalizedOptions` |
+
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`Get2UsersPersonalizedTrendsResponse`](../interfaces/Schemas.Get2UsersPersonalizedTrendsResponse.md)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[trends/client.ts:55](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/trends/client.ts#L55)
+[trends/client.ts:75](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/trends/client.ts#L75)
 
 ___
 
 ### getByWoeid
 
-▸ **getByWoeid**(`options?`): `Promise`\<`any`\>
+▸ **getByWoeid**(`woeid`, `options?`): `Promise`\<[`Get2TrendsByWoeidWoeidResponse`](../interfaces/Schemas.Get2TrendsByWoeidWoeidResponse.md)\>
 
 Get Trends by WOEID
 Retrieves trending topics for a specific location identified by its WOEID.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | `GetByWoeidOptions` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `woeid` | `number` | The WOEID of the place to lookup a trend for. |
+| `options` | `GetByWoeidOptions` | - |
 
 #### Returns
 
-`Promise`\<`any`\>
+`Promise`\<[`Get2TrendsByWoeidWoeidResponse`](../interfaces/Schemas.Get2TrendsByWoeidWoeidResponse.md)\>
 
-Promise with the API response
+Promise resolving to the API response
 
 #### Defined in
 
-[trends/client.ts:88](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/trends/client.ts#L88)
+[trends/client.ts:125](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/trends/client.ts#L125)

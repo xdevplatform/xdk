@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[http-client.ts:16](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L16)
+[http-client.ts:16](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/http-client.ts#L16)
 
 ___
 
@@ -30,17 +30,17 @@ ___
 
 #### Defined in
 
-[http-client.ts:17](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L17)
+[http-client.ts:17](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/http-client.ts#L17)
 
 ___
 
 ### body
 
-• `Optional` **body**: `string` \| `ArrayBuffer` \| `Buffer`\<`ArrayBufferLike`\> \| `ArrayBufferView`\<`ArrayBufferLike`\>
+• `Optional` **body**: `string` \| `Buffer` \| `ArrayBuffer` \| `ArrayBufferView`
 
 #### Defined in
 
-[http-client.ts:18](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L18)
+[http-client.ts:18](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/http-client.ts#L18)
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[http-client.ts:19](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L19)
+[http-client.ts:19](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/http-client.ts#L19)
 
 ___
 
@@ -60,4 +60,4 @@ ___
 
 #### Defined in
 
-[http-client.ts:20](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/http-client.ts#L20)
+[http-client.ts:20](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/http-client.ts#L20)

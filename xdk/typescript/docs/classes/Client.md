@@ -50,23 +50,23 @@ for await (const follower of followers) {
 - [maxRetries](Client.md#maxretries)
 - [userAgent](Client.md#useragent)
 - [httpClient](Client.md#httpclient)
-- [posts](Client.md#posts)
-- [activity](Client.md#activity)
-- [usage](Client.md#usage)
-- [users](Client.md#users)
-- [spaces](Client.md#spaces)
-- [general](Client.md#general)
-- [connections](Client.md#connections)
-- [communityNotes](Client.md#communitynotes)
-- [trends](Client.md#trends)
 - [lists](Client.md#lists)
 - [directMessages](Client.md#directmessages)
+- [usage](Client.md#usage)
 - [webhooks](Client.md#webhooks)
+- [trends](Client.md#trends)
+- [communityNotes](Client.md#communitynotes)
 - [stream](Client.md#stream)
-- [accountActivity](Client.md#accountactivity)
 - [communities](Client.md#communities)
-- [compliance](Client.md#compliance)
 - [media](Client.md#media)
+- [connections](Client.md#connections)
+- [compliance](Client.md#compliance)
+- [general](Client.md#general)
+- [users](Client.md#users)
+- [activity](Client.md#activity)
+- [accountActivity](Client.md#accountactivity)
+- [posts](Client.md#posts)
+- [spaces](Client.md#spaces)
 
 ### Methods
 
@@ -117,7 +117,7 @@ const client = new Client({
 
 #### Defined in
 
-[client.ts:306](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L306)
+[client.ts:306](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L306)
 
 ## Properties
 
@@ -129,7 +129,7 @@ Base URL for API requests
 
 #### Defined in
 
-[client.ts:209](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L209)
+[client.ts:209](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L209)
 
 ___
 
@@ -141,7 +141,7 @@ Bearer token for authentication
 
 #### Defined in
 
-[client.ts:211](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L211)
+[client.ts:211](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L211)
 
 ___
 
@@ -153,7 +153,7 @@ OAuth2 access token
 
 #### Defined in
 
-[client.ts:213](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L213)
+[client.ts:213](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L213)
 
 ___
 
@@ -165,7 +165,7 @@ OAuth1 instance for authentication
 
 #### Defined in
 
-[client.ts:215](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L215)
+[client.ts:215](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L215)
 
 ___
 
@@ -177,7 +177,7 @@ Headers for requests
 
 #### Defined in
 
-[client.ts:217](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L217)
+[client.ts:217](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L217)
 
 ___
 
@@ -189,7 +189,7 @@ Request timeout in milliseconds
 
 #### Defined in
 
-[client.ts:219](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L219)
+[client.ts:219](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L219)
 
 ___
 
@@ -201,7 +201,7 @@ Whether to automatically retry failed requests
 
 #### Defined in
 
-[client.ts:221](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L221)
+[client.ts:221](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L221)
 
 ___
 
@@ -213,7 +213,7 @@ Maximum number of retry attempts
 
 #### Defined in
 
-[client.ts:223](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L223)
+[client.ts:223](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L223)
 
 ___
 
@@ -225,7 +225,7 @@ User agent string
 
 #### Defined in
 
-[client.ts:225](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L225)
+[client.ts:225](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L225)
 
 ___
 
@@ -237,115 +237,7 @@ HTTP client for making requests
 
 #### Defined in
 
-[client.ts:228](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L228)
-
-___
-
-### posts
-
-• `Readonly` **posts**: [`PostsClient`](PostsClient.md)
-
-posts client
-
-#### Defined in
-
-[client.ts:232](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L232)
-
-___
-
-### activity
-
-• `Readonly` **activity**: [`ActivityClient`](ActivityClient.md)
-
-activity client
-
-#### Defined in
-
-[client.ts:235](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L235)
-
-___
-
-### usage
-
-• `Readonly` **usage**: [`UsageClient`](UsageClient.md)
-
-usage client
-
-#### Defined in
-
-[client.ts:238](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L238)
-
-___
-
-### users
-
-• `Readonly` **users**: [`UsersClient`](UsersClient.md)
-
-users client
-
-#### Defined in
-
-[client.ts:241](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L241)
-
-___
-
-### spaces
-
-• `Readonly` **spaces**: [`SpacesClient`](SpacesClient.md)
-
-spaces client
-
-#### Defined in
-
-[client.ts:244](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L244)
-
-___
-
-### general
-
-• `Readonly` **general**: [`GeneralClient`](GeneralClient.md)
-
-general client
-
-#### Defined in
-
-[client.ts:247](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L247)
-
-___
-
-### connections
-
-• `Readonly` **connections**: [`ConnectionsClient`](ConnectionsClient.md)
-
-connections client
-
-#### Defined in
-
-[client.ts:250](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L250)
-
-___
-
-### communityNotes
-
-• `Readonly` **communityNotes**: [`CommunityNotesClient`](CommunityNotesClient.md)
-
-community notes client
-
-#### Defined in
-
-[client.ts:253](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L253)
-
-___
-
-### trends
-
-• `Readonly` **trends**: [`TrendsClient`](TrendsClient.md)
-
-trends client
-
-#### Defined in
-
-[client.ts:256](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L256)
+[client.ts:228](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L228)
 
 ___
 
@@ -357,7 +249,7 @@ lists client
 
 #### Defined in
 
-[client.ts:259](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L259)
+[client.ts:232](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L232)
 
 ___
 
@@ -369,7 +261,19 @@ direct messages client
 
 #### Defined in
 
-[client.ts:262](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L262)
+[client.ts:235](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L235)
+
+___
+
+### usage
+
+• `Readonly` **usage**: [`UsageClient`](UsageClient.md)
+
+usage client
+
+#### Defined in
+
+[client.ts:238](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L238)
 
 ___
 
@@ -381,7 +285,31 @@ webhooks client
 
 #### Defined in
 
-[client.ts:265](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L265)
+[client.ts:241](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L241)
+
+___
+
+### trends
+
+• `Readonly` **trends**: [`TrendsClient`](TrendsClient.md)
+
+trends client
+
+#### Defined in
+
+[client.ts:244](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L244)
+
+___
+
+### communityNotes
+
+• `Readonly` **communityNotes**: [`CommunityNotesClient`](CommunityNotesClient.md)
+
+community notes client
+
+#### Defined in
+
+[client.ts:247](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L247)
 
 ___
 
@@ -393,19 +321,7 @@ stream client
 
 #### Defined in
 
-[client.ts:268](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L268)
-
-___
-
-### accountActivity
-
-• `Readonly` **accountActivity**: [`AccountActivityClient`](AccountActivityClient.md)
-
-account activity client
-
-#### Defined in
-
-[client.ts:271](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L271)
+[client.ts:250](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L250)
 
 ___
 
@@ -417,19 +333,7 @@ communities client
 
 #### Defined in
 
-[client.ts:274](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L274)
-
-___
-
-### compliance
-
-• `Readonly` **compliance**: [`ComplianceClient`](ComplianceClient.md)
-
-compliance client
-
-#### Defined in
-
-[client.ts:277](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L277)
+[client.ts:253](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L253)
 
 ___
 
@@ -441,7 +345,103 @@ media client
 
 #### Defined in
 
-[client.ts:280](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L280)
+[client.ts:256](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L256)
+
+___
+
+### connections
+
+• `Readonly` **connections**: [`ConnectionsClient`](ConnectionsClient.md)
+
+connections client
+
+#### Defined in
+
+[client.ts:259](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L259)
+
+___
+
+### compliance
+
+• `Readonly` **compliance**: [`ComplianceClient`](ComplianceClient.md)
+
+compliance client
+
+#### Defined in
+
+[client.ts:262](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L262)
+
+___
+
+### general
+
+• `Readonly` **general**: [`GeneralClient`](GeneralClient.md)
+
+general client
+
+#### Defined in
+
+[client.ts:265](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L265)
+
+___
+
+### users
+
+• `Readonly` **users**: [`UsersClient`](UsersClient.md)
+
+users client
+
+#### Defined in
+
+[client.ts:268](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L268)
+
+___
+
+### activity
+
+• `Readonly` **activity**: [`ActivityClient`](ActivityClient.md)
+
+activity client
+
+#### Defined in
+
+[client.ts:271](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L271)
+
+___
+
+### accountActivity
+
+• `Readonly` **accountActivity**: [`AccountActivityClient`](AccountActivityClient.md)
+
+account activity client
+
+#### Defined in
+
+[client.ts:274](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L274)
+
+___
+
+### posts
+
+• `Readonly` **posts**: [`PostsClient`](PostsClient.md)
+
+posts client
+
+#### Defined in
+
+[client.ts:277](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L277)
+
+___
+
+### spaces
+
+• `Readonly` **spaces**: [`SpacesClient`](SpacesClient.md)
+
+spaces client
+
+#### Defined in
+
+[client.ts:280](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L280)
 
 ## Methods
 
@@ -495,7 +495,7 @@ When the API returns an error response
 
 #### Defined in
 
-[client.ts:400](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L400)
+[client.ts:400](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L400)
 
 ___
 
@@ -511,7 +511,7 @@ Check if the OAuth2 token is expired
 
 #### Defined in
 
-[client.ts:494](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L494)
+[client.ts:494](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L494)
 
 ___
 
@@ -527,7 +527,7 @@ Refresh the OAuth2 token
 
 #### Defined in
 
-[client.ts:502](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L502)
+[client.ts:502](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L502)
 
 ___
 
@@ -543,7 +543,7 @@ Get the current authentication status
 
 #### Defined in
 
-[client.ts:509](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L509)
+[client.ts:509](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L509)
 
 ___
 
@@ -567,7 +567,7 @@ Array of internal authentication types
 
 #### Defined in
 
-[client.ts:518](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L518)
+[client.ts:518](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L518)
 
 ___
 
@@ -590,7 +590,7 @@ Validate that the required authentication method is available
 
 #### Defined in
 
-[client.ts:540](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L540)
+[client.ts:540](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L540)
 
 ___
 
@@ -606,4 +606,4 @@ Get available authentication types
 
 #### Defined in
 
-[client.ts:582](https://github.com/xdevplatform/xdk/blob/a701cd88782eaa1dd81e314e3b527b2c3f9e2f7b/xdk/typescript/src/client.ts#L582)
+[client.ts:582](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L582)

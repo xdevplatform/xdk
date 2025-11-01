@@ -24,6 +24,25 @@ import {
  * @public
  */
 export interface GetJobsOptions {
+  /** Status of Compliance Job to list. */
+  status?: string;
+
+  /** A comma separated list of ComplianceJob fields to display. */
+  complianceJobfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getJobsById method
+ * 
+ * @public
+ */
+export interface GetJobsByIdOptions {
+  /** A comma separated list of ComplianceJob fields to display. */
+  complianceJobfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
 }
@@ -55,20 +74,45 @@ export class ComplianceClient {
 
 
 
+   * @param type Type of Compliance Job to list.
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<GetJobsResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getJobs(options: GetJobsOptions = {}): Promise<GetJobsResponse> {
-    // Destructure options
+  async getJobs(
+    type: string,
+    options: GetJobsOptions = {}
+  ): Promise<GetJobsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const { requestOptions: requestOptions = {} } = options;
+    const {
+      status = undefined,
+
+      complianceJobfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/compliance/jobs';
 
     // Build query parameters
     const params = new URLSearchParams();
+
+    if (type !== undefined) {
+      params.append('type', String(type));
+    }
+
+    if (status !== undefined) {
+      params.append('status', String(status));
+    }
+
+    if (complianceJobfields !== undefined) {
+      params.append('compliance_job.fields', complianceJobfields.join(','));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -87,13 +131,14 @@ export class ComplianceClient {
    * Creates a new Compliance Job for the specified job type.
 
 
+
    * @param body Request body
 
-   * @returns Promise with the API response
+   * @returns {Promise<CreateJobsResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
   async createJobs(body: CreateJobsRequest): Promise<CreateJobsResponse> {
-    // Destructure options
+    // Destructure options (exclude path parameters, they're already function params)
 
     const requestOptions = {};
 
@@ -122,25 +167,42 @@ export class ComplianceClient {
    * Retrieves details of a specific Compliance Job by its ID.
 
 
+   * @param id The ID of the Compliance Job to retrieve.
 
 
-   * @returns Promise with the API response
+
+
+   * @returns {Promise<GetJobsByIdResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getJobsById(): Promise<GetJobsByIdResponse> {
-    // Destructure options
+  async getJobsById(
+    id: string,
+    options: GetJobsByIdOptions = {}
+  ): Promise<GetJobsByIdResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
 
-    const requestOptions = {};
+    const {
+      complianceJobfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/compliance/jobs/{id}';
 
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
     // Build query parameters
     const params = new URLSearchParams();
 
+    if (complianceJobfields !== undefined) {
+      params.append('compliance_job.fields', complianceJobfields.join(','));
+    }
+
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
+      ...requestOptions,
     };
 
     return this.client.request<GetJobsByIdResponse>(

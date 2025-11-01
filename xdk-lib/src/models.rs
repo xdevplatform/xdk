@@ -161,12 +161,18 @@ impl ParameterInfo {
                 .filter_map(|param_ref| {
                     // Handle both direct parameters and parameter references
                     let param = match param_ref {
-                        RefOrValue::Value(p) => p,
-                        RefOrValue::Reference { .. } => return None, // Skip references for now
+                        RefOrValue::Value(p) => p.clone(),
+                        RefOrValue::Reference { .. } => {
+                            // Resolve parameter references using OpenAPI context
+                            match param_ref.try_resolve() {
+                                Ok(rc_param) => (*rc_param).clone(),
+                                Err(_) => return None, // Skip if resolution fails
+                            }
+                        }
                     };
 
                     if let (Some(name), Some(location)) = (&param.name, &param.r#in) {
-                        let param_type = extract_param_type(param);
+                        let param_type = extract_param_type(&param);
                         let is_required = param.required.unwrap_or(false) || location == "path";
 
                         Some(Self {

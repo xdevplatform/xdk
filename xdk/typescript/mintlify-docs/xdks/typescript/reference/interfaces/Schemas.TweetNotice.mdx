@@ -1,0 +1,43 @@
+---
+title: "TweetNotice"
+sidebarTitle: "TweetNotice"
+---
+
+[Schemas](/xdks/typescript/reference/modules/Schemas).TweetNotice
+
+## Properties
+
+<ResponseField name="application" type="string" required>
+If the label is being applied or removed. Possible values are ‘apply’ or ‘remove’.
+
+</ResponseField>
+
+<ResponseField name="details" type="string">
+Information shown on the Tweet label
+
+</ResponseField>
+
+<ResponseField name="eventAt" type="string" required>
+Event time.
+
+</ResponseField>
+
+<ResponseField name="eventType" type="string" required>
+The type of label on the Tweet
+
+</ResponseField>
+
+<ResponseField name="extendedDetailsUrl" type="string">
+Link to more information about this kind of label
+
+</ResponseField>
+
+<ResponseField name="labelTitle" type="string">
+Title/header of the Tweet label
+
+</ResponseField>
+
+<ResponseField name="tweet" type="Record&lt;string, any&gt;" required>
+none
+
+</ResponseField>

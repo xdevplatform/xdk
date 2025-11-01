@@ -21,10 +21,10 @@ import {
  * @public
  */
 export interface {{ operation.class_name }}StreamingOptions {
-    {% for param in operation.parameters | rejectattr('required') %}
-    {% if param.name %}
-    /** {% if param.description %}{{ param.description }}{% else %}{{ param.name }}{% endif %} */
-    {{ param.name | camel_case }}?: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %};
+    {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+    {% if param.variable_name %}
+    /** {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %} */
+    {{ param.variable_name }}?: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %};
     {% endif %}
     {% endfor %}
     {% if operation.request_body and not operation.request_body.required %}
@@ -56,19 +56,39 @@ export class {{ tag.class_name }}Client {
      * Returns an event-driven stream that's easy to use.
      * Use .on() to listen for events like 'data', 'error', 'close'.
      * Also supports async iteration with for await...of.
+{% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+{% if param.variable_name %}
+     * @param {{ param.variable_name }} {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
+{% endif %}
+{% endfor %}
+{% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+{% if param.variable_name %}
+     * @param {{ param.variable_name }} {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
+{% endif %}
+{% endfor %}
+{% if operation.request_body and operation.request_body.required %}
+     * @param body {% if operation.request_body.content and operation.request_body.content["application/json"] and operation.request_body.content["application/json"].schema and operation.request_body.content["application/json"].schema.description %}{{ operation.request_body.content["application/json"].schema.description }}{% else %}Request body{% endif %}
+{% endif %}
+     * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
      */
     async {{ operation.method_name }}(
-        {# Required parameters #}
-        {% for param in operation.parameters | selectattr('required') %}
-        {% if param.name %}
-        {{ param.name | camel_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
+        {# Path parameters are always required - use location field #}
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}string{% endif %},
+        {% endif %}
+        {% endfor %}
+        {# Required query/header parameters (but not path, since those are already included above) #}
+        {% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
         {% endif %}
         {% endfor %}
         {# Required request body #}
         {% if operation.request_body and operation.request_body.required %}
         body: any,
         {% endif %}
-        {# Options object for all optional parameters #}
+        {# Options object for all optional parameters - always include for headers/signal #}
         options: {{ operation.class_name }}StreamingOptions = {}
     ): Promise<EventDrivenStream> {
         // Validate authentication requirements
@@ -82,48 +102,60 @@ export class {{ tag.class_name }}Client {
         this.client.validateAuthentication(requiredAuthTypes, '{{ operation.method_name }}');
         {% endif %}
 
-        // Destructure options with defaults
-        {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        // Destructure options (exclude path parameters, they're already function params)
+        {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
         const {
-            {% for param in operation.parameters | rejectattr('required') %}
-            {% if param.name %}
-            {{ param.name | camel_case }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
+            {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+            {% if param.variable_name %}
+            {{ param.variable_name }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
             {% endif %}
             {% endfor %}
             {% if operation.request_body and not operation.request_body.required %}
             body,
             {% endif %}
+            headers = {},
+            signal,
             requestOptions: requestOptions = {}
-        } = options;
+        } = options || {};
         {% else %}
-        const requestOptions = {};
+        const { headers = {}, signal, requestOptions = {} } = options || {};
         {% endif %}
+
+        // Build the path with path parameters
+        let path = '{{ operation.path }}';
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        path = path.replace('{{ '{' }}{{ param.original_name }}{{ '}' }}', encodeURIComponent(String({{ param.variable_name }})));
+        {% endif %}
+        {% endfor %}
 
         // Build query parameters
         const params = new URLSearchParams();
-        {% for param in operation.parameters %}
-        {% if param.name %}
-        {% if param.in == "query" %}
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'query') %}
+        {% if param.variable_name %}
         {% if param.required %}
-        if ({{ param.name | camel_case }} !== undefined) {
-            params.append('{{ param.name }}', String({{ param.name | camel_case }}));
-        }
+        {# Required query params are function arguments #}
+        {% if param.schema and param.schema.type == 'array' %}
+        params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
         {% else %}
-        if ({{ param.name | camel_case }} !== undefined) {
+        params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+        {% endif %}
+        {% else %}
+        {# Optional query params come from options #}
+        if ({{ param.variable_name }} !== undefined) {
             {% if param.schema and param.schema.type == 'array' %}
-            params.append('{{ param.name }}', {{ param.name | camel_case }}.join(','));
+            params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
             {% else %}
-            params.append('{{ param.name }}', String({{ param.name | camel_case }}));
+            params.append('{{ param.original_name }}', String({{ param.variable_name }}));
             {% endif %}
         }
-        {% endif %}
         {% endif %}
         {% endif %}
         {% endfor %}
 
         // Make the authenticated request using the main client's request method
         // We need raw: true to get the raw Response object for streaming
-        const url = '{{ operation.path }}' + (params.toString() ? `?${params.toString()}` : '');
+        const url = path + (params.toString() ? `?${params.toString()}` : '');
         
         // For streaming requests, we don't want to timeout the initial connection
         // Instead, we'll handle timeouts at the stream level
@@ -133,15 +165,15 @@ export class {{ tag.class_name }}Client {
             {
                 headers: {
                     'Content-Type': 'application/json',
-                    ...(options.headers || {}),
+                    ...headers,
                 },
                 {% if operation.request_body %}
                 body: JSON.stringify({% if operation.request_body.required %}body{% else %}body{% endif %}),
                 {% endif %}
-                signal: options.signal,
+                signal: signal,
                 raw: true, // Get raw Response object for streaming
                 timeout: 0, // Disable timeout for streaming requests
-                ...options,
+                ...requestOptions,
             }
         ) as Response;
 
@@ -176,17 +208,23 @@ export class {{ tag.class_name }}Client {
      * @returns Promise with the API response
      */
     async {{ operation.method_name }}(
-        {# Required parameters #}
-        {% for param in operation.parameters | selectattr('required') %}
-        {% if param.name %}
-        {{ param.name | camel_case }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
+        {# Path parameters are always required - use location field #}
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}string{% endif %},
+        {% endif %}
+        {% endfor %}
+        {# Required query/header parameters (but not path, since those are already included above) #}
+        {% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
         {% endif %}
         {% endfor %}
         {# Required request body #}
         {% if operation.request_body and operation.request_body.required %}
         body: any,
         {% endif %}
-        {# Options object for all optional parameters #}
+        {# Options object for all optional parameters - always include for headers/signal #}
         options: {{ operation.class_name }}StreamingOptions = {}
     ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}> {
         // Validate authentication requirements
@@ -200,51 +238,53 @@ export class {{ tag.class_name }}Client {
         this.client.validateAuthentication(requiredAuthTypes, '{{ operation.method_name }}');
         {% endif %}
 
-        // Destructure options with defaults
-        {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        // Destructure options (exclude path parameters, they're already function params)
+        {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
         const {
-            {% for param in operation.parameters | rejectattr('required') %}
-            {% if param.name %}
-            {{ param.name | camel_case }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
+            {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+            {% if param.variable_name %}
+            {{ param.variable_name }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
             {% endif %}
             {% endfor %}
             {% if operation.request_body and not operation.request_body.required %}
             body,
             {% endif %}
+            headers = {},
+            signal,
             requestOptions: requestOptions = {}
-        } = options;
+        } = options || {};
         {% else %}
-        const requestOptions = {};
+        const { headers = {}, signal, requestOptions = {} } = options || {};
         {% endif %}
 
-        // Build query parameters
-        const params = new URLSearchParams();
-        {% for param in operation.parameters %}
-        {% if param.name %}
-        {% if param.in == "query" %}
-        {% if param.required %}
-        if ({{ param.name | camel_case }} !== undefined) {
-            params.append('{{ param.name }}', String({{ param.name | camel_case }}));
-        }
-        {% else %}
-        if ({{ param.name | camel_case }} !== undefined) {
-            {% if param.schema and param.schema.type == 'array' %}
-            params.append('{{ param.name }}', {{ param.name | camel_case }}.join(','));
-            {% else %}
-            params.append('{{ param.name }}', String({{ param.name | camel_case }}));
-            {% endif %}
-        }
-        {% endif %}
-        {% endif %}
+        // Build the path with path parameters
+        let path = '{{ operation.path }}';
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        path = path.replace('{{ '{' }}{{ param.original_name }}{{ '}' }}', encodeURIComponent(String({{ param.variable_name }})));
         {% endif %}
         {% endfor %}
 
-        // Build path parameters
-        let path = `{{ operation.path }}`;
-        {% for param in operation.parameters %}
-        {% if param.name %}
-        {% if param.in == "path" %}
-        path = path.replace(`{${'{{ param.name }}'}}`, String({{ param.name | camel_case }}));
+        // Build query parameters
+        const params = new URLSearchParams();
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'query') %}
+        {% if param.variable_name %}
+        {% if param.required %}
+        {# Required query params are function arguments #}
+        {% if param.schema and param.schema.type == 'array' %}
+        params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+        {% else %}
+        params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+        {% endif %}
+        {% else %}
+        {# Optional query params come from options #}
+        if ({{ param.variable_name }} !== undefined) {
+            {% if param.schema and param.schema.type == 'array' %}
+            params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+            {% else %}
+            params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+            {% endif %}
+        }
         {% endif %}
         {% endif %}
         {% endfor %}
@@ -253,13 +293,13 @@ export class {{ tag.class_name }}Client {
         const finalRequestOptions: RequestOptions = {
             headers: {
                 'Content-Type': 'application/json',
-                ...(options.headers || {}),
+                ...headers,
             },
-            signal: options.signal,
+            signal: signal,
             {% if operation.request_body %}
             body: JSON.stringify({% if operation.request_body.required %}body{% else %}body{% endif %}),
             {% endif %}
-            ...options,
+            ...requestOptions,
         };
 
         // Make the request
