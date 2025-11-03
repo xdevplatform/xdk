@@ -46,10 +46,7 @@ fn format_typescript_files(output_dir: &Path) -> Result<()> {
             let path = entry.path();
 
             // Skip node_modules directory
-            if path
-                .file_name()
-                .is_some_and(|name| name == "node_modules")
-            {
+            if path.file_name().is_some_and(|name| name == "node_modules") {
                 continue;
             }
 
@@ -58,18 +55,18 @@ fn format_typescript_files(output_dir: &Path) -> Result<()> {
             } else if let Some(extension) = path.extension()
                 && (extension == "ts" || extension == "js")
             {
-                    // Only format files in src directory
-                    if path.to_string_lossy().contains("/src/") {
-                        // Try to format with Prettier if available
-                        if let Err(e) = format_file_with_prettier(&path) {
-                            log_info!(
-                                "Warning: Could not format {} with Prettier: {}",
-                                path.display(),
-                                e
-                            );
-                            log_info!("You may need to install Prettier: npm install -g prettier");
-                        }
+                // Only format files in src directory
+                if path.to_string_lossy().contains("/src/") {
+                    // Try to format with Prettier if available
+                    if let Err(e) = format_file_with_prettier(&path) {
+                        log_info!(
+                            "Warning: Could not format {} with Prettier: {}",
+                            path.display(),
+                            e
+                        );
+                        log_info!("You may need to install Prettier: npm install -g prettier");
                     }
+                }
             }
         }
         Ok(())
