@@ -13,7 +13,7 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     let generator = TypeScript;
 
     // Generate the SDK
-    generate_sdk(generator, openapi, output_dir).map_err(|e| BuildError::SdkGenError(e))?;
+    generate_sdk(generator, openapi, output_dir).map_err(BuildError::SdkGenError)?;
 
     // Format generated TypeScript files with Prettier
     log_info!("Formatting generated TypeScript files with Prettier...");
@@ -48,15 +48,16 @@ fn format_typescript_files(output_dir: &Path) -> Result<()> {
             // Skip node_modules directory
             if path
                 .file_name()
-                .map_or(false, |name| name == "node_modules")
+                .is_some_and(|name| name == "node_modules")
             {
                 continue;
             }
 
             if path.is_dir() {
                 process_directory(&path)?;
-            } else if let Some(extension) = path.extension() {
-                if extension == "ts" || extension == "js" {
+            } else if let Some(extension) = path.extension()
+                && (extension == "ts" || extension == "js")
+            {
                     // Only format files in src directory
                     if path.to_string_lossy().contains("/src/") {
                         // Try to format with Prettier if available
@@ -69,7 +70,6 @@ fn format_typescript_files(output_dir: &Path) -> Result<()> {
                             log_info!("You may need to install Prettier: npm install -g prettier");
                         }
                     }
-                }
             }
         }
         Ok(())
