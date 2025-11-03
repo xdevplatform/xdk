@@ -17,10 +17,10 @@ parsing for all community notes related operations.
 ### Methods
 
 - [create](CommunityNotesClient.md#create)
-- [evaluate](CommunityNotesClient.md#evaluate)
 - [searchWritten](CommunityNotesClient.md#searchwritten)
-- [delete](CommunityNotesClient.md#delete)
 - [searchEligiblePosts](CommunityNotesClient.md#searcheligibleposts)
+- [evaluate](CommunityNotesClient.md#evaluate)
+- [delete](CommunityNotesClient.md#delete)
 
 ## Constructors
 
@@ -42,7 +42,7 @@ Creates a new community notes client instance
 
 #### Defined in
 
-[community_notes/client.ts:120](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/community_notes/client.ts#L120)
+[community_notes/client.ts:120](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/client.ts#L120)
 
 ## Methods
 
@@ -67,32 +67,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[community_notes/client.ts:133](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/community_notes/client.ts#L133)
-
-___
-
-### evaluate
-
-▸ **evaluate**(`options?`): `Promise`\<[`EvaluateNoteResponse`](../interfaces/Schemas.EvaluateNoteResponse.md)\>
-
-Evaluate a Community Note
-Endpoint to evaluate a community note.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `EvaluateOptions` |
-
-#### Returns
-
-`Promise`\<[`EvaluateNoteResponse`](../interfaces/Schemas.EvaluateNoteResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[community_notes/client.ts:172](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/community_notes/client.ts#L172)
+[community_notes/client.ts:133](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/client.ts#L133)
 
 ___
 
@@ -118,32 +93,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[community_notes/client.ts:215](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/community_notes/client.ts#L215)
-
-___
-
-### delete
-
-▸ **delete**(`id`): `Promise`\<[`DeleteNoteResponse`](../interfaces/Schemas.DeleteNoteResponse.md)\>
-
-Delete a Community Note
-Deletes a community note.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The community note id to delete. |
-
-#### Returns
-
-`Promise`\<[`DeleteNoteResponse`](../interfaces/Schemas.DeleteNoteResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[community_notes/client.ts:279](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/community_notes/client.ts#L279)
+[community_notes/client.ts:176](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/client.ts#L176)
 
 ___
 
@@ -169,4 +119,54 @@ Promise resolving to the API response
 
 #### Defined in
 
-[community_notes/client.ts:317](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/community_notes/client.ts#L317)
+[community_notes/client.ts:240](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/client.ts#L240)
+
+___
+
+### evaluate
+
+▸ **evaluate**(`options?`): `Promise`\<[`EvaluateNoteResponse`](../interfaces/Schemas.EvaluateNoteResponse.md)\>
+
+Evaluate a Community Note
+Endpoint to evaluate a community note.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `EvaluateOptions` |
+
+#### Returns
+
+`Promise`\<[`EvaluateNoteResponse`](../interfaces/Schemas.EvaluateNoteResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[community_notes/client.ts:330](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/client.ts#L330)
+
+___
+
+### delete
+
+▸ **delete**(`id`): `Promise`\<[`DeleteNoteResponse`](../interfaces/Schemas.DeleteNoteResponse.md)\>
+
+Delete a Community Note
+Deletes a community note.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The community note id to delete. |
+
+#### Returns
+
+`Promise`\<[`DeleteNoteResponse`](../interfaces/Schemas.DeleteNoteResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[community_notes/client.ts:373](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/client.ts#L373)

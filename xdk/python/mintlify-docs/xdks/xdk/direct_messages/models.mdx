@@ -1,0 +1,170 @@
+---
+sidebarTitle: Direct Messages Models
+---
+
+xdk.direct\_messages.models — XDK Python SDK documentation
+
+# xdk.direct\_messages.models[¶](#module-xdk.direct_messages.models "Link to this heading")
+
+Auto-generated direct messages models for the X API.
+
+This module provides Pydantic models for request and response data structures
+for the direct messages endpoints of the X API. All models are generated
+from the OpenAPI specification and provide type safety and validation.
+
+Generated automatically - do not edit manually.
+
+Classes
+
+|  |  |
+| --- | --- |
+| [`CreateByConversationIdRequest`](#xdk.direct_messages.models.CreateByConversationIdRequest "xdk.direct_messages.models.CreateByConversationIdRequest")() | Request model for create\_by\_conversation\_id |
+| [`CreateByConversationIdResponse`](#xdk.direct_messages.models.CreateByConversationIdResponse "xdk.direct_messages.models.CreateByConversationIdResponse")(\*\*extra\_data) | Response model for create\_by\_conversation\_id |
+| [`CreateByParticipantIdRequest`](#xdk.direct_messages.models.CreateByParticipantIdRequest "xdk.direct_messages.models.CreateByParticipantIdRequest")() | Request model for create\_by\_participant\_id |
+| [`CreateByParticipantIdResponse`](#xdk.direct_messages.models.CreateByParticipantIdResponse "xdk.direct_messages.models.CreateByParticipantIdResponse")(\*\*extra\_data) | Response model for create\_by\_participant\_id |
+| [`CreateConversationRequest`](#xdk.direct_messages.models.CreateConversationRequest "xdk.direct_messages.models.CreateConversationRequest")() | Request model for create\_conversation |
+| [`CreateConversationResponse`](#xdk.direct_messages.models.CreateConversationResponse "xdk.direct_messages.models.CreateConversationResponse")(\*\*extra\_data) | Response model for create\_conversation |
+| [`DeleteEventsResponse`](#xdk.direct_messages.models.DeleteEventsResponse "xdk.direct_messages.models.DeleteEventsResponse")(\*\*extra\_data) | Response model for delete\_events |
+| [`GetEventsByConversationIdResponse`](#xdk.direct_messages.models.GetEventsByConversationIdResponse "xdk.direct_messages.models.GetEventsByConversationIdResponse")(\*\*extra\_data) | Response model for get\_events\_by\_conversation\_id |
+| [`GetEventsByIdResponse`](#xdk.direct_messages.models.GetEventsByIdResponse "xdk.direct_messages.models.GetEventsByIdResponse")(\*\*extra\_data) | Response model for get\_events\_by\_id |
+| [`GetEventsByParticipantIdResponse`](#xdk.direct_messages.models.GetEventsByParticipantIdResponse "xdk.direct_messages.models.GetEventsByParticipantIdResponse")(\*\*extra\_data) | Response model for get\_events\_by\_participant\_id |
+| [`GetEventsResponse`](#xdk.direct_messages.models.GetEventsResponse "xdk.direct_messages.models.GetEventsResponse")(\*\*extra\_data) | Response model for get\_events |
+
+*class* xdk.direct\_messages.models.CreateByConversationIdRequest[¶](#xdk.direct_messages.models.CreateByConversationIdRequest "Link to this definition")
+:   Bases: `BaseModel`
+
+    Request model for create\_by\_conversation\_id
+
+    model\_config*: ClassVar[ConfigDict]* *= {'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.direct_messages.models.CreateByConversationIdRequest.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.direct\_messages.models.CreateByConversationIdResponse(*\*\*extra\_data*)[¶](#xdk.direct_messages.models.CreateByConversationIdResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for create\_by\_conversation\_id
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.direct_messages.models.CreateByConversationIdResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.direct\_messages.models.CreateByParticipantIdRequest[¶](#xdk.direct_messages.models.CreateByParticipantIdRequest "Link to this definition")
+:   Bases: `BaseModel`
+
+    Request model for create\_by\_participant\_id
+
+    model\_config*: ClassVar[ConfigDict]* *= {'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.direct_messages.models.CreateByParticipantIdRequest.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.direct\_messages.models.CreateByParticipantIdResponse(*\*\*extra\_data*)[¶](#xdk.direct_messages.models.CreateByParticipantIdResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for create\_by\_participant\_id
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.direct_messages.models.CreateByParticipantIdResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.direct\_messages.models.CreateConversationRequest[¶](#xdk.direct_messages.models.CreateConversationRequest "Link to this definition")
+:   Bases: `BaseModel`
+
+    Request model for create\_conversation
+
+    model\_config*: ClassVar[ConfigDict]* *= {'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.direct_messages.models.CreateConversationRequest.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.direct\_messages.models.CreateConversationResponse(*\*\*extra\_data*)[¶](#xdk.direct_messages.models.CreateConversationResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for create\_conversation
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.direct_messages.models.CreateConversationResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.direct\_messages.models.DeleteEventsResponse(*\*\*extra\_data*)[¶](#xdk.direct_messages.models.DeleteEventsResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for delete\_events
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.direct_messages.models.DeleteEventsResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.direct\_messages.models.GetEventsByConversationIdResponse(*\*\*extra\_data*)[¶](#xdk.direct_messages.models.GetEventsByConversationIdResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_events\_by\_conversation\_id
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.direct_messages.models.GetEventsByConversationIdResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.direct\_messages.models.GetEventsByIdResponse(*\*\*extra\_data*)[¶](#xdk.direct_messages.models.GetEventsByIdResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_events\_by\_id
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.direct_messages.models.GetEventsByIdResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.direct\_messages.models.GetEventsByParticipantIdResponse(*\*\*extra\_data*)[¶](#xdk.direct_messages.models.GetEventsByParticipantIdResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_events\_by\_participant\_id
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.direct_messages.models.GetEventsByParticipantIdResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.direct\_messages.models.GetEventsResponse(*\*\*extra\_data*)[¶](#xdk.direct_messages.models.GetEventsResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_events
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.direct_messages.models.GetEventsResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](xdk.html)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - [xdk](xdk.html)
+      * [xdk.direct\_messages](xdk.direct_messages.html)
+        + Previous: [xdk.direct\_messages.client](xdk.direct_messages.client.html "previous chapter")
+        + Next: [xdk.general](xdk.general.html "next chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.direct_messages.models.rst.txt)

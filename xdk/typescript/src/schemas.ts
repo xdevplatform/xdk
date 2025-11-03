@@ -1,6 +1,8 @@
 /**
  * OpenAPI Schema Types
  * Auto-generated from OpenAPI components/schemas
+ *
+ * @internal
  */
 
 /**

@@ -22,7 +22,7 @@ Description of the context annotation domain.
 
 #### Defined in
 
-[schemas.ts:342](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L342)
+[schemas.ts:344](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L344)
 
 ___
 
@@ -34,7 +34,7 @@ The unique id for a context annotation domain.
 
 #### Defined in
 
-[schemas.ts:343](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L343)
+[schemas.ts:345](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L345)
 
 ___
 
@@ -46,4 +46,4 @@ Name of the context annotation domain.
 
 #### Defined in
 
-[schemas.ts:344](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L344)
+[schemas.ts:346](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L346)

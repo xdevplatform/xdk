@@ -13,44 +13,10 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-
-
-
-
-
-
-
 # Models for get
-
-
-
-
-
-
 
 
 class GetResponse(BaseModel):
     """Response model for get"""
-    
 
-    model_config = ConfigDict(populate_by_name=True, extra='allow')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
+    model_config = ConfigDict(populate_by_name=True, extra="allow")

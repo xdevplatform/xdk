@@ -16,8 +16,8 @@ parsing for all communities related operations.
 
 ### Methods
 
-- [getById](CommunitiesClient.md#getbyid)
 - [search](CommunitiesClient.md#search)
+- [getById](CommunitiesClient.md#getbyid)
 
 ## Constructors
 
@@ -39,35 +39,9 @@ Creates a new communities client instance
 
 #### Defined in
 
-[communities/client.ts:68](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/communities/client.ts#L68)
+[communities/client.ts:68](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/communities/client.ts#L68)
 
 ## Methods
-
-### getById
-
-▸ **getById**(`id`, `options?`): `Promise`\<[`Get2CommunitiesIdResponse`](../interfaces/Schemas.Get2CommunitiesIdResponse.md)\>
-
-Get Community by ID
-Retrieves details of a specific Community by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the Community. |
-| `options` | `GetByIdOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2CommunitiesIdResponse`](../interfaces/Schemas.Get2CommunitiesIdResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[communities/client.ts:85](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/communities/client.ts#L85)
-
-___
 
 ### search
 
@@ -91,4 +65,30 @@ Promise resolving to the API response
 
 #### Defined in
 
-[communities/client.ts:135](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/communities/client.ts#L135)
+[communities/client.ts:85](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/communities/client.ts#L85)
+
+___
+
+### getById
+
+▸ **getById**(`id`, `options?`): `Promise`\<[`Get2CommunitiesIdResponse`](../interfaces/Schemas.Get2CommunitiesIdResponse.md)\>
+
+Get Community by ID
+Retrieves details of a specific Community by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the Community. |
+| `options` | `GetByIdOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2CommunitiesIdResponse`](../interfaces/Schemas.Get2CommunitiesIdResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[communities/client.ts:155](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/communities/client.ts#L155)

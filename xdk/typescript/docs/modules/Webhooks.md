@@ -6,52 +6,16 @@
 
 ### Type Aliases
 
-- [GetResponse](Webhooks.md#getresponse)
-- [CreateRequest](Webhooks.md#createrequest)
-- [CreateResponse](Webhooks.md#createresponse)
 - [GetStreamLinksResponse](Webhooks.md#getstreamlinksresponse)
 - [ValidateResponse](Webhooks.md#validateresponse)
 - [DeleteResponse](Webhooks.md#deleteresponse)
+- [GetResponse](Webhooks.md#getresponse)
+- [CreateRequest](Webhooks.md#createrequest)
+- [CreateResponse](Webhooks.md#createresponse)
 - [CreateStreamLinkResponse](Webhooks.md#createstreamlinkresponse)
 - [DeleteStreamLinkResponse](Webhooks.md#deletestreamlinkresponse)
 
 ## Type Aliases
-
-### GetResponse
-
-Ƭ **GetResponse**: [`Get2WebhooksResponse`](../interfaces/Schemas.Get2WebhooksResponse.md)
-
-Response for get
-
-#### Defined in
-
-[webhooks/models.ts:15](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/models.ts#L15)
-
-___
-
-### CreateRequest
-
-Ƭ **CreateRequest**: [`WebhookConfigCreateRequest`](../interfaces/Schemas.WebhookConfigCreateRequest.md)
-
-Request for create
-
-#### Defined in
-
-[webhooks/models.ts:21](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/models.ts#L21)
-
-___
-
-### CreateResponse
-
-Ƭ **CreateResponse**: [`WebhookConfigCreateResponse`](../interfaces/Schemas.WebhookConfigCreateResponse.md)
-
-Response for create
-
-#### Defined in
-
-[webhooks/models.ts:27](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/models.ts#L27)
-
-___
 
 ### GetStreamLinksResponse
 
@@ -61,7 +25,7 @@ Response for getStreamLinks
 
 #### Defined in
 
-[webhooks/models.ts:33](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/models.ts#L33)
+[webhooks/models.ts:15](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/models.ts#L15)
 
 ___
 
@@ -73,7 +37,7 @@ Response for validate
 
 #### Defined in
 
-[webhooks/models.ts:39](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/models.ts#L39)
+[webhooks/models.ts:21](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/models.ts#L21)
 
 ___
 
@@ -85,7 +49,43 @@ Response for delete
 
 #### Defined in
 
-[webhooks/models.ts:45](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/models.ts#L45)
+[webhooks/models.ts:27](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/models.ts#L27)
+
+___
+
+### GetResponse
+
+Ƭ **GetResponse**: [`Get2WebhooksResponse`](../interfaces/Schemas.Get2WebhooksResponse.md)
+
+Response for get
+
+#### Defined in
+
+[webhooks/models.ts:33](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/models.ts#L33)
+
+___
+
+### CreateRequest
+
+Ƭ **CreateRequest**: [`WebhookConfigCreateRequest`](../interfaces/Schemas.WebhookConfigCreateRequest.md)
+
+Request for create
+
+#### Defined in
+
+[webhooks/models.ts:39](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/models.ts#L39)
+
+___
+
+### CreateResponse
+
+Ƭ **CreateResponse**: [`WebhookConfigCreateResponse`](../interfaces/Schemas.WebhookConfigCreateResponse.md)
+
+Response for create
+
+#### Defined in
+
+[webhooks/models.ts:45](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/models.ts#L45)
 
 ___
 
@@ -97,7 +97,7 @@ Response for createStreamLink
 
 #### Defined in
 
-[webhooks/models.ts:51](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/models.ts#L51)
+[webhooks/models.ts:51](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/models.ts#L51)
 
 ___
 
@@ -109,4 +109,4 @@ Response for deleteStreamLink
 
 #### Defined in
 
-[webhooks/models.ts:57](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/models.ts#L57)
+[webhooks/models.ts:57](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/models.ts#L57)

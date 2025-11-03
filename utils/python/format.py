@@ -122,14 +122,22 @@ def format_file(file_path):
 def format_directory(directory):
     """
     Format all Python files in the given directory and its subdirectories,
-    skipping directories that start with a dot.
+    skipping directories that start with a dot and common virtual environment patterns.
     
     Args:
         directory (str): Path to the directory to process.
     """
+    # Common patterns to skip (venv, env, .venv, path/to/venv, etc.)
+    skip_patterns = ['.venv', 'venv', 'env', '.env', 'path']
+    
     for root, dirs, files in os.walk(directory):
         # Skip directories starting with a dot
         dirs[:] = [d for d in dirs if not d.startswith('.')]
+        # Skip common virtual environment directories
+        dirs[:] = [d for d in dirs if d.lower() not in skip_patterns]
+        # Skip if any parent directory matches skip patterns
+        if any(pattern in root.lower() for pattern in skip_patterns):
+            continue
         for file in files:
             if file.endswith('.py'):
                 file_path = os.path.join(root, file)

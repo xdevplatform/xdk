@@ -25,7 +25,7 @@ Number of days left for the Tweet cap to reset
 
 #### Defined in
 
-[schemas.ts:2881](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2881)
+[schemas.ts:2883](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2883)
 
 ___
 
@@ -37,7 +37,7 @@ The daily usage breakdown for each Client Application a project
 
 #### Defined in
 
-[schemas.ts:2882](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2882)
+[schemas.ts:2884](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2884)
 
 ___
 
@@ -49,7 +49,7 @@ The daily usage breakdown for a project
 
 #### Defined in
 
-[schemas.ts:2885](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2885)
+[schemas.ts:2887](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2887)
 
 ___
 
@@ -61,7 +61,7 @@ Total number of Posts that can be read in this project per month
 
 #### Defined in
 
-[schemas.ts:2889](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2889)
+[schemas.ts:2891](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2891)
 
 ___
 
@@ -73,7 +73,7 @@ The unique identifier for this project
 
 #### Defined in
 
-[schemas.ts:2890](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2890)
+[schemas.ts:2892](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2892)
 
 ___
 
@@ -85,4 +85,4 @@ The number of Posts read in this project
 
 #### Defined in
 
-[schemas.ts:2891](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2891)
+[schemas.ts:2893](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2893)

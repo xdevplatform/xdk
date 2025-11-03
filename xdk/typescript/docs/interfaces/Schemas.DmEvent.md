@@ -32,7 +32,7 @@ Specifies the type of attachments (if any) present in this DM.
 
 #### Defined in
 
-[schemas.ts:494](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L494)
+[schemas.ts:496](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L496)
 
 ___
 
@@ -44,7 +44,7 @@ none
 
 #### Defined in
 
-[schemas.ts:498](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L498)
+[schemas.ts:500](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L500)
 
 ___
 
@@ -56,7 +56,7 @@ none
 
 #### Defined in
 
-[schemas.ts:499](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L499)
+[schemas.ts:501](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L501)
 
 ___
 
@@ -66,7 +66,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:500](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L500)
+[schemas.ts:502](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L502)
 
 ___
 
@@ -78,7 +78,7 @@ none
 
 #### Defined in
 
-[schemas.ts:501](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L501)
+[schemas.ts:503](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L503)
 
 ___
 
@@ -90,7 +90,7 @@ none
 
 #### Defined in
 
-[schemas.ts:502](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L502)
+[schemas.ts:504](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L504)
 
 ___
 
@@ -100,7 +100,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:503](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L503)
+[schemas.ts:505](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L505)
 
 ___
 
@@ -112,7 +112,7 @@ none
 
 #### Defined in
 
-[schemas.ts:504](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L504)
+[schemas.ts:506](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L506)
 
 ___
 
@@ -124,7 +124,7 @@ A list of participants for a ParticipantsJoin or ParticipantsLeave event_type.
 
 #### Defined in
 
-[schemas.ts:505](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L505)
+[schemas.ts:507](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L507)
 
 ___
 
@@ -136,7 +136,7 @@ A list of Posts this DM refers to.
 
 #### Defined in
 
-[schemas.ts:508](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L508)
+[schemas.ts:510](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L510)
 
 ___
 
@@ -146,7 +146,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:511](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L511)
+[schemas.ts:513](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L513)
 
 ___
 
@@ -158,7 +158,7 @@ none
 
 #### Defined in
 
-[schemas.ts:512](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L512)
+[schemas.ts:514](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L514)
 
 ___
 
@@ -170,4 +170,4 @@ none
 
 #### Defined in
 
-[schemas.ts:513](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L513)
+[schemas.ts:515](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L515)

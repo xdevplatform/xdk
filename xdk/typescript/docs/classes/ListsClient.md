@@ -17,14 +17,14 @@ parsing for all lists related operations.
 ### Methods
 
 - [getPosts](ListsClient.md#getposts)
-- [removeMemberByUserId](ListsClient.md#removememberbyuserid)
 - [getById](ListsClient.md#getbyid)
 - [update](ListsClient.md#update)
 - [delete](ListsClient.md#delete)
-- [create](ListsClient.md#create)
-- [getFollowers](ListsClient.md#getfollowers)
+- [removeMemberByUserId](ListsClient.md#removememberbyuserid)
 - [getMembers](ListsClient.md#getmembers)
 - [addMember](ListsClient.md#addmember)
+- [getFollowers](ListsClient.md#getfollowers)
+- [create](ListsClient.md#create)
 
 ## Constructors
 
@@ -46,7 +46,7 @@ Creates a new lists client instance
 
 #### Defined in
 
-[lists/client.ts:188](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L188)
+[lists/client.ts:188](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L188)
 
 ## Methods
 
@@ -72,33 +72,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:205](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L205)
-
-___
-
-### removeMemberByUserId
-
-▸ **removeMemberByUserId**(`id`, `userId`): `Promise`\<[`ListMutateResponse`](../interfaces/Schemas.ListMutateResponse.md)\>
-
-Remove List member
-Removes a User from a specific List by its ID and the User’s ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the List to remove a member. |
-| `userId` | `string` | The ID of User that will be removed from the List. |
-
-#### Returns
-
-`Promise`\<[`ListMutateResponse`](../interfaces/Schemas.ListMutateResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[lists/client.ts:301](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L301)
+[lists/client.ts:205](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L205)
 
 ___
 
@@ -124,7 +98,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:344](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L344)
+[lists/client.ts:297](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L297)
 
 ___
 
@@ -150,7 +124,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:406](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L406)
+[lists/client.ts:359](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L359)
 
 ___
 
@@ -175,58 +149,33 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:454](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L454)
+[lists/client.ts:407](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L407)
 
 ___
 
-### create
+### removeMemberByUserId
 
-▸ **create**(`options?`): `Promise`\<[`ListCreateResponse`](../interfaces/Schemas.ListCreateResponse.md)\>
+▸ **removeMemberByUserId**(`id`, `userId`): `Promise`\<[`ListMutateResponse`](../interfaces/Schemas.ListMutateResponse.md)\>
 
-Create List
-Creates a new List for the authenticated user.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `CreateOptions` |
-
-#### Returns
-
-`Promise`\<[`ListCreateResponse`](../interfaces/Schemas.ListCreateResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[lists/client.ts:488](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L488)
-
-___
-
-### getFollowers
-
-▸ **getFollowers**(`id`, `options?`): `Promise`\<[`Get2ListsIdFollowersResponse`](../interfaces/Schemas.Get2ListsIdFollowersResponse.md)\>
-
-Get List followers
-Retrieves a list of Users who follow a specific List by its ID.
+Remove List member
+Removes a User from a specific List by its ID and the User’s ID.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `id` | `string` | The ID of the List. |
-| `options` | `GetFollowersOptions` | - |
+| `id` | `string` | The ID of the List to remove a member. |
+| `userId` | `string` | The ID of User that will be removed from the List. |
 
 #### Returns
 
-`Promise`\<[`Get2ListsIdFollowersResponse`](../interfaces/Schemas.Get2ListsIdFollowersResponse.md)\>
+`Promise`\<[`ListMutateResponse`](../interfaces/Schemas.ListMutateResponse.md)\>
 
 Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:531](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L531)
+[lists/client.ts:449](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L449)
 
 ___
 
@@ -252,7 +201,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:605](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L605)
+[lists/client.ts:492](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L492)
 
 ___
 
@@ -278,4 +227,55 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:679](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/client.ts#L679)
+[lists/client.ts:566](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L566)
+
+___
+
+### getFollowers
+
+▸ **getFollowers**(`id`, `options?`): `Promise`\<[`Get2ListsIdFollowersResponse`](../interfaces/Schemas.Get2ListsIdFollowersResponse.md)\>
+
+Get List followers
+Retrieves a list of Users who follow a specific List by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the List. |
+| `options` | `GetFollowersOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2ListsIdFollowersResponse`](../interfaces/Schemas.Get2ListsIdFollowersResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[lists/client.ts:614](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L614)
+
+___
+
+### create
+
+▸ **create**(`options?`): `Promise`\<[`ListCreateResponse`](../interfaces/Schemas.ListCreateResponse.md)\>
+
+Create List
+Creates a new List for the authenticated user.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `CreateOptions` |
+
+#### Returns
+
+`Promise`\<[`ListCreateResponse`](../interfaces/Schemas.ListCreateResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[lists/client.ts:684](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L684)

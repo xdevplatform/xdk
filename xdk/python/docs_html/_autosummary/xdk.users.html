@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>xdk.users &#8212; XDK Python SDK  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="xdk.users.client" href="xdk.users.client.html" />
+    <link rel="prev" title="xdk.usage.models" href="xdk.usage.models.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-xdk.users">
+<span id="xdk-users"></span><h1>xdk.users<a class="headerlink" href="#module-xdk.users" title="Link to this heading">¶</a></h1>
+<p>Auto-generated users module for the X API.</p>
+<p>This module provides access to the users endpoints of the X API
+and serves as the main entry point for all users-related functionality.</p>
+<p>Generated automatically - do not edit manually.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="xdk.users.UsersClient">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xdk.users.</span></span><span class="sig-name descname"><span class="pre">UsersClient</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">client</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Client for users operations</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>client</strong> (<a class="reference internal" href="xdk.html#xdk.Client" title="xdk.Client"><em>Client</em></a>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.block_dms">
+<span class="sig-name descname"><span class="pre">block_dms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.block_dms" title="Link to this definition">¶</a></dt>
+<dd><p>Block DMs</p>
+<p>Blocks direct messages to or from a specific User by their ID for the authenticated user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the target User that the authenticated user requesting to block dms for.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>BlockDmsResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.BlockDmsResponse" title="xdk.users.models.BlockDmsResponse"><em>BlockDmsResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.create_bookmark">
+<span class="sig-name descname"><span class="pre">create_bookmark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.create_bookmark" title="Link to this definition">¶</a></dt>
+<dd><p>Create Bookmark</p>
+<p>Adds a post to the authenticated user’s bookmarks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User for whom to add bookmarks.</p></li>
+<li><p><strong>body</strong> (<a class="reference internal" href="xdk.users.models.html#xdk.users.models.CreateBookmarkRequest" title="xdk.users.models.CreateBookmarkRequest"><em>CreateBookmarkRequest</em></a>) – Request body</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.CreateBookmarkResponse" title="xdk.users.models.CreateBookmarkResponse"><em>CreateBookmarkResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.delete_bookmark">
+<span class="sig-name descname"><span class="pre">delete_bookmark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweet_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.delete_bookmark" title="Link to this definition">¶</a></dt>
+<dd><p>Delete Bookmark</p>
+<p>Removes a Post from the authenticated user’s Bookmarks by its ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User whose bookmark is to be removed.</p></li>
+<li><p><strong>tweet_id</strong> (<em>Any</em>) – The ID of the Post that the source User is removing from bookmarks.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>DeleteBookmarkResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.DeleteBookmarkResponse" title="xdk.users.models.DeleteBookmarkResponse"><em>DeleteBookmarkResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.follow_list">
+<span class="sig-name descname"><span class="pre">follow_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.follow_list" title="Link to this definition">¶</a></dt>
+<dd><p>Follow List</p>
+<p>Causes the authenticated user to follow a specific List by its ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User that will follow the List.</p></li>
+<li><p><strong>body</strong> (<a class="reference internal" href="xdk.users.models.html#xdk.users.models.FollowListRequest" title="xdk.users.models.FollowListRequest"><em>FollowListRequest</em></a><em> | </em><em>None</em>) – Request body</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.FollowListResponse" title="xdk.users.models.FollowListResponse"><em>FollowListResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.follow_user">
+<span class="sig-name descname"><span class="pre">follow_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.follow_user" title="Link to this definition">¶</a></dt>
+<dd><p>Follow User</p>
+<p>Causes the authenticated user to follow a specific user by their ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User that is requesting to follow the target User.</p></li>
+<li><p><strong>body</strong> (<a class="reference internal" href="xdk.users.models.html#xdk.users.models.FollowUserRequest" title="xdk.users.models.FollowUserRequest"><em>FollowUserRequest</em></a><em> | </em><em>None</em>) – Request body</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.FollowUserResponse" title="xdk.users.models.FollowUserResponse"><em>FollowUserResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_blocking">
+<span class="sig-name descname"><span class="pre">get_blocking</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_blocking" title="Link to this definition">¶</a></dt>
+<dd><p>Get blocking</p>
+<p>Retrieves a list of Users blocked by the specified User ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User for whom to return results.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get a specified ‘page’ of results.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetBlockingResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetBlockingResponse" title="xdk.users.models.GetBlockingResponse"><em>GetBlockingResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_bookmark_folders">
+<span class="sig-name descname"><span class="pre">get_bookmark_folders</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_bookmark_folders" title="Link to this definition">¶</a></dt>
+<dd><p>Get Bookmark folders</p>
+<p>Retrieves a list of Bookmark folders created by the authenticated user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User for whom to return results.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get the next ‘page’ of results.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetBookmarkFoldersResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetBookmarkFoldersResponse" title="xdk.users.models.GetBookmarkFoldersResponse"><em>GetBookmarkFoldersResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_bookmarks">
+<span class="sig-name descname"><span class="pre">get_bookmarks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mediafields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pollfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">placefields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_bookmarks" title="Link to this definition">¶</a></dt>
+<dd><p>Get Bookmarks</p>
+<p>Retrieves a list of Posts bookmarked by the authenticated user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User for whom to return results.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get the next ‘page’ of results.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>mediafields</strong> (<em>List</em>) – A comma separated list of Media fields to display.</p></li>
+<li><p><strong>pollfields</strong> (<em>List</em>) – A comma separated list of Poll fields to display.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>placefields</strong> (<em>List</em>) – A comma separated list of Place fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetBookmarksResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetBookmarksResponse" title="xdk.users.models.GetBookmarksResponse"><em>GetBookmarksResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_bookmarks_by_folder_id">
+<span class="sig-name descname"><span class="pre">get_bookmarks_by_folder_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">folder_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_bookmarks_by_folder_id" title="Link to this definition">¶</a></dt>
+<dd><p>Get Bookmarks by folder ID</p>
+<p>Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User for whom to return results.</p></li>
+<li><p><strong>folder_id</strong> (<em>Any</em>) – The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetBookmarksByFolderIdResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetBookmarksByFolderIdResponse" title="xdk.users.models.GetBookmarksByFolderIdResponse"><em>GetBookmarksByFolderIdResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_by_id">
+<span class="sig-name descname"><span class="pre">get_by_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_by_id" title="Link to this definition">¶</a></dt>
+<dd><p>Get User by ID</p>
+<p>Retrieves details of a specific User by their ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the User to lookup.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetByIdResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetByIdResponse" title="xdk.users.models.GetByIdResponse"><em>GetByIdResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_by_ids">
+<span class="sig-name descname"><span class="pre">get_by_ids</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ids</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_by_ids" title="Link to this definition">¶</a></dt>
+<dd><p>Get Users by IDs</p>
+<p>Retrieves details of multiple Users by their IDs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ids</strong> (<em>List</em>) – A list of User IDs, comma-separated. You can specify up to 100 IDs.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetByIdsResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetByIdsResponse" title="xdk.users.models.GetByIdsResponse"><em>GetByIdsResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_by_username">
+<span class="sig-name descname"><span class="pre">get_by_username</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">username</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_by_username" title="Link to this definition">¶</a></dt>
+<dd><p>Get User by username</p>
+<p>Retrieves details of a specific User by their username.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>username</strong> (<em>str</em>) – A username.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetByUsernameResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetByUsernameResponse" title="xdk.users.models.GetByUsernameResponse"><em>GetByUsernameResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_by_usernames">
+<span class="sig-name descname"><span class="pre">get_by_usernames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">usernames</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_by_usernames" title="Link to this definition">¶</a></dt>
+<dd><p>Get Users by usernames</p>
+<p>Retrieves details of multiple Users by their usernames.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>usernames</strong> (<em>List</em>) – A list of usernames, comma-separated.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetByUsernamesResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetByUsernamesResponse" title="xdk.users.models.GetByUsernamesResponse"><em>GetByUsernamesResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_followed_lists">
+<span class="sig-name descname"><span class="pre">get_followed_lists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">listfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_followed_lists" title="Link to this definition">¶</a></dt>
+<dd><p>Get followed Lists</p>
+<p>Retrieves a list of Lists followed by a specific User by their ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the User to lookup.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get a specified ‘page’ of results.</p></li>
+<li><p><strong>listfields</strong> (<em>List</em>) – A comma separated list of List fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetFollowedListsResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetFollowedListsResponse" title="xdk.users.models.GetFollowedListsResponse"><em>GetFollowedListsResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_followers">
+<span class="sig-name descname"><span class="pre">get_followers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_followers" title="Link to this definition">¶</a></dt>
+<dd><p>Get followers</p>
+<p>Retrieves a list of Users who follow a specific User by their ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the User to lookup.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get a specified ‘page’ of results.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetFollowersResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetFollowersResponse" title="xdk.users.models.GetFollowersResponse"><em>GetFollowersResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_following">
+<span class="sig-name descname"><span class="pre">get_following</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_following" title="Link to this definition">¶</a></dt>
+<dd><p>Get following</p>
+<p>Retrieves a list of Users followed by a specific User by their ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the User to lookup.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get a specified ‘page’ of results.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetFollowingResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetFollowingResponse" title="xdk.users.models.GetFollowingResponse"><em>GetFollowingResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_liked_posts">
+<span class="sig-name descname"><span class="pre">get_liked_posts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mediafields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pollfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">placefields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_liked_posts" title="Link to this definition">¶</a></dt>
+<dd><p>Get liked Posts</p>
+<p>Retrieves a list of Posts liked by a specific User by their ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the User to lookup.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get the next ‘page’ of results.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>mediafields</strong> (<em>List</em>) – A comma separated list of Media fields to display.</p></li>
+<li><p><strong>pollfields</strong> (<em>List</em>) – A comma separated list of Poll fields to display.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>placefields</strong> (<em>List</em>) – A comma separated list of Place fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetLikedPostsResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetLikedPostsResponse" title="xdk.users.models.GetLikedPostsResponse"><em>GetLikedPostsResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_list_memberships">
+<span class="sig-name descname"><span class="pre">get_list_memberships</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">listfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_list_memberships" title="Link to this definition">¶</a></dt>
+<dd><p>Get List memberships</p>
+<p>Retrieves a list of Lists that a specific User is a member of by their ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the User to lookup.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get a specified ‘page’ of results.</p></li>
+<li><p><strong>listfields</strong> (<em>List</em>) – A comma separated list of List fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetListMembershipsResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetListMembershipsResponse" title="xdk.users.models.GetListMembershipsResponse"><em>GetListMembershipsResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_me">
+<span class="sig-name descname"><span class="pre">get_me</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_me" title="Link to this definition">¶</a></dt>
+<dd><p>Get my User</p>
+<p>Retrieves details of the authenticated user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetMeResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetMeResponse" title="xdk.users.models.GetMeResponse"><em>GetMeResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_mentions">
+<span class="sig-name descname"><span class="pre">get_mentions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">since_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">until_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mediafields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pollfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">placefields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_mentions" title="Link to this definition">¶</a></dt>
+<dd><p>Get mentions</p>
+<p>Retrieves a list of Posts that mention a specific User by their ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the User to lookup.</p></li>
+<li><p><strong>since_id</strong> (<em>Any</em>) – The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified.</p></li>
+<li><p><strong>until_id</strong> (<em>Any</em>) – The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get the next ‘page’ of results.</p></li>
+<li><p><strong>start_time</strong> (<em>str</em>) – YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since_id parameter takes precedence if it is also specified.</p></li>
+<li><p><strong>end_time</strong> (<em>str</em>) – YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until_id parameter takes precedence if it is also specified.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>mediafields</strong> (<em>List</em>) – A comma separated list of Media fields to display.</p></li>
+<li><p><strong>pollfields</strong> (<em>List</em>) – A comma separated list of Poll fields to display.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>placefields</strong> (<em>List</em>) – A comma separated list of Place fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetMentionsResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetMentionsResponse" title="xdk.users.models.GetMentionsResponse"><em>GetMentionsResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_muting">
+<span class="sig-name descname"><span class="pre">get_muting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_muting" title="Link to this definition">¶</a></dt>
+<dd><p>Get muting</p>
+<p>Retrieves a list of Users muted by the authenticated user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User for whom to return results.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get the next ‘page’ of results.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetMutingResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetMutingResponse" title="xdk.users.models.GetMutingResponse"><em>GetMutingResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_owned_lists">
+<span class="sig-name descname"><span class="pre">get_owned_lists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">listfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_owned_lists" title="Link to this definition">¶</a></dt>
+<dd><p>Get owned Lists</p>
+<p>Retrieves a list of Lists owned by a specific User by their ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the User to lookup.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get a specified ‘page’ of results.</p></li>
+<li><p><strong>listfields</strong> (<em>List</em>) – A comma separated list of List fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetOwnedListsResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetOwnedListsResponse" title="xdk.users.models.GetOwnedListsResponse"><em>GetOwnedListsResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_pinned_lists">
+<span class="sig-name descname"><span class="pre">get_pinned_lists</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">listfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_pinned_lists" title="Link to this definition">¶</a></dt>
+<dd><p>Get pinned Lists</p>
+<p>Retrieves a list of Lists pinned by the authenticated user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User for whom to return results.</p></li>
+<li><p><strong>listfields</strong> (<em>List</em>) – A comma separated list of List fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetPinnedListsResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetPinnedListsResponse" title="xdk.users.models.GetPinnedListsResponse"><em>GetPinnedListsResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_posts">
+<span class="sig-name descname"><span class="pre">get_posts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">since_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">until_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mediafields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pollfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">placefields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_posts" title="Link to this definition">¶</a></dt>
+<dd><p>Get Posts</p>
+<p>Retrieves a list of posts authored by a specific User by their ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the User to lookup.</p></li>
+<li><p><strong>since_id</strong> (<em>Any</em>) – The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified.</p></li>
+<li><p><strong>until_id</strong> (<em>Any</em>) – The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get the next ‘page’ of results.</p></li>
+<li><p><strong>exclude</strong> (<em>List</em>) – The set of entities to exclude (e.g. ‘replies’ or ‘retweets’).</p></li>
+<li><p><strong>start_time</strong> (<em>str</em>) – YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since_id parameter takes precedence if it is also specified.</p></li>
+<li><p><strong>end_time</strong> (<em>str</em>) – YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until_id parameter takes precedence if it is also specified.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>mediafields</strong> (<em>List</em>) – A comma separated list of Media fields to display.</p></li>
+<li><p><strong>pollfields</strong> (<em>List</em>) – A comma separated list of Poll fields to display.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>placefields</strong> (<em>List</em>) – A comma separated list of Place fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetPostsResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetPostsResponse" title="xdk.users.models.GetPostsResponse"><em>GetPostsResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_reposts_of_me">
+<span class="sig-name descname"><span class="pre">get_reposts_of_me</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mediafields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pollfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">placefields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_reposts_of_me" title="Link to this definition">¶</a></dt>
+<dd><p>Get Reposts of me</p>
+<p>Retrieves a list of Posts that repost content from the authenticated user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get the next ‘page’ of results.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>mediafields</strong> (<em>List</em>) – A comma separated list of Media fields to display.</p></li>
+<li><p><strong>pollfields</strong> (<em>List</em>) – A comma separated list of Poll fields to display.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>placefields</strong> (<em>List</em>) – A comma separated list of Place fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetRepostsOfMeResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetRepostsOfMeResponse" title="xdk.users.models.GetRepostsOfMeResponse"><em>GetRepostsOfMeResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.get_timeline">
+<span class="sig-name descname"><span class="pre">get_timeline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">since_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">until_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pagination_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exclude</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mediafields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pollfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">placefields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.get_timeline" title="Link to this definition">¶</a></dt>
+<dd><p>Get Timeline</p>
+<p>Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User to list Reverse Chronological Timeline Posts of.</p></li>
+<li><p><strong>since_id</strong> (<em>Any</em>) – The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified.</p></li>
+<li><p><strong>until_id</strong> (<em>Any</em>) – The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>pagination_token</strong> (<em>Any</em>) – This parameter is used to get the next ‘page’ of results.</p></li>
+<li><p><strong>exclude</strong> (<em>List</em>) – The set of entities to exclude (e.g. ‘replies’ or ‘retweets’).</p></li>
+<li><p><strong>start_time</strong> (<em>str</em>) – YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since_id parameter takes precedence if it is also specified.</p></li>
+<li><p><strong>end_time</strong> (<em>str</em>) – YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until_id parameter takes precedence if it is also specified.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>mediafields</strong> (<em>List</em>) – A comma separated list of Media fields to display.</p></li>
+<li><p><strong>pollfields</strong> (<em>List</em>) – A comma separated list of Poll fields to display.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>placefields</strong> (<em>List</em>) – A comma separated list of Place fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>GetTimelineResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.GetTimelineResponse" title="xdk.users.models.GetTimelineResponse"><em>GetTimelineResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.like_post">
+<span class="sig-name descname"><span class="pre">like_post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.like_post" title="Link to this definition">¶</a></dt>
+<dd><p>Like Post</p>
+<p>Causes the authenticated user to Like a specific Post by its ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User that is requesting to like the Post.</p></li>
+<li><p><strong>body</strong> (<a class="reference internal" href="xdk.users.models.html#xdk.users.models.LikePostRequest" title="xdk.users.models.LikePostRequest"><em>LikePostRequest</em></a><em> | </em><em>None</em>) – Request body</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.LikePostResponse" title="xdk.users.models.LikePostResponse"><em>LikePostResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.mute_user">
+<span class="sig-name descname"><span class="pre">mute_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.mute_user" title="Link to this definition">¶</a></dt>
+<dd><p>Mute User</p>
+<p>Causes the authenticated user to mute a specific User by their ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User that is requesting to mute the target User.</p></li>
+<li><p><strong>body</strong> (<a class="reference internal" href="xdk.users.models.html#xdk.users.models.MuteUserRequest" title="xdk.users.models.MuteUserRequest"><em>MuteUserRequest</em></a><em> | </em><em>None</em>) – Request body</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.MuteUserResponse" title="xdk.users.models.MuteUserResponse"><em>MuteUserResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.pin_list">
+<span class="sig-name descname"><span class="pre">pin_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.pin_list" title="Link to this definition">¶</a></dt>
+<dd><p>Pin List</p>
+<p>Causes the authenticated user to pin a specific List by its ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User that will pin the List.</p></li>
+<li><p><strong>body</strong> (<a class="reference internal" href="xdk.users.models.html#xdk.users.models.PinListRequest" title="xdk.users.models.PinListRequest"><em>PinListRequest</em></a>) – Request body</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.PinListResponse" title="xdk.users.models.PinListResponse"><em>PinListResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.repost_post">
+<span class="sig-name descname"><span class="pre">repost_post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">body</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.repost_post" title="Link to this definition">¶</a></dt>
+<dd><p>Repost Post</p>
+<p>Causes the authenticated user to repost a specific Post by its ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User that is requesting to repost the Post.</p></li>
+<li><p><strong>body</strong> (<a class="reference internal" href="xdk.users.models.html#xdk.users.models.RepostPostRequest" title="xdk.users.models.RepostPostRequest"><em>RepostPostRequest</em></a><em> | </em><em>None</em>) – Request body</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Response data</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.RepostPostResponse" title="xdk.users.models.RepostPostResponse"><em>RepostPostResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.search">
+<span class="sig-name descname"><span class="pre">search</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">query</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_results</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">next_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">userfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expansions</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweetfields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.search" title="Link to this definition">¶</a></dt>
+<dd><p>Search Users</p>
+<p>Retrieves a list of Users matching a search query.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>query</strong> (<em>Any</em>) – TThe the query string by which to query for users.</p></li>
+<li><p><strong>max_results</strong> (<em>int</em>) – The maximum number of results.</p></li>
+<li><p><strong>next_token</strong> (<em>Any</em>) – This parameter is used to get the next ‘page’ of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.</p></li>
+<li><p><strong>userfields</strong> (<em>List</em>) – A comma separated list of User fields to display.</p></li>
+<li><p><strong>expansions</strong> (<em>List</em>) – A comma separated list of fields to expand.</p></li>
+<li><p><strong>tweetfields</strong> (<em>List</em>) – A comma separated list of Tweet fields to display.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>SearchResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.SearchResponse" title="xdk.users.models.SearchResponse"><em>SearchResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.unblock_dms">
+<span class="sig-name descname"><span class="pre">unblock_dms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.unblock_dms" title="Link to this definition">¶</a></dt>
+<dd><p>Unblock DMs</p>
+<p>Unblocks direct messages to or from a specific User by their ID for the authenticated user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the target User that the authenticated user requesting to unblock dms for.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>UnblockDmsResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.UnblockDmsResponse" title="xdk.users.models.UnblockDmsResponse"><em>UnblockDmsResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.unfollow_list">
+<span class="sig-name descname"><span class="pre">unfollow_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.unfollow_list" title="Link to this definition">¶</a></dt>
+<dd><p>Unfollow List</p>
+<p>Causes the authenticated user to unfollow a specific List by its ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User that will unfollow the List.</p></li>
+<li><p><strong>list_id</strong> (<em>Any</em>) – The ID of the List to unfollow.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>UnfollowListResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.UnfollowListResponse" title="xdk.users.models.UnfollowListResponse"><em>UnfollowListResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.unfollow_user">
+<span class="sig-name descname"><span class="pre">unfollow_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_user_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.unfollow_user" title="Link to this definition">¶</a></dt>
+<dd><p>Unfollow User</p>
+<p>Causes the authenticated user to unfollow a specific user by their ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_user_id</strong> (<em>Any</em>) – The ID of the authenticated source User that is requesting to unfollow the target User.</p></li>
+<li><p><strong>target_user_id</strong> (<em>Any</em>) – The ID of the User that the source User is requesting to unfollow.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>UnfollowUserResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.UnfollowUserResponse" title="xdk.users.models.UnfollowUserResponse"><em>UnfollowUserResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.unlike_post">
+<span class="sig-name descname"><span class="pre">unlike_post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tweet_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.unlike_post" title="Link to this definition">¶</a></dt>
+<dd><p>Unlike Post</p>
+<p>Causes the authenticated user to Unlike a specific Post by its ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User that is requesting to unlike the Post.</p></li>
+<li><p><strong>tweet_id</strong> (<em>Any</em>) – The ID of the Post that the User is requesting to unlike.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>UnlikePostResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.UnlikePostResponse" title="xdk.users.models.UnlikePostResponse"><em>UnlikePostResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.unmute_user">
+<span class="sig-name descname"><span class="pre">unmute_user</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source_user_id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_user_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.unmute_user" title="Link to this definition">¶</a></dt>
+<dd><p>Unmute User</p>
+<p>Causes the authenticated user to unmute a specific user by their ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source_user_id</strong> (<em>Any</em>) – The ID of the authenticated source User that is requesting to unmute the target User.</p></li>
+<li><p><strong>target_user_id</strong> (<em>Any</em>) – The ID of the User that the source User is requesting to unmute.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>UnmuteUserResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.UnmuteUserResponse" title="xdk.users.models.UnmuteUserResponse"><em>UnmuteUserResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.unpin_list">
+<span class="sig-name descname"><span class="pre">unpin_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.unpin_list" title="Link to this definition">¶</a></dt>
+<dd><p>Unpin List</p>
+<p>Causes the authenticated user to unpin a specific List by its ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User for whom to return results.</p></li>
+<li><p><strong>list_id</strong> (<em>Any</em>) – The ID of the List to unpin.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>UnpinListResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.UnpinListResponse" title="xdk.users.models.UnpinListResponse"><em>UnpinListResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.users.UsersClient.unrepost_post">
+<span class="sig-name descname"><span class="pre">unrepost_post</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source_tweet_id</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.users.UsersClient.unrepost_post" title="Link to this definition">¶</a></dt>
+<dd><p>Unrepost Post</p>
+<p>Causes the authenticated user to unrepost a specific Post by its ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<em>Any</em>) – The ID of the authenticated source User that is requesting to repost the Post.</p></li>
+<li><p><strong>source_tweet_id</strong> (<em>Any</em>) – The ID of the Post that the User is requesting to unretweet.</p></li>
+<li><p><strong>Returns</strong></p></li>
+<li><p><strong>UnrepostPostResponse</strong> – Response data</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.users.models.html#xdk.users.models.UnrepostPostResponse" title="xdk.users.models.UnrepostPostResponse"><em>UnrepostPostResponse</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<p class="rubric">Modules</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="xdk.users.client.html#module-xdk.users.client" title="xdk.users.client"><code class="xref py py-obj docutils literal notranslate"><span class="pre">client</span></code></a></p></td>
+<td><p>Auto-generated users client for the X API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xdk.users.models.html#module-xdk.users.models" title="xdk.users.models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">models</span></code></a></p></td>
+<td><p>Auto-generated users models for the X API.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">XDK Python SDK</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="xdk.html">xdk</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../modules.html">API Reference</a><ul>
+  <li><a href="xdk.html">xdk</a><ul>
+      <li>Previous: <a href="xdk.usage.models.html" title="previous chapter">xdk.usage.models</a></li>
+      <li>Next: <a href="xdk.users.client.html" title="next chapter">xdk.users.client</a></li>
+  </ul></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, XDK.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/_autosummary/xdk.users.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -27,7 +27,7 @@ The category of the account (e.g., personal, business).
 
 #### Defined in
 
-[schemas.ts:2029](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2029)
+[schemas.ts:2031](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2031)
 
 ___
 
@@ -39,7 +39,7 @@ The amount transacted.
 
 #### Defined in
 
-[schemas.ts:2030](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2030)
+[schemas.ts:2032](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2032)
 
 ___
 
@@ -51,7 +51,7 @@ Memo for transaction (e.g. CREDIT)
 
 #### Defined in
 
-[schemas.ts:2031](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2031)
+[schemas.ts:2033](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2033)
 
 ___
 
@@ -63,7 +63,7 @@ The transaction description
 
 #### Defined in
 
-[schemas.ts:2032](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2032)
+[schemas.ts:2034](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2034)
 
 ___
 
@@ -75,7 +75,7 @@ The timestamp when the transaction was posted.
 
 #### Defined in
 
-[schemas.ts:2033](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2033)
+[schemas.ts:2035](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2035)
 
 ___
 
@@ -87,7 +87,7 @@ The status of the transaction.
 
 #### Defined in
 
-[schemas.ts:2034](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2034)
+[schemas.ts:2036](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2036)
 
 ___
 
@@ -99,7 +99,7 @@ The identifier for the transaction.
 
 #### Defined in
 
-[schemas.ts:2035](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2035)
+[schemas.ts:2037](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2037)
 
 ___
 
@@ -111,4 +111,4 @@ The timestamp when the transaction occurred.
 
 #### Defined in
 
-[schemas.ts:2036](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2036)
+[schemas.ts:2038](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2038)

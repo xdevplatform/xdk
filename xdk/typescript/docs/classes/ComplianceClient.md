@@ -16,9 +16,9 @@ parsing for all compliance related operations.
 
 ### Methods
 
+- [getJobsById](ComplianceClient.md#getjobsbyid)
 - [getJobs](ComplianceClient.md#getjobs)
 - [createJobs](ComplianceClient.md#createjobs)
-- [getJobsById](ComplianceClient.md#getjobsbyid)
 
 ## Constructors
 
@@ -40,9 +40,35 @@ Creates a new compliance client instance
 
 #### Defined in
 
-[compliance/client.ts:67](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/compliance/client.ts#L67)
+[compliance/client.ts:67](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/compliance/client.ts#L67)
 
 ## Methods
+
+### getJobsById
+
+▸ **getJobsById**(`id`, `options?`): `Promise`\<[`Get2ComplianceJobsIdResponse`](../interfaces/Schemas.Get2ComplianceJobsIdResponse.md)\>
+
+Get Compliance Job by ID
+Retrieves details of a specific Compliance Job by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the Compliance Job to retrieve. |
+| `options` | `GetJobsByIdOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2ComplianceJobsIdResponse`](../interfaces/Schemas.Get2ComplianceJobsIdResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[compliance/client.ts:84](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/compliance/client.ts#L84)
+
+___
 
 ### getJobs
 
@@ -66,7 +92,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[compliance/client.ts:84](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/compliance/client.ts#L84)
+[compliance/client.ts:134](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/compliance/client.ts#L134)
 
 ___
 
@@ -91,30 +117,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[compliance/client.ts:140](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/compliance/client.ts#L140)
-
-___
-
-### getJobsById
-
-▸ **getJobsById**(`id`, `options?`): `Promise`\<[`Get2ComplianceJobsIdResponse`](../interfaces/Schemas.Get2ComplianceJobsIdResponse.md)\>
-
-Get Compliance Job by ID
-Retrieves details of a specific Compliance Job by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the Compliance Job to retrieve. |
-| `options` | `GetJobsByIdOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2ComplianceJobsIdResponse`](../interfaces/Schemas.Get2ComplianceJobsIdResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[compliance/client.ts:178](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/compliance/client.ts#L178)
+[compliance/client.ts:190](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/compliance/client.ts#L190)

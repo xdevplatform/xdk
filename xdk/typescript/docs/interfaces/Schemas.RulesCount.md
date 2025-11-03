@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[schemas.ts:2245](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2245)
+[schemas.ts:2247](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2247)
 
 ___
 
@@ -34,7 +34,7 @@ Cap of number of rules allowed per client application
 
 #### Defined in
 
-[schemas.ts:2246](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2246)
+[schemas.ts:2248](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2248)
 
 ___
 
@@ -46,7 +46,7 @@ Cap of number of rules allowed per project
 
 #### Defined in
 
-[schemas.ts:2247](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2247)
+[schemas.ts:2249](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2249)
 
 ___
 
@@ -56,7 +56,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2248](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2248)
+[schemas.ts:2250](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2250)
 
 ___
 
@@ -68,4 +68,4 @@ Number of rules for project
 
 #### Defined in
 
-[schemas.ts:2249](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2249)
+[schemas.ts:2251](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2251)

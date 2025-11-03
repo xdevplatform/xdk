@@ -63,15 +63,17 @@ class Cursor(Generic[ResponseType]):
     return type of the wrapped method for proper type hints.
     
     Example usage:
-        # For methods requiring arguments
-        cursor = Cursor(client.users.get_users_blocking, "user_id", max_results=100)
-        for user in cursor.items(250):  # user is properly typed
-            print(user.name)
-            
-        # For methods with query parameters  
-        cursor = Cursor(client.posts.search_posts_recent, "python", max_results=50)
-        for page in cursor.pages(5):  # page is SearchResponse type
-            print(f"Got {len(page.data)} posts")
+        .. code-block:: python
+
+            # For methods requiring arguments
+            cursor = Cursor(client.users.get_users_blocking, "user_id", max_results=100)
+            for user in cursor.items(250):  # user is properly typed
+                print(user.name)
+
+            # For methods with query parameters
+            cursor = Cursor(client.posts.search_posts_recent, "python", max_results=50)
+            for page in cursor.pages(5):  # page is SearchResponse type
+                print(f"Got {len(page.data)} posts")
     """
     
     def __init__(self, method: PaginatableMethod[ResponseType], *args: Any, **kwargs: Any):
@@ -143,17 +145,19 @@ def cursor(method: PaginatableMethod[ResponseType], *args: Any, **kwargs: Any) -
         PaginationError: If the method doesn't support pagination parameters
         
     Example:
-        # Type is inferred as Cursor[GetUsersResponse]
-        users_cursor = cursor(client.users.get_users_blocking, "user_id", max_results=100)
-        
-        # page is typed as GetUsersResponse
-        for page in users_cursor.pages(5):
-            print(len(page.data))
-            
-        # For search methods
-        search_cursor = cursor(client.posts.search_posts_recent, "python", max_results=50)
-        for tweet in search_cursor.items(100):
-            print(tweet.text)
+        .. code-block:: python
+
+            # Type is inferred as Cursor[GetUsersResponse]
+            users_cursor = cursor(client.users.get_users_blocking, "user_id", max_results=100)
+
+            # page is typed as GetUsersResponse
+            for page in users_cursor.pages(5):
+                print(len(page.data))
+
+            # For search methods
+            search_cursor = cursor(client.posts.search_posts_recent, "python", max_results=50)
+            for tweet in search_cursor.items(100):
+                print(tweet.text)
     """
     return Cursor(method, *args, **kwargs)
 

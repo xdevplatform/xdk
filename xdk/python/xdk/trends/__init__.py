@@ -9,4 +9,4 @@ Generated automatically - do not edit manually.
 
 from .client import TrendsClient
 
-__all__ = ["TrendsClient"] 
+__all__ = ["TrendsClient"]

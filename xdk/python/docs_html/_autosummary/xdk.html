@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html lang="en" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>xdk &#8212; XDK Python SDK  documentation</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/basic.css?v=b08954a9" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=27fed22d" />
+    <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="xdk.account_activity" href="xdk.account_activity.html" />
+    <link rel="prev" title="API Reference" href="../modules.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="module-xdk">
+<span id="xdk"></span><h1>xdk<a class="headerlink" href="#module-xdk" title="Link to this heading">¶</a></h1>
+<p>XDK Python SDK.</p>
+<p>A Python SDK for the X API that provides convenient access
+to the X API endpoints with type safety and authentication support.</p>
+<p>Generated automatically - do not edit manually.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="xdk.Client">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xdk.</span></span><span class="sig-name descname"><span class="pre">Client</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'https://api.twitter.com'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bearer_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_secret</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_uri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.Client" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Client for interacting with the X API.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_url</strong> (<em>str</em>)</p></li>
+<li><p><strong>bearer_token</strong> (<em>str</em>)</p></li>
+<li><p><strong>client_id</strong> (<em>str</em>)</p></li>
+<li><p><strong>client_secret</strong> (<em>str</em>)</p></li>
+<li><p><strong>redirect_uri</strong> (<em>str</em>)</p></li>
+<li><p><strong>token</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>)</p></li>
+<li><p><strong>scope</strong> (<em>str</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.Client.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">base_url</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'https://api.twitter.com'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">bearer_token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_id</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">client_secret</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_uri</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">token</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scope</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.Client.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize the X API client.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>base_url</strong> (<em>str</em>) – The base URL for the X API.</p></li>
+<li><p><strong>bearer_token</strong> (<em>str</em>) – The bearer token for the X API.</p></li>
+<li><p><strong>client_id</strong> (<em>str</em>) – The client ID for the X API.</p></li>
+<li><p><strong>client_secret</strong> (<em>str</em>) – The client secret for the X API.</p></li>
+<li><p><strong>redirect_uri</strong> (<em>str</em>) – The redirect URI for OAuth2 authorization.</p></li>
+<li><p><strong>token</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Any</em><em>]</em>) – An existing OAuth2 token dictionary (if available).</p></li>
+<li><p><strong>scope</strong> (<em>str</em>) – Space-separated list of scopes for OAuth2 authorization.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xdk.Client.access_token">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">access_token</span></span><a class="headerlink" href="#xdk.Client.access_token" title="Link to this definition">¶</a></dt>
+<dd><p>Get the current access token if available.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.Client.fetch_token">
+<span class="sig-name descname"><span class="pre">fetch_token</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">authorization_response</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.Client.fetch_token" title="Link to this definition">¶</a></dt>
+<dd><p>Fetch token using authorization response.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.Client.get_authorization_url">
+<span class="sig-name descname"><span class="pre">get_authorization_url</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xdk.Client.get_authorization_url" title="Link to this definition">¶</a></dt>
+<dd><p>Get the authorization URL for the OAuth2 PKCE flow.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.Client.is_token_expired">
+<span class="sig-name descname"><span class="pre">is_token_expired</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xdk.Client.is_token_expired" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the OAuth2 token is expired.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xdk.Client.oauth2_session">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">oauth2_session</span></span><a class="headerlink" href="#xdk.Client.oauth2_session" title="Link to this definition">¶</a></dt>
+<dd><p>Get the OAuth2 session if available.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.Client.refresh_token">
+<span class="sig-name descname"><span class="pre">refresh_token</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#xdk.Client.refresh_token" title="Link to this definition">¶</a></dt>
+<dd><p>Refresh the OAuth2 token.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="xdk.Client.token">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">token</span></span><a class="headerlink" href="#xdk.Client.token" title="Link to this definition">¶</a></dt>
+<dd><p>Get the current OAuth2 token if available.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="xdk.Cursor">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xdk.</span></span><span class="sig-name descname"><span class="pre">Cursor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.Cursor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Generic</span></code>[<code class="xref py py-obj docutils literal notranslate"><span class="pre">ResponseType</span></code>]</p>
+<p>A cursor for handling pagination in API calls.</p>
+<p>This class wraps any API method and provides elegant pagination
+through .items() and .pages() methods. The cursor preserves the
+return type of the wrapped method for proper type hints.</p>
+<dl>
+<dt>Example usage:</dt><dd><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># For methods requiring arguments</span>
+<span class="n">cursor</span> <span class="o">=</span> <span class="n">Cursor</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">users</span><span class="o">.</span><span class="n">get_users_blocking</span><span class="p">,</span> <span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="mi">250</span><span class="p">):</span>  <span class="c1"># user is properly typed</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+
+<span class="c1"># For methods with query parameters</span>
+<span class="n">cursor</span> <span class="o">=</span> <span class="n">Cursor</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">posts</span><span class="o">.</span><span class="n">search_posts_recent</span><span class="p">,</span> <span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">cursor</span><span class="o">.</span><span class="n">pages</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>  <span class="c1"># page is SearchResponse type</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Got </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">page</span><span class="o">.</span><span class="n">data</span><span class="p">)</span><span class="si">}</span><span class="s2"> posts&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<a class="reference internal" href="xdk.paginator.html#xdk.paginator.PaginatableMethod" title="xdk.paginator.PaginatableMethod"><em>PaginatableMethod</em></a><em>[</em><em>ResponseType</em><em>]</em>)</p></li>
+<li><p><strong>args</strong> (<em>Any</em>)</p></li>
+<li><p><strong>kwargs</strong> (<em>Any</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.Cursor.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.Cursor.__init__" title="Link to this definition">¶</a></dt>
+<dd><p>Initialize the cursor.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<a class="reference internal" href="xdk.paginator.html#xdk.paginator.PaginatableMethod" title="xdk.paginator.PaginatableMethod"><em>PaginatableMethod</em></a><em>[</em><em>ResponseType</em><em>]</em>) – The API method to call for each page (must support pagination)</p></li>
+<li><p><strong>*args</strong> (<em>Any</em>) – Positional arguments to pass to the API method</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments to pass to the API method (excluding pagination params)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#xdk.PaginationError" title="xdk.PaginationError"><strong>PaginationError</strong></a> – If the method doesn’t support pagination parameters</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.Cursor.items">
+<span class="sig-name descname"><span class="pre">items</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.Cursor.items" title="Link to this definition">¶</a></dt>
+<dd><p>Iterate over individual items from paginated responses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>limit</strong> (<em>int</em><em> | </em><em>None</em>) – Maximum number of items to return (None for unlimited)</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>Individual items from the API responses</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Iterator</em>[<em>Any</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="xdk.Cursor.pages">
+<span class="sig-name descname"><span class="pre">pages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.Cursor.pages" title="Link to this definition">¶</a></dt>
+<dd><p>Iterate over pages of responses.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>limit</strong> (<em>int</em><em> | </em><em>None</em>) – Maximum number of pages to return (None for unlimited)</p>
+</dd>
+<dt class="field-even">Yields<span class="colon">:</span></dt>
+<dd class="field-even"><p>Page responses from the API (same type as the wrapped method returns)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><em>Iterator</em>[<em>ResponseType</em>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="xdk.PaginationError">
+<em class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">xdk.</span></span><span class="sig-name descname"><span class="pre">PaginationError</span></span><a class="headerlink" href="#xdk.PaginationError" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">TypeError</span></code></p>
+<p>Raised when a non-paginatable method is passed to Cursor.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="xdk.cursor">
+<span class="sig-prename descclassname"><span class="pre">xdk.</span></span><span class="sig-name descname"><span class="pre">cursor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">method</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#xdk.cursor" title="Link to this definition">¶</a></dt>
+<dd><p>Create a cursor with proper type inference and validation.</p>
+<p>This factory function helps with type inference so you get proper
+type hints for the response type, and validates that the method
+supports pagination at both static analysis and runtime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>method</strong> (<a class="reference internal" href="xdk.paginator.html#xdk.paginator.PaginatableMethod" title="xdk.paginator.PaginatableMethod"><em>PaginatableMethod</em></a><em>[</em><em>ResponseType</em><em>]</em>) – The API method to wrap (must support pagination)</p></li>
+<li><p><strong>*args</strong> (<em>Any</em>) – Positional arguments to pass to the method</p></li>
+<li><p><strong>**kwargs</strong> (<em>Any</em>) – Keyword arguments to pass to the method</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A properly typed Cursor instance</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="#xdk.PaginationError" title="xdk.PaginationError"><strong>PaginationError</strong></a> – If the method doesn’t support pagination parameters</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="xdk.paginator.html#xdk.paginator.Cursor" title="xdk.paginator.Cursor"><em>Cursor</em></a>[<em>ResponseType</em>]</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Type is inferred as Cursor[GetUsersResponse]</span>
+<span class="n">users_cursor</span> <span class="o">=</span> <span class="n">cursor</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">users</span><span class="o">.</span><span class="n">get_users_blocking</span><span class="p">,</span> <span class="s2">&quot;user_id&quot;</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># page is typed as GetUsersResponse</span>
+<span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">users_cursor</span><span class="o">.</span><span class="n">pages</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">page</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
+
+<span class="c1"># For search methods</span>
+<span class="n">search_cursor</span> <span class="o">=</span> <span class="n">cursor</span><span class="p">(</span><span class="n">client</span><span class="o">.</span><span class="n">posts</span><span class="o">.</span><span class="n">search_posts_recent</span><span class="p">,</span> <span class="s2">&quot;python&quot;</span><span class="p">,</span> <span class="n">max_results</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">tweet</span> <span class="ow">in</span> <span class="n">search_cursor</span><span class="o">.</span><span class="n">items</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tweet</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<p class="rubric">Modules</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="xdk.account_activity.html#module-xdk.account_activity" title="xdk.account_activity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">account_activity</span></code></a></p></td>
+<td><p>Auto-generated account activity module for the X API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xdk.activity.html#module-xdk.activity" title="xdk.activity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">activity</span></code></a></p></td>
+<td><p>Auto-generated activity module for the X API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="xdk.client.html#module-xdk.client" title="xdk.client"><code class="xref py py-obj docutils literal notranslate"><span class="pre">client</span></code></a></p></td>
+<td><p>Auto-generated main client for the X API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xdk.communities.html#module-xdk.communities" title="xdk.communities"><code class="xref py py-obj docutils literal notranslate"><span class="pre">communities</span></code></a></p></td>
+<td><p>Auto-generated communities module for the X API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="xdk.community_notes.html#module-xdk.community_notes" title="xdk.community_notes"><code class="xref py py-obj docutils literal notranslate"><span class="pre">community_notes</span></code></a></p></td>
+<td><p>Auto-generated community notes module for the X API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xdk.compliance.html#module-xdk.compliance" title="xdk.compliance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compliance</span></code></a></p></td>
+<td><p>Auto-generated compliance module for the X API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="xdk.connections.html#module-xdk.connections" title="xdk.connections"><code class="xref py py-obj docutils literal notranslate"><span class="pre">connections</span></code></a></p></td>
+<td><p>Auto-generated connections module for the X API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xdk.direct_messages.html#module-xdk.direct_messages" title="xdk.direct_messages"><code class="xref py py-obj docutils literal notranslate"><span class="pre">direct_messages</span></code></a></p></td>
+<td><p>Auto-generated direct messages module for the X API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="xdk.general.html#module-xdk.general" title="xdk.general"><code class="xref py py-obj docutils literal notranslate"><span class="pre">general</span></code></a></p></td>
+<td><p>Auto-generated general module for the X API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xdk.lists.html#module-xdk.lists" title="xdk.lists"><code class="xref py py-obj docutils literal notranslate"><span class="pre">lists</span></code></a></p></td>
+<td><p>Auto-generated lists module for the X API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="xdk.media.html#module-xdk.media" title="xdk.media"><code class="xref py py-obj docutils literal notranslate"><span class="pre">media</span></code></a></p></td>
+<td><p>Auto-generated media module for the X API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xdk.oauth2_auth.html#module-xdk.oauth2_auth" title="xdk.oauth2_auth"><code class="xref py py-obj docutils literal notranslate"><span class="pre">oauth2_auth</span></code></a></p></td>
+<td><p>Auto-generated OAuth2 PKCE authentication for the X API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="xdk.paginator.html#module-xdk.paginator" title="xdk.paginator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">paginator</span></code></a></p></td>
+<td><p>Cursor-based pagination utilities for the X API SDK.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xdk.posts.html#module-xdk.posts" title="xdk.posts"><code class="xref py py-obj docutils literal notranslate"><span class="pre">posts</span></code></a></p></td>
+<td><p>Auto-generated posts module for the X API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="xdk.spaces.html#module-xdk.spaces" title="xdk.spaces"><code class="xref py py-obj docutils literal notranslate"><span class="pre">spaces</span></code></a></p></td>
+<td><p>Auto-generated spaces module for the X API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xdk.stream.html#module-xdk.stream" title="xdk.stream"><code class="xref py py-obj docutils literal notranslate"><span class="pre">stream</span></code></a></p></td>
+<td><p>Auto-generated stream module for the X API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="xdk.trends.html#module-xdk.trends" title="xdk.trends"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trends</span></code></a></p></td>
+<td><p>Auto-generated trends module for the X API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xdk.usage.html#module-xdk.usage" title="xdk.usage"><code class="xref py py-obj docutils literal notranslate"><span class="pre">usage</span></code></a></p></td>
+<td><p>Auto-generated usage module for the X API.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="xdk.users.html#module-xdk.users" title="xdk.users"><code class="xref py py-obj docutils literal notranslate"><span class="pre">users</span></code></a></p></td>
+<td><p>Auto-generated users module for the X API.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="xdk.webhooks.html#module-xdk.webhooks" title="xdk.webhooks"><code class="xref py py-obj docutils literal notranslate"><span class="pre">webhooks</span></code></a></p></td>
+<td><p>Auto-generated webhooks module for the X API.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">XDK Python SDK</a></h1>
+
+
+
+
+
+
+
+
+
+<search id="searchbox" style="display: none" role="search">
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script><h3>Navigation</h3>
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../modules.html">API Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">xdk</a></li>
+</ul>
+</li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../modules.html">API Reference</a><ul>
+      <li>Previous: <a href="../modules.html" title="previous chapter">API Reference</a></li>
+      <li>Next: <a href="xdk.account_activity.html" title="next chapter">xdk.account_activity</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, XDK.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 8.2.3</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 1.0.0</a>
+      
+      |
+      <a href="../_sources/_autosummary/xdk.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

@@ -18,4 +18,4 @@ Response for deleteAll
 
 #### Defined in
 
-[connections/models.ts:15](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/connections/models.ts#L15)
+[connections/models.ts:15](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/connections/models.ts#L15)

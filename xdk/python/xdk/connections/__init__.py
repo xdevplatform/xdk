@@ -9,4 +9,4 @@ Generated automatically - do not edit manually.
 
 from .client import ConnectionsClient
 
-__all__ = ["ConnectionsClient"] 
+__all__ = ["ConnectionsClient"]

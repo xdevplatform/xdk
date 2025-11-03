@@ -17,11 +17,11 @@ parsing for all account activity related operations.
 ### Methods
 
 - [deleteSubscription](AccountActivityClient.md#deletesubscription)
-- [getSubscriptionCount](AccountActivityClient.md#getsubscriptioncount)
 - [getSubscriptions](AccountActivityClient.md#getsubscriptions)
 - [createReplayJob](AccountActivityClient.md#createreplayjob)
 - [validateSubscription](AccountActivityClient.md#validatesubscription)
 - [createSubscription](AccountActivityClient.md#createsubscription)
+- [getSubscriptionCount](AccountActivityClient.md#getsubscriptioncount)
 
 ## Constructors
 
@@ -43,7 +43,7 @@ Creates a new account activity client instance
 
 #### Defined in
 
-[account_activity/client.ts:54](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/account_activity/client.ts#L54)
+[account_activity/client.ts:54](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L54)
 
 ## Methods
 
@@ -69,26 +69,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:75](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/account_activity/client.ts#L75)
-
-___
-
-### getSubscriptionCount
-
-▸ **getSubscriptionCount**(): `Promise`\<[`SubscriptionsCountGetResponse`](../interfaces/Schemas.SubscriptionsCountGetResponse.md)\>
-
-Get subscription count
-Retrieves a count of currently active Account Activity subscriptions.
-
-#### Returns
-
-`Promise`\<[`SubscriptionsCountGetResponse`](../interfaces/Schemas.SubscriptionsCountGetResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[account_activity/client.ts:115](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/account_activity/client.ts#L115)
+[account_activity/client.ts:75](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L75)
 
 ___
 
@@ -113,7 +94,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:151](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/account_activity/client.ts#L151)
+[account_activity/client.ts:119](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L119)
 
 ___
 
@@ -140,7 +121,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:198](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/account_activity/client.ts#L198)
+[account_activity/client.ts:166](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L166)
 
 ___
 
@@ -165,7 +146,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:249](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/account_activity/client.ts#L249)
+[account_activity/client.ts:217](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L217)
 
 ___
 
@@ -191,4 +172,23 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:289](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/account_activity/client.ts#L289)
+[account_activity/client.ts:257](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L257)
+
+___
+
+### getSubscriptionCount
+
+▸ **getSubscriptionCount**(): `Promise`\<[`SubscriptionsCountGetResponse`](../interfaces/Schemas.SubscriptionsCountGetResponse.md)\>
+
+Get subscription count
+Retrieves a count of currently active Account Activity subscriptions.
+
+#### Returns
+
+`Promise`\<[`SubscriptionsCountGetResponse`](../interfaces/Schemas.SubscriptionsCountGetResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[account_activity/client.ts:301](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L301)

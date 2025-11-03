@@ -9,4 +9,4 @@ Generated automatically - do not edit manually.
 
 from .client import MediaClient
 
-__all__ = ["MediaClient"] 
+__all__ = ["MediaClient"]

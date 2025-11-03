@@ -16,22 +16,22 @@ parsing for all posts related operations.
 
 ### Methods
 
+- [getQuoted](PostsClient.md#getquoted)
+- [getInsights28hr](PostsClient.md#getinsights28hr)
+- [hideReply](PostsClient.md#hidereply)
+- [getCountsAll](PostsClient.md#getcountsall)
+- [getInsightsHistorical](PostsClient.md#getinsightshistorical)
+- [getAnalytics](PostsClient.md#getanalytics)
 - [getById](PostsClient.md#getbyid)
 - [delete](PostsClient.md#delete)
+- [getLikingUsers](PostsClient.md#getlikingusers)
 - [searchRecent](PostsClient.md#searchrecent)
-- [getCountsRecent](PostsClient.md#getcountsrecent)
+- [searchAll](PostsClient.md#searchall)
+- [getReposts](PostsClient.md#getreposts)
+- [getRepostedBy](PostsClient.md#getrepostedby)
 - [getByIds](PostsClient.md#getbyids)
 - [create](PostsClient.md#create)
-- [getInsights28hr](PostsClient.md#getinsights28hr)
-- [searchAll](PostsClient.md#searchall)
-- [getQuoted](PostsClient.md#getquoted)
-- [getAnalytics](PostsClient.md#getanalytics)
-- [getCountsAll](PostsClient.md#getcountsall)
-- [getReposts](PostsClient.md#getreposts)
-- [getInsightsHistorical](PostsClient.md#getinsightshistorical)
-- [hideReply](PostsClient.md#hidereply)
-- [getLikingUsers](PostsClient.md#getlikingusers)
-- [getRepostedBy](PostsClient.md#getrepostedby)
+- [getCountsRecent](PostsClient.md#getcountsrecent)
 
 ## Constructors
 
@@ -53,161 +53,33 @@ Creates a new posts client instance
 
 #### Defined in
 
-[posts/client.ts:453](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L453)
+[posts/client.ts:453](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L453)
 
 ## Methods
 
-### getById
+### getQuoted
 
-▸ **getById**(`id`, `options?`): `Promise`\<[`Get2TweetsIdResponse`](../interfaces/Schemas.Get2TweetsIdResponse.md)\>
+▸ **getQuoted**(`id`, `options?`): `Promise`\<[`Get2TweetsIdQuoteTweetsResponse`](../interfaces/Schemas.Get2TweetsIdQuoteTweetsResponse.md)\>
 
-Get Post by ID
-Retrieves details of a specific Post by its ID.
+Get Quoted Posts
+Retrieves a list of Posts that quote a specific Post by its ID.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `id` | `string` | A single Post ID. |
-| `options` | `GetByIdOptions` | - |
+| `options` | `GetQuotedOptions` | - |
 
 #### Returns
 
-`Promise`\<[`Get2TweetsIdResponse`](../interfaces/Schemas.Get2TweetsIdResponse.md)\>
+`Promise`\<[`Get2TweetsIdQuoteTweetsResponse`](../interfaces/Schemas.Get2TweetsIdQuoteTweetsResponse.md)\>
 
 Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:470](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L470)
-
-___
-
-### delete
-
-▸ **delete**(`id`): `Promise`\<[`TweetDeleteResponse`](../interfaces/Schemas.TweetDeleteResponse.md)\>
-
-Delete Post
-Deletes a specific Post by its ID, if owned by the authenticated user.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the Post to be deleted. |
-
-#### Returns
-
-`Promise`\<[`TweetDeleteResponse`](../interfaces/Schemas.TweetDeleteResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[posts/client.ts:550](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L550)
-
-___
-
-### searchRecent
-
-▸ **searchRecent**(`query`, `options?`): `Promise`\<[`Get2TweetsSearchRecentResponse`](../interfaces/Schemas.Get2TweetsSearchRecentResponse.md)\>
-
-Search recent Posts
-Retrieves Posts from the last 7 days matching a search query.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `query` | `string` | One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length. |
-| `options` | `SearchRecentOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2TweetsSearchRecentResponse`](../interfaces/Schemas.Get2TweetsSearchRecentResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[posts/client.ts:588](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L588)
-
-___
-
-### getCountsRecent
-
-▸ **getCountsRecent**(`query`, `options?`): `Promise`\<[`Get2TweetsCountsRecentResponse`](../interfaces/Schemas.Get2TweetsCountsRecentResponse.md)\>
-
-Get count of recent Posts
-Retrieves the count of Posts from the last 7 days matching a search query.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `query` | `string` | One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length. |
-| `options` | `GetCountsRecentOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2TweetsCountsRecentResponse`](../interfaces/Schemas.Get2TweetsCountsRecentResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[posts/client.ts:718](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L718)
-
-___
-
-### getByIds
-
-▸ **getByIds**(`ids`, `options?`): `Promise`\<[`Get2TweetsResponse`](../interfaces/Schemas.Get2TweetsResponse.md)\>
-
-Get Posts by IDs
-Retrieves details of multiple Posts by their IDs.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `ids` | `any`[] | A comma separated list of Post IDs. Up to 100 are allowed in a single request. |
-| `options` | `GetByIdsOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2TweetsResponse`](../interfaces/Schemas.Get2TweetsResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[posts/client.ts:812](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L812)
-
-___
-
-### create
-
-▸ **create**(`body`): `Promise`\<[`TweetCreateResponse`](../interfaces/Schemas.TweetCreateResponse.md)\>
-
-Create or Edit Post
-Creates a new Post for the authenticated user, or edits an existing Post when edit_options are provided.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `body` | [`TweetCreateRequest`](../interfaces/Schemas.TweetCreateRequest.md) | Request body |
-
-#### Returns
-
-`Promise`\<[`TweetCreateResponse`](../interfaces/Schemas.TweetCreateResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[posts/client.ts:892](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L892)
+[posts/client.ts:470](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L470)
 
 ___
 
@@ -235,88 +107,33 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:938](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L938)
+[posts/client.ts:576](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L576)
 
 ___
 
-### searchAll
+### hideReply
 
-▸ **searchAll**(`query`, `options?`): `Promise`\<[`Get2TweetsSearchAllResponse`](../interfaces/Schemas.Get2TweetsSearchAllResponse.md)\>
+▸ **hideReply**(`tweetId`, `options?`): `Promise`\<[`TweetHideResponse`](../interfaces/Schemas.TweetHideResponse.md)\>
 
-Search all Posts
-Retrieves Posts from the full archive matching a search query.
+Hide reply
+Hides or unhides a reply to a conversation owned by the authenticated user.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `query` | `string` | One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length. |
-| `options` | `SearchAllOptions` | - |
+| `tweetId` | `string` | The ID of the reply that you want to hide or unhide. |
+| `options` | `HideReplyOptions` | - |
 
 #### Returns
 
-`Promise`\<[`Get2TweetsSearchAllResponse`](../interfaces/Schemas.Get2TweetsSearchAllResponse.md)\>
+`Promise`\<[`TweetHideResponse`](../interfaces/Schemas.TweetHideResponse.md)\>
 
 Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1000](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L1000)
-
-___
-
-### getQuoted
-
-▸ **getQuoted**(`id`, `options?`): `Promise`\<[`Get2TweetsIdQuoteTweetsResponse`](../interfaces/Schemas.Get2TweetsIdQuoteTweetsResponse.md)\>
-
-Get Quoted Posts
-Retrieves a list of Posts that quote a specific Post by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | A single Post ID. |
-| `options` | `GetQuotedOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2TweetsIdQuoteTweetsResponse`](../interfaces/Schemas.Get2TweetsIdQuoteTweetsResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[posts/client.ts:1130](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L1130)
-
-___
-
-### getAnalytics
-
-▸ **getAnalytics**(`ids`, `endTime`, `startTime`, `granularity`, `options?`): `Promise`\<[`Analytics`](../interfaces/Schemas.Analytics.md)\>
-
-Get Post analytics
-Retrieves analytics data for specified Posts within a defined time range.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `ids` | `any`[] | A comma separated list of Post IDs. Up to 100 are allowed in a single request. |
-| `endTime` | `string` | YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range. |
-| `startTime` | `string` | YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range. |
-| `granularity` | `string` | The granularity for the search counts results. |
-| `options` | `GetAnalyticsOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Analytics`](../interfaces/Schemas.Analytics.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[posts/client.ts:1240](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L1240)
+[posts/client.ts:638](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L638)
 
 ___
 
@@ -342,33 +159,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1307](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L1307)
-
-___
-
-### getReposts
-
-▸ **getReposts**(`id`, `options?`): `Promise`\<[`Get2TweetsIdRetweetsResponse`](../interfaces/Schemas.Get2TweetsIdRetweetsResponse.md)\>
-
-Get Reposts
-Retrieves a list of Posts that repost a specific Post by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | A single Post ID. |
-| `options` | `GetRepostsOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2TweetsIdRetweetsResponse`](../interfaces/Schemas.Get2TweetsIdRetweetsResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[posts/client.ts:1401](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L1401)
+[posts/client.ts:686](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L686)
 
 ___
 
@@ -398,33 +189,87 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1509](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L1509)
+[posts/client.ts:796](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L796)
 
 ___
 
-### hideReply
+### getAnalytics
 
-▸ **hideReply**(`tweetId`, `options?`): `Promise`\<[`TweetHideResponse`](../interfaces/Schemas.TweetHideResponse.md)\>
+▸ **getAnalytics**(`ids`, `endTime`, `startTime`, `granularity`, `options?`): `Promise`\<[`Analytics`](../interfaces/Schemas.Analytics.md)\>
 
-Hide reply
-Hides or unhides a reply to a conversation owned by the authenticated user.
+Get Post analytics
+Retrieves analytics data for specified Posts within a defined time range.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `tweetId` | `string` | The ID of the reply that you want to hide or unhide. |
-| `options` | `HideReplyOptions` | - |
+| `ids` | `any`[] | A comma separated list of Post IDs. Up to 100 are allowed in a single request. |
+| `endTime` | `string` | YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range. |
+| `startTime` | `string` | YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range. |
+| `granularity` | `string` | The granularity for the search counts results. |
+| `options` | `GetAnalyticsOptions` | - |
 
 #### Returns
 
-`Promise`\<[`TweetHideResponse`](../interfaces/Schemas.TweetHideResponse.md)\>
+`Promise`\<[`Analytics`](../interfaces/Schemas.Analytics.md)\>
 
 Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1581](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L1581)
+[posts/client.ts:880](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L880)
+
+___
+
+### getById
+
+▸ **getById**(`id`, `options?`): `Promise`\<[`Get2TweetsIdResponse`](../interfaces/Schemas.Get2TweetsIdResponse.md)\>
+
+Get Post by ID
+Retrieves details of a specific Post by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | A single Post ID. |
+| `options` | `GetByIdOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2TweetsIdResponse`](../interfaces/Schemas.Get2TweetsIdResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[posts/client.ts:947](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L947)
+
+___
+
+### delete
+
+▸ **delete**(`id`): `Promise`\<[`TweetDeleteResponse`](../interfaces/Schemas.TweetDeleteResponse.md)\>
+
+Delete Post
+Deletes a specific Post by its ID, if owned by the authenticated user.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the Post to be deleted. |
+
+#### Returns
+
+`Promise`\<[`TweetDeleteResponse`](../interfaces/Schemas.TweetDeleteResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[posts/client.ts:1027](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1027)
 
 ___
 
@@ -450,7 +295,85 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1629](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L1629)
+[posts/client.ts:1065](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1065)
+
+___
+
+### searchRecent
+
+▸ **searchRecent**(`query`, `options?`): `Promise`\<[`Get2TweetsSearchRecentResponse`](../interfaces/Schemas.Get2TweetsSearchRecentResponse.md)\>
+
+Search recent Posts
+Retrieves Posts from the last 7 days matching a search query.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `query` | `string` | One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length. |
+| `options` | `SearchRecentOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2TweetsSearchRecentResponse`](../interfaces/Schemas.Get2TweetsSearchRecentResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[posts/client.ts:1139](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1139)
+
+___
+
+### searchAll
+
+▸ **searchAll**(`query`, `options?`): `Promise`\<[`Get2TweetsSearchAllResponse`](../interfaces/Schemas.Get2TweetsSearchAllResponse.md)\>
+
+Search all Posts
+Retrieves Posts from the full archive matching a search query.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `query` | `string` | One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length. |
+| `options` | `SearchAllOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2TweetsSearchAllResponse`](../interfaces/Schemas.Get2TweetsSearchAllResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[posts/client.ts:1269](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1269)
+
+___
+
+### getReposts
+
+▸ **getReposts**(`id`, `options?`): `Promise`\<[`Get2TweetsIdRetweetsResponse`](../interfaces/Schemas.Get2TweetsIdRetweetsResponse.md)\>
+
+Get Reposts
+Retrieves a list of Posts that repost a specific Post by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | A single Post ID. |
+| `options` | `GetRepostsOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2TweetsIdRetweetsResponse`](../interfaces/Schemas.Get2TweetsIdRetweetsResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[posts/client.ts:1399](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1399)
 
 ___
 
@@ -476,4 +399,81 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1703](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/posts/client.ts#L1703)
+[posts/client.ts:1491](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1491)
+
+___
+
+### getByIds
+
+▸ **getByIds**(`ids`, `options?`): `Promise`\<[`Get2TweetsResponse`](../interfaces/Schemas.Get2TweetsResponse.md)\>
+
+Get Posts by IDs
+Retrieves details of multiple Posts by their IDs.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `ids` | `any`[] | A comma separated list of Post IDs. Up to 100 are allowed in a single request. |
+| `options` | `GetByIdsOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2TweetsResponse`](../interfaces/Schemas.Get2TweetsResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[posts/client.ts:1565](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1565)
+
+___
+
+### create
+
+▸ **create**(`body`): `Promise`\<[`TweetCreateResponse`](../interfaces/Schemas.TweetCreateResponse.md)\>
+
+Create or Edit Post
+Creates a new Post for the authenticated user, or edits an existing Post when edit_options are provided.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `body` | [`TweetCreateRequest`](../interfaces/Schemas.TweetCreateRequest.md) | Request body |
+
+#### Returns
+
+`Promise`\<[`TweetCreateResponse`](../interfaces/Schemas.TweetCreateResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[posts/client.ts:1645](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1645)
+
+___
+
+### getCountsRecent
+
+▸ **getCountsRecent**(`query`, `options?`): `Promise`\<[`Get2TweetsCountsRecentResponse`](../interfaces/Schemas.Get2TweetsCountsRecentResponse.md)\>
+
+Get count of recent Posts
+Retrieves the count of Posts from the last 7 days matching a search query.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `query` | `string` | One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length. |
+| `options` | `GetCountsRecentOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2TweetsCountsRecentResponse`](../interfaces/Schemas.Get2TweetsCountsRecentResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[posts/client.ts:1683](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1683)

@@ -13,12 +13,12 @@ import {
 } from '../paginator.js';
 import {
   DeleteSubscriptionResponse,
-  GetSubscriptionCountResponse,
   GetSubscriptionsResponse,
   CreateReplayJobResponse,
   ValidateSubscriptionResponse,
   CreateSubscriptionRequest,
   CreateSubscriptionResponse,
+  GetSubscriptionCountResponse,
 } from './models.js';
 
 /**
@@ -98,38 +98,6 @@ export class AccountActivityClient {
 
     return this.client.request<DeleteSubscriptionResponse>(
       'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get subscription count
-   * Retrieves a count of currently active Account Activity subscriptions.
-
-
-
-   * @returns {Promise<GetSubscriptionCountResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getSubscriptionCount(): Promise<GetSubscriptionCountResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/account_activity/subscriptions/count';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetSubscriptionCountResponse>(
-      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -316,6 +284,38 @@ export class AccountActivityClient {
 
     return this.client.request<CreateSubscriptionResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get subscription count
+   * Retrieves a count of currently active Account Activity subscriptions.
+
+
+
+   * @returns {Promise<GetSubscriptionCountResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getSubscriptionCount(): Promise<GetSubscriptionCountResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/account_activity/subscriptions/count';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<GetSubscriptionCountResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

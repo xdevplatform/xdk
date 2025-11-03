@@ -21,7 +21,7 @@ Index (zero-based) at which position this entity ends.  The index is exclusive.
 
 #### Defined in
 
-[schemas.ts:575](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L575)
+[schemas.ts:577](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L577)
 
 ___
 
@@ -33,4 +33,4 @@ Index (zero-based) at which position this entity starts.  The index is inclusive
 
 #### Defined in
 
-[schemas.ts:576](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L576)
+[schemas.ts:578](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L578)

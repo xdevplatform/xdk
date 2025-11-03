@@ -27,7 +27,7 @@ none
 
 #### Defined in
 
-[schemas.ts:1955](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L1955)
+[schemas.ts:1957](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1957)
 
 ___
 
@@ -39,7 +39,7 @@ The full name of the county in which this place exists.
 
 #### Defined in
 
-[schemas.ts:1956](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L1956)
+[schemas.ts:1958](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1958)
 
 ___
 
@@ -49,7 +49,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:1957](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L1957)
+[schemas.ts:1959](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1959)
 
 ___
 
@@ -61,7 +61,7 @@ The full name of this place.
 
 #### Defined in
 
-[schemas.ts:1958](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L1958)
+[schemas.ts:1960](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1960)
 
 ___
 
@@ -71,7 +71,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:1959](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L1959)
+[schemas.ts:1961](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1961)
 
 ___
 
@@ -81,7 +81,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:1960](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L1960)
+[schemas.ts:1962](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1962)
 
 ___
 
@@ -93,7 +93,7 @@ The human readable name of this place.
 
 #### Defined in
 
-[schemas.ts:1961](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L1961)
+[schemas.ts:1963](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1963)
 
 ___
 
@@ -103,4 +103,4 @@ ___
 
 #### Defined in
 
-[schemas.ts:1962](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L1962)
+[schemas.ts:1964](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1964)

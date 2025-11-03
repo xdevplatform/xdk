@@ -16,17 +16,17 @@ parsing for all media related operations.
 
 ### Methods
 
-- [appendUpload](MediaClient.md#appendupload)
 - [getByKey](MediaClient.md#getbykey)
-- [initializeUpload](MediaClient.md#initializeupload)
 - [createMetadata](MediaClient.md#createmetadata)
-- [finalizeUpload](MediaClient.md#finalizeupload)
-- [getByKeys](MediaClient.md#getbykeys)
-- [createSubtitles](MediaClient.md#createsubtitles)
-- [deleteSubtitles](MediaClient.md#deletesubtitles)
 - [getUploadStatus](MediaClient.md#getuploadstatus)
 - [upload](MediaClient.md#upload)
+- [appendUpload](MediaClient.md#appendupload)
+- [getByKeys](MediaClient.md#getbykeys)
 - [getAnalytics](MediaClient.md#getanalytics)
+- [initializeUpload](MediaClient.md#initializeupload)
+- [finalizeUpload](MediaClient.md#finalizeupload)
+- [createSubtitles](MediaClient.md#createsubtitles)
+- [deleteSubtitles](MediaClient.md#deletesubtitles)
 
 ## Constructors
 
@@ -48,35 +48,9 @@ Creates a new media client instance
 
 #### Defined in
 
-[media/client.ts:181](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/media/client.ts#L181)
+[media/client.ts:181](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L181)
 
 ## Methods
-
-### appendUpload
-
-▸ **appendUpload**(`id`, `options?`): `Promise`\<[`MediaUploadAppendResponse`](../interfaces/Schemas.MediaUploadAppendResponse.md)\>
-
-Append Media upload
-Appends data to a Media upload request.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The media identifier for the media to perform the append operation. |
-| `options` | `AppendUploadOptions` | - |
-
-#### Returns
-
-`Promise`\<[`MediaUploadAppendResponse`](../interfaces/Schemas.MediaUploadAppendResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[media/client.ts:198](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/media/client.ts#L198)
-
-___
 
 ### getByKey
 
@@ -100,32 +74,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:246](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/media/client.ts#L246)
-
-___
-
-### initializeUpload
-
-▸ **initializeUpload**(`options?`): `Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
-
-Initialize media upload
-Initializes a media upload.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `InitializeUploadOptions` |
-
-#### Returns
-
-`Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[media/client.ts:292](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/media/client.ts#L292)
+[media/client.ts:198](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L198)
 
 ___
 
@@ -150,108 +99,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:333](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/media/client.ts#L333)
-
-___
-
-### finalizeUpload
-
-▸ **finalizeUpload**(`id`): `Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
-
-Finalize Media upload
-Finalizes a Media upload request.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The media id of the targeted media to finalize. |
-
-#### Returns
-
-`Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[media/client.ts:378](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/media/client.ts#L378)
-
-___
-
-### getByKeys
-
-▸ **getByKeys**(`mediaKeys`, `options?`): `Promise`\<[`Get2MediaResponse`](../interfaces/Schemas.Get2MediaResponse.md)\>
-
-Get Media by media keys
-Retrieves details of Media files by their media keys.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `mediaKeys` | `any`[] | A comma separated list of Media Keys. Up to 100 are allowed in a single request. |
-| `options` | `GetByKeysOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2MediaResponse`](../interfaces/Schemas.Get2MediaResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[media/client.ts:416](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/media/client.ts#L416)
-
-___
-
-### createSubtitles
-
-▸ **createSubtitles**(`options?`): `Promise`\<[`SubtitlesCreateResponse`](../interfaces/Schemas.SubtitlesCreateResponse.md)\>
-
-Create Media subtitles
-Creates subtitles for a specific Media file.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `CreateSubtitlesOptions` |
-
-#### Returns
-
-`Promise`\<[`SubtitlesCreateResponse`](../interfaces/Schemas.SubtitlesCreateResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[media/client.ts:464](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/media/client.ts#L464)
-
-___
-
-### deleteSubtitles
-
-▸ **deleteSubtitles**(`options?`): `Promise`\<[`SubtitlesDeleteResponse`](../interfaces/Schemas.SubtitlesDeleteResponse.md)\>
-
-Delete Media subtitles
-Deletes subtitles for a specific Media file.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `DeleteSubtitlesOptions` |
-
-#### Returns
-
-`Promise`\<[`SubtitlesDeleteResponse`](../interfaces/Schemas.SubtitlesDeleteResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[media/client.ts:505](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/media/client.ts#L505)
+[media/client.ts:244](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L244)
 
 ___
 
@@ -277,7 +125,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:550](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/media/client.ts#L550)
+[media/client.ts:289](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L289)
 
 ___
 
@@ -302,7 +150,59 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:598](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/media/client.ts#L598)
+[media/client.ts:337](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L337)
+
+___
+
+### appendUpload
+
+▸ **appendUpload**(`id`, `options?`): `Promise`\<[`MediaUploadAppendResponse`](../interfaces/Schemas.MediaUploadAppendResponse.md)\>
+
+Append Media upload
+Appends data to a Media upload request.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The media identifier for the media to perform the append operation. |
+| `options` | `AppendUploadOptions` | - |
+
+#### Returns
+
+`Promise`\<[`MediaUploadAppendResponse`](../interfaces/Schemas.MediaUploadAppendResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[media/client.ts:380](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L380)
+
+___
+
+### getByKeys
+
+▸ **getByKeys**(`mediaKeys`, `options?`): `Promise`\<[`Get2MediaResponse`](../interfaces/Schemas.Get2MediaResponse.md)\>
+
+Get Media by media keys
+Retrieves details of Media files by their media keys.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `mediaKeys` | `any`[] | A comma separated list of Media Keys. Up to 100 are allowed in a single request. |
+| `options` | `GetByKeysOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2MediaResponse`](../interfaces/Schemas.Get2MediaResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[media/client.ts:428](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L428)
 
 ___
 
@@ -331,4 +231,104 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:653](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/media/client.ts#L653)
+[media/client.ts:492](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L492)
+
+___
+
+### initializeUpload
+
+▸ **initializeUpload**(`options?`): `Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
+
+Initialize media upload
+Initializes a media upload.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `InitializeUploadOptions` |
+
+#### Returns
+
+`Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[media/client.ts:555](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L555)
+
+___
+
+### finalizeUpload
+
+▸ **finalizeUpload**(`id`): `Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
+
+Finalize Media upload
+Finalizes a Media upload request.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The media id of the targeted media to finalize. |
+
+#### Returns
+
+`Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[media/client.ts:600](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L600)
+
+___
+
+### createSubtitles
+
+▸ **createSubtitles**(`options?`): `Promise`\<[`SubtitlesCreateResponse`](../interfaces/Schemas.SubtitlesCreateResponse.md)\>
+
+Create Media subtitles
+Creates subtitles for a specific Media file.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `CreateSubtitlesOptions` |
+
+#### Returns
+
+`Promise`\<[`SubtitlesCreateResponse`](../interfaces/Schemas.SubtitlesCreateResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[media/client.ts:634](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L634)
+
+___
+
+### deleteSubtitles
+
+▸ **deleteSubtitles**(`options?`): `Promise`\<[`SubtitlesDeleteResponse`](../interfaces/Schemas.SubtitlesDeleteResponse.md)\>
+
+Delete Media subtitles
+Deletes subtitles for a specific Media file.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `DeleteSubtitlesOptions` |
+
+#### Returns
+
+`Promise`\<[`SubtitlesDeleteResponse`](../interfaces/Schemas.SubtitlesDeleteResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[media/client.ts:675](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L675)

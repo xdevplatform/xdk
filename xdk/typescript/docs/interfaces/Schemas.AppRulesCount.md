@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[schemas.ts:173](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L173)
+[schemas.ts:175](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L175)
 
 ___
 
@@ -31,4 +31,4 @@ Number of rules for client application
 
 #### Defined in
 
-[schemas.ts:174](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L174)
+[schemas.ts:176](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L176)

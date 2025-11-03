@@ -28,7 +28,7 @@ Description of the URL landing page.
 
 #### Defined in
 
-[schemas.ts:2857](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2857)
+[schemas.ts:2859](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2859)
 
 ___
 
@@ -40,7 +40,7 @@ The URL as displayed in the X client.
 
 #### Defined in
 
-[schemas.ts:2858](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2858)
+[schemas.ts:2860](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2860)
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2859](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2859)
+[schemas.ts:2861](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2861)
 
 ___
 
@@ -62,7 +62,7 @@ none
 
 #### Defined in
 
-[schemas.ts:2860](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2860)
+[schemas.ts:2862](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2862)
 
 ___
 
@@ -72,7 +72,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2861](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2861)
+[schemas.ts:2863](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2863)
 
 ___
 
@@ -82,7 +82,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2862](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2862)
+[schemas.ts:2864](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2864)
 
 ___
 
@@ -94,7 +94,7 @@ Title of the page the URL points to.
 
 #### Defined in
 
-[schemas.ts:2863](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2863)
+[schemas.ts:2865](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2865)
 
 ___
 
@@ -106,7 +106,7 @@ Fully resolved url.
 
 #### Defined in
 
-[schemas.ts:2864](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2864)
+[schemas.ts:2866](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2866)
 
 ___
 
@@ -116,4 +116,4 @@ ___
 
 #### Defined in
 
-[schemas.ts:2865](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2865)
+[schemas.ts:2867](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2867)

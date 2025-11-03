@@ -24,7 +24,7 @@ Request timeout in milliseconds
 
 #### Defined in
 
-[client.ts:133](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L133)
+[client.ts:133](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L133)
 
 ___
 
@@ -36,7 +36,7 @@ Additional headers
 
 #### Defined in
 
-[client.ts:135](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L135)
+[client.ts:135](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L135)
 
 ___
 
@@ -48,7 +48,7 @@ Request signal for cancellation
 
 #### Defined in
 
-[client.ts:137](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L137)
+[client.ts:137](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L137)
 
 ___
 
@@ -60,7 +60,7 @@ Request body
 
 #### Defined in
 
-[client.ts:139](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L139)
+[client.ts:139](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L139)
 
 ___
 
@@ -72,4 +72,4 @@ Return raw HTTP wrapper instead of parsed body
 
 #### Defined in
 
-[client.ts:141](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L141)
+[client.ts:141](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L141)

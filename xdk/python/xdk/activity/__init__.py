@@ -9,4 +9,4 @@ Generated automatically - do not edit manually.
 
 from .client import ActivityClient
 
-__all__ = ["ActivityClient"] 
+__all__ = ["ActivityClient"]

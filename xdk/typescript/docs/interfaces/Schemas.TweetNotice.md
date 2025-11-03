@@ -26,7 +26,7 @@ If the label is being applied or removed. Possible values are ‘apply’ or ‘
 
 #### Defined in
 
-[schemas.ts:2731](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2731)
+[schemas.ts:2733](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2733)
 
 ___
 
@@ -38,7 +38,7 @@ Information shown on the Tweet label
 
 #### Defined in
 
-[schemas.ts:2732](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2732)
+[schemas.ts:2734](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2734)
 
 ___
 
@@ -50,7 +50,7 @@ Event time.
 
 #### Defined in
 
-[schemas.ts:2733](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2733)
+[schemas.ts:2735](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2735)
 
 ___
 
@@ -62,7 +62,7 @@ The type of label on the Tweet
 
 #### Defined in
 
-[schemas.ts:2734](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2734)
+[schemas.ts:2736](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2736)
 
 ___
 
@@ -74,7 +74,7 @@ Link to more information about this kind of label
 
 #### Defined in
 
-[schemas.ts:2735](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2735)
+[schemas.ts:2737](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2737)
 
 ___
 
@@ -86,7 +86,7 @@ Title/header of the Tweet label
 
 #### Defined in
 
-[schemas.ts:2736](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2736)
+[schemas.ts:2738](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2738)
 
 ___
 
@@ -98,4 +98,4 @@ none
 
 #### Defined in
 
-[schemas.ts:2737](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2737)
+[schemas.ts:2739](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2739)

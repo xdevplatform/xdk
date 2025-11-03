@@ -25,7 +25,7 @@ none
 
 #### Defined in
 
-[schemas.ts:615](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L615)
+[schemas.ts:617](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L617)
 
 ___
 
@@ -37,7 +37,7 @@ none
 
 #### Defined in
 
-[schemas.ts:616](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L616)
+[schemas.ts:618](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L618)
 
 ___
 
@@ -49,7 +49,7 @@ none
 
 #### Defined in
 
-[schemas.ts:617](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L617)
+[schemas.ts:619](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L619)
 
 ___
 
@@ -61,7 +61,7 @@ none
 
 #### Defined in
 
-[schemas.ts:618](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L618)
+[schemas.ts:620](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L620)
 
 ___
 
@@ -73,7 +73,7 @@ none
 
 #### Defined in
 
-[schemas.ts:619](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L619)
+[schemas.ts:621](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L621)
 
 ___
 
@@ -85,4 +85,4 @@ none
 
 #### Defined in
 
-[schemas.ts:620](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L620)
+[schemas.ts:622](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L622)

@@ -40,7 +40,7 @@ Metadata about a user's affiliation.
 
 #### Defined in
 
-[schemas.ts:2912](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2912)
+[schemas.ts:2914](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2914)
 
 ___
 
@@ -52,7 +52,7 @@ Returns detailed information about the relationship between two users.
 
 #### Defined in
 
-[schemas.ts:2913](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2913)
+[schemas.ts:2915](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2915)
 
 ___
 
@@ -64,7 +64,7 @@ Creation time of this User.
 
 #### Defined in
 
-[schemas.ts:2921](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2921)
+[schemas.ts:2923](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2923)
 
 ___
 
@@ -76,7 +76,7 @@ The text of this User's profile description (also known as bio), if the User pro
 
 #### Defined in
 
-[schemas.ts:2922](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2922)
+[schemas.ts:2924](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2924)
 
 ___
 
@@ -88,7 +88,7 @@ A list of metadata found in the User's profile description.
 
 #### Defined in
 
-[schemas.ts:2923](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2923)
+[schemas.ts:2925](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2925)
 
 ___
 
@@ -98,7 +98,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2927](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2927)
+[schemas.ts:2929](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2929)
 
 ___
 
@@ -110,7 +110,7 @@ The location specified in the User's profile, if the User provided one. As this 
 
 #### Defined in
 
-[schemas.ts:2928](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2928)
+[schemas.ts:2930](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2930)
 
 ___
 
@@ -120,7 +120,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2929](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2929)
+[schemas.ts:2931](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2931)
 
 ___
 
@@ -132,7 +132,7 @@ The friendly name of this User, as shown on their profile.
 
 #### Defined in
 
-[schemas.ts:2930](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2930)
+[schemas.ts:2932](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2932)
 
 ___
 
@@ -142,7 +142,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2931](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2931)
+[schemas.ts:2933](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2933)
 
 ___
 
@@ -154,7 +154,7 @@ The URL to the profile banner for this User.
 
 #### Defined in
 
-[schemas.ts:2932](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2932)
+[schemas.ts:2934](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2934)
 
 ___
 
@@ -166,7 +166,7 @@ The URL to the profile image for this User.
 
 #### Defined in
 
-[schemas.ts:2933](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2933)
+[schemas.ts:2935](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2935)
 
 ___
 
@@ -178,7 +178,7 @@ Indicates if this User has chosen to protect their Posts (in other words, if thi
 
 #### Defined in
 
-[schemas.ts:2934](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2934)
+[schemas.ts:2936](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2936)
 
 ___
 
@@ -190,7 +190,7 @@ A list of metrics for this User.
 
 #### Defined in
 
-[schemas.ts:2935](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2935)
+[schemas.ts:2937](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2937)
 
 ___
 
@@ -202,7 +202,7 @@ Indicates if you can send a DM to this User
 
 #### Defined in
 
-[schemas.ts:2936](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2936)
+[schemas.ts:2938](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2938)
 
 ___
 
@@ -214,7 +214,7 @@ The X Blue subscription type of the user, eg: Basic, Premium, PremiumPlus or Non
 
 #### Defined in
 
-[schemas.ts:2937](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2937)
+[schemas.ts:2939](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2939)
 
 ___
 
@@ -226,7 +226,7 @@ The URL specified in the User's profile.
 
 #### Defined in
 
-[schemas.ts:2942](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2942)
+[schemas.ts:2944](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2944)
 
 ___
 
@@ -236,7 +236,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2943](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2943)
+[schemas.ts:2945](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2945)
 
 ___
 
@@ -248,7 +248,7 @@ Indicate if this User is a verified X User.
 
 #### Defined in
 
-[schemas.ts:2944](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2944)
+[schemas.ts:2946](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2946)
 
 ___
 
@@ -260,7 +260,7 @@ The X Blue verified type of the user, eg: blue, government, business or none.
 
 #### Defined in
 
-[schemas.ts:2945](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2945)
+[schemas.ts:2947](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2947)
 
 ___
 
@@ -270,4 +270,4 @@ ___
 
 #### Defined in
 
-[schemas.ts:2950](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2950)
+[schemas.ts:2952](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2952)

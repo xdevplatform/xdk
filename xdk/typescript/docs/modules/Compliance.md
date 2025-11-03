@@ -6,12 +6,24 @@
 
 ### Type Aliases
 
+- [GetJobsByIdResponse](Compliance.md#getjobsbyidresponse)
 - [GetJobsResponse](Compliance.md#getjobsresponse)
 - [CreateJobsRequest](Compliance.md#createjobsrequest)
 - [CreateJobsResponse](Compliance.md#createjobsresponse)
-- [GetJobsByIdResponse](Compliance.md#getjobsbyidresponse)
 
 ## Type Aliases
+
+### GetJobsByIdResponse
+
+Ƭ **GetJobsByIdResponse**: [`Get2ComplianceJobsIdResponse`](../interfaces/Schemas.Get2ComplianceJobsIdResponse.md)
+
+Response for getJobsById
+
+#### Defined in
+
+[compliance/models.ts:15](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/compliance/models.ts#L15)
+
+___
 
 ### GetJobsResponse
 
@@ -21,7 +33,7 @@ Response for getJobs
 
 #### Defined in
 
-[compliance/models.ts:15](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/compliance/models.ts#L15)
+[compliance/models.ts:21](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/compliance/models.ts#L21)
 
 ___
 
@@ -33,7 +45,7 @@ Request for createJobs
 
 #### Defined in
 
-[compliance/models.ts:21](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/compliance/models.ts#L21)
+[compliance/models.ts:27](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/compliance/models.ts#L27)
 
 ___
 
@@ -45,16 +57,4 @@ Response for createJobs
 
 #### Defined in
 
-[compliance/models.ts:27](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/compliance/models.ts#L27)
-
-___
-
-### GetJobsByIdResponse
-
-Ƭ **GetJobsByIdResponse**: [`Get2ComplianceJobsIdResponse`](../interfaces/Schemas.Get2ComplianceJobsIdResponse.md)
-
-Response for getJobsById
-
-#### Defined in
-
-[compliance/models.ts:33](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/compliance/models.ts#L33)
+[compliance/models.ts:33](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/compliance/models.ts#L33)

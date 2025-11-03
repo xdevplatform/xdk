@@ -24,7 +24,7 @@ List of addresses associated with the account holder.
 
 #### Defined in
 
-[schemas.ts:2001](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2001)
+[schemas.ts:2003](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2003)
 
 ___
 
@@ -36,7 +36,7 @@ List of email addresses associated with the account holder.
 
 #### Defined in
 
-[schemas.ts:2004](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2004)
+[schemas.ts:2006](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2006)
 
 ___
 
@@ -46,7 +46,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2007](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2007)
+[schemas.ts:2009](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2009)
 
 ___
 
@@ -58,7 +58,7 @@ Relationship of the contact to the account.
 
 #### Defined in
 
-[schemas.ts:2008](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2008)
+[schemas.ts:2010](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2010)
 
 ___
 
@@ -70,4 +70,4 @@ List of telephone numbers associated with the account holder.
 
 #### Defined in
 
-[schemas.ts:2009](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2009)
+[schemas.ts:2011](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2011)

@@ -22,7 +22,7 @@ Number of seconds to check again for status
 
 #### Defined in
 
-[schemas.ts:2153](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2153)
+[schemas.ts:2155](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2155)
 
 ___
 
@@ -34,7 +34,7 @@ Percent of upload progress
 
 #### Defined in
 
-[schemas.ts:2154](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2154)
+[schemas.ts:2156](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2156)
 
 ___
 
@@ -46,4 +46,4 @@ State of upload
 
 #### Defined in
 
-[schemas.ts:2155](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2155)
+[schemas.ts:2157](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2157)

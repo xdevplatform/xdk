@@ -21,7 +21,7 @@
 
 #### Defined in
 
-[schemas.ts:2270](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2270)
+[schemas.ts:2272](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2272)
 
 ___
 
@@ -33,7 +33,7 @@ Number of Rules in result set.
 
 #### Defined in
 
-[schemas.ts:2271](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2271)
+[schemas.ts:2273](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2273)
 
 ___
 
@@ -45,7 +45,7 @@ none
 
 #### Defined in
 
-[schemas.ts:2272](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2272)
+[schemas.ts:2274](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2274)
 
 ___
 
@@ -55,4 +55,4 @@ ___
 
 #### Defined in
 
-[schemas.ts:2273](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2273)
+[schemas.ts:2275](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2275)

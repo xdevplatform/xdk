@@ -38,7 +38,7 @@ Creates a new usage client instance
 
 #### Defined in
 
-[usage/client.ts:49](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/usage/client.ts#L49)
+[usage/client.ts:49](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/usage/client.ts#L49)
 
 ## Methods
 
@@ -63,4 +63,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[usage/client.ts:62](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/usage/client.ts#L62)
+[usage/client.ts:62](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/usage/client.ts#L62)

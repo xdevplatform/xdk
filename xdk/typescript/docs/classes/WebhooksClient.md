@@ -16,11 +16,11 @@ parsing for all webhooks related operations.
 
 ### Methods
 
-- [get](WebhooksClient.md#get)
-- [create](WebhooksClient.md#create)
 - [getStreamLinks](WebhooksClient.md#getstreamlinks)
 - [validate](WebhooksClient.md#validate)
 - [delete](WebhooksClient.md#delete)
+- [get](WebhooksClient.md#get)
+- [create](WebhooksClient.md#create)
 - [createStreamLink](WebhooksClient.md#createstreamlink)
 - [deleteStreamLink](WebhooksClient.md#deletestreamlink)
 
@@ -44,59 +44,9 @@ Creates a new webhooks client instance
 
 #### Defined in
 
-[webhooks/client.ts:96](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/client.ts#L96)
+[webhooks/client.ts:96](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L96)
 
 ## Methods
-
-### get
-
-▸ **get**(`options?`): `Promise`\<[`Get2WebhooksResponse`](../interfaces/Schemas.Get2WebhooksResponse.md)\>
-
-Get webhook
-Get a list of webhook configs associated with a client app.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `GetOptions` |
-
-#### Returns
-
-`Promise`\<[`Get2WebhooksResponse`](../interfaces/Schemas.Get2WebhooksResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[webhooks/client.ts:109](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/client.ts#L109)
-
-___
-
-### create
-
-▸ **create**(`options?`): `Promise`\<[`WebhookConfigCreateResponse`](../interfaces/Schemas.WebhookConfigCreateResponse.md)\>
-
-Create webhook
-Creates a new webhook configuration.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `CreateOptions` |
-
-#### Returns
-
-`Promise`\<[`WebhookConfigCreateResponse`](../interfaces/Schemas.WebhookConfigCreateResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[webhooks/client.ts:150](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/client.ts#L150)
-
-___
 
 ### getStreamLinks
 
@@ -113,7 +63,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:189](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/client.ts#L189)
+[webhooks/client.ts:109](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L109)
 
 ___
 
@@ -138,7 +88,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:225](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/client.ts#L225)
+[webhooks/client.ts:145](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L145)
 
 ___
 
@@ -163,7 +113,57 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:263](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/client.ts#L263)
+[webhooks/client.ts:183](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L183)
+
+___
+
+### get
+
+▸ **get**(`options?`): `Promise`\<[`Get2WebhooksResponse`](../interfaces/Schemas.Get2WebhooksResponse.md)\>
+
+Get webhook
+Get a list of webhook configs associated with a client app.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetOptions` |
+
+#### Returns
+
+`Promise`\<[`Get2WebhooksResponse`](../interfaces/Schemas.Get2WebhooksResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[webhooks/client.ts:217](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L217)
+
+___
+
+### create
+
+▸ **create**(`options?`): `Promise`\<[`WebhookConfigCreateResponse`](../interfaces/Schemas.WebhookConfigCreateResponse.md)\>
+
+Create webhook
+Creates a new webhook configuration.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `CreateOptions` |
+
+#### Returns
+
+`Promise`\<[`WebhookConfigCreateResponse`](../interfaces/Schemas.WebhookConfigCreateResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[webhooks/client.ts:258](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L258)
 
 ___
 
@@ -189,7 +189,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:301](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/client.ts#L301)
+[webhooks/client.ts:301](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L301)
 
 ___
 
@@ -214,4 +214,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:381](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/webhooks/client.ts#L381)
+[webhooks/client.ts:381](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L381)

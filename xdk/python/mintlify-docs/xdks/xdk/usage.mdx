@@ -1,0 +1,69 @@
+---
+sidebarTitle: Usage
+---
+
+xdk.usage — XDK Python SDK documentation
+
+# xdk.usage[¶](#module-xdk.usage "Link to this heading")
+
+Auto-generated usage module for the X API.
+
+This module provides access to the usage endpoints of the X API
+and serves as the main entry point for all usage-related functionality.
+
+Generated automatically - do not edit manually.
+
+*class* xdk.usage.UsageClient(*client*)[¶](#xdk.usage.UsageClient "Link to this definition")
+:   Bases: `object`
+
+    Client for usage operations
+
+    Parameters:
+    :   **client** ([*Client*](xdk.html#xdk.Client "xdk.Client"))
+
+    get(*days=None*, *usagefields=None*)[¶](#xdk.usage.UsageClient.get "Link to this definition")
+    :   Get usage
+
+        Retrieves usage statistics for Posts over a specified number of days.
+
+        Parameters:
+        :   * **days** (*int*) – The number of days for which you need usage for.
+            * **usagefields** (*List*) – A comma separated list of Usage fields to display.
+            * **Returns**
+            * **GetResponse** – Response data
+
+        Return type:
+        :   [*GetResponse*](xdk.usage.models.html#xdk.usage.models.GetResponse "xdk.usage.models.GetResponse")
+
+Modules
+
+|  |  |
+| --- | --- |
+| [`client`](xdk.usage.client.html#module-xdk.usage.client "xdk.usage.client") | Auto-generated usage client for the X API. |
+| [`models`](xdk.usage.models.html#module-xdk.usage.models "xdk.usage.models") | Auto-generated usage models for the X API. |
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](xdk.html)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - [xdk](xdk.html)
+      * Previous: [xdk.trends.models](xdk.trends.models.html "previous chapter")
+      * Next: [xdk.usage.client](xdk.usage.client.html "next chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.usage.rst.txt)

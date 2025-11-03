@@ -22,7 +22,7 @@ The bit rate of the media.
 
 #### Defined in
 
-[schemas.ts:3183](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L3183)
+[schemas.ts:3185](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L3185)
 
 ___
 
@@ -34,7 +34,7 @@ The content type of the media.
 
 #### Defined in
 
-[schemas.ts:3184](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L3184)
+[schemas.ts:3186](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L3186)
 
 ___
 
@@ -46,4 +46,4 @@ The url to the media.
 
 #### Defined in
 
-[schemas.ts:3185](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L3185)
+[schemas.ts:3187](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L3187)

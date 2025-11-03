@@ -9,4 +9,4 @@ Generated automatically - do not edit manually.
 
 from .client import WebhooksClient
 
-__all__ = ["WebhooksClient"] 
+__all__ = ["WebhooksClient"]

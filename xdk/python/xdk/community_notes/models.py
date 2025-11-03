@@ -13,208 +13,58 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
+# Models for delete
 
 
+class DeleteResponse(BaseModel):
+    """Response model for delete"""
 
-
-
-
-
-# Models for create
-
-class CreateRequest(BaseModel):
-    """Request model for create"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-class CreateResponse(BaseModel):
-    """Response model for create"""
-    
-
-    model_config = ConfigDict(populate_by_name=True, extra='allow')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
 
 
 # Models for search_eligible_posts
 
 
-
-
-
-
-
-
 class SearchEligiblePostsResponse(BaseModel):
     """Response model for search_eligible_posts"""
-    
 
-    model_config = ConfigDict(populate_by_name=True, extra='allow')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
 
 
 # Models for evaluate
 
+
 class EvaluateRequest(BaseModel):
     """Request model for evaluate"""
-    
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-
-
-
-
-
-
 class EvaluateResponse(BaseModel):
     """Response model for evaluate"""
-    
 
-    model_config = ConfigDict(populate_by_name=True, extra='allow')
-
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
 
 
+# Models for create
 
 
+class CreateRequest(BaseModel):
+    """Request model for create"""
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
+class CreateResponse(BaseModel):
+    """Response model for create"""
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for delete
-
-
-
-
-
-
-
-
-class DeleteResponse(BaseModel):
-    """Response model for delete"""
-    
-
-    model_config = ConfigDict(populate_by_name=True, extra='allow')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
 
 
 # Models for search_written
 
 
-
-
-
-
-
-
 class SearchWrittenResponse(BaseModel):
     """Response model for search_written"""
-    
 
-    model_config = ConfigDict(populate_by_name=True, extra='allow')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
+    model_config = ConfigDict(populate_by_name=True, extra="allow")

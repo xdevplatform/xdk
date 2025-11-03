@@ -7,17 +7,17 @@
 ### Type Aliases
 
 - [GetPostsResponse](Lists.md#getpostsresponse)
-- [RemoveMemberByUserIdResponse](Lists.md#removememberbyuseridresponse)
 - [GetByIdResponse](Lists.md#getbyidresponse)
 - [UpdateRequest](Lists.md#updaterequest)
 - [UpdateResponse](Lists.md#updateresponse)
 - [DeleteResponse](Lists.md#deleteresponse)
-- [CreateRequest](Lists.md#createrequest)
-- [CreateResponse](Lists.md#createresponse)
-- [GetFollowersResponse](Lists.md#getfollowersresponse)
+- [RemoveMemberByUserIdResponse](Lists.md#removememberbyuseridresponse)
 - [GetMembersResponse](Lists.md#getmembersresponse)
 - [AddMemberRequest](Lists.md#addmemberrequest)
 - [AddMemberResponse](Lists.md#addmemberresponse)
+- [GetFollowersResponse](Lists.md#getfollowersresponse)
+- [CreateRequest](Lists.md#createrequest)
+- [CreateResponse](Lists.md#createresponse)
 
 ## Type Aliases
 
@@ -29,19 +29,7 @@ Response for getPosts
 
 #### Defined in
 
-[lists/models.ts:15](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/models.ts#L15)
-
-___
-
-### RemoveMemberByUserIdResponse
-
-Ƭ **RemoveMemberByUserIdResponse**: [`ListMutateResponse`](../interfaces/Schemas.ListMutateResponse.md)
-
-Response for removeMemberByUserId
-
-#### Defined in
-
-[lists/models.ts:21](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/models.ts#L21)
+[lists/models.ts:15](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/models.ts#L15)
 
 ___
 
@@ -53,7 +41,7 @@ Response for getById
 
 #### Defined in
 
-[lists/models.ts:27](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/models.ts#L27)
+[lists/models.ts:21](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/models.ts#L21)
 
 ___
 
@@ -65,7 +53,7 @@ Request for update
 
 #### Defined in
 
-[lists/models.ts:33](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/models.ts#L33)
+[lists/models.ts:27](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/models.ts#L27)
 
 ___
 
@@ -77,7 +65,7 @@ Response for update
 
 #### Defined in
 
-[lists/models.ts:39](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/models.ts#L39)
+[lists/models.ts:33](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/models.ts#L33)
 
 ___
 
@@ -89,43 +77,19 @@ Response for delete
 
 #### Defined in
 
-[lists/models.ts:45](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/models.ts#L45)
+[lists/models.ts:39](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/models.ts#L39)
 
 ___
 
-### CreateRequest
+### RemoveMemberByUserIdResponse
 
-Ƭ **CreateRequest**: [`ListCreateRequest`](../interfaces/Schemas.ListCreateRequest.md)
+Ƭ **RemoveMemberByUserIdResponse**: [`ListMutateResponse`](../interfaces/Schemas.ListMutateResponse.md)
 
-Request for create
-
-#### Defined in
-
-[lists/models.ts:51](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/models.ts#L51)
-
-___
-
-### CreateResponse
-
-Ƭ **CreateResponse**: [`ListCreateResponse`](../interfaces/Schemas.ListCreateResponse.md)
-
-Response for create
+Response for removeMemberByUserId
 
 #### Defined in
 
-[lists/models.ts:57](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/models.ts#L57)
-
-___
-
-### GetFollowersResponse
-
-Ƭ **GetFollowersResponse**: [`Get2ListsIdFollowersResponse`](../interfaces/Schemas.Get2ListsIdFollowersResponse.md)
-
-Response for getFollowers
-
-#### Defined in
-
-[lists/models.ts:63](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/models.ts#L63)
+[lists/models.ts:45](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/models.ts#L45)
 
 ___
 
@@ -137,7 +101,7 @@ Response for getMembers
 
 #### Defined in
 
-[lists/models.ts:69](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/models.ts#L69)
+[lists/models.ts:51](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/models.ts#L51)
 
 ___
 
@@ -149,7 +113,7 @@ Request for addMember
 
 #### Defined in
 
-[lists/models.ts:75](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/models.ts#L75)
+[lists/models.ts:57](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/models.ts#L57)
 
 ___
 
@@ -161,4 +125,40 @@ Response for addMember
 
 #### Defined in
 
-[lists/models.ts:81](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/lists/models.ts#L81)
+[lists/models.ts:63](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/models.ts#L63)
+
+___
+
+### GetFollowersResponse
+
+Ƭ **GetFollowersResponse**: [`Get2ListsIdFollowersResponse`](../interfaces/Schemas.Get2ListsIdFollowersResponse.md)
+
+Response for getFollowers
+
+#### Defined in
+
+[lists/models.ts:69](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/models.ts#L69)
+
+___
+
+### CreateRequest
+
+Ƭ **CreateRequest**: [`ListCreateRequest`](../interfaces/Schemas.ListCreateRequest.md)
+
+Request for create
+
+#### Defined in
+
+[lists/models.ts:75](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/models.ts#L75)
+
+___
+
+### CreateResponse
+
+Ƭ **CreateResponse**: [`ListCreateResponse`](../interfaces/Schemas.ListCreateResponse.md)
+
+Response for create
+
+#### Defined in
+
+[lists/models.ts:81](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/models.ts#L81)

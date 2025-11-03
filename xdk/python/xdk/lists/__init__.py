@@ -9,4 +9,4 @@ Generated automatically - do not edit manually.
 
 from .client import ListsClient
 
-__all__ = ["ListsClient"] 
+__all__ = ["ListsClient"]

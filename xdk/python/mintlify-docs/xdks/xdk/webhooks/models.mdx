@@ -1,0 +1,139 @@
+---
+sidebarTitle: Webhooks Models
+---
+
+xdk.webhooks.models — XDK Python SDK documentation
+
+# xdk.webhooks.models[¶](#module-xdk.webhooks.models "Link to this heading")
+
+Auto-generated webhooks models for the X API.
+
+This module provides Pydantic models for request and response data structures
+for the webhooks endpoints of the X API. All models are generated
+from the OpenAPI specification and provide type safety and validation.
+
+Generated automatically - do not edit manually.
+
+Classes
+
+|  |  |
+| --- | --- |
+| [`CreateRequest`](#xdk.webhooks.models.CreateRequest "xdk.webhooks.models.CreateRequest")() | Request model for create |
+| [`CreateResponse`](#xdk.webhooks.models.CreateResponse "xdk.webhooks.models.CreateResponse")(\*\*extra\_data) | Response model for create |
+| [`CreateStreamLinkResponse`](#xdk.webhooks.models.CreateStreamLinkResponse "xdk.webhooks.models.CreateStreamLinkResponse")(\*\*extra\_data) | Response model for create\_stream\_link |
+| [`DeleteResponse`](#xdk.webhooks.models.DeleteResponse "xdk.webhooks.models.DeleteResponse")(\*\*extra\_data) | Response model for delete |
+| [`DeleteStreamLinkResponse`](#xdk.webhooks.models.DeleteStreamLinkResponse "xdk.webhooks.models.DeleteStreamLinkResponse")(\*\*extra\_data) | Response model for delete\_stream\_link |
+| [`GetResponse`](#xdk.webhooks.models.GetResponse "xdk.webhooks.models.GetResponse")(\*\*extra\_data) | Response model for get |
+| [`GetStreamLinksResponse`](#xdk.webhooks.models.GetStreamLinksResponse "xdk.webhooks.models.GetStreamLinksResponse")(\*\*extra\_data) | Response model for get\_stream\_links |
+| [`ValidateResponse`](#xdk.webhooks.models.ValidateResponse "xdk.webhooks.models.ValidateResponse")(\*\*extra\_data) | Response model for validate |
+
+*class* xdk.webhooks.models.CreateRequest[¶](#xdk.webhooks.models.CreateRequest "Link to this definition")
+:   Bases: `BaseModel`
+
+    Request model for create
+
+    model\_config*: ClassVar[ConfigDict]* *= {'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.webhooks.models.CreateRequest.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.webhooks.models.CreateResponse(*\*\*extra\_data*)[¶](#xdk.webhooks.models.CreateResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for create
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.webhooks.models.CreateResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.webhooks.models.CreateStreamLinkResponse(*\*\*extra\_data*)[¶](#xdk.webhooks.models.CreateStreamLinkResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for create\_stream\_link
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.webhooks.models.CreateStreamLinkResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.webhooks.models.DeleteResponse(*\*\*extra\_data*)[¶](#xdk.webhooks.models.DeleteResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for delete
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.webhooks.models.DeleteResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.webhooks.models.DeleteStreamLinkResponse(*\*\*extra\_data*)[¶](#xdk.webhooks.models.DeleteStreamLinkResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for delete\_stream\_link
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.webhooks.models.DeleteStreamLinkResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.webhooks.models.GetResponse(*\*\*extra\_data*)[¶](#xdk.webhooks.models.GetResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.webhooks.models.GetResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.webhooks.models.GetStreamLinksResponse(*\*\*extra\_data*)[¶](#xdk.webhooks.models.GetStreamLinksResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_stream\_links
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.webhooks.models.GetStreamLinksResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.webhooks.models.ValidateResponse(*\*\*extra\_data*)[¶](#xdk.webhooks.models.ValidateResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for validate
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.webhooks.models.ValidateResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](xdk.html)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - [xdk](xdk.html)
+      * [xdk.webhooks](xdk.webhooks.html)
+        + Previous: [xdk.webhooks.client](xdk.webhooks.client.html "previous chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.webhooks.models.rst.txt)

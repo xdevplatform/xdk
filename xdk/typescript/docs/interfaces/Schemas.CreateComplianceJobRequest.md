@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[schemas.ts:373](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L373)
+[schemas.ts:375](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L375)
 
 ___
 
@@ -32,7 +32,7 @@ If true, this endpoint will return a pre-signed URL with resumable uploads enabl
 
 #### Defined in
 
-[schemas.ts:374](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L374)
+[schemas.ts:376](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L376)
 
 ___
 
@@ -44,4 +44,4 @@ Type of compliance job to list.
 
 #### Defined in
 
-[schemas.ts:375](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L375)
+[schemas.ts:377](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L377)

@@ -1,0 +1,691 @@
+---
+sidebarTitle: Users
+---
+
+xdk.users — XDK Python SDK documentation
+
+# xdk.users[¶](#module-xdk.users "Link to this heading")
+
+Auto-generated users module for the X API.
+
+This module provides access to the users endpoints of the X API
+and serves as the main entry point for all users-related functionality.
+
+Generated automatically - do not edit manually.
+
+*class* xdk.users.UsersClient(*client*)[¶](#xdk.users.UsersClient "Link to this definition")
+:   Bases: `object`
+
+    Client for users operations
+
+    Parameters:
+    :   **client** ([*Client*](xdk.html#xdk.Client "xdk.Client"))
+
+    block\_dms(*id*)[¶](#xdk.users.UsersClient.block_dms "Link to this definition")
+    :   Block DMs
+
+        Blocks direct messages to or from a specific User by their ID for the authenticated user.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the target User that the authenticated user requesting to block dms for.
+            * **Returns**
+            * **BlockDmsResponse** – Response data
+
+        Return type:
+        :   [*BlockDmsResponse*](xdk.users.models.html#xdk.users.models.BlockDmsResponse "xdk.users.models.BlockDmsResponse")
+
+    create\_bookmark(*id*, *body*)[¶](#xdk.users.UsersClient.create_bookmark "Link to this definition")
+    :   Create Bookmark
+
+        Adds a post to the authenticated user’s bookmarks.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User for whom to add bookmarks.
+            * **body** ([*CreateBookmarkRequest*](xdk.users.models.html#xdk.users.models.CreateBookmarkRequest "xdk.users.models.CreateBookmarkRequest")) – Request body
+
+        Returns:
+        :   Response data
+
+        Return type:
+        :   [*CreateBookmarkResponse*](xdk.users.models.html#xdk.users.models.CreateBookmarkResponse "xdk.users.models.CreateBookmarkResponse")
+
+    delete\_bookmark(*id*, *tweet\_id*)[¶](#xdk.users.UsersClient.delete_bookmark "Link to this definition")
+    :   Delete Bookmark
+
+        Removes a Post from the authenticated user’s Bookmarks by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User whose bookmark is to be removed.
+            * **tweet\_id** (*Any*) – The ID of the Post that the source User is removing from bookmarks.
+            * **Returns**
+            * **DeleteBookmarkResponse** – Response data
+
+        Return type:
+        :   [*DeleteBookmarkResponse*](xdk.users.models.html#xdk.users.models.DeleteBookmarkResponse "xdk.users.models.DeleteBookmarkResponse")
+
+    follow\_list(*id*, *body=None*)[¶](#xdk.users.UsersClient.follow_list "Link to this definition")
+    :   Follow List
+
+        Causes the authenticated user to follow a specific List by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User that will follow the List.
+            * **body** ([*FollowListRequest*](xdk.users.models.html#xdk.users.models.FollowListRequest "xdk.users.models.FollowListRequest") *|* *None*) – Request body
+
+        Returns:
+        :   Response data
+
+        Return type:
+        :   [*FollowListResponse*](xdk.users.models.html#xdk.users.models.FollowListResponse "xdk.users.models.FollowListResponse")
+
+    follow\_user(*id*, *body=None*)[¶](#xdk.users.UsersClient.follow_user "Link to this definition")
+    :   Follow User
+
+        Causes the authenticated user to follow a specific user by their ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User that is requesting to follow the target User.
+            * **body** ([*FollowUserRequest*](xdk.users.models.html#xdk.users.models.FollowUserRequest "xdk.users.models.FollowUserRequest") *|* *None*) – Request body
+
+        Returns:
+        :   Response data
+
+        Return type:
+        :   [*FollowUserResponse*](xdk.users.models.html#xdk.users.models.FollowUserResponse "xdk.users.models.FollowUserResponse")
+
+    get\_blocking(*id*, *max\_results=None*, *pagination\_token=None*, *userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.users.UsersClient.get_blocking "Link to this definition")
+    :   Get blocking
+
+        Retrieves a list of Users blocked by the specified User ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User for whom to return results.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get a specified ‘page’ of results.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **GetBlockingResponse** – Response data
+
+        Return type:
+        :   [*GetBlockingResponse*](xdk.users.models.html#xdk.users.models.GetBlockingResponse "xdk.users.models.GetBlockingResponse")
+
+    get\_bookmark\_folders(*id*, *max\_results=None*, *pagination\_token=None*)[¶](#xdk.users.UsersClient.get_bookmark_folders "Link to this definition")
+    :   Get Bookmark folders
+
+        Retrieves a list of Bookmark folders created by the authenticated user.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User for whom to return results.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results.
+            * **Returns**
+            * **GetBookmarkFoldersResponse** – Response data
+
+        Return type:
+        :   [*GetBookmarkFoldersResponse*](xdk.users.models.html#xdk.users.models.GetBookmarkFoldersResponse "xdk.users.models.GetBookmarkFoldersResponse")
+
+    get\_bookmarks(*id*, *max\_results=None*, *pagination\_token=None*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.users.UsersClient.get_bookmarks "Link to this definition")
+    :   Get Bookmarks
+
+        Retrieves a list of Posts bookmarked by the authenticated user.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User for whom to return results.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **GetBookmarksResponse** – Response data
+
+        Return type:
+        :   [*GetBookmarksResponse*](xdk.users.models.html#xdk.users.models.GetBookmarksResponse "xdk.users.models.GetBookmarksResponse")
+
+    get\_bookmarks\_by\_folder\_id(*id*, *folder\_id*)[¶](#xdk.users.UsersClient.get_bookmarks_by_folder_id "Link to this definition")
+    :   Get Bookmarks by folder ID
+
+        Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User for whom to return results.
+            * **folder\_id** (*Any*) – The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.
+            * **Returns**
+            * **GetBookmarksByFolderIdResponse** – Response data
+
+        Return type:
+        :   [*GetBookmarksByFolderIdResponse*](xdk.users.models.html#xdk.users.models.GetBookmarksByFolderIdResponse "xdk.users.models.GetBookmarksByFolderIdResponse")
+
+    get\_by\_id(*id*, *userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.users.UsersClient.get_by_id "Link to this definition")
+    :   Get User by ID
+
+        Retrieves details of a specific User by their ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the User to lookup.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **GetByIdResponse** – Response data
+
+        Return type:
+        :   [*GetByIdResponse*](xdk.users.models.html#xdk.users.models.GetByIdResponse "xdk.users.models.GetByIdResponse")
+
+    get\_by\_ids(*ids*, *userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.users.UsersClient.get_by_ids "Link to this definition")
+    :   Get Users by IDs
+
+        Retrieves details of multiple Users by their IDs.
+
+        Parameters:
+        :   * **ids** (*List*) – A list of User IDs, comma-separated. You can specify up to 100 IDs.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **GetByIdsResponse** – Response data
+
+        Return type:
+        :   [*GetByIdsResponse*](xdk.users.models.html#xdk.users.models.GetByIdsResponse "xdk.users.models.GetByIdsResponse")
+
+    get\_by\_username(*username*, *userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.users.UsersClient.get_by_username "Link to this definition")
+    :   Get User by username
+
+        Retrieves details of a specific User by their username.
+
+        Parameters:
+        :   * **username** (*str*) – A username.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **GetByUsernameResponse** – Response data
+
+        Return type:
+        :   [*GetByUsernameResponse*](xdk.users.models.html#xdk.users.models.GetByUsernameResponse "xdk.users.models.GetByUsernameResponse")
+
+    get\_by\_usernames(*usernames*, *userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.users.UsersClient.get_by_usernames "Link to this definition")
+    :   Get Users by usernames
+
+        Retrieves details of multiple Users by their usernames.
+
+        Parameters:
+        :   * **usernames** (*List*) – A list of usernames, comma-separated.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **GetByUsernamesResponse** – Response data
+
+        Return type:
+        :   [*GetByUsernamesResponse*](xdk.users.models.html#xdk.users.models.GetByUsernamesResponse "xdk.users.models.GetByUsernamesResponse")
+
+    get\_followed\_lists(*id*, *max\_results=None*, *pagination\_token=None*, *listfields=None*, *expansions=None*, *userfields=None*)[¶](#xdk.users.UsersClient.get_followed_lists "Link to this definition")
+    :   Get followed Lists
+
+        Retrieves a list of Lists followed by a specific User by their ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the User to lookup.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get a specified ‘page’ of results.
+            * **listfields** (*List*) – A comma separated list of List fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **Returns**
+            * **GetFollowedListsResponse** – Response data
+
+        Return type:
+        :   [*GetFollowedListsResponse*](xdk.users.models.html#xdk.users.models.GetFollowedListsResponse "xdk.users.models.GetFollowedListsResponse")
+
+    get\_followers(*id*, *max\_results=None*, *pagination\_token=None*, *userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.users.UsersClient.get_followers "Link to this definition")
+    :   Get followers
+
+        Retrieves a list of Users who follow a specific User by their ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the User to lookup.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get a specified ‘page’ of results.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **GetFollowersResponse** – Response data
+
+        Return type:
+        :   [*GetFollowersResponse*](xdk.users.models.html#xdk.users.models.GetFollowersResponse "xdk.users.models.GetFollowersResponse")
+
+    get\_following(*id*, *max\_results=None*, *pagination\_token=None*, *userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.users.UsersClient.get_following "Link to this definition")
+    :   Get following
+
+        Retrieves a list of Users followed by a specific User by their ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the User to lookup.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get a specified ‘page’ of results.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **GetFollowingResponse** – Response data
+
+        Return type:
+        :   [*GetFollowingResponse*](xdk.users.models.html#xdk.users.models.GetFollowingResponse "xdk.users.models.GetFollowingResponse")
+
+    get\_liked\_posts(*id*, *max\_results=None*, *pagination\_token=None*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.users.UsersClient.get_liked_posts "Link to this definition")
+    :   Get liked Posts
+
+        Retrieves a list of Posts liked by a specific User by their ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the User to lookup.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **GetLikedPostsResponse** – Response data
+
+        Return type:
+        :   [*GetLikedPostsResponse*](xdk.users.models.html#xdk.users.models.GetLikedPostsResponse "xdk.users.models.GetLikedPostsResponse")
+
+    get\_list\_memberships(*id*, *max\_results=None*, *pagination\_token=None*, *listfields=None*, *expansions=None*, *userfields=None*)[¶](#xdk.users.UsersClient.get_list_memberships "Link to this definition")
+    :   Get List memberships
+
+        Retrieves a list of Lists that a specific User is a member of by their ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the User to lookup.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get a specified ‘page’ of results.
+            * **listfields** (*List*) – A comma separated list of List fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **Returns**
+            * **GetListMembershipsResponse** – Response data
+
+        Return type:
+        :   [*GetListMembershipsResponse*](xdk.users.models.html#xdk.users.models.GetListMembershipsResponse "xdk.users.models.GetListMembershipsResponse")
+
+    get\_me(*userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.users.UsersClient.get_me "Link to this definition")
+    :   Get my User
+
+        Retrieves details of the authenticated user.
+
+        Parameters:
+        :   * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **GetMeResponse** – Response data
+
+        Return type:
+        :   [*GetMeResponse*](xdk.users.models.html#xdk.users.models.GetMeResponse "xdk.users.models.GetMeResponse")
+
+    get\_mentions(*id*, *since\_id=None*, *until\_id=None*, *max\_results=None*, *pagination\_token=None*, *start\_time=None*, *end\_time=None*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.users.UsersClient.get_mentions "Link to this definition")
+    :   Get mentions
+
+        Retrieves a list of Posts that mention a specific User by their ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the User to lookup.
+            * **since\_id** (*Any*) – The minimum Post ID to be included in the result set. This parameter takes precedence over start\_time if both are specified.
+            * **until\_id** (*Any*) – The maximum Post ID to be included in the result set. This parameter takes precedence over end\_time if both are specified.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results.
+            * **start\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since\_id parameter takes precedence if it is also specified.
+            * **end\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until\_id parameter takes precedence if it is also specified.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **GetMentionsResponse** – Response data
+
+        Return type:
+        :   [*GetMentionsResponse*](xdk.users.models.html#xdk.users.models.GetMentionsResponse "xdk.users.models.GetMentionsResponse")
+
+    get\_muting(*id*, *max\_results=None*, *pagination\_token=None*, *userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.users.UsersClient.get_muting "Link to this definition")
+    :   Get muting
+
+        Retrieves a list of Users muted by the authenticated user.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User for whom to return results.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **GetMutingResponse** – Response data
+
+        Return type:
+        :   [*GetMutingResponse*](xdk.users.models.html#xdk.users.models.GetMutingResponse "xdk.users.models.GetMutingResponse")
+
+    get\_owned\_lists(*id*, *max\_results=None*, *pagination\_token=None*, *listfields=None*, *expansions=None*, *userfields=None*)[¶](#xdk.users.UsersClient.get_owned_lists "Link to this definition")
+    :   Get owned Lists
+
+        Retrieves a list of Lists owned by a specific User by their ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the User to lookup.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get a specified ‘page’ of results.
+            * **listfields** (*List*) – A comma separated list of List fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **Returns**
+            * **GetOwnedListsResponse** – Response data
+
+        Return type:
+        :   [*GetOwnedListsResponse*](xdk.users.models.html#xdk.users.models.GetOwnedListsResponse "xdk.users.models.GetOwnedListsResponse")
+
+    get\_pinned\_lists(*id*, *listfields=None*, *expansions=None*, *userfields=None*)[¶](#xdk.users.UsersClient.get_pinned_lists "Link to this definition")
+    :   Get pinned Lists
+
+        Retrieves a list of Lists pinned by the authenticated user.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User for whom to return results.
+            * **listfields** (*List*) – A comma separated list of List fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **Returns**
+            * **GetPinnedListsResponse** – Response data
+
+        Return type:
+        :   [*GetPinnedListsResponse*](xdk.users.models.html#xdk.users.models.GetPinnedListsResponse "xdk.users.models.GetPinnedListsResponse")
+
+    get\_posts(*id*, *since\_id=None*, *until\_id=None*, *max\_results=None*, *pagination\_token=None*, *exclude=None*, *start\_time=None*, *end\_time=None*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.users.UsersClient.get_posts "Link to this definition")
+    :   Get Posts
+
+        Retrieves a list of posts authored by a specific User by their ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the User to lookup.
+            * **since\_id** (*Any*) – The minimum Post ID to be included in the result set. This parameter takes precedence over start\_time if both are specified.
+            * **until\_id** (*Any*) – The maximum Post ID to be included in the result set. This parameter takes precedence over end\_time if both are specified.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results.
+            * **exclude** (*List*) – The set of entities to exclude (e.g. ‘replies’ or ‘retweets’).
+            * **start\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since\_id parameter takes precedence if it is also specified.
+            * **end\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until\_id parameter takes precedence if it is also specified.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **GetPostsResponse** – Response data
+
+        Return type:
+        :   [*GetPostsResponse*](xdk.users.models.html#xdk.users.models.GetPostsResponse "xdk.users.models.GetPostsResponse")
+
+    get\_reposts\_of\_me(*max\_results=None*, *pagination\_token=None*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.users.UsersClient.get_reposts_of_me "Link to this definition")
+    :   Get Reposts of me
+
+        Retrieves a list of Posts that repost content from the authenticated user.
+
+        Parameters:
+        :   * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **GetRepostsOfMeResponse** – Response data
+
+        Return type:
+        :   [*GetRepostsOfMeResponse*](xdk.users.models.html#xdk.users.models.GetRepostsOfMeResponse "xdk.users.models.GetRepostsOfMeResponse")
+
+    get\_timeline(*id*, *since\_id=None*, *until\_id=None*, *max\_results=None*, *pagination\_token=None*, *exclude=None*, *start\_time=None*, *end\_time=None*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.users.UsersClient.get_timeline "Link to this definition")
+    :   Get Timeline
+
+        Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User to list Reverse Chronological Timeline Posts of.
+            * **since\_id** (*Any*) – The minimum Post ID to be included in the result set. This parameter takes precedence over start\_time if both are specified.
+            * **until\_id** (*Any*) – The maximum Post ID to be included in the result set. This parameter takes precedence over end\_time if both are specified.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results.
+            * **exclude** (*List*) – The set of entities to exclude (e.g. ‘replies’ or ‘retweets’).
+            * **start\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since\_id parameter takes precedence if it is also specified.
+            * **end\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until\_id parameter takes precedence if it is also specified.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **GetTimelineResponse** – Response data
+
+        Return type:
+        :   [*GetTimelineResponse*](xdk.users.models.html#xdk.users.models.GetTimelineResponse "xdk.users.models.GetTimelineResponse")
+
+    like\_post(*id*, *body=None*)[¶](#xdk.users.UsersClient.like_post "Link to this definition")
+    :   Like Post
+
+        Causes the authenticated user to Like a specific Post by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User that is requesting to like the Post.
+            * **body** ([*LikePostRequest*](xdk.users.models.html#xdk.users.models.LikePostRequest "xdk.users.models.LikePostRequest") *|* *None*) – Request body
+
+        Returns:
+        :   Response data
+
+        Return type:
+        :   [*LikePostResponse*](xdk.users.models.html#xdk.users.models.LikePostResponse "xdk.users.models.LikePostResponse")
+
+    mute\_user(*id*, *body=None*)[¶](#xdk.users.UsersClient.mute_user "Link to this definition")
+    :   Mute User
+
+        Causes the authenticated user to mute a specific User by their ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User that is requesting to mute the target User.
+            * **body** ([*MuteUserRequest*](xdk.users.models.html#xdk.users.models.MuteUserRequest "xdk.users.models.MuteUserRequest") *|* *None*) – Request body
+
+        Returns:
+        :   Response data
+
+        Return type:
+        :   [*MuteUserResponse*](xdk.users.models.html#xdk.users.models.MuteUserResponse "xdk.users.models.MuteUserResponse")
+
+    pin\_list(*id*, *body*)[¶](#xdk.users.UsersClient.pin_list "Link to this definition")
+    :   Pin List
+
+        Causes the authenticated user to pin a specific List by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User that will pin the List.
+            * **body** ([*PinListRequest*](xdk.users.models.html#xdk.users.models.PinListRequest "xdk.users.models.PinListRequest")) – Request body
+
+        Returns:
+        :   Response data
+
+        Return type:
+        :   [*PinListResponse*](xdk.users.models.html#xdk.users.models.PinListResponse "xdk.users.models.PinListResponse")
+
+    repost\_post(*id*, *body=None*)[¶](#xdk.users.UsersClient.repost_post "Link to this definition")
+    :   Repost Post
+
+        Causes the authenticated user to repost a specific Post by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User that is requesting to repost the Post.
+            * **body** ([*RepostPostRequest*](xdk.users.models.html#xdk.users.models.RepostPostRequest "xdk.users.models.RepostPostRequest") *|* *None*) – Request body
+
+        Returns:
+        :   Response data
+
+        Return type:
+        :   [*RepostPostResponse*](xdk.users.models.html#xdk.users.models.RepostPostResponse "xdk.users.models.RepostPostResponse")
+
+    search(*query*, *max\_results=None*, *next\_token=None*, *userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.users.UsersClient.search "Link to this definition")
+    :   Search Users
+
+        Retrieves a list of Users matching a search query.
+
+        Parameters:
+        :   * **query** (*Any*) – TThe the query string by which to query for users.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **next\_token** (*Any*) – This parameter is used to get the next ‘page’ of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **SearchResponse** – Response data
+
+        Return type:
+        :   [*SearchResponse*](xdk.users.models.html#xdk.users.models.SearchResponse "xdk.users.models.SearchResponse")
+
+    unblock\_dms(*id*)[¶](#xdk.users.UsersClient.unblock_dms "Link to this definition")
+    :   Unblock DMs
+
+        Unblocks direct messages to or from a specific User by their ID for the authenticated user.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the target User that the authenticated user requesting to unblock dms for.
+            * **Returns**
+            * **UnblockDmsResponse** – Response data
+
+        Return type:
+        :   [*UnblockDmsResponse*](xdk.users.models.html#xdk.users.models.UnblockDmsResponse "xdk.users.models.UnblockDmsResponse")
+
+    unfollow\_list(*id*, *list\_id*)[¶](#xdk.users.UsersClient.unfollow_list "Link to this definition")
+    :   Unfollow List
+
+        Causes the authenticated user to unfollow a specific List by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User that will unfollow the List.
+            * **list\_id** (*Any*) – The ID of the List to unfollow.
+            * **Returns**
+            * **UnfollowListResponse** – Response data
+
+        Return type:
+        :   [*UnfollowListResponse*](xdk.users.models.html#xdk.users.models.UnfollowListResponse "xdk.users.models.UnfollowListResponse")
+
+    unfollow\_user(*source\_user\_id*, *target\_user\_id*)[¶](#xdk.users.UsersClient.unfollow_user "Link to this definition")
+    :   Unfollow User
+
+        Causes the authenticated user to unfollow a specific user by their ID.
+
+        Parameters:
+        :   * **source\_user\_id** (*Any*) – The ID of the authenticated source User that is requesting to unfollow the target User.
+            * **target\_user\_id** (*Any*) – The ID of the User that the source User is requesting to unfollow.
+            * **Returns**
+            * **UnfollowUserResponse** – Response data
+
+        Return type:
+        :   [*UnfollowUserResponse*](xdk.users.models.html#xdk.users.models.UnfollowUserResponse "xdk.users.models.UnfollowUserResponse")
+
+    unlike\_post(*id*, *tweet\_id*)[¶](#xdk.users.UsersClient.unlike_post "Link to this definition")
+    :   Unlike Post
+
+        Causes the authenticated user to Unlike a specific Post by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User that is requesting to unlike the Post.
+            * **tweet\_id** (*Any*) – The ID of the Post that the User is requesting to unlike.
+            * **Returns**
+            * **UnlikePostResponse** – Response data
+
+        Return type:
+        :   [*UnlikePostResponse*](xdk.users.models.html#xdk.users.models.UnlikePostResponse "xdk.users.models.UnlikePostResponse")
+
+    unmute\_user(*source\_user\_id*, *target\_user\_id*)[¶](#xdk.users.UsersClient.unmute_user "Link to this definition")
+    :   Unmute User
+
+        Causes the authenticated user to unmute a specific user by their ID.
+
+        Parameters:
+        :   * **source\_user\_id** (*Any*) – The ID of the authenticated source User that is requesting to unmute the target User.
+            * **target\_user\_id** (*Any*) – The ID of the User that the source User is requesting to unmute.
+            * **Returns**
+            * **UnmuteUserResponse** – Response data
+
+        Return type:
+        :   [*UnmuteUserResponse*](xdk.users.models.html#xdk.users.models.UnmuteUserResponse "xdk.users.models.UnmuteUserResponse")
+
+    unpin\_list(*id*, *list\_id*)[¶](#xdk.users.UsersClient.unpin_list "Link to this definition")
+    :   Unpin List
+
+        Causes the authenticated user to unpin a specific List by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User for whom to return results.
+            * **list\_id** (*Any*) – The ID of the List to unpin.
+            * **Returns**
+            * **UnpinListResponse** – Response data
+
+        Return type:
+        :   [*UnpinListResponse*](xdk.users.models.html#xdk.users.models.UnpinListResponse "xdk.users.models.UnpinListResponse")
+
+    unrepost\_post(*id*, *source\_tweet\_id*)[¶](#xdk.users.UsersClient.unrepost_post "Link to this definition")
+    :   Unrepost Post
+
+        Causes the authenticated user to unrepost a specific Post by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the authenticated source User that is requesting to repost the Post.
+            * **source\_tweet\_id** (*Any*) – The ID of the Post that the User is requesting to unretweet.
+            * **Returns**
+            * **UnrepostPostResponse** – Response data
+
+        Return type:
+        :   [*UnrepostPostResponse*](xdk.users.models.html#xdk.users.models.UnrepostPostResponse "xdk.users.models.UnrepostPostResponse")
+
+Modules
+
+|  |  |
+| --- | --- |
+| [`client`](xdk.users.client.html#module-xdk.users.client "xdk.users.client") | Auto-generated users client for the X API. |
+| [`models`](xdk.users.models.html#module-xdk.users.models "xdk.users.models") | Auto-generated users models for the X API. |
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](xdk.html)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - [xdk](xdk.html)
+      * Previous: [xdk.usage.models](xdk.usage.models.html "previous chapter")
+      * Next: [xdk.users.client](xdk.users.client.html "next chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.users.rst.txt)

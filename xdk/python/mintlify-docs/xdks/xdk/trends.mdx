@@ -1,0 +1,83 @@
+---
+sidebarTitle: Trends
+---
+
+xdk.trends — XDK Python SDK documentation
+
+# xdk.trends[¶](#module-xdk.trends "Link to this heading")
+
+Auto-generated trends module for the X API.
+
+This module provides access to the trends endpoints of the X API
+and serves as the main entry point for all trends-related functionality.
+
+Generated automatically - do not edit manually.
+
+*class* xdk.trends.TrendsClient(*client*)[¶](#xdk.trends.TrendsClient "Link to this definition")
+:   Bases: `object`
+
+    Client for trends operations
+
+    Parameters:
+    :   **client** ([*Client*](xdk.html#xdk.Client "xdk.Client"))
+
+    get\_by\_woeid(*woeid*, *max\_trends=None*, *trendfields=None*)[¶](#xdk.trends.TrendsClient.get_by_woeid "Link to this definition")
+    :   Get Trends by WOEID
+
+        Retrieves trending topics for a specific location identified by its WOEID.
+
+        Parameters:
+        :   * **woeid** (*int*) – The WOEID of the place to lookup a trend for.
+            * **max\_trends** (*int*) – The maximum number of results.
+            * **trendfields** (*List*) – A comma separated list of Trend fields to display.
+            * **Returns**
+            * **GetByWoeidResponse** – Response data
+
+        Return type:
+        :   [*GetByWoeidResponse*](xdk.trends.models.html#xdk.trends.models.GetByWoeidResponse "xdk.trends.models.GetByWoeidResponse")
+
+    get\_personalized(*personalized\_trendfields=None*)[¶](#xdk.trends.TrendsClient.get_personalized "Link to this definition")
+    :   Get personalized Trends
+
+        Retrieves personalized trending topics for the authenticated user.
+
+        Parameters:
+        :   * **personalized\_trendfields** (*List*) – A comma separated list of PersonalizedTrend fields to display.
+            * **Returns**
+            * **GetPersonalizedResponse** – Response data
+
+        Return type:
+        :   [*GetPersonalizedResponse*](xdk.trends.models.html#xdk.trends.models.GetPersonalizedResponse "xdk.trends.models.GetPersonalizedResponse")
+
+Modules
+
+|  |  |
+| --- | --- |
+| [`client`](xdk.trends.client.html#module-xdk.trends.client "xdk.trends.client") | Auto-generated trends client for the X API. |
+| [`models`](xdk.trends.models.html#module-xdk.trends.models "xdk.trends.models") | Auto-generated trends models for the X API. |
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](xdk.html)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - [xdk](xdk.html)
+      * Previous: [xdk.stream.models](xdk.stream.models.html "previous chapter")
+      * Next: [xdk.trends.client](xdk.trends.client.html "next chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.trends.rst.txt)

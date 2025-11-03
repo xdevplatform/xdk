@@ -39,7 +39,7 @@ Creates a new trends client instance
 
 #### Defined in
 
-[trends/client.ts:62](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/trends/client.ts#L62)
+[trends/client.ts:62](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/trends/client.ts#L62)
 
 ## Methods
 
@@ -64,7 +64,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[trends/client.ts:75](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/trends/client.ts#L75)
+[trends/client.ts:75](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/trends/client.ts#L75)
 
 ___
 
@@ -90,4 +90,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[trends/client.ts:125](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/trends/client.ts#L125)
+[trends/client.ts:125](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/trends/client.ts#L125)

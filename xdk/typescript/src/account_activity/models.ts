@@ -14,12 +14,6 @@ import type * as Schemas from '../schemas.js';
  */
 export type DeleteSubscriptionResponse = Schemas.SubscriptionsDeleteResponse;
 /**
- * Response for getSubscriptionCount
- * 
- * @public
- */
-export type GetSubscriptionCountResponse = Schemas.SubscriptionsCountGetResponse;
-/**
  * Response for getSubscriptions
  * 
  * @public
@@ -49,3 +43,9 @@ export type CreateSubscriptionRequest = Schemas.SubscriptionsCreateRequest;
  * @public
  */
 export type CreateSubscriptionResponse = Schemas.SubscriptionsCreateResponse;
+/**
+ * Response for getSubscriptionCount
+ * 
+ * @public
+ */
+export type GetSubscriptionCountResponse = Schemas.SubscriptionsCountGetResponse;

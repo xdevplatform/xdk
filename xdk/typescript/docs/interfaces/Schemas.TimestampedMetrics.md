@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[schemas.ts:2499](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2499)
+[schemas.ts:2501](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2501)
 
 ___
 
@@ -31,4 +31,4 @@ ISO8601 Time
 
 #### Defined in
 
-[schemas.ts:2500](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2500)
+[schemas.ts:2502](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2502)

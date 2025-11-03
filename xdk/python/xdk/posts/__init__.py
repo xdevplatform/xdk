@@ -9,4 +9,4 @@ Generated automatically - do not edit manually.
 
 from .client import PostsClient
 
-__all__ = ["PostsClient"] 
+__all__ = ["PostsClient"]

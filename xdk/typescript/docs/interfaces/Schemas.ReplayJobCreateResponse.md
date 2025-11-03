@@ -21,7 +21,7 @@ The UTC timestamp indicating when the replay job was created.
 
 #### Defined in
 
-[schemas.ts:2166](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2166)
+[schemas.ts:2168](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2168)
 
 ___
 
@@ -33,4 +33,4 @@ The unique identifier for the initiated replay job.
 
 #### Defined in
 
-[schemas.ts:2167](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2167)
+[schemas.ts:2169](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2169)

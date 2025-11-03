@@ -72,7 +72,7 @@ const client = new Client({
 
 
 
-[client.ts:306](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/client.ts#L306)
+[client.ts:306](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L306)
 
 ## Properties
 
@@ -126,23 +126,28 @@ HTTP client for making requests
 
 </ResponseField>
 
-<ResponseField name="lists" type="ListsClient" required>
-lists client
+<ResponseField name="compliance" type="ComplianceClient" required>
+compliance client
 
 </ResponseField>
 
-<ResponseField name="directMessages" type="DirectMessagesClient" required>
-direct messages client
-
-</ResponseField>
-
-<ResponseField name="usage" type="UsageClient" required>
-usage client
+<ResponseField name="spaces" type="SpacesClient" required>
+spaces client
 
 </ResponseField>
 
 <ResponseField name="webhooks" type="WebhooksClient" required>
 webhooks client
+
+</ResponseField>
+
+<ResponseField name="activity" type="ActivityClient" required>
+activity client
+
+</ResponseField>
+
+<ResponseField name="users" type="UsersClient" required>
+users client
 
 </ResponseField>
 
@@ -156,8 +161,23 @@ community notes client
 
 </ResponseField>
 
-<ResponseField name="stream" type="StreamClient" required>
-stream client
+<ResponseField name="directMessages" type="DirectMessagesClient" required>
+direct messages client
+
+</ResponseField>
+
+<ResponseField name="usage" type="UsageClient" required>
+usage client
+
+</ResponseField>
+
+<ResponseField name="accountActivity" type="AccountActivityClient" required>
+account activity client
+
+</ResponseField>
+
+<ResponseField name="lists" type="ListsClient" required>
+lists client
 
 </ResponseField>
 
@@ -176,8 +196,8 @@ connections client
 
 </ResponseField>
 
-<ResponseField name="compliance" type="ComplianceClient" required>
-compliance client
+<ResponseField name="stream" type="StreamClient" required>
+stream client
 
 </ResponseField>
 
@@ -186,28 +206,8 @@ general client
 
 </ResponseField>
 
-<ResponseField name="users" type="UsersClient" required>
-users client
-
-</ResponseField>
-
-<ResponseField name="activity" type="ActivityClient" required>
-activity client
-
-</ResponseField>
-
-<ResponseField name="accountActivity" type="AccountActivityClient" required>
-account activity client
-
-</ResponseField>
-
 <ResponseField name="posts" type="PostsClient" required>
 posts client
-
-</ResponseField>
-
-<ResponseField name="spaces" type="SpacesClient" required>
-spaces client
 
 </ResponseField>
 

@@ -9,4 +9,4 @@ Generated automatically - do not edit manually.
 
 from .client import DirectMessagesClient
 
-__all__ = ["DirectMessagesClient"] 
+__all__ = ["DirectMessagesClient"]

@@ -17,13 +17,13 @@ parsing for all direct messages related operations.
 ### Methods
 
 - [getEvents](DirectMessagesClient.md#getevents)
-- [createByConversationId](DirectMessagesClient.md#createbyconversationid)
-- [createByParticipantId](DirectMessagesClient.md#createbyparticipantid)
 - [getEventsById](DirectMessagesClient.md#geteventsbyid)
 - [deleteEvents](DirectMessagesClient.md#deleteevents)
-- [createConversation](DirectMessagesClient.md#createconversation)
+- [createByParticipantId](DirectMessagesClient.md#createbyparticipantid)
+- [createByConversationId](DirectMessagesClient.md#createbyconversationid)
 - [getEventsByParticipantId](DirectMessagesClient.md#geteventsbyparticipantid)
 - [getEventsByConversationId](DirectMessagesClient.md#geteventsbyconversationid)
+- [createConversation](DirectMessagesClient.md#createconversation)
 
 ## Constructors
 
@@ -45,7 +45,7 @@ Creates a new direct messages client instance
 
 #### Defined in
 
-[direct_messages/client.ts:211](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/direct_messages/client.ts#L211)
+[direct_messages/client.ts:211](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L211)
 
 ## Methods
 
@@ -70,59 +70,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:224](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/direct_messages/client.ts#L224)
-
-___
-
-### createByConversationId
-
-▸ **createByConversationId**(`dmConversationId`, `options?`): `Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
-
-Create DM message by conversation ID
-Sends a new direct message to a specific conversation by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `dmConversationId` | `string` | The DM Conversation ID. |
-| `options` | `CreateByConversationIdOptions` | - |
-
-#### Returns
-
-`Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[direct_messages/client.ts:311](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/direct_messages/client.ts#L311)
-
-___
-
-### createByParticipantId
-
-▸ **createByParticipantId**(`participantId`, `options?`): `Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
-
-Create DM message by participant ID
-Sends a new direct message to a specific participant by their ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `participantId` | `string` | The ID of the recipient user that will receive the DM. |
-| `options` | `CreateByParticipantIdOptions` | - |
-
-#### Returns
-
-`Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[direct_messages/client.ts:362](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/direct_messages/client.ts#L362)
+[direct_messages/client.ts:224](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L224)
 
 ___
 
@@ -148,7 +96,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:413](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/direct_messages/client.ts#L413)
+[direct_messages/client.ts:311](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L311)
 
 ___
 
@@ -173,22 +121,23 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:487](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/direct_messages/client.ts#L487)
+[direct_messages/client.ts:385](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L385)
 
 ___
 
-### createConversation
+### createByParticipantId
 
-▸ **createConversation**(`options?`): `Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
+▸ **createByParticipantId**(`participantId`, `options?`): `Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
 
-Create DM conversation
-Initiates a new direct message conversation with specified participants.
+Create DM message by participant ID
+Sends a new direct message to a specific participant by their ID.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | `CreateConversationOptions` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `participantId` | `string` | The ID of the recipient user that will receive the DM. |
+| `options` | `CreateByParticipantIdOptions` | - |
 
 #### Returns
 
@@ -198,7 +147,33 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:521](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/direct_messages/client.ts#L521)
+[direct_messages/client.ts:423](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L423)
+
+___
+
+### createByConversationId
+
+▸ **createByConversationId**(`dmConversationId`, `options?`): `Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
+
+Create DM message by conversation ID
+Sends a new direct message to a specific conversation by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `dmConversationId` | `string` | The DM Conversation ID. |
+| `options` | `CreateByConversationIdOptions` | - |
+
+#### Returns
+
+`Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[direct_messages/client.ts:474](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L474)
 
 ___
 
@@ -224,7 +199,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:566](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/direct_messages/client.ts#L566)
+[direct_messages/client.ts:525](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L525)
 
 ___
 
@@ -250,4 +225,29 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:661](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/direct_messages/client.ts#L661)
+[direct_messages/client.ts:620](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L620)
+
+___
+
+### createConversation
+
+▸ **createConversation**(`options?`): `Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
+
+Create DM conversation
+Initiates a new direct message conversation with specified participants.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `CreateConversationOptions` |
+
+#### Returns
+
+`Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[direct_messages/client.ts:708](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L708)

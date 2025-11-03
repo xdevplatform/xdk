@@ -8,13 +8,13 @@ import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
   GetEventsResponse,
-  CreateByConversationIdResponse,
-  CreateByParticipantIdResponse,
   GetEventsByIdResponse,
   DeleteEventsResponse,
-  CreateConversationResponse,
+  CreateByParticipantIdResponse,
+  CreateByConversationIdResponse,
   GetEventsByParticipantIdResponse,
   GetEventsByConversationIdResponse,
+  CreateConversationResponse,
 } from './models.js';
 
 /**
@@ -46,38 +46,6 @@ export interface GetEventsStreamingOptions {
 
   /** A comma separated list of Tweet fields to display. */
   tweetfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for createByConversationId method
- * 
- * @public
- */
-export interface CreateByConversationIdStreamingOptions {
-  /** Request body */
-  body?: any;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for createByParticipantId method
- * 
- * @public
- */
-export interface CreateByParticipantIdStreamingOptions {
-  /** Request body */
-  body?: any;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -128,11 +96,27 @@ export interface DeleteEventsStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for createConversation method
+ * Options for createByParticipantId method
  * 
  * @public
  */
-export interface CreateConversationStreamingOptions {
+export interface CreateByParticipantIdStreamingOptions {
+  /** Request body */
+  body?: any;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for createByConversationId method
+ * 
+ * @public
+ */
+export interface CreateByConversationIdStreamingOptions {
   /** Request body */
   body?: any;
 
@@ -209,6 +193,22 @@ export interface GetEventsByConversationIdStreamingOptions {
 
   /** A comma separated list of Tweet fields to display. */
   tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for createConversation method
+ * 
+ * @public
+ */
+export interface CreateConversationStreamingOptions {
+  /** Request body */
+  body?: any;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -321,138 +321,6 @@ export class DirectMessagesClient {
     // Make the request
     return this.client.request<GetEventsResponse>(
       'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Create DM message by conversation ID
-     * Sends a new direct message to a specific conversation by its ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async createByConversationId(
-    dmConversationId: string,
-    options: CreateByConversationIdStreamingOptions = {}
-  ): Promise<CreateByConversationIdResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(
-      requiredAuthTypes,
-      'createByConversationId'
-    );
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      body,
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/dm_conversations/{dm_conversation_id}/messages';
-
-    path = path.replace(
-      '{dm_conversation_id}',
-      encodeURIComponent(String(dmConversationId))
-    );
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      body: JSON.stringify(body),
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<CreateByConversationIdResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Create DM message by participant ID
-     * Sends a new direct message to a specific participant by their ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async createByParticipantId(
-    participantId: string,
-    options: CreateByParticipantIdStreamingOptions = {}
-  ): Promise<CreateByParticipantIdResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(
-      requiredAuthTypes,
-      'createByParticipantId'
-    );
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      body,
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/dm_conversations/with/{participant_id}/messages';
-
-    path = path.replace(
-      '{participant_id}',
-      encodeURIComponent(String(participantId))
-    );
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      body: JSON.stringify(body),
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<CreateByParticipantIdResponse>(
-      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -596,14 +464,15 @@ export class DirectMessagesClient {
   }
 
   /**
-     * Create DM conversation
-     * Initiates a new direct message conversation with specified participants.
+     * Create DM message by participant ID
+     * Sends a new direct message to a specific participant by their ID.
      * 
      * @returns Promise with the API response
      */
-  async createConversation(
-    options: CreateConversationStreamingOptions = {}
-  ): Promise<CreateConversationResponse> {
+  async createByParticipantId(
+    participantId: string,
+    options: CreateByParticipantIdStreamingOptions = {}
+  ): Promise<CreateByParticipantIdResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -612,7 +481,10 @@ export class DirectMessagesClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'createConversation');
+    this.client.validateAuthentication(
+      requiredAuthTypes,
+      'createByParticipantId'
+    );
 
     // Destructure options (exclude path parameters, they're already function params)
 
@@ -626,7 +498,12 @@ export class DirectMessagesClient {
       options || {};
 
     // Build the path with path parameters
-    let path = '/2/dm_conversations';
+    let path = '/2/dm_conversations/with/{participant_id}/messages';
+
+    path = path.replace(
+      '{participant_id}',
+      encodeURIComponent(String(participantId))
+    );
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -645,7 +522,73 @@ export class DirectMessagesClient {
     };
 
     // Make the request
-    return this.client.request<CreateConversationResponse>(
+    return this.client.request<CreateByParticipantIdResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Create DM message by conversation ID
+     * Sends a new direct message to a specific conversation by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async createByConversationId(
+    dmConversationId: string,
+    options: CreateByConversationIdStreamingOptions = {}
+  ): Promise<CreateByConversationIdResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(
+      requiredAuthTypes,
+      'createByConversationId'
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      body,
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/dm_conversations/{dm_conversation_id}/messages';
+
+    path = path.replace(
+      '{dm_conversation_id}',
+      encodeURIComponent(String(dmConversationId))
+    );
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      body: JSON.stringify(body),
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<CreateByConversationIdResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -864,6 +807,63 @@ export class DirectMessagesClient {
     // Make the request
     return this.client.request<GetEventsByConversationIdResponse>(
       'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Create DM conversation
+     * Initiates a new direct message conversation with specified participants.
+     * 
+     * @returns Promise with the API response
+     */
+  async createConversation(
+    options: CreateConversationStreamingOptions = {}
+  ): Promise<CreateConversationResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'createConversation');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      body,
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/dm_conversations';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      body: JSON.stringify(body),
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<CreateConversationResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

@@ -1,0 +1,215 @@
+---
+sidebarTitle: Xdk
+---
+
+xdk — XDK Python SDK documentation
+
+# xdk[¶](#module-xdk "Link to this heading")
+
+XDK Python SDK.
+
+A Python SDK for the X API that provides convenient access
+to the X API endpoints with type safety and authentication support.
+
+Generated automatically - do not edit manually.
+
+*class* xdk.Client(*base\_url='https://api.twitter.com'*, *bearer\_token=None*, *client\_id=None*, *client\_secret=None*, *redirect\_uri=None*, *token=None*, *scope=None*)[¶](#xdk.Client "Link to this definition")
+:   Bases: `object`
+
+    Client for interacting with the X API.
+
+    Parameters:
+    :   * **base\_url** (*str*)
+        * **bearer\_token** (*str*)
+        * **client\_id** (*str*)
+        * **client\_secret** (*str*)
+        * **redirect\_uri** (*str*)
+        * **token** (*Dict**[**str**,* *Any**]*)
+        * **scope** (*str*)
+
+    \_\_init\_\_(*base\_url='https://api.twitter.com'*, *bearer\_token=None*, *client\_id=None*, *client\_secret=None*, *redirect\_uri=None*, *token=None*, *scope=None*)[¶](#xdk.Client.__init__ "Link to this definition")
+    :   Initialize the X API client.
+
+        Parameters:
+        :   * **base\_url** (*str*) – The base URL for the X API.
+            * **bearer\_token** (*str*) – The bearer token for the X API.
+            * **client\_id** (*str*) – The client ID for the X API.
+            * **client\_secret** (*str*) – The client secret for the X API.
+            * **redirect\_uri** (*str*) – The redirect URI for OAuth2 authorization.
+            * **token** (*Dict**[**str**,* *Any**]*) – An existing OAuth2 token dictionary (if available).
+            * **scope** (*str*) – Space-separated list of scopes for OAuth2 authorization.
+
+    *property* access\_token[¶](#xdk.Client.access_token "Link to this definition")
+    :   Get the current access token if available.
+
+    fetch\_token(*authorization\_response*)[¶](#xdk.Client.fetch_token "Link to this definition")
+    :   Fetch token using authorization response.
+
+    get\_authorization\_url()[¶](#xdk.Client.get_authorization_url "Link to this definition")
+    :   Get the authorization URL for the OAuth2 PKCE flow.
+
+    is\_token\_expired()[¶](#xdk.Client.is_token_expired "Link to this definition")
+    :   Check if the OAuth2 token is expired.
+
+    *property* oauth2\_session[¶](#xdk.Client.oauth2_session "Link to this definition")
+    :   Get the OAuth2 session if available.
+
+    refresh\_token()[¶](#xdk.Client.refresh_token "Link to this definition")
+    :   Refresh the OAuth2 token.
+
+    *property* token[¶](#xdk.Client.token "Link to this definition")
+    :   Get the current OAuth2 token if available.
+
+*class* xdk.Cursor(*method*, *\*args*, *\*\*kwargs*)[¶](#xdk.Cursor "Link to this definition")
+:   Bases: `Generic`[`ResponseType`]
+
+    A cursor for handling pagination in API calls.
+
+    This class wraps any API method and provides elegant pagination
+    through .items() and .pages() methods. The cursor preserves the
+    return type of the wrapped method for proper type hints.
+
+    Example usage:
+    :   ```
+        # For methods requiring arguments
+        cursor = Cursor(client.users.get_users_blocking, "user_id", max_results=100)
+        for user in cursor.items(250):  # user is properly typed
+            print(user.name)
+
+        # For methods with query parameters
+        cursor = Cursor(client.posts.search_posts_recent, "python", max_results=50)
+        for page in cursor.pages(5):  # page is SearchResponse type
+            print(f"Got {len(page.data)} posts")
+        ```
+
+    Parameters:
+    :   * **method** ([*PaginatableMethod*](xdk.paginator.html#xdk.paginator.PaginatableMethod "xdk.paginator.PaginatableMethod")*[**ResponseType**]*)
+        * **args** (*Any*)
+        * **kwargs** (*Any*)
+
+    \_\_init\_\_(*method*, *\*args*, *\*\*kwargs*)[¶](#xdk.Cursor.__init__ "Link to this definition")
+    :   Initialize the cursor.
+
+        Parameters:
+        :   * **method** ([*PaginatableMethod*](xdk.paginator.html#xdk.paginator.PaginatableMethod "xdk.paginator.PaginatableMethod")*[**ResponseType**]*) – The API method to call for each page (must support pagination)
+            * **\*args** (*Any*) – Positional arguments to pass to the API method
+            * **\*\*kwargs** (*Any*) – Keyword arguments to pass to the API method (excluding pagination params)
+
+        Raises:
+        :   [**PaginationError**](#xdk.PaginationError "xdk.PaginationError") – If the method doesn’t support pagination parameters
+
+    items(*limit=None*)[¶](#xdk.Cursor.items "Link to this definition")
+    :   Iterate over individual items from paginated responses.
+
+        Parameters:
+        :   **limit** (*int* *|* *None*) – Maximum number of items to return (None for unlimited)
+
+        Yields:
+        :   Individual items from the API responses
+
+        Return type:
+        :   *Iterator*[*Any*]
+
+    pages(*limit=None*)[¶](#xdk.Cursor.pages "Link to this definition")
+    :   Iterate over pages of responses.
+
+        Parameters:
+        :   **limit** (*int* *|* *None*) – Maximum number of pages to return (None for unlimited)
+
+        Yields:
+        :   Page responses from the API (same type as the wrapped method returns)
+
+        Return type:
+        :   *Iterator*[*ResponseType*]
+
+*exception* xdk.PaginationError[¶](#xdk.PaginationError "Link to this definition")
+:   Bases: `TypeError`
+
+    Raised when a non-paginatable method is passed to Cursor.
+
+xdk.cursor(*method*, *\*args*, *\*\*kwargs*)[¶](#xdk.cursor "Link to this definition")
+:   Create a cursor with proper type inference and validation.
+
+    This factory function helps with type inference so you get proper
+    type hints for the response type, and validates that the method
+    supports pagination at both static analysis and runtime.
+
+    Parameters:
+    :   * **method** ([*PaginatableMethod*](xdk.paginator.html#xdk.paginator.PaginatableMethod "xdk.paginator.PaginatableMethod")*[**ResponseType**]*) – The API method to wrap (must support pagination)
+        * **\*args** (*Any*) – Positional arguments to pass to the method
+        * **\*\*kwargs** (*Any*) – Keyword arguments to pass to the method
+
+    Returns:
+    :   A properly typed Cursor instance
+
+    Raises:
+    :   [**PaginationError**](#xdk.PaginationError "xdk.PaginationError") – If the method doesn’t support pagination parameters
+
+    Return type:
+    :   [*Cursor*](xdk.paginator.html#xdk.paginator.Cursor "xdk.paginator.Cursor")[*ResponseType*]
+
+    Example
+
+    ```
+    # Type is inferred as Cursor[GetUsersResponse]
+    users_cursor = cursor(client.users.get_users_blocking, "user_id", max_results=100)
+
+    # page is typed as GetUsersResponse
+    for page in users_cursor.pages(5):
+        print(len(page.data))
+
+    # For search methods
+    search_cursor = cursor(client.posts.search_posts_recent, "python", max_results=50)
+    for tweet in search_cursor.items(100):
+        print(tweet.text)
+    ```
+
+Modules
+
+|  |  |
+| --- | --- |
+| [`account_activity`](xdk.account_activity.html#module-xdk.account_activity "xdk.account_activity") | Auto-generated account activity module for the X API. |
+| [`activity`](xdk.activity.html#module-xdk.activity "xdk.activity") | Auto-generated activity module for the X API. |
+| [`client`](xdk.client.html#module-xdk.client "xdk.client") | Auto-generated main client for the X API. |
+| [`communities`](xdk.communities.html#module-xdk.communities "xdk.communities") | Auto-generated communities module for the X API. |
+| [`community_notes`](xdk.community_notes.html#module-xdk.community_notes "xdk.community_notes") | Auto-generated community notes module for the X API. |
+| [`compliance`](xdk.compliance.html#module-xdk.compliance "xdk.compliance") | Auto-generated compliance module for the X API. |
+| [`connections`](xdk.connections.html#module-xdk.connections "xdk.connections") | Auto-generated connections module for the X API. |
+| [`direct_messages`](xdk.direct_messages.html#module-xdk.direct_messages "xdk.direct_messages") | Auto-generated direct messages module for the X API. |
+| [`general`](xdk.general.html#module-xdk.general "xdk.general") | Auto-generated general module for the X API. |
+| [`lists`](xdk.lists.html#module-xdk.lists "xdk.lists") | Auto-generated lists module for the X API. |
+| [`media`](xdk.media.html#module-xdk.media "xdk.media") | Auto-generated media module for the X API. |
+| [`oauth2_auth`](xdk.oauth2_auth.html#module-xdk.oauth2_auth "xdk.oauth2_auth") | Auto-generated OAuth2 PKCE authentication for the X API. |
+| [`paginator`](xdk.paginator.html#module-xdk.paginator "xdk.paginator") | Cursor-based pagination utilities for the X API SDK. |
+| [`posts`](xdk.posts.html#module-xdk.posts "xdk.posts") | Auto-generated posts module for the X API. |
+| [`spaces`](xdk.spaces.html#module-xdk.spaces "xdk.spaces") | Auto-generated spaces module for the X API. |
+| [`stream`](xdk.stream.html#module-xdk.stream "xdk.stream") | Auto-generated stream module for the X API. |
+| [`trends`](xdk.trends.html#module-xdk.trends "xdk.trends") | Auto-generated trends module for the X API. |
+| [`usage`](xdk.usage.html#module-xdk.usage "xdk.usage") | Auto-generated usage module for the X API. |
+| [`users`](xdk.users.html#module-xdk.users "xdk.users") | Auto-generated users module for the X API. |
+| [`webhooks`](xdk.webhooks.html#module-xdk.webhooks "xdk.webhooks") | Auto-generated webhooks module for the X API. |
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](#)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - Previous: [API Reference](../modules.html "previous chapter")
+    - Next: [xdk.account\_activity](xdk.account_activity.html "next chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.rst.txt)

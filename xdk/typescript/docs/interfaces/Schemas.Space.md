@@ -36,7 +36,7 @@ Creation time of the Space.
 
 #### Defined in
 
-[schemas.ts:2315](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2315)
+[schemas.ts:2317](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2317)
 
 ___
 
@@ -46,7 +46,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2316](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2316)
+[schemas.ts:2318](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2318)
 
 ___
 
@@ -58,7 +58,7 @@ End time of the Space.
 
 #### Defined in
 
-[schemas.ts:2317](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2317)
+[schemas.ts:2319](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2319)
 
 ___
 
@@ -70,7 +70,7 @@ The user ids for the hosts of the Space.
 
 #### Defined in
 
-[schemas.ts:2318](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2318)
+[schemas.ts:2320](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2320)
 
 ___
 
@@ -80,7 +80,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2319](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2319)
+[schemas.ts:2321](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2321)
 
 ___
 
@@ -92,7 +92,7 @@ An array of user ids for people who were invited to a Space.
 
 #### Defined in
 
-[schemas.ts:2320](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2320)
+[schemas.ts:2322](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2322)
 
 ___
 
@@ -104,7 +104,7 @@ Denotes if the Space is a ticketed Space.
 
 #### Defined in
 
-[schemas.ts:2323](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2323)
+[schemas.ts:2325](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2325)
 
 ___
 
@@ -116,7 +116,7 @@ The language of the Space.
 
 #### Defined in
 
-[schemas.ts:2324](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2324)
+[schemas.ts:2326](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2326)
 
 ___
 
@@ -128,7 +128,7 @@ The number of participants in a Space.
 
 #### Defined in
 
-[schemas.ts:2325](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2325)
+[schemas.ts:2327](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2327)
 
 ___
 
@@ -140,7 +140,7 @@ A date time stamp for when a Space is scheduled to begin.
 
 #### Defined in
 
-[schemas.ts:2326](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2326)
+[schemas.ts:2328](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2328)
 
 ___
 
@@ -152,7 +152,7 @@ An array of user ids for people who were speakers in a Space.
 
 #### Defined in
 
-[schemas.ts:2327](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2327)
+[schemas.ts:2329](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2329)
 
 ___
 
@@ -164,7 +164,7 @@ When the Space was started as a date string.
 
 #### Defined in
 
-[schemas.ts:2330](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2330)
+[schemas.ts:2332](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2332)
 
 ___
 
@@ -176,7 +176,7 @@ The current state of the Space.
 
 #### Defined in
 
-[schemas.ts:2331](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2331)
+[schemas.ts:2333](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2333)
 
 ___
 
@@ -188,7 +188,7 @@ The number of people who have either purchased a ticket or set a reminder for th
 
 #### Defined in
 
-[schemas.ts:2332](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2332)
+[schemas.ts:2334](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2334)
 
 ___
 
@@ -200,7 +200,7 @@ The title of the Space.
 
 #### Defined in
 
-[schemas.ts:2333](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2333)
+[schemas.ts:2335](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2335)
 
 ___
 
@@ -212,7 +212,7 @@ The topics of a Space, as selected by its creator.
 
 #### Defined in
 
-[schemas.ts:2334](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2334)
+[schemas.ts:2336](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2336)
 
 ___
 
@@ -224,4 +224,4 @@ When the Space was last updated.
 
 #### Defined in
 
-[schemas.ts:2337](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2337)
+[schemas.ts:2339](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2339)

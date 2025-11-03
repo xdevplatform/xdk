@@ -21,7 +21,7 @@
 
 #### Defined in
 
-[schemas.ts:633](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L633)
+[schemas.ts:635](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L635)
 
 ___
 
@@ -33,7 +33,7 @@ none
 
 #### Defined in
 
-[schemas.ts:634](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L634)
+[schemas.ts:636](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L636)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:635](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L635)
+[schemas.ts:637](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L637)
 
 ___
 
@@ -55,4 +55,4 @@ The list of rules which matched the Tweet
 
 #### Defined in
 
-[schemas.ts:636](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L636)
+[schemas.ts:638](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L638)

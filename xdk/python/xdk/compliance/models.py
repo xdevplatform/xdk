@@ -13,126 +13,34 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-
-
-
-
-
-
-
 # Models for get_jobs
-
-
-
-
-
-
 
 
 class GetJobsResponse(BaseModel):
     """Response model for get_jobs"""
-    
 
-    model_config = ConfigDict(populate_by_name=True, extra='allow')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
 
 
 # Models for create_jobs
 
+
 class CreateJobsRequest(BaseModel):
     """Request model for create_jobs"""
-    
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-
-
-
-
-
-
 class CreateJobsResponse(BaseModel):
     """Response model for create_jobs"""
-    
 
-    model_config = ConfigDict(populate_by_name=True, extra='allow')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
 
 
 # Models for get_jobs_by_id
 
 
-
-
-
-
-
-
 class GetJobsByIdResponse(BaseModel):
     """Response model for get_jobs_by_id"""
-    
 
-    model_config = ConfigDict(populate_by_name=True, extra='allow')
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
+    model_config = ConfigDict(populate_by_name=True, extra="allow")

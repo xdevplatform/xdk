@@ -21,7 +21,7 @@ Text for the community note.
 
 #### Defined in
 
-[schemas.ts:599](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L599)
+[schemas.ts:601](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L601)
 
 ___
 
@@ -31,4 +31,4 @@ ___
 
 #### Defined in
 
-[schemas.ts:600](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L600)
+[schemas.ts:602](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L602)

@@ -14,17 +14,17 @@ import type * as Schemas from '../schemas.js';
  */
 export type GetEventsResponse = Schemas.Get2DmEventsResponse;
 /**
- * Request for createByConversationId
+ * Response for getEventsById
  * 
  * @public
  */
-export type CreateByConversationIdRequest = Schemas.CreateMessageRequest;
+export type GetEventsByIdResponse = Schemas.Get2DmEventsEventIdResponse;
 /**
- * Response for createByConversationId
+ * Response for deleteEvents
  * 
  * @public
  */
-export type CreateByConversationIdResponse = Schemas.CreateDmEventResponse;
+export type DeleteEventsResponse = Schemas.DeleteDmResponse;
 /**
  * Request for createByParticipantId
  * 
@@ -38,29 +38,17 @@ export type CreateByParticipantIdRequest = Schemas.CreateMessageRequest;
  */
 export type CreateByParticipantIdResponse = Schemas.CreateDmEventResponse;
 /**
- * Response for getEventsById
+ * Request for createByConversationId
  * 
  * @public
  */
-export type GetEventsByIdResponse = Schemas.Get2DmEventsEventIdResponse;
+export type CreateByConversationIdRequest = Schemas.CreateMessageRequest;
 /**
- * Response for deleteEvents
+ * Response for createByConversationId
  * 
  * @public
  */
-export type DeleteEventsResponse = Schemas.DeleteDmResponse;
-/**
- * Request for createConversation
- * 
- * @public
- */
-export type CreateConversationRequest = Schemas.CreateDmConversationRequest;
-/**
- * Response for createConversation
- * 
- * @public
- */
-export type CreateConversationResponse = Schemas.CreateDmEventResponse;
+export type CreateByConversationIdResponse = Schemas.CreateDmEventResponse;
 /**
  * Response for getEventsByParticipantId
  * 
@@ -73,3 +61,15 @@ export type GetEventsByParticipantIdResponse = Schemas.Get2DmConversationsWithPa
  * @public
  */
 export type GetEventsByConversationIdResponse = Schemas.Get2DmConversationsIdDmEventsResponse;
+/**
+ * Request for createConversation
+ * 
+ * @public
+ */
+export type CreateConversationRequest = Schemas.CreateDmConversationRequest;
+/**
+ * Response for createConversation
+ * 
+ * @public
+ */
+export type CreateConversationResponse = Schemas.CreateDmEventResponse;

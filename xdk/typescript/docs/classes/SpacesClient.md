@@ -16,12 +16,12 @@ parsing for all spaces related operations.
 
 ### Methods
 
-- [getBuyers](SpacesClient.md#getbuyers)
 - [getByCreatorIds](SpacesClient.md#getbycreatorids)
-- [search](SpacesClient.md#search)
-- [getById](SpacesClient.md#getbyid)
 - [getPosts](SpacesClient.md#getposts)
 - [getByIds](SpacesClient.md#getbyids)
+- [getById](SpacesClient.md#getbyid)
+- [getBuyers](SpacesClient.md#getbuyers)
+- [search](SpacesClient.md#search)
 
 ## Constructors
 
@@ -43,35 +43,9 @@ Creates a new spaces client instance
 
 #### Defined in
 
-[spaces/client.ts:190](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/spaces/client.ts#L190)
+[spaces/client.ts:190](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L190)
 
 ## Methods
-
-### getBuyers
-
-▸ **getBuyers**(`id`, `options?`): `Promise`\<[`Get2SpacesIdBuyersResponse`](../interfaces/Schemas.Get2SpacesIdBuyersResponse.md)\>
-
-Get Space ticket buyers
-Retrieves a list of Users who purchased tickets to a specific Space by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the Space to be retrieved. |
-| `options` | `GetBuyersOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2SpacesIdBuyersResponse`](../interfaces/Schemas.Get2SpacesIdBuyersResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[spaces/client.ts:207](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/spaces/client.ts#L207)
-
-___
 
 ### getByCreatorIds
 
@@ -95,59 +69,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[spaces/client.ts:281](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/spaces/client.ts#L281)
-
-___
-
-### search
-
-▸ **search**(`query`, `options?`): `Promise`\<[`Get2SpacesSearchResponse`](../interfaces/Schemas.Get2SpacesSearchResponse.md)\>
-
-Search Spaces
-Retrieves a list of Spaces matching the specified search query.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `query` | `string` | The search query. |
-| `options` | `SearchOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2SpacesSearchResponse`](../interfaces/Schemas.Get2SpacesSearchResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[spaces/client.ts:351](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/spaces/client.ts#L351)
-
-___
-
-### getById
-
-▸ **getById**(`id`, `options?`): `Promise`\<[`Get2SpacesIdResponse`](../interfaces/Schemas.Get2SpacesIdResponse.md)\>
-
-Get space by ID
-Retrieves details of a specific space by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the Space to be retrieved. |
-| `options` | `GetByIdOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2SpacesIdResponse`](../interfaces/Schemas.Get2SpacesIdResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[spaces/client.ts:433](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/spaces/client.ts#L433)
+[spaces/client.ts:207](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L207)
 
 ___
 
@@ -173,7 +95,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[spaces/client.ts:501](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/spaces/client.ts#L501)
+[spaces/client.ts:277](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L277)
 
 ___
 
@@ -199,4 +121,82 @@ Promise resolving to the API response
 
 #### Defined in
 
-[spaces/client.ts:587](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/spaces/client.ts#L587)
+[spaces/client.ts:363](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L363)
+
+___
+
+### getById
+
+▸ **getById**(`id`, `options?`): `Promise`\<[`Get2SpacesIdResponse`](../interfaces/Schemas.Get2SpacesIdResponse.md)\>
+
+Get space by ID
+Retrieves details of a specific space by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the Space to be retrieved. |
+| `options` | `GetByIdOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2SpacesIdResponse`](../interfaces/Schemas.Get2SpacesIdResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[spaces/client.ts:433](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L433)
+
+___
+
+### getBuyers
+
+▸ **getBuyers**(`id`, `options?`): `Promise`\<[`Get2SpacesIdBuyersResponse`](../interfaces/Schemas.Get2SpacesIdBuyersResponse.md)\>
+
+Get Space ticket buyers
+Retrieves a list of Users who purchased tickets to a specific Space by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the Space to be retrieved. |
+| `options` | `GetBuyersOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2SpacesIdBuyersResponse`](../interfaces/Schemas.Get2SpacesIdBuyersResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[spaces/client.ts:501](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L501)
+
+___
+
+### search
+
+▸ **search**(`query`, `options?`): `Promise`\<[`Get2SpacesSearchResponse`](../interfaces/Schemas.Get2SpacesSearchResponse.md)\>
+
+Search Spaces
+Retrieves a list of Spaces matching the specified search query.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `query` | `string` | The search query. |
+| `options` | `SearchOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2SpacesSearchResponse`](../interfaces/Schemas.Get2SpacesSearchResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[spaces/client.ts:575](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L575)

@@ -1,0 +1,125 @@
+---
+sidebarTitle: Community Notes Models
+---
+
+xdk.community\_notes.models — XDK Python SDK documentation
+
+# xdk.community\_notes.models[¶](#module-xdk.community_notes.models "Link to this heading")
+
+Auto-generated community notes models for the X API.
+
+This module provides Pydantic models for request and response data structures
+for the community notes endpoints of the X API. All models are generated
+from the OpenAPI specification and provide type safety and validation.
+
+Generated automatically - do not edit manually.
+
+Classes
+
+|  |  |
+| --- | --- |
+| [`CreateRequest`](#xdk.community_notes.models.CreateRequest "xdk.community_notes.models.CreateRequest")() | Request model for create |
+| [`CreateResponse`](#xdk.community_notes.models.CreateResponse "xdk.community_notes.models.CreateResponse")(\*\*extra\_data) | Response model for create |
+| [`DeleteResponse`](#xdk.community_notes.models.DeleteResponse "xdk.community_notes.models.DeleteResponse")(\*\*extra\_data) | Response model for delete |
+| [`EvaluateRequest`](#xdk.community_notes.models.EvaluateRequest "xdk.community_notes.models.EvaluateRequest")() | Request model for evaluate |
+| [`EvaluateResponse`](#xdk.community_notes.models.EvaluateResponse "xdk.community_notes.models.EvaluateResponse")(\*\*extra\_data) | Response model for evaluate |
+| [`SearchEligiblePostsResponse`](#xdk.community_notes.models.SearchEligiblePostsResponse "xdk.community_notes.models.SearchEligiblePostsResponse")(\*\*extra\_data) | Response model for search\_eligible\_posts |
+| [`SearchWrittenResponse`](#xdk.community_notes.models.SearchWrittenResponse "xdk.community_notes.models.SearchWrittenResponse")(\*\*extra\_data) | Response model for search\_written |
+
+*class* xdk.community\_notes.models.CreateRequest[¶](#xdk.community_notes.models.CreateRequest "Link to this definition")
+:   Bases: `BaseModel`
+
+    Request model for create
+
+    model\_config*: ClassVar[ConfigDict]* *= {'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.community_notes.models.CreateRequest.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.community\_notes.models.CreateResponse(*\*\*extra\_data*)[¶](#xdk.community_notes.models.CreateResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for create
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.community_notes.models.CreateResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.community\_notes.models.DeleteResponse(*\*\*extra\_data*)[¶](#xdk.community_notes.models.DeleteResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for delete
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.community_notes.models.DeleteResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.community\_notes.models.EvaluateRequest[¶](#xdk.community_notes.models.EvaluateRequest "Link to this definition")
+:   Bases: `BaseModel`
+
+    Request model for evaluate
+
+    model\_config*: ClassVar[ConfigDict]* *= {'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.community_notes.models.EvaluateRequest.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.community\_notes.models.EvaluateResponse(*\*\*extra\_data*)[¶](#xdk.community_notes.models.EvaluateResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for evaluate
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.community_notes.models.EvaluateResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.community\_notes.models.SearchEligiblePostsResponse(*\*\*extra\_data*)[¶](#xdk.community_notes.models.SearchEligiblePostsResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for search\_eligible\_posts
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.community_notes.models.SearchEligiblePostsResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.community\_notes.models.SearchWrittenResponse(*\*\*extra\_data*)[¶](#xdk.community_notes.models.SearchWrittenResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for search\_written
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.community_notes.models.SearchWrittenResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](xdk.html)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - [xdk](xdk.html)
+      * [xdk.community\_notes](xdk.community_notes.html)
+        + Previous: [xdk.community\_notes.client](xdk.community_notes.client.html "previous chapter")
+        + Next: [xdk.compliance](xdk.compliance.html "next chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.community_notes.models.rst.txt)

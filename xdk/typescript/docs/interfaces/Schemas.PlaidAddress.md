@@ -25,7 +25,7 @@ The city of the address.
 
 #### Defined in
 
-[schemas.ts:2043](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2043)
+[schemas.ts:2045](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2045)
 
 ___
 
@@ -37,7 +37,7 @@ The country of the address (ISO 3166-1 alpha-2 code).
 
 #### Defined in
 
-[schemas.ts:2044](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2044)
+[schemas.ts:2046](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2046)
 
 ___
 
@@ -49,7 +49,7 @@ The first line of the address.
 
 #### Defined in
 
-[schemas.ts:2045](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2045)
+[schemas.ts:2047](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2047)
 
 ___
 
@@ -61,7 +61,7 @@ The second line of the address.
 
 #### Defined in
 
-[schemas.ts:2046](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2046)
+[schemas.ts:2048](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2048)
 
 ___
 
@@ -73,7 +73,7 @@ The postal code of the address.
 
 #### Defined in
 
-[schemas.ts:2047](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2047)
+[schemas.ts:2049](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2049)
 
 ___
 
@@ -85,4 +85,4 @@ The region or state of the address.
 
 #### Defined in
 
-[schemas.ts:2048](https://github.com/xdevplatform/xdk/blob/70fb6a6cb23cd3c8ca2096a864d248dff75ed2ff/xdk/typescript/src/schemas.ts#L2048)
+[schemas.ts:2050](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2050)
