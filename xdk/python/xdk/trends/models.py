@@ -32,19 +32,8 @@ from datetime import datetime
 class GetByWoeidResponse(BaseModel):
     """Response model for get_by_woeid"""
     
-    data: Optional[List] =None
-    errors: Optional[List] =None
-    
 
     model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
 
 
 
@@ -78,19 +67,8 @@ class GetByWoeidResponse(BaseModel):
 class GetPersonalizedResponse(BaseModel):
     """Response model for get_personalized"""
     
-    data: Optional[List] =None
-    errors: Optional[List] =None
-    
 
     model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
 
 
 

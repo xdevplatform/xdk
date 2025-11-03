@@ -59,6 +59,8 @@ class TestTrendsStructure:
             
             "max_trends",
             
+            "trend.fields",
+            
         ]
         
         for optional_param in optional_params:
@@ -106,6 +108,8 @@ class TestTrendsStructure:
         
         # Check optional parameters have defaults (excluding 'self')
         optional_params = [
+            
+            "personalized_trend.fields",
             
         ]
         

@@ -36,7 +36,7 @@ class TrendsClient:
         self.client = client
     
     
-    def get_by_woeid(self, woeid: int, max_trends: int = None) -> GetByWoeidResponse:
+    def get_by_woeid(self, woeid: int, max_trends: int = None, trendfields: List = None) -> GetByWoeidResponse:
         """
         Get Trends by WOEID
         
@@ -45,6 +45,7 @@ class TrendsClient:
         Args:
             woeid: The WOEID of the place to lookup a trend for.
             max_trends: The maximum number of results.
+            trendfields: A comma separated list of Trend fields to display.
             Returns:
             GetByWoeidResponse: Response data
         """
@@ -61,6 +62,9 @@ class TrendsClient:
         params = {}
         if max_trends is not None:
             params["max_trends"] = max_trends
+            
+        if trendfields is not None:
+            params["trend.fields"] = ",".join(str(item) for item in trendfields)
             
         
         
@@ -108,13 +112,15 @@ class TrendsClient:
         
 
     
-    def get_personalized(self, ) -> GetPersonalizedResponse:
+    def get_personalized(self, personalized_trendfields: List = None) -> GetPersonalizedResponse:
         """
         Get personalized Trends
         
         Retrieves personalized trending topics for the authenticated user.
         
-        Returns:
+        Args:
+            personalized_trendfields: A comma separated list of PersonalizedTrend fields to display.
+            Returns:
             GetPersonalizedResponse: Response data
         """
         url = self.client.base_url + "/2/users/personalized_trends"
@@ -128,6 +134,9 @@ class TrendsClient:
         
         
         params = {}
+        if personalized_trendfields is not None:
+            params["personalized_trend.fields"] = ",".join(str(item) for item in personalized_trendfields)
+            
         
         
         headers = {}

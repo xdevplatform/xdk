@@ -20,7 +20,7 @@ from datetime import datetime
 
 
 
-# Models for get_subscriptions
+# Models for delete_subscription
 
 
 
@@ -29,11 +29,8 @@ from datetime import datetime
 
 
 
-class GetSubscriptionsResponse(BaseModel):
-    """Response model for get_subscriptions"""
-    
-    data: Optional["GetSubscriptionsResponseData"] =Field(description="The list of active subscriptions for a specified webhook",default_factory=dict)
-    errors: Optional[List] =None
+class DeleteSubscriptionResponse(BaseModel):
+    """Response model for delete_subscription"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -44,82 +41,6 @@ class GetSubscriptionsResponse(BaseModel):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-class GetSubscriptionsResponseData(BaseModel):
-    """Nested model for GetSubscriptionsResponseData"""
-    application_id:Optional[str] =None
-    subscriptions:Optional[List] =None
-    webhook_id:Optional[str] =None
-    webhook_url:Optional[str] =None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for get_subscription_count
-
-
-
-
-
-
-
-
-class GetSubscriptionCountResponse(BaseModel):
-    """Response model for get_subscription_count"""
-    
-    data: Optional["GetSubscriptionCountResponseData"] =Field(description="The count of active subscriptions across all webhooks",default_factory=dict)
-    errors: Optional[List] =None
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class GetSubscriptionCountResponseData(BaseModel):
-    """Nested model for GetSubscriptionCountResponseData"""
-    account_name:Optional[str] =None
-    provisioned_count:Optional[str] =None
-    subscriptions_count_all:Optional[str] =None
-    subscriptions_count_direct_messages:Optional[str] =None
-
-    model_config = ConfigDict(populate_by_name=True)
 
 
 
@@ -146,9 +67,6 @@ class GetSubscriptionCountResponseData(BaseModel):
 class CreateReplayJobResponse(BaseModel):
     """Response model for create_replay_job"""
     
-    created_at: Optional[str] =None
-    job_id: Optional[str] =None
-    
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -158,68 +76,6 @@ class CreateReplayJobResponse(BaseModel):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for delete_subscription
-
-
-
-
-
-
-
-
-class DeleteSubscriptionResponse(BaseModel):
-    """Response model for delete_subscription"""
-    
-    data: Optional["DeleteSubscriptionResponseData"] =None
-    errors: Optional[List] =None
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-class DeleteSubscriptionResponseData(BaseModel):
-    """Nested model for DeleteSubscriptionResponseData"""
-    subscribed:Optional[bool] =None
-
-    model_config = ConfigDict(populate_by_name=True)
 
 
 
@@ -246,9 +102,6 @@ class DeleteSubscriptionResponseData(BaseModel):
 class ValidateSubscriptionResponse(BaseModel):
     """Response model for validate_subscription"""
     
-    data: Optional["ValidateSubscriptionResponseData"] =None
-    errors: Optional[List] =None
-    
 
     model_config = ConfigDict(populate_by_name=True)
 
@@ -258,22 +111,6 @@ class ValidateSubscriptionResponse(BaseModel):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-class ValidateSubscriptionResponseData(BaseModel):
-    """Nested model for ValidateSubscriptionResponseData"""
-    subscribed:Optional[bool] =None
-
-    model_config = ConfigDict(populate_by_name=True)
 
 
 
@@ -306,8 +143,46 @@ class CreateSubscriptionRequest(BaseModel):
 class CreateSubscriptionResponse(BaseModel):
     """Response model for create_subscription"""
     
-    data: Optional["CreateSubscriptionResponseData"] =None
-    errors: Optional[List] =None
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for get_subscriptions
+
+
+
+
+
+
+
+
+class GetSubscriptionsResponse(BaseModel):
+    """Response model for get_subscriptions"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -332,14 +207,27 @@ class CreateSubscriptionResponse(BaseModel):
 
 
 
+# Models for get_subscription_count
 
 
 
-class CreateSubscriptionResponseData(BaseModel):
-    """Nested model for CreateSubscriptionResponseData"""
-    subscribed:Optional[bool] =None
+
+
+
+
+
+class GetSubscriptionCountResponse(BaseModel):
+    """Response model for get_subscription_count"""
+    
 
     model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
 
 
 

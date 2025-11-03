@@ -57,6 +57,8 @@ class TestUsageStructure:
             
             "days",
             
+            "usage.fields",
+            
         ]
         
         for optional_param in optional_params:

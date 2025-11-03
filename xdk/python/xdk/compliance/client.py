@@ -43,7 +43,7 @@ class ComplianceClient:
         self.client = client
     
     
-    def get_jobs(self, type: str, status: str = None) -> GetJobsResponse:
+    def get_jobs(self, type: str, status: str = None, compliance_jobfields: List = None) -> GetJobsResponse:
         """
         Get Compliance Jobs
         
@@ -52,6 +52,7 @@ class ComplianceClient:
         Args:
             type: Type of Compliance Job to list.
             status: Status of Compliance Job to list.
+            compliance_jobfields: A comma separated list of ComplianceJob fields to display.
             Returns:
             GetJobsResponse: Response data
         """
@@ -70,6 +71,9 @@ class ComplianceClient:
             
         if status is not None:
             params["status"] = status
+            
+        if compliance_jobfields is not None:
+            params["compliance_job.fields"] = ",".join(str(item) for item in compliance_jobfields)
             
         
         
@@ -123,7 +127,7 @@ class ComplianceClient:
         
         Creates a new Compliance Job for the specified job type.
         
-        body: A request to create a new batch compliance job.
+        body: Request body
         Returns:
             CreateJobsResponse: Response data
         """
@@ -188,7 +192,7 @@ class ComplianceClient:
         
 
     
-    def get_jobs_by_id(self, id: Any) -> GetJobsByIdResponse:
+    def get_jobs_by_id(self, id: Any, compliance_jobfields: List = None) -> GetJobsByIdResponse:
         """
         Get Compliance Job by ID
         
@@ -196,6 +200,7 @@ class ComplianceClient:
         
         Args:
             id: The ID of the Compliance Job to retrieve.
+            compliance_jobfields: A comma separated list of ComplianceJob fields to display.
             Returns:
             GetJobsByIdResponse: Response data
         """
@@ -210,6 +215,9 @@ class ComplianceClient:
         
         
         params = {}
+        if compliance_jobfields is not None:
+            params["compliance_job.fields"] = ",".join(str(item) for item in compliance_jobfields)
+            
         
         
         headers = {}

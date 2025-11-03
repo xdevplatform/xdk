@@ -59,6 +59,8 @@ class TestComplianceStructure:
             
             "status",
             
+            "compliance_job.fields",
+            
         ]
         
         for optional_param in optional_params:
@@ -156,6 +158,8 @@ class TestComplianceStructure:
         
         # Check optional parameters have defaults (excluding 'self')
         optional_params = [
+            
+            "compliance_job.fields",
             
         ]
         

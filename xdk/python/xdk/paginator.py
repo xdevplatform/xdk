@@ -187,11 +187,13 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
         # Make the API call with both positional and keyword arguments
         response = self.cursor.method(*self.cursor.args, **params)
         
-        # Extract next token
-        self._next_token = self._extract_next_token(response)
+        # Extract next token AFTER returning this response
+        # This allows us to check if there are more pages
+        extracted_token = self._extract_next_token(response)
+        self._next_token = extracted_token
         
-        # Check if we're done
-        if not self._next_token:
+        # Check if we're done - if no token was extracted, we've reached the end
+        if not extracted_token:
             self.exhausted = True
             
         self.count += 1
@@ -210,9 +212,27 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
     def _extract_next_token(self, response: ResponseType) -> Optional[str]:
         """Extract the next_token from the response."""
         # Try common patterns for next_token
-        if hasattr(response, 'meta') and response.meta:
-            if hasattr(response.meta, 'next_token'):
-                return response.meta.next_token
+        # Pattern 1: response.meta.next_token (most common)
+        try:
+            if hasattr(response, 'meta') and response.meta is not None:
+                # Try to get next_token from meta
+                meta = response.meta
+                if hasattr(meta, 'next_token'):
+                    token = getattr(meta, 'next_token', None)
+                    if token:
+                        return str(token)
+        except (AttributeError, TypeError):
+            pass
+        
+        # Pattern 2: response.next_token (some APIs)
+        try:
+            if hasattr(response, 'next_token'):
+                token = getattr(response, 'next_token', None)
+                if token:
+                    return str(token)
+        except (AttributeError, TypeError):
+            pass
+        
         return None
 
 
@@ -259,8 +279,11 @@ class _ItemIterator(Iterator[Any]):
         """Extract items from response, trying common field names."""
         # Try common field names for data arrays
         for field_name in ['data', 'results', 'items']:
-            if hasattr(response, field_name):
-                items = getattr(response, field_name)
-                if isinstance(items, list):
-                    return items
+            try:
+                if hasattr(response, field_name):
+                    items = getattr(response, field_name, None)
+                    if isinstance(items, list):
+                        return items
+            except (AttributeError, TypeError):
+                continue
         return None

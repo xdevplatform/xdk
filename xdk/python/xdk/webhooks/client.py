@@ -28,6 +28,10 @@ from .models import (
     
     
     
+    GetStreamLinksResponse,
+    
+    
+    
     CreateStreamLinkResponse,
     
     
@@ -44,10 +48,6 @@ from .models import (
     
     CreateResponse,
     
-    
-    
-    
-    GetStreamLinksResponse,
     
     
 )
@@ -201,6 +201,71 @@ class WebhooksClient:
         # Convert to Pydantic model if applicable
         
         return DeleteResponse.model_validate(response_data)
+        
+        
+
+    
+    def get_stream_links(self, ) -> GetStreamLinksResponse:
+        """
+        Get stream links
+        
+        Get a list of webhook links associated with a filtered stream ruleset.
+        
+        Returns:
+            GetStreamLinksResponse: Response data
+        """
+        url = self.client.base_url + "/2/tweets/search/webhooks"
+        
+
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = f"Bearer {self.client.bearer_token}"
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = f"Bearer {self.client.access_token}"
+        
+        
+        params = {}
+        
+        
+        headers = {}
+        
+        
+        # Prepare request data
+        json_data = None
+        
+        
+        
+        
+
+
+
+
+
+
+
+
+
+
+        # Make the request
+        
+        
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+            
+        )
+        
+        
+
+        # Check for errors
+        response.raise_for_status()
+
+        # Parse the response data
+        response_data = response.json()
+
+        # Convert to Pydantic model if applicable
+        
+        return GetStreamLinksResponse.model_validate(response_data)
         
         
 
@@ -365,13 +430,15 @@ class WebhooksClient:
         
 
     
-    def get(self, ) -> GetResponse:
+    def get(self, webhook_configfields: List = None) -> GetResponse:
         """
         Get webhook
         
         Get a list of webhook configs associated with a client app.
         
-        Returns:
+        Args:
+            webhook_configfields: A comma separated list of WebhookConfig fields to display.
+            Returns:
             GetResponse: Response data
         """
         url = self.client.base_url + "/2/webhooks"
@@ -384,6 +451,9 @@ class WebhooksClient:
         
         
         params = {}
+        if webhook_configfields is not None:
+            params["webhook_config.fields"] = ",".join(str(item) for item in webhook_configfields)
+            
         
         
         headers = {}
@@ -502,71 +572,6 @@ class WebhooksClient:
         # Convert to Pydantic model if applicable
         
         return CreateResponse.model_validate(response_data)
-        
-        
-
-    
-    def get_stream_links(self, ) -> GetStreamLinksResponse:
-        """
-        Get stream links
-        
-        Get a list of webhook links associated with a filtered stream ruleset.
-        
-        Returns:
-            GetStreamLinksResponse: Response data
-        """
-        url = self.client.base_url + "/2/tweets/search/webhooks"
-        
-
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = f"Bearer {self.client.bearer_token}"
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = f"Bearer {self.client.access_token}"
-        
-        
-        params = {}
-        
-        
-        headers = {}
-        
-        
-        # Prepare request data
-        json_data = None
-        
-        
-        
-        
-
-
-
-
-
-
-
-
-
-
-        # Make the request
-        
-        
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-            
-        )
-        
-        
-
-        # Check for errors
-        response.raise_for_status()
-
-        # Parse the response data
-        response_data = response.json()
-
-        # Convert to Pydantic model if applicable
-        
-        return GetStreamLinksResponse.model_validate(response_data)
         
         
 

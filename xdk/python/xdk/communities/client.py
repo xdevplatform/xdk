@@ -20,11 +20,11 @@ if TYPE_CHECKING:
 from .models import (
     
     
-    GetByIdResponse,
-    
-    
-    
     SearchResponse,
+    
+    
+    
+    GetByIdResponse,
     
     
 )
@@ -36,92 +36,7 @@ class CommunitiesClient:
         self.client = client
     
     
-    def get_by_id(self, id: Any) -> GetByIdResponse:
-        """
-        Get Community by ID
-        
-        Retrieves details of a specific Community by its ID.
-        
-        Args:
-            id: The ID of the Community.
-            Returns:
-            GetByIdResponse: Response data
-        """
-        url = self.client.base_url + "/2/communities/{id}"
-        url = url.replace("{id}", str(id))
-        
-
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = f"Bearer {self.client.bearer_token}"
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = f"Bearer {self.client.access_token}"
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        
-        
-        params = {}
-        
-        
-        headers = {}
-        
-        
-        # Prepare request data
-        json_data = None
-        
-        
-        
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # Make the request
-        
-        
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-            
-        )
-        
-        
-
-        # Check for errors
-        response.raise_for_status()
-
-        # Parse the response data
-        response_data = response.json()
-
-        # Convert to Pydantic model if applicable
-        
-        return GetByIdResponse.model_validate(response_data)
-        
-        
-
-    
-    def search(self, query: str, max_results: int = None, next_token: Any = None, pagination_token: Any = None) -> SearchResponse:
+    def search(self, query: str, max_results: int = None, next_token: Any = None, pagination_token: Any = None, communityfields: List = None) -> SearchResponse:
         """
         Search Communities
         
@@ -132,6 +47,7 @@ class CommunitiesClient:
             max_results: The maximum number of search results to be returned by a request.
             next_token: This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
             pagination_token: This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
+            communityfields: A comma separated list of Community fields to display.
             Returns:
             SearchResponse: Response data
         """
@@ -157,6 +73,9 @@ class CommunitiesClient:
             
         if pagination_token is not None:
             params["pagination_token"] = pagination_token
+            
+        if communityfields is not None:
+            params["community.fields"] = ",".join(str(item) for item in communityfields)
             
         
         
@@ -213,6 +132,95 @@ class CommunitiesClient:
         # Convert to Pydantic model if applicable
         
         return SearchResponse.model_validate(response_data)
+        
+        
+
+    
+    def get_by_id(self, id: Any, communityfields: List = None) -> GetByIdResponse:
+        """
+        Get Community by ID
+        
+        Retrieves details of a specific Community by its ID.
+        
+        Args:
+            id: The ID of the Community.
+            communityfields: A comma separated list of Community fields to display.
+            Returns:
+            GetByIdResponse: Response data
+        """
+        url = self.client.base_url + "/2/communities/{id}"
+        url = url.replace("{id}", str(id))
+        
+
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = f"Bearer {self.client.bearer_token}"
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = f"Bearer {self.client.access_token}"
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        
+        
+        params = {}
+        if communityfields is not None:
+            params["community.fields"] = ",".join(str(item) for item in communityfields)
+            
+        
+        
+        headers = {}
+        
+        
+        # Prepare request data
+        json_data = None
+        
+        
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        # Make the request
+        
+        
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+            
+        )
+        
+        
+
+        # Check for errors
+        response.raise_for_status()
+
+        # Parse the response data
+        response_data = response.json()
+
+        # Convert to Pydantic model if applicable
+        
+        return GetByIdResponse.model_validate(response_data)
         
         
 
