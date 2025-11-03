@@ -23,7 +23,7 @@ none
 
 #### Defined in
 
-[schemas.ts:3222](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L3222)
+[schemas.ts:3222](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L3222)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:3223](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L3223)
+[schemas.ts:3223](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L3223)
 
 ___
 
@@ -45,7 +45,7 @@ The callback URL of the webhook.
 
 #### Defined in
 
-[schemas.ts:3224](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L3224)
+[schemas.ts:3224](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L3224)
 
 ___
 
@@ -57,4 +57,4 @@ none
 
 #### Defined in
 
-[schemas.ts:3225](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L3225)
+[schemas.ts:3225](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L3225)

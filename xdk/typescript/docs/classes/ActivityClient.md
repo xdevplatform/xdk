@@ -42,7 +42,7 @@ Creates a new activity client instance
 
 #### Defined in
 
-[activity/client.ts:86](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/activity/client.ts#L86)
+[activity/client.ts:86](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/activity/client.ts#L86)
 
 ## Methods
 
@@ -68,7 +68,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[activity/client.ts:103](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/activity/client.ts#L103)
+[activity/client.ts:103](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/activity/client.ts#L103)
 
 ___
 
@@ -93,7 +93,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[activity/client.ts:154](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/activity/client.ts#L154)
+[activity/client.ts:154](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/activity/client.ts#L154)
 
 ___
 
@@ -118,7 +118,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[activity/client.ts:193](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/activity/client.ts#L193)
+[activity/client.ts:193](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/activity/client.ts#L193)
 
 ___
 
@@ -137,7 +137,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[activity/client.ts:246](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/activity/client.ts#L246)
+[activity/client.ts:246](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/activity/client.ts#L246)
 
 ___
 
@@ -162,4 +162,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[activity/client.ts:278](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/activity/client.ts#L278)
+[activity/client.ts:278](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/activity/client.ts#L278)

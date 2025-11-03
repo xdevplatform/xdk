@@ -39,7 +39,7 @@ Creates a new communities client instance
 
 #### Defined in
 
-[communities/client.ts:68](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/communities/client.ts#L68)
+[communities/client.ts:68](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/communities/client.ts#L68)
 
 ## Methods
 
@@ -65,7 +65,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[communities/client.ts:85](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/communities/client.ts#L85)
+[communities/client.ts:85](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/communities/client.ts#L85)
 
 ___
 
@@ -91,4 +91,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[communities/client.ts:155](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/communities/client.ts#L155)
+[communities/client.ts:155](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/communities/client.ts#L155)

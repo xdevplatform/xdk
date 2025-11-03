@@ -21,7 +21,7 @@ Score bucket from the evaluator result.
 
 #### Defined in
 
-[schemas.ts:1896](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1896)
+[schemas.ts:1896](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1896)
 
 ___
 
@@ -33,4 +33,4 @@ The type of the evaluator.
 
 #### Defined in
 
-[schemas.ts:1897](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1897)
+[schemas.ts:1897](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1897)

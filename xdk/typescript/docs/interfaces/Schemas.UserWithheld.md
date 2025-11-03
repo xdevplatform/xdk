@@ -21,7 +21,7 @@ Provides a list of countries where this content is not available.
 
 #### Defined in
 
-[schemas.ts:3168](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L3168)
+[schemas.ts:3168](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L3168)
 
 ___
 
@@ -33,4 +33,4 @@ Indicates that the content being withheld is a `user`.
 
 #### Defined in
 
-[schemas.ts:3171](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L3171)
+[schemas.ts:3171](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L3171)

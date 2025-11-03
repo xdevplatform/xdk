@@ -19,7 +19,7 @@ Response for search
 
 #### Defined in
 
-[communities/models.ts:15](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/communities/models.ts#L15)
+[communities/models.ts:15](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/communities/models.ts#L15)
 
 ___
 
@@ -31,4 +31,4 @@ Response for getById
 
 #### Defined in
 
-[communities/models.ts:21](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/communities/models.ts#L21)
+[communities/models.ts:21](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/communities/models.ts#L21)

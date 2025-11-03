@@ -47,7 +47,7 @@ Specifies the type of attachments (if any) present in this Tweet.
 
 #### Defined in
 
-[schemas.ts:2531](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2531)
+[schemas.ts:2531](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2531)
 
 ___
 
@@ -57,7 +57,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2535](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2535)
+[schemas.ts:2535](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2535)
 
 ___
 
@@ -67,7 +67,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2536](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2536)
+[schemas.ts:2536](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2536)
 
 ___
 
@@ -79,7 +79,7 @@ none
 
 #### Defined in
 
-[schemas.ts:2537](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2537)
+[schemas.ts:2537](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2537)
 
 ___
 
@@ -89,7 +89,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2538](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2538)
+[schemas.ts:2538](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2538)
 
 ___
 
@@ -101,7 +101,7 @@ Creation time of the Tweet.
 
 #### Defined in
 
-[schemas.ts:2539](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2539)
+[schemas.ts:2539](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2539)
 
 ___
 
@@ -111,7 +111,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2540](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2540)
+[schemas.ts:2540](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2540)
 
 ___
 
@@ -123,7 +123,7 @@ none
 
 #### Defined in
 
-[schemas.ts:2541](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2541)
+[schemas.ts:2541](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2541)
 
 ___
 
@@ -135,7 +135,7 @@ A list of Tweet Ids in this Tweet chain.
 
 #### Defined in
 
-[schemas.ts:2542](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2542)
+[schemas.ts:2542](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2542)
 
 ___
 
@@ -145,7 +145,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2545](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2545)
+[schemas.ts:2545](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2545)
 
 ___
 
@@ -157,7 +157,7 @@ The location tagged on the Tweet, if the user provided one.
 
 #### Defined in
 
-[schemas.ts:2546](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2546)
+[schemas.ts:2546](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2546)
 
 ___
 
@@ -167,7 +167,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2550](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2550)
+[schemas.ts:2550](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2550)
 
 ___
 
@@ -177,7 +177,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2551](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2551)
+[schemas.ts:2551](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2551)
 
 ___
 
@@ -189,7 +189,7 @@ Language of the Tweet, if detected by X. Returned as a BCP47 language tag.
 
 #### Defined in
 
-[schemas.ts:2552](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2552)
+[schemas.ts:2552](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2552)
 
 ___
 
@@ -201,7 +201,7 @@ Nonpublic engagement metrics for the Tweet at the time of the request.
 
 #### Defined in
 
-[schemas.ts:2553](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2553)
+[schemas.ts:2553](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2553)
 
 ___
 
@@ -213,7 +213,7 @@ The full-content of the Tweet, including text beyond 280 characters.
 
 #### Defined in
 
-[schemas.ts:2557](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2557)
+[schemas.ts:2557](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2557)
 
 ___
 
@@ -225,7 +225,7 @@ Organic nonpublic engagement metrics for the Tweet at the time of the request.
 
 #### Defined in
 
-[schemas.ts:2561](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2561)
+[schemas.ts:2561](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2561)
 
 ___
 
@@ -237,7 +237,7 @@ Indicates if this Tweet contains URLs marked as sensitive, for example content s
 
 #### Defined in
 
-[schemas.ts:2565](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2565)
+[schemas.ts:2565](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2565)
 
 ___
 
@@ -249,7 +249,7 @@ Promoted nonpublic engagement metrics for the Tweet at the time of the request.
 
 #### Defined in
 
-[schemas.ts:2566](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2566)
+[schemas.ts:2566](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2566)
 
 ___
 
@@ -261,7 +261,7 @@ Engagement metrics for the Tweet at the time of the request.
 
 #### Defined in
 
-[schemas.ts:2570](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2570)
+[schemas.ts:2570](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2570)
 
 ___
 
@@ -273,7 +273,7 @@ A list of Posts this Tweet refers to. For example, if the parent Tweet is a Retw
 
 #### Defined in
 
-[schemas.ts:2574](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2574)
+[schemas.ts:2574](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2574)
 
 ___
 
@@ -283,7 +283,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2577](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2577)
+[schemas.ts:2577](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2577)
 
 ___
 
@@ -295,7 +295,7 @@ The scopes for this tweet
 
 #### Defined in
 
-[schemas.ts:2578](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2578)
+[schemas.ts:2578](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2578)
 
 ___
 
@@ -307,7 +307,7 @@ This is deprecated.
 
 #### Defined in
 
-[schemas.ts:2579](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2579)
+[schemas.ts:2579](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2579)
 
 ___
 
@@ -319,7 +319,7 @@ none
 
 #### Defined in
 
-[schemas.ts:2580](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2580)
+[schemas.ts:2580](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2580)
 
 ___
 
@@ -329,7 +329,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2581](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2581)
+[schemas.ts:2581](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2581)
 
 ___
 
@@ -339,7 +339,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2582](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2582)
+[schemas.ts:2582](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2582)
 
 ___
 
@@ -349,4 +349,4 @@ ___
 
 #### Defined in
 
-[schemas.ts:2583](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2583)
+[schemas.ts:2583](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2583)

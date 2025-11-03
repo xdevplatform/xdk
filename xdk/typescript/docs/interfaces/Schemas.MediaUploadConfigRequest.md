@@ -24,7 +24,7 @@ none
 
 #### Defined in
 
-[schemas.ts:1695](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1695)
+[schemas.ts:1695](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1695)
 
 ___
 
@@ -34,7 +34,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:1696](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1696)
+[schemas.ts:1696](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1696)
 
 ___
 
@@ -46,7 +46,7 @@ The type of media.
 
 #### Defined in
 
-[schemas.ts:1697](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1697)
+[schemas.ts:1697](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1697)
 
 ___
 
@@ -58,7 +58,7 @@ Whether this media is shared or not.
 
 #### Defined in
 
-[schemas.ts:1713](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1713)
+[schemas.ts:1713](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1713)
 
 ___
 
@@ -70,4 +70,4 @@ The total size of the media upload in bytes.
 
 #### Defined in
 
-[schemas.ts:1714](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1714)
+[schemas.ts:1714](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1714)

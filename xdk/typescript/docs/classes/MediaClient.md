@@ -48,7 +48,7 @@ Creates a new media client instance
 
 #### Defined in
 
-[media/client.ts:181](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L181)
+[media/client.ts:181](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L181)
 
 ## Methods
 
@@ -74,7 +74,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:198](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L198)
+[media/client.ts:198](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L198)
 
 ___
 
@@ -99,7 +99,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:244](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L244)
+[media/client.ts:244](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L244)
 
 ___
 
@@ -125,7 +125,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:289](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L289)
+[media/client.ts:289](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L289)
 
 ___
 
@@ -150,7 +150,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:337](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L337)
+[media/client.ts:337](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L337)
 
 ___
 
@@ -176,7 +176,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:380](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L380)
+[media/client.ts:380](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L380)
 
 ___
 
@@ -202,7 +202,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:428](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L428)
+[media/client.ts:428](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L428)
 
 ___
 
@@ -231,7 +231,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:492](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L492)
+[media/client.ts:492](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L492)
 
 ___
 
@@ -256,7 +256,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:555](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L555)
+[media/client.ts:555](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L555)
 
 ___
 
@@ -281,7 +281,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:600](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L600)
+[media/client.ts:600](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L600)
 
 ___
 
@@ -306,7 +306,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:634](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L634)
+[media/client.ts:634](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L634)
 
 ___
 
@@ -331,4 +331,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:675](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/client.ts#L675)
+[media/client.ts:675](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L675)

@@ -38,7 +38,7 @@ Creates a new connections client instance
 
 #### Defined in
 
-[connections/client.ts:33](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/connections/client.ts#L33)
+[connections/client.ts:33](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/connections/client.ts#L33)
 
 ## Methods
 
@@ -57,4 +57,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[connections/client.ts:46](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/connections/client.ts#L46)
+[connections/client.ts:46](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/connections/client.ts#L46)

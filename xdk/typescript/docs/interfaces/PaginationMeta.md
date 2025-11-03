@@ -23,7 +23,7 @@ Next page token
 
 #### Defined in
 
-[client.ts:165](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L165)
+[client.ts:165](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L165)
 
 ___
 
@@ -35,7 +35,7 @@ Previous page token
 
 #### Defined in
 
-[client.ts:167](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L167)
+[client.ts:167](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L167)
 
 ___
 
@@ -47,7 +47,7 @@ Total count
 
 #### Defined in
 
-[client.ts:169](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L169)
+[client.ts:169](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L169)
 
 ___
 
@@ -59,4 +59,4 @@ Result count
 
 #### Defined in
 
-[client.ts:171](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L171)
+[client.ts:171](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L171)

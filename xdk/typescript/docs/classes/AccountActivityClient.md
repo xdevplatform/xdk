@@ -43,7 +43,7 @@ Creates a new account activity client instance
 
 #### Defined in
 
-[account_activity/client.ts:54](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L54)
+[account_activity/client.ts:54](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L54)
 
 ## Methods
 
@@ -69,7 +69,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:75](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L75)
+[account_activity/client.ts:75](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L75)
 
 ___
 
@@ -94,7 +94,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:119](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L119)
+[account_activity/client.ts:119](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L119)
 
 ___
 
@@ -121,7 +121,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:166](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L166)
+[account_activity/client.ts:166](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L166)
 
 ___
 
@@ -146,7 +146,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:217](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L217)
+[account_activity/client.ts:217](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L217)
 
 ___
 
@@ -172,7 +172,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:257](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L257)
+[account_activity/client.ts:257](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L257)
 
 ___
 
@@ -191,4 +191,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:301](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/client.ts#L301)
+[account_activity/client.ts:301](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L301)

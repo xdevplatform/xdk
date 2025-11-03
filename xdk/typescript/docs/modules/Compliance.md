@@ -21,7 +21,7 @@ Response for getJobsById
 
 #### Defined in
 
-[compliance/models.ts:15](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/compliance/models.ts#L15)
+[compliance/models.ts:15](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/compliance/models.ts#L15)
 
 ___
 
@@ -33,7 +33,7 @@ Response for getJobs
 
 #### Defined in
 
-[compliance/models.ts:21](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/compliance/models.ts#L21)
+[compliance/models.ts:21](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/compliance/models.ts#L21)
 
 ___
 
@@ -45,7 +45,7 @@ Request for createJobs
 
 #### Defined in
 
-[compliance/models.ts:27](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/compliance/models.ts#L27)
+[compliance/models.ts:27](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/compliance/models.ts#L27)
 
 ___
 
@@ -57,4 +57,4 @@ Response for createJobs
 
 #### Defined in
 
-[compliance/models.ts:33](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/compliance/models.ts#L33)
+[compliance/models.ts:33](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/compliance/models.ts#L33)

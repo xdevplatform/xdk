@@ -24,7 +24,7 @@ Response for deleteSubscription
 
 #### Defined in
 
-[account_activity/models.ts:15](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/models.ts#L15)
+[account_activity/models.ts:15](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/models.ts#L15)
 
 ___
 
@@ -36,7 +36,7 @@ Response for getSubscriptions
 
 #### Defined in
 
-[account_activity/models.ts:21](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/models.ts#L21)
+[account_activity/models.ts:21](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/models.ts#L21)
 
 ___
 
@@ -48,7 +48,7 @@ Response for createReplayJob
 
 #### Defined in
 
-[account_activity/models.ts:27](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/models.ts#L27)
+[account_activity/models.ts:27](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/models.ts#L27)
 
 ___
 
@@ -60,7 +60,7 @@ Response for validateSubscription
 
 #### Defined in
 
-[account_activity/models.ts:33](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/models.ts#L33)
+[account_activity/models.ts:33](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/models.ts#L33)
 
 ___
 
@@ -72,7 +72,7 @@ Request for createSubscription
 
 #### Defined in
 
-[account_activity/models.ts:39](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/models.ts#L39)
+[account_activity/models.ts:39](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/models.ts#L39)
 
 ___
 
@@ -84,7 +84,7 @@ Response for createSubscription
 
 #### Defined in
 
-[account_activity/models.ts:45](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/models.ts#L45)
+[account_activity/models.ts:45](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/models.ts#L45)
 
 ___
 
@@ -96,4 +96,4 @@ Response for getSubscriptionCount
 
 #### Defined in
 
-[account_activity/models.ts:51](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/account_activity/models.ts#L51)
+[account_activity/models.ts:51](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/models.ts#L51)

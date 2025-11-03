@@ -22,7 +22,7 @@ All user-specified stream filtering rules that were created.
 
 #### Defined in
 
-[schemas.ts:117](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L117)
+[schemas.ts:117](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L117)
 
 ___
 
@@ -34,7 +34,7 @@ none
 
 #### Defined in
 
-[schemas.ts:120](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L120)
+[schemas.ts:120](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L120)
 
 ___
 
@@ -44,4 +44,4 @@ ___
 
 #### Defined in
 
-[schemas.ts:121](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L121)
+[schemas.ts:121](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L121)

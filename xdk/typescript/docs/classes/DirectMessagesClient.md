@@ -45,7 +45,7 @@ Creates a new direct messages client instance
 
 #### Defined in
 
-[direct_messages/client.ts:211](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L211)
+[direct_messages/client.ts:211](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L211)
 
 ## Methods
 
@@ -70,7 +70,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:224](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L224)
+[direct_messages/client.ts:224](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L224)
 
 ___
 
@@ -96,7 +96,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:311](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L311)
+[direct_messages/client.ts:311](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L311)
 
 ___
 
@@ -121,7 +121,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:385](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L385)
+[direct_messages/client.ts:385](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L385)
 
 ___
 
@@ -147,7 +147,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:423](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L423)
+[direct_messages/client.ts:423](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L423)
 
 ___
 
@@ -173,7 +173,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:474](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L474)
+[direct_messages/client.ts:474](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L474)
 
 ___
 
@@ -199,7 +199,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:525](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L525)
+[direct_messages/client.ts:525](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L525)
 
 ___
 
@@ -225,7 +225,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:620](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L620)
+[direct_messages/client.ts:620](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L620)
 
 ___
 
@@ -250,4 +250,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:708](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/client.ts#L708)
+[direct_messages/client.ts:708](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L708)

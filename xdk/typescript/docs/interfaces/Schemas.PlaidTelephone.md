@@ -22,7 +22,7 @@ The country code for the phone number (e.g., '+1').
 
 #### Defined in
 
-[schemas.ts:2079](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2079)
+[schemas.ts:2079](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2079)
 
 ___
 
@@ -34,7 +34,7 @@ The phone number.
 
 #### Defined in
 
-[schemas.ts:2080](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2080)
+[schemas.ts:2080](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2080)
 
 ___
 
@@ -46,4 +46,4 @@ The type of phone number (e.g., 'mobile').
 
 #### Defined in
 
-[schemas.ts:2081](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2081)
+[schemas.ts:2081](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2081)

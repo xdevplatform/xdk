@@ -35,7 +35,7 @@ Response for getQuoted
 
 #### Defined in
 
-[posts/models.ts:15](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L15)
+[posts/models.ts:15](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L15)
 
 ___
 
@@ -47,7 +47,7 @@ Response for getInsights28hr
 
 #### Defined in
 
-[posts/models.ts:21](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L21)
+[posts/models.ts:21](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L21)
 
 ___
 
@@ -59,7 +59,7 @@ Request for hideReply
 
 #### Defined in
 
-[posts/models.ts:27](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L27)
+[posts/models.ts:27](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L27)
 
 ___
 
@@ -71,7 +71,7 @@ Response for hideReply
 
 #### Defined in
 
-[posts/models.ts:33](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L33)
+[posts/models.ts:33](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L33)
 
 ___
 
@@ -83,7 +83,7 @@ Response for getCountsAll
 
 #### Defined in
 
-[posts/models.ts:39](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L39)
+[posts/models.ts:39](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L39)
 
 ___
 
@@ -95,7 +95,7 @@ Response for getInsightsHistorical
 
 #### Defined in
 
-[posts/models.ts:45](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L45)
+[posts/models.ts:45](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L45)
 
 ___
 
@@ -107,7 +107,7 @@ Response for getAnalytics
 
 #### Defined in
 
-[posts/models.ts:51](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L51)
+[posts/models.ts:51](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L51)
 
 ___
 
@@ -119,7 +119,7 @@ Response for getById
 
 #### Defined in
 
-[posts/models.ts:57](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L57)
+[posts/models.ts:57](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L57)
 
 ___
 
@@ -131,7 +131,7 @@ Response for delete
 
 #### Defined in
 
-[posts/models.ts:63](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L63)
+[posts/models.ts:63](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L63)
 
 ___
 
@@ -143,7 +143,7 @@ Response for getLikingUsers
 
 #### Defined in
 
-[posts/models.ts:69](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L69)
+[posts/models.ts:69](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L69)
 
 ___
 
@@ -155,7 +155,7 @@ Response for searchRecent
 
 #### Defined in
 
-[posts/models.ts:75](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L75)
+[posts/models.ts:75](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L75)
 
 ___
 
@@ -167,7 +167,7 @@ Response for searchAll
 
 #### Defined in
 
-[posts/models.ts:81](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L81)
+[posts/models.ts:81](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L81)
 
 ___
 
@@ -179,7 +179,7 @@ Response for getReposts
 
 #### Defined in
 
-[posts/models.ts:87](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L87)
+[posts/models.ts:87](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L87)
 
 ___
 
@@ -191,7 +191,7 @@ Response for getRepostedBy
 
 #### Defined in
 
-[posts/models.ts:93](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L93)
+[posts/models.ts:93](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L93)
 
 ___
 
@@ -203,7 +203,7 @@ Response for getByIds
 
 #### Defined in
 
-[posts/models.ts:99](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L99)
+[posts/models.ts:99](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L99)
 
 ___
 
@@ -215,7 +215,7 @@ Request for create
 
 #### Defined in
 
-[posts/models.ts:105](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L105)
+[posts/models.ts:105](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L105)
 
 ___
 
@@ -227,7 +227,7 @@ Response for create
 
 #### Defined in
 
-[posts/models.ts:111](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L111)
+[posts/models.ts:111](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L111)
 
 ___
 
@@ -239,4 +239,4 @@ Response for getCountsRecent
 
 #### Defined in
 
-[posts/models.ts:117](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/models.ts#L117)
+[posts/models.ts:117](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/models.ts#L117)

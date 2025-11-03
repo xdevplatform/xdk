@@ -104,7 +104,7 @@ Creates a new paginator instance
 
 #### Defined in
 
-[paginator.ts:87](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L87)
+[paginator.ts:87](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L87)
 
 ## Accessors
 
@@ -120,7 +120,7 @@ Get all fetched items
 
 #### Defined in
 
-[paginator.ts:94](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L94)
+[paginator.ts:94](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L94)
 
 ___
 
@@ -136,7 +136,7 @@ Get current pagination metadata
 
 #### Defined in
 
-[paginator.ts:101](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L101)
+[paginator.ts:101](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L101)
 
 ___
 
@@ -152,7 +152,7 @@ Get current includes data
 
 #### Defined in
 
-[paginator.ts:108](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L108)
+[paginator.ts:108](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L108)
 
 ___
 
@@ -168,7 +168,7 @@ Get current errors
 
 #### Defined in
 
-[paginator.ts:115](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L115)
+[paginator.ts:115](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L115)
 
 ___
 
@@ -184,7 +184,7 @@ Check if pagination is done
 
 #### Defined in
 
-[paginator.ts:122](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L122)
+[paginator.ts:122](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L122)
 
 ___
 
@@ -200,7 +200,7 @@ Check if rate limit was hit
 
 #### Defined in
 
-[paginator.ts:129](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L129)
+[paginator.ts:129](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L129)
 
 ## Methods
 
@@ -236,7 +236,7 @@ When the API request fails
 
 #### Defined in
 
-[paginator.ts:153](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L153)
+[paginator.ts:153](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L153)
 
 ___
 
@@ -270,7 +270,7 @@ if (!followers.done) {
 
 #### Defined in
 
-[paginator.ts:208](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L208)
+[paginator.ts:208](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L208)
 
 ___
 
@@ -286,7 +286,7 @@ Fetch previous page (if supported)
 
 #### Defined in
 
-[paginator.ts:222](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L222)
+[paginator.ts:222](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L222)
 
 ___
 
@@ -302,7 +302,7 @@ Get previous page as a new instance
 
 #### Defined in
 
-[paginator.ts:257](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L257)
+[paginator.ts:257](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L257)
 
 ___
 
@@ -324,7 +324,7 @@ Fetch up to a specified number of additional items
 
 #### Defined in
 
-[paginator.ts:271](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L271)
+[paginator.ts:271](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L271)
 
 ___
 
@@ -340,7 +340,7 @@ Reset paginator to initial state
 
 #### Defined in
 
-[paginator.ts:285](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L285)
+[paginator.ts:285](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L285)
 
 ___
 
@@ -356,7 +356,7 @@ Iterator for all fetched items
 
 #### Defined in
 
-[paginator.ts:300](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L300)
+[paginator.ts:300](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L300)
 
 ___
 
@@ -376,4 +376,4 @@ AsyncIterable.[asyncIterator]
 
 #### Defined in
 
-[paginator.ts:309](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/paginator.ts#L309)
+[paginator.ts:309](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/paginator.ts#L309)

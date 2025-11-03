@@ -3,164 +3,157 @@ title: "Pagination"
 sidebarTitle: "Pagination"
 ---
 
-The TypeScript SDK provides powerful pagination capabilities for efficiently handling large datasets.
+The SDK provides generic paginator utilities you can use with any endpoint that returns paginated responses. Methods return plain responses; you wrap them with a paginator.
 
-## Basic Pagination
-
-Most endpoints that return lists support pagination:
+### Basic Pagination
 
 <CodeGroup dropdown>
 
-```typescript basic.ts theme={null}
-import { Client, UserPaginator } from '@xdevplatform/xdk';
+```typescript quick-start.ts theme={null}
+import { Client, UserPaginator, PaginatedResponse, Schemas } from '@xdevplatform/xdk';
 
 const client: Client = new Client({ bearerToken: 'your-bearer-token' });
-const followersPaginator: UserPaginator = await client.users.getFollowers({ userId: 'user-id', maxResults: 100 });
-console.log('Has more pages:', !followersPaginator.done);
-console.log('Next token:', followersPaginator.meta?.next_token);
+
+// Wrap any list endpoint with proper typing
+const followers: UserPaginator = new UserPaginator(
+  async (token?: string): Promise<PaginatedResponse<Schemas.User>> => {
+    const res = await client.users.getFollowers('<userId>', {
+      maxResults: 100,
+      paginationToken: token,
+      userfields: ['id','name','username'],
+    });
+    return { 
+      data: res.data ?? [], 
+      meta: res.meta, 
+      includes: res.includes, 
+      errors: res.errors 
+    };
+  }
+);
 ```
 
-```javascript basic.js theme={null}
+```javascript quick-start.js theme={null}
 import { Client } from '@xdevplatform/xdk';
+import { UserPaginator } from '@xdevplatform/xdk';
 
 const client = new Client({ bearerToken: 'your-bearer-token' });
-const followersPaginator = await client.users.getFollowers({ userId: 'user-id', maxResults: 100 });
-console.log('Has more pages:', !followersPaginator.done);
-console.log('Next token:', followersPaginator.meta?.next_token);
+
+const followers = new UserPaginator(async (token) => {
+  const res = await client.users.getFollowers('<userId>', {
+    maxResults: 100,
+    paginationToken: token,
+    userfields: ['id','name','username'],
+  });
+  return { data: res.data ?? [], meta: res.meta, includes: res.includes, errors: res.errors };
+});
 ```
 
 </CodeGroup>
 
-## Async Iteration
-
-Iterate through all pages automatically:
-
-<CodeGroup dropdown>
-
-```typescript pagination-async.ts theme={null}
-import { User, UserPaginator } from '@xdevplatform/xdk';
-
-// Get all followers
-for await (const follower of (followersPaginator as UserPaginator)) {
-  const u: User = follower;
-  console.log(u.username);
-}
-```
-
-```javascript pagination-async.js theme={null}
-// Get all followers (JS)
-for await (const follower of followersPaginator) {
-  console.log(follower.username);
-}
-```
-
-</CodeGroup>
-
-## Manual Page Control
-
-Control pagination manually:
+### Manual paging
 
 <CodeGroup>
 
 ```typescript manual.ts theme={null}
-import { UserPaginator } from '@xdevplatform/xdk';
+import { UserPaginator, Schemas } from '@xdevplatform/xdk';
 
-// Get first page
-await (followersPaginator as UserPaginator).fetchNext();
-console.log('First page:', (followersPaginator as UserPaginator).items);
-
-// Get next page
-if (!(followersPaginator as UserPaginator).done) {
-  await (followersPaginator as UserPaginator).fetchNext();
-  console.log('Second page:', (followersPaginator as UserPaginator).items);
+await followers.fetchNext();          // first page
+while (!followers.done) {
+  await followers.fetchNext();        // subsequent pages
 }
+
+const userCount: number = followers.users.length;  // all fetched users
+const firstUser: Schemas.User | undefined = followers.users[0];
+const nextToken: string | undefined = followers.meta?.next_token;
 ```
 
 ```javascript manual.js theme={null}
-// Get first page
-await followersPaginator.fetchNext();
-console.log('First page:', followersPaginator.items);
+await followers.fetchNext();
+while (!followers.done) await followers.fetchNext();
+console.log(followers.items.length);
+```
 
-// Get next page
-if (!followersPaginator.done) {
-  await followersPaginator.fetchNext();
-  console.log('Second page:', followersPaginator.items);
+</CodeGroup>
+
+### Async iteration
+
+<CodeGroup>
+
+```typescript async.ts theme={null}
+import { Schemas } from '@xdevplatform/xdk';
+
+for await (const user of followers) {
+  const typedUser: Schemas.User = user;
+  console.log(typedUser.username);  // fully typed access
+}
+```
+
+```javascript async.js theme={null}
+for await (const user of followers) {
+  console.log(user.username);
 }
 ```
 
 </CodeGroup>
 
-## Pagination Types
-
-Different endpoints return different paginator types:
+### Next page as a new instance
 
 <CodeGroup>
 
-```typescript types.ts theme={null}
-import { Client, UserPaginator, PostPaginator, EventPaginator, User, Post } from '@xdevplatform/xdk';
+```typescript next.ts theme={null}
+import { UserPaginator } from '@xdevplatform/xdk';
 
-const client: Client = new Client({ bearerToken: 'your-bearer-token' });
-
-// User paginator for user-related endpoints
-const userPaginator: UserPaginator = await client.users.getFollowers({ userId: 'user-id' });
-const firstUser: User | undefined = userPaginator.users[0];
-
-// Post paginator for tweet/post endpoints
-const postPaginator: PostPaginator = await client.posts.getUserTweets({ userId: 'user-id' });
-const firstPost: Post | undefined = postPaginator.posts[0];
-
-// Event paginator for DM/event endpoints
-const eventPaginator: EventPaginator = await client.directMessages.getDmEvents({ userId: 'user-id' });
+await followers.fetchNext();
+if (!followers.done) {
+  const page2: UserPaginator = await followers.next(); // independent paginator starting at next page
+  await page2.fetchNext();
+  console.log(page2.users.length);  // items from second page
+}
 ```
 
-```javascript types.js theme={null}
-// User paginator for user-related endpoints
-const userPaginator = await client.users.getFollowers({ userId: 'user-id' });
-// userPaginator.users - array of User objects
-
-// Post paginator for tweet/post endpoints  
-const postPaginator = await client.posts.getUserTweets({ userId: 'user-id' });
-// postPaginator.posts - array of Post objects
-
-// Event paginator for DM/event endpoints
-const eventPaginator = await client.directMessages.getDmEvents({ userId: 'user-id' });
-// eventPaginator.events - array of DmEvent objects
+```javascript next.js theme={null}
+await followers.fetchNext();
+if (!followers.done) {
+  const page2 = await followers.next();
+  await page2.fetchNext();
+}
 ```
 
 </CodeGroup>
 
-## Error Handling
-
-Handle pagination errors gracefully:
+### Error handling and rate limits
 
 <CodeGroup>
 
 ```typescript errors.ts theme={null}
-import { UserPaginator } from '@xdevplatform/xdk';
+import { UserPaginator, Schemas } from '@xdevplatform/xdk';
 
 try {
-  for await (const follower of (followersPaginator as UserPaginator)) {
-    console.log(follower.username);
+  for await (const item of followers) {
+    const user: Schemas.User = item;
+    // process user...
   }
-} catch (error) {
-  if ((followersPaginator as UserPaginator).rateLimited) {
-    console.log('Rate limited, waiting...');
+} catch (err: unknown) {
+  if (followers.rateLimited) {
+    console.error('Rate limited, backoff required');
+    // backoff / retry later
   } else {
-    console.error('Pagination error:', error);
+    console.error('Pagination error:', err);
+    throw err;
   }
 }
 ```
 
 ```javascript errors.js theme={null}
 try {
-  for await (const follower of followersPaginator) {
-    console.log(follower.username);
+  for await (const item of followers) {
+    // ...
   }
-} catch (error) {
-  if (followersPaginator.rateLimited) {
-    console.log('Rate limited, waiting...');
+} catch (err) {
+  if (followers.rateLimited) {
+    // backoff / retry later
   } else {
-    console.error('Pagination error:', error);
+    throw err;
   }
 }
 ```

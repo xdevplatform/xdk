@@ -35,7 +35,7 @@ Response for postsFirehoseKo
 
 #### Defined in
 
-[stream/models.ts:15](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L15)
+[stream/models.ts:15](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L15)
 
 ___
 
@@ -47,7 +47,7 @@ Response for likesSample10
 
 #### Defined in
 
-[stream/models.ts:21](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L21)
+[stream/models.ts:21](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L21)
 
 ___
 
@@ -59,7 +59,7 @@ Response for postsSample
 
 #### Defined in
 
-[stream/models.ts:27](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L27)
+[stream/models.ts:27](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L27)
 
 ___
 
@@ -71,7 +71,7 @@ Response for postsFirehosePt
 
 #### Defined in
 
-[stream/models.ts:33](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L33)
+[stream/models.ts:33](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L33)
 
 ___
 
@@ -83,7 +83,7 @@ Response for posts
 
 #### Defined in
 
-[stream/models.ts:39](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L39)
+[stream/models.ts:39](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L39)
 
 ___
 
@@ -95,7 +95,7 @@ Response for postsCompliance
 
 #### Defined in
 
-[stream/models.ts:45](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L45)
+[stream/models.ts:45](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L45)
 
 ___
 
@@ -107,7 +107,7 @@ Response for getRuleCounts
 
 #### Defined in
 
-[stream/models.ts:51](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L51)
+[stream/models.ts:51](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L51)
 
 ___
 
@@ -119,7 +119,7 @@ Response for postsFirehose
 
 #### Defined in
 
-[stream/models.ts:57](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L57)
+[stream/models.ts:57](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L57)
 
 ___
 
@@ -131,7 +131,7 @@ Response for labelsCompliance
 
 #### Defined in
 
-[stream/models.ts:63](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L63)
+[stream/models.ts:63](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L63)
 
 ___
 
@@ -143,7 +143,7 @@ Response for postsFirehoseEn
 
 #### Defined in
 
-[stream/models.ts:69](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L69)
+[stream/models.ts:69](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L69)
 
 ___
 
@@ -155,7 +155,7 @@ Response for likesFirehose
 
 #### Defined in
 
-[stream/models.ts:75](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L75)
+[stream/models.ts:75](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L75)
 
 ___
 
@@ -167,7 +167,7 @@ Response for usersCompliance
 
 #### Defined in
 
-[stream/models.ts:81](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L81)
+[stream/models.ts:81](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L81)
 
 ___
 
@@ -179,7 +179,7 @@ Response for getRules
 
 #### Defined in
 
-[stream/models.ts:87](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L87)
+[stream/models.ts:87](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L87)
 
 ___
 
@@ -191,7 +191,7 @@ Request for updateRules
 
 #### Defined in
 
-[stream/models.ts:93](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L93)
+[stream/models.ts:93](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L93)
 
 ___
 
@@ -203,7 +203,7 @@ Response for updateRules
 
 #### Defined in
 
-[stream/models.ts:99](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L99)
+[stream/models.ts:99](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L99)
 
 ___
 
@@ -215,7 +215,7 @@ Response for likesCompliance
 
 #### Defined in
 
-[stream/models.ts:105](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L105)
+[stream/models.ts:105](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L105)
 
 ___
 
@@ -227,7 +227,7 @@ Response for postsSample10
 
 #### Defined in
 
-[stream/models.ts:111](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L111)
+[stream/models.ts:111](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L111)
 
 ___
 
@@ -239,4 +239,4 @@ Response for postsFirehoseJa
 
 #### Defined in
 
-[stream/models.ts:117](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/models.ts#L117)
+[stream/models.ts:117](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/models.ts#L117)

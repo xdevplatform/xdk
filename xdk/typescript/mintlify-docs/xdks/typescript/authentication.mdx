@@ -15,7 +15,7 @@ For read-only operations and public data access:
 import { 
   Client, 
   type ClientConfig,
-  type UsersGetByUsernameResponse
+  type Users
 } from '@xdevplatform/xdk';
 
 const config: ClientConfig = { bearerToken: 'your-bearer-token' };
@@ -23,7 +23,7 @@ const config: ClientConfig = { bearerToken: 'your-bearer-token' };
 const client: Client = new Client(config);
 
 async function main(): Promise<void> {
-  const userResponse: UsersGetByUsernameResponse = await client.users.getByUsername('XDevelopers');
+  const userResponse: Users.GetByUsernameResponse = await client.users.getByUsername('XDevelopers');
   const username: string = userResponse.data?.username!;
   console.log(username);
 }

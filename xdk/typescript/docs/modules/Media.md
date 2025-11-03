@@ -34,7 +34,7 @@ Response for getByKey
 
 #### Defined in
 
-[media/models.ts:15](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L15)
+[media/models.ts:15](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L15)
 
 ___
 
@@ -46,7 +46,7 @@ Request for createMetadata
 
 #### Defined in
 
-[media/models.ts:21](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L21)
+[media/models.ts:21](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L21)
 
 ___
 
@@ -58,7 +58,7 @@ Response for createMetadata
 
 #### Defined in
 
-[media/models.ts:27](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L27)
+[media/models.ts:27](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L27)
 
 ___
 
@@ -70,7 +70,7 @@ Response for getUploadStatus
 
 #### Defined in
 
-[media/models.ts:33](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L33)
+[media/models.ts:33](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L33)
 
 ___
 
@@ -82,7 +82,7 @@ Request for upload
 
 #### Defined in
 
-[media/models.ts:39](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L39)
+[media/models.ts:39](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L39)
 
 ___
 
@@ -94,7 +94,7 @@ Response for upload
 
 #### Defined in
 
-[media/models.ts:45](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L45)
+[media/models.ts:45](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L45)
 
 ___
 
@@ -106,7 +106,7 @@ Request for appendUpload
 
 #### Defined in
 
-[media/models.ts:51](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L51)
+[media/models.ts:51](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L51)
 
 ___
 
@@ -118,7 +118,7 @@ Response for appendUpload
 
 #### Defined in
 
-[media/models.ts:57](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L57)
+[media/models.ts:57](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L57)
 
 ___
 
@@ -130,7 +130,7 @@ Response for getByKeys
 
 #### Defined in
 
-[media/models.ts:63](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L63)
+[media/models.ts:63](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L63)
 
 ___
 
@@ -142,7 +142,7 @@ Response for getAnalytics
 
 #### Defined in
 
-[media/models.ts:69](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L69)
+[media/models.ts:69](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L69)
 
 ___
 
@@ -154,7 +154,7 @@ Request for initializeUpload
 
 #### Defined in
 
-[media/models.ts:75](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L75)
+[media/models.ts:75](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L75)
 
 ___
 
@@ -166,7 +166,7 @@ Response for initializeUpload
 
 #### Defined in
 
-[media/models.ts:81](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L81)
+[media/models.ts:81](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L81)
 
 ___
 
@@ -178,7 +178,7 @@ Response for finalizeUpload
 
 #### Defined in
 
-[media/models.ts:87](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L87)
+[media/models.ts:87](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L87)
 
 ___
 
@@ -190,7 +190,7 @@ Request for createSubtitles
 
 #### Defined in
 
-[media/models.ts:93](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L93)
+[media/models.ts:93](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L93)
 
 ___
 
@@ -202,7 +202,7 @@ Response for createSubtitles
 
 #### Defined in
 
-[media/models.ts:99](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L99)
+[media/models.ts:99](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L99)
 
 ___
 
@@ -214,7 +214,7 @@ Request for deleteSubtitles
 
 #### Defined in
 
-[media/models.ts:105](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L105)
+[media/models.ts:105](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L105)
 
 ___
 
@@ -226,4 +226,4 @@ Response for deleteSubtitles
 
 #### Defined in
 
-[media/models.ts:111](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/media/models.ts#L111)
+[media/models.ts:111](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/models.ts#L111)

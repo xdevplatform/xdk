@@ -44,7 +44,7 @@ Creates a new webhooks client instance
 
 #### Defined in
 
-[webhooks/client.ts:96](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L96)
+[webhooks/client.ts:96](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L96)
 
 ## Methods
 
@@ -63,7 +63,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:109](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L109)
+[webhooks/client.ts:109](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L109)
 
 ___
 
@@ -88,7 +88,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:145](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L145)
+[webhooks/client.ts:145](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L145)
 
 ___
 
@@ -113,7 +113,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:183](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L183)
+[webhooks/client.ts:183](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L183)
 
 ___
 
@@ -138,7 +138,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:217](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L217)
+[webhooks/client.ts:217](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L217)
 
 ___
 
@@ -163,7 +163,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:258](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L258)
+[webhooks/client.ts:258](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L258)
 
 ___
 
@@ -189,7 +189,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:301](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L301)
+[webhooks/client.ts:301](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L301)
 
 ___
 
@@ -214,4 +214,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:381](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/webhooks/client.ts#L381)
+[webhooks/client.ts:381](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L381)

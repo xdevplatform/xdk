@@ -43,7 +43,7 @@ Creates a new spaces client instance
 
 #### Defined in
 
-[spaces/client.ts:190](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L190)
+[spaces/client.ts:190](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/spaces/client.ts#L190)
 
 ## Methods
 
@@ -69,7 +69,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[spaces/client.ts:207](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L207)
+[spaces/client.ts:207](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/spaces/client.ts#L207)
 
 ___
 
@@ -95,7 +95,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[spaces/client.ts:277](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L277)
+[spaces/client.ts:277](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/spaces/client.ts#L277)
 
 ___
 
@@ -121,7 +121,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[spaces/client.ts:363](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L363)
+[spaces/client.ts:363](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/spaces/client.ts#L363)
 
 ___
 
@@ -147,7 +147,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[spaces/client.ts:433](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L433)
+[spaces/client.ts:433](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/spaces/client.ts#L433)
 
 ___
 
@@ -173,7 +173,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[spaces/client.ts:501](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L501)
+[spaces/client.ts:501](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/spaces/client.ts#L501)
 
 ___
 
@@ -199,4 +199,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[spaces/client.ts:575](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/spaces/client.ts#L575)
+[spaces/client.ts:575](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/spaces/client.ts#L575)

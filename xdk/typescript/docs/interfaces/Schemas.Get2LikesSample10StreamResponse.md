@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[schemas.ts:826](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L826)
+[schemas.ts:826](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L826)
 
 ___
 
@@ -32,7 +32,7 @@ none
 
 #### Defined in
 
-[schemas.ts:827](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L827)
+[schemas.ts:827](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L827)
 
 ___
 
@@ -42,4 +42,4 @@ ___
 
 #### Defined in
 
-[schemas.ts:828](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L828)
+[schemas.ts:828](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L828)

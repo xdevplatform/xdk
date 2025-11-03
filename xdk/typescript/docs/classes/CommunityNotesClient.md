@@ -42,7 +42,7 @@ Creates a new community notes client instance
 
 #### Defined in
 
-[community_notes/client.ts:120](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/client.ts#L120)
+[community_notes/client.ts:120](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/client.ts#L120)
 
 ## Methods
 
@@ -67,7 +67,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[community_notes/client.ts:133](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/client.ts#L133)
+[community_notes/client.ts:133](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/client.ts#L133)
 
 ___
 
@@ -93,7 +93,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[community_notes/client.ts:176](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/client.ts#L176)
+[community_notes/client.ts:176](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/client.ts#L176)
 
 ___
 
@@ -119,7 +119,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[community_notes/client.ts:240](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/client.ts#L240)
+[community_notes/client.ts:240](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/client.ts#L240)
 
 ___
 
@@ -144,7 +144,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[community_notes/client.ts:330](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/client.ts#L330)
+[community_notes/client.ts:330](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/client.ts#L330)
 
 ___
 
@@ -169,4 +169,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[community_notes/client.ts:373](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/client.ts#L373)
+[community_notes/client.ts:373](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/client.ts#L373)

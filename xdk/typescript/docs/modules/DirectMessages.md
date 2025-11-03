@@ -28,7 +28,7 @@ Response for getEvents
 
 #### Defined in
 
-[direct_messages/models.ts:15](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/models.ts#L15)
+[direct_messages/models.ts:15](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L15)
 
 ___
 
@@ -40,7 +40,7 @@ Response for getEventsById
 
 #### Defined in
 
-[direct_messages/models.ts:21](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/models.ts#L21)
+[direct_messages/models.ts:21](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L21)
 
 ___
 
@@ -52,7 +52,7 @@ Response for deleteEvents
 
 #### Defined in
 
-[direct_messages/models.ts:27](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/models.ts#L27)
+[direct_messages/models.ts:27](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L27)
 
 ___
 
@@ -64,7 +64,7 @@ Request for createByParticipantId
 
 #### Defined in
 
-[direct_messages/models.ts:33](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/models.ts#L33)
+[direct_messages/models.ts:33](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L33)
 
 ___
 
@@ -76,7 +76,7 @@ Response for createByParticipantId
 
 #### Defined in
 
-[direct_messages/models.ts:39](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/models.ts#L39)
+[direct_messages/models.ts:39](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L39)
 
 ___
 
@@ -88,7 +88,7 @@ Request for createByConversationId
 
 #### Defined in
 
-[direct_messages/models.ts:45](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/models.ts#L45)
+[direct_messages/models.ts:45](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L45)
 
 ___
 
@@ -100,7 +100,7 @@ Response for createByConversationId
 
 #### Defined in
 
-[direct_messages/models.ts:51](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/models.ts#L51)
+[direct_messages/models.ts:51](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L51)
 
 ___
 
@@ -112,7 +112,7 @@ Response for getEventsByParticipantId
 
 #### Defined in
 
-[direct_messages/models.ts:57](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/models.ts#L57)
+[direct_messages/models.ts:57](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L57)
 
 ___
 
@@ -124,7 +124,7 @@ Response for getEventsByConversationId
 
 #### Defined in
 
-[direct_messages/models.ts:63](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/models.ts#L63)
+[direct_messages/models.ts:63](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L63)
 
 ___
 
@@ -136,7 +136,7 @@ Request for createConversation
 
 #### Defined in
 
-[direct_messages/models.ts:69](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/models.ts#L69)
+[direct_messages/models.ts:69](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L69)
 
 ___
 
@@ -148,4 +148,4 @@ Response for createConversation
 
 #### Defined in
 
-[direct_messages/models.ts:75](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/direct_messages/models.ts#L75)
+[direct_messages/models.ts:75](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L75)

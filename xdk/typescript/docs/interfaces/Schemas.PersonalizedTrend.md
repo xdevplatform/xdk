@@ -23,7 +23,7 @@ Category of this trend.
 
 #### Defined in
 
-[schemas.ts:1941](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1941)
+[schemas.ts:1941](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1941)
 
 ___
 
@@ -35,7 +35,7 @@ Number of posts pertaining to this trend.
 
 #### Defined in
 
-[schemas.ts:1942](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1942)
+[schemas.ts:1942](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1942)
 
 ___
 
@@ -47,7 +47,7 @@ Name of the trend.
 
 #### Defined in
 
-[schemas.ts:1943](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1943)
+[schemas.ts:1943](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1943)
 
 ___
 
@@ -59,4 +59,4 @@ Time since this is trending.
 
 #### Defined in
 
-[schemas.ts:1944](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L1944)
+[schemas.ts:1944](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1944)

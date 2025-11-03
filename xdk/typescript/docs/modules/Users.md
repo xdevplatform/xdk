@@ -71,7 +71,7 @@ Response for blockDms
 
 #### Defined in
 
-[users/models.ts:15](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L15)
+[users/models.ts:15](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L15)
 
 ___
 
@@ -83,7 +83,7 @@ Response for getByUsernames
 
 #### Defined in
 
-[users/models.ts:21](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L21)
+[users/models.ts:21](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L21)
 
 ___
 
@@ -95,7 +95,7 @@ Response for getByIds
 
 #### Defined in
 
-[users/models.ts:27](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L27)
+[users/models.ts:27](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L27)
 
 ___
 
@@ -107,7 +107,7 @@ Response for unlikePost
 
 #### Defined in
 
-[users/models.ts:33](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L33)
+[users/models.ts:33](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L33)
 
 ___
 
@@ -119,7 +119,7 @@ Response for getBlocking
 
 #### Defined in
 
-[users/models.ts:39](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L39)
+[users/models.ts:39](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L39)
 
 ___
 
@@ -131,7 +131,7 @@ Response for unmuteUser
 
 #### Defined in
 
-[users/models.ts:45](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L45)
+[users/models.ts:45](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L45)
 
 ___
 
@@ -143,7 +143,7 @@ Response for unpinList
 
 #### Defined in
 
-[users/models.ts:51](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L51)
+[users/models.ts:51](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L51)
 
 ___
 
@@ -155,7 +155,7 @@ Response for getBookmarkFolders
 
 #### Defined in
 
-[users/models.ts:57](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L57)
+[users/models.ts:57](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L57)
 
 ___
 
@@ -167,7 +167,7 @@ Response for getPosts
 
 #### Defined in
 
-[users/models.ts:63](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L63)
+[users/models.ts:63](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L63)
 
 ___
 
@@ -179,7 +179,7 @@ Response for unfollowUser
 
 #### Defined in
 
-[users/models.ts:69](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L69)
+[users/models.ts:69](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L69)
 
 ___
 
@@ -191,7 +191,7 @@ Response for getTimeline
 
 #### Defined in
 
-[users/models.ts:75](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L75)
+[users/models.ts:75](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L75)
 
 ___
 
@@ -203,7 +203,7 @@ Response for getBookmarks
 
 #### Defined in
 
-[users/models.ts:81](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L81)
+[users/models.ts:81](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L81)
 
 ___
 
@@ -215,7 +215,7 @@ Request for createBookmark
 
 #### Defined in
 
-[users/models.ts:87](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L87)
+[users/models.ts:87](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L87)
 
 ___
 
@@ -227,7 +227,7 @@ Response for createBookmark
 
 #### Defined in
 
-[users/models.ts:93](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L93)
+[users/models.ts:93](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L93)
 
 ___
 
@@ -239,7 +239,7 @@ Response for getFollowedLists
 
 #### Defined in
 
-[users/models.ts:99](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L99)
+[users/models.ts:99](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L99)
 
 ___
 
@@ -251,7 +251,7 @@ Request for followList
 
 #### Defined in
 
-[users/models.ts:105](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L105)
+[users/models.ts:105](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L105)
 
 ___
 
@@ -263,7 +263,7 @@ Response for followList
 
 #### Defined in
 
-[users/models.ts:111](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L111)
+[users/models.ts:111](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L111)
 
 ___
 
@@ -275,7 +275,7 @@ Response for getListMemberships
 
 #### Defined in
 
-[users/models.ts:117](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L117)
+[users/models.ts:117](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L117)
 
 ___
 
@@ -287,7 +287,7 @@ Response for getOwnedLists
 
 #### Defined in
 
-[users/models.ts:123](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L123)
+[users/models.ts:123](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L123)
 
 ___
 
@@ -299,7 +299,7 @@ Response for getBookmarksByFolderId
 
 #### Defined in
 
-[users/models.ts:129](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L129)
+[users/models.ts:129](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L129)
 
 ___
 
@@ -311,7 +311,7 @@ Request for repostPost
 
 #### Defined in
 
-[users/models.ts:135](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L135)
+[users/models.ts:135](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L135)
 
 ___
 
@@ -323,7 +323,7 @@ Response for repostPost
 
 #### Defined in
 
-[users/models.ts:141](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L141)
+[users/models.ts:141](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L141)
 
 ___
 
@@ -335,7 +335,7 @@ Response for unblockDms
 
 #### Defined in
 
-[users/models.ts:147](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L147)
+[users/models.ts:147](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L147)
 
 ___
 
@@ -347,7 +347,7 @@ Response for getMentions
 
 #### Defined in
 
-[users/models.ts:153](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L153)
+[users/models.ts:153](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L153)
 
 ___
 
@@ -359,7 +359,7 @@ Response for search
 
 #### Defined in
 
-[users/models.ts:159](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L159)
+[users/models.ts:159](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L159)
 
 ___
 
@@ -371,7 +371,7 @@ Response for getFollowers
 
 #### Defined in
 
-[users/models.ts:165](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L165)
+[users/models.ts:165](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L165)
 
 ___
 
@@ -383,7 +383,7 @@ Response for getMe
 
 #### Defined in
 
-[users/models.ts:171](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L171)
+[users/models.ts:171](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L171)
 
 ___
 
@@ -395,7 +395,7 @@ Response for getById
 
 #### Defined in
 
-[users/models.ts:177](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L177)
+[users/models.ts:177](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L177)
 
 ___
 
@@ -407,7 +407,7 @@ Response for unfollowList
 
 #### Defined in
 
-[users/models.ts:183](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L183)
+[users/models.ts:183](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L183)
 
 ___
 
@@ -419,7 +419,7 @@ Response for getMuting
 
 #### Defined in
 
-[users/models.ts:189](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L189)
+[users/models.ts:189](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L189)
 
 ___
 
@@ -431,7 +431,7 @@ Response for muteUser
 
 #### Defined in
 
-[users/models.ts:202](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L202)
+[users/models.ts:202](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L202)
 
 ___
 
@@ -443,7 +443,7 @@ Response for getByUsername
 
 #### Defined in
 
-[users/models.ts:208](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L208)
+[users/models.ts:208](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L208)
 
 ___
 
@@ -455,7 +455,7 @@ Response for getPinnedLists
 
 #### Defined in
 
-[users/models.ts:214](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L214)
+[users/models.ts:214](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L214)
 
 ___
 
@@ -467,7 +467,7 @@ Request for pinList
 
 #### Defined in
 
-[users/models.ts:220](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L220)
+[users/models.ts:220](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L220)
 
 ___
 
@@ -479,7 +479,7 @@ Response for pinList
 
 #### Defined in
 
-[users/models.ts:226](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L226)
+[users/models.ts:226](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L226)
 
 ___
 
@@ -491,7 +491,7 @@ Response for deleteBookmark
 
 #### Defined in
 
-[users/models.ts:232](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L232)
+[users/models.ts:232](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L232)
 
 ___
 
@@ -503,7 +503,7 @@ Response for getLikedPosts
 
 #### Defined in
 
-[users/models.ts:238](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L238)
+[users/models.ts:238](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L238)
 
 ___
 
@@ -515,7 +515,7 @@ Response for unrepostPost
 
 #### Defined in
 
-[users/models.ts:244](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L244)
+[users/models.ts:244](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L244)
 
 ___
 
@@ -527,7 +527,7 @@ Response for getRepostsOfMe
 
 #### Defined in
 
-[users/models.ts:250](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L250)
+[users/models.ts:250](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L250)
 
 ___
 
@@ -539,7 +539,7 @@ Response for getFollowing
 
 #### Defined in
 
-[users/models.ts:256](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L256)
+[users/models.ts:256](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L256)
 
 ___
 
@@ -551,7 +551,7 @@ Request for followUser
 
 #### Defined in
 
-[users/models.ts:262](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L262)
+[users/models.ts:262](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L262)
 
 ___
 
@@ -563,7 +563,7 @@ Response for followUser
 
 #### Defined in
 
-[users/models.ts:268](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L268)
+[users/models.ts:268](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L268)
 
 ___
 
@@ -575,7 +575,7 @@ Request for likePost
 
 #### Defined in
 
-[users/models.ts:274](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L274)
+[users/models.ts:274](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L274)
 
 ___
 
@@ -587,4 +587,4 @@ Response for likePost
 
 #### Defined in
 
-[users/models.ts:280](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/models.ts#L280)
+[users/models.ts:280](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/models.ts#L280)

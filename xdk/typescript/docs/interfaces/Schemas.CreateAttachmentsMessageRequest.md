@@ -19,7 +19,7 @@
 
 #### Defined in
 
-[schemas.ts:367](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L367)
+[schemas.ts:367](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L367)
 
 ___
 
@@ -31,4 +31,4 @@ Text of the message.
 
 #### Defined in
 
-[schemas.ts:368](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L368)
+[schemas.ts:368](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L368)

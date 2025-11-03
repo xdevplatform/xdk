@@ -21,7 +21,7 @@ Unique Identifier of media within provider ( <= 24 characters ))
 
 #### Defined in
 
-[schemas.ts:647](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L647)
+[schemas.ts:647](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L647)
 
 ___
 
@@ -33,4 +33,4 @@ The media provider (e.g., 'giphy') that sourced the media ( <= 8 Characters )
 
 #### Defined in
 
-[schemas.ts:648](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L648)
+[schemas.ts:648](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L648)

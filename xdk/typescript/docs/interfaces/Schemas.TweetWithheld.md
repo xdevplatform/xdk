@@ -22,7 +22,7 @@ Indicates if the content is being withheld for on the basis of copyright infring
 
 #### Defined in
 
-[schemas.ts:2791](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2791)
+[schemas.ts:2791](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2791)
 
 ___
 
@@ -34,7 +34,7 @@ Provides a list of countries where this content is not available.
 
 #### Defined in
 
-[schemas.ts:2792](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2792)
+[schemas.ts:2792](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2792)
 
 ___
 
@@ -46,4 +46,4 @@ Indicates whether the content being withheld is the `tweet` or a `user`.
 
 #### Defined in
 
-[schemas.ts:2795](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2795)
+[schemas.ts:2795](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2795)

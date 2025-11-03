@@ -24,7 +24,7 @@ The bank ID associated with the account.
 
 #### Defined in
 
-[schemas.ts:2020](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2020)
+[schemas.ts:2020](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2020)
 
 ___
 
@@ -36,7 +36,7 @@ The payment network identifier.
 
 #### Defined in
 
-[schemas.ts:2021](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2021)
+[schemas.ts:2021](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2021)
 
 ___
 
@@ -48,7 +48,7 @@ Indicates if transfers into the account are supported.
 
 #### Defined in
 
-[schemas.ts:2022](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2022)
+[schemas.ts:2022](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2022)
 
 ___
 
@@ -60,7 +60,7 @@ Indicates if transfers out of the account are supported.
 
 #### Defined in
 
-[schemas.ts:2023](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2023)
+[schemas.ts:2023](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2023)
 
 ___
 
@@ -72,4 +72,4 @@ The type of payment network (e.g., ACH, SEPA).
 
 #### Defined in
 
-[schemas.ts:2024](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2024)
+[schemas.ts:2024](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2024)

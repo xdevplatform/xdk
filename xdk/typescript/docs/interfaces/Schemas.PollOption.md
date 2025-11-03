@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[schemas.ts:2112](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2112)
+[schemas.ts:2112](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2112)
 
 ___
 
@@ -32,7 +32,7 @@ Position of this choice in the poll.
 
 #### Defined in
 
-[schemas.ts:2113](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2113)
+[schemas.ts:2113](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2113)
 
 ___
 
@@ -44,4 +44,4 @@ Number of users who voted for this choice.
 
 #### Defined in
 
-[schemas.ts:2114](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2114)
+[schemas.ts:2114](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2114)

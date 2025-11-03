@@ -109,6 +109,12 @@ function processMarkdownContent(content, title, currentFilePath, knownTargets) {
   // Remove the first H1 header to avoid duplicate titles (frontmatter title will be used)
   content = content.replace(/^\s*#\s+[^\n]+\n+/, '');
 
+  // Escape generic type angle brackets like PaginatedResponse<T> to avoid MDX JSX parsing
+  content = content.replace(/\b([A-Z][A-Za-z0-9_]*)<([^>\n]+)>/g, (m, name, inner) => {
+    const escapedInner = inner.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return `${name}&lt;${escapedInner}&gt;`;
+  });
+
   // Remove explicit Table of contents blocks; Mintlify renders a sidebar TOC automatically
   content = content.replace(/(^##\s+Table of contents\n[\s\S]*?)(?=^##\s+|^#\s+|\Z)/gmi, '');
 
@@ -353,6 +359,21 @@ function processMarkdownContent(content, title, currentFilePath, knownTargets) {
     content = content
       .replace(/^####\s+Defined in[\s\S]*?(?=^###\s+|^##\s+|$)/gm, '')
       .replace(/^___\s*$/gm, '');
+
+    // Escape '<' inside component blocks to avoid MDX JSX parse issues in text like '<='
+    // But preserve JSX tags like <Expandable>, <ResponseField>, etc.
+    content = content
+      .replace(/(<ResponseField[\s\S]*?>)([\s\S]*?)(<\/ResponseField>)/g, (m, open, inner, close) => {
+        // Escape '<' only when it's NOT part of a JSX tag (like <Expandable> or </Expandable>)
+        // Pattern: < followed by either a letter (JSX tag start) or /letter (JSX closing tag)
+        // Escape everything else like '<=' or '< number'
+        const escaped = inner.replace(/<(?![A-Za-z/])/g, '&lt;');
+        return open + escaped + close;
+      })
+      .replace(/(<ParamField[\s\S]*?>)([\s\S]*?)(<\/ParamField>)/g, (m, open, inner, close) => {
+        const escaped = inner.replace(/<(?![A-Za-z/])/g, '&lt;');
+        return open + escaped + close;
+      });
   }
 
   return content;
@@ -616,7 +637,7 @@ For read-only operations and public data access:
 import { 
   Client, 
   type ClientConfig,
-  type UsersGetByUsernameResponse
+  type Users
 } from '@xdevplatform/xdk';
 
 const config: ClientConfig = { bearerToken: 'your-bearer-token' };
@@ -624,7 +645,7 @@ const config: ClientConfig = { bearerToken: 'your-bearer-token' };
 const client: Client = new Client(config);
 
 async function main(): Promise<void> {
-  const userResponse: UsersGetByUsernameResponse = await client.users.getByUsername('XDevelopers');
+  const userResponse: Users.GetByUsernameResponse = await client.users.getByUsername('XDevelopers');
   const username: string = userResponse.data?.username!;
   console.log(username);
 }
@@ -819,175 +840,167 @@ title: "Pagination"
 sidebarTitle: "Pagination"
 ---
 
-The TypeScript SDK provides powerful pagination capabilities for efficiently handling large datasets.
+The SDK provides generic paginator utilities you can use with any endpoint that returns paginated responses. Methods return plain responses; you wrap them with a paginator.
 
-## Basic Pagination
-
-Most endpoints that return lists support pagination:
+### Basic Pagination
 
 <CodeGroup dropdown>
 
-\`\`\`typescript basic.ts theme={null}
-import { Client, UserPaginator } from '@xdevplatform/xdk';
+\`\`\`typescript quick-start.ts theme={null}
+import { Client, UserPaginator, PaginatedResponse, Schemas } from '@xdevplatform/xdk';
 
 const client: Client = new Client({ bearerToken: 'your-bearer-token' });
-const followersPaginator: UserPaginator = await client.users.getFollowers({ userId: 'user-id', maxResults: 100 });
-console.log('Has more pages:', !followersPaginator.done);
-console.log('Next token:', followersPaginator.meta?.next_token);
+
+// Wrap any list endpoint with proper typing
+const followers: UserPaginator = new UserPaginator(
+  async (token?: string): Promise<PaginatedResponse<Schemas.User>> => {
+    const res = await client.users.getFollowers('<userId>', {
+      maxResults: 100,
+      paginationToken: token,
+      userfields: ['id','name','username'],
+    });
+    return { 
+      data: res.data ?? [], 
+      meta: res.meta, 
+      includes: res.includes, 
+      errors: res.errors 
+    };
+  }
+);
 \`\`\`
 
-\`\`\`javascript basic.js theme={null}
+\`\`\`javascript quick-start.js theme={null}
 import { Client } from '@xdevplatform/xdk';
+import { UserPaginator } from '@xdevplatform/xdk';
 
 const client = new Client({ bearerToken: 'your-bearer-token' });
-const followersPaginator = await client.users.getFollowers({ userId: 'user-id', maxResults: 100 });
-console.log('Has more pages:', !followersPaginator.done);
-console.log('Next token:', followersPaginator.meta?.next_token);
+
+const followers = new UserPaginator(async (token) => {
+  const res = await client.users.getFollowers('<userId>', {
+    maxResults: 100,
+    paginationToken: token,
+    userfields: ['id','name','username'],
+  });
+  return { data: res.data ?? [], meta: res.meta, includes: res.includes, errors: res.errors };
+});
 \`\`\`
 
 </CodeGroup>
 
-## Async Iteration
-
-Iterate through all pages automatically:
-
-<CodeGroup dropdown>
-
-\`\`\`typescript pagination-async.ts theme={null}
-import { User, UserPaginator } from '@xdevplatform/xdk';
-
-// Get all followers
-for await (const follower of (followersPaginator as UserPaginator)) {
-  const u: User = follower;
-  console.log(u.username);
-}
-\`\`\`
-
-\`\`\`javascript pagination-async.js theme={null}
-// Get all followers (JS)
-for await (const follower of followersPaginator) {
-  console.log(follower.username);
-}
-\`\`\`
-
-</CodeGroup>
-
-## Manual Page Control
-
-Control pagination manually:
+### Manual paging
 
 <CodeGroup>
 
 \`\`\`typescript manual.ts theme={null}
-import { UserPaginator } from '@xdevplatform/xdk';
+import { UserPaginator, Schemas } from '@xdevplatform/xdk';
 
-// Get first page
-await (followersPaginator as UserPaginator).fetchNext();
-console.log('First page:', (followersPaginator as UserPaginator).items);
-
-// Get next page
-if (!(followersPaginator as UserPaginator).done) {
-  await (followersPaginator as UserPaginator).fetchNext();
-  console.log('Second page:', (followersPaginator as UserPaginator).items);
+await followers.fetchNext();          // first page
+while (!followers.done) {
+  await followers.fetchNext();        // subsequent pages
 }
+
+const userCount: number = followers.users.length;  // all fetched users
+const firstUser: Schemas.User | undefined = followers.users[0];
+const nextToken: string | undefined = followers.meta?.next_token;
 \`\`\`
 
 \`\`\`javascript manual.js theme={null}
-// Get first page
-await followersPaginator.fetchNext();
-console.log('First page:', followersPaginator.items);
+await followers.fetchNext();
+while (!followers.done) await followers.fetchNext();
+console.log(followers.items.length);
+\`\`\`
 
-// Get next page
-if (!followersPaginator.done) {
-  await followersPaginator.fetchNext();
-  console.log('Second page:', followersPaginator.items);
+</CodeGroup>
+
+### Async iteration
+
+<CodeGroup>
+
+\`\`\`typescript async.ts theme={null}
+import { Schemas } from '@xdevplatform/xdk';
+
+for await (const user of followers) {
+  const typedUser: Schemas.User = user;
+  console.log(typedUser.username);  // fully typed access
+}
+\`\`\`
+
+\`\`\`javascript async.js theme={null}
+for await (const user of followers) {
+  console.log(user.username);
 }
 \`\`\`
 
 </CodeGroup>
 
-## Pagination Types
-
-Different endpoints return different paginator types:
+### Next page as a new instance
 
 <CodeGroup>
 
-\`\`\`typescript types.ts theme={null}
-import { Client, UserPaginator, PostPaginator, EventPaginator, User, Post } from '@xdevplatform/xdk';
+\`\`\`typescript next.ts theme={null}
+import { UserPaginator } from '@xdevplatform/xdk';
 
-const client: Client = new Client({ bearerToken: 'your-bearer-token' });
-
-// User paginator for user-related endpoints
-const userPaginator: UserPaginator = await client.users.getFollowers({ userId: 'user-id' });
-const firstUser: User | undefined = userPaginator.users[0];
-
-// Post paginator for tweet/post endpoints
-const postPaginator: PostPaginator = await client.posts.getUserTweets({ userId: 'user-id' });
-const firstPost: Post | undefined = postPaginator.posts[0];
-
-// Event paginator for DM/event endpoints
-const eventPaginator: EventPaginator = await client.directMessages.getDmEvents({ userId: 'user-id' });
+await followers.fetchNext();
+if (!followers.done) {
+  const page2: UserPaginator = await followers.next(); // independent paginator starting at next page
+  await page2.fetchNext();
+  console.log(page2.users.length);  // items from second page
+}
 \`\`\`
 
-\`\`\`javascript types.js theme={null}
-// User paginator for user-related endpoints
-const userPaginator = await client.users.getFollowers({ userId: 'user-id' });
-// userPaginator.users - array of User objects
-
-// Post paginator for tweet/post endpoints  
-const postPaginator = await client.posts.getUserTweets({ userId: 'user-id' });
-// postPaginator.posts - array of Post objects
-
-// Event paginator for DM/event endpoints
-const eventPaginator = await client.directMessages.getDmEvents({ userId: 'user-id' });
-// eventPaginator.events - array of DmEvent objects
+\`\`\`javascript next.js theme={null}
+await followers.fetchNext();
+if (!followers.done) {
+  const page2 = await followers.next();
+  await page2.fetchNext();
+}
 \`\`\`
 
 </CodeGroup>
 
-## Error Handling
-
-Handle pagination errors gracefully:
+### Error handling and rate limits
 
 <CodeGroup>
 
 \`\`\`typescript errors.ts theme={null}
-import { UserPaginator } from '@xdevplatform/xdk';
+import { UserPaginator, Schemas } from '@xdevplatform/xdk';
 
 try {
-  for await (const follower of (followersPaginator as UserPaginator)) {
-    console.log(follower.username);
+  for await (const item of followers) {
+    const user: Schemas.User = item;
+    // process user...
   }
-} catch (error) {
-  if ((followersPaginator as UserPaginator).rateLimited) {
-    console.log('Rate limited, waiting...');
+} catch (err: unknown) {
+  if (followers.rateLimited) {
+    console.error('Rate limited, backoff required');
+    // backoff / retry later
   } else {
-    console.error('Pagination error:', error);
+    console.error('Pagination error:', err);
+    throw err;
   }
 }
 \`\`\`
 
 \`\`\`javascript errors.js theme={null}
 try {
-  for await (const follower of followersPaginator) {
-    console.log(follower.username);
+  for await (const item of followers) {
+    // ...
   }
-} catch (error) {
-  if (followersPaginator.rateLimited) {
-    console.log('Rate limited, waiting...');
+} catch (err) {
+  if (followers.rateLimited) {
+    // backoff / retry later
   } else {
-    console.error('Pagination error:', error);
+    throw err;
   }
 }
 \`\`\`
 
 </CodeGroup>
 `;
+fs.writeFileSync(path.join(outputDir, 'xdks', 'typescript', 'pagination.mdx'), paginationContent);
 
-    fs.writeFileSync(path.join(outputDir, 'xdks', 'typescript', 'pagination.mdx'), paginationContent);
-
-    // Streaming page
-    const streamingContent = `---
+// Streaming page
+const streamingContent = `---
 title: "Streaming"
 sidebarTitle: "Streaming"
 ---
@@ -996,7 +1009,7 @@ The TypeScript SDK provides real-time streaming capabilities for live data feeds
 
 ## Basic Streaming
 
-Connect to real-time streams:
+Connect to real-time sampled posts:
 
 <CodeGroup>
 
@@ -1004,87 +1017,72 @@ Connect to real-time streams:
 import { Client } from '@xdevplatform/xdk';
 
 const client: Client = new Client({ bearerToken: 'your-bearer-token' });
-const stream = await client.stream.getTweetsStream({ tweetFields: ['created_at', 'author_id', 'text'] });
-stream.on('tweet', (tweet) => console.log('New tweet:', tweet.text));
-stream.on('error', (error) => console.error('Stream error:', error));
-await stream.connect();
+
+// 1% sampled public posts
+const stream = await client.stream.postsSample({
+  tweetfields: ['id','text','created_at'],
+  expansions: ['author_id'],
+  userfields: ['id','username','name']
+});
+
+// Listen to events
+stream.on('data', (event) => {
+  // event is the parsed JSON line (data/includes/matching_rules)
+  console.log('New data:', event);
+});
+
+stream.on('error', (e) => console.error('Stream error:', e));
+stream.on('close', () => console.log('Stream closed'));
 \`\`\`
 
 \`\`\`javascript stream.js theme={null}
 import { Client } from '@xdevplatform/xdk';
 
 const client = new Client({ bearerToken: 'your-bearer-token' });
-const stream = await client.stream.getTweetsStream({ tweetFields: ['created_at'] });
-stream.on('tweet', (tweet) => console.log('New tweet:', tweet.text));
-await stream.connect();
+const stream = await client.stream.postsSample({ tweetfields: ['id','text'] });
+
+stream.on('data', (event) => {
+  console.log('New data:', event);
+});
+stream.on('error', (e) => console.error('Stream error:', e));
+stream.on('close', () => console.log('Stream closed'));
 \`\`\`
 
 </CodeGroup>
 
-## Event-Driven Streaming
+## Async Iteration
 
-Use the event-driven approach for better control:
+Consume the stream with async iteration:
 
 <CodeGroup>
 
-\`\`\`typescript events.ts theme={null}
-import { EventDrivenStream } from '@xdevplatform/xdk';
-
-const stream: EventDrivenStream = new EventDrivenStream({ endpoint: 'tweets/sample/stream', bearerToken: 'your-bearer-token' });
-stream.onTweet((tweet) => console.log('Tweet received:', tweet.text));
-stream.onError((error) => console.error('Stream error:', error));
-stream.onConnect(() => console.log('Connected to stream'));
-stream.onDisconnect(() => console.log('Disconnected from stream'));
-await stream.connect();
+\`\`\`typescript async.ts theme={null}
+const stream = await client.stream.postsSample();
+for await (const event of stream) {
+  // Each event is a parsed JSON line (data/includes/matching_rules)
+  console.log(event);
+}
 \`\`\`
 
-\`\`\`javascript events.js theme={null}
-import { EventDrivenStream } from '@xdevplatform/xdk';
-
-const stream = new EventDrivenStream({ endpoint: 'tweets/sample/stream', bearerToken: 'your-bearer-token' });
-stream.onTweet((t) => console.log('Tweet received:', t.text));
-await stream.connect();
+\`\`\`javascript async.js theme={null}
+const stream = await client.stream.postsSample();
+for await (const event of stream) {
+  console.log(event);
+}
 \`\`\`
 
 </CodeGroup>
 
 ## Stream Management
 
-Control stream lifecycle:
+Control lifecycle from the event-driven stream:
 
 \`\`\`typescript
-// Connect to stream
-await stream.connect();
+// Close the stream
+stream.close();
 
-// Check connection status
-console.log('Connected:', stream.isConnected());
-
-// Disconnect from stream
-await stream.disconnect();
-
-// Reconnect after disconnect
-await stream.reconnect();
-\`\`\`
-
-## Filtering Streams
-
-Apply filters to streams:
-
-\`\`\`typescript
-// Stream with specific rules
-const filteredStream = await client.stream.getTweetsStream({
-  tweetFields: ['created_at', 'author_id', 'text'],
-  expansions: ['author_id'],
-  userFields: ['username', 'name']
-});
-
-// Add filtering rules
-await client.stream.addRules({
-  add: [
-    { value: 'typescript', tag: 'typescript-tweets' },
-    { value: 'javascript', tag: 'js-tweets' }
-  ]
-});
+// Auto-reconnect (if enabled by your wrapper)
+// The default EventDrivenStream exposes basic reconnect hooks
 \`\`\`
 
 ## Error Handling
@@ -1092,24 +1090,17 @@ await client.stream.addRules({
 Handle streaming errors and reconnections:
 
 \`\`\`typescript
-stream.on('error', (error) => {
-  if (error.code === 'ECONNRESET') {
-    console.log('Connection lost, reconnecting...');
-    stream.reconnect();
-  } else {
-    console.error('Stream error:', error);
-  }
+stream.on('error', (event) => {
+  const err = event.error || event;
+  console.error('Stream error:', err);
 });
 
-// Handle rate limiting
-stream.on('rate_limit', (rateLimitInfo) => {
-  console.log('Rate limited, backing off...');
-  // Implement backoff strategy
+stream.on('keepAlive', () => {
+  // heartbeat event
 });
 \`\`\`
 `;
-
-    fs.writeFileSync(path.join(outputDir, 'xdks', 'typescript', 'streaming.mdx'), streamingContent);
+fs.writeFileSync(path.join(outputDir, 'xdks', 'typescript', 'streaming.mdx'), streamingContent);
     
     // Create navigation structure for integration into existing Mintlify site
     console.log('⚙️ Creating navigation structure...');

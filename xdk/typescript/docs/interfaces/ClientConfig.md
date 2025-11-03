@@ -28,7 +28,7 @@ Base URL for API requests
 
 #### Defined in
 
-[client.ts:90](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L90)
+[client.ts:90](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L90)
 
 ___
 
@@ -40,7 +40,7 @@ Bearer token for authentication
 
 #### Defined in
 
-[client.ts:92](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L92)
+[client.ts:92](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L92)
 
 ___
 
@@ -52,7 +52,7 @@ OAuth2 access token
 
 #### Defined in
 
-[client.ts:94](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L94)
+[client.ts:94](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L94)
 
 ___
 
@@ -64,7 +64,7 @@ OAuth1 instance for authentication
 
 #### Defined in
 
-[client.ts:96](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L96)
+[client.ts:96](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L96)
 
 ___
 
@@ -76,7 +76,7 @@ Custom headers to include in requests
 
 #### Defined in
 
-[client.ts:98](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L98)
+[client.ts:98](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L98)
 
 ___
 
@@ -88,7 +88,7 @@ Request timeout in milliseconds
 
 #### Defined in
 
-[client.ts:100](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L100)
+[client.ts:100](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L100)
 
 ___
 
@@ -100,7 +100,7 @@ Whether to automatically retry failed requests
 
 #### Defined in
 
-[client.ts:102](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L102)
+[client.ts:102](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L102)
 
 ___
 
@@ -112,7 +112,7 @@ Maximum number of retry attempts
 
 #### Defined in
 
-[client.ts:104](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L104)
+[client.ts:104](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L104)
 
 ___
 
@@ -124,4 +124,4 @@ User agent string
 
 #### Defined in
 
-[client.ts:106](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/client.ts#L106)
+[client.ts:106](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L106)

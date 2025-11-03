@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[schemas.ts:420](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L420)
+[schemas.ts:420](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L420)
 
 ___
 
@@ -30,7 +30,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:421](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L421)
+[schemas.ts:421](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L421)
 
 ___
 
@@ -42,4 +42,4 @@ If true, the note being submitted is only for testing the capability of the bot,
 
 #### Defined in
 
-[schemas.ts:422](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L422)
+[schemas.ts:422](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L422)

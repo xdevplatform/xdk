@@ -46,7 +46,7 @@
 
 #### Defined in
 
-[stream/stream_client.ts:560](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L560)
+[stream/stream_client.ts:560](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L560)
 
 ## Methods
 
@@ -76,7 +76,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:580](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L580)
+[stream/stream_client.ts:580](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L580)
 
 ___
 
@@ -106,7 +106,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:714](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L714)
+[stream/stream_client.ts:714](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L714)
 
 ___
 
@@ -135,7 +135,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:835](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L835)
+[stream/stream_client.ts:835](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L835)
 
 ___
 
@@ -165,7 +165,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:954](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L954)
+[stream/stream_client.ts:954](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L954)
 
 ___
 
@@ -194,7 +194,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:1084](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L1084)
+[stream/stream_client.ts:1084](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L1084)
 
 ___
 
@@ -224,7 +224,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:1213](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L1213)
+[stream/stream_client.ts:1213](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L1213)
 
 ___
 
@@ -254,7 +254,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:1311](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L1311)
+[stream/stream_client.ts:1311](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L1311)
 
 ___
 
@@ -283,7 +283,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:1441](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L1441)
+[stream/stream_client.ts:1441](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L1441)
 
 ___
 
@@ -313,7 +313,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:1536](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L1536)
+[stream/stream_client.ts:1536](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L1536)
 
 ___
 
@@ -343,7 +343,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:1670](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L1670)
+[stream/stream_client.ts:1670](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L1670)
 
 ___
 
@@ -373,7 +373,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:1795](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L1795)
+[stream/stream_client.ts:1795](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L1795)
 
 ___
 
@@ -402,7 +402,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:1889](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L1889)
+[stream/stream_client.ts:1889](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L1889)
 
 ___
 
@@ -432,7 +432,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:1984](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L1984)
+[stream/stream_client.ts:1984](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L1984)
 
 ___
 
@@ -462,7 +462,7 @@ Event-driven stream for handling streaming data
 
 #### Defined in
 
-[stream/stream_client.ts:2118](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L2118)
+[stream/stream_client.ts:2118](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L2118)
 
 ___
 
@@ -487,7 +487,7 @@ Promise with the API response
 
 #### Defined in
 
-[stream/stream_client.ts:2242](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L2242)
+[stream/stream_client.ts:2242](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L2242)
 
 ___
 
@@ -512,7 +512,7 @@ Promise with the API response
 
 #### Defined in
 
-[stream/stream_client.ts:2299](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L2299)
+[stream/stream_client.ts:2299](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L2299)
 
 ___
 
@@ -538,4 +538,4 @@ Promise with the API response
 
 #### Defined in
 
-[stream/stream_client.ts:2368](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/stream/stream_client.ts#L2368)
+[stream/stream_client.ts:2368](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/stream/stream_client.ts#L2368)

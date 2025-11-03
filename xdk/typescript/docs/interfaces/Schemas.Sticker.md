@@ -29,7 +29,7 @@ width-to-height ratio of the media
 
 #### Defined in
 
-[schemas.ts:2356](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2356)
+[schemas.ts:2356](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2356)
 
 ___
 
@@ -41,7 +41,7 @@ A unique identifier for the group of annotations associated with the media
 
 #### Defined in
 
-[schemas.ts:2357](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2357)
+[schemas.ts:2357](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2357)
 
 ___
 
@@ -53,7 +53,7 @@ Unique identifier for sticker
 
 #### Defined in
 
-[schemas.ts:2358](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2358)
+[schemas.ts:2358](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2358)
 
 ___
 
@@ -65,7 +65,7 @@ A unique identifier for the sticker set associated with the media
 
 #### Defined in
 
-[schemas.ts:2359](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2359)
+[schemas.ts:2359](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2359)
 
 ___
 
@@ -77,7 +77,7 @@ Scale or rotate the media on the x-axis
 
 #### Defined in
 
-[schemas.ts:2360](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2360)
+[schemas.ts:2360](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2360)
 
 ___
 
@@ -89,7 +89,7 @@ Skew the media on the x-axis
 
 #### Defined in
 
-[schemas.ts:2361](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2361)
+[schemas.ts:2361](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2361)
 
 ___
 
@@ -101,7 +101,7 @@ Skew the media on the y-axis
 
 #### Defined in
 
-[schemas.ts:2362](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2362)
+[schemas.ts:2362](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2362)
 
 ___
 
@@ -113,7 +113,7 @@ Scale or rotate the media on the y-axis
 
 #### Defined in
 
-[schemas.ts:2363](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2363)
+[schemas.ts:2363](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2363)
 
 ___
 
@@ -125,7 +125,7 @@ Scale or rotate the media on the x-axis
 
 #### Defined in
 
-[schemas.ts:2364](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2364)
+[schemas.ts:2364](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2364)
 
 ___
 
@@ -137,4 +137,4 @@ The vertical translation (shift) value for the media
 
 #### Defined in
 
-[schemas.ts:2365](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L2365)
+[schemas.ts:2365](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2365)

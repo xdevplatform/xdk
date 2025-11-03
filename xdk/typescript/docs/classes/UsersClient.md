@@ -75,7 +75,7 @@ Creates a new users client instance
 
 #### Defined in
 
-[users/client.ts:720](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L720)
+[users/client.ts:720](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L720)
 
 ## Methods
 
@@ -100,7 +100,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:737](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L737)
+[users/client.ts:737](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L737)
 
 ___
 
@@ -126,7 +126,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:775](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L775)
+[users/client.ts:775](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L775)
 
 ___
 
@@ -152,7 +152,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:839](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L839)
+[users/client.ts:839](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L839)
 
 ___
 
@@ -178,7 +178,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:907](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L907)
+[users/client.ts:907](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L907)
 
 ___
 
@@ -204,7 +204,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:947](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L947)
+[users/client.ts:947](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L947)
 
 ___
 
@@ -230,7 +230,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1025](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1025)
+[users/client.ts:1025](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1025)
 
 ___
 
@@ -256,7 +256,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1078](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1078)
+[users/client.ts:1078](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1078)
 
 ___
 
@@ -282,7 +282,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1118](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1118)
+[users/client.ts:1118](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1118)
 
 ___
 
@@ -308,7 +308,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1174](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1174)
+[users/client.ts:1174](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1174)
 
 ___
 
@@ -334,7 +334,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1300](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1300)
+[users/client.ts:1300](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1300)
 
 ___
 
@@ -360,7 +360,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1349](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1349)
+[users/client.ts:1349](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1349)
 
 ___
 
@@ -386,7 +386,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1471](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1471)
+[users/client.ts:1471](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1471)
 
 ___
 
@@ -412,7 +412,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1565](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1565)
+[users/client.ts:1565](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1565)
 
 ___
 
@@ -438,7 +438,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1608](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1608)
+[users/client.ts:1608](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1608)
 
 ___
 
@@ -464,7 +464,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1682](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1682)
+[users/client.ts:1682](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1682)
 
 ___
 
@@ -490,7 +490,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1730](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1730)
+[users/client.ts:1730](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1730)
 
 ___
 
@@ -516,7 +516,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1804](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1804)
+[users/client.ts:1804](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1804)
 
 ___
 
@@ -542,7 +542,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1882](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1882)
+[users/client.ts:1882](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1882)
 
 ___
 
@@ -568,7 +568,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1925](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1925)
+[users/client.ts:1925](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1925)
 
 ___
 
@@ -593,7 +593,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1973](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L1973)
+[users/client.ts:1973](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1973)
 
 ___
 
@@ -619,7 +619,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2011](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2011)
+[users/client.ts:2011](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2011)
 
 ___
 
@@ -645,7 +645,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2127](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2127)
+[users/client.ts:2127](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2127)
 
 ___
 
@@ -671,7 +671,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2203](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2203)
+[users/client.ts:2203](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2203)
 
 ___
 
@@ -696,7 +696,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2273](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2273)
+[users/client.ts:2273](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2273)
 
 ___
 
@@ -722,7 +722,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2330](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2330)
+[users/client.ts:2330](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2330)
 
 ___
 
@@ -748,7 +748,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2396](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2396)
+[users/client.ts:2396](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2396)
 
 ___
 
@@ -774,7 +774,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2439](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2439)
+[users/client.ts:2439](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2439)
 
 ___
 
@@ -800,7 +800,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2513](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2513)
+[users/client.ts:2513](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2513)
 
 ___
 
@@ -826,7 +826,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2561](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2561)
+[users/client.ts:2561](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2561)
 
 ___
 
@@ -852,7 +852,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2623](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2623)
+[users/client.ts:2623](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2623)
 
 ___
 
@@ -878,7 +878,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2687](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2687)
+[users/client.ts:2687](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2687)
 
 ___
 
@@ -904,7 +904,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2731](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2731)
+[users/client.ts:2731](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2731)
 
 ___
 
@@ -930,7 +930,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2774](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2774)
+[users/client.ts:2774](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2774)
 
 ___
 
@@ -956,7 +956,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2870](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2870)
+[users/client.ts:2870](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2870)
 
 ___
 
@@ -981,7 +981,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2912](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L2912)
+[users/client.ts:2912](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2912)
 
 ___
 
@@ -1007,7 +1007,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:3001](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L3001)
+[users/client.ts:3001](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L3001)
 
 ___
 
@@ -1033,7 +1033,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:3075](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L3075)
+[users/client.ts:3075](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L3075)
 
 ___
 
@@ -1059,4 +1059,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:3123](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/users/client.ts#L3123)
+[users/client.ts:3123](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L3123)

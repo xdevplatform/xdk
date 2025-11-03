@@ -24,7 +24,7 @@ Request for create
 
 #### Defined in
 
-[community_notes/models.ts:15](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/models.ts#L15)
+[community_notes/models.ts:15](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/models.ts#L15)
 
 ___
 
@@ -36,7 +36,7 @@ Response for create
 
 #### Defined in
 
-[community_notes/models.ts:21](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/models.ts#L21)
+[community_notes/models.ts:21](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/models.ts#L21)
 
 ___
 
@@ -48,7 +48,7 @@ Response for searchWritten
 
 #### Defined in
 
-[community_notes/models.ts:27](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/models.ts#L27)
+[community_notes/models.ts:27](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/models.ts#L27)
 
 ___
 
@@ -60,7 +60,7 @@ Response for searchEligiblePosts
 
 #### Defined in
 
-[community_notes/models.ts:33](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/models.ts#L33)
+[community_notes/models.ts:33](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/models.ts#L33)
 
 ___
 
@@ -72,7 +72,7 @@ Request for evaluate
 
 #### Defined in
 
-[community_notes/models.ts:39](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/models.ts#L39)
+[community_notes/models.ts:39](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/models.ts#L39)
 
 ___
 
@@ -84,7 +84,7 @@ Response for evaluate
 
 #### Defined in
 
-[community_notes/models.ts:45](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/models.ts#L45)
+[community_notes/models.ts:45](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/models.ts#L45)
 
 ___
 
@@ -96,4 +96,4 @@ Response for delete
 
 #### Defined in
 
-[community_notes/models.ts:51](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/community_notes/models.ts#L51)
+[community_notes/models.ts:51](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/models.ts#L51)

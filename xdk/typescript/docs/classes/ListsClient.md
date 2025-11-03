@@ -46,7 +46,7 @@ Creates a new lists client instance
 
 #### Defined in
 
-[lists/client.ts:188](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L188)
+[lists/client.ts:188](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/lists/client.ts#L188)
 
 ## Methods
 
@@ -72,7 +72,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:205](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L205)
+[lists/client.ts:205](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/lists/client.ts#L205)
 
 ___
 
@@ -98,7 +98,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:297](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L297)
+[lists/client.ts:297](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/lists/client.ts#L297)
 
 ___
 
@@ -124,7 +124,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:359](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L359)
+[lists/client.ts:359](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/lists/client.ts#L359)
 
 ___
 
@@ -149,7 +149,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:407](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L407)
+[lists/client.ts:407](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/lists/client.ts#L407)
 
 ___
 
@@ -175,7 +175,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:449](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L449)
+[lists/client.ts:449](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/lists/client.ts#L449)
 
 ___
 
@@ -201,7 +201,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:492](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L492)
+[lists/client.ts:492](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/lists/client.ts#L492)
 
 ___
 
@@ -227,7 +227,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:566](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L566)
+[lists/client.ts:566](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/lists/client.ts#L566)
 
 ___
 
@@ -253,7 +253,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:614](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L614)
+[lists/client.ts:614](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/lists/client.ts#L614)
 
 ___
 
@@ -278,4 +278,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[lists/client.ts:684](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/lists/client.ts#L684)
+[lists/client.ts:684](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/lists/client.ts#L684)

@@ -22,7 +22,7 @@ none
 
 #### Defined in
 
-[schemas.ts:268](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L268)
+[schemas.ts:268](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L268)
 
 ___
 
@@ -32,7 +32,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:269](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L269)
+[schemas.ts:269](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L269)
 
 ___
 
@@ -44,4 +44,4 @@ The name of this Community.
 
 #### Defined in
 
-[schemas.ts:270](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/schemas.ts#L270)
+[schemas.ts:270](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L270)

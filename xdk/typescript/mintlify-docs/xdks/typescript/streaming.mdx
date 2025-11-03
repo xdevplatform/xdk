@@ -7,7 +7,7 @@ The TypeScript SDK provides real-time streaming capabilities for live data feeds
 
 ## Basic Streaming
 
-Connect to real-time streams:
+Connect to real-time sampled posts:
 
 <CodeGroup>
 
@@ -15,87 +15,72 @@ Connect to real-time streams:
 import { Client } from '@xdevplatform/xdk';
 
 const client: Client = new Client({ bearerToken: 'your-bearer-token' });
-const stream = await client.stream.getTweetsStream({ tweetFields: ['created_at', 'author_id', 'text'] });
-stream.on('tweet', (tweet) => console.log('New tweet:', tweet.text));
-stream.on('error', (error) => console.error('Stream error:', error));
-await stream.connect();
+
+// 1% sampled public posts
+const stream = await client.stream.postsSample({
+  tweetfields: ['id','text','created_at'],
+  expansions: ['author_id'],
+  userfields: ['id','username','name']
+});
+
+// Listen to events
+stream.on('data', (event) => {
+  // event is the parsed JSON line (data/includes/matching_rules)
+  console.log('New data:', event);
+});
+
+stream.on('error', (e) => console.error('Stream error:', e));
+stream.on('close', () => console.log('Stream closed'));
 ```
 
 ```javascript stream.js theme={null}
 import { Client } from '@xdevplatform/xdk';
 
 const client = new Client({ bearerToken: 'your-bearer-token' });
-const stream = await client.stream.getTweetsStream({ tweetFields: ['created_at'] });
-stream.on('tweet', (tweet) => console.log('New tweet:', tweet.text));
-await stream.connect();
+const stream = await client.stream.postsSample({ tweetfields: ['id','text'] });
+
+stream.on('data', (event) => {
+  console.log('New data:', event);
+});
+stream.on('error', (e) => console.error('Stream error:', e));
+stream.on('close', () => console.log('Stream closed'));
 ```
 
 </CodeGroup>
 
-## Event-Driven Streaming
+## Async Iteration
 
-Use the event-driven approach for better control:
+Consume the stream with async iteration:
 
 <CodeGroup>
 
-```typescript events.ts theme={null}
-import { EventDrivenStream } from '@xdevplatform/xdk';
-
-const stream: EventDrivenStream = new EventDrivenStream({ endpoint: 'tweets/sample/stream', bearerToken: 'your-bearer-token' });
-stream.onTweet((tweet) => console.log('Tweet received:', tweet.text));
-stream.onError((error) => console.error('Stream error:', error));
-stream.onConnect(() => console.log('Connected to stream'));
-stream.onDisconnect(() => console.log('Disconnected from stream'));
-await stream.connect();
+```typescript async.ts theme={null}
+const stream = await client.stream.postsSample();
+for await (const event of stream) {
+  // Each event is a parsed JSON line (data/includes/matching_rules)
+  console.log(event);
+}
 ```
 
-```javascript events.js theme={null}
-import { EventDrivenStream } from '@xdevplatform/xdk';
-
-const stream = new EventDrivenStream({ endpoint: 'tweets/sample/stream', bearerToken: 'your-bearer-token' });
-stream.onTweet((t) => console.log('Tweet received:', t.text));
-await stream.connect();
+```javascript async.js theme={null}
+const stream = await client.stream.postsSample();
+for await (const event of stream) {
+  console.log(event);
+}
 ```
 
 </CodeGroup>
 
 ## Stream Management
 
-Control stream lifecycle:
+Control lifecycle from the event-driven stream:
 
 ```typescript
-// Connect to stream
-await stream.connect();
+// Close the stream
+stream.close();
 
-// Check connection status
-console.log('Connected:', stream.isConnected());
-
-// Disconnect from stream
-await stream.disconnect();
-
-// Reconnect after disconnect
-await stream.reconnect();
-```
-
-## Filtering Streams
-
-Apply filters to streams:
-
-```typescript
-// Stream with specific rules
-const filteredStream = await client.stream.getTweetsStream({
-  tweetFields: ['created_at', 'author_id', 'text'],
-  expansions: ['author_id'],
-  userFields: ['username', 'name']
-});
-
-// Add filtering rules
-await client.stream.addRules({
-  add: [
-    { value: 'typescript', tag: 'typescript-tweets' },
-    { value: 'javascript', tag: 'js-tweets' }
-  ]
-});
+// Auto-reconnect (if enabled by your wrapper)
+// The default EventDrivenStream exposes basic reconnect hooks
 ```
 
 ## Error Handling
@@ -103,18 +88,12 @@ await client.stream.addRules({
 Handle streaming errors and reconnections:
 
 ```typescript
-stream.on('error', (error) => {
-  if (error.code === 'ECONNRESET') {
-    console.log('Connection lost, reconnecting...');
-    stream.reconnect();
-  } else {
-    console.error('Stream error:', error);
-  }
+stream.on('error', (event) => {
+  const err = event.error || event;
+  console.error('Stream error:', err);
 });
 
-// Handle rate limiting
-stream.on('rate_limit', (rateLimitInfo) => {
-  console.log('Rate limited, backing off...');
-  // Implement backoff strategy
+stream.on('keepAlive', () => {
+  // heartbeat event
 });
 ```

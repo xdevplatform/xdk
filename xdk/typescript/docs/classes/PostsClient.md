@@ -53,7 +53,7 @@ Creates a new posts client instance
 
 #### Defined in
 
-[posts/client.ts:453](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L453)
+[posts/client.ts:453](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L453)
 
 ## Methods
 
@@ -79,7 +79,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:470](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L470)
+[posts/client.ts:470](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L470)
 
 ___
 
@@ -107,7 +107,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:576](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L576)
+[posts/client.ts:576](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L576)
 
 ___
 
@@ -133,7 +133,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:638](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L638)
+[posts/client.ts:638](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L638)
 
 ___
 
@@ -159,7 +159,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:686](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L686)
+[posts/client.ts:686](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L686)
 
 ___
 
@@ -189,7 +189,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:796](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L796)
+[posts/client.ts:796](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L796)
 
 ___
 
@@ -218,7 +218,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:880](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L880)
+[posts/client.ts:880](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L880)
 
 ___
 
@@ -244,7 +244,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:947](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L947)
+[posts/client.ts:947](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L947)
 
 ___
 
@@ -269,7 +269,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1027](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1027)
+[posts/client.ts:1027](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L1027)
 
 ___
 
@@ -295,7 +295,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1065](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1065)
+[posts/client.ts:1065](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L1065)
 
 ___
 
@@ -321,7 +321,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1139](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1139)
+[posts/client.ts:1139](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L1139)
 
 ___
 
@@ -347,7 +347,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1269](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1269)
+[posts/client.ts:1269](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L1269)
 
 ___
 
@@ -373,7 +373,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1399](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1399)
+[posts/client.ts:1399](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L1399)
 
 ___
 
@@ -399,7 +399,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1491](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1491)
+[posts/client.ts:1491](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L1491)
 
 ___
 
@@ -425,7 +425,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1565](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1565)
+[posts/client.ts:1565](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L1565)
 
 ___
 
@@ -450,7 +450,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1645](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1645)
+[posts/client.ts:1645](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L1645)
 
 ___
 
@@ -476,4 +476,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[posts/client.ts:1683](https://github.com/xdevplatform/xdk/blob/796140a044d14160471bbb8c39cc8eae5182b809/xdk/typescript/src/posts/client.ts#L1683)
+[posts/client.ts:1683](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/posts/client.ts#L1683)
