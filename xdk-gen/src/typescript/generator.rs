@@ -26,7 +26,7 @@ fn typescript_type(value: &str) -> String {
 
 /// MiniJinja filter for getting the last part of a dot-separated path
 fn last_part(value: &str) -> String {
-    value.split('.').last().unwrap_or(value).to_string()
+    value.split('.').next_back().unwrap_or(value).to_string()
 }
 
 /// MiniJinja filter for extracting schema name from a reference path
@@ -36,17 +36,7 @@ fn schema_name_from_ref(path: &str) -> String {
         path.trim_start_matches("#/components/schemas/").to_string()
     } else {
         // Fallback: try to get last part after /
-        path.split('/').last().unwrap_or(path).to_string()
-    }
-}
-
-/// Extract schema name from a reference path
-/// e.g., "#/components/schemas/User" -> "User"
-fn extract_schema_name_from_ref(path: &str) -> Option<String> {
-    if path.starts_with("#/components/schemas/") {
-        Some(path.trim_start_matches("#/components/schemas/").to_string())
-    } else {
-        None
+        path.split('/').next_back().unwrap_or(path).to_string()
     }
 }
 
