@@ -8,12 +8,12 @@ import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
   GetStreamLinksResponse,
+  CreateStreamLinkResponse,
+  DeleteStreamLinkResponse,
   ValidateResponse,
   DeleteResponse,
   GetResponse,
   CreateResponse,
-  CreateStreamLinkResponse,
-  DeleteStreamLinkResponse,
 } from './models.js';
 
 /**
@@ -22,6 +22,50 @@ import {
  * @public
  */
 export interface GetStreamLinksStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for createStreamLink method
+ * 
+ * @public
+ */
+export interface CreateStreamLinkStreamingOptions {
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: string;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: string;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: string;
+
+  /** A comma separated list of Poll fields to display. */
+  pollfields?: string;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: string;
+
+  /** A comma separated list of Place fields to display. */
+  placefields?: string;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for deleteStreamLink method
+ * 
+ * @public
+ */
+export interface DeleteStreamLinkStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -87,50 +131,6 @@ export interface CreateStreamingOptions {
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
-/**
- * Options for createStreamLink method
- * 
- * @public
- */
-export interface CreateStreamLinkStreamingOptions {
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: string;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: string;
-
-  /** A comma separated list of Media fields to display. */
-  mediafields?: string;
-
-  /** A comma separated list of Poll fields to display. */
-  pollfields?: string;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: string;
-
-  /** A comma separated list of Place fields to display. */
-  placefields?: string;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for deleteStreamLink method
- * 
- * @public
- */
-export interface DeleteStreamLinkStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
 
 export class WebhooksClient {
   private client: Client;
@@ -180,6 +180,145 @@ export class WebhooksClient {
     // Make the request
     return this.client.request<GetStreamLinksResponse>(
       'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Create stream link
+     * Creates a link to deliver FilteredStream events to the given webhook.
+     * 
+     * @returns Promise with the API response
+     */
+  async createStreamLink(
+    webhookId: string,
+    options: CreateStreamLinkStreamingOptions = {}
+  ): Promise<CreateStreamLinkResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'createStreamLink');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      tweetfields = undefined,
+
+      expansions = undefined,
+
+      mediafields = undefined,
+
+      pollfields = undefined,
+
+      userfields = undefined,
+
+      placefields = undefined,
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/tweets/search/webhooks/{webhook_id}';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', String(tweetfields));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', String(expansions));
+    }
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', String(mediafields));
+    }
+
+    if (pollfields !== undefined) {
+      params.append('poll.fields', String(pollfields));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', String(userfields));
+    }
+
+    if (placefields !== undefined) {
+      params.append('place.fields', String(placefields));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<CreateStreamLinkResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Delete stream link
+     * Deletes a link from FilteredStream events to the given webhook.
+     * 
+     * @returns Promise with the API response
+     */
+  async deleteStreamLink(
+    webhookId: string,
+    options: DeleteStreamLinkStreamingOptions = {}
+  ): Promise<DeleteStreamLinkResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'deleteStreamLink');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const { headers = {}, signal, requestOptions = {} } = options || {};
+
+    // Build the path with path parameters
+    let path = '/2/tweets/search/webhooks/{webhook_id}';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<DeleteStreamLinkResponse>(
+      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -392,145 +531,6 @@ export class WebhooksClient {
     // Make the request
     return this.client.request<CreateResponse>(
       'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Create stream link
-     * Creates a link to deliver FilteredStream events to the given webhook.
-     * 
-     * @returns Promise with the API response
-     */
-  async createStreamLink(
-    webhookId: string,
-    options: CreateStreamLinkStreamingOptions = {}
-  ): Promise<CreateStreamLinkResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'createStreamLink');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      tweetfields = undefined,
-
-      expansions = undefined,
-
-      mediafields = undefined,
-
-      pollfields = undefined,
-
-      userfields = undefined,
-
-      placefields = undefined,
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/tweets/search/webhooks/{webhook_id}';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', String(tweetfields));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', String(expansions));
-    }
-
-    if (mediafields !== undefined) {
-      params.append('media.fields', String(mediafields));
-    }
-
-    if (pollfields !== undefined) {
-      params.append('poll.fields', String(pollfields));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', String(userfields));
-    }
-
-    if (placefields !== undefined) {
-      params.append('place.fields', String(placefields));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<CreateStreamLinkResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Delete stream link
-     * Deletes a link from FilteredStream events to the given webhook.
-     * 
-     * @returns Promise with the API response
-     */
-  async deleteStreamLink(
-    webhookId: string,
-    options: DeleteStreamLinkStreamingOptions = {}
-  ): Promise<DeleteStreamLinkResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'deleteStreamLink');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const { headers = {}, signal, requestOptions = {} } = options || {};
-
-    // Build the path with path parameters
-    let path = '/2/tweets/search/webhooks/{webhook_id}';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<DeleteStreamLinkResponse>(
-      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

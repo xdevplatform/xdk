@@ -8,12 +8,6 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
- * Response for deleteSubscription
- * 
- * @public
- */
-export type DeleteSubscriptionResponse = Schemas.SubscriptionsDeleteResponse;
-/**
  * Response for getSubscriptions
  * 
  * @public
@@ -43,6 +37,12 @@ export type CreateSubscriptionRequest = Schemas.SubscriptionsCreateRequest;
  * @public
  */
 export type CreateSubscriptionResponse = Schemas.SubscriptionsCreateResponse;
+/**
+ * Response for deleteSubscription
+ * 
+ * @public
+ */
+export type DeleteSubscriptionResponse = Schemas.SubscriptionsDeleteResponse;
 /**
  * Response for getSubscriptionCount
  * 

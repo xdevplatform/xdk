@@ -14,6 +14,18 @@ import type * as Schemas from '../schemas.js';
  */
 export type GetStreamLinksResponse = Schemas.WebhookLinksGetResponse;
 /**
+ * Response for createStreamLink
+ * 
+ * @public
+ */
+export type CreateStreamLinkResponse = Schemas.WebhookLinksCreateResponse;
+/**
+ * Response for deleteStreamLink
+ * 
+ * @public
+ */
+export type DeleteStreamLinkResponse = Schemas.WebhookLinksDeleteResponse;
+/**
  * Response for validate
  * 
  * @public
@@ -43,15 +55,3 @@ export type CreateRequest = Schemas.WebhookConfigCreateRequest;
  * @public
  */
 export type CreateResponse = Schemas.WebhookConfigCreateResponse;
-/**
- * Response for createStreamLink
- * 
- * @public
- */
-export type CreateStreamLinkResponse = Schemas.WebhookLinksCreateResponse;
-/**
- * Response for deleteStreamLink
- * 
- * @public
- */
-export type DeleteStreamLinkResponse = Schemas.WebhookLinksDeleteResponse;

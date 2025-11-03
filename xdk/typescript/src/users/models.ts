@@ -8,71 +8,17 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
- * Response for blockDms
+ * Response for getMentions
  * 
  * @public
  */
-export type BlockDmsResponse = Schemas.UsersDMBlockCreateResponse;
+export type GetMentionsResponse = Schemas.Get2UsersIdMentionsResponse;
 /**
- * Response for getByUsernames
+ * Response for getRepostsOfMe
  * 
  * @public
  */
-export type GetByUsernamesResponse = Schemas.Get2UsersByResponse;
-/**
- * Response for getByIds
- * 
- * @public
- */
-export type GetByIdsResponse = Schemas.Get2UsersResponse;
-/**
- * Response for unlikePost
- * 
- * @public
- */
-export type UnlikePostResponse = Schemas.UsersLikesDeleteResponse;
-/**
- * Response for getBlocking
- * 
- * @public
- */
-export type GetBlockingResponse = Schemas.Get2UsersIdBlockingResponse;
-/**
- * Response for unmuteUser
- * 
- * @public
- */
-export type UnmuteUserResponse = Schemas.MuteUserMutationResponse;
-/**
- * Response for unpinList
- * 
- * @public
- */
-export type UnpinListResponse = Schemas.ListUnpinResponse;
-/**
- * Response for getBookmarkFolders
- * 
- * @public
- */
-export type GetBookmarkFoldersResponse = Schemas.BookmarkFoldersResponse;
-/**
- * Response for getPosts
- * 
- * @public
- */
-export type GetPostsResponse = Schemas.Get2UsersIdTweetsResponse;
-/**
- * Response for unfollowUser
- * 
- * @public
- */
-export type UnfollowUserResponse = Schemas.UsersFollowingDeleteResponse;
-/**
- * Response for getTimeline
- * 
- * @public
- */
-export type GetTimelineResponse = Schemas.Get2UsersIdTimelinesReverseChronologicalResponse;
+export type GetRepostsOfMeResponse = Schemas.Get2UsersRepostsOfMeResponse;
 /**
  * Response for getBookmarks
  * 
@@ -92,6 +38,144 @@ export type CreateBookmarkRequest = Schemas.BookmarkAddRequest;
  */
 export type CreateBookmarkResponse = Schemas.BookmarkMutationResponse;
 /**
+ * Response for getBlocking
+ * 
+ * @public
+ */
+export type GetBlockingResponse = Schemas.Get2UsersIdBlockingResponse;
+/**
+ * Response for getBookmarksByFolderId
+ * 
+ * @public
+ */
+export type GetBookmarksByFolderIdResponse = Schemas.BookmarkFolderPostsResponse;
+/**
+ * Response for getById
+ * 
+ * @public
+ */
+export type GetByIdResponse = Schemas.Get2UsersIdResponse;
+/**
+ * Response for unrepostPost
+ * 
+ * @public
+ */
+export type UnrepostPostResponse = Schemas.UsersRetweetsDeleteResponse;
+/**
+ * Response for getFollowers
+ * 
+ * @public
+ */
+export type GetFollowersResponse = Schemas.Get2UsersIdFollowersResponse;
+/**
+ * Request for likePost
+ * 
+ * @public
+ */
+export type LikePostRequest = Schemas.UsersLikesCreateRequest;
+/**
+ * Response for likePost
+ * 
+ * @public
+ */
+export type LikePostResponse = Schemas.UsersLikesCreateResponse;
+/**
+ * Response for unlikePost
+ * 
+ * @public
+ */
+export type UnlikePostResponse = Schemas.UsersLikesDeleteResponse;
+/**
+ * Response for unfollowList
+ * 
+ * @public
+ */
+export type UnfollowListResponse = Schemas.ListFollowedResponse;
+/**
+ * Response for getFollowing
+ * 
+ * @public
+ */
+export type GetFollowingResponse = Schemas.Get2UsersIdFollowingResponse;
+/**
+ * Request for followUser
+ * 
+ * @public
+ */
+export type FollowUserRequest = Schemas.UsersFollowingCreateRequest;
+/**
+ * Response for followUser
+ * 
+ * @public
+ */
+export type FollowUserResponse = Schemas.UsersFollowingCreateResponse;
+/**
+ * Response for getLikedPosts
+ * 
+ * @public
+ */
+export type GetLikedPostsResponse = Schemas.Get2UsersIdLikedTweetsResponse;
+/**
+ * Response for unfollowUser
+ * 
+ * @public
+ */
+export type UnfollowUserResponse = Schemas.UsersFollowingDeleteResponse;
+/**
+ * Response for unpinList
+ * 
+ * @public
+ */
+export type UnpinListResponse = Schemas.ListUnpinResponse;
+/**
+ * Request for repostPost
+ * 
+ * @public
+ */
+export type RepostPostRequest = Schemas.UsersRetweetsCreateRequest;
+/**
+ * Response for repostPost
+ * 
+ * @public
+ */
+export type RepostPostResponse = Schemas.UsersRetweetsCreateResponse;
+/**
+ * Response for getPinnedLists
+ * 
+ * @public
+ */
+export type GetPinnedListsResponse = Schemas.Get2UsersIdPinnedListsResponse;
+/**
+ * Request for pinList
+ * 
+ * @public
+ */
+export type PinListRequest = Schemas.ListPinnedRequest;
+/**
+ * Response for pinList
+ * 
+ * @public
+ */
+export type PinListResponse = Schemas.ListPinnedResponse;
+/**
+ * Response for getListMemberships
+ * 
+ * @public
+ */
+export type GetListMembershipsResponse = Schemas.Get2UsersIdListMembershipsResponse;
+/**
+ * Response for unmuteUser
+ * 
+ * @public
+ */
+export type UnmuteUserResponse = Schemas.MuteUserMutationResponse;
+/**
+ * Response for blockDms
+ * 
+ * @public
+ */
+export type BlockDmsResponse = Schemas.UsersDMBlockCreateResponse;
+/**
  * Response for getFollowedLists
  * 
  * @public
@@ -110,59 +194,11 @@ export type FollowListRequest = Schemas.ListFollowedRequest;
  */
 export type FollowListResponse = Schemas.ListFollowedResponse;
 /**
- * Response for getListMemberships
+ * Response for getByIds
  * 
  * @public
  */
-export type GetListMembershipsResponse = Schemas.Get2UsersIdListMembershipsResponse;
-/**
- * Response for getOwnedLists
- * 
- * @public
- */
-export type GetOwnedListsResponse = Schemas.Get2UsersIdOwnedListsResponse;
-/**
- * Response for getBookmarksByFolderId
- * 
- * @public
- */
-export type GetBookmarksByFolderIdResponse = Schemas.BookmarkFolderPostsResponse;
-/**
- * Request for repostPost
- * 
- * @public
- */
-export type RepostPostRequest = Schemas.UsersRetweetsCreateRequest;
-/**
- * Response for repostPost
- * 
- * @public
- */
-export type RepostPostResponse = Schemas.UsersRetweetsCreateResponse;
-/**
- * Response for unblockDms
- * 
- * @public
- */
-export type UnblockDmsResponse = Schemas.UsersDMUnBlockCreateResponse;
-/**
- * Response for getMentions
- * 
- * @public
- */
-export type GetMentionsResponse = Schemas.Get2UsersIdMentionsResponse;
-/**
- * Response for search
- * 
- * @public
- */
-export type SearchResponse = Schemas.Get2UsersSearchResponse;
-/**
- * Response for getFollowers
- * 
- * @public
- */
-export type GetFollowersResponse = Schemas.Get2UsersIdFollowersResponse;
+export type GetByIdsResponse = Schemas.Get2UsersResponse;
 /**
  * Response for getMe
  * 
@@ -170,17 +206,11 @@ export type GetFollowersResponse = Schemas.Get2UsersIdFollowersResponse;
  */
 export type GetMeResponse = Schemas.Get2UsersMeResponse;
 /**
- * Response for getById
+ * Response for unblockDms
  * 
  * @public
  */
-export type GetByIdResponse = Schemas.Get2UsersIdResponse;
-/**
- * Response for unfollowList
- * 
- * @public
- */
-export type UnfollowListResponse = Schemas.ListFollowedResponse;
+export type UnblockDmsResponse = Schemas.UsersDMUnBlockCreateResponse;
 /**
  * Response for getMuting
  * 
@@ -201,29 +231,11 @@ export type { MuteUserRequest as MuteUserRequest } from '../schemas.js';
  */
 export type MuteUserResponse = Schemas.MuteUserMutationResponse;
 /**
- * Response for getByUsername
+ * Response for getPosts
  * 
  * @public
  */
-export type GetByUsernameResponse = Schemas.Get2UsersByUsernameUsernameResponse;
-/**
- * Response for getPinnedLists
- * 
- * @public
- */
-export type GetPinnedListsResponse = Schemas.Get2UsersIdPinnedListsResponse;
-/**
- * Request for pinList
- * 
- * @public
- */
-export type PinListRequest = Schemas.ListPinnedRequest;
-/**
- * Response for pinList
- * 
- * @public
- */
-export type PinListResponse = Schemas.ListPinnedResponse;
+export type GetPostsResponse = Schemas.Get2UsersIdTweetsResponse;
 /**
  * Response for deleteBookmark
  * 
@@ -231,50 +243,38 @@ export type PinListResponse = Schemas.ListPinnedResponse;
  */
 export type DeleteBookmarkResponse = Schemas.BookmarkMutationResponse;
 /**
- * Response for getLikedPosts
+ * Response for getByUsernames
  * 
  * @public
  */
-export type GetLikedPostsResponse = Schemas.Get2UsersIdLikedTweetsResponse;
+export type GetByUsernamesResponse = Schemas.Get2UsersByResponse;
 /**
- * Response for unrepostPost
+ * Response for getByUsername
  * 
  * @public
  */
-export type UnrepostPostResponse = Schemas.UsersRetweetsDeleteResponse;
+export type GetByUsernameResponse = Schemas.Get2UsersByUsernameUsernameResponse;
 /**
- * Response for getRepostsOfMe
+ * Response for getBookmarkFolders
  * 
  * @public
  */
-export type GetRepostsOfMeResponse = Schemas.Get2UsersRepostsOfMeResponse;
+export type GetBookmarkFoldersResponse = Schemas.BookmarkFoldersResponse;
 /**
- * Response for getFollowing
+ * Response for search
  * 
  * @public
  */
-export type GetFollowingResponse = Schemas.Get2UsersIdFollowingResponse;
+export type SearchResponse = Schemas.Get2UsersSearchResponse;
 /**
- * Request for followUser
+ * Response for getTimeline
  * 
  * @public
  */
-export type FollowUserRequest = Schemas.UsersFollowingCreateRequest;
+export type GetTimelineResponse = Schemas.Get2UsersIdTimelinesReverseChronologicalResponse;
 /**
- * Response for followUser
+ * Response for getOwnedLists
  * 
  * @public
  */
-export type FollowUserResponse = Schemas.UsersFollowingCreateResponse;
-/**
- * Request for likePost
- * 
- * @public
- */
-export type LikePostRequest = Schemas.UsersLikesCreateRequest;
-/**
- * Response for likePost
- * 
- * @public
- */
-export type LikePostResponse = Schemas.UsersLikesCreateResponse;
+export type GetOwnedListsResponse = Schemas.Get2UsersIdOwnedListsResponse;

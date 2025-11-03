@@ -7,27 +7,14 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  DeleteSubscriptionResponse,
   GetSubscriptionsResponse,
   CreateReplayJobResponse,
   ValidateSubscriptionResponse,
   CreateSubscriptionResponse,
+  DeleteSubscriptionResponse,
   GetSubscriptionCountResponse,
 } from './models.js';
 
-/**
- * Options for deleteSubscription method
- * 
- * @public
- */
-export interface DeleteSubscriptionStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
 /**
  * Options for getSubscriptions method
  * 
@@ -84,6 +71,19 @@ export interface CreateSubscriptionStreamingOptions {
   signal?: AbortSignal;
 }
 /**
+ * Options for deleteSubscription method
+ * 
+ * @public
+ */
+export interface DeleteSubscriptionStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
  * Options for getSubscriptionCount method
  * 
  * @public
@@ -102,59 +102,6 @@ export class AccountActivityClient {
 
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-     * Delete subscription
-     * Deletes an Account Activity subscription for the given webhook and user ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async deleteSubscription(
-    webhookId: string,
-    userId: string,
-    options: DeleteSubscriptionStreamingOptions = {}
-  ): Promise<DeleteSubscriptionResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'deleteSubscription');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const { headers = {}, signal, requestOptions = {} } = options || {};
-
-    // Build the path with path parameters
-    let path =
-      '/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
-
-    path = path.replace('{user_id}', encodeURIComponent(String(userId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<DeleteSubscriptionResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
   }
 
   /**
@@ -372,6 +319,59 @@ export class AccountActivityClient {
     // Make the request
     return this.client.request<CreateSubscriptionResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Delete subscription
+     * Deletes an Account Activity subscription for the given webhook and user ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async deleteSubscription(
+    webhookId: string,
+    userId: string,
+    options: DeleteSubscriptionStreamingOptions = {}
+  ): Promise<DeleteSubscriptionResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'deleteSubscription');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const { headers = {}, signal, requestOptions = {} } = options || {};
+
+    // Build the path with path parameters
+    let path =
+      '/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    path = path.replace('{user_id}', encodeURIComponent(String(userId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<DeleteSubscriptionResponse>(
+      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
