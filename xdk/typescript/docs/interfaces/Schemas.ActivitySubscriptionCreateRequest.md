@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / ActivitySubscriptionCreateRequest
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / ActivitySubscriptionCreateRequest
 
 # Interface: ActivitySubscriptionCreateRequest
 
@@ -23,7 +23,7 @@ none
 
 #### Defined in
 
-[schemas.ts:40](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L40)
+[schemas.ts:40](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L40)
 
 ___
 
@@ -33,7 +33,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:48](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L48)
+[schemas.ts:48](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L48)
 
 ___
 
@@ -45,7 +45,7 @@ none
 
 #### Defined in
 
-[schemas.ts:49](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L49)
+[schemas.ts:49](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L49)
 
 ___
 
@@ -55,4 +55,4 @@ ___
 
 #### Defined in
 
-[schemas.ts:50](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L50)
+[schemas.ts:50](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L50)

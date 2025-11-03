@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / AccountActivityClient
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / AccountActivityClient
 
 # Class: AccountActivityClient
 
@@ -16,11 +16,11 @@ parsing for all account activity related operations.
 
 ### Methods
 
-- [deleteSubscription](AccountActivityClient.md#deletesubscription)
 - [getSubscriptions](AccountActivityClient.md#getsubscriptions)
 - [createReplayJob](AccountActivityClient.md#createreplayjob)
 - [validateSubscription](AccountActivityClient.md#validatesubscription)
 - [createSubscription](AccountActivityClient.md#createsubscription)
+- [deleteSubscription](AccountActivityClient.md#deletesubscription)
 - [getSubscriptionCount](AccountActivityClient.md#getsubscriptioncount)
 
 ## Constructors
@@ -43,35 +43,9 @@ Creates a new account activity client instance
 
 #### Defined in
 
-[account_activity/client.ts:54](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L54)
+[account_activity/client.ts:54](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/account_activity/client.ts#L54)
 
 ## Methods
-
-### deleteSubscription
-
-▸ **deleteSubscription**(`webhookId`, `userId`): `Promise`\<[`SubscriptionsDeleteResponse`](../interfaces/Schemas.SubscriptionsDeleteResponse.md)\>
-
-Delete subscription
-Deletes an Account Activity subscription for the given webhook and user ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `webhookId` | `string` | The webhook ID to check subscription against. |
-| `userId` | `string` | User ID to unsubscribe from. |
-
-#### Returns
-
-`Promise`\<[`SubscriptionsDeleteResponse`](../interfaces/Schemas.SubscriptionsDeleteResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[account_activity/client.ts:75](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L75)
-
-___
 
 ### getSubscriptions
 
@@ -94,7 +68,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:119](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L119)
+[account_activity/client.ts:71](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/account_activity/client.ts#L71)
 
 ___
 
@@ -121,7 +95,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:166](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L166)
+[account_activity/client.ts:118](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/account_activity/client.ts#L118)
 
 ___
 
@@ -146,7 +120,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:217](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L217)
+[account_activity/client.ts:169](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/account_activity/client.ts#L169)
 
 ___
 
@@ -172,7 +146,33 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:257](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L257)
+[account_activity/client.ts:209](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/account_activity/client.ts#L209)
+
+___
+
+### deleteSubscription
+
+▸ **deleteSubscription**(`webhookId`, `userId`): `Promise`\<[`SubscriptionsDeleteResponse`](../interfaces/Schemas.SubscriptionsDeleteResponse.md)\>
+
+Delete subscription
+Deletes an Account Activity subscription for the given webhook and user ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `webhookId` | `string` | The webhook ID to check subscription against. |
+| `userId` | `string` | User ID to unsubscribe from. |
+
+#### Returns
+
+`Promise`\<[`SubscriptionsDeleteResponse`](../interfaces/Schemas.SubscriptionsDeleteResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[account_activity/client.ts:261](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/account_activity/client.ts#L261)
 
 ___
 
@@ -191,4 +191,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[account_activity/client.ts:301](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/account_activity/client.ts#L301)
+[account_activity/client.ts:301](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/account_activity/client.ts#L301)

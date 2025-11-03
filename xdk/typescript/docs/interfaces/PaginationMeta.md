@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / PaginationMeta
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / PaginationMeta
 
 # Interface: PaginationMeta
 
@@ -23,7 +23,7 @@ Next page token
 
 #### Defined in
 
-[client.ts:165](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L165)
+[client.ts:165](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L165)
 
 ___
 
@@ -35,7 +35,7 @@ Previous page token
 
 #### Defined in
 
-[client.ts:167](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L167)
+[client.ts:167](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L167)
 
 ___
 
@@ -47,7 +47,7 @@ Total count
 
 #### Defined in
 
-[client.ts:169](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L169)
+[client.ts:169](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L169)
 
 ___
 
@@ -59,4 +59,4 @@ Result count
 
 #### Defined in
 
-[client.ts:171](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L171)
+[client.ts:171](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L171)

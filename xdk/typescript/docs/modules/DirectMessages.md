@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / DirectMessages
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / DirectMessages
 
 # Namespace: DirectMessages
 
@@ -7,14 +7,14 @@
 ### Type Aliases
 
 - [GetEventsResponse](DirectMessages.md#geteventsresponse)
-- [GetEventsByIdResponse](DirectMessages.md#geteventsbyidresponse)
-- [DeleteEventsResponse](DirectMessages.md#deleteeventsresponse)
-- [CreateByParticipantIdRequest](DirectMessages.md#createbyparticipantidrequest)
-- [CreateByParticipantIdResponse](DirectMessages.md#createbyparticipantidresponse)
+- [GetEventsByParticipantIdResponse](DirectMessages.md#geteventsbyparticipantidresponse)
 - [CreateByConversationIdRequest](DirectMessages.md#createbyconversationidrequest)
 - [CreateByConversationIdResponse](DirectMessages.md#createbyconversationidresponse)
-- [GetEventsByParticipantIdResponse](DirectMessages.md#geteventsbyparticipantidresponse)
+- [CreateByParticipantIdRequest](DirectMessages.md#createbyparticipantidrequest)
+- [CreateByParticipantIdResponse](DirectMessages.md#createbyparticipantidresponse)
 - [GetEventsByConversationIdResponse](DirectMessages.md#geteventsbyconversationidresponse)
+- [GetEventsByIdResponse](DirectMessages.md#geteventsbyidresponse)
+- [DeleteEventsResponse](DirectMessages.md#deleteeventsresponse)
 - [CreateConversationRequest](DirectMessages.md#createconversationrequest)
 - [CreateConversationResponse](DirectMessages.md#createconversationresponse)
 
@@ -28,79 +28,7 @@ Response for getEvents
 
 #### Defined in
 
-[direct_messages/models.ts:15](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L15)
-
-___
-
-### GetEventsByIdResponse
-
-Ƭ **GetEventsByIdResponse**: [`Get2DmEventsEventIdResponse`](../interfaces/Schemas.Get2DmEventsEventIdResponse.md)
-
-Response for getEventsById
-
-#### Defined in
-
-[direct_messages/models.ts:21](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L21)
-
-___
-
-### DeleteEventsResponse
-
-Ƭ **DeleteEventsResponse**: [`DeleteDmResponse`](../interfaces/Schemas.DeleteDmResponse.md)
-
-Response for deleteEvents
-
-#### Defined in
-
-[direct_messages/models.ts:27](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L27)
-
-___
-
-### CreateByParticipantIdRequest
-
-Ƭ **CreateByParticipantIdRequest**: [`CreateMessageRequest`](Schemas.md#createmessagerequest)
-
-Request for createByParticipantId
-
-#### Defined in
-
-[direct_messages/models.ts:33](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L33)
-
-___
-
-### CreateByParticipantIdResponse
-
-Ƭ **CreateByParticipantIdResponse**: [`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)
-
-Response for createByParticipantId
-
-#### Defined in
-
-[direct_messages/models.ts:39](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L39)
-
-___
-
-### CreateByConversationIdRequest
-
-Ƭ **CreateByConversationIdRequest**: [`CreateMessageRequest`](Schemas.md#createmessagerequest)
-
-Request for createByConversationId
-
-#### Defined in
-
-[direct_messages/models.ts:45](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L45)
-
-___
-
-### CreateByConversationIdResponse
-
-Ƭ **CreateByConversationIdResponse**: [`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)
-
-Response for createByConversationId
-
-#### Defined in
-
-[direct_messages/models.ts:51](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L51)
+[direct_messages/models.ts:15](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/models.ts#L15)
 
 ___
 
@@ -112,7 +40,55 @@ Response for getEventsByParticipantId
 
 #### Defined in
 
-[direct_messages/models.ts:57](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L57)
+[direct_messages/models.ts:21](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/models.ts#L21)
+
+___
+
+### CreateByConversationIdRequest
+
+Ƭ **CreateByConversationIdRequest**: [`CreateMessageRequest`](Schemas.md#createmessagerequest)
+
+Request for createByConversationId
+
+#### Defined in
+
+[direct_messages/models.ts:27](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/models.ts#L27)
+
+___
+
+### CreateByConversationIdResponse
+
+Ƭ **CreateByConversationIdResponse**: [`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)
+
+Response for createByConversationId
+
+#### Defined in
+
+[direct_messages/models.ts:33](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/models.ts#L33)
+
+___
+
+### CreateByParticipantIdRequest
+
+Ƭ **CreateByParticipantIdRequest**: [`CreateMessageRequest`](Schemas.md#createmessagerequest)
+
+Request for createByParticipantId
+
+#### Defined in
+
+[direct_messages/models.ts:39](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/models.ts#L39)
+
+___
+
+### CreateByParticipantIdResponse
+
+Ƭ **CreateByParticipantIdResponse**: [`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)
+
+Response for createByParticipantId
+
+#### Defined in
+
+[direct_messages/models.ts:45](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/models.ts#L45)
 
 ___
 
@@ -124,7 +100,31 @@ Response for getEventsByConversationId
 
 #### Defined in
 
-[direct_messages/models.ts:63](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L63)
+[direct_messages/models.ts:51](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/models.ts#L51)
+
+___
+
+### GetEventsByIdResponse
+
+Ƭ **GetEventsByIdResponse**: [`Get2DmEventsEventIdResponse`](../interfaces/Schemas.Get2DmEventsEventIdResponse.md)
+
+Response for getEventsById
+
+#### Defined in
+
+[direct_messages/models.ts:57](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/models.ts#L57)
+
+___
+
+### DeleteEventsResponse
+
+Ƭ **DeleteEventsResponse**: [`DeleteDmResponse`](../interfaces/Schemas.DeleteDmResponse.md)
+
+Response for deleteEvents
+
+#### Defined in
+
+[direct_messages/models.ts:63](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/models.ts#L63)
 
 ___
 
@@ -136,7 +136,7 @@ Request for createConversation
 
 #### Defined in
 
-[direct_messages/models.ts:69](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L69)
+[direct_messages/models.ts:69](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/models.ts#L69)
 
 ___
 
@@ -148,4 +148,4 @@ Response for createConversation
 
 #### Defined in
 
-[direct_messages/models.ts:75](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/models.ts#L75)
+[direct_messages/models.ts:75](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/models.ts#L75)

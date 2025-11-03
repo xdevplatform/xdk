@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / ActivityClient
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / ActivityClient
 
 # Class: ActivityClient
 
@@ -16,9 +16,9 @@ parsing for all activity related operations.
 
 ### Methods
 
+- [stream](ActivityClient.md#stream)
 - [updateSubscription](ActivityClient.md#updatesubscription)
 - [deleteSubscription](ActivityClient.md#deletesubscription)
-- [stream](ActivityClient.md#stream)
 - [getSubscriptions](ActivityClient.md#getsubscriptions)
 - [createSubscription](ActivityClient.md#createsubscription)
 
@@ -42,9 +42,34 @@ Creates a new activity client instance
 
 #### Defined in
 
-[activity/client.ts:86](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/activity/client.ts#L86)
+[activity/client.ts:86](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/activity/client.ts#L86)
 
 ## Methods
+
+### stream
+
+▸ **stream**(`options?`): `Promise`\<[`ActivityStreamingResponse`](../interfaces/Schemas.ActivityStreamingResponse.md)\>
+
+Activity Stream
+Stream of X Activities
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `StreamOptions` |
+
+#### Returns
+
+`Promise`\<[`ActivityStreamingResponse`](../interfaces/Schemas.ActivityStreamingResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[activity/client.ts:99](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/activity/client.ts#L99)
+
+___
 
 ### updateSubscription
 
@@ -68,7 +93,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[activity/client.ts:103](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/activity/client.ts#L103)
+[activity/client.ts:156](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/activity/client.ts#L156)
 
 ___
 
@@ -93,32 +118,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[activity/client.ts:154](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/activity/client.ts#L154)
-
-___
-
-### stream
-
-▸ **stream**(`options?`): `Promise`\<[`ActivityStreamingResponse`](../interfaces/Schemas.ActivityStreamingResponse.md)\>
-
-Activity Stream
-Stream of X Activities
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `StreamOptions` |
-
-#### Returns
-
-`Promise`\<[`ActivityStreamingResponse`](../interfaces/Schemas.ActivityStreamingResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[activity/client.ts:193](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/activity/client.ts#L193)
+[activity/client.ts:207](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/activity/client.ts#L207)
 
 ___
 
@@ -137,7 +137,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[activity/client.ts:246](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/activity/client.ts#L246)
+[activity/client.ts:246](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/activity/client.ts#L246)
 
 ___
 
@@ -162,4 +162,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[activity/client.ts:278](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/activity/client.ts#L278)
+[activity/client.ts:278](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/activity/client.ts#L278)

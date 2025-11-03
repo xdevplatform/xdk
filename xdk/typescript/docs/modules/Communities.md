@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / Communities
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / Communities
 
 # Namespace: Communities
 
@@ -6,22 +6,10 @@
 
 ### Type Aliases
 
-- [SearchResponse](Communities.md#searchresponse)
 - [GetByIdResponse](Communities.md#getbyidresponse)
+- [SearchResponse](Communities.md#searchresponse)
 
 ## Type Aliases
-
-### SearchResponse
-
-Ƭ **SearchResponse**: [`Get2CommunitiesSearchResponse`](../interfaces/Schemas.Get2CommunitiesSearchResponse.md)
-
-Response for search
-
-#### Defined in
-
-[communities/models.ts:15](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/communities/models.ts#L15)
-
-___
 
 ### GetByIdResponse
 
@@ -31,4 +19,16 @@ Response for getById
 
 #### Defined in
 
-[communities/models.ts:21](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/communities/models.ts#L21)
+[communities/models.ts:15](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/communities/models.ts#L15)
+
+___
+
+### SearchResponse
+
+Ƭ **SearchResponse**: [`Get2CommunitiesSearchResponse`](../interfaces/Schemas.Get2CommunitiesSearchResponse.md)
+
+Response for search
+
+#### Defined in
+
+[communities/models.ts:21](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/communities/models.ts#L21)

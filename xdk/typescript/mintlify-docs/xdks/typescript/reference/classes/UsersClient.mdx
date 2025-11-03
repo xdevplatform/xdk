@@ -29,292 +29,58 @@ Creates a new users client instance
 
 #### Defined in
 
-[users/client.ts:720](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L720)
+[users/client.ts:720](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L720)
 
 ## Methods
 
-### blockDms
+### getMentions
 
-▸ **blockDms**(`id`): `Promise`\<[`UsersDMBlockCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersDMBlockCreateResponse)\>
+▸ **getMentions**(`id`, `options?`): `Promise`\<[`Get2UsersIdMentionsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdMentionsResponse)\>
 
-Block DMs
-Blocks direct messages to or from a specific User by their ID for the authenticated user.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the target User that the authenticated user requesting to block dms for. |
-
-#### Returns
-
-`Promise`\<[`UsersDMBlockCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersDMBlockCreateResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:737](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L737)
-
-___
-
-### getByUsernames
-
-▸ **getByUsernames**(`usernames`, `options?`): `Promise`\<[`Get2UsersByResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersByResponse)\>
-
-Get Users by usernames
-Retrieves details of multiple Users by their usernames.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `usernames` | `any`[] | A list of usernames, comma-separated. |
-| `options` | `GetByUsernamesOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2UsersByResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersByResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:775](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L775)
-
-___
-
-### getByIds
-
-▸ **getByIds**(`ids`, `options?`): `Promise`\<[`Get2UsersResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersResponse)\>
-
-Get Users by IDs
-Retrieves details of multiple Users by their IDs.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `ids` | `any`[] | A list of User IDs, comma-separated. You can specify up to 100 IDs. |
-| `options` | `GetByIdsOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2UsersResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:839](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L839)
-
-___
-
-### unlikePost
-
-▸ **unlikePost**(`id`, `tweetId`): `Promise`\<[`UsersLikesDeleteResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersLikesDeleteResponse)\>
-
-Unlike Post
-Causes the authenticated user to Unlike a specific Post by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User that is requesting to unlike the Post. |
-| `tweetId` | `string` | The ID of the Post that the User is requesting to unlike. |
-
-#### Returns
-
-`Promise`\<[`UsersLikesDeleteResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersLikesDeleteResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:907](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L907)
-
-___
-
-### getBlocking
-
-▸ **getBlocking**(`id`, `options?`): `Promise`\<[`Get2UsersIdBlockingResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdBlockingResponse)\>
-
-Get blocking
-Retrieves a list of Users blocked by the specified User ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User for whom to return results. |
-| `options` | `GetBlockingOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2UsersIdBlockingResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdBlockingResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:947](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L947)
-
-___
-
-### unmuteUser
-
-▸ **unmuteUser**(`sourceUserId`, `targetUserId`): `Promise`\<[`MuteUserMutationResponse`](/xdks/typescript/reference/interfaces/Schemas.MuteUserMutationResponse)\>
-
-Unmute User
-Causes the authenticated user to unmute a specific user by their ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `sourceUserId` | `string` | The ID of the authenticated source User that is requesting to unmute the target User. |
-| `targetUserId` | `string` | The ID of the User that the source User is requesting to unmute. |
-
-#### Returns
-
-`Promise`\<[`MuteUserMutationResponse`](/xdks/typescript/reference/interfaces/Schemas.MuteUserMutationResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:1025](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1025)
-
-___
-
-### unpinList
-
-▸ **unpinList**(`id`, `listId`): `Promise`\<[`ListUnpinResponse`](/xdks/typescript/reference/interfaces/Schemas.ListUnpinResponse)\>
-
-Unpin List
-Causes the authenticated user to unpin a specific List by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User for whom to return results. |
-| `listId` | `string` | The ID of the List to unpin. |
-
-#### Returns
-
-`Promise`\<[`ListUnpinResponse`](/xdks/typescript/reference/interfaces/Schemas.ListUnpinResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:1078](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1078)
-
-___
-
-### getBookmarkFolders
-
-▸ **getBookmarkFolders**(`id`, `options?`): `Promise`\<[`BookmarkFoldersResponse`](/xdks/typescript/reference/interfaces/Schemas.BookmarkFoldersResponse)\>
-
-Get Bookmark folders
-Retrieves a list of Bookmark folders created by the authenticated user.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User for whom to return results. |
-| `options` | `GetBookmarkFoldersOptions` | - |
-
-#### Returns
-
-`Promise`\<[`BookmarkFoldersResponse`](/xdks/typescript/reference/interfaces/Schemas.BookmarkFoldersResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:1118](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1118)
-
-___
-
-### getPosts
-
-▸ **getPosts**(`id`, `options?`): `Promise`\<[`Get2UsersIdTweetsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdTweetsResponse)\>
-
-Get Posts
-Retrieves a list of posts authored by a specific User by their ID.
+Get mentions
+Retrieves a list of Posts that mention a specific User by their ID.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `id` | `string` | The ID of the User to lookup. |
-| `options` | `GetPostsOptions` | - |
+| `options` | `GetMentionsOptions` | - |
 
 #### Returns
 
-`Promise`\<[`Get2UsersIdTweetsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdTweetsResponse)\>
+`Promise`\<[`Get2UsersIdMentionsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdMentionsResponse)\>
 
 Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1174](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1174)
+[users/client.ts:737](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L737)
 
 ___
 
-### unfollowUser
+### getRepostsOfMe
 
-▸ **unfollowUser**(`sourceUserId`, `targetUserId`): `Promise`\<[`UsersFollowingDeleteResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersFollowingDeleteResponse)\>
+▸ **getRepostsOfMe**(`options?`): `Promise`\<[`Get2UsersRepostsOfMeResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersRepostsOfMeResponse)\>
 
-Unfollow User
-Causes the authenticated user to unfollow a specific user by their ID.
+Get Reposts of me
+Retrieves a list of Posts that repost content from the authenticated user.
 
 #### Parameters
 
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `sourceUserId` | `string` | The ID of the authenticated source User that is requesting to unfollow the target User. |
-| `targetUserId` | `string` | The ID of the User that the source User is requesting to unfollow. |
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetRepostsOfMeOptions` |
 
 #### Returns
 
-`Promise`\<[`UsersFollowingDeleteResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersFollowingDeleteResponse)\>
+`Promise`\<[`Get2UsersRepostsOfMeResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersRepostsOfMeResponse)\>
 
 Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1300](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1300)
-
-___
-
-### getTimeline
-
-▸ **getTimeline**(`id`, `options?`): `Promise`\<[`Get2UsersIdTimelinesReverseChronologicalResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdTimelinesReverseChronologicalResponse)\>
-
-Get Timeline
-Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User to list Reverse Chronological Timeline Posts of. |
-| `options` | `GetTimelineOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2UsersIdTimelinesReverseChronologicalResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdTimelinesReverseChronologicalResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:1349](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1349)
+[users/client.ts:849](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L849)
 
 ___
 
@@ -340,7 +106,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1471](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1471)
+[users/client.ts:938](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L938)
 
 ___
 
@@ -366,111 +132,33 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1565](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1565)
+[users/client.ts:1032](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1032)
 
 ___
 
-### getFollowedLists
+### getBlocking
 
-▸ **getFollowedLists**(`id`, `options?`): `Promise`\<[`Get2UsersIdFollowedListsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdFollowedListsResponse)\>
+▸ **getBlocking**(`id`, `options?`): `Promise`\<[`Get2UsersIdBlockingResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdBlockingResponse)\>
 
-Get followed Lists
-Retrieves a list of Lists followed by a specific User by their ID.
+Get blocking
+Retrieves a list of Users blocked by the specified User ID.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
-| `id` | `string` | The ID of the User to lookup. |
-| `options` | `GetFollowedListsOptions` | - |
+| `id` | `string` | The ID of the authenticated source User for whom to return results. |
+| `options` | `GetBlockingOptions` | - |
 
 #### Returns
 
-`Promise`\<[`Get2UsersIdFollowedListsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdFollowedListsResponse)\>
+`Promise`\<[`Get2UsersIdBlockingResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdBlockingResponse)\>
 
 Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1608](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1608)
-
-___
-
-### followList
-
-▸ **followList**(`id`, `options?`): `Promise`\<[`ListFollowedResponse`](/xdks/typescript/reference/interfaces/Schemas.ListFollowedResponse)\>
-
-Follow List
-Causes the authenticated user to follow a specific List by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User that will follow the List. |
-| `options` | `FollowListOptions` | - |
-
-#### Returns
-
-`Promise`\<[`ListFollowedResponse`](/xdks/typescript/reference/interfaces/Schemas.ListFollowedResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:1682](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1682)
-
-___
-
-### getListMemberships
-
-▸ **getListMemberships**(`id`, `options?`): `Promise`\<[`Get2UsersIdListMembershipsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdListMembershipsResponse)\>
-
-Get List memberships
-Retrieves a list of Lists that a specific User is a member of by their ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the User to lookup. |
-| `options` | `GetListMembershipsOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2UsersIdListMembershipsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdListMembershipsResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:1730](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1730)
-
-___
-
-### getOwnedLists
-
-▸ **getOwnedLists**(`id`, `options?`): `Promise`\<[`Get2UsersIdOwnedListsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdOwnedListsResponse)\>
-
-Get owned Lists
-Retrieves a list of Lists owned by a specific User by their ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the User to lookup. |
-| `options` | `GetOwnedListsOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2UsersIdOwnedListsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdOwnedListsResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:1804](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1804)
+[users/client.ts:1075](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1075)
 
 ___
 
@@ -496,161 +184,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:1882](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1882)
-
-___
-
-### repostPost
-
-▸ **repostPost**(`id`, `options?`): `Promise`\<[`UsersRetweetsCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersRetweetsCreateResponse)\>
-
-Repost Post
-Causes the authenticated user to repost a specific Post by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User that is requesting to repost the Post. |
-| `options` | `RepostPostOptions` | - |
-
-#### Returns
-
-`Promise`\<[`UsersRetweetsCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersRetweetsCreateResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:1925](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1925)
-
-___
-
-### unblockDms
-
-▸ **unblockDms**(`id`): `Promise`\<[`UsersDMUnBlockCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersDMUnBlockCreateResponse)\>
-
-Unblock DMs
-Unblocks direct messages to or from a specific User by their ID for the authenticated user.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the target User that the authenticated user requesting to unblock dms for. |
-
-#### Returns
-
-`Promise`\<[`UsersDMUnBlockCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersDMUnBlockCreateResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:1973](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L1973)
-
-___
-
-### getMentions
-
-▸ **getMentions**(`id`, `options?`): `Promise`\<[`Get2UsersIdMentionsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdMentionsResponse)\>
-
-Get mentions
-Retrieves a list of Posts that mention a specific User by their ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the User to lookup. |
-| `options` | `GetMentionsOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2UsersIdMentionsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdMentionsResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:2011](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2011)
-
-___
-
-### search
-
-▸ **search**(`query`, `options?`): `Promise`\<[`Get2UsersSearchResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersSearchResponse)\>
-
-Search Users
-Retrieves a list of Users matching a search query.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `query` | `any` | TThe the query string by which to query for users. |
-| `options` | `SearchOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2UsersSearchResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersSearchResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:2127](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2127)
-
-___
-
-### getFollowers
-
-▸ **getFollowers**(`id`, `options?`): `Promise`\<[`Get2UsersIdFollowersResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdFollowersResponse)\>
-
-Get followers
-Retrieves a list of Users who follow a specific User by their ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the User to lookup. |
-| `options` | `GetFollowersOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2UsersIdFollowersResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdFollowersResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:2203](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2203)
-
-___
-
-### getMe
-
-▸ **getMe**(`options?`): `Promise`\<[`Get2UsersMeResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersMeResponse)\>
-
-Get my User
-Retrieves details of the authenticated user.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `GetMeOptions` |
-
-#### Returns
-
-`Promise`\<[`Get2UsersMeResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersMeResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:2273](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2273)
+[users/client.ts:1153](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1153)
 
 ___
 
@@ -676,215 +210,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2330](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2330)
-
-___
-
-### unfollowList
-
-▸ **unfollowList**(`id`, `listId`): `Promise`\<[`ListFollowedResponse`](/xdks/typescript/reference/interfaces/Schemas.ListFollowedResponse)\>
-
-Unfollow List
-Causes the authenticated user to unfollow a specific List by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User that will unfollow the List. |
-| `listId` | `string` | The ID of the List to unfollow. |
-
-#### Returns
-
-`Promise`\<[`ListFollowedResponse`](/xdks/typescript/reference/interfaces/Schemas.ListFollowedResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:2396](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2396)
-
-___
-
-### getMuting
-
-▸ **getMuting**(`id`, `options?`): `Promise`\<[`Get2UsersIdMutingResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdMutingResponse)\>
-
-Get muting
-Retrieves a list of Users muted by the authenticated user.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User for whom to return results. |
-| `options` | `GetMutingOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2UsersIdMutingResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdMutingResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:2439](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2439)
-
-___
-
-### muteUser
-
-▸ **muteUser**(`id`, `options?`): `Promise`\<[`MuteUserMutationResponse`](/xdks/typescript/reference/interfaces/Schemas.MuteUserMutationResponse)\>
-
-Mute User
-Causes the authenticated user to mute a specific User by their ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User that is requesting to mute the target User. |
-| `options` | `MuteUserOptions` | - |
-
-#### Returns
-
-`Promise`\<[`MuteUserMutationResponse`](/xdks/typescript/reference/interfaces/Schemas.MuteUserMutationResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:2513](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2513)
-
-___
-
-### getByUsername
-
-▸ **getByUsername**(`username`, `options?`): `Promise`\<[`Get2UsersByUsernameUsernameResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersByUsernameUsernameResponse)\>
-
-Get User by username
-Retrieves details of a specific User by their username.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `username` | `string` | A username. |
-| `options` | `GetByUsernameOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2UsersByUsernameUsernameResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersByUsernameUsernameResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:2561](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2561)
-
-___
-
-### getPinnedLists
-
-▸ **getPinnedLists**(`id`, `options?`): `Promise`\<[`Get2UsersIdPinnedListsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdPinnedListsResponse)\>
-
-Get pinned Lists
-Retrieves a list of Lists pinned by the authenticated user.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User for whom to return results. |
-| `options` | `GetPinnedListsOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2UsersIdPinnedListsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdPinnedListsResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:2623](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2623)
-
-___
-
-### pinList
-
-▸ **pinList**(`id`, `body`): `Promise`\<[`ListPinnedResponse`](/xdks/typescript/reference/interfaces/Schemas.ListPinnedResponse)\>
-
-Pin List
-Causes the authenticated user to pin a specific List by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User that will pin the List. |
-| `body` | [`ListPinnedRequest`](/xdks/typescript/reference/interfaces/Schemas.ListPinnedRequest) | Request body |
-
-#### Returns
-
-`Promise`\<[`ListPinnedResponse`](/xdks/typescript/reference/interfaces/Schemas.ListPinnedResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:2687](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2687)
-
-___
-
-### deleteBookmark
-
-▸ **deleteBookmark**(`id`, `tweetId`): `Promise`\<[`BookmarkMutationResponse`](/xdks/typescript/reference/interfaces/Schemas.BookmarkMutationResponse)\>
-
-Delete Bookmark
-Removes a Post from the authenticated user’s Bookmarks by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User whose bookmark is to be removed. |
-| `tweetId` | `string` | The ID of the Post that the source User is removing from bookmarks. |
-
-#### Returns
-
-`Promise`\<[`BookmarkMutationResponse`](/xdks/typescript/reference/interfaces/Schemas.BookmarkMutationResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:2731](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2731)
-
-___
-
-### getLikedPosts
-
-▸ **getLikedPosts**(`id`, `options?`): `Promise`\<[`Get2UsersIdLikedTweetsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdLikedTweetsResponse)\>
-
-Get liked Posts
-Retrieves a list of Posts liked by a specific User by their ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the User to lookup. |
-| `options` | `GetLikedPostsOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2UsersIdLikedTweetsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdLikedTweetsResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:2774](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2774)
+[users/client.ts:1196](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1196)
 
 ___
 
@@ -910,84 +236,33 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:2870](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2870)
+[users/client.ts:1262](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1262)
 
 ___
 
-### getRepostsOfMe
+### getFollowers
 
-▸ **getRepostsOfMe**(`options?`): `Promise`\<[`Get2UsersRepostsOfMeResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersRepostsOfMeResponse)\>
+▸ **getFollowers**(`id`, `options?`): `Promise`\<[`Get2UsersIdFollowersResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdFollowersResponse)\>
 
-Get Reposts of me
-Retrieves a list of Posts that repost content from the authenticated user.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `GetRepostsOfMeOptions` |
-
-#### Returns
-
-`Promise`\<[`Get2UsersRepostsOfMeResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersRepostsOfMeResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:2912](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L2912)
-
-___
-
-### getFollowing
-
-▸ **getFollowing**(`id`, `options?`): `Promise`\<[`Get2UsersIdFollowingResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdFollowingResponse)\>
-
-Get following
-Retrieves a list of Users followed by a specific User by their ID.
+Get followers
+Retrieves a list of Users who follow a specific User by their ID.
 
 #### Parameters
 
 | Name | Type | Description |
 | :------ | :------ | :------ |
 | `id` | `string` | The ID of the User to lookup. |
-| `options` | `GetFollowingOptions` | - |
+| `options` | `GetFollowersOptions` | - |
 
 #### Returns
 
-`Promise`\<[`Get2UsersIdFollowingResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdFollowingResponse)\>
+`Promise`\<[`Get2UsersIdFollowersResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdFollowersResponse)\>
 
 Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:3001](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L3001)
-
-___
-
-### followUser
-
-▸ **followUser**(`id`, `options?`): `Promise`\<[`UsersFollowingCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersFollowingCreateResponse)\>
-
-Follow User
-Causes the authenticated user to follow a specific user by their ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The ID of the authenticated source User that is requesting to follow the target User. |
-| `options` | `FollowUserOptions` | - |
-
-#### Returns
-
-`Promise`\<[`UsersFollowingCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersFollowingCreateResponse)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[users/client.ts:3075](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L3075)
+[users/client.ts:1308](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1308)
 
 ___
 
@@ -1013,4 +288,729 @@ Promise resolving to the API response
 
 #### Defined in
 
-[users/client.ts:3123](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/users/client.ts#L3123)
+[users/client.ts:1382](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1382)
+
+___
+
+### unlikePost
+
+▸ **unlikePost**(`id`, `tweetId`): `Promise`\<[`UsersLikesDeleteResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersLikesDeleteResponse)\>
+
+Unlike Post
+Causes the authenticated user to Unlike a specific Post by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the authenticated source User that is requesting to unlike the Post. |
+| `tweetId` | `string` | The ID of the Post that the User is requesting to unlike. |
+
+#### Returns
+
+`Promise`\<[`UsersLikesDeleteResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersLikesDeleteResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:1434](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1434)
+
+___
+
+### unfollowList
+
+▸ **unfollowList**(`id`, `listId`): `Promise`\<[`ListFollowedResponse`](/xdks/typescript/reference/interfaces/Schemas.ListFollowedResponse)\>
+
+Unfollow List
+Causes the authenticated user to unfollow a specific List by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the authenticated source User that will unfollow the List. |
+| `listId` | `string` | The ID of the List to unfollow. |
+
+#### Returns
+
+`Promise`\<[`ListFollowedResponse`](/xdks/typescript/reference/interfaces/Schemas.ListFollowedResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:1478](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1478)
+
+___
+
+### getFollowing
+
+▸ **getFollowing**(`id`, `options?`): `Promise`\<[`Get2UsersIdFollowingResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdFollowingResponse)\>
+
+Get following
+Retrieves a list of Users followed by a specific User by their ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the User to lookup. |
+| `options` | `GetFollowingOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2UsersIdFollowingResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdFollowingResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:1521](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1521)
+
+___
+
+### followUser
+
+▸ **followUser**(`id`, `options?`): `Promise`\<[`UsersFollowingCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersFollowingCreateResponse)\>
+
+Follow User
+Causes the authenticated user to follow a specific user by their ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the authenticated source User that is requesting to follow the target User. |
+| `options` | `FollowUserOptions` | - |
+
+#### Returns
+
+`Promise`\<[`UsersFollowingCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersFollowingCreateResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:1595](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1595)
+
+___
+
+### getLikedPosts
+
+▸ **getLikedPosts**(`id`, `options?`): `Promise`\<[`Get2UsersIdLikedTweetsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdLikedTweetsResponse)\>
+
+Get liked Posts
+Retrieves a list of Posts liked by a specific User by their ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the User to lookup. |
+| `options` | `GetLikedPostsOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2UsersIdLikedTweetsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdLikedTweetsResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:1643](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1643)
+
+___
+
+### unfollowUser
+
+▸ **unfollowUser**(`sourceUserId`, `targetUserId`): `Promise`\<[`UsersFollowingDeleteResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersFollowingDeleteResponse)\>
+
+Unfollow User
+Causes the authenticated user to unfollow a specific user by their ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `sourceUserId` | `string` | The ID of the authenticated source User that is requesting to unfollow the target User. |
+| `targetUserId` | `string` | The ID of the User that the source User is requesting to unfollow. |
+
+#### Returns
+
+`Promise`\<[`UsersFollowingDeleteResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersFollowingDeleteResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:1739](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1739)
+
+___
+
+### unpinList
+
+▸ **unpinList**(`id`, `listId`): `Promise`\<[`ListUnpinResponse`](/xdks/typescript/reference/interfaces/Schemas.ListUnpinResponse)\>
+
+Unpin List
+Causes the authenticated user to unpin a specific List by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the authenticated source User for whom to return results. |
+| `listId` | `string` | The ID of the List to unpin. |
+
+#### Returns
+
+`Promise`\<[`ListUnpinResponse`](/xdks/typescript/reference/interfaces/Schemas.ListUnpinResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:1792](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1792)
+
+___
+
+### repostPost
+
+▸ **repostPost**(`id`, `options?`): `Promise`\<[`UsersRetweetsCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersRetweetsCreateResponse)\>
+
+Repost Post
+Causes the authenticated user to repost a specific Post by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the authenticated source User that is requesting to repost the Post. |
+| `options` | `RepostPostOptions` | - |
+
+#### Returns
+
+`Promise`\<[`UsersRetweetsCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersRetweetsCreateResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:1832](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1832)
+
+___
+
+### getPinnedLists
+
+▸ **getPinnedLists**(`id`, `options?`): `Promise`\<[`Get2UsersIdPinnedListsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdPinnedListsResponse)\>
+
+Get pinned Lists
+Retrieves a list of Lists pinned by the authenticated user.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the authenticated source User for whom to return results. |
+| `options` | `GetPinnedListsOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2UsersIdPinnedListsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdPinnedListsResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:1880](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1880)
+
+___
+
+### pinList
+
+▸ **pinList**(`id`, `body`): `Promise`\<[`ListPinnedResponse`](/xdks/typescript/reference/interfaces/Schemas.ListPinnedResponse)\>
+
+Pin List
+Causes the authenticated user to pin a specific List by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the authenticated source User that will pin the List. |
+| `body` | [`ListPinnedRequest`](/xdks/typescript/reference/interfaces/Schemas.ListPinnedRequest) | Request body |
+
+#### Returns
+
+`Promise`\<[`ListPinnedResponse`](/xdks/typescript/reference/interfaces/Schemas.ListPinnedResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:1944](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1944)
+
+___
+
+### getListMemberships
+
+▸ **getListMemberships**(`id`, `options?`): `Promise`\<[`Get2UsersIdListMembershipsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdListMembershipsResponse)\>
+
+Get List memberships
+Retrieves a list of Lists that a specific User is a member of by their ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the User to lookup. |
+| `options` | `GetListMembershipsOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2UsersIdListMembershipsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdListMembershipsResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:1984](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L1984)
+
+___
+
+### unmuteUser
+
+▸ **unmuteUser**(`sourceUserId`, `targetUserId`): `Promise`\<[`MuteUserMutationResponse`](/xdks/typescript/reference/interfaces/Schemas.MuteUserMutationResponse)\>
+
+Unmute User
+Causes the authenticated user to unmute a specific user by their ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `sourceUserId` | `string` | The ID of the authenticated source User that is requesting to unmute the target User. |
+| `targetUserId` | `string` | The ID of the User that the source User is requesting to unmute. |
+
+#### Returns
+
+`Promise`\<[`MuteUserMutationResponse`](/xdks/typescript/reference/interfaces/Schemas.MuteUserMutationResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2062](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2062)
+
+___
+
+### blockDms
+
+▸ **blockDms**(`id`): `Promise`\<[`UsersDMBlockCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersDMBlockCreateResponse)\>
+
+Block DMs
+Blocks direct messages to or from a specific User by their ID for the authenticated user.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the target User that the authenticated user requesting to block dms for. |
+
+#### Returns
+
+`Promise`\<[`UsersDMBlockCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersDMBlockCreateResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2111](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2111)
+
+___
+
+### getFollowedLists
+
+▸ **getFollowedLists**(`id`, `options?`): `Promise`\<[`Get2UsersIdFollowedListsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdFollowedListsResponse)\>
+
+Get followed Lists
+Retrieves a list of Lists followed by a specific User by their ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the User to lookup. |
+| `options` | `GetFollowedListsOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2UsersIdFollowedListsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdFollowedListsResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2149](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2149)
+
+___
+
+### followList
+
+▸ **followList**(`id`, `options?`): `Promise`\<[`ListFollowedResponse`](/xdks/typescript/reference/interfaces/Schemas.ListFollowedResponse)\>
+
+Follow List
+Causes the authenticated user to follow a specific List by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the authenticated source User that will follow the List. |
+| `options` | `FollowListOptions` | - |
+
+#### Returns
+
+`Promise`\<[`ListFollowedResponse`](/xdks/typescript/reference/interfaces/Schemas.ListFollowedResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2223](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2223)
+
+___
+
+### getByIds
+
+▸ **getByIds**(`ids`, `options?`): `Promise`\<[`Get2UsersResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersResponse)\>
+
+Get Users by IDs
+Retrieves details of multiple Users by their IDs.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `ids` | `any`[] | A list of User IDs, comma-separated. You can specify up to 100 IDs. |
+| `options` | `GetByIdsOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2UsersResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2271](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2271)
+
+___
+
+### getMe
+
+▸ **getMe**(`options?`): `Promise`\<[`Get2UsersMeResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersMeResponse)\>
+
+Get my User
+Retrieves details of the authenticated user.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetMeOptions` |
+
+#### Returns
+
+`Promise`\<[`Get2UsersMeResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersMeResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2331](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2331)
+
+___
+
+### unblockDms
+
+▸ **unblockDms**(`id`): `Promise`\<[`UsersDMUnBlockCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersDMUnBlockCreateResponse)\>
+
+Unblock DMs
+Unblocks direct messages to or from a specific User by their ID for the authenticated user.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the target User that the authenticated user requesting to unblock dms for. |
+
+#### Returns
+
+`Promise`\<[`UsersDMUnBlockCreateResponse`](/xdks/typescript/reference/interfaces/Schemas.UsersDMUnBlockCreateResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2388](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2388)
+
+___
+
+### getMuting
+
+▸ **getMuting**(`id`, `options?`): `Promise`\<[`Get2UsersIdMutingResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdMutingResponse)\>
+
+Get muting
+Retrieves a list of Users muted by the authenticated user.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the authenticated source User for whom to return results. |
+| `options` | `GetMutingOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2UsersIdMutingResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdMutingResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2426](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2426)
+
+___
+
+### muteUser
+
+▸ **muteUser**(`id`, `options?`): `Promise`\<[`MuteUserMutationResponse`](/xdks/typescript/reference/interfaces/Schemas.MuteUserMutationResponse)\>
+
+Mute User
+Causes the authenticated user to mute a specific User by their ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the authenticated source User that is requesting to mute the target User. |
+| `options` | `MuteUserOptions` | - |
+
+#### Returns
+
+`Promise`\<[`MuteUserMutationResponse`](/xdks/typescript/reference/interfaces/Schemas.MuteUserMutationResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2500](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2500)
+
+___
+
+### getPosts
+
+▸ **getPosts**(`id`, `options?`): `Promise`\<[`Get2UsersIdTweetsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdTweetsResponse)\>
+
+Get Posts
+Retrieves a list of posts authored by a specific User by their ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the User to lookup. |
+| `options` | `GetPostsOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2UsersIdTweetsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdTweetsResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2548](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2548)
+
+___
+
+### deleteBookmark
+
+▸ **deleteBookmark**(`id`, `tweetId`): `Promise`\<[`BookmarkMutationResponse`](/xdks/typescript/reference/interfaces/Schemas.BookmarkMutationResponse)\>
+
+Delete Bookmark
+Removes a Post from the authenticated user’s Bookmarks by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the authenticated source User whose bookmark is to be removed. |
+| `tweetId` | `string` | The ID of the Post that the source User is removing from bookmarks. |
+
+#### Returns
+
+`Promise`\<[`BookmarkMutationResponse`](/xdks/typescript/reference/interfaces/Schemas.BookmarkMutationResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2674](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2674)
+
+___
+
+### getByUsernames
+
+▸ **getByUsernames**(`usernames`, `options?`): `Promise`\<[`Get2UsersByResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersByResponse)\>
+
+Get Users by usernames
+Retrieves details of multiple Users by their usernames.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `usernames` | `any`[] | A list of usernames, comma-separated. |
+| `options` | `GetByUsernamesOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2UsersByResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersByResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2717](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2717)
+
+___
+
+### getByUsername
+
+▸ **getByUsername**(`username`, `options?`): `Promise`\<[`Get2UsersByUsernameUsernameResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersByUsernameUsernameResponse)\>
+
+Get User by username
+Retrieves details of a specific User by their username.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `username` | `string` | A username. |
+| `options` | `GetByUsernameOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2UsersByUsernameUsernameResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersByUsernameUsernameResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2781](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2781)
+
+___
+
+### getBookmarkFolders
+
+▸ **getBookmarkFolders**(`id`, `options?`): `Promise`\<[`BookmarkFoldersResponse`](/xdks/typescript/reference/interfaces/Schemas.BookmarkFoldersResponse)\>
+
+Get Bookmark folders
+Retrieves a list of Bookmark folders created by the authenticated user.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the authenticated source User for whom to return results. |
+| `options` | `GetBookmarkFoldersOptions` | - |
+
+#### Returns
+
+`Promise`\<[`BookmarkFoldersResponse`](/xdks/typescript/reference/interfaces/Schemas.BookmarkFoldersResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2843](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2843)
+
+___
+
+### search
+
+▸ **search**(`query`, `options?`): `Promise`\<[`Get2UsersSearchResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersSearchResponse)\>
+
+Search Users
+Retrieves a list of Users matching a search query.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `query` | `any` | TThe the query string by which to query for users. |
+| `options` | `SearchOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2UsersSearchResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersSearchResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2899](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2899)
+
+___
+
+### getTimeline
+
+▸ **getTimeline**(`id`, `options?`): `Promise`\<[`Get2UsersIdTimelinesReverseChronologicalResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdTimelinesReverseChronologicalResponse)\>
+
+Get Timeline
+Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the authenticated source User to list Reverse Chronological Timeline Posts of. |
+| `options` | `GetTimelineOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2UsersIdTimelinesReverseChronologicalResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdTimelinesReverseChronologicalResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:2975](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L2975)
+
+___
+
+### getOwnedLists
+
+▸ **getOwnedLists**(`id`, `options?`): `Promise`\<[`Get2UsersIdOwnedListsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdOwnedListsResponse)\>
+
+Get owned Lists
+Retrieves a list of Lists owned by a specific User by their ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The ID of the User to lookup. |
+| `options` | `GetOwnedListsOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2UsersIdOwnedListsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsersIdOwnedListsResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[users/client.ts:3097](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/users/client.ts#L3097)

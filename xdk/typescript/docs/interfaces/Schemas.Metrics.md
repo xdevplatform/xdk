@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / Metrics
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / Metrics
 
 # Interface: Metrics
 
@@ -38,7 +38,7 @@ Tracks number of App Install Attempts
 
 #### Defined in
 
-[schemas.ts:1783](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1783)
+[schemas.ts:1783](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1783)
 
 ___
 
@@ -50,7 +50,7 @@ Tracks number of App opens
 
 #### Defined in
 
-[schemas.ts:1784](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1784)
+[schemas.ts:1784](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1784)
 
 ___
 
@@ -62,7 +62,7 @@ Tracks number of Detail expands
 
 #### Defined in
 
-[schemas.ts:1785](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1785)
+[schemas.ts:1785](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1785)
 
 ___
 
@@ -74,7 +74,7 @@ Tracks number of Email Tweet actions
 
 #### Defined in
 
-[schemas.ts:1786](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1786)
+[schemas.ts:1786](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1786)
 
 ___
 
@@ -86,7 +86,7 @@ Tracks total Engagements
 
 #### Defined in
 
-[schemas.ts:1787](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1787)
+[schemas.ts:1787](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1787)
 
 ___
 
@@ -98,7 +98,7 @@ Tracks number of Follows
 
 #### Defined in
 
-[schemas.ts:1788](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1788)
+[schemas.ts:1788](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1788)
 
 ___
 
@@ -110,7 +110,7 @@ Tracks number of Hashtag clicks
 
 #### Defined in
 
-[schemas.ts:1789](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1789)
+[schemas.ts:1789](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1789)
 
 ___
 
@@ -122,7 +122,7 @@ Tracks number of Impressions
 
 #### Defined in
 
-[schemas.ts:1790](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1790)
+[schemas.ts:1790](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1790)
 
 ___
 
@@ -134,7 +134,7 @@ Tracks number of Likes
 
 #### Defined in
 
-[schemas.ts:1791](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1791)
+[schemas.ts:1791](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1791)
 
 ___
 
@@ -146,7 +146,7 @@ Tracks number of Link clicks
 
 #### Defined in
 
-[schemas.ts:1792](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1792)
+[schemas.ts:1792](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1792)
 
 ___
 
@@ -158,7 +158,7 @@ Tracks number of Media engagements
 
 #### Defined in
 
-[schemas.ts:1793](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1793)
+[schemas.ts:1793](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1793)
 
 ___
 
@@ -170,7 +170,7 @@ Tracks number of Media views
 
 #### Defined in
 
-[schemas.ts:1794](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1794)
+[schemas.ts:1794](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1794)
 
 ___
 
@@ -182,7 +182,7 @@ Tracks number of Permalink clicks
 
 #### Defined in
 
-[schemas.ts:1795](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1795)
+[schemas.ts:1795](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1795)
 
 ___
 
@@ -194,7 +194,7 @@ Tracks number of Profile visits
 
 #### Defined in
 
-[schemas.ts:1796](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1796)
+[schemas.ts:1796](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1796)
 
 ___
 
@@ -206,7 +206,7 @@ Tracks number of Quote Tweets
 
 #### Defined in
 
-[schemas.ts:1797](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1797)
+[schemas.ts:1797](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1797)
 
 ___
 
@@ -218,7 +218,7 @@ Tracks number of Replies
 
 #### Defined in
 
-[schemas.ts:1798](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1798)
+[schemas.ts:1798](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1798)
 
 ___
 
@@ -230,7 +230,7 @@ Tracks number of Retweets
 
 #### Defined in
 
-[schemas.ts:1799](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1799)
+[schemas.ts:1799](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1799)
 
 ___
 
@@ -242,7 +242,7 @@ Tracks number of URL clicks
 
 #### Defined in
 
-[schemas.ts:1800](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1800)
+[schemas.ts:1800](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1800)
 
 ___
 
@@ -254,4 +254,4 @@ Tracks number of User Profile clicks
 
 #### Defined in
 
-[schemas.ts:1801](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1801)
+[schemas.ts:1801](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1801)

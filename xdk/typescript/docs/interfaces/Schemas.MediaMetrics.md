@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / MediaMetrics
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / MediaMetrics
 
 # Interface: MediaMetrics
 
@@ -29,7 +29,7 @@ Tracks the number of clicks on a call-to-action URL
 
 #### Defined in
 
-[schemas.ts:1641](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1641)
+[schemas.ts:1641](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1641)
 
 ___
 
@@ -41,7 +41,7 @@ Tracks the number of clicks to watch a video or media content
 
 #### Defined in
 
-[schemas.ts:1642](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1642)
+[schemas.ts:1642](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1642)
 
 ___
 
@@ -53,7 +53,7 @@ Tracks the number of times a video or media is played from a user tap
 
 #### Defined in
 
-[schemas.ts:1643](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1643)
+[schemas.ts:1643](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1643)
 
 ___
 
@@ -65,7 +65,7 @@ Tracks the number of times a video reaches 25% of its duration
 
 #### Defined in
 
-[schemas.ts:1644](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1644)
+[schemas.ts:1644](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1644)
 
 ___
 
@@ -77,7 +77,7 @@ Tracks the number of times a video reaches 50% of its duration
 
 #### Defined in
 
-[schemas.ts:1645](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1645)
+[schemas.ts:1645](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1645)
 
 ___
 
@@ -89,7 +89,7 @@ Tracks the number of times a video reaches 75% of its duration
 
 #### Defined in
 
-[schemas.ts:1646](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1646)
+[schemas.ts:1646](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1646)
 
 ___
 
@@ -101,7 +101,7 @@ Tracks the number of times a video is played to completion
 
 #### Defined in
 
-[schemas.ts:1647](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1647)
+[schemas.ts:1647](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1647)
 
 ___
 
@@ -113,7 +113,7 @@ Tracks the number of times a video playback is initiated
 
 #### Defined in
 
-[schemas.ts:1648](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1648)
+[schemas.ts:1648](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1648)
 
 ___
 
@@ -125,7 +125,7 @@ Tracks the number of times a video is viewed
 
 #### Defined in
 
-[schemas.ts:1649](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1649)
+[schemas.ts:1649](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1649)
 
 ___
 
@@ -137,4 +137,4 @@ Tracks the total time spent watching a video, measured in milliseconds
 
 #### Defined in
 
-[schemas.ts:1650](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1650)
+[schemas.ts:1650](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1650)

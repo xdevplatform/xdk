@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / WebhooksClient
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / WebhooksClient
 
 # Class: WebhooksClient
 
@@ -17,12 +17,12 @@ parsing for all webhooks related operations.
 ### Methods
 
 - [getStreamLinks](WebhooksClient.md#getstreamlinks)
+- [createStreamLink](WebhooksClient.md#createstreamlink)
+- [deleteStreamLink](WebhooksClient.md#deletestreamlink)
 - [validate](WebhooksClient.md#validate)
 - [delete](WebhooksClient.md#delete)
 - [get](WebhooksClient.md#get)
 - [create](WebhooksClient.md#create)
-- [createStreamLink](WebhooksClient.md#createstreamlink)
-- [deleteStreamLink](WebhooksClient.md#deletestreamlink)
 
 ## Constructors
 
@@ -44,7 +44,7 @@ Creates a new webhooks client instance
 
 #### Defined in
 
-[webhooks/client.ts:96](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L96)
+[webhooks/client.ts:96](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/webhooks/client.ts#L96)
 
 ## Methods
 
@@ -63,107 +63,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:109](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L109)
-
-___
-
-### validate
-
-▸ **validate**(`webhookId`): `Promise`\<[`WebhookConfigPutResponse`](../interfaces/Schemas.WebhookConfigPutResponse.md)\>
-
-Validate webhook
-Triggers a CRC check for a given webhook.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `webhookId` | `string` | The ID of the webhook to check. |
-
-#### Returns
-
-`Promise`\<[`WebhookConfigPutResponse`](../interfaces/Schemas.WebhookConfigPutResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[webhooks/client.ts:145](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L145)
-
-___
-
-### delete
-
-▸ **delete**(`webhookId`): `Promise`\<[`WebhookConfigDeleteResponse`](../interfaces/Schemas.WebhookConfigDeleteResponse.md)\>
-
-Delete webhook
-Deletes an existing webhook configuration.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `webhookId` | `string` | The ID of the webhook to delete. |
-
-#### Returns
-
-`Promise`\<[`WebhookConfigDeleteResponse`](../interfaces/Schemas.WebhookConfigDeleteResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[webhooks/client.ts:183](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L183)
-
-___
-
-### get
-
-▸ **get**(`options?`): `Promise`\<[`Get2WebhooksResponse`](../interfaces/Schemas.Get2WebhooksResponse.md)\>
-
-Get webhook
-Get a list of webhook configs associated with a client app.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `GetOptions` |
-
-#### Returns
-
-`Promise`\<[`Get2WebhooksResponse`](../interfaces/Schemas.Get2WebhooksResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[webhooks/client.ts:217](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L217)
-
-___
-
-### create
-
-▸ **create**(`options?`): `Promise`\<[`WebhookConfigCreateResponse`](../interfaces/Schemas.WebhookConfigCreateResponse.md)\>
-
-Create webhook
-Creates a new webhook configuration.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `CreateOptions` |
-
-#### Returns
-
-`Promise`\<[`WebhookConfigCreateResponse`](../interfaces/Schemas.WebhookConfigCreateResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[webhooks/client.ts:258](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L258)
+[webhooks/client.ts:109](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/webhooks/client.ts#L109)
 
 ___
 
@@ -189,7 +89,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:301](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L301)
+[webhooks/client.ts:145](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/webhooks/client.ts#L145)
 
 ___
 
@@ -214,4 +114,104 @@ Promise resolving to the API response
 
 #### Defined in
 
-[webhooks/client.ts:381](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/webhooks/client.ts#L381)
+[webhooks/client.ts:225](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/webhooks/client.ts#L225)
+
+___
+
+### validate
+
+▸ **validate**(`webhookId`): `Promise`\<[`WebhookConfigPutResponse`](../interfaces/Schemas.WebhookConfigPutResponse.md)\>
+
+Validate webhook
+Triggers a CRC check for a given webhook.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `webhookId` | `string` | The ID of the webhook to check. |
+
+#### Returns
+
+`Promise`\<[`WebhookConfigPutResponse`](../interfaces/Schemas.WebhookConfigPutResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[webhooks/client.ts:263](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/webhooks/client.ts#L263)
+
+___
+
+### delete
+
+▸ **delete**(`webhookId`): `Promise`\<[`WebhookConfigDeleteResponse`](../interfaces/Schemas.WebhookConfigDeleteResponse.md)\>
+
+Delete webhook
+Deletes an existing webhook configuration.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `webhookId` | `string` | The ID of the webhook to delete. |
+
+#### Returns
+
+`Promise`\<[`WebhookConfigDeleteResponse`](../interfaces/Schemas.WebhookConfigDeleteResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[webhooks/client.ts:301](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/webhooks/client.ts#L301)
+
+___
+
+### get
+
+▸ **get**(`options?`): `Promise`\<[`Get2WebhooksResponse`](../interfaces/Schemas.Get2WebhooksResponse.md)\>
+
+Get webhook
+Get a list of webhook configs associated with a client app.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetOptions` |
+
+#### Returns
+
+`Promise`\<[`Get2WebhooksResponse`](../interfaces/Schemas.Get2WebhooksResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[webhooks/client.ts:335](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/webhooks/client.ts#L335)
+
+___
+
+### create
+
+▸ **create**(`options?`): `Promise`\<[`WebhookConfigCreateResponse`](../interfaces/Schemas.WebhookConfigCreateResponse.md)\>
+
+Create webhook
+Creates a new webhook configuration.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `CreateOptions` |
+
+#### Returns
+
+`Promise`\<[`WebhookConfigCreateResponse`](../interfaces/Schemas.WebhookConfigCreateResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[webhooks/client.ts:376](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/webhooks/client.ts#L376)

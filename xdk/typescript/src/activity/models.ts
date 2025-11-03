@@ -8,12 +8,6 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
- * Response for stream
- * 
- * @public
- */
-export type StreamResponse = Schemas.ActivityStreamingResponse;
-/**
  * Request for updateSubscription
  * 
  * @public
@@ -31,6 +25,12 @@ export type UpdateSubscriptionResponse = Schemas.ActivitySubscriptionUpdateRespo
  * @public
  */
 export type DeleteSubscriptionResponse = Schemas.ActivitySubscriptionDeleteResponse;
+/**
+ * Response for stream
+ * 
+ * @public
+ */
+export type StreamResponse = Schemas.ActivityStreamingResponse;
 /**
  * Response for getSubscriptions
  * 

@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / RulesCount
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / RulesCount
 
 # Interface: RulesCount
 
@@ -22,7 +22,7 @@
 
 #### Defined in
 
-[schemas.ts:2247](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2247)
+[schemas.ts:2247](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2247)
 
 ___
 
@@ -34,7 +34,7 @@ Cap of number of rules allowed per client application
 
 #### Defined in
 
-[schemas.ts:2248](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2248)
+[schemas.ts:2248](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2248)
 
 ___
 
@@ -46,7 +46,7 @@ Cap of number of rules allowed per project
 
 #### Defined in
 
-[schemas.ts:2249](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2249)
+[schemas.ts:2249](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2249)
 
 ___
 
@@ -56,7 +56,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2250](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2250)
+[schemas.ts:2250](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2250)
 
 ___
 
@@ -68,4 +68,4 @@ Number of rules for project
 
 #### Defined in
 
-[schemas.ts:2251](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2251)
+[schemas.ts:2251](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2251)

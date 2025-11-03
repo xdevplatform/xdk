@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / FullTextEntities
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / FullTextEntities
 
 # Interface: FullTextEntities
 
@@ -24,7 +24,7 @@ none
 
 #### Defined in
 
-[schemas.ts:655](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L655)
+[schemas.ts:655](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L655)
 
 ___
 
@@ -36,7 +36,7 @@ none
 
 #### Defined in
 
-[schemas.ts:656](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L656)
+[schemas.ts:656](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L656)
 
 ___
 
@@ -48,7 +48,7 @@ none
 
 #### Defined in
 
-[schemas.ts:657](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L657)
+[schemas.ts:657](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L657)
 
 ___
 
@@ -60,7 +60,7 @@ none
 
 #### Defined in
 
-[schemas.ts:658](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L658)
+[schemas.ts:658](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L658)
 
 ___
 
@@ -72,4 +72,4 @@ none
 
 #### Defined in
 
-[schemas.ts:659](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L659)
+[schemas.ts:659](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L659)

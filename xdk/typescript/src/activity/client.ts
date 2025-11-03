@@ -12,14 +12,27 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  StreamResponse,
   UpdateSubscriptionRequest,
   UpdateSubscriptionResponse,
   DeleteSubscriptionResponse,
+  StreamResponse,
   GetSubscriptionsResponse,
   CreateSubscriptionRequest,
   CreateSubscriptionResponse,
 } from './models.js';
+
+/**
+ * Options for updateSubscription method
+ * 
+ * @public
+ */
+export interface UpdateSubscriptionOptions {
+  /** Request body */
+  body?: UpdateSubscriptionRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
 
 /**
  * Options for stream method
@@ -35,19 +48,6 @@ export interface StreamOptions {
 
   /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
   endTime?: string;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for updateSubscription method
- * 
- * @public
- */
-export interface UpdateSubscriptionOptions {
-  /** Request body */
-  body?: UpdateSubscriptionRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -85,59 +85,6 @@ export class ActivityClient {
      */
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-   * Activity Stream
-   * Stream of X Activities
-
-
-
-   * @returns {Promise<StreamResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async stream(options: StreamOptions = {}): Promise<StreamResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      backfillMinutes = undefined,
-
-      startTime = undefined,
-
-      endTime = undefined,
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/activity/stream';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (backfillMinutes !== undefined) {
-      params.append('backfill_minutes', String(backfillMinutes));
-    }
-
-    if (startTime !== undefined) {
-      params.append('start_time', String(startTime));
-    }
-
-    if (endTime !== undefined) {
-      params.append('end_time', String(endTime));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<StreamResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
   }
 
   /**
@@ -229,6 +176,59 @@ export class ActivityClient {
 
     return this.client.request<DeleteSubscriptionResponse>(
       'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Activity Stream
+   * Stream of X Activities
+
+
+
+   * @returns {Promise<StreamResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async stream(options: StreamOptions = {}): Promise<StreamResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      backfillMinutes = undefined,
+
+      startTime = undefined,
+
+      endTime = undefined,
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/activity/stream';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (backfillMinutes !== undefined) {
+      params.append('backfill_minutes', String(backfillMinutes));
+    }
+
+    if (startTime !== undefined) {
+      params.append('start_time', String(startTime));
+    }
+
+    if (endTime !== undefined) {
+      params.append('end_time', String(endTime));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<StreamResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

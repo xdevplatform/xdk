@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / PlaidAccount
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / PlaidAccount
 
 # Interface: PlaidAccount
 
@@ -29,7 +29,7 @@ The category of the account (e.g., personal, business).
 
 #### Defined in
 
-[schemas.ts:1987](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1987)
+[schemas.ts:1987](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1987)
 
 ___
 
@@ -41,7 +41,7 @@ The Plaid account ID.
 
 #### Defined in
 
-[schemas.ts:1988](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1988)
+[schemas.ts:1988](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1988)
 
 ___
 
@@ -53,7 +53,7 @@ The last 2-4 digits of the account number.
 
 #### Defined in
 
-[schemas.ts:1989](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1989)
+[schemas.ts:1989](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1989)
 
 ___
 
@@ -65,7 +65,7 @@ The type of the account (e.g., checking, savings).
 
 #### Defined in
 
-[schemas.ts:1990](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1990)
+[schemas.ts:1990](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1990)
 
 ___
 
@@ -77,7 +77,7 @@ The available balance of the account.
 
 #### Defined in
 
-[schemas.ts:1991](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1991)
+[schemas.ts:1991](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1991)
 
 ___
 
@@ -87,7 +87,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:1992](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1992)
+[schemas.ts:1992](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1992)
 
 ___
 
@@ -99,7 +99,7 @@ The current balance of the account.
 
 #### Defined in
 
-[schemas.ts:1993](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1993)
+[schemas.ts:1993](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1993)
 
 ___
 
@@ -111,7 +111,7 @@ The nickname of the account.
 
 #### Defined in
 
-[schemas.ts:1994](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1994)
+[schemas.ts:1994](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1994)
 
 ___
 
@@ -123,7 +123,7 @@ The name of the product associated with the account.
 
 #### Defined in
 
-[schemas.ts:1995](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1995)
+[schemas.ts:1995](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1995)
 
 ___
 
@@ -135,4 +135,4 @@ The status of the account.
 
 #### Defined in
 
-[schemas.ts:1996](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1996)
+[schemas.ts:1996](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1996)

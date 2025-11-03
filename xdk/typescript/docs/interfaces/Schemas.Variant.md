@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / Variant
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / Variant
 
 # Interface: Variant
 
@@ -22,7 +22,7 @@ The bit rate of the media.
 
 #### Defined in
 
-[schemas.ts:3185](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L3185)
+[schemas.ts:3185](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L3185)
 
 ___
 
@@ -34,7 +34,7 @@ The content type of the media.
 
 #### Defined in
 
-[schemas.ts:3186](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L3186)
+[schemas.ts:3186](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L3186)
 
 ___
 
@@ -46,4 +46,4 @@ The url to the media.
 
 #### Defined in
 
-[schemas.ts:3187](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L3187)
+[schemas.ts:3187](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L3187)

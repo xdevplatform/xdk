@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / CommunityNotesClient
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / CommunityNotesClient
 
 # Class: CommunityNotesClient
 
@@ -16,11 +16,11 @@ parsing for all community notes related operations.
 
 ### Methods
 
-- [create](CommunityNotesClient.md#create)
-- [searchWritten](CommunityNotesClient.md#searchwritten)
 - [searchEligiblePosts](CommunityNotesClient.md#searcheligibleposts)
-- [evaluate](CommunityNotesClient.md#evaluate)
+- [searchWritten](CommunityNotesClient.md#searchwritten)
 - [delete](CommunityNotesClient.md#delete)
+- [evaluate](CommunityNotesClient.md#evaluate)
+- [create](CommunityNotesClient.md#create)
 
 ## Constructors
 
@@ -42,32 +42,33 @@ Creates a new community notes client instance
 
 #### Defined in
 
-[community_notes/client.ts:120](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/client.ts#L120)
+[community_notes/client.ts:120](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/community_notes/client.ts#L120)
 
 ## Methods
 
-### create
+### searchEligiblePosts
 
-▸ **create**(`options?`): `Promise`\<[`CreateNoteResponse`](../interfaces/Schemas.CreateNoteResponse.md)\>
+▸ **searchEligiblePosts**(`testMode`, `options?`): `Promise`\<[`Get2NotesSearchPostsEligibleForNotesResponse`](../interfaces/Schemas.Get2NotesSearchPostsEligibleForNotesResponse.md)\>
 
-Create a Community Note
-Creates a community note endpoint for LLM use case.
+Search for Posts Eligible for Community Notes
+Returns all the posts that are eligible for community notes.
 
 #### Parameters
 
-| Name | Type |
-| :------ | :------ |
-| `options` | `CreateOptions` |
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `testMode` | `boolean` | If true, return a list of posts that are for the test. If false, return a list of posts that the bots can write proposed notes on the product. |
+| `options` | `SearchEligiblePostsOptions` | - |
 
 #### Returns
 
-`Promise`\<[`CreateNoteResponse`](../interfaces/Schemas.CreateNoteResponse.md)\>
+`Promise`\<[`Get2NotesSearchPostsEligibleForNotesResponse`](../interfaces/Schemas.Get2NotesSearchPostsEligibleForNotesResponse.md)\>
 
 Promise resolving to the API response
 
 #### Defined in
 
-[community_notes/client.ts:133](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/client.ts#L133)
+[community_notes/client.ts:137](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/community_notes/client.ts#L137)
 
 ___
 
@@ -93,58 +94,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[community_notes/client.ts:176](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/client.ts#L176)
-
-___
-
-### searchEligiblePosts
-
-▸ **searchEligiblePosts**(`testMode`, `options?`): `Promise`\<[`Get2NotesSearchPostsEligibleForNotesResponse`](../interfaces/Schemas.Get2NotesSearchPostsEligibleForNotesResponse.md)\>
-
-Search for Posts Eligible for Community Notes
-Returns all the posts that are eligible for community notes.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `testMode` | `boolean` | If true, return a list of posts that are for the test. If false, return a list of posts that the bots can write proposed notes on the product. |
-| `options` | `SearchEligiblePostsOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2NotesSearchPostsEligibleForNotesResponse`](../interfaces/Schemas.Get2NotesSearchPostsEligibleForNotesResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[community_notes/client.ts:240](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/client.ts#L240)
-
-___
-
-### evaluate
-
-▸ **evaluate**(`options?`): `Promise`\<[`EvaluateNoteResponse`](../interfaces/Schemas.EvaluateNoteResponse.md)\>
-
-Evaluate a Community Note
-Endpoint to evaluate a community note.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `EvaluateOptions` |
-
-#### Returns
-
-`Promise`\<[`EvaluateNoteResponse`](../interfaces/Schemas.EvaluateNoteResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[community_notes/client.ts:330](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/client.ts#L330)
+[community_notes/client.ts:231](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/community_notes/client.ts#L231)
 
 ___
 
@@ -169,4 +119,54 @@ Promise resolving to the API response
 
 #### Defined in
 
-[community_notes/client.ts:373](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/community_notes/client.ts#L373)
+[community_notes/client.ts:295](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/community_notes/client.ts#L295)
+
+___
+
+### evaluate
+
+▸ **evaluate**(`options?`): `Promise`\<[`EvaluateNoteResponse`](../interfaces/Schemas.EvaluateNoteResponse.md)\>
+
+Evaluate a Community Note
+Endpoint to evaluate a community note.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `EvaluateOptions` |
+
+#### Returns
+
+`Promise`\<[`EvaluateNoteResponse`](../interfaces/Schemas.EvaluateNoteResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[community_notes/client.ts:329](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/community_notes/client.ts#L329)
+
+___
+
+### create
+
+▸ **create**(`options?`): `Promise`\<[`CreateNoteResponse`](../interfaces/Schemas.CreateNoteResponse.md)\>
+
+Create a Community Note
+Creates a community note endpoint for LLM use case.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `CreateOptions` |
+
+#### Returns
+
+`Promise`\<[`CreateNoteResponse`](../interfaces/Schemas.CreateNoteResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[community_notes/client.ts:368](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/community_notes/client.ts#L368)

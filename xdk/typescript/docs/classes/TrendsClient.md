@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / TrendsClient
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / TrendsClient
 
 # Class: TrendsClient
 
@@ -39,7 +39,7 @@ Creates a new trends client instance
 
 #### Defined in
 
-[trends/client.ts:62](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/trends/client.ts#L62)
+[trends/client.ts:62](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/trends/client.ts#L62)
 
 ## Methods
 
@@ -64,7 +64,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[trends/client.ts:75](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/trends/client.ts#L75)
+[trends/client.ts:75](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/trends/client.ts#L75)
 
 ___
 
@@ -90,4 +90,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[trends/client.ts:125](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/trends/client.ts#L125)
+[trends/client.ts:125](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/trends/client.ts#L125)

@@ -8,12 +8,6 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
- * Response for getFollowers
- * 
- * @public
- */
-export type GetFollowersResponse = Schemas.Get2ListsIdFollowersResponse;
-/**
  * Response for getMembers
  * 
  * @public
@@ -31,18 +25,6 @@ export type AddMemberRequest = Schemas.ListAddUserRequest;
  * @public
  */
 export type AddMemberResponse = Schemas.ListMutateResponse;
-/**
- * Response for removeMemberByUserId
- * 
- * @public
- */
-export type RemoveMemberByUserIdResponse = Schemas.ListMutateResponse;
-/**
- * Response for getPosts
- * 
- * @public
- */
-export type GetPostsResponse = Schemas.Get2ListsIdTweetsResponse;
 /**
  * Response for getById
  * 
@@ -79,3 +61,21 @@ export type CreateRequest = Schemas.ListCreateRequest;
  * @public
  */
 export type CreateResponse = Schemas.ListCreateResponse;
+/**
+ * Response for getFollowers
+ * 
+ * @public
+ */
+export type GetFollowersResponse = Schemas.Get2ListsIdFollowersResponse;
+/**
+ * Response for removeMemberByUserId
+ * 
+ * @public
+ */
+export type RemoveMemberByUserIdResponse = Schemas.ListMutateResponse;
+/**
+ * Response for getPosts
+ * 
+ * @public
+ */
+export type GetPostsResponse = Schemas.Get2ListsIdTweetsResponse;

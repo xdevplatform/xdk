@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / UsageClient
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / UsageClient
 
 # Class: UsageClient
 
@@ -38,7 +38,7 @@ Creates a new usage client instance
 
 #### Defined in
 
-[usage/client.ts:49](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/usage/client.ts#L49)
+[usage/client.ts:49](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/usage/client.ts#L49)
 
 ## Methods
 
@@ -63,4 +63,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[usage/client.ts:62](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/usage/client.ts#L62)
+[usage/client.ts:62](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/usage/client.ts#L62)

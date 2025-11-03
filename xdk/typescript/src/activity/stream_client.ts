@@ -7,35 +7,13 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  StreamResponse,
   UpdateSubscriptionResponse,
   DeleteSubscriptionResponse,
+  StreamResponse,
   GetSubscriptionsResponse,
   CreateSubscriptionResponse,
 } from './models.js';
 
-/**
- * Options for stream method
- * 
- * @public
- */
-export interface StreamStreamingOptions {
-  /** The number of minutes of backfill requested. */
-  backfillMinutes?: number;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. */
-  startTime?: string;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
-  endTime?: string;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
 /**
  * Options for updateSubscription method
  * 
@@ -58,6 +36,28 @@ export interface UpdateSubscriptionStreamingOptions {
  * @public
  */
 export interface DeleteSubscriptionStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for stream method
+ * 
+ * @public
+ */
+export interface StreamStreamingOptions {
+  /** The number of minutes of backfill requested. */
+  backfillMinutes?: number;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
+  endTime?: string;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */

@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / PlaidTelephone
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / PlaidTelephone
 
 # Interface: PlaidTelephone
 
@@ -22,7 +22,7 @@ The country code for the phone number (e.g., '+1').
 
 #### Defined in
 
-[schemas.ts:2079](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2079)
+[schemas.ts:2079](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2079)
 
 ___
 
@@ -34,7 +34,7 @@ The phone number.
 
 #### Defined in
 
-[schemas.ts:2080](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2080)
+[schemas.ts:2080](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2080)
 
 ___
 
@@ -46,4 +46,4 @@ The type of phone number (e.g., 'mobile').
 
 #### Defined in
 
-[schemas.ts:2081](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2081)
+[schemas.ts:2081](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2081)
