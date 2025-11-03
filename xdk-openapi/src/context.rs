@@ -133,9 +133,9 @@ impl OpenApiContext {
             .filter_map(|(path, component)| {
                 if path.starts_with("#/components/schemas/") {
                     match component {
-                        StoredComponent::Schema(_) => {
-                            path.strip_prefix("#/components/schemas/").map(|s| s.to_string())
-                        }
+                        StoredComponent::Schema(_) => path
+                            .strip_prefix("#/components/schemas/")
+                            .map(|s| s.to_string()),
                         _ => None,
                     }
                 } else {
@@ -152,10 +152,9 @@ impl OpenApiContext {
             .filter_map(|(path, component)| {
                 if path.starts_with("#/components/schemas/") {
                     match component {
-                        StoredComponent::Schema(rc) => {
-                            path.strip_prefix("#/components/schemas/")
-                                .map(|name| (name.to_string(), rc.as_ref().clone()))
-                        }
+                        StoredComponent::Schema(rc) => path
+                            .strip_prefix("#/components/schemas/")
+                            .map(|name| (name.to_string(), rc.as_ref().clone())),
                         _ => None,
                     }
                 } else {

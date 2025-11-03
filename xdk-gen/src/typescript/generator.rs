@@ -1,9 +1,9 @@
+use serde::Serialize;
 /// TypeScript SDK Generator Implementation
 ///
 /// This file implements the TypeScript generator using the `language!` macro.
 /// It defines filters for TypeScript-specific formatting and implements the generator.
-use xdk_lib::{Casing, language, pascal_case, camel_case};
-use serde::Serialize;
+use xdk_lib::{Casing, camel_case, language, pascal_case};
 
 /// Helper function for snake_case conversion (for use as a filter)
 fn snake_case(value: &str) -> String {
@@ -130,7 +130,8 @@ impl xdk_lib::generator::LanguageGenerator for TypeScript {
                 .into_iter()
                 .map(|(name, schema)| SchemaInfo { name, schema })
                 .collect()
-        }).unwrap_or_default();
+        })
+        .unwrap_or_default();
 
         if !schemas.is_empty() {
             let context = SchemasContext { schemas };
@@ -141,4 +142,4 @@ impl xdk_lib::generator::LanguageGenerator for TypeScript {
 
         Ok(())
     }
-} 
+}

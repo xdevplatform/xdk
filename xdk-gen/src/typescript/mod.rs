@@ -1,2 +1,2 @@
 mod generator;
-pub use generator::TypeScript; 
+pub use generator::TypeScript;

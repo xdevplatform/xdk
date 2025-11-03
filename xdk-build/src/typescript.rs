@@ -1,7 +1,7 @@
 use crate::error::{BuildError, Result};
 use std::path::Path;
 use xdk_gen::TypeScript;
-use xdk_lib::{log_info, generate as generate_sdk};
+use xdk_lib::{generate as generate_sdk, log_info};
 use xdk_openapi::OpenApi;
 
 /// Generate TypeScript SDK from OpenAPI spec
@@ -46,7 +46,10 @@ fn format_typescript_files(output_dir: &Path) -> Result<()> {
             let path = entry.path();
 
             // Skip node_modules directory
-            if path.file_name().map_or(false, |name| name == "node_modules") {
+            if path
+                .file_name()
+                .map_or(false, |name| name == "node_modules")
+            {
                 continue;
             }
 
@@ -58,7 +61,11 @@ fn format_typescript_files(output_dir: &Path) -> Result<()> {
                     if path.to_string_lossy().contains("/src/") {
                         // Try to format with Prettier if available
                         if let Err(e) = format_file_with_prettier(&path) {
-                            log_info!("Warning: Could not format {} with Prettier: {}", path.display(), e);
+                            log_info!(
+                                "Warning: Could not format {} with Prettier: {}",
+                                path.display(),
+                                e
+                            );
                             log_info!("You may need to install Prettier: npm install -g prettier");
                         }
                     }
@@ -81,7 +88,9 @@ fn format_file_with_prettier(file_path: &Path) -> Result<()> {
     if status.success() {
         Ok(())
     } else {
-        Err(BuildError::CommandFailed("Prettier formatting failed".to_string()))
+        Err(BuildError::CommandFailed(
+            "Prettier formatting failed".to_string(),
+        ))
     }
 }
 
@@ -97,7 +106,9 @@ fn install_dependencies(output_dir: &Path) -> Result<()> {
     if status.success() {
         Ok(())
     } else {
-        Err(BuildError::CommandFailed("Failed to install dependencies".to_string()))
+        Err(BuildError::CommandFailed(
+            "Failed to install dependencies".to_string(),
+        ))
     }
 }
 
@@ -116,4 +127,4 @@ fn build_sdk(output_dir: &Path) -> Result<()> {
     } else {
         Err(BuildError::CommandFailed("Failed to build SDK".to_string()))
     }
-} 
+}
