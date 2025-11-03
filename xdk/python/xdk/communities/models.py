@@ -33,7 +33,7 @@ class SearchResponse(BaseModel):
     """Response model for search"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -68,7 +68,7 @@ class GetByIdResponse(BaseModel):
     """Response model for get_by_id"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 

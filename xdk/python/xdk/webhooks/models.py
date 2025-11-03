@@ -20,181 +20,6 @@ from datetime import datetime
 
 
 
-# Models for create_stream_link
-
-
-
-
-
-
-
-
-class CreateStreamLinkResponse(BaseModel):
-    """Response model for create_stream_link"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for delete_stream_link
-
-
-
-
-
-
-
-
-class DeleteStreamLinkResponse(BaseModel):
-    """Response model for delete_stream_link"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for get_stream_links
-
-
-
-
-
-
-
-
-class GetStreamLinksResponse(BaseModel):
-    """Response model for get_stream_links"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for validate
-
-
-
-
-
-
-
-
-class ValidateResponse(BaseModel):
-    """Response model for validate"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for delete
-
-
-
-
-
-
-
-
-class DeleteResponse(BaseModel):
-    """Response model for delete"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Models for get
 
 
@@ -208,7 +33,7 @@ class GetResponse(BaseModel):
     """Response model for get"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -249,13 +74,188 @@ class CreateResponse(BaseModel):
     """Response model for create"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for validate
+
+
+
+
+
+
+
+
+class ValidateResponse(BaseModel):
+    """Response model for validate"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for delete
+
+
+
+
+
+
+
+
+class DeleteResponse(BaseModel):
+    """Response model for delete"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for create_stream_link
+
+
+
+
+
+
+
+
+class CreateStreamLinkResponse(BaseModel):
+    """Response model for create_stream_link"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for delete_stream_link
+
+
+
+
+
+
+
+
+class DeleteStreamLinkResponse(BaseModel):
+    """Response model for delete_stream_link"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for get_stream_links
+
+
+
+
+
+
+
+
+class GetStreamLinksResponse(BaseModel):
+    """Response model for get_stream_links"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 

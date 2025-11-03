@@ -164,7 +164,7 @@ class {{ operation.class_name }}Response(BaseModel):
     {%- endif %}
     {%- endif %}
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 {% endif %}
 {% endif %}
 {% endif %}

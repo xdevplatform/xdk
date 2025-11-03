@@ -27,248 +27,6 @@ class TestListsStructure:
     
     
     
-    def test_get_members_exists(self):
-        """Test that get_members method exists with correct signature."""
-        # Check method exists
-        method = getattr(ListsClient, "get_members", None)
-        assert method is not None, f"Method get_members does not exist on ListsClient"
-        
-        # Check method is callable
-        assert callable(method), f"get_members is not callable"
-        
-        # Check method signature
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        
-        # Should have 'self' as first parameter
-        assert len(params) >= 1, f"get_members should have at least 'self' parameter"
-        assert params[0] == 'self', f"First parameter should be 'self', got '{params[0]}'"
-        
-        # Check required parameters exist (excluding 'self')
-        required_params = [
-            
-            "id",
-            
-        ]
-        
-        for required_param in required_params:
-            assert required_param in params, f"Required parameter '{required_param}' missing from get_members"
-        
-        # Check optional parameters have defaults (excluding 'self')
-        optional_params = [
-            
-            "max_results",
-            
-            "pagination_token",
-            
-            "user.fields",
-            
-            "expansions",
-            
-            "tweet.fields",
-            
-        ]
-        
-        for optional_param in optional_params:
-            if optional_param in params:
-                param_obj = sig.parameters[optional_param]
-                assert param_obj.default is not inspect.Parameter.empty, \
-                    f"Optional parameter '{optional_param}' should have a default value"
-    
-    def test_get_members_return_annotation(self):
-        """Test that get_members has proper return type annotation."""
-        method = getattr(ListsClient, "get_members")
-        sig = inspect.signature(method)
-        
-        # Check return annotation exists
-        assert sig.return_annotation is not inspect.Signature.empty, \
-            f"Method get_members should have return type annotation"
-    
-    
-    def test_get_members_pagination_params(self):
-        """Test that get_members has pagination parameters."""
-        method = getattr(ListsClient, "get_members")
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        
-        # Should have pagination-related parameters
-        pagination_params = ['pagination_token', 'max_results', 'next_token', 'cursor', 'limit']
-        has_pagination_param = any(param in params for param in pagination_params)
-        assert has_pagination_param, \
-            f"Paginated method get_members should have pagination parameters"
-    
-    
-    
-    def test_add_member_exists(self):
-        """Test that add_member method exists with correct signature."""
-        # Check method exists
-        method = getattr(ListsClient, "add_member", None)
-        assert method is not None, f"Method add_member does not exist on ListsClient"
-        
-        # Check method is callable
-        assert callable(method), f"add_member is not callable"
-        
-        # Check method signature
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        
-        # Should have 'self' as first parameter
-        assert len(params) >= 1, f"add_member should have at least 'self' parameter"
-        assert params[0] == 'self', f"First parameter should be 'self', got '{params[0]}'"
-        
-        # Check required parameters exist (excluding 'self')
-        required_params = [
-            
-            "id",
-            
-        ]
-        
-        for required_param in required_params:
-            assert required_param in params, f"Required parameter '{required_param}' missing from add_member"
-        
-        # Check optional parameters have defaults (excluding 'self')
-        optional_params = [
-            
-        ]
-        
-        for optional_param in optional_params:
-            if optional_param in params:
-                param_obj = sig.parameters[optional_param]
-                assert param_obj.default is not inspect.Parameter.empty, \
-                    f"Optional parameter '{optional_param}' should have a default value"
-    
-    def test_add_member_return_annotation(self):
-        """Test that add_member has proper return type annotation."""
-        method = getattr(ListsClient, "add_member")
-        sig = inspect.signature(method)
-        
-        # Check return annotation exists
-        assert sig.return_annotation is not inspect.Signature.empty, \
-            f"Method add_member should have return type annotation"
-    
-    
-    
-    
-    def test_create_exists(self):
-        """Test that create method exists with correct signature."""
-        # Check method exists
-        method = getattr(ListsClient, "create", None)
-        assert method is not None, f"Method create does not exist on ListsClient"
-        
-        # Check method is callable
-        assert callable(method), f"create is not callable"
-        
-        # Check method signature
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        
-        # Should have 'self' as first parameter
-        assert len(params) >= 1, f"create should have at least 'self' parameter"
-        assert params[0] == 'self', f"First parameter should be 'self', got '{params[0]}'"
-        
-        # Check required parameters exist (excluding 'self')
-        required_params = [
-            
-        ]
-        
-        for required_param in required_params:
-            assert required_param in params, f"Required parameter '{required_param}' missing from create"
-        
-        # Check optional parameters have defaults (excluding 'self')
-        optional_params = [
-            
-        ]
-        
-        for optional_param in optional_params:
-            if optional_param in params:
-                param_obj = sig.parameters[optional_param]
-                assert param_obj.default is not inspect.Parameter.empty, \
-                    f"Optional parameter '{optional_param}' should have a default value"
-    
-    def test_create_return_annotation(self):
-        """Test that create has proper return type annotation."""
-        method = getattr(ListsClient, "create")
-        sig = inspect.signature(method)
-        
-        # Check return annotation exists
-        assert sig.return_annotation is not inspect.Signature.empty, \
-            f"Method create should have return type annotation"
-    
-    
-    
-    
-    def test_get_followers_exists(self):
-        """Test that get_followers method exists with correct signature."""
-        # Check method exists
-        method = getattr(ListsClient, "get_followers", None)
-        assert method is not None, f"Method get_followers does not exist on ListsClient"
-        
-        # Check method is callable
-        assert callable(method), f"get_followers is not callable"
-        
-        # Check method signature
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        
-        # Should have 'self' as first parameter
-        assert len(params) >= 1, f"get_followers should have at least 'self' parameter"
-        assert params[0] == 'self', f"First parameter should be 'self', got '{params[0]}'"
-        
-        # Check required parameters exist (excluding 'self')
-        required_params = [
-            
-            "id",
-            
-        ]
-        
-        for required_param in required_params:
-            assert required_param in params, f"Required parameter '{required_param}' missing from get_followers"
-        
-        # Check optional parameters have defaults (excluding 'self')
-        optional_params = [
-            
-            "max_results",
-            
-            "pagination_token",
-            
-            "user.fields",
-            
-            "expansions",
-            
-            "tweet.fields",
-            
-        ]
-        
-        for optional_param in optional_params:
-            if optional_param in params:
-                param_obj = sig.parameters[optional_param]
-                assert param_obj.default is not inspect.Parameter.empty, \
-                    f"Optional parameter '{optional_param}' should have a default value"
-    
-    def test_get_followers_return_annotation(self):
-        """Test that get_followers has proper return type annotation."""
-        method = getattr(ListsClient, "get_followers")
-        sig = inspect.signature(method)
-        
-        # Check return annotation exists
-        assert sig.return_annotation is not inspect.Signature.empty, \
-            f"Method get_followers should have return type annotation"
-    
-    
-    def test_get_followers_pagination_params(self):
-        """Test that get_followers has pagination parameters."""
-        method = getattr(ListsClient, "get_followers")
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        
-        # Should have pagination-related parameters
-        pagination_params = ['pagination_token', 'max_results', 'next_token', 'cursor', 'limit']
-        has_pagination_param = any(param in params for param in pagination_params)
-        assert has_pagination_param, \
-            f"Paginated method get_followers should have pagination parameters"
-    
-    
-    
     def test_remove_member_by_user_id_exists(self):
         """Test that remove_member_by_user_id method exists with correct signature."""
         # Check method exists
@@ -477,6 +235,78 @@ class TestListsStructure:
     
     
     
+    def test_get_followers_exists(self):
+        """Test that get_followers method exists with correct signature."""
+        # Check method exists
+        method = getattr(ListsClient, "get_followers", None)
+        assert method is not None, f"Method get_followers does not exist on ListsClient"
+        
+        # Check method is callable
+        assert callable(method), f"get_followers is not callable"
+        
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        
+        # Should have 'self' as first parameter
+        assert len(params) >= 1, f"get_followers should have at least 'self' parameter"
+        assert params[0] == 'self', f"First parameter should be 'self', got '{params[0]}'"
+        
+        # Check required parameters exist (excluding 'self')
+        required_params = [
+            
+            "id",
+            
+        ]
+        
+        for required_param in required_params:
+            assert required_param in params, f"Required parameter '{required_param}' missing from get_followers"
+        
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = [
+            
+            "max_results",
+            
+            "pagination_token",
+            
+            "user.fields",
+            
+            "expansions",
+            
+            "tweet.fields",
+            
+        ]
+        
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert param_obj.default is not inspect.Parameter.empty, \
+                    f"Optional parameter '{optional_param}' should have a default value"
+    
+    def test_get_followers_return_annotation(self):
+        """Test that get_followers has proper return type annotation."""
+        method = getattr(ListsClient, "get_followers")
+        sig = inspect.signature(method)
+        
+        # Check return annotation exists
+        assert sig.return_annotation is not inspect.Signature.empty, \
+            f"Method get_followers should have return type annotation"
+    
+    
+    def test_get_followers_pagination_params(self):
+        """Test that get_followers has pagination parameters."""
+        method = getattr(ListsClient, "get_followers")
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        
+        # Should have pagination-related parameters
+        pagination_params = ['pagination_token', 'max_results', 'next_token', 'cursor', 'limit']
+        has_pagination_param = any(param in params for param in pagination_params)
+        assert has_pagination_param, \
+            f"Paginated method get_followers should have pagination parameters"
+    
+    
+    
     def test_get_posts_exists(self):
         """Test that get_posts method exists with correct signature."""
         # Check method exists
@@ -555,18 +385,180 @@ class TestListsStructure:
     
     
     
+    def test_get_members_exists(self):
+        """Test that get_members method exists with correct signature."""
+        # Check method exists
+        method = getattr(ListsClient, "get_members", None)
+        assert method is not None, f"Method get_members does not exist on ListsClient"
+        
+        # Check method is callable
+        assert callable(method), f"get_members is not callable"
+        
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        
+        # Should have 'self' as first parameter
+        assert len(params) >= 1, f"get_members should have at least 'self' parameter"
+        assert params[0] == 'self', f"First parameter should be 'self', got '{params[0]}'"
+        
+        # Check required parameters exist (excluding 'self')
+        required_params = [
+            
+            "id",
+            
+        ]
+        
+        for required_param in required_params:
+            assert required_param in params, f"Required parameter '{required_param}' missing from get_members"
+        
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = [
+            
+            "max_results",
+            
+            "pagination_token",
+            
+            "user.fields",
+            
+            "expansions",
+            
+            "tweet.fields",
+            
+        ]
+        
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert param_obj.default is not inspect.Parameter.empty, \
+                    f"Optional parameter '{optional_param}' should have a default value"
+    
+    def test_get_members_return_annotation(self):
+        """Test that get_members has proper return type annotation."""
+        method = getattr(ListsClient, "get_members")
+        sig = inspect.signature(method)
+        
+        # Check return annotation exists
+        assert sig.return_annotation is not inspect.Signature.empty, \
+            f"Method get_members should have return type annotation"
+    
+    
+    def test_get_members_pagination_params(self):
+        """Test that get_members has pagination parameters."""
+        method = getattr(ListsClient, "get_members")
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        
+        # Should have pagination-related parameters
+        pagination_params = ['pagination_token', 'max_results', 'next_token', 'cursor', 'limit']
+        has_pagination_param = any(param in params for param in pagination_params)
+        assert has_pagination_param, \
+            f"Paginated method get_members should have pagination parameters"
+    
+    
+    
+    def test_add_member_exists(self):
+        """Test that add_member method exists with correct signature."""
+        # Check method exists
+        method = getattr(ListsClient, "add_member", None)
+        assert method is not None, f"Method add_member does not exist on ListsClient"
+        
+        # Check method is callable
+        assert callable(method), f"add_member is not callable"
+        
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        
+        # Should have 'self' as first parameter
+        assert len(params) >= 1, f"add_member should have at least 'self' parameter"
+        assert params[0] == 'self', f"First parameter should be 'self', got '{params[0]}'"
+        
+        # Check required parameters exist (excluding 'self')
+        required_params = [
+            
+            "id",
+            
+        ]
+        
+        for required_param in required_params:
+            assert required_param in params, f"Required parameter '{required_param}' missing from add_member"
+        
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = [
+            
+        ]
+        
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert param_obj.default is not inspect.Parameter.empty, \
+                    f"Optional parameter '{optional_param}' should have a default value"
+    
+    def test_add_member_return_annotation(self):
+        """Test that add_member has proper return type annotation."""
+        method = getattr(ListsClient, "add_member")
+        sig = inspect.signature(method)
+        
+        # Check return annotation exists
+        assert sig.return_annotation is not inspect.Signature.empty, \
+            f"Method add_member should have return type annotation"
+    
+    
+    
+    
+    def test_create_exists(self):
+        """Test that create method exists with correct signature."""
+        # Check method exists
+        method = getattr(ListsClient, "create", None)
+        assert method is not None, f"Method create does not exist on ListsClient"
+        
+        # Check method is callable
+        assert callable(method), f"create is not callable"
+        
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        
+        # Should have 'self' as first parameter
+        assert len(params) >= 1, f"create should have at least 'self' parameter"
+        assert params[0] == 'self', f"First parameter should be 'self', got '{params[0]}'"
+        
+        # Check required parameters exist (excluding 'self')
+        required_params = [
+            
+        ]
+        
+        for required_param in required_params:
+            assert required_param in params, f"Required parameter '{required_param}' missing from create"
+        
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = [
+            
+        ]
+        
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert param_obj.default is not inspect.Parameter.empty, \
+                    f"Optional parameter '{optional_param}' should have a default value"
+    
+    def test_create_return_annotation(self):
+        """Test that create has proper return type annotation."""
+        method = getattr(ListsClient, "create")
+        sig = inspect.signature(method)
+        
+        # Check return annotation exists
+        assert sig.return_annotation is not inspect.Signature.empty, \
+            f"Method create should have return type annotation"
+    
+    
+    
+    
     
     def test_all_expected_methods_exist(self):
         """Test that all expected methods exist on the client."""
         expected_methods = [
-            
-            "get_members",
-            
-            "add_member",
-            
-            "create",
-            
-            "get_followers",
             
             "remove_member_by_user_id",
             
@@ -576,7 +568,15 @@ class TestListsStructure:
             
             "delete",
             
+            "get_followers",
+            
             "get_posts",
+            
+            "get_members",
+            
+            "add_member",
+            
+            "create",
             
         ]
         

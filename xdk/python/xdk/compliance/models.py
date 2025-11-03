@@ -20,41 +20,6 @@ from datetime import datetime
 
 
 
-# Models for get_jobs_by_id
-
-
-
-
-
-
-
-
-class GetJobsByIdResponse(BaseModel):
-    """Response model for get_jobs_by_id"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Models for get_jobs
 
 
@@ -68,7 +33,7 @@ class GetJobsResponse(BaseModel):
     """Response model for get_jobs"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -109,13 +74,48 @@ class CreateJobsResponse(BaseModel):
     """Response model for create_jobs"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for get_jobs_by_id
+
+
+
+
+
+
+
+
+class GetJobsByIdResponse(BaseModel):
+    """Response model for get_jobs_by_id"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 

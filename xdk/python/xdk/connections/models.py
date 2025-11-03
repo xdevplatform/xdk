@@ -33,7 +33,7 @@ class DeleteAllResponse(BaseModel):
     """Response model for delete_all"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 

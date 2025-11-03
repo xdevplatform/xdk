@@ -20,7 +20,7 @@ from datetime import datetime
 
 
 
-# Models for posts_sample10
+# Models for posts_firehose_ko
 
 
 
@@ -29,81 +29,11 @@ from datetime import datetime
 
 
 
-class PostsSample10Response(BaseModel):
-    """Response model for posts_sample10"""
+class PostsFirehoseKoResponse(BaseModel):
+    """Response model for posts_firehose_ko"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for posts_firehose
-
-
-
-
-
-
-
-
-class PostsFirehoseResponse(BaseModel):
-    """Response model for posts_firehose"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for posts_firehose_ja
-
-
-
-
-
-
-
-
-class PostsFirehoseJaResponse(BaseModel):
-    """Response model for posts_firehose_ja"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -138,7 +68,7 @@ class PostsFirehosePtResponse(BaseModel):
     """Response model for posts_firehose_pt"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -160,7 +90,7 @@ class PostsFirehosePtResponse(BaseModel):
 
 
 
-# Models for posts_compliance
+# Models for posts_sample10
 
 
 
@@ -169,11 +99,151 @@ class PostsFirehosePtResponse(BaseModel):
 
 
 
-class PostsComplianceResponse(BaseModel):
-    """Response model for posts_compliance"""
+class PostsSample10Response(BaseModel):
+    """Response model for posts_sample10"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for posts
+
+
+
+
+
+
+
+
+class PostsResponse(BaseModel):
+    """Response model for posts"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for posts_sample
+
+
+
+
+
+
+
+
+class PostsSampleResponse(BaseModel):
+    """Response model for posts_sample"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for likes_compliance
+
+
+
+
+
+
+
+
+class LikesComplianceResponse(BaseModel):
+    """Response model for likes_compliance"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for posts_firehose
+
+
+
+
+
+
+
+
+class PostsFirehoseResponse(BaseModel):
+    """Response model for posts_firehose"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -208,7 +278,7 @@ class GetRulesResponse(BaseModel):
     """Response model for get_rules"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -249,153 +319,13 @@ class UpdateRulesResponse(BaseModel):
     """Response model for update_rules"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for likes_firehose
-
-
-
-
-
-
-
-
-class LikesFirehoseResponse(BaseModel):
-    """Response model for likes_firehose"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for posts_firehose_ko
-
-
-
-
-
-
-
-
-class PostsFirehoseKoResponse(BaseModel):
-    """Response model for posts_firehose_ko"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for get_rule_counts
-
-
-
-
-
-
-
-
-class GetRuleCountsResponse(BaseModel):
-    """Response model for get_rule_counts"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for labels_compliance
-
-
-
-
-
-
-
-
-class LabelsComplianceResponse(BaseModel):
-    """Response model for labels_compliance"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
 
 
 
@@ -430,7 +360,7 @@ class PostsFirehoseEnResponse(BaseModel):
     """Response model for posts_firehose_en"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -452,7 +382,7 @@ class PostsFirehoseEnResponse(BaseModel):
 
 
 
-# Models for likes_sample10
+# Models for posts_firehose_ja
 
 
 
@@ -461,11 +391,11 @@ class PostsFirehoseEnResponse(BaseModel):
 
 
 
-class LikesSample10Response(BaseModel):
-    """Response model for likes_sample10"""
+class PostsFirehoseJaResponse(BaseModel):
+    """Response model for posts_firehose_ja"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -500,7 +430,7 @@ class UsersComplianceResponse(BaseModel):
     """Response model for users_compliance"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -522,7 +452,7 @@ class UsersComplianceResponse(BaseModel):
 
 
 
-# Models for likes_compliance
+# Models for posts_compliance
 
 
 
@@ -531,11 +461,11 @@ class UsersComplianceResponse(BaseModel):
 
 
 
-class LikesComplianceResponse(BaseModel):
-    """Response model for likes_compliance"""
+class PostsComplianceResponse(BaseModel):
+    """Response model for posts_compliance"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -557,7 +487,7 @@ class LikesComplianceResponse(BaseModel):
 
 
 
-# Models for posts
+# Models for likes_sample10
 
 
 
@@ -566,11 +496,11 @@ class LikesComplianceResponse(BaseModel):
 
 
 
-class PostsResponse(BaseModel):
-    """Response model for posts"""
+class LikesSample10Response(BaseModel):
+    """Response model for likes_sample10"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -592,7 +522,7 @@ class PostsResponse(BaseModel):
 
 
 
-# Models for posts_sample
+# Models for likes_firehose
 
 
 
@@ -601,11 +531,81 @@ class PostsResponse(BaseModel):
 
 
 
-class PostsSampleResponse(BaseModel):
-    """Response model for posts_sample"""
+class LikesFirehoseResponse(BaseModel):
+    """Response model for likes_firehose"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for labels_compliance
+
+
+
+
+
+
+
+
+class LabelsComplianceResponse(BaseModel):
+    """Response model for labels_compliance"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for get_rule_counts
+
+
+
+
+
+
+
+
+class GetRuleCountsResponse(BaseModel):
+    """Response model for get_rule_counts"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 

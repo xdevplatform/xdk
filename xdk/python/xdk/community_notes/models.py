@@ -20,41 +20,6 @@ from datetime import datetime
 
 
 
-# Models for search_written
-
-
-
-
-
-
-
-
-class SearchWrittenResponse(BaseModel):
-    """Response model for search_written"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Models for create
 
 class CreateRequest(BaseModel):
@@ -74,7 +39,7 @@ class CreateResponse(BaseModel):
     """Response model for create"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -115,7 +80,7 @@ class SearchEligiblePostsResponse(BaseModel):
     """Response model for search_eligible_posts"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -156,7 +121,7 @@ class EvaluateResponse(BaseModel):
     """Response model for evaluate"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -197,7 +162,42 @@ class DeleteResponse(BaseModel):
     """Response model for delete"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for search_written
+
+
+
+
+
+
+
+
+class SearchWrittenResponse(BaseModel):
+    """Response model for search_written"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 

@@ -215,8 +215,26 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
         response_dict = None
         if hasattr(response, 'model_dump'):
             try:
+                # model_dump includes both defined fields and extra fields
                 response_dict = response.model_dump()
             except (AttributeError, TypeError):
+                pass
+        
+        # Also try to get extra fields directly from Pydantic
+        if hasattr(response, '__pydantic_extra__'):
+            try:
+                extra = response.__pydantic_extra__
+                if extra and isinstance(extra, dict):
+                    meta = extra.get('meta')
+                    if meta and isinstance(meta, dict):
+                        token = meta.get('next_token')
+                        if token:
+                            return str(token)
+                    # Also check for next_token at root level in extra
+                    token = extra.get('next_token')
+                    if token:
+                        return str(token)
+            except (AttributeError, TypeError, KeyError):
                 pass
         
         # Pattern 1: response.meta.next_token (most common)
@@ -236,6 +254,11 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
                 # Otherwise try attribute access
                 if hasattr(meta, 'next_token'):
                     token = getattr(meta, 'next_token', None)
+                    if token:
+                        return str(token)
+                # If meta is a dict, access it directly
+                if isinstance(meta, dict):
+                    token = meta.get('next_token')
                     if token:
                         return str(token)
         except (AttributeError, TypeError):
@@ -318,8 +341,21 @@ class _ItemIterator(Iterator[Any]):
         response_dict = None
         if hasattr(response, 'model_dump'):
             try:
+                # model_dump includes both defined fields and extra fields
                 response_dict = response.model_dump()
             except (AttributeError, TypeError):
+                pass
+        
+        # Also try to get extra fields directly from Pydantic
+        if hasattr(response, '__pydantic_extra__'):
+            try:
+                extra = response.__pydantic_extra__
+                if extra and isinstance(extra, dict):
+                    for field_name in ['data', 'results', 'items']:
+                        items = extra.get(field_name)
+                        if isinstance(items, list):
+                            return items
+            except (AttributeError, TypeError, KeyError):
                 pass
         
         # Try common field names for data arrays

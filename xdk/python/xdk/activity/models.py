@@ -33,7 +33,7 @@ class GetSubscriptionsResponse(BaseModel):
     """Response model for get_subscriptions"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -74,48 +74,13 @@ class CreateSubscriptionResponse(BaseModel):
     """Response model for create_subscription"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for stream
-
-
-
-
-
-
-
-
-class StreamResponse(BaseModel):
-    """Response model for stream"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
 
 
 
@@ -156,7 +121,7 @@ class UpdateSubscriptionResponse(BaseModel):
     """Response model for update_subscription"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
@@ -197,7 +162,42 @@ class DeleteSubscriptionResponse(BaseModel):
     """Response model for delete_subscription"""
     
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for stream
+
+
+
+
+
+
+
+
+class StreamResponse(BaseModel):
+    """Response model for stream"""
+    
+
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 
 
 
