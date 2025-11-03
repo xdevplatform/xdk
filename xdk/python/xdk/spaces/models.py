@@ -20,6 +20,41 @@ from datetime import datetime
 
 
 
+# Models for get_buyers
+
+
+
+
+
+
+
+
+class GetBuyersResponse(BaseModel):
+    """Response model for get_buyers"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Models for get_by_id
 
 
@@ -31,6 +66,41 @@ from datetime import datetime
 
 class GetByIdResponse(BaseModel):
     """Response model for get_by_id"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for get_posts
+
+
+
+
+
+
+
+
+class GetPostsResponse(BaseModel):
+    """Response model for get_posts"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -125,41 +195,6 @@ class SearchResponse(BaseModel):
 
 
 
-# Models for get_posts
-
-
-
-
-
-
-
-
-class GetPostsResponse(BaseModel):
-    """Response model for get_posts"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Models for get_by_ids
 
 
@@ -171,41 +206,6 @@ class GetPostsResponse(BaseModel):
 
 class GetByIdsResponse(BaseModel):
     """Response model for get_by_ids"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for get_buyers
-
-
-
-
-
-
-
-
-class GetBuyersResponse(BaseModel):
-    """Response model for get_buyers"""
     
 
     model_config = ConfigDict(populate_by_name=True)

@@ -20,7 +20,7 @@ from datetime import datetime
 
 
 
-# Models for validate
+# Models for create_stream_link
 
 
 
@@ -29,8 +29,8 @@ from datetime import datetime
 
 
 
-class ValidateResponse(BaseModel):
-    """Response model for validate"""
+class CreateStreamLinkResponse(BaseModel):
+    """Response model for create_stream_link"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -55,7 +55,7 @@ class ValidateResponse(BaseModel):
 
 
 
-# Models for delete
+# Models for delete_stream_link
 
 
 
@@ -64,8 +64,8 @@ class ValidateResponse(BaseModel):
 
 
 
-class DeleteResponse(BaseModel):
-    """Response model for delete"""
+class DeleteStreamLinkResponse(BaseModel):
+    """Response model for delete_stream_link"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -125,7 +125,7 @@ class GetStreamLinksResponse(BaseModel):
 
 
 
-# Models for create_stream_link
+# Models for validate
 
 
 
@@ -134,8 +134,8 @@ class GetStreamLinksResponse(BaseModel):
 
 
 
-class CreateStreamLinkResponse(BaseModel):
-    """Response model for create_stream_link"""
+class ValidateResponse(BaseModel):
+    """Response model for validate"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -160,7 +160,7 @@ class CreateStreamLinkResponse(BaseModel):
 
 
 
-# Models for delete_stream_link
+# Models for delete
 
 
 
@@ -169,8 +169,8 @@ class CreateStreamLinkResponse(BaseModel):
 
 
 
-class DeleteStreamLinkResponse(BaseModel):
-    """Response model for delete_stream_link"""
+class DeleteResponse(BaseModel):
+    """Response model for delete"""
     
 
     model_config = ConfigDict(populate_by_name=True)

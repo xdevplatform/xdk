@@ -20,76 +20,6 @@ from datetime import datetime
 
 
 
-# Models for get_followers
-
-
-
-
-
-
-
-
-class GetFollowersResponse(BaseModel):
-    """Response model for get_followers"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for get_posts
-
-
-
-
-
-
-
-
-class GetPostsResponse(BaseModel):
-    """Response model for get_posts"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Models for get_members
 
 
@@ -172,41 +102,6 @@ class AddMemberResponse(BaseModel):
 
 
 
-# Models for remove_member_by_user_id
-
-
-
-
-
-
-
-
-class RemoveMemberByUserIdResponse(BaseModel):
-    """Response model for remove_member_by_user_id"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Models for create
 
 class CreateRequest(BaseModel):
@@ -233,6 +128,76 @@ class CreateResponse(BaseModel):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for get_followers
+
+
+
+
+
+
+
+
+class GetFollowersResponse(BaseModel):
+    """Response model for get_followers"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for remove_member_by_user_id
+
+
+
+
+
+
+
+
+class RemoveMemberByUserIdResponse(BaseModel):
+    """Response model for remove_member_by_user_id"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 
@@ -347,6 +312,41 @@ class UpdateResponse(BaseModel):
 
 class DeleteResponse(BaseModel):
     """Response model for delete"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for get_posts
+
+
+
+
+
+
+
+
+class GetPostsResponse(BaseModel):
+    """Response model for get_posts"""
     
 
     model_config = ConfigDict(populate_by_name=True)

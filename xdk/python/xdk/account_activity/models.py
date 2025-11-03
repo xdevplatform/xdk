@@ -20,7 +20,7 @@ from datetime import datetime
 
 
 
-# Models for delete_subscription
+# Models for get_subscription_count
 
 
 
@@ -29,43 +29,8 @@ from datetime import datetime
 
 
 
-class DeleteSubscriptionResponse(BaseModel):
-    """Response model for delete_subscription"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for create_replay_job
-
-
-
-
-
-
-
-
-class CreateReplayJobResponse(BaseModel):
-    """Response model for create_replay_job"""
+class GetSubscriptionCountResponse(BaseModel):
+    """Response model for get_subscription_count"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -172,7 +137,7 @@ class CreateSubscriptionResponse(BaseModel):
 
 
 
-# Models for get_subscriptions
+# Models for create_replay_job
 
 
 
@@ -181,8 +146,8 @@ class CreateSubscriptionResponse(BaseModel):
 
 
 
-class GetSubscriptionsResponse(BaseModel):
-    """Response model for get_subscriptions"""
+class CreateReplayJobResponse(BaseModel):
+    """Response model for create_replay_job"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -207,7 +172,7 @@ class GetSubscriptionsResponse(BaseModel):
 
 
 
-# Models for get_subscription_count
+# Models for delete_subscription
 
 
 
@@ -216,8 +181,43 @@ class GetSubscriptionsResponse(BaseModel):
 
 
 
-class GetSubscriptionCountResponse(BaseModel):
-    """Response model for get_subscription_count"""
+class DeleteSubscriptionResponse(BaseModel):
+    """Response model for delete_subscription"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for get_subscriptions
+
+
+
+
+
+
+
+
+class GetSubscriptionsResponse(BaseModel):
+    """Response model for get_subscriptions"""
     
 
     model_config = ConfigDict(populate_by_name=True)

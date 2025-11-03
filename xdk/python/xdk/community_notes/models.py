@@ -20,32 +20,20 @@ from datetime import datetime
 
 
 
-# Models for evaluate
+# Models for search_written
 
-class EvaluateRequest(BaseModel):
-    """Request model for evaluate"""
+
+
+
+
+
+
+
+class SearchWrittenResponse(BaseModel):
+    """Response model for search_written"""
     
 
     model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-class EvaluateResponse(BaseModel):
-    """Response model for evaluate"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
 
 
 
@@ -114,41 +102,6 @@ class CreateResponse(BaseModel):
 
 
 
-# Models for delete
-
-
-
-
-
-
-
-
-class DeleteResponse(BaseModel):
-    """Response model for delete"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Models for search_eligible_posts
 
 
@@ -184,7 +137,13 @@ class SearchEligiblePostsResponse(BaseModel):
 
 
 
-# Models for search_written
+# Models for evaluate
+
+class EvaluateRequest(BaseModel):
+    """Request model for evaluate"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 
@@ -193,8 +152,49 @@ class SearchEligiblePostsResponse(BaseModel):
 
 
 
-class SearchWrittenResponse(BaseModel):
-    """Response model for search_written"""
+class EvaluateResponse(BaseModel):
+    """Response model for evaluate"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for delete
+
+
+
+
+
+
+
+
+class DeleteResponse(BaseModel):
+    """Response model for delete"""
     
 
     model_config = ConfigDict(populate_by_name=True)

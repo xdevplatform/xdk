@@ -20,6 +20,13 @@ if TYPE_CHECKING:
 from .models import (
     
     
+    InitializeUploadRequest,
+    
+    InitializeUploadResponse,
+    
+    
+    
+    
     GetUploadStatusResponse,
     
     
@@ -45,10 +52,14 @@ from .models import (
     
     
     
-    InitializeUploadRequest,
+    CreateMetadataRequest,
     
-    InitializeUploadResponse,
+    CreateMetadataResponse,
     
+    
+    
+    
+    GetAnalyticsResponse,
     
     
     
@@ -67,18 +78,7 @@ from .models import (
     
     
     
-    GetAnalyticsResponse,
-    
-    
-    
     GetByKeysResponse,
-    
-    
-    
-    CreateMetadataRequest,
-    
-    CreateMetadataResponse,
-    
     
     
 )
@@ -89,6 +89,93 @@ class MediaClient:
     def __init__(self, client: Client):
         self.client = client
     
+    
+    def initialize_upload(self, body: Optional[InitializeUploadRequest] = None) -> InitializeUploadResponse:
+        """
+        Initialize media upload
+        
+        Initializes a media upload.
+        
+        body: Request body
+        Returns:
+            InitializeUploadResponse: Response data
+        """
+        url = self.client.base_url + "/2/media/upload/initialize"
+        
+
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        
+        
+        params = {}
+        
+        
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        
+        
+        # Prepare request data
+        json_data = None
+        if body is not None:
+            json_data = body.model_dump(exclude_none=True) if hasattr(body, 'model_dump') else body
+        
+        
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        # Make the request
+        
+        
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.post(
+                url,
+                params=params,
+                headers=headers,
+                
+                json=json_data,
+                
+            )
+        else:
+            response = self.client.session.post(
+                url,
+                params=params,
+                headers=headers,
+                
+                json=json_data,
+                
+            )
+        
+        
+
+        # Check for errors
+        response.raise_for_status()
+
+        # Parse the response data
+        response_data = response.json()
+
+        # Convert to Pydantic model if applicable
+        
+        return InitializeUploadResponse.model_validate(response_data)
+        
+        
+
     
     def get_upload_status(self, media_id: Any, command: str = None) -> GetUploadStatusResponse:
         """
@@ -439,17 +526,17 @@ class MediaClient:
         
 
     
-    def initialize_upload(self, body: Optional[InitializeUploadRequest] = None) -> InitializeUploadResponse:
+    def create_metadata(self, body: Optional[CreateMetadataRequest] = None) -> CreateMetadataResponse:
         """
-        Initialize media upload
+        Create Media metadata
         
-        Initializes a media upload.
+        Creates metadata for a Media file.
         
         body: Request body
         Returns:
-            InitializeUploadResponse: Response data
+            CreateMetadataResponse: Response data
         """
-        url = self.client.base_url + "/2/media/upload/initialize"
+        url = self.client.base_url + "/2/media/metadata"
         
 
         # Ensure we have a valid access token
@@ -521,7 +608,107 @@ class MediaClient:
 
         # Convert to Pydantic model if applicable
         
-        return InitializeUploadResponse.model_validate(response_data)
+        return CreateMetadataResponse.model_validate(response_data)
+        
+        
+
+    
+    def get_analytics(self, media_keys: List, end_time: str, start_time: str, granularity: str, media_analyticsfields: List = None) -> GetAnalyticsResponse:
+        """
+        Get Media analytics
+        
+        Retrieves analytics data for media.
+        
+        Args:
+            media_keys: A comma separated list of Media Keys. Up to 100 are allowed in a single request.
+            end_time: YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
+            start_time: YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
+            granularity: The granularity for the search counts results.
+            media_analyticsfields: A comma separated list of MediaAnalytics fields to display.
+            Returns:
+            GetAnalyticsResponse: Response data
+        """
+        url = self.client.base_url + "/2/media/analytics"
+        
+
+        # Ensure we have a valid access token
+        if self.client.oauth2_auth and self.client.token:
+            # Check if token needs refresh
+            if self.client.is_token_expired():
+                self.client.refresh_token()
+        
+        
+        params = {}
+        if media_keys is not None:
+            params["media_keys"] = ",".join(str(item) for item in media_keys)
+            
+        if end_time is not None:
+            params["end_time"] = end_time
+            
+        if start_time is not None:
+            params["start_time"] = start_time
+            
+        if granularity is not None:
+            params["granularity"] = granularity
+            
+        if media_analyticsfields is not None:
+            params["media_analytics.fields"] = ",".join(str(item) for item in media_analyticsfields)
+            
+        
+        
+        headers = {}
+        
+        
+        # Prepare request data
+        json_data = None
+        
+        
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        # Make the request
+        
+        
+        if self.client.oauth2_session:
+            response = self.client.oauth2_session.get(
+                url,
+                params=params,
+                headers=headers,
+                
+            )
+        else:
+            response = self.client.session.get(
+                url,
+                params=params,
+                headers=headers,
+                
+            )
+        
+        
+
+        # Check for errors
+        response.raise_for_status()
+
+        # Parse the response data
+        response_data = response.json()
+
+        # Convert to Pydantic model if applicable
+        
+        return GetAnalyticsResponse.model_validate(response_data)
         
         
 
@@ -787,106 +974,6 @@ class MediaClient:
         
 
     
-    def get_analytics(self, media_keys: List, end_time: str, start_time: str, granularity: str, media_analyticsfields: List = None) -> GetAnalyticsResponse:
-        """
-        Get Media analytics
-        
-        Retrieves analytics data for media.
-        
-        Args:
-            media_keys: A comma separated list of Media Keys. Up to 100 are allowed in a single request.
-            end_time: YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
-            start_time: YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
-            granularity: The granularity for the search counts results.
-            media_analyticsfields: A comma separated list of MediaAnalytics fields to display.
-            Returns:
-            GetAnalyticsResponse: Response data
-        """
-        url = self.client.base_url + "/2/media/analytics"
-        
-
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        
-        
-        params = {}
-        if media_keys is not None:
-            params["media_keys"] = ",".join(str(item) for item in media_keys)
-            
-        if end_time is not None:
-            params["end_time"] = end_time
-            
-        if start_time is not None:
-            params["start_time"] = start_time
-            
-        if granularity is not None:
-            params["granularity"] = granularity
-            
-        if media_analyticsfields is not None:
-            params["media_analytics.fields"] = ",".join(str(item) for item in media_analyticsfields)
-            
-        
-        
-        headers = {}
-        
-        
-        # Prepare request data
-        json_data = None
-        
-        
-        
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # Make the request
-        
-        
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.get(
-                url,
-                params=params,
-                headers=headers,
-                
-            )
-        else:
-            response = self.client.session.get(
-                url,
-                params=params,
-                headers=headers,
-                
-            )
-        
-        
-
-        # Check for errors
-        response.raise_for_status()
-
-        # Parse the response data
-        response_data = response.json()
-
-        # Convert to Pydantic model if applicable
-        
-        return GetAnalyticsResponse.model_validate(response_data)
-        
-        
-
-    
     def get_by_keys(self, media_keys: List, mediafields: List = None) -> GetByKeysResponse:
         """
         Get Media by media keys
@@ -974,93 +1061,6 @@ class MediaClient:
         # Convert to Pydantic model if applicable
         
         return GetByKeysResponse.model_validate(response_data)
-        
-        
-
-    
-    def create_metadata(self, body: Optional[CreateMetadataRequest] = None) -> CreateMetadataResponse:
-        """
-        Create Media metadata
-        
-        Creates metadata for a Media file.
-        
-        body: Request body
-        Returns:
-            CreateMetadataResponse: Response data
-        """
-        url = self.client.base_url + "/2/media/metadata"
-        
-
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        
-        
-        params = {}
-        
-        
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        
-        
-        # Prepare request data
-        json_data = None
-        if body is not None:
-            json_data = body.model_dump(exclude_none=True) if hasattr(body, 'model_dump') else body
-        
-        
-        
-        
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        # Make the request
-        
-        
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
-                url,
-                params=params,
-                headers=headers,
-                
-                json=json_data,
-                
-            )
-        else:
-            response = self.client.session.post(
-                url,
-                params=params,
-                headers=headers,
-                
-                json=json_data,
-                
-            )
-        
-        
-
-        # Check for errors
-        response.raise_for_status()
-
-        # Parse the response data
-        response_data = response.json()
-
-        # Convert to Pydantic model if applicable
-        
-        return CreateMetadataResponse.model_validate(response_data)
         
         
 

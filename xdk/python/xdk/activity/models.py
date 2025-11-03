@@ -20,41 +20,6 @@ from datetime import datetime
 
 
 
-# Models for stream
-
-
-
-
-
-
-
-
-class StreamResponse(BaseModel):
-    """Response model for stream"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Models for get_subscriptions
 
 
@@ -116,6 +81,41 @@ class CreateSubscriptionResponse(BaseModel):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for stream
+
+
+
+
+
+
+
+
+class StreamResponse(BaseModel):
+    """Response model for stream"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 

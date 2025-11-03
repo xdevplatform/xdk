@@ -20,6 +20,53 @@ from datetime import datetime
 
 
 
+# Models for initialize_upload
+
+class InitializeUploadRequest(BaseModel):
+    """Request model for initialize_upload"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+class InitializeUploadResponse(BaseModel):
+    """Response model for initialize_upload"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Models for get_upload_status
 
 
@@ -196,10 +243,10 @@ class DeleteSubtitlesResponse(BaseModel):
 
 
 
-# Models for initialize_upload
+# Models for create_metadata
 
-class InitializeUploadRequest(BaseModel):
-    """Request model for initialize_upload"""
+class CreateMetadataRequest(BaseModel):
+    """Request model for create_metadata"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -211,8 +258,8 @@ class InitializeUploadRequest(BaseModel):
 
 
 
-class InitializeUploadResponse(BaseModel):
-    """Response model for initialize_upload"""
+class CreateMetadataResponse(BaseModel):
+    """Response model for create_metadata"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -222,6 +269,41 @@ class InitializeUploadResponse(BaseModel):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for get_analytics
+
+
+
+
+
+
+
+
+class GetAnalyticsResponse(BaseModel):
+    """Response model for get_analytics"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 
@@ -360,41 +442,6 @@ class AppendUploadResponse(BaseModel):
 
 
 
-# Models for get_analytics
-
-
-
-
-
-
-
-
-class GetAnalyticsResponse(BaseModel):
-    """Response model for get_analytics"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Models for get_by_keys
 
 
@@ -409,53 +456,6 @@ class GetByKeysResponse(BaseModel):
     
 
     model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for create_metadata
-
-class CreateMetadataRequest(BaseModel):
-    """Request model for create_metadata"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-class CreateMetadataResponse(BaseModel):
-    """Response model for create_metadata"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
 
 
 

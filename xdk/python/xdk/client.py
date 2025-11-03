@@ -14,39 +14,39 @@ from typing import Dict, List, Optional, Union, Any, Callable
 from .oauth2_auth import OAuth2PKCEAuth
 from .paginator import Cursor, cursor, PaginationError
 
-from .compliance.client import ComplianceClient
-
 from .lists.client import ListsClient
-
-from .community_notes.client import CommunityNotesClient
-
-from .media.client import MediaClient
-
-from .trends.client import TrendsClient
-
-from .general.client import GeneralClient
-
-from .stream.client import StreamClient
-
-from .webhooks.client import WebhooksClient
 
 from .account_activity.client import AccountActivityClient
 
-from .direct_messages.client import DirectMessagesClient
+from .trends.client import TrendsClient
 
-from .spaces.client import SpacesClient
-
-from .users.client import UsersClient
+from .compliance.client import ComplianceClient
 
 from .communities.client import CommunitiesClient
 
+from .webhooks.client import WebhooksClient
+
 from .usage.client import UsageClient
+
+from .media.client import MediaClient
 
 from .activity.client import ActivityClient
 
-from .posts.client import PostsClient
-
 from .connections.client import ConnectionsClient
+
+from .general.client import GeneralClient
+
+from .community_notes.client import CommunityNotesClient
+
+from .spaces.client import SpacesClient
+
+from .direct_messages.client import DirectMessagesClient
+
+from .stream.client import StreamClient
+
+from .users.client import UsersClient
+
+from .posts.client import PostsClient
 
 
 
@@ -90,39 +90,39 @@ class Client:
         
         # Initialize clients for each tag
         
-        self.compliance = ComplianceClient(self)
-        
         self.lists = ListsClient(self)
-        
-        self.community_notes = CommunityNotesClient(self)
-        
-        self.media = MediaClient(self)
-        
-        self.trends = TrendsClient(self)
-        
-        self.general = GeneralClient(self)
-        
-        self.stream = StreamClient(self)
-        
-        self.webhooks = WebhooksClient(self)
         
         self.account_activity = AccountActivityClient(self)
         
-        self.direct_messages = DirectMessagesClient(self)
+        self.trends = TrendsClient(self)
         
-        self.spaces = SpacesClient(self)
-        
-        self.users = UsersClient(self)
+        self.compliance = ComplianceClient(self)
         
         self.communities = CommunitiesClient(self)
         
+        self.webhooks = WebhooksClient(self)
+        
         self.usage = UsageClient(self)
+        
+        self.media = MediaClient(self)
         
         self.activity = ActivityClient(self)
         
-        self.posts = PostsClient(self)
-        
         self.connections = ConnectionsClient(self)
+        
+        self.general = GeneralClient(self)
+        
+        self.community_notes = CommunityNotesClient(self)
+        
+        self.spaces = SpacesClient(self)
+        
+        self.direct_messages = DirectMessagesClient(self)
+        
+        self.stream = StreamClient(self)
+        
+        self.users = UsersClient(self)
+        
+        self.posts = PostsClient(self)
         
     
     @property

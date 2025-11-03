@@ -20,7 +20,13 @@ from datetime import datetime
 
 
 
-# Models for search_recent
+# Models for hide_reply
+
+class HideReplyRequest(BaseModel):
+    """Request model for hide_reply"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 
@@ -29,8 +35,8 @@ from datetime import datetime
 
 
 
-class SearchRecentResponse(BaseModel):
-    """Response model for search_recent"""
+class HideReplyResponse(BaseModel):
+    """Response model for hide_reply"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -55,7 +61,13 @@ class SearchRecentResponse(BaseModel):
 
 
 
-# Models for get_reposts
+
+
+
+
+
+
+# Models for search_all
 
 
 
@@ -64,43 +76,8 @@ class SearchRecentResponse(BaseModel):
 
 
 
-class GetRepostsResponse(BaseModel):
-    """Response model for get_reposts"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for get_insights28hr
-
-
-
-
-
-
-
-
-class GetInsights28hrResponse(BaseModel):
-    """Response model for get_insights28hr"""
+class SearchAllResponse(BaseModel):
+    """Response model for search_all"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -136,111 +113,6 @@ class GetInsights28hrResponse(BaseModel):
 
 class GetLikingUsersResponse(BaseModel):
     """Response model for get_liking_users"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for get_analytics
-
-
-
-
-
-
-
-
-class GetAnalyticsResponse(BaseModel):
-    """Response model for get_analytics"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for get_counts_recent
-
-
-
-
-
-
-
-
-class GetCountsRecentResponse(BaseModel):
-    """Response model for get_counts_recent"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for get_insights_historical
-
-
-
-
-
-
-
-
-class GetInsightsHistoricalResponse(BaseModel):
-    """Response model for get_insights_historical"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -335,6 +207,76 @@ class DeleteResponse(BaseModel):
 
 
 
+# Models for get_reposts
+
+
+
+
+
+
+
+
+class GetRepostsResponse(BaseModel):
+    """Response model for get_reposts"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for get_analytics
+
+
+
+
+
+
+
+
+class GetAnalyticsResponse(BaseModel):
+    """Response model for get_analytics"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Models for get_counts_all
 
 
@@ -370,32 +312,20 @@ class GetCountsAllResponse(BaseModel):
 
 
 
-# Models for hide_reply
+# Models for get_counts_recent
 
-class HideReplyRequest(BaseModel):
-    """Request model for hide_reply"""
+
+
+
+
+
+
+
+class GetCountsRecentResponse(BaseModel):
+    """Response model for get_counts_recent"""
     
 
     model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-class HideReplyResponse(BaseModel):
-    """Response model for hide_reply"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
 
 
 
@@ -452,7 +382,7 @@ class GetQuotedResponse(BaseModel):
 
 
 
-# Models for get_reposted_by
+# Models for get_insights28hr
 
 
 
@@ -461,8 +391,8 @@ class GetQuotedResponse(BaseModel):
 
 
 
-class GetRepostedByResponse(BaseModel):
-    """Response model for get_reposted_by"""
+class GetInsights28hrResponse(BaseModel):
+    """Response model for get_insights28hr"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -487,7 +417,7 @@ class GetRepostedByResponse(BaseModel):
 
 
 
-# Models for search_all
+# Models for get_reposted_by
 
 
 
@@ -496,8 +426,8 @@ class GetRepostedByResponse(BaseModel):
 
 
 
-class SearchAllResponse(BaseModel):
-    """Response model for search_all"""
+class GetRepostedByResponse(BaseModel):
+    """Response model for get_reposted_by"""
     
 
     model_config = ConfigDict(populate_by_name=True)
@@ -583,6 +513,76 @@ class CreateResponse(BaseModel):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for search_recent
+
+
+
+
+
+
+
+
+class SearchRecentResponse(BaseModel):
+    """Response model for search_recent"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for get_insights_historical
+
+
+
+
+
+
+
+
+class GetInsightsHistoricalResponse(BaseModel):
+    """Response model for get_insights_historical"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 

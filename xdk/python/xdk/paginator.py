@@ -211,18 +211,46 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
         
     def _extract_next_token(self, response: ResponseType) -> Optional[str]:
         """Extract the next_token from the response."""
-        # Try common patterns for next_token
+        # First, try to convert Pydantic model to dict if possible
+        response_dict = None
+        if hasattr(response, 'model_dump'):
+            try:
+                response_dict = response.model_dump()
+            except (AttributeError, TypeError):
+                pass
+        
         # Pattern 1: response.meta.next_token (most common)
         try:
+            # Try Pydantic model attributes first
             if hasattr(response, 'meta') and response.meta is not None:
-                # Try to get next_token from meta
                 meta = response.meta
+                # If meta is a Pydantic model, try to dump it
+                if hasattr(meta, 'model_dump'):
+                    try:
+                        meta_dict = meta.model_dump()
+                        token = meta_dict.get('next_token')
+                        if token:
+                            return str(token)
+                    except (AttributeError, TypeError):
+                        pass
+                # Otherwise try attribute access
                 if hasattr(meta, 'next_token'):
                     token = getattr(meta, 'next_token', None)
                     if token:
                         return str(token)
         except (AttributeError, TypeError):
             pass
+        
+        # Try dict access if we have a dict
+        if response_dict:
+            try:
+                meta = response_dict.get('meta')
+                if meta and isinstance(meta, dict):
+                    token = meta.get('next_token')
+                    if token:
+                        return str(token)
+            except (AttributeError, TypeError, KeyError):
+                pass
         
         # Pattern 2: response.next_token (some APIs)
         try:
@@ -232,6 +260,15 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
                     return str(token)
         except (AttributeError, TypeError):
             pass
+        
+        # Try dict access for next_token at root level
+        if response_dict:
+            try:
+                token = response_dict.get('next_token')
+                if token:
+                    return str(token)
+            except (AttributeError, TypeError, KeyError):
+                pass
         
         return None
 
@@ -277,13 +314,32 @@ class _ItemIterator(Iterator[Any]):
         
     def _extract_items(self, response: Any) -> Optional[list]:
         """Extract items from response, trying common field names."""
+        # First, try to convert Pydantic model to dict if possible
+        response_dict = None
+        if hasattr(response, 'model_dump'):
+            try:
+                response_dict = response.model_dump()
+            except (AttributeError, TypeError):
+                pass
+        
         # Try common field names for data arrays
         for field_name in ['data', 'results', 'items']:
+            # Try attribute access first (for Pydantic models)
             try:
                 if hasattr(response, field_name):
                     items = getattr(response, field_name, None)
                     if isinstance(items, list):
                         return items
             except (AttributeError, TypeError):
-                continue
+                pass
+            
+            # Try dict access if we have a dict
+            if response_dict:
+                try:
+                    items = response_dict.get(field_name)
+                    if isinstance(items, list):
+                        return items
+                except (AttributeError, TypeError, KeyError):
+                    continue
+        
         return None

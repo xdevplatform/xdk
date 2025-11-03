@@ -20,76 +20,6 @@ from datetime import datetime
 
 
 
-# Models for get_events_by_participant_id
-
-
-
-
-
-
-
-
-class GetEventsByParticipantIdResponse(BaseModel):
-    """Response model for get_events_by_participant_id"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for get_events
-
-
-
-
-
-
-
-
-class GetEventsResponse(BaseModel):
-    """Response model for get_events"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Models for create_by_participant_id
 
 class CreateByParticipantIdRequest(BaseModel):
@@ -116,41 +46,6 @@ class CreateByParticipantIdResponse(BaseModel):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# Models for get_events_by_conversation_id
-
-
-
-
-
-
-
-
-class GetEventsByConversationIdResponse(BaseModel):
-    """Response model for get_events_by_conversation_id"""
-    
-
-    model_config = ConfigDict(populate_by_name=True)
 
 
 
@@ -289,6 +184,41 @@ class DeleteEventsResponse(BaseModel):
 
 
 
+# Models for get_events_by_conversation_id
+
+
+
+
+
+
+
+
+class GetEventsByConversationIdResponse(BaseModel):
+    """Response model for get_events_by_conversation_id"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Models for create_by_conversation_id
 
 class CreateByConversationIdRequest(BaseModel):
@@ -315,6 +245,76 @@ class CreateByConversationIdResponse(BaseModel):
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for get_events_by_participant_id
+
+
+
+
+
+
+
+
+class GetEventsByParticipantIdResponse(BaseModel):
+    """Response model for get_events_by_participant_id"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Models for get_events
+
+
+
+
+
+
+
+
+class GetEventsResponse(BaseModel):
+    """Response model for get_events"""
+    
+
+    model_config = ConfigDict(populate_by_name=True)
 
 
 
