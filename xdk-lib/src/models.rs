@@ -234,20 +234,10 @@ impl PropertyInfo {
                             "Array<any>".to_string()
                         }
                     }
-                    openapi::TypedSchema::Object(obj) => {
-                        // For object types, if they have additional properties but no explicit properties,
-                        // use Record<string, any>. Otherwise, we'd need to generate an inline type
-                        if obj.properties.is_none()
-                            || obj
-                                .properties
-                                .as_ref()
-                                .map(|p| p.is_empty())
-                                .unwrap_or(true)
-                        {
-                            "Record<string, any>".to_string()
-                        } else {
-                            "Record<string, any>".to_string() // Inline objects need special handling
-                        }
+                    openapi::TypedSchema::Object(_obj) => {
+                        // For object types, return a generic record for now
+                        // Inline object generation can be added here in the future
+                        "Record<string, any>".to_string()
                     }
                 }
             }
@@ -275,30 +265,29 @@ impl PropertyInfo {
             RefOrValue::Value(s) => s,
         };
 
-        if let Schema::Typed(typed) = schema_ref {
-            if let openapi::TypedSchema::Object(obj) = typed.as_ref() {
-                if let Some(properties) = &obj.properties {
-                    let mut prop_info = HashMap::new();
-                    for (name, prop_schema) in properties {
-                        let ts_type = Self::extract_ts_type_from_schema(prop_schema);
-                        let is_required = required
-                            .as_ref()
-                            .map(|req| req.contains(name))
-                            .unwrap_or(false);
+        if let Schema::Typed(typed) = schema_ref
+            && let openapi::TypedSchema::Object(obj) = typed.as_ref()
+            && let Some(properties) = &obj.properties
+        {
+            let mut prop_info = HashMap::new();
+            for (name, prop_schema) in properties {
+                let ts_type = Self::extract_ts_type_from_schema(prop_schema);
+                let is_required = required
+                    .as_ref()
+                    .map(|req| req.contains(name))
+                    .unwrap_or(false);
 
-                        prop_info.insert(
-                            name.clone(),
-                            Self {
-                                name: name.clone(),
-                                ts_type,
-                                required: is_required,
-                                description: None, // Could extract from schema base if needed
-                            },
-                        );
-                    }
-                    return Some(prop_info);
-                }
+                prop_info.insert(
+                    name.clone(),
+                    Self {
+                        name: name.clone(),
+                        ts_type,
+                        required: is_required,
+                        description: None, // Could extract from schema base if needed
+                    },
+                );
             }
+            return Some(prop_info);
         }
         None
     }
