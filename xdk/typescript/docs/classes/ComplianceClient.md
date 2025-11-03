@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / ComplianceClient
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / ComplianceClient
 
 # Class: ComplianceClient
 
@@ -40,7 +40,7 @@ Creates a new compliance client instance
 
 #### Defined in
 
-[compliance/client.ts:67](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/compliance/client.ts#L67)
+[compliance/client.ts:67](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/compliance/client.ts#L67)
 
 ## Methods
 
@@ -66,7 +66,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[compliance/client.ts:84](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/compliance/client.ts#L84)
+[compliance/client.ts:84](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/compliance/client.ts#L84)
 
 ___
 
@@ -92,7 +92,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[compliance/client.ts:134](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/compliance/client.ts#L134)
+[compliance/client.ts:134](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/compliance/client.ts#L134)
 
 ___
 
@@ -117,4 +117,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[compliance/client.ts:190](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/compliance/client.ts#L190)
+[compliance/client.ts:190](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/compliance/client.ts#L190)

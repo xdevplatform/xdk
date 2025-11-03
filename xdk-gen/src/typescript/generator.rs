@@ -84,6 +84,7 @@ language! {
         render "tsconfig" => "tsconfig.json",
         render "tsup.config" => "tsup.config.ts",
         render "typedoc.json" => "typedoc.json",
+        render "npmignore" => ".npmignore",
         render "generate_docs" => "scripts/generate-docs.js",
         render "readme" => "README.md"
     ],

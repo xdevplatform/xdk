@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / ApiResponse
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / ApiResponse
 
 # Interface: ApiResponse\<T\>
 
@@ -30,7 +30,7 @@ Response body
 
 #### Defined in
 
-[client.ts:149](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L149)
+[client.ts:149](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L149)
 
 ___
 
@@ -42,7 +42,7 @@ Response headers
 
 #### Defined in
 
-[client.ts:151](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L151)
+[client.ts:151](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L151)
 
 ___
 
@@ -54,7 +54,7 @@ HTTP status code
 
 #### Defined in
 
-[client.ts:153](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L153)
+[client.ts:153](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L153)
 
 ___
 
@@ -66,7 +66,7 @@ HTTP status text
 
 #### Defined in
 
-[client.ts:155](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L155)
+[client.ts:155](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L155)
 
 ___
 
@@ -78,4 +78,4 @@ Response URL
 
 #### Defined in
 
-[client.ts:157](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L157)
+[client.ts:157](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L157)

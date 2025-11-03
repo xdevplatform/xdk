@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / DirectMessagesClient
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / DirectMessagesClient
 
 # Class: DirectMessagesClient
 
@@ -17,12 +17,12 @@ parsing for all direct messages related operations.
 ### Methods
 
 - [getEvents](DirectMessagesClient.md#getevents)
+- [getEventsByParticipantId](DirectMessagesClient.md#geteventsbyparticipantid)
+- [createByConversationId](DirectMessagesClient.md#createbyconversationid)
+- [createByParticipantId](DirectMessagesClient.md#createbyparticipantid)
+- [getEventsByConversationId](DirectMessagesClient.md#geteventsbyconversationid)
 - [getEventsById](DirectMessagesClient.md#geteventsbyid)
 - [deleteEvents](DirectMessagesClient.md#deleteevents)
-- [createByParticipantId](DirectMessagesClient.md#createbyparticipantid)
-- [createByConversationId](DirectMessagesClient.md#createbyconversationid)
-- [getEventsByParticipantId](DirectMessagesClient.md#geteventsbyparticipantid)
-- [getEventsByConversationId](DirectMessagesClient.md#geteventsbyconversationid)
 - [createConversation](DirectMessagesClient.md#createconversation)
 
 ## Constructors
@@ -45,7 +45,7 @@ Creates a new direct messages client instance
 
 #### Defined in
 
-[direct_messages/client.ts:211](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L211)
+[direct_messages/client.ts:211](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/client.ts#L211)
 
 ## Methods
 
@@ -70,110 +70,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:224](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L224)
-
-___
-
-### getEventsById
-
-▸ **getEventsById**(`eventId`, `options?`): `Promise`\<[`Get2DmEventsEventIdResponse`](../interfaces/Schemas.Get2DmEventsEventIdResponse.md)\>
-
-Get DM event by ID
-Retrieves details of a specific direct message event by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `eventId` | `string` | dm event id. |
-| `options` | `GetEventsByIdOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2DmEventsEventIdResponse`](../interfaces/Schemas.Get2DmEventsEventIdResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[direct_messages/client.ts:311](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L311)
-
-___
-
-### deleteEvents
-
-▸ **deleteEvents**(`eventId`): `Promise`\<[`DeleteDmResponse`](../interfaces/Schemas.DeleteDmResponse.md)\>
-
-Delete DM event
-Deletes a specific direct message event by its ID, if owned by the authenticated user.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `eventId` | `string` | The ID of the direct-message event to delete. |
-
-#### Returns
-
-`Promise`\<[`DeleteDmResponse`](../interfaces/Schemas.DeleteDmResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[direct_messages/client.ts:385](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L385)
-
-___
-
-### createByParticipantId
-
-▸ **createByParticipantId**(`participantId`, `options?`): `Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
-
-Create DM message by participant ID
-Sends a new direct message to a specific participant by their ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `participantId` | `string` | The ID of the recipient user that will receive the DM. |
-| `options` | `CreateByParticipantIdOptions` | - |
-
-#### Returns
-
-`Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[direct_messages/client.ts:423](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L423)
-
-___
-
-### createByConversationId
-
-▸ **createByConversationId**(`dmConversationId`, `options?`): `Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
-
-Create DM message by conversation ID
-Sends a new direct message to a specific conversation by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `dmConversationId` | `string` | The DM Conversation ID. |
-| `options` | `CreateByConversationIdOptions` | - |
-
-#### Returns
-
-`Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[direct_messages/client.ts:474](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L474)
+[direct_messages/client.ts:224](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/client.ts#L224)
 
 ___
 
@@ -199,7 +96,59 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:525](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L525)
+[direct_messages/client.ts:311](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/client.ts#L311)
+
+___
+
+### createByConversationId
+
+▸ **createByConversationId**(`dmConversationId`, `options?`): `Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
+
+Create DM message by conversation ID
+Sends a new direct message to a specific conversation by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `dmConversationId` | `string` | The DM Conversation ID. |
+| `options` | `CreateByConversationIdOptions` | - |
+
+#### Returns
+
+`Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[direct_messages/client.ts:406](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/client.ts#L406)
+
+___
+
+### createByParticipantId
+
+▸ **createByParticipantId**(`participantId`, `options?`): `Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
+
+Create DM message by participant ID
+Sends a new direct message to a specific participant by their ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `participantId` | `string` | The ID of the recipient user that will receive the DM. |
+| `options` | `CreateByParticipantIdOptions` | - |
+
+#### Returns
+
+`Promise`\<[`CreateDmEventResponse`](../interfaces/Schemas.CreateDmEventResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[direct_messages/client.ts:457](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/client.ts#L457)
 
 ___
 
@@ -225,7 +174,58 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:620](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L620)
+[direct_messages/client.ts:508](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/client.ts#L508)
+
+___
+
+### getEventsById
+
+▸ **getEventsById**(`eventId`, `options?`): `Promise`\<[`Get2DmEventsEventIdResponse`](../interfaces/Schemas.Get2DmEventsEventIdResponse.md)\>
+
+Get DM event by ID
+Retrieves details of a specific direct message event by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `eventId` | `string` | dm event id. |
+| `options` | `GetEventsByIdOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2DmEventsEventIdResponse`](../interfaces/Schemas.Get2DmEventsEventIdResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[direct_messages/client.ts:600](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/client.ts#L600)
+
+___
+
+### deleteEvents
+
+▸ **deleteEvents**(`eventId`): `Promise`\<[`DeleteDmResponse`](../interfaces/Schemas.DeleteDmResponse.md)\>
+
+Delete DM event
+Deletes a specific direct message event by its ID, if owned by the authenticated user.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `eventId` | `string` | The ID of the direct-message event to delete. |
+
+#### Returns
+
+`Promise`\<[`DeleteDmResponse`](../interfaces/Schemas.DeleteDmResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[direct_messages/client.ts:674](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/client.ts#L674)
 
 ___
 
@@ -250,4 +250,4 @@ Promise resolving to the API response
 
 #### Defined in
 
-[direct_messages/client.ts:708](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/direct_messages/client.ts#L708)
+[direct_messages/client.ts:708](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/direct_messages/client.ts#L708)

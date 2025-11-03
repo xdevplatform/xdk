@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / MediaUploadRequestOneShot
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / MediaUploadRequestOneShot
 
 # Interface: MediaUploadRequestOneShot
 
@@ -24,7 +24,7 @@ none
 
 #### Defined in
 
-[schemas.ts:1721](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1721)
+[schemas.ts:1721](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1721)
 
 ___
 
@@ -36,7 +36,7 @@ none
 
 #### Defined in
 
-[schemas.ts:1722](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1722)
+[schemas.ts:1722](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1722)
 
 ___
 
@@ -46,7 +46,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:1723](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1723)
+[schemas.ts:1723](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1723)
 
 ___
 
@@ -58,7 +58,7 @@ The type of image or subtitle.
 
 #### Defined in
 
-[schemas.ts:1724](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1724)
+[schemas.ts:1724](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1724)
 
 ___
 
@@ -70,4 +70,4 @@ Whether this media is shared or not.
 
 #### Defined in
 
-[schemas.ts:1733](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1733)
+[schemas.ts:1733](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1733)

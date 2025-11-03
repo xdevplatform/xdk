@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / TweetCreateRequest
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / TweetCreateRequest
 
 # Interface: TweetCreateRequest
 
@@ -33,7 +33,7 @@ Card Uri Parameter. This is mutually exclusive from Quote Tweet Id, Poll, Media,
 
 #### Defined in
 
-[schemas.ts:2616](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2616)
+[schemas.ts:2616](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2616)
 
 ___
 
@@ -43,7 +43,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2617](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2617)
+[schemas.ts:2617](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2617)
 
 ___
 
@@ -55,7 +55,7 @@ Link to take the conversation from the public timeline to a private Direct Messa
 
 #### Defined in
 
-[schemas.ts:2618](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2618)
+[schemas.ts:2618](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2618)
 
 ___
 
@@ -67,7 +67,7 @@ Options for editing an existing Post. When provided, this request will edit the 
 
 #### Defined in
 
-[schemas.ts:2619](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2619)
+[schemas.ts:2619](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2619)
 
 ___
 
@@ -79,7 +79,7 @@ Exclusive Tweet for super followers.
 
 #### Defined in
 
-[schemas.ts:2623](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2623)
+[schemas.ts:2623](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2623)
 
 ___
 
@@ -91,7 +91,7 @@ Place ID being attached to the Tweet for geo location.
 
 #### Defined in
 
-[schemas.ts:2624](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2624)
+[schemas.ts:2624](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2624)
 
 ___
 
@@ -103,7 +103,7 @@ Media information being attached to created Tweet. This is mutually exclusive fr
 
 #### Defined in
 
-[schemas.ts:2628](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2628)
+[schemas.ts:2628](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2628)
 
 ___
 
@@ -115,7 +115,7 @@ Nullcasted (promoted-only) Posts do not appear in the public timeline and are no
 
 #### Defined in
 
-[schemas.ts:2632](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2632)
+[schemas.ts:2632](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2632)
 
 ___
 
@@ -127,7 +127,7 @@ Poll options for a Tweet with a poll. This is mutually exclusive from Media, Quo
 
 #### Defined in
 
-[schemas.ts:2633](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2633)
+[schemas.ts:2633](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2633)
 
 ___
 
@@ -137,7 +137,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:2637](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2637)
+[schemas.ts:2637](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2637)
 
 ___
 
@@ -149,7 +149,7 @@ Tweet information of the Tweet being replied to.
 
 #### Defined in
 
-[schemas.ts:2638](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2638)
+[schemas.ts:2638](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2638)
 
 ___
 
@@ -161,7 +161,7 @@ Settings to indicate who can reply to the Tweet.
 
 #### Defined in
 
-[schemas.ts:2642](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2642)
+[schemas.ts:2642](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2642)
 
 ___
 
@@ -173,7 +173,7 @@ Share community post with followers too.
 
 #### Defined in
 
-[schemas.ts:2647](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2647)
+[schemas.ts:2647](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2647)
 
 ___
 
@@ -183,4 +183,4 @@ ___
 
 #### Defined in
 
-[schemas.ts:2648](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2648)
+[schemas.ts:2648](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2648)

@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / ApiError
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / ApiError
 
 # Class: ApiError
 
@@ -49,7 +49,7 @@ Error.constructor
 
 #### Defined in
 
-[client.ts:118](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L118)
+[client.ts:118](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L118)
 
 ## Properties
 
@@ -59,7 +59,7 @@ Error.constructor
 
 #### Defined in
 
-[client.ts:113](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L113)
+[client.ts:113](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L113)
 
 ___
 
@@ -69,7 +69,7 @@ ___
 
 #### Defined in
 
-[client.ts:114](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L114)
+[client.ts:114](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L114)
 
 ___
 
@@ -79,7 +79,7 @@ ___
 
 #### Defined in
 
-[client.ts:115](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L115)
+[client.ts:115](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L115)
 
 ___
 
@@ -89,4 +89,4 @@ ___
 
 #### Defined in
 
-[client.ts:116](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L116)
+[client.ts:116](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/client.ts#L116)

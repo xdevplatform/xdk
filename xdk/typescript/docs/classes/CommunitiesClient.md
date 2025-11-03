@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / CommunitiesClient
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / CommunitiesClient
 
 # Class: CommunitiesClient
 
@@ -16,8 +16,8 @@ parsing for all communities related operations.
 
 ### Methods
 
-- [search](CommunitiesClient.md#search)
 - [getById](CommunitiesClient.md#getbyid)
+- [search](CommunitiesClient.md#search)
 
 ## Constructors
 
@@ -39,35 +39,9 @@ Creates a new communities client instance
 
 #### Defined in
 
-[communities/client.ts:68](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/communities/client.ts#L68)
+[communities/client.ts:68](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/communities/client.ts#L68)
 
 ## Methods
-
-### search
-
-▸ **search**(`query`, `options?`): `Promise`\<[`Get2CommunitiesSearchResponse`](../interfaces/Schemas.Get2CommunitiesSearchResponse.md)\>
-
-Search Communities
-Retrieves a list of Communities matching the specified search query.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `query` | `string` | Query to search communities. |
-| `options` | `SearchOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2CommunitiesSearchResponse`](../interfaces/Schemas.Get2CommunitiesSearchResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[communities/client.ts:85](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/communities/client.ts#L85)
-
-___
 
 ### getById
 
@@ -91,4 +65,30 @@ Promise resolving to the API response
 
 #### Defined in
 
-[communities/client.ts:155](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/communities/client.ts#L155)
+[communities/client.ts:85](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/communities/client.ts#L85)
+
+___
+
+### search
+
+▸ **search**(`query`, `options?`): `Promise`\<[`Get2CommunitiesSearchResponse`](../interfaces/Schemas.Get2CommunitiesSearchResponse.md)\>
+
+Search Communities
+Retrieves a list of Communities matching the specified search query.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `query` | `string` | Query to search communities. |
+| `options` | `SearchOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2CommunitiesSearchResponse`](../interfaces/Schemas.Get2CommunitiesSearchResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[communities/client.ts:135](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/communities/client.ts#L135)

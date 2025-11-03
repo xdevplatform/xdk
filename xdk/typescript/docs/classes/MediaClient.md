@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / MediaClient
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / MediaClient
 
 # Class: MediaClient
 
@@ -16,17 +16,17 @@ parsing for all media related operations.
 
 ### Methods
 
-- [getByKey](MediaClient.md#getbykey)
+- [getAnalytics](MediaClient.md#getanalytics)
+- [initializeUpload](MediaClient.md#initializeupload)
+- [createSubtitles](MediaClient.md#createsubtitles)
+- [deleteSubtitles](MediaClient.md#deletesubtitles)
 - [createMetadata](MediaClient.md#createmetadata)
+- [getByKey](MediaClient.md#getbykey)
+- [getByKeys](MediaClient.md#getbykeys)
+- [finalizeUpload](MediaClient.md#finalizeupload)
 - [getUploadStatus](MediaClient.md#getuploadstatus)
 - [upload](MediaClient.md#upload)
 - [appendUpload](MediaClient.md#appendupload)
-- [getByKeys](MediaClient.md#getbykeys)
-- [getAnalytics](MediaClient.md#getanalytics)
-- [initializeUpload](MediaClient.md#initializeupload)
-- [finalizeUpload](MediaClient.md#finalizeupload)
-- [createSubtitles](MediaClient.md#createsubtitles)
-- [deleteSubtitles](MediaClient.md#deletesubtitles)
 
 ## Constructors
 
@@ -48,163 +48,9 @@ Creates a new media client instance
 
 #### Defined in
 
-[media/client.ts:181](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L181)
+[media/client.ts:181](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/media/client.ts#L181)
 
 ## Methods
-
-### getByKey
-
-▸ **getByKey**(`mediaKey`, `options?`): `Promise`\<[`Get2MediaMediaKeyResponse`](../interfaces/Schemas.Get2MediaMediaKeyResponse.md)\>
-
-Get Media by media key
-Retrieves details of a specific Media file by its media key.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `mediaKey` | `string` | A single Media Key. |
-| `options` | `GetByKeyOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2MediaMediaKeyResponse`](../interfaces/Schemas.Get2MediaMediaKeyResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[media/client.ts:198](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L198)
-
-___
-
-### createMetadata
-
-▸ **createMetadata**(`options?`): `Promise`\<[`MetadataCreateResponse`](../interfaces/Schemas.MetadataCreateResponse.md)\>
-
-Create Media metadata
-Creates metadata for a Media file.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `CreateMetadataOptions` |
-
-#### Returns
-
-`Promise`\<[`MetadataCreateResponse`](../interfaces/Schemas.MetadataCreateResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[media/client.ts:244](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L244)
-
-___
-
-### getUploadStatus
-
-▸ **getUploadStatus**(`mediaId`, `options?`): `Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
-
-Get Media upload status
-Retrieves the status of a Media upload by its ID.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `mediaId` | `any` | Media id for the requested media upload status. |
-| `options` | `GetUploadStatusOptions` | - |
-
-#### Returns
-
-`Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[media/client.ts:289](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L289)
-
-___
-
-### upload
-
-▸ **upload**(`options?`): `Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
-
-Upload media
-Uploads a media file for use in posts or other content.
-
-#### Parameters
-
-| Name | Type |
-| :------ | :------ |
-| `options` | `UploadOptions` |
-
-#### Returns
-
-`Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[media/client.ts:337](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L337)
-
-___
-
-### appendUpload
-
-▸ **appendUpload**(`id`, `options?`): `Promise`\<[`MediaUploadAppendResponse`](../interfaces/Schemas.MediaUploadAppendResponse.md)\>
-
-Append Media upload
-Appends data to a Media upload request.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The media identifier for the media to perform the append operation. |
-| `options` | `AppendUploadOptions` | - |
-
-#### Returns
-
-`Promise`\<[`MediaUploadAppendResponse`](../interfaces/Schemas.MediaUploadAppendResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[media/client.ts:380](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L380)
-
-___
-
-### getByKeys
-
-▸ **getByKeys**(`mediaKeys`, `options?`): `Promise`\<[`Get2MediaResponse`](../interfaces/Schemas.Get2MediaResponse.md)\>
-
-Get Media by media keys
-Retrieves details of Media files by their media keys.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `mediaKeys` | `any`[] | A comma separated list of Media Keys. Up to 100 are allowed in a single request. |
-| `options` | `GetByKeysOptions` | - |
-
-#### Returns
-
-`Promise`\<[`Get2MediaResponse`](../interfaces/Schemas.Get2MediaResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[media/client.ts:428](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L428)
-
-___
 
 ### getAnalytics
 
@@ -231,7 +77,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:492](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L492)
+[media/client.ts:210](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/media/client.ts#L210)
 
 ___
 
@@ -256,32 +102,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:555](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L555)
-
-___
-
-### finalizeUpload
-
-▸ **finalizeUpload**(`id`): `Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
-
-Finalize Media upload
-Finalizes a Media upload request.
-
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `id` | `string` | The media id of the targeted media to finalize. |
-
-#### Returns
-
-`Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
-
-Promise resolving to the API response
-
-#### Defined in
-
-[media/client.ts:600](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L600)
+[media/client.ts:273](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/media/client.ts#L273)
 
 ___
 
@@ -306,7 +127,7 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:634](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L634)
+[media/client.ts:314](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/media/client.ts#L314)
 
 ___
 
@@ -331,4 +152,183 @@ Promise resolving to the API response
 
 #### Defined in
 
-[media/client.ts:675](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/media/client.ts#L675)
+[media/client.ts:355](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/media/client.ts#L355)
+
+___
+
+### createMetadata
+
+▸ **createMetadata**(`options?`): `Promise`\<[`MetadataCreateResponse`](../interfaces/Schemas.MetadataCreateResponse.md)\>
+
+Create Media metadata
+Creates metadata for a Media file.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `CreateMetadataOptions` |
+
+#### Returns
+
+`Promise`\<[`MetadataCreateResponse`](../interfaces/Schemas.MetadataCreateResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[media/client.ts:396](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/media/client.ts#L396)
+
+___
+
+### getByKey
+
+▸ **getByKey**(`mediaKey`, `options?`): `Promise`\<[`Get2MediaMediaKeyResponse`](../interfaces/Schemas.Get2MediaMediaKeyResponse.md)\>
+
+Get Media by media key
+Retrieves details of a specific Media file by its media key.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `mediaKey` | `string` | A single Media Key. |
+| `options` | `GetByKeyOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2MediaMediaKeyResponse`](../interfaces/Schemas.Get2MediaMediaKeyResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[media/client.ts:441](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/media/client.ts#L441)
+
+___
+
+### getByKeys
+
+▸ **getByKeys**(`mediaKeys`, `options?`): `Promise`\<[`Get2MediaResponse`](../interfaces/Schemas.Get2MediaResponse.md)\>
+
+Get Media by media keys
+Retrieves details of Media files by their media keys.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `mediaKeys` | `any`[] | A comma separated list of Media Keys. Up to 100 are allowed in a single request. |
+| `options` | `GetByKeysOptions` | - |
+
+#### Returns
+
+`Promise`\<[`Get2MediaResponse`](../interfaces/Schemas.Get2MediaResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[media/client.ts:491](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/media/client.ts#L491)
+
+___
+
+### finalizeUpload
+
+▸ **finalizeUpload**(`id`): `Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
+
+Finalize Media upload
+Finalizes a Media upload request.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The media id of the targeted media to finalize. |
+
+#### Returns
+
+`Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[media/client.ts:543](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/media/client.ts#L543)
+
+___
+
+### getUploadStatus
+
+▸ **getUploadStatus**(`mediaId`, `options?`): `Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
+
+Get Media upload status
+Retrieves the status of a Media upload by its ID.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `mediaId` | `any` | Media id for the requested media upload status. |
+| `options` | `GetUploadStatusOptions` | - |
+
+#### Returns
+
+`Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[media/client.ts:581](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/media/client.ts#L581)
+
+___
+
+### upload
+
+▸ **upload**(`options?`): `Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
+
+Upload media
+Uploads a media file for use in posts or other content.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `UploadOptions` |
+
+#### Returns
+
+`Promise`\<[`MediaUploadResponse`](../interfaces/Schemas.MediaUploadResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[media/client.ts:629](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/media/client.ts#L629)
+
+___
+
+### appendUpload
+
+▸ **appendUpload**(`id`, `options?`): `Promise`\<[`MediaUploadAppendResponse`](../interfaces/Schemas.MediaUploadAppendResponse.md)\>
+
+Append Media upload
+Appends data to a Media upload request.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `id` | `string` | The media identifier for the media to perform the append operation. |
+| `options` | `AppendUploadOptions` | - |
+
+#### Returns
+
+`Promise`\<[`MediaUploadAppendResponse`](../interfaces/Schemas.MediaUploadAppendResponse.md)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[media/client.ts:672](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/media/client.ts#L672)

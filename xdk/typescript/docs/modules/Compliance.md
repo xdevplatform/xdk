@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / Compliance
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / Compliance
 
 # Namespace: Compliance
 
@@ -21,7 +21,7 @@ Response for getJobsById
 
 #### Defined in
 
-[compliance/models.ts:15](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/compliance/models.ts#L15)
+[compliance/models.ts:15](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/compliance/models.ts#L15)
 
 ___
 
@@ -33,7 +33,7 @@ Response for getJobs
 
 #### Defined in
 
-[compliance/models.ts:21](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/compliance/models.ts#L21)
+[compliance/models.ts:21](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/compliance/models.ts#L21)
 
 ___
 
@@ -45,7 +45,7 @@ Request for createJobs
 
 #### Defined in
 
-[compliance/models.ts:27](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/compliance/models.ts#L27)
+[compliance/models.ts:27](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/compliance/models.ts#L27)
 
 ___
 
@@ -57,4 +57,4 @@ Response for createJobs
 
 #### Defined in
 
-[compliance/models.ts:33](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/compliance/models.ts#L33)
+[compliance/models.ts:33](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/compliance/models.ts#L33)

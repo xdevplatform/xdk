@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / PlaidAddress
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / PlaidAddress
 
 # Interface: PlaidAddress
 
@@ -25,7 +25,7 @@ The city of the address.
 
 #### Defined in
 
-[schemas.ts:2045](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2045)
+[schemas.ts:2045](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2045)
 
 ___
 
@@ -37,7 +37,7 @@ The country of the address (ISO 3166-1 alpha-2 code).
 
 #### Defined in
 
-[schemas.ts:2046](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2046)
+[schemas.ts:2046](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2046)
 
 ___
 
@@ -49,7 +49,7 @@ The first line of the address.
 
 #### Defined in
 
-[schemas.ts:2047](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2047)
+[schemas.ts:2047](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2047)
 
 ___
 
@@ -61,7 +61,7 @@ The second line of the address.
 
 #### Defined in
 
-[schemas.ts:2048](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2048)
+[schemas.ts:2048](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2048)
 
 ___
 
@@ -73,7 +73,7 @@ The postal code of the address.
 
 #### Defined in
 
-[schemas.ts:2049](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2049)
+[schemas.ts:2049](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2049)
 
 ___
 
@@ -85,4 +85,4 @@ The region or state of the address.
 
 #### Defined in
 
-[schemas.ts:2050](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2050)
+[schemas.ts:2050](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2050)

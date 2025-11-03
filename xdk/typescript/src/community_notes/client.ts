@@ -12,23 +12,23 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  CreateRequest,
-  CreateResponse,
-  SearchWrittenResponse,
-  SearchEligiblePostsResponse,
+  DeleteResponse,
   EvaluateRequest,
   EvaluateResponse,
-  DeleteResponse,
+  SearchWrittenResponse,
+  SearchEligiblePostsResponse,
+  CreateRequest,
+  CreateResponse,
 } from './models.js';
 
 /**
- * Options for create method
+ * Options for evaluate method
  * 
  * @public
  */
-export interface CreateOptions {
+export interface EvaluateOptions {
   /** Request body */
-  body?: CreateRequest;
+  body?: EvaluateRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -88,13 +88,13 @@ export interface SearchEligiblePostsOptions {
 }
 
 /**
- * Options for evaluate method
+ * Options for create method
  * 
  * @public
  */
-export interface EvaluateOptions {
+export interface CreateOptions {
   /** Request body */
-  body?: EvaluateRequest;
+  body?: CreateRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -122,15 +122,53 @@ export class CommunityNotesClient {
   }
 
   /**
-   * Create a Community Note
-   * Creates a community note endpoint for LLM use case.
+   * Delete a Community Note
+   * Deletes a community note.
+
+
+   * @param id The community note id to delete.
 
 
 
-   * @returns {Promise<CreateResponse>} Promise resolving to the API response
+
+   * @returns {Promise<DeleteResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async create(options: CreateOptions = {}): Promise<CreateResponse> {
+  async delete(id: string): Promise<DeleteResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/notes/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<DeleteResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Evaluate a Community Note
+   * Endpoint to evaluate a community note.
+
+
+
+   * @returns {Promise<EvaluateResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async evaluate(options: EvaluateOptions = {}): Promise<EvaluateResponse> {
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
@@ -141,7 +179,7 @@ export class CommunityNotesClient {
       options || {};
 
     // Build the path with path parameters
-    let path = '/2/notes';
+    let path = '/2/evaluate_note';
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -153,7 +191,7 @@ export class CommunityNotesClient {
       ...requestOptions,
     };
 
-    return this.client.request<CreateResponse>(
+    return this.client.request<EvaluateResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -319,15 +357,15 @@ export class CommunityNotesClient {
   }
 
   /**
-   * Evaluate a Community Note
-   * Endpoint to evaluate a community note.
+   * Create a Community Note
+   * Creates a community note endpoint for LLM use case.
 
 
 
-   * @returns {Promise<EvaluateResponse>} Promise resolving to the API response
+   * @returns {Promise<CreateResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async evaluate(options: EvaluateOptions = {}): Promise<EvaluateResponse> {
+  async create(options: CreateOptions = {}): Promise<CreateResponse> {
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
@@ -338,7 +376,7 @@ export class CommunityNotesClient {
       options || {};
 
     // Build the path with path parameters
-    let path = '/2/evaluate_note';
+    let path = '/2/notes';
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -350,46 +388,8 @@ export class CommunityNotesClient {
       ...requestOptions,
     };
 
-    return this.client.request<EvaluateResponse>(
+    return this.client.request<CreateResponse>(
       'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Delete a Community Note
-   * Deletes a community note.
-
-
-   * @param id The community note id to delete.
-
-
-
-
-   * @returns {Promise<DeleteResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async delete(id: string): Promise<DeleteResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/notes/{id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<DeleteResponse>(
-      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / List
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / List
 
 # Interface: List
 
@@ -27,7 +27,7 @@ none
 
 #### Defined in
 
-[schemas.ts:1459](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1459)
+[schemas.ts:1459](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1459)
 
 ___
 
@@ -39,7 +39,7 @@ none
 
 #### Defined in
 
-[schemas.ts:1460](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1460)
+[schemas.ts:1460](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1460)
 
 ___
 
@@ -51,7 +51,7 @@ none
 
 #### Defined in
 
-[schemas.ts:1461](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1461)
+[schemas.ts:1461](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1461)
 
 ___
 
@@ -61,7 +61,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:1462](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1462)
+[schemas.ts:1462](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1462)
 
 ___
 
@@ -73,7 +73,7 @@ none
 
 #### Defined in
 
-[schemas.ts:1463](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1463)
+[schemas.ts:1463](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1463)
 
 ___
 
@@ -85,7 +85,7 @@ The name of this List.
 
 #### Defined in
 
-[schemas.ts:1464](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1464)
+[schemas.ts:1464](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1464)
 
 ___
 
@@ -95,7 +95,7 @@ ___
 
 #### Defined in
 
-[schemas.ts:1465](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1465)
+[schemas.ts:1465](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1465)
 
 ___
 
@@ -107,4 +107,4 @@ none
 
 #### Defined in
 
-[schemas.ts:1466](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1466)
+[schemas.ts:1466](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L1466)

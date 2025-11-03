@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / CreateComplianceJobRequest
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / CreateComplianceJobRequest
 
 # Interface: CreateComplianceJobRequest
 
@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[schemas.ts:375](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L375)
+[schemas.ts:375](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L375)
 
 ___
 
@@ -32,7 +32,7 @@ If true, this endpoint will return a pre-signed URL with resumable uploads enabl
 
 #### Defined in
 
-[schemas.ts:376](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L376)
+[schemas.ts:376](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L376)
 
 ___
 
@@ -44,4 +44,4 @@ Type of compliance job to list.
 
 #### Defined in
 
-[schemas.ts:377](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L377)
+[schemas.ts:377](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L377)

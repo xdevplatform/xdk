@@ -1,6 +1,6 @@
-[X API SDK v2.152 - v1.0.0](README.md) / Exports
+[X API SDK v2.152 - v0.1.0](README.md) / Exports
 
-# X API SDK v2.152 - v1.0.0
+# X API SDK v2.152 - v0.1.0
 
 ## Table of contents
 
@@ -128,4 +128,4 @@
 
 #### Defined in
 
-[http-client.ts:205](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/http-client.ts#L205)
+[http-client.ts:205](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/http-client.ts#L205)

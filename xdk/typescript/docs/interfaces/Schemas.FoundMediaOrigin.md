@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / FoundMediaOrigin
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / FoundMediaOrigin
 
 # Interface: FoundMediaOrigin
 
@@ -21,7 +21,7 @@ Unique Identifier of media within provider ( <= 24 characters ))
 
 #### Defined in
 
-[schemas.ts:647](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L647)
+[schemas.ts:647](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L647)
 
 ___
 
@@ -33,4 +33,4 @@ The media provider (e.g., 'giphy') that sourced the media ( <= 8 Characters )
 
 #### Defined in
 
-[schemas.ts:648](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L648)
+[schemas.ts:648](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L648)

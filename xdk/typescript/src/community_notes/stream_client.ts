@@ -7,19 +7,32 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  CreateResponse,
+  DeleteResponse,
+  EvaluateResponse,
   SearchWrittenResponse,
   SearchEligiblePostsResponse,
-  EvaluateResponse,
-  DeleteResponse,
+  CreateResponse,
 } from './models.js';
 
 /**
- * Options for create method
+ * Options for delete method
  * 
  * @public
  */
-export interface CreateStreamingOptions {
+export interface DeleteStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for evaluate method
+ * 
+ * @public
+ */
+export interface EvaluateStreamingOptions {
   /** Request body */
   body?: any;
 
@@ -90,27 +103,14 @@ export interface SearchEligiblePostsStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for evaluate method
+ * Options for create method
  * 
  * @public
  */
-export interface EvaluateStreamingOptions {
+export interface CreateStreamingOptions {
   /** Request body */
   body?: any;
 
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for delete method
- * 
- * @public
- */
-export interface DeleteStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -127,12 +127,15 @@ export class CommunityNotesClient {
   }
 
   /**
-     * Create a Community Note
-     * Creates a community note endpoint for LLM use case.
+     * Delete a Community Note
+     * Deletes a community note.
      * 
      * @returns Promise with the API response
      */
-  async create(options: CreateStreamingOptions = {}): Promise<CreateResponse> {
+  async delete(
+    id: string,
+    options: DeleteStreamingOptions = {}
+  ): Promise<DeleteResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -141,7 +144,57 @@ export class CommunityNotesClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'create');
+    this.client.validateAuthentication(requiredAuthTypes, 'delete');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const { headers = {}, signal, requestOptions = {} } = options || {};
+
+    // Build the path with path parameters
+    let path = '/2/notes/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<DeleteResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Evaluate a Community Note
+     * Endpoint to evaluate a community note.
+     * 
+     * @returns Promise with the API response
+     */
+  async evaluate(
+    options: EvaluateStreamingOptions = {}
+  ): Promise<EvaluateResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'evaluate');
 
     // Destructure options (exclude path parameters, they're already function params)
 
@@ -155,7 +208,7 @@ export class CommunityNotesClient {
       options || {};
 
     // Build the path with path parameters
-    let path = '/2/notes';
+    let path = '/2/evaluate_note';
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -174,7 +227,7 @@ export class CommunityNotesClient {
     };
 
     // Make the request
-    return this.client.request<CreateResponse>(
+    return this.client.request<EvaluateResponse>(
       'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -363,14 +416,12 @@ export class CommunityNotesClient {
   }
 
   /**
-     * Evaluate a Community Note
-     * Endpoint to evaluate a community note.
+     * Create a Community Note
+     * Creates a community note endpoint for LLM use case.
      * 
      * @returns Promise with the API response
      */
-  async evaluate(
-    options: EvaluateStreamingOptions = {}
-  ): Promise<EvaluateResponse> {
+  async create(options: CreateStreamingOptions = {}): Promise<CreateResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -379,7 +430,7 @@ export class CommunityNotesClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'evaluate');
+    this.client.validateAuthentication(requiredAuthTypes, 'create');
 
     // Destructure options (exclude path parameters, they're already function params)
 
@@ -393,7 +444,7 @@ export class CommunityNotesClient {
       options || {};
 
     // Build the path with path parameters
-    let path = '/2/evaluate_note';
+    let path = '/2/notes';
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -412,59 +463,8 @@ export class CommunityNotesClient {
     };
 
     // Make the request
-    return this.client.request<EvaluateResponse>(
+    return this.client.request<CreateResponse>(
       'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Delete a Community Note
-     * Deletes a community note.
-     * 
-     * @returns Promise with the API response
-     */
-  async delete(
-    id: string,
-    options: DeleteStreamingOptions = {}
-  ): Promise<DeleteResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'delete');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const { headers = {}, signal, requestOptions = {} } = options || {};
-
-    // Build the path with path parameters
-    let path = '/2/notes/{id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<DeleteResponse>(
-      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

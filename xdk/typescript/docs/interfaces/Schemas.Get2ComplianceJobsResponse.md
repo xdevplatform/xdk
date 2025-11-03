@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / Get2ComplianceJobsResponse
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / Get2ComplianceJobsResponse
 
 # Interface: Get2ComplianceJobsResponse
 
@@ -22,7 +22,7 @@ none
 
 #### Defined in
 
-[schemas.ts:713](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L713)
+[schemas.ts:713](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L713)
 
 ___
 
@@ -34,7 +34,7 @@ none
 
 #### Defined in
 
-[schemas.ts:714](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L714)
+[schemas.ts:714](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L714)
 
 ___
 
@@ -46,4 +46,4 @@ none
 
 #### Defined in
 
-[schemas.ts:715](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L715)
+[schemas.ts:715](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L715)

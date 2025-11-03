@@ -1,4 +1,4 @@
-[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / SubscriptionsCountGetResponse
+[X API SDK v2.152 - v0.1.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / SubscriptionsCountGetResponse
 
 # Interface: SubscriptionsCountGetResponse
 
@@ -21,7 +21,7 @@ The count of active subscriptions across all webhooks
 
 #### Defined in
 
-[schemas.ts:2399](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2399)
+[schemas.ts:2399](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2399)
 
 ___
 
@@ -33,4 +33,4 @@ none
 
 #### Defined in
 
-[schemas.ts:2403](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L2403)
+[schemas.ts:2403](https://github.com/xdevplatform/xdk/blob/a332a30384267be8a87066aae5bba329e7c24532/xdk/typescript/src/schemas.ts#L2403)
