@@ -1,0 +1,74 @@
+/**
+ * X API SDK
+ *
+ * A modern TypeScript/JavaScript SDK for interacting with the X API.
+ * Built with full TypeScript support, React hooks, and Next.js integration.
+ */
+
+// Automatic polyfill setup for Node.js environments
+if (typeof process !== 'undefined' && process.versions && process.versions.node) {
+  // Node.js environment - set up polyfills if needed
+  if (typeof globalThis.fetch === 'undefined' || typeof globalThis.Headers === 'undefined') {
+    try {
+      // Try to use native Node.js fetch (Node 18+)
+      if (typeof globalThis.fetch === 'function' && typeof globalThis.Headers === 'function') {
+        // Native APIs are available, no polyfills needed
+      } else {
+        // Need to set up polyfills for older Node.js versions
+        const nodeFetch = require('node-fetch');
+        const { Headers: NodeHeaders } = nodeFetch;
+        
+        if (typeof globalThis.fetch === 'undefined') {
+          (globalThis as any).fetch = nodeFetch.default || nodeFetch;
+        }
+        if (typeof globalThis.Headers === 'undefined') {
+          (globalThis as any).Headers = NodeHeaders;
+        }
+      }
+    } catch (error) {
+      // If node-fetch is not available, provide a helpful error
+      console.warn(
+        'X API SDK: node-fetch not found. For Node.js environments, please install node-fetch:\n' +
+        'npm install node-fetch\n' +
+        'Or upgrade to Node.js 18+ for native fetch support.'
+      );
+    }
+  }
+}
+
+// Main client
+export { Client } from './client.js';
+export type { ClientConfig } from './client.js';
+
+// Error handling
+export { ApiError } from './client.js';
+export type { RequestOptions, ApiResponse, PaginationMeta } from './client.js';
+
+// HTTP client
+export { httpClient, HttpClient } from './http-client.js';
+export type { RequestOptions as HttpClientRequestOptions, HttpResponse } from './http-client.js';
+
+// Authentication
+export { OAuth2 } from './oauth2_auth.js';
+export type { OAuth2Config, OAuth2Token } from './oauth2_auth.js';
+export { OAuth1 } from './oauth1_auth.js';
+export type { OAuth1Config, OAuth1RequestToken, OAuth1AccessToken } from './oauth1_auth.js';
+
+// Crypto utilities
+export { CryptoUtils, hmacSha1, generateNonce, generateTimestamp, generateCodeVerifier, generateCodeChallenge } from './crypto_utils.js';
+
+// Streaming
+export type { StreamListener, TweetStreamListener } from './stream_listener.js';
+
+// Schema types (export all OpenAPI schema types)
+export * as Schemas from './schemas.js';
+
+// Client modules (export client classes and types)
+{% for tag in tags %}
+export { {{ tag.class_name }}Client } from './{{ tag.import_name }}/client.js';
+// Export all types (Request, Response, Options) from this module as a namespace
+export * as {{ tag.class_name }} from './{{ tag.import_name }}/models.js';
+{% endfor %}
+
+// Utilities
+export * from './paginator.js'; 

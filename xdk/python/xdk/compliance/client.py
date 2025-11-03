@@ -17,10 +17,10 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    GetJobsByIdResponse,
     GetJobsResponse,
     CreateJobsRequest,
     CreateJobsResponse,
+    GetJobsByIdResponse,
 )
 
 
@@ -32,50 +32,16 @@ class ComplianceClient:
         self.client = client
 
 
-    def get_jobs_by_id(self, id: Any) -> GetJobsByIdResponse:
-        """
-        Get Compliance Job by ID
-        Retrieves details of a specific Compliance Job by its ID.
-        Args:
-            id: The ID of the Compliance Job to retrieve.
-            Returns:
-            GetJobsByIdResponse: Response data
-        """
-        url = self.client.base_url + "/2/compliance/jobs/{id}"
-        url = url.replace("{id}", str(id))
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        headers = {}
-        # Prepare request data
-        json_data = None
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetJobsByIdResponse.model_validate(response_data)
-
-
-    def get_jobs(self, type: str, status: str = None) -> GetJobsResponse:
+    def get_jobs(
+        self, type: str, status: str = None, compliance_jobfields: List = None
+    ) -> GetJobsResponse:
         """
         Get Compliance Jobs
         Retrieves a list of Compliance Jobs filtered by job type and optional status.
         Args:
             type: Type of Compliance Job to list.
             status: Status of Compliance Job to list.
+            compliance_jobfields: A comma separated list of ComplianceJob fields to display.
             Returns:
             GetJobsResponse: Response data
         """
@@ -93,6 +59,10 @@ class ComplianceClient:
             params["type"] = type
         if status is not None:
             params["status"] = status
+        if compliance_jobfields is not None:
+            params["compliance_job.fields"] = ",".join(
+                str(item) for item in compliance_jobfields
+            )
         headers = {}
         # Prepare request data
         json_data = None
@@ -114,7 +84,7 @@ class ComplianceClient:
         """
         Create Compliance Job
         Creates a new Compliance Job for the specified job type.
-        body: A request to create a new batch compliance job.
+        body: Request body
         Returns:
             CreateJobsResponse: Response data
         """
@@ -151,3 +121,47 @@ class ComplianceClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return CreateJobsResponse.model_validate(response_data)
+
+
+    def get_jobs_by_id(
+        self, id: Any, compliance_jobfields: List = None
+    ) -> GetJobsByIdResponse:
+        """
+        Get Compliance Job by ID
+        Retrieves details of a specific Compliance Job by its ID.
+        Args:
+            id: The ID of the Compliance Job to retrieve.
+            compliance_jobfields: A comma separated list of ComplianceJob fields to display.
+            Returns:
+            GetJobsByIdResponse: Response data
+        """
+        url = self.client.base_url + "/2/compliance/jobs/{id}"
+        url = url.replace("{id}", str(id))
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        if compliance_jobfields is not None:
+            params["compliance_job.fields"] = ",".join(
+                str(item) for item in compliance_jobfields
+            )
+        headers = {}
+        # Prepare request data
+        json_data = None
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetJobsByIdResponse.model_validate(response_data)

@@ -1,0 +1,21 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / Connections
+
+# Namespace: Connections
+
+## Table of contents
+
+### Type Aliases
+
+- [DeleteAllResponse](Connections.md#deleteallresponse)
+
+## Type Aliases
+
+### DeleteAllResponse
+
+Ƭ **DeleteAllResponse**: [`KillAllConnectionsResponse`](../interfaces/Schemas.KillAllConnectionsResponse.md)
+
+Response for deleteAll
+
+#### Defined in
+
+[connections/models.ts:15](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/connections/models.ts#L15)

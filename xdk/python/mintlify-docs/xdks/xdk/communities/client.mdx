@@ -1,0 +1,87 @@
+---
+sidebarTitle: Communities Client
+---
+
+xdk.communities.client — XDK Python SDK documentation
+
+# xdk.communities.client[¶](#module-xdk.communities.client "Link to this heading")
+
+Auto-generated communities client for the X API.
+
+This module provides a client for interacting with the communities endpoints of the X API.
+
+All methods, parameters, and response models are generated from the OpenAPI specification.
+
+Generated automatically - do not edit manually.
+
+Classes
+
+|  |  |
+| --- | --- |
+| [`CommunitiesClient`](#xdk.communities.client.CommunitiesClient "xdk.communities.client.CommunitiesClient")(client) | Client for communities operations |
+
+*class* xdk.communities.client.CommunitiesClient(*client*)[¶](#xdk.communities.client.CommunitiesClient "Link to this definition")
+:   Bases: `object`
+
+    Client for communities operations
+
+    Parameters:
+    :   **client** ([*Client*](xdk.html#xdk.Client "xdk.Client"))
+
+    get\_by\_id(*id*, *communityfields=None*)[¶](#xdk.communities.client.CommunitiesClient.get_by_id "Link to this definition")
+    :   Get Community by ID
+
+        Retrieves details of a specific Community by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the Community.
+            * **communityfields** (*List*) – A comma separated list of Community fields to display.
+            * **Returns**
+            * **GetByIdResponse** – Response data
+
+        Return type:
+        :   [*GetByIdResponse*](xdk.communities.models.html#xdk.communities.models.GetByIdResponse "xdk.communities.models.GetByIdResponse")
+
+    search(*query*, *max\_results=None*, *next\_token=None*, *pagination\_token=None*, *communityfields=None*)[¶](#xdk.communities.client.CommunitiesClient.search "Link to this definition")
+    :   Search Communities
+
+        Retrieves a list of Communities matching the specified search query.
+
+        Parameters:
+        :   * **query** (*str*) – Query to search communities.
+            * **max\_results** (*int*) – The maximum number of search results to be returned by a request.
+            * **next\_token** (*Any*) – This parameter is used to get the next ‘page’ of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
+            * **communityfields** (*List*) – A comma separated list of Community fields to display.
+            * **Returns**
+            * **SearchResponse** – Response data
+
+        Return type:
+        :   [*SearchResponse*](xdk.communities.models.html#xdk.communities.models.SearchResponse "xdk.communities.models.SearchResponse")
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](xdk.html)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - [xdk](xdk.html)
+      * [xdk.communities](xdk.communities.html)
+        + Previous: [xdk.communities](xdk.communities.html "previous chapter")
+        + Next: [xdk.communities.models](xdk.communities.models.html "next chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.communities.client.rst.txt)

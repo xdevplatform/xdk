@@ -25,6 +25,81 @@ class TestDirectMessagesStructure:
         self.direct_messages_client = getattr(self.client, "direct_messages")
 
 
+    def test_get_events_by_participant_id_exists(self):
+        """Test that get_events_by_participant_id method exists with correct signature."""
+        # Check method exists
+        method = getattr(DirectMessagesClient, "get_events_by_participant_id", None)
+        assert (
+            method is not None
+        ), f"Method get_events_by_participant_id does not exist on DirectMessagesClient"
+        # Check method is callable
+        assert callable(method), f"get_events_by_participant_id is not callable"
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        # Should have 'self' as first parameter
+        assert (
+            len(params) >= 1
+        ), f"get_events_by_participant_id should have at least 'self' parameter"
+        assert (
+            params[0] == "self"
+        ), f"First parameter should be 'self', got '{params[0]}'"
+        # Check required parameters exist (excluding 'self')
+        required_params = [
+            "participant_id",
+        ]
+        for required_param in required_params:
+            assert (
+                required_param in params
+            ), f"Required parameter '{required_param}' missing from get_events_by_participant_id"
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = [
+            "max_results",
+            "pagination_token",
+            "event_types",
+            "dm_event.fields",
+            "expansions",
+            "media.fields",
+            "user.fields",
+            "tweet.fields",
+        ]
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert (
+                    param_obj.default is not inspect.Parameter.empty
+                ), f"Optional parameter '{optional_param}' should have a default value"
+
+
+    def test_get_events_by_participant_id_return_annotation(self):
+        """Test that get_events_by_participant_id has proper return type annotation."""
+        method = getattr(DirectMessagesClient, "get_events_by_participant_id")
+        sig = inspect.signature(method)
+        # Check return annotation exists
+        assert (
+            sig.return_annotation is not inspect.Signature.empty
+        ), f"Method get_events_by_participant_id should have return type annotation"
+
+
+    def test_get_events_by_participant_id_pagination_params(self):
+        """Test that get_events_by_participant_id has pagination parameters."""
+        method = getattr(DirectMessagesClient, "get_events_by_participant_id")
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        # Should have pagination-related parameters
+        pagination_params = [
+            "pagination_token",
+            "max_results",
+            "next_token",
+            "cursor",
+            "limit",
+        ]
+        has_pagination_param = any(param in params for param in pagination_params)
+        assert (
+            has_pagination_param
+        ), f"Paginated method get_events_by_participant_id should have pagination parameters"
+
+
     def test_create_conversation_exists(self):
         """Test that create_conversation method exists with correct signature."""
         # Check method exists
@@ -68,6 +143,128 @@ class TestDirectMessagesStructure:
         assert (
             sig.return_annotation is not inspect.Signature.empty
         ), f"Method create_conversation should have return type annotation"
+
+
+    def test_get_events_by_conversation_id_exists(self):
+        """Test that get_events_by_conversation_id method exists with correct signature."""
+        # Check method exists
+        method = getattr(DirectMessagesClient, "get_events_by_conversation_id", None)
+        assert (
+            method is not None
+        ), f"Method get_events_by_conversation_id does not exist on DirectMessagesClient"
+        # Check method is callable
+        assert callable(method), f"get_events_by_conversation_id is not callable"
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        # Should have 'self' as first parameter
+        assert (
+            len(params) >= 1
+        ), f"get_events_by_conversation_id should have at least 'self' parameter"
+        assert (
+            params[0] == "self"
+        ), f"First parameter should be 'self', got '{params[0]}'"
+        # Check required parameters exist (excluding 'self')
+        required_params = [
+            "id",
+        ]
+        for required_param in required_params:
+            assert (
+                required_param in params
+            ), f"Required parameter '{required_param}' missing from get_events_by_conversation_id"
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = [
+            "max_results",
+            "pagination_token",
+            "event_types",
+            "dm_event.fields",
+            "expansions",
+            "media.fields",
+            "user.fields",
+            "tweet.fields",
+        ]
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert (
+                    param_obj.default is not inspect.Parameter.empty
+                ), f"Optional parameter '{optional_param}' should have a default value"
+
+
+    def test_get_events_by_conversation_id_return_annotation(self):
+        """Test that get_events_by_conversation_id has proper return type annotation."""
+        method = getattr(DirectMessagesClient, "get_events_by_conversation_id")
+        sig = inspect.signature(method)
+        # Check return annotation exists
+        assert (
+            sig.return_annotation is not inspect.Signature.empty
+        ), f"Method get_events_by_conversation_id should have return type annotation"
+
+
+    def test_get_events_by_conversation_id_pagination_params(self):
+        """Test that get_events_by_conversation_id has pagination parameters."""
+        method = getattr(DirectMessagesClient, "get_events_by_conversation_id")
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        # Should have pagination-related parameters
+        pagination_params = [
+            "pagination_token",
+            "max_results",
+            "next_token",
+            "cursor",
+            "limit",
+        ]
+        has_pagination_param = any(param in params for param in pagination_params)
+        assert (
+            has_pagination_param
+        ), f"Paginated method get_events_by_conversation_id should have pagination parameters"
+
+
+    def test_create_by_participant_id_exists(self):
+        """Test that create_by_participant_id method exists with correct signature."""
+        # Check method exists
+        method = getattr(DirectMessagesClient, "create_by_participant_id", None)
+        assert (
+            method is not None
+        ), f"Method create_by_participant_id does not exist on DirectMessagesClient"
+        # Check method is callable
+        assert callable(method), f"create_by_participant_id is not callable"
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        # Should have 'self' as first parameter
+        assert (
+            len(params) >= 1
+        ), f"create_by_participant_id should have at least 'self' parameter"
+        assert (
+            params[0] == "self"
+        ), f"First parameter should be 'self', got '{params[0]}'"
+        # Check required parameters exist (excluding 'self')
+        required_params = [
+            "participant_id",
+        ]
+        for required_param in required_params:
+            assert (
+                required_param in params
+            ), f"Required parameter '{required_param}' missing from create_by_participant_id"
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = []
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert (
+                    param_obj.default is not inspect.Parameter.empty
+                ), f"Optional parameter '{optional_param}' should have a default value"
+
+
+    def test_create_by_participant_id_return_annotation(self):
+        """Test that create_by_participant_id has proper return type annotation."""
+        method = getattr(DirectMessagesClient, "create_by_participant_id")
+        sig = inspect.signature(method)
+        # Check return annotation exists
+        assert (
+            sig.return_annotation is not inspect.Signature.empty
+        ), f"Method create_by_participant_id should have return type annotation"
 
 
     def test_create_by_conversation_id_exists(self):
@@ -145,6 +342,11 @@ class TestDirectMessagesStructure:
             "max_results",
             "pagination_token",
             "event_types",
+            "dm_event.fields",
+            "expansions",
+            "media.fields",
+            "user.fields",
+            "tweet.fields",
         ]
         for optional_param in optional_params:
             if optional_param in params:
@@ -183,193 +385,6 @@ class TestDirectMessagesStructure:
         ), f"Paginated method get_events should have pagination parameters"
 
 
-    def test_get_events_by_participant_id_exists(self):
-        """Test that get_events_by_participant_id method exists with correct signature."""
-        # Check method exists
-        method = getattr(DirectMessagesClient, "get_events_by_participant_id", None)
-        assert (
-            method is not None
-        ), f"Method get_events_by_participant_id does not exist on DirectMessagesClient"
-        # Check method is callable
-        assert callable(method), f"get_events_by_participant_id is not callable"
-        # Check method signature
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        # Should have 'self' as first parameter
-        assert (
-            len(params) >= 1
-        ), f"get_events_by_participant_id should have at least 'self' parameter"
-        assert (
-            params[0] == "self"
-        ), f"First parameter should be 'self', got '{params[0]}'"
-        # Check required parameters exist (excluding 'self')
-        required_params = [
-            "participant_id",
-        ]
-        for required_param in required_params:
-            assert (
-                required_param in params
-            ), f"Required parameter '{required_param}' missing from get_events_by_participant_id"
-        # Check optional parameters have defaults (excluding 'self')
-        optional_params = [
-            "max_results",
-            "pagination_token",
-            "event_types",
-        ]
-        for optional_param in optional_params:
-            if optional_param in params:
-                param_obj = sig.parameters[optional_param]
-                assert (
-                    param_obj.default is not inspect.Parameter.empty
-                ), f"Optional parameter '{optional_param}' should have a default value"
-
-
-    def test_get_events_by_participant_id_return_annotation(self):
-        """Test that get_events_by_participant_id has proper return type annotation."""
-        method = getattr(DirectMessagesClient, "get_events_by_participant_id")
-        sig = inspect.signature(method)
-        # Check return annotation exists
-        assert (
-            sig.return_annotation is not inspect.Signature.empty
-        ), f"Method get_events_by_participant_id should have return type annotation"
-
-
-    def test_get_events_by_participant_id_pagination_params(self):
-        """Test that get_events_by_participant_id has pagination parameters."""
-        method = getattr(DirectMessagesClient, "get_events_by_participant_id")
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        # Should have pagination-related parameters
-        pagination_params = [
-            "pagination_token",
-            "max_results",
-            "next_token",
-            "cursor",
-            "limit",
-        ]
-        has_pagination_param = any(param in params for param in pagination_params)
-        assert (
-            has_pagination_param
-        ), f"Paginated method get_events_by_participant_id should have pagination parameters"
-
-
-    def test_create_by_participant_id_exists(self):
-        """Test that create_by_participant_id method exists with correct signature."""
-        # Check method exists
-        method = getattr(DirectMessagesClient, "create_by_participant_id", None)
-        assert (
-            method is not None
-        ), f"Method create_by_participant_id does not exist on DirectMessagesClient"
-        # Check method is callable
-        assert callable(method), f"create_by_participant_id is not callable"
-        # Check method signature
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        # Should have 'self' as first parameter
-        assert (
-            len(params) >= 1
-        ), f"create_by_participant_id should have at least 'self' parameter"
-        assert (
-            params[0] == "self"
-        ), f"First parameter should be 'self', got '{params[0]}'"
-        # Check required parameters exist (excluding 'self')
-        required_params = [
-            "participant_id",
-        ]
-        for required_param in required_params:
-            assert (
-                required_param in params
-            ), f"Required parameter '{required_param}' missing from create_by_participant_id"
-        # Check optional parameters have defaults (excluding 'self')
-        optional_params = []
-        for optional_param in optional_params:
-            if optional_param in params:
-                param_obj = sig.parameters[optional_param]
-                assert (
-                    param_obj.default is not inspect.Parameter.empty
-                ), f"Optional parameter '{optional_param}' should have a default value"
-
-
-    def test_create_by_participant_id_return_annotation(self):
-        """Test that create_by_participant_id has proper return type annotation."""
-        method = getattr(DirectMessagesClient, "create_by_participant_id")
-        sig = inspect.signature(method)
-        # Check return annotation exists
-        assert (
-            sig.return_annotation is not inspect.Signature.empty
-        ), f"Method create_by_participant_id should have return type annotation"
-
-
-    def test_get_events_by_conversation_id_exists(self):
-        """Test that get_events_by_conversation_id method exists with correct signature."""
-        # Check method exists
-        method = getattr(DirectMessagesClient, "get_events_by_conversation_id", None)
-        assert (
-            method is not None
-        ), f"Method get_events_by_conversation_id does not exist on DirectMessagesClient"
-        # Check method is callable
-        assert callable(method), f"get_events_by_conversation_id is not callable"
-        # Check method signature
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        # Should have 'self' as first parameter
-        assert (
-            len(params) >= 1
-        ), f"get_events_by_conversation_id should have at least 'self' parameter"
-        assert (
-            params[0] == "self"
-        ), f"First parameter should be 'self', got '{params[0]}'"
-        # Check required parameters exist (excluding 'self')
-        required_params = [
-            "id",
-        ]
-        for required_param in required_params:
-            assert (
-                required_param in params
-            ), f"Required parameter '{required_param}' missing from get_events_by_conversation_id"
-        # Check optional parameters have defaults (excluding 'self')
-        optional_params = [
-            "max_results",
-            "pagination_token",
-            "event_types",
-        ]
-        for optional_param in optional_params:
-            if optional_param in params:
-                param_obj = sig.parameters[optional_param]
-                assert (
-                    param_obj.default is not inspect.Parameter.empty
-                ), f"Optional parameter '{optional_param}' should have a default value"
-
-
-    def test_get_events_by_conversation_id_return_annotation(self):
-        """Test that get_events_by_conversation_id has proper return type annotation."""
-        method = getattr(DirectMessagesClient, "get_events_by_conversation_id")
-        sig = inspect.signature(method)
-        # Check return annotation exists
-        assert (
-            sig.return_annotation is not inspect.Signature.empty
-        ), f"Method get_events_by_conversation_id should have return type annotation"
-
-
-    def test_get_events_by_conversation_id_pagination_params(self):
-        """Test that get_events_by_conversation_id has pagination parameters."""
-        method = getattr(DirectMessagesClient, "get_events_by_conversation_id")
-        sig = inspect.signature(method)
-        params = list(sig.parameters.keys())
-        # Should have pagination-related parameters
-        pagination_params = [
-            "pagination_token",
-            "max_results",
-            "next_token",
-            "cursor",
-            "limit",
-        ]
-        has_pagination_param = any(param in params for param in pagination_params)
-        assert (
-            has_pagination_param
-        ), f"Paginated method get_events_by_conversation_id should have pagination parameters"
-
-
     def test_get_events_by_id_exists(self):
         """Test that get_events_by_id method exists with correct signature."""
         # Check method exists
@@ -398,7 +413,13 @@ class TestDirectMessagesStructure:
                 required_param in params
             ), f"Required parameter '{required_param}' missing from get_events_by_id"
         # Check optional parameters have defaults (excluding 'self')
-        optional_params = []
+        optional_params = [
+            "dm_event.fields",
+            "expansions",
+            "media.fields",
+            "user.fields",
+            "tweet.fields",
+        ]
         for optional_param in optional_params:
             if optional_param in params:
                 param_obj = sig.parameters[optional_param]
@@ -465,12 +486,12 @@ class TestDirectMessagesStructure:
     def test_all_expected_methods_exist(self):
         """Test that all expected methods exist on the client."""
         expected_methods = [
+            "get_events_by_participant_id",
             "create_conversation",
+            "get_events_by_conversation_id",
+            "create_by_participant_id",
             "create_by_conversation_id",
             "get_events",
-            "get_events_by_participant_id",
-            "create_by_participant_id",
-            "get_events_by_conversation_id",
             "get_events_by_id",
             "delete_events",
         ]

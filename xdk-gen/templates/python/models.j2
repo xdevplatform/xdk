@@ -42,7 +42,11 @@ class {{ class_name }}(BaseModel):
 
 {# Helper macro to generate field type with nested class support #}
 {% macro field_type(prop, parent_class_name, field_name) -%}
-{%- if prop.type == 'object' and prop.properties -%}
+{%- if prop.get("$ref") -%}
+{# Handle schema reference - extract type name from $ref path #}
+{%- set ref_name = prop["$ref"].split("/")[-1] -%}
+{%- if prop.required %}"{{ ref_name }}"{%- else %}Optional["{{ ref_name }}"]{%- endif -%}
+{%- elif prop.type == 'object' and prop.properties -%}
 Optional["{{ parent_class_name }}{{ field_name | pascal_case }}"]
 {%- elif prop.type -%}
 {%- if prop.required %}{{ prop.type | python_type }}{%- else %}Optional[{{ prop.type | python_type }}]{%- endif -%}
@@ -160,7 +164,7 @@ class {{ operation.class_name }}Response(BaseModel):
     {%- endif %}
     {%- endif %}
 
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra='allow')
 {% endif %}
 {% endif %}
 {% endif %}

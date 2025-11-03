@@ -1,0 +1,60 @@
+[X API SDK v2.152 - v1.0.0](../README.md) / [Exports](../modules.md) / [Schemas](../modules/Schemas.md) / Get2UsersIdMentionsResponse
+
+# Interface: Get2UsersIdMentionsResponse
+
+[Schemas](../modules/Schemas.md).Get2UsersIdMentionsResponse
+
+## Table of contents
+
+### Properties
+
+- [data](Schemas.Get2UsersIdMentionsResponse.md#data)
+- [errors](Schemas.Get2UsersIdMentionsResponse.md#errors)
+- [includes](Schemas.Get2UsersIdMentionsResponse.md#includes)
+- [meta](Schemas.Get2UsersIdMentionsResponse.md#meta)
+
+## Properties
+
+### data
+
+• `Optional` **data**: [`Tweet`](Schemas.Tweet.md)[]
+
+none
+
+#### Defined in
+
+[schemas.ts:1263](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1263)
+
+___
+
+### errors
+
+• `Optional` **errors**: [`Problem`](Schemas.Problem.md)[]
+
+none
+
+#### Defined in
+
+[schemas.ts:1264](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1264)
+
+___
+
+### includes
+
+• `Optional` **includes**: [`Expansions`](Schemas.Expansions.md)
+
+#### Defined in
+
+[schemas.ts:1265](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1265)
+
+___
+
+### meta
+
+• `Optional` **meta**: `Record`\<`string`, `any`\>
+
+none
+
+#### Defined in
+
+[schemas.ts:1266](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/schemas.ts#L1266)

@@ -1,0 +1,136 @@
+---
+sidebarTitle: Community Notes Client
+---
+
+xdk.community\_notes.client — XDK Python SDK documentation
+
+# xdk.community\_notes.client[¶](#module-xdk.community_notes.client "Link to this heading")
+
+Auto-generated community notes client for the X API.
+
+This module provides a client for interacting with the community notes endpoints of the X API.
+
+All methods, parameters, and response models are generated from the OpenAPI specification.
+
+Generated automatically - do not edit manually.
+
+Classes
+
+|  |  |
+| --- | --- |
+| [`CommunityNotesClient`](#xdk.community_notes.client.CommunityNotesClient "xdk.community_notes.client.CommunityNotesClient")(client) | Client for community notes operations |
+
+*class* xdk.community\_notes.client.CommunityNotesClient(*client*)[¶](#xdk.community_notes.client.CommunityNotesClient "Link to this definition")
+:   Bases: `object`
+
+    Client for community notes operations
+
+    Parameters:
+    :   **client** ([*Client*](xdk.html#xdk.Client "xdk.Client"))
+
+    create(*body=None*)[¶](#xdk.community_notes.client.CommunityNotesClient.create "Link to this definition")
+    :   Create a Community Note
+
+        Creates a community note endpoint for LLM use case.
+
+        body: Request body
+        :returns: Response data
+        :rtype: CreateResponse
+
+        Parameters:
+        :   **body** ([*CreateRequest*](xdk.community_notes.models.html#xdk.community_notes.models.CreateRequest "xdk.community_notes.models.CreateRequest") *|* *None*)
+
+        Return type:
+        :   [*CreateResponse*](xdk.community_notes.models.html#xdk.community_notes.models.CreateResponse "xdk.community_notes.models.CreateResponse")
+
+    delete(*id*)[¶](#xdk.community_notes.client.CommunityNotesClient.delete "Link to this definition")
+    :   Delete a Community Note
+
+        Deletes a community note.
+
+        Parameters:
+        :   * **id** (*Any*) – The community note id to delete.
+            * **Returns**
+            * **DeleteResponse** – Response data
+
+        Return type:
+        :   [*DeleteResponse*](xdk.community_notes.models.html#xdk.community_notes.models.DeleteResponse "xdk.community_notes.models.DeleteResponse")
+
+    evaluate(*body=None*)[¶](#xdk.community_notes.client.CommunityNotesClient.evaluate "Link to this definition")
+    :   Evaluate a Community Note
+
+        Endpoint to evaluate a community note.
+
+        body: Request body
+        :returns: Response data
+        :rtype: EvaluateResponse
+
+        Parameters:
+        :   **body** ([*EvaluateRequest*](xdk.community_notes.models.html#xdk.community_notes.models.EvaluateRequest "xdk.community_notes.models.EvaluateRequest") *|* *None*)
+
+        Return type:
+        :   [*EvaluateResponse*](xdk.community_notes.models.html#xdk.community_notes.models.EvaluateResponse "xdk.community_notes.models.EvaluateResponse")
+
+    search\_eligible\_posts(*test\_mode*, *pagination\_token=None*, *max\_results=None*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.community_notes.client.CommunityNotesClient.search_eligible_posts "Link to this definition")
+    :   Search for Posts Eligible for Community Notes
+
+        Returns all the posts that are eligible for community notes.
+
+        Parameters:
+        :   * **test\_mode** (*bool*) – If true, return a list of posts that are for the test. If false, return a list of posts that the bots can write proposed notes on the product.
+            * **pagination\_token** (*str*) – Pagination token to get next set of posts eligible for notes.
+            * **max\_results** (*int*) – Max results to return.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **SearchEligiblePostsResponse** – Response data
+
+        Return type:
+        :   [*SearchEligiblePostsResponse*](xdk.community_notes.models.html#xdk.community_notes.models.SearchEligiblePostsResponse "xdk.community_notes.models.SearchEligiblePostsResponse")
+
+    search\_written(*test\_mode*, *pagination\_token=None*, *max\_results=None*, *notefields=None*)[¶](#xdk.community_notes.client.CommunityNotesClient.search_written "Link to this definition")
+    :   Search for Community Notes Written
+
+        Returns all the community notes written by the user.
+
+        Parameters:
+        :   * **test\_mode** (*bool*) – If true, return the notes the caller wrote for the test. If false, return the notes the caller wrote on the product.
+            * **pagination\_token** (*str*) – Pagination token to get next set of posts eligible for notes.
+            * **max\_results** (*int*) – Max results to return.
+            * **notefields** (*List*) – A comma separated list of Note fields to display.
+            * **Returns**
+            * **SearchWrittenResponse** – Response data
+
+        Return type:
+        :   [*SearchWrittenResponse*](xdk.community_notes.models.html#xdk.community_notes.models.SearchWrittenResponse "xdk.community_notes.models.SearchWrittenResponse")
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](xdk.html)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - [xdk](xdk.html)
+      * [xdk.community\_notes](xdk.community_notes.html)
+        + Previous: [xdk.community\_notes](xdk.community_notes.html "previous chapter")
+        + Next: [xdk.community\_notes.models](xdk.community_notes.models.html "next chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.community_notes.client.rst.txt)

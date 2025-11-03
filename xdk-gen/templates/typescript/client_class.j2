@@ -1,0 +1,323 @@
+{% if tag.class_name != 'Stream' %}
+/**
+ * {{ tag.display_name }} client for the X API.
+ *
+ * This module provides a client for interacting with the {{ tag.display_name }} endpoints of the X API.
+ */
+
+import { Client, ApiResponse, RequestOptions } from '../client.js';
+import { 
+    Paginator, 
+    PostPaginator, 
+    UserPaginator, 
+    EventPaginator
+} from '../paginator.js';
+import {
+{% for operation in operations -%}
+{% if operation.request_body -%}
+    {{ operation.class_name }}Request,
+{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses -%}
+    {{ operation.class_name }}Response,
+{% endif -%}
+{% elif operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses -%}
+    {{ operation.class_name }}Response,
+{% endif -%}
+{% endfor -%}
+} from './models.js';
+
+{% for operation in operations -%}
+{% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+/**
+ * Options for {{ operation.method_name }} method
+ * 
+ * @public
+ */
+export interface {{ operation.class_name }}Options {
+    {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+    {% if param.variable_name %}
+    /** {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %} */
+    {{ param.variable_name }}?: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %};
+    {% endif %}
+    {% endfor %}
+    {% if operation.request_body and not operation.request_body.required %}
+    /** Request body */
+    body?: {{ operation.class_name }}Request;
+    {% endif %}
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+{% endif %}
+{% endfor %}
+
+/**
+ * Client for {{ tag.display_name }} operations
+ * 
+ * This client provides methods for interacting with the {{ tag.display_name }} endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all {{ tag.display_name }} related operations.
+ * 
+ * @category {{ tag.display_name }}
+ */
+export class {{ tag.class_name }}Client {
+    private client: Client;
+
+    /**
+     * Creates a new {{ tag.display_name }} client instance
+     * 
+     * @param client - The main X API client instance
+     */
+    constructor(client: Client) {
+        this.client = client;
+    }
+{% for operation in operations %}
+{% if not (operation.parameters and (operation.parameters | selectattr('name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('name', 'equalto', 'next_token') | list | length > 0)) %}
+  /**
+   * {{ operation.summary | default("") }}{% if operation.description %}
+   * {{ operation.description }}{% endif %}
+{% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+{% if param.variable_name %}
+   * @param {{ param.variable_name }} {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
+{% endif %}
+{% endfor %}
+{% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+{% if param.variable_name %}
+   * @param {{ param.variable_name }} {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
+{% endif %}
+{% endfor %}
+{% if operation.request_body and operation.request_body.required %}
+   * @param body {% if operation.request_body.content and operation.request_body.content["application/json"] and operation.request_body.content["application/json"].schema and operation.request_body.content["application/json"].schema.description %}{{ operation.request_body.content["application/json"].schema.description }}{% else %}Request body{% endif %}
+{% endif %}
+   * @returns {Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>} Promise resolving to the API response
+   */
+    // Overload 1: Default behavior (unwrapped response)
+    async {{ operation.method_name }}(
+        {# Path parameters are always required - use location field #}
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}string{% endif %},
+        {% endif %}
+        {% endfor %}
+        {# Required query/header parameters (but not path, since those are already included above) #}
+        {% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
+        {% endif %}
+        {% endfor %}
+        {# Required request body #}
+        {% if operation.request_body and operation.request_body.required %}
+        body: {{ operation.class_name }}Request,
+        {% endif %}
+        {# Options object for all optional parameters #}
+        {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        options: {{ operation.class_name }}Options = {}
+        {% endif %}
+    ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}> {
+        // Destructure options (exclude path parameters, they're already function params)
+        {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        const {
+            {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+            {% if param.variable_name %}
+            {{ param.variable_name }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
+            {% endif %}
+            {% endfor %}
+            {% if operation.request_body and not operation.request_body.required %}
+            body,
+            {% endif %}
+            requestOptions: requestOptions = {}
+        } = options || {};
+        {% else %}
+        const requestOptions = {};
+        {% endif %}
+
+        // Build the path with path parameters
+        let path = '{{ operation.path }}';
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        path = path.replace('{{ '{' }}{{ param.original_name }}{{ '}' }}', encodeURIComponent(String({{ param.variable_name }})));
+        {% endif %}
+        {% endfor %}
+
+        // Build query parameters
+        const params = new URLSearchParams();
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'query') %}
+        {% if param.variable_name %}
+        {% if param.required %}
+        if ({{ param.variable_name }} !== undefined) {
+            {% if param.schema and param.schema.type == 'array' %}
+            params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+            {% else %}
+            params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+            {% endif %}
+        }
+        {% else %}
+        if ({{ param.variable_name }} !== undefined) {
+            {% if param.schema and param.schema.type == 'array' %}
+            params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+            {% else %}
+            params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+            {% endif %}
+        }
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+        // Prepare request options
+        const finalRequestOptions: RequestOptions = {
+            {% if operation.request_body and operation.request_body.required %}
+            body: JSON.stringify(body || {}),
+            {% elif operation.request_body and not operation.request_body.required %}
+            body: body ? JSON.stringify(body) : undefined,
+            {% endif %}
+            {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+            ...requestOptions
+            {% else %}
+            // No optional parameters, using empty request options
+            {% endif %}
+        };
+
+        return this.client.request<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>(
+            '{{ operation.method | upper }}',
+            path + (params.toString() ? `?${params.toString()}` : ''),
+            finalRequestOptions
+        );
+    }
+
+{% endif %}
+{% endfor %}
+
+{% for operation in operations %}
+{% if operation.parameters and (operation.parameters | selectattr('name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('name', 'equalto', 'next_token') | list | length > 0) %}
+  /**
+   * {{ operation.summary | default("") }}{% if operation.description %}
+   * {{ operation.description }}{% endif %}
+   * Returns a paginator for automatic pagination through all results.
+{% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+{% if param.variable_name %}
+   * @param {{ param.variable_name }} {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
+{% endif %}
+{% endfor %}
+{% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+{% if param.variable_name %}
+   * @param {{ param.variable_name }} {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
+{% endif %}
+{% endfor %}
+   * @param options Options for the paginated request
+   * @returns A paginator instance for iterating through all results
+   */
+  async {{ operation.method_name }}(
+    {# Path parameters are always required #}
+    {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+    {% if param.variable_name %}
+    {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}string{% endif %},
+    {% endif %}
+    {% endfor %}
+    {# Required query/header parameters (but not path) #}
+    {% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+    {% if param.variable_name %}
+    {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
+    {% endif %}
+    {% endfor %}
+    {# Options object for all optional parameters #}
+    {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 %}
+    options: {{ operation.class_name }}Options = {}
+    {% else %}
+    options: { requestOptions?: RequestOptions } = {}
+    {% endif %}
+  ): Promise<{% if 'tweet' in operation.method_name|lower or 'post' in operation.method_name|lower %}PostPaginator{% elif 'user' in operation.method_name|lower or 'users' in operation.method_name|lower or 'list' in operation.method_name|lower %}UserPaginator{% elif 'event' in operation.method_name|lower or 'dm' in operation.method_name|lower %}EventPaginator{% else %}Paginator<any>{% endif %}> {
+    // Destructure options (exclude path parameters)
+    {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 %}
+    const {
+        {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
+        {% endif %}
+        {% endfor %}
+        requestOptions: requestOptions = {}
+    } = options || {};
+    {% else %}
+    const { requestOptions: requestOptions = {} } = options;
+    {% endif %}
+
+    // Build the path with path parameters
+    let path = '{{ operation.path }}';
+    {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+    {% if param.variable_name %}
+    path = path.replace('{{ '{' }}{{ param.original_name }}{{ '}' }}', encodeURIComponent(String({{ param.variable_name }})));
+    {% endif %}
+    {% endfor %}
+
+    // Create the fetch function for the paginator
+    const fetchPage = async (paginationToken?: string) => {
+      // Build query parameters
+      const params = new URLSearchParams();
+      {% for param in operation.parameters | selectattr('location', 'equalto', 'query') %}
+      {% if param.variable_name %}
+      {% if param.required %}
+      if ({{ param.variable_name }} !== undefined) {
+          {% if param.schema and param.schema.type == 'array' %}
+          params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+          {% else %}
+          params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+          {% endif %}
+      }
+      {% else %}
+      if ({{ param.variable_name }} !== undefined) {
+          {% if param.schema and param.schema.type == 'array' %}
+          params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+          {% else %}
+          params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+          {% endif %}
+      }
+      {% endif %}
+      {% endif %}
+      {% endfor %}
+
+      // Add pagination token if provided
+      if (paginationToken) {
+        {% if operation.parameters | selectattr('name', 'equalto', 'pagination_token') | list | length > 0 %}
+        params.set('pagination_token', paginationToken);
+        {% elif operation.parameters | selectattr('name', 'equalto', 'next_token') | list | length > 0 %}
+        params.set('next_token', paginationToken);
+        {% endif %}
+      }
+
+      // Prepare request options
+      const finalRequestOptions: RequestOptions = {
+          {% if operation.request_body and operation.request_body.required %}
+          body: JSON.stringify(body || {}),
+          {% elif operation.request_body and not operation.request_body.required %}
+          body: body ? JSON.stringify(body) : undefined,
+          {% endif %}
+          ...requestOptions
+      };
+
+      const response = await this.client.request<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>(
+          '{{ operation.method | upper }}',
+          path + (params.toString() ? `?${params.toString()}` : ''),
+          finalRequestOptions
+      );
+
+      return {
+        data: Array.isArray(response.data) ? response.data : [],
+        meta: (response as any).meta,
+        includes: (response as any).includes,
+        errors: (response as any).errors
+      };
+    };
+
+    // Create paginator and fetch first page
+    const paginator = new {% if 'tweet' in operation.method_name|lower or 'post' in operation.method_name|lower %}PostPaginator{% elif 'user' in operation.method_name|lower or 'users' in operation.method_name|lower or 'list' in operation.method_name|lower %}UserPaginator{% elif 'event' in operation.method_name|lower or 'dm' in operation.method_name|lower %}EventPaginator{% else %}Paginator{% endif %}(fetchPage);
+    
+    // Fetch the first page immediately
+    await paginator.fetchNext();
+    
+    return paginator;
+  }
+
+{% endif %}
+{% endfor %}
+}
+{% else %}
+{# Stream client is handled by stream_client.j2 template, so we import and re-export it here #}
+export { StreamClient } from './stream_client.js';
+{% endif %}

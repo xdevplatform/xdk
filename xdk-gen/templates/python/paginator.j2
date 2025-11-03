@@ -63,15 +63,17 @@ class Cursor(Generic[ResponseType]):
     return type of the wrapped method for proper type hints.
     
     Example usage:
-        # For methods requiring arguments
-        cursor = Cursor(client.users.get_users_blocking, "user_id", max_results=100)
-        for user in cursor.items(250):  # user is properly typed
-            print(user.name)
-            
-        # For methods with query parameters  
-        cursor = Cursor(client.posts.search_posts_recent, "python", max_results=50)
-        for page in cursor.pages(5):  # page is SearchResponse type
-            print(f"Got {len(page.data)} posts")
+        .. code-block:: python
+
+            # For methods requiring arguments
+            cursor = Cursor(client.users.get_users_blocking, "user_id", max_results=100)
+            for user in cursor.items(250):  # user is properly typed
+                print(user.name)
+
+            # For methods with query parameters
+            cursor = Cursor(client.posts.search_posts_recent, "python", max_results=50)
+            for page in cursor.pages(5):  # page is SearchResponse type
+                print(f"Got {len(page.data)} posts")
     """
     
     def __init__(self, method: PaginatableMethod[ResponseType], *args: Any, **kwargs: Any):
@@ -143,17 +145,19 @@ def cursor(method: PaginatableMethod[ResponseType], *args: Any, **kwargs: Any) -
         PaginationError: If the method doesn't support pagination parameters
         
     Example:
-        # Type is inferred as Cursor[GetUsersResponse]
-        users_cursor = cursor(client.users.get_users_blocking, "user_id", max_results=100)
-        
-        # page is typed as GetUsersResponse
-        for page in users_cursor.pages(5):
-            print(len(page.data))
-            
-        # For search methods
-        search_cursor = cursor(client.posts.search_posts_recent, "python", max_results=50)
-        for tweet in search_cursor.items(100):
-            print(tweet.text)
+        .. code-block:: python
+
+            # Type is inferred as Cursor[GetUsersResponse]
+            users_cursor = cursor(client.users.get_users_blocking, "user_id", max_results=100)
+
+            # page is typed as GetUsersResponse
+            for page in users_cursor.pages(5):
+                print(len(page.data))
+
+            # For search methods
+            search_cursor = cursor(client.posts.search_posts_recent, "python", max_results=50)
+            for tweet in search_cursor.items(100):
+                print(tweet.text)
     """
     return Cursor(method, *args, **kwargs)
 
@@ -187,11 +191,13 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
         # Make the API call with both positional and keyword arguments
         response = self.cursor.method(*self.cursor.args, **params)
         
-        # Extract next token
-        self._next_token = self._extract_next_token(response)
+        # Extract next token AFTER returning this response
+        # This allows us to check if there are more pages
+        extracted_token = self._extract_next_token(response)
+        self._next_token = extracted_token
         
-        # Check if we're done
-        if not self._next_token:
+        # Check if we're done - if no token was extracted, we've reached the end
+        if not extracted_token:
             self.exhausted = True
             
         self.count += 1
@@ -209,10 +215,88 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
         
     def _extract_next_token(self, response: ResponseType) -> Optional[str]:
         """Extract the next_token from the response."""
-        # Try common patterns for next_token
-        if hasattr(response, 'meta') and response.meta:
-            if hasattr(response.meta, 'next_token'):
-                return response.meta.next_token
+        # First, try to convert Pydantic model to dict if possible
+        response_dict = None
+        if hasattr(response, 'model_dump'):
+            try:
+                # model_dump includes both defined fields and extra fields
+                response_dict = response.model_dump()
+            except (AttributeError, TypeError):
+                pass
+        
+        # Also try to get extra fields directly from Pydantic
+        if hasattr(response, '__pydantic_extra__'):
+            try:
+                extra = response.__pydantic_extra__
+                if extra and isinstance(extra, dict):
+                    meta = extra.get('meta')
+                    if meta and isinstance(meta, dict):
+                        token = meta.get('next_token')
+                        if token:
+                            return str(token)
+                    # Also check for next_token at root level in extra
+                    token = extra.get('next_token')
+                    if token:
+                        return str(token)
+            except (AttributeError, TypeError, KeyError):
+                pass
+        
+        # Pattern 1: response.meta.next_token (most common)
+        try:
+            # Try Pydantic model attributes first
+            if hasattr(response, 'meta') and response.meta is not None:
+                meta = response.meta
+                # If meta is a Pydantic model, try to dump it
+                if hasattr(meta, 'model_dump'):
+                    try:
+                        meta_dict = meta.model_dump()
+                        token = meta_dict.get('next_token')
+                        if token:
+                            return str(token)
+                    except (AttributeError, TypeError):
+                        pass
+                # Otherwise try attribute access
+                if hasattr(meta, 'next_token'):
+                    token = getattr(meta, 'next_token', None)
+                    if token:
+                        return str(token)
+                # If meta is a dict, access it directly
+                if isinstance(meta, dict):
+                    token = meta.get('next_token')
+                    if token:
+                        return str(token)
+        except (AttributeError, TypeError):
+            pass
+        
+        # Try dict access if we have a dict
+        if response_dict:
+            try:
+                meta = response_dict.get('meta')
+                if meta and isinstance(meta, dict):
+                    token = meta.get('next_token')
+                    if token:
+                        return str(token)
+            except (AttributeError, TypeError, KeyError):
+                pass
+        
+        # Pattern 2: response.next_token (some APIs)
+        try:
+            if hasattr(response, 'next_token'):
+                token = getattr(response, 'next_token', None)
+                if token:
+                    return str(token)
+        except (AttributeError, TypeError):
+            pass
+        
+        # Try dict access for next_token at root level
+        if response_dict:
+            try:
+                token = response_dict.get('next_token')
+                if token:
+                    return str(token)
+            except (AttributeError, TypeError, KeyError):
+                pass
+        
         return None
 
 
@@ -257,10 +341,45 @@ class _ItemIterator(Iterator[Any]):
         
     def _extract_items(self, response: Any) -> Optional[list]:
         """Extract items from response, trying common field names."""
+        # First, try to convert Pydantic model to dict if possible
+        response_dict = None
+        if hasattr(response, 'model_dump'):
+            try:
+                # model_dump includes both defined fields and extra fields
+                response_dict = response.model_dump()
+            except (AttributeError, TypeError):
+                pass
+        
+        # Also try to get extra fields directly from Pydantic
+        if hasattr(response, '__pydantic_extra__'):
+            try:
+                extra = response.__pydantic_extra__
+                if extra and isinstance(extra, dict):
+                    for field_name in ['data', 'results', 'items']:
+                        items = extra.get(field_name)
+                        if isinstance(items, list):
+                            return items
+            except (AttributeError, TypeError, KeyError):
+                pass
+        
         # Try common field names for data arrays
         for field_name in ['data', 'results', 'items']:
-            if hasattr(response, field_name):
-                items = getattr(response, field_name)
-                if isinstance(items, list):
-                    return items
+            # Try attribute access first (for Pydantic models)
+            try:
+                if hasattr(response, field_name):
+                    items = getattr(response, field_name, None)
+                    if isinstance(items, list):
+                        return items
+            except (AttributeError, TypeError):
+                pass
+            
+            # Try dict access if we have a dict
+            if response_dict:
+                try:
+                    items = response_dict.get(field_name)
+                    if isinstance(items, list):
+                        return items
+                except (AttributeError, TypeError, KeyError):
+                    continue
+        
         return None

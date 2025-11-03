@@ -1,0 +1,314 @@
+/**
+ * Stream client for the X API.
+ *
+ * This module provides a client for interacting with the streaming endpoints of the X API.
+ */
+
+import { Client, ApiResponse, RequestOptions } from '../client.js';
+import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
+import {
+{% for operation in operations -%}
+{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
+  {{ operation.class_name }}Response,
+{% endif %}
+{% endfor -%}
+} from './models.js';
+
+{% for operation in operations -%}
+/**
+ * Options for {{ operation.method_name }} method
+ * 
+ * @public
+ */
+export interface {{ operation.class_name }}StreamingOptions {
+    {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+    {% if param.variable_name %}
+    /** {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %} */
+    {{ param.variable_name }}?: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %};
+    {% endif %}
+    {% endfor %}
+    {% if operation.request_body and not operation.request_body.required %}
+    /** Request body */
+    body?: any;
+    {% endif %}
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+    /** Additional headers */
+    headers?: Record<string, string>;
+    /** AbortSignal for cancelling the request */
+    signal?: AbortSignal;
+}
+{% endfor %}
+
+export class {{ tag.class_name }}Client {
+    private client: Client;
+
+    constructor(client: Client) {
+        this.client = client;
+    }
+
+{% for operation in operations %}
+{% if operation["x-twitter-streaming"] or ('/stream' in operation.path and '/rules' not in operation.path) %}
+    /**
+     * {{ operation.summary | default("") }}{% if operation.description %}
+     * {{ operation.description }}{% endif %}
+     * 
+     * Returns an event-driven stream that's easy to use.
+     * Use .on() to listen for events like 'data', 'error', 'close'.
+     * Also supports async iteration with for await...of.
+{% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+{% if param.variable_name %}
+     * @param {{ param.variable_name }} {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
+{% endif %}
+{% endfor %}
+{% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+{% if param.variable_name %}
+     * @param {{ param.variable_name }} {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %}
+{% endif %}
+{% endfor %}
+{% if operation.request_body and operation.request_body.required %}
+     * @param body {% if operation.request_body.content and operation.request_body.content["application/json"] and operation.request_body.content["application/json"].schema and operation.request_body.content["application/json"].schema.description %}{{ operation.request_body.content["application/json"].schema.description }}{% else %}Request body{% endif %}
+{% endif %}
+     * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
+     */
+    async {{ operation.method_name }}(
+        {# Path parameters are always required - use location field #}
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}string{% endif %},
+        {% endif %}
+        {% endfor %}
+        {# Required query/header parameters (but not path, since those are already included above) #}
+        {% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
+        {% endif %}
+        {% endfor %}
+        {# Required request body #}
+        {% if operation.request_body and operation.request_body.required %}
+        body: any,
+        {% endif %}
+        {# Options object for all optional parameters - always include for headers/signal #}
+        options: {{ operation.class_name }}StreamingOptions = {}
+    ): Promise<EventDrivenStream> {
+        // Validate authentication requirements
+        {% if operation.security %}
+        const requiredAuthTypes = [];
+        {% for security_req in operation.security %}
+        {% for auth_type in security_req %}
+        requiredAuthTypes.push('{{ auth_type }}');
+        {% endfor %}
+        {% endfor %}
+        this.client.validateAuthentication(requiredAuthTypes, '{{ operation.method_name }}');
+        {% endif %}
+
+        // Destructure options (exclude path parameters, they're already function params)
+        {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        const {
+            {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+            {% if param.variable_name %}
+            {{ param.variable_name }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
+            {% endif %}
+            {% endfor %}
+            {% if operation.request_body and not operation.request_body.required %}
+            body,
+            {% endif %}
+            headers = {},
+            signal,
+            requestOptions: requestOptions = {}
+        } = options || {};
+        {% else %}
+        const { headers = {}, signal, requestOptions = {} } = options || {};
+        {% endif %}
+
+        // Build the path with path parameters
+        let path = '{{ operation.path }}';
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        path = path.replace('{{ '{' }}{{ param.original_name }}{{ '}' }}', encodeURIComponent(String({{ param.variable_name }})));
+        {% endif %}
+        {% endfor %}
+
+        // Build query parameters
+        const params = new URLSearchParams();
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'query') %}
+        {% if param.variable_name %}
+        {% if param.required %}
+        {# Required query params are function arguments #}
+        {% if param.schema and param.schema.type == 'array' %}
+        params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+        {% else %}
+        params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+        {% endif %}
+        {% else %}
+        {# Optional query params come from options #}
+        if ({{ param.variable_name }} !== undefined) {
+            {% if param.schema and param.schema.type == 'array' %}
+            params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+            {% else %}
+            params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+            {% endif %}
+        }
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+        // Make the authenticated request using the main client's request method
+        // We need raw: true to get the raw Response object for streaming
+        const url = path + (params.toString() ? `?${params.toString()}` : '');
+        
+        // For streaming requests, we don't want to timeout the initial connection
+        // Instead, we'll handle timeouts at the stream level
+        const response = await this.client.request(
+            '{{ operation.method | upper }}',
+            url,
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...headers,
+                },
+                {% if operation.request_body %}
+                body: JSON.stringify({% if operation.request_body.required %}body{% else %}body{% endif %}),
+                {% endif %}
+                signal: signal,
+                raw: true, // Get raw Response object for streaming
+                timeout: 0, // Disable timeout for streaming requests
+                ...requestOptions,
+            }
+        ) as Response;
+
+        // Handle errors
+        if (!response.ok) {
+            throw new Error(
+                `HTTP ${response.status}: ${response.statusText}`
+            );
+        }
+
+        // Return the readable stream
+        // The response.body is the actual ReadableStream for streaming
+        if (!response.body) {
+            throw new Error('Response body is not available for streaming');
+        }
+
+        // Wrap the ReadableStream in an event-driven interface
+        const eventStream = new EventDrivenStream();
+        await eventStream.connect(response.body);
+        return eventStream;
+    }
+{% endif %}
+
+{% endfor %}
+
+{% for operation in operations %}
+{% if not operation["x-twitter-streaming"] and not ('/stream' in operation.path and '/rules' not in operation.path) %}
+    /**
+     * {{ operation.summary | default("") }}{% if operation.description %}
+     * {{ operation.description }}{% endif %}
+     * 
+     * @returns Promise with the API response
+     */
+    async {{ operation.method_name }}(
+        {# Path parameters are always required - use location field #}
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}string{% endif %},
+        {% endif %}
+        {% endfor %}
+        {# Required query/header parameters (but not path, since those are already included above) #}
+        {% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
+        {% endif %}
+        {% endfor %}
+        {# Required request body #}
+        {% if operation.request_body and operation.request_body.required %}
+        body: any,
+        {% endif %}
+        {# Options object for all optional parameters - always include for headers/signal #}
+        options: {{ operation.class_name }}StreamingOptions = {}
+    ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}> {
+        // Validate authentication requirements
+        {% if operation.security %}
+        const requiredAuthTypes = [];
+        {% for security_req in operation.security %}
+        {% for auth_type in security_req %}
+        requiredAuthTypes.push('{{ auth_type }}');
+        {% endfor %}
+        {% endfor %}
+        this.client.validateAuthentication(requiredAuthTypes, '{{ operation.method_name }}');
+        {% endif %}
+
+        // Destructure options (exclude path parameters, they're already function params)
+        {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        const {
+            {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+            {% if param.variable_name %}
+            {{ param.variable_name }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
+            {% endif %}
+            {% endfor %}
+            {% if operation.request_body and not operation.request_body.required %}
+            body,
+            {% endif %}
+            headers = {},
+            signal,
+            requestOptions: requestOptions = {}
+        } = options || {};
+        {% else %}
+        const { headers = {}, signal, requestOptions = {} } = options || {};
+        {% endif %}
+
+        // Build the path with path parameters
+        let path = '{{ operation.path }}';
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        path = path.replace('{{ '{' }}{{ param.original_name }}{{ '}' }}', encodeURIComponent(String({{ param.variable_name }})));
+        {% endif %}
+        {% endfor %}
+
+        // Build query parameters
+        const params = new URLSearchParams();
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'query') %}
+        {% if param.variable_name %}
+        {% if param.required %}
+        {# Required query params are function arguments #}
+        {% if param.schema and param.schema.type == 'array' %}
+        params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+        {% else %}
+        params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+        {% endif %}
+        {% else %}
+        {# Optional query params come from options #}
+        if ({{ param.variable_name }} !== undefined) {
+            {% if param.schema and param.schema.type == 'array' %}
+            params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+            {% else %}
+            params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+            {% endif %}
+        }
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+        // Prepare request options
+        const finalRequestOptions: RequestOptions = {
+            headers: {
+                'Content-Type': 'application/json',
+                ...headers,
+            },
+            signal: signal,
+            {% if operation.request_body %}
+            body: JSON.stringify({% if operation.request_body.required %}body{% else %}body{% endif %}),
+            {% endif %}
+            ...requestOptions,
+        };
+
+        // Make the request
+        return this.client.request<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>(
+            '{{ operation.method | upper }}',
+            path + (params.toString() ? `?${params.toString()}` : ''),
+            finalRequestOptions
+        );
+    }
+{% endif %}
+{% endfor %}
+}

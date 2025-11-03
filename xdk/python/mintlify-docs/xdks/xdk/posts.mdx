@@ -1,0 +1,362 @@
+---
+sidebarTitle: Posts
+---
+
+xdk.posts — XDK Python SDK documentation
+
+# xdk.posts[¶](#module-xdk.posts "Link to this heading")
+
+Auto-generated posts module for the X API.
+
+This module provides access to the posts endpoints of the X API
+and serves as the main entry point for all posts-related functionality.
+
+Generated automatically - do not edit manually.
+
+*class* xdk.posts.PostsClient(*client*)[¶](#xdk.posts.PostsClient "Link to this definition")
+:   Bases: `object`
+
+    Client for posts operations
+
+    Parameters:
+    :   **client** ([*Client*](xdk.html#xdk.Client "xdk.Client"))
+
+    create(*body*)[¶](#xdk.posts.PostsClient.create "Link to this definition")
+    :   Create or Edit Post
+
+        Creates a new Post for the authenticated user, or edits an existing Post when edit\_options are provided.
+
+        body: Request body
+        :returns: Response data
+        :rtype: CreateResponse
+
+        Parameters:
+        :   **body** ([*CreateRequest*](xdk.posts.models.html#xdk.posts.models.CreateRequest "xdk.posts.models.CreateRequest"))
+
+        Return type:
+        :   *Dict*[*str*, *Any*]
+
+    delete(*id*)[¶](#xdk.posts.PostsClient.delete "Link to this definition")
+    :   Delete Post
+
+        Deletes a specific Post by its ID, if owned by the authenticated user.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the Post to be deleted.
+            * **Returns**
+            * **DeleteResponse** – Response data
+
+        Return type:
+        :   [*DeleteResponse*](xdk.posts.models.html#xdk.posts.models.DeleteResponse "xdk.posts.models.DeleteResponse")
+
+    get\_analytics(*ids*, *end\_time*, *start\_time*, *granularity*, *analyticsfields=None*)[¶](#xdk.posts.PostsClient.get_analytics "Link to this definition")
+    :   Get Post analytics
+
+        Retrieves analytics data for specified Posts within a defined time range.
+
+        Parameters:
+        :   * **ids** (*List*) – A comma separated list of Post IDs. Up to 100 are allowed in a single request.
+            * **end\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
+            * **start\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
+            * **granularity** (*str*) – The granularity for the search counts results.
+            * **analyticsfields** (*List*) – A comma separated list of Analytics fields to display.
+            * **Returns**
+            * **GetAnalyticsResponse** – Response data
+
+        Return type:
+        :   [*GetAnalyticsResponse*](xdk.posts.models.html#xdk.posts.models.GetAnalyticsResponse "xdk.posts.models.GetAnalyticsResponse")
+
+    get\_by\_id(*id*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.posts.PostsClient.get_by_id "Link to this definition")
+    :   Get Post by ID
+
+        Retrieves details of a specific Post by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – A single Post ID.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **GetByIdResponse** – Response data
+
+        Return type:
+        :   [*GetByIdResponse*](xdk.posts.models.html#xdk.posts.models.GetByIdResponse "xdk.posts.models.GetByIdResponse")
+
+    get\_by\_ids(*ids*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.posts.PostsClient.get_by_ids "Link to this definition")
+    :   Get Posts by IDs
+
+        Retrieves details of multiple Posts by their IDs.
+
+        Parameters:
+        :   * **ids** (*List*) – A comma separated list of Post IDs. Up to 100 are allowed in a single request.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **GetByIdsResponse** – Response data
+
+        Return type:
+        :   [*GetByIdsResponse*](xdk.posts.models.html#xdk.posts.models.GetByIdsResponse "xdk.posts.models.GetByIdsResponse")
+
+    get\_counts\_all(*query*, *start\_time=None*, *end\_time=None*, *since\_id=None*, *until\_id=None*, *next\_token=None*, *pagination\_token=None*, *granularity=None*, *search\_countfields=None*)[¶](#xdk.posts.PostsClient.get_counts_all "Link to this definition")
+    :   Get count of all Posts
+
+        Retrieves the count of Posts matching a search query from the full archive.
+
+        Parameters:
+        :   * **query** (*str*) – One query/rule/filter for matching Posts. Refer to <https://t.co/rulelength> to identify the max query length.
+            * **start\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp (from most recent 7 days) from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute).
+            * **end\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute).
+            * **since\_id** (*Any*) – Returns results with a Post ID greater than (that is, more recent than) the specified ID.
+            * **until\_id** (*Any*) – Returns results with a Post ID less than (that is, older than) the specified ID.
+            * **next\_token** (*Any*) – This parameter is used to get the next ‘page’ of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
+            * **granularity** (*str*) – The granularity for the search counts results.
+            * **search\_countfields** (*List*) – A comma separated list of SearchCount fields to display.
+            * **Returns**
+            * **GetCountsAllResponse** – Response data
+
+        Return type:
+        :   [*GetCountsAllResponse*](xdk.posts.models.html#xdk.posts.models.GetCountsAllResponse "xdk.posts.models.GetCountsAllResponse")
+
+    get\_counts\_recent(*query*, *start\_time=None*, *end\_time=None*, *since\_id=None*, *until\_id=None*, *next\_token=None*, *pagination\_token=None*, *granularity=None*, *search\_countfields=None*)[¶](#xdk.posts.PostsClient.get_counts_recent "Link to this definition")
+    :   Get count of recent Posts
+
+        Retrieves the count of Posts from the last 7 days matching a search query.
+
+        Parameters:
+        :   * **query** (*str*) – One query/rule/filter for matching Posts. Refer to <https://t.co/rulelength> to identify the max query length.
+            * **start\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp (from most recent 7 days) from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute).
+            * **end\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute).
+            * **since\_id** (*Any*) – Returns results with a Post ID greater than (that is, more recent than) the specified ID.
+            * **until\_id** (*Any*) – Returns results with a Post ID less than (that is, older than) the specified ID.
+            * **next\_token** (*Any*) – This parameter is used to get the next ‘page’ of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
+            * **granularity** (*str*) – The granularity for the search counts results.
+            * **search\_countfields** (*List*) – A comma separated list of SearchCount fields to display.
+            * **Returns**
+            * **GetCountsRecentResponse** – Response data
+
+        Return type:
+        :   [*GetCountsRecentResponse*](xdk.posts.models.html#xdk.posts.models.GetCountsRecentResponse "xdk.posts.models.GetCountsRecentResponse")
+
+    get\_insights28hr(*tweet\_ids*, *granularity*, *requested\_metrics*, *engagementfields=None*)[¶](#xdk.posts.PostsClient.get_insights28hr "Link to this definition")
+    :   Get 28-hour Post insights
+
+        Retrieves engagement metrics for specified Posts over the last 28 hours.
+
+        Parameters:
+        :   * **tweet\_ids** (*List*) – List of PostIds for 28hr metrics.
+            * **granularity** (*str*) – granularity of metrics response.
+            * **requested\_metrics** (*List*) – request metrics for historical request.
+            * **engagementfields** (*List*) – A comma separated list of Engagement fields to display.
+            * **Returns**
+            * **GetInsights28hrResponse** – Response data
+
+        Return type:
+        :   [*GetInsights28hrResponse*](xdk.posts.models.html#xdk.posts.models.GetInsights28hrResponse "xdk.posts.models.GetInsights28hrResponse")
+
+    get\_insights\_historical(*tweet\_ids*, *end\_time*, *start\_time*, *granularity*, *requested\_metrics*, *engagementfields=None*)[¶](#xdk.posts.PostsClient.get_insights_historical "Link to this definition")
+    :   Get historical Post insights
+
+        Retrieves historical engagement metrics for specified Posts within a defined time range.
+
+        Parameters:
+        :   * **tweet\_ids** (*List*) – List of PostIds for historical metrics.
+            * **end\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
+            * **start\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
+            * **granularity** (*str*) – granularity of metrics response.
+            * **requested\_metrics** (*List*) – request metrics for historical request.
+            * **engagementfields** (*List*) – A comma separated list of Engagement fields to display.
+            * **Returns**
+            * **GetInsightsHistoricalResponse** – Response data
+
+        Return type:
+        :   [*GetInsightsHistoricalResponse*](xdk.posts.models.html#xdk.posts.models.GetInsightsHistoricalResponse "xdk.posts.models.GetInsightsHistoricalResponse")
+
+    get\_liking\_users(*id*, *max\_results=None*, *pagination\_token=None*, *userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.posts.PostsClient.get_liking_users "Link to this definition")
+    :   Get Liking Users
+
+        Retrieves a list of Users who liked a specific Post by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – A single Post ID.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **GetLikingUsersResponse** – Response data
+
+        Return type:
+        :   [*GetLikingUsersResponse*](xdk.posts.models.html#xdk.posts.models.GetLikingUsersResponse "xdk.posts.models.GetLikingUsersResponse")
+
+    get\_quoted(*id*, *max\_results=None*, *pagination\_token=None*, *exclude=None*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.posts.PostsClient.get_quoted "Link to this definition")
+    :   Get Quoted Posts
+
+        Retrieves a list of Posts that quote a specific Post by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – A single Post ID.
+            * **max\_results** (*int*) – The maximum number of results to be returned.
+            * **pagination\_token** (*Any*) – This parameter is used to get a specified ‘page’ of results.
+            * **exclude** (*List*) – The set of entities to exclude (e.g. ‘replies’ or ‘retweets’).
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **GetQuotedResponse** – Response data
+
+        Return type:
+        :   [*GetQuotedResponse*](xdk.posts.models.html#xdk.posts.models.GetQuotedResponse "xdk.posts.models.GetQuotedResponse")
+
+    get\_reposted\_by(*id*, *max\_results=None*, *pagination\_token=None*, *userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.posts.PostsClient.get_reposted_by "Link to this definition")
+    :   Get Reposted by
+
+        Retrieves a list of Users who reposted a specific Post by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – A single Post ID.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **GetRepostedByResponse** – Response data
+
+        Return type:
+        :   [*GetRepostedByResponse*](xdk.posts.models.html#xdk.posts.models.GetRepostedByResponse "xdk.posts.models.GetRepostedByResponse")
+
+    get\_reposts(*id*, *max\_results=None*, *pagination\_token=None*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.posts.PostsClient.get_reposts "Link to this definition")
+    :   Get Reposts
+
+        Retrieves a list of Posts that repost a specific Post by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – A single Post ID.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **GetRepostsResponse** – Response data
+
+        Return type:
+        :   [*GetRepostsResponse*](xdk.posts.models.html#xdk.posts.models.GetRepostsResponse "xdk.posts.models.GetRepostsResponse")
+
+    hide\_reply(*tweet\_id*, *body=None*)[¶](#xdk.posts.PostsClient.hide_reply "Link to this definition")
+    :   Hide reply
+
+        Hides or unhides a reply to a conversation owned by the authenticated user.
+
+        Parameters:
+        :   * **tweet\_id** (*Any*) – The ID of the reply that you want to hide or unhide.
+            * **body** ([*HideReplyRequest*](xdk.posts.models.html#xdk.posts.models.HideReplyRequest "xdk.posts.models.HideReplyRequest") *|* *None*) – Request body
+
+        Returns:
+        :   Response data
+
+        Return type:
+        :   [*HideReplyResponse*](xdk.posts.models.html#xdk.posts.models.HideReplyResponse "xdk.posts.models.HideReplyResponse")
+
+    search\_all(*query*, *start\_time=None*, *end\_time=None*, *since\_id=None*, *until\_id=None*, *max\_results=None*, *next\_token=None*, *pagination\_token=None*, *sort\_order=None*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.posts.PostsClient.search_all "Link to this definition")
+    :   Search all Posts
+
+        Retrieves Posts from the full archive matching a search query.
+
+        Parameters:
+        :   * **query** (*str*) – One query/rule/filter for matching Posts. Refer to <https://t.co/rulelength> to identify the max query length.
+            * **start\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute).
+            * **end\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute).
+            * **since\_id** (*Any*) – Returns results with a Post ID greater than (that is, more recent than) the specified ID.
+            * **until\_id** (*Any*) – Returns results with a Post ID less than (that is, older than) the specified ID.
+            * **max\_results** (*int*) – The maximum number of search results to be returned by a request.
+            * **next\_token** (*Any*) – This parameter is used to get the next ‘page’ of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
+            * **sort\_order** (*str*) – This order in which to return results.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **SearchAllResponse** – Response data
+
+        Return type:
+        :   [*SearchAllResponse*](xdk.posts.models.html#xdk.posts.models.SearchAllResponse "xdk.posts.models.SearchAllResponse")
+
+    search\_recent(*query*, *start\_time=None*, *end\_time=None*, *since\_id=None*, *until\_id=None*, *max\_results=None*, *next\_token=None*, *pagination\_token=None*, *sort\_order=None*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.posts.PostsClient.search_recent "Link to this definition")
+    :   Search recent Posts
+
+        Retrieves Posts from the last 7 days matching a search query.
+
+        Parameters:
+        :   * **query** (*str*) – One query/rule/filter for matching Posts. Refer to <https://t.co/rulelength> to identify the max query length.
+            * **start\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute).
+            * **end\_time** (*str*) – YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute).
+            * **since\_id** (*Any*) – Returns results with a Post ID greater than (that is, more recent than) the specified ID.
+            * **until\_id** (*Any*) – Returns results with a Post ID less than (that is, older than) the specified ID.
+            * **max\_results** (*int*) – The maximum number of search results to be returned by a request.
+            * **next\_token** (*Any*) – This parameter is used to get the next ‘page’ of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
+            * **sort\_order** (*str*) – This order in which to return results.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **SearchRecentResponse** – Response data
+
+        Return type:
+        :   [*SearchRecentResponse*](xdk.posts.models.html#xdk.posts.models.SearchRecentResponse "xdk.posts.models.SearchRecentResponse")
+
+Modules
+
+|  |  |
+| --- | --- |
+| [`client`](xdk.posts.client.html#module-xdk.posts.client "xdk.posts.client") | Auto-generated posts client for the X API. |
+| [`models`](xdk.posts.models.html#module-xdk.posts.models "xdk.posts.models") | Auto-generated posts models for the X API. |
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](xdk.html)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - [xdk](xdk.html)
+      * Previous: [xdk.paginator](xdk.paginator.html "previous chapter")
+      * Next: [xdk.posts.client](xdk.posts.client.html "next chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.posts.rst.txt)

@@ -1,0 +1,167 @@
+/**
+ * trends client for the X API.
+ *
+ * This module provides a client for interacting with the trends endpoints of the X API.
+ */
+
+import { Client, ApiResponse, RequestOptions } from '../client.js';
+import {
+  Paginator,
+  PostPaginator,
+  UserPaginator,
+  EventPaginator,
+} from '../paginator.js';
+import { GetPersonalizedResponse, GetByWoeidResponse } from './models.js';
+
+/**
+ * Options for getPersonalized method
+ * 
+ * @public
+ */
+export interface GetPersonalizedOptions {
+  /** A comma separated list of PersonalizedTrend fields to display. */
+  personalizedTrendfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for getByWoeid method
+ * 
+ * @public
+ */
+export interface GetByWoeidOptions {
+  /** The maximum number of results. */
+  maxTrends?: number;
+
+  /** A comma separated list of Trend fields to display. */
+  trendfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Client for trends operations
+ * 
+ * This client provides methods for interacting with the trends endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all trends related operations.
+ * 
+ * @category trends
+ */
+export class TrendsClient {
+  private client: Client;
+
+  /**
+     * Creates a new trends client instance
+     * 
+     * @param client - The main X API client instance
+     */
+  constructor(client: Client) {
+    this.client = client;
+  }
+
+  /**
+   * Get personalized Trends
+   * Retrieves personalized trending topics for the authenticated user.
+
+
+
+   * @returns {Promise<GetPersonalizedResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getPersonalized(
+    options: GetPersonalizedOptions = {}
+  ): Promise<GetPersonalizedResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      personalizedTrendfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/personalized_trends';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (personalizedTrendfields !== undefined) {
+      params.append(
+        'personalized_trend.fields',
+        personalizedTrendfields.join(',')
+      );
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetPersonalizedResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Trends by WOEID
+   * Retrieves trending topics for a specific location identified by its WOEID.
+
+
+   * @param woeid The WOEID of the place to lookup a trend for.
+
+
+
+
+   * @returns {Promise<GetByWoeidResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByWoeid(
+    woeid: number,
+    options: GetByWoeidOptions = {}
+  ): Promise<GetByWoeidResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxTrends = undefined,
+
+      trendfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/trends/by/woeid/{woeid}';
+
+    path = path.replace('{woeid}', encodeURIComponent(String(woeid)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxTrends !== undefined) {
+      params.append('max_trends', String(maxTrends));
+    }
+
+    if (trendfields !== undefined) {
+      params.append('trend.fields', trendfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetByWoeidResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+}

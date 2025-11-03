@@ -1,0 +1,116 @@
+{
+  "name": "x-api-sdk",
+  "version": "1.0.0",
+  "description": "A modern TypeScript/JavaScript SDK for the X API",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./client": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./http-client": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./oauth2": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./oauth1": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./crypto": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "x-api",
+    "twitter-api",
+    "typescript",
+    "sdk",
+    "api-client",
+    "oauth2",
+    "oauth1",
+    "bearer-token",
+    "crypto",
+    "hmac-sha1",
+    "pkce"
+  ],
+  "author": "X API SDK Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/x-api-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/x-api-sdk/issues"
+  },
+  "homepage": "https://github.com/your-org/x-api-sdk#readme",
+  "engines": {
+    "node": ">=16.14"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.0"
+  },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "typescript": "^5.0.0",
+        "tsup": "^7.0.0",
+        "prettier": "^3.0.0",
+        "eslint": "^8.0.0",
+        "@typescript-eslint/eslint-plugin": "^6.0.0",
+        "@typescript-eslint/parser": "^6.0.0",
+        "typedoc": "^0.25.0",
+        "typedoc-plugin-markdown": "^3.15.0",
+        "chokidar": "^3.5.3",
+        "http-server": "^14.1.1"
+    },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "clean": "rm -rf dist",
+    "format": "prettier --write \"src/**/*.{ts,js}\"",
+    "lint": "eslint \"src/**/*.{ts,js}\"",
+    "type-check": "tsc --noEmit",
+    "test": "echo \"No tests specified\" && exit 0",
+    "docs": "typedoc",
+    "docs:build": "typedoc && echo \"Documentation generated in docs/\"",
+    "docs:build-simple": "node generate-docs-simple.js",
+    "docs:serve": "npx http-server docs -p 8080 -o",
+    "docs:watch": "node watch-docs.js",
+    "docs:mintlify": "node process-for-mintlify.js"
+  },
+  "prettier": {
+    "semi": true,
+    "trailingComma": "es5",
+    "singleQuote": true,
+    "printWidth": 80,
+    "tabWidth": 2
+  },
+  "eslintConfig": {
+    "extends": [
+      "@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+      "@typescript-eslint"
+    ],
+    "rules": {
+      "@typescript-eslint/no-unused-vars": "error",
+      "@typescript-eslint/explicit-function-return-type": "off",
+      "@typescript-eslint/explicit-module-boundary-types": "off"
+    }
+  }
+} 

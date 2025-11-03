@@ -1,0 +1,566 @@
+---
+sidebarTitle: Users Models
+---
+
+xdk.users.models — XDK Python SDK documentation
+
+# xdk.users.models[¶](#module-xdk.users.models "Link to this heading")
+
+Auto-generated users models for the X API.
+
+This module provides Pydantic models for request and response data structures
+for the users endpoints of the X API. All models are generated
+from the OpenAPI specification and provide type safety and validation.
+
+Generated automatically - do not edit manually.
+
+Classes
+
+|  |  |
+| --- | --- |
+| [`BlockDmsResponse`](#xdk.users.models.BlockDmsResponse "xdk.users.models.BlockDmsResponse")(\*\*extra\_data) | Response model for block\_dms |
+| [`CreateBookmarkRequest`](#xdk.users.models.CreateBookmarkRequest "xdk.users.models.CreateBookmarkRequest")() | Request model for create\_bookmark |
+| [`CreateBookmarkResponse`](#xdk.users.models.CreateBookmarkResponse "xdk.users.models.CreateBookmarkResponse")(\*\*extra\_data) | Response model for create\_bookmark |
+| [`DeleteBookmarkResponse`](#xdk.users.models.DeleteBookmarkResponse "xdk.users.models.DeleteBookmarkResponse")(\*\*extra\_data) | Response model for delete\_bookmark |
+| [`FollowListRequest`](#xdk.users.models.FollowListRequest "xdk.users.models.FollowListRequest")() | Request model for follow\_list |
+| [`FollowListResponse`](#xdk.users.models.FollowListResponse "xdk.users.models.FollowListResponse")(\*\*extra\_data) | Response model for follow\_list |
+| [`FollowUserRequest`](#xdk.users.models.FollowUserRequest "xdk.users.models.FollowUserRequest")() | Request model for follow\_user |
+| [`FollowUserResponse`](#xdk.users.models.FollowUserResponse "xdk.users.models.FollowUserResponse")(\*\*extra\_data) | Response model for follow\_user |
+| [`GetBlockingResponse`](#xdk.users.models.GetBlockingResponse "xdk.users.models.GetBlockingResponse")(\*\*extra\_data) | Response model for get\_blocking |
+| [`GetBookmarkFoldersResponse`](#xdk.users.models.GetBookmarkFoldersResponse "xdk.users.models.GetBookmarkFoldersResponse")(\*\*extra\_data) | Response model for get\_bookmark\_folders |
+| [`GetBookmarksByFolderIdResponse`](#xdk.users.models.GetBookmarksByFolderIdResponse "xdk.users.models.GetBookmarksByFolderIdResponse")(\*\*extra\_data) | Response model for get\_bookmarks\_by\_folder\_id |
+| [`GetBookmarksResponse`](#xdk.users.models.GetBookmarksResponse "xdk.users.models.GetBookmarksResponse")(\*\*extra\_data) | Response model for get\_bookmarks |
+| [`GetByIdResponse`](#xdk.users.models.GetByIdResponse "xdk.users.models.GetByIdResponse")(\*\*extra\_data) | Response model for get\_by\_id |
+| [`GetByIdsResponse`](#xdk.users.models.GetByIdsResponse "xdk.users.models.GetByIdsResponse")(\*\*extra\_data) | Response model for get\_by\_ids |
+| [`GetByUsernameResponse`](#xdk.users.models.GetByUsernameResponse "xdk.users.models.GetByUsernameResponse")(\*\*extra\_data) | Response model for get\_by\_username |
+| [`GetByUsernamesResponse`](#xdk.users.models.GetByUsernamesResponse "xdk.users.models.GetByUsernamesResponse")(\*\*extra\_data) | Response model for get\_by\_usernames |
+| [`GetFollowedListsResponse`](#xdk.users.models.GetFollowedListsResponse "xdk.users.models.GetFollowedListsResponse")(\*\*extra\_data) | Response model for get\_followed\_lists |
+| [`GetFollowersResponse`](#xdk.users.models.GetFollowersResponse "xdk.users.models.GetFollowersResponse")(\*\*extra\_data) | Response model for get\_followers |
+| [`GetFollowingResponse`](#xdk.users.models.GetFollowingResponse "xdk.users.models.GetFollowingResponse")(\*\*extra\_data) | Response model for get\_following |
+| [`GetLikedPostsResponse`](#xdk.users.models.GetLikedPostsResponse "xdk.users.models.GetLikedPostsResponse")(\*\*extra\_data) | Response model for get\_liked\_posts |
+| [`GetListMembershipsResponse`](#xdk.users.models.GetListMembershipsResponse "xdk.users.models.GetListMembershipsResponse")(\*\*extra\_data) | Response model for get\_list\_memberships |
+| [`GetMeResponse`](#xdk.users.models.GetMeResponse "xdk.users.models.GetMeResponse")(\*\*extra\_data) | Response model for get\_me |
+| [`GetMentionsResponse`](#xdk.users.models.GetMentionsResponse "xdk.users.models.GetMentionsResponse")(\*\*extra\_data) | Response model for get\_mentions |
+| [`GetMutingResponse`](#xdk.users.models.GetMutingResponse "xdk.users.models.GetMutingResponse")(\*\*extra\_data) | Response model for get\_muting |
+| [`GetOwnedListsResponse`](#xdk.users.models.GetOwnedListsResponse "xdk.users.models.GetOwnedListsResponse")(\*\*extra\_data) | Response model for get\_owned\_lists |
+| [`GetPinnedListsResponse`](#xdk.users.models.GetPinnedListsResponse "xdk.users.models.GetPinnedListsResponse")(\*\*extra\_data) | Response model for get\_pinned\_lists |
+| [`GetPostsResponse`](#xdk.users.models.GetPostsResponse "xdk.users.models.GetPostsResponse")(\*\*extra\_data) | Response model for get\_posts |
+| [`GetRepostsOfMeResponse`](#xdk.users.models.GetRepostsOfMeResponse "xdk.users.models.GetRepostsOfMeResponse")(\*\*extra\_data) | Response model for get\_reposts\_of\_me |
+| [`GetTimelineResponse`](#xdk.users.models.GetTimelineResponse "xdk.users.models.GetTimelineResponse")(\*\*extra\_data) | Response model for get\_timeline |
+| [`LikePostRequest`](#xdk.users.models.LikePostRequest "xdk.users.models.LikePostRequest")() | Request model for like\_post |
+| [`LikePostResponse`](#xdk.users.models.LikePostResponse "xdk.users.models.LikePostResponse")(\*\*extra\_data) | Response model for like\_post |
+| [`MuteUserRequest`](#xdk.users.models.MuteUserRequest "xdk.users.models.MuteUserRequest")() | Request model for mute\_user |
+| [`MuteUserResponse`](#xdk.users.models.MuteUserResponse "xdk.users.models.MuteUserResponse")(\*\*extra\_data) | Response model for mute\_user |
+| [`PinListRequest`](#xdk.users.models.PinListRequest "xdk.users.models.PinListRequest")() | Request model for pin\_list |
+| [`PinListResponse`](#xdk.users.models.PinListResponse "xdk.users.models.PinListResponse")(\*\*extra\_data) | Response model for pin\_list |
+| [`RepostPostRequest`](#xdk.users.models.RepostPostRequest "xdk.users.models.RepostPostRequest")() | Request model for repost\_post |
+| [`RepostPostResponse`](#xdk.users.models.RepostPostResponse "xdk.users.models.RepostPostResponse")(\*\*extra\_data) | Response model for repost\_post |
+| [`SearchResponse`](#xdk.users.models.SearchResponse "xdk.users.models.SearchResponse")(\*\*extra\_data) | Response model for search |
+| [`UnblockDmsResponse`](#xdk.users.models.UnblockDmsResponse "xdk.users.models.UnblockDmsResponse")(\*\*extra\_data) | Response model for unblock\_dms |
+| [`UnfollowListResponse`](#xdk.users.models.UnfollowListResponse "xdk.users.models.UnfollowListResponse")(\*\*extra\_data) | Response model for unfollow\_list |
+| [`UnfollowUserResponse`](#xdk.users.models.UnfollowUserResponse "xdk.users.models.UnfollowUserResponse")(\*\*extra\_data) | Response model for unfollow\_user |
+| [`UnlikePostResponse`](#xdk.users.models.UnlikePostResponse "xdk.users.models.UnlikePostResponse")(\*\*extra\_data) | Response model for unlike\_post |
+| [`UnmuteUserResponse`](#xdk.users.models.UnmuteUserResponse "xdk.users.models.UnmuteUserResponse")(\*\*extra\_data) | Response model for unmute\_user |
+| [`UnpinListResponse`](#xdk.users.models.UnpinListResponse "xdk.users.models.UnpinListResponse")(\*\*extra\_data) | Response model for unpin\_list |
+| [`UnrepostPostResponse`](#xdk.users.models.UnrepostPostResponse "xdk.users.models.UnrepostPostResponse")(\*\*extra\_data) | Response model for unrepost\_post |
+
+*class* xdk.users.models.BlockDmsResponse(*\*\*extra\_data*)[¶](#xdk.users.models.BlockDmsResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for block\_dms
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.BlockDmsResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.CreateBookmarkRequest[¶](#xdk.users.models.CreateBookmarkRequest "Link to this definition")
+:   Bases: `BaseModel`
+
+    Request model for create\_bookmark
+
+    model\_config*: ClassVar[ConfigDict]* *= {'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.CreateBookmarkRequest.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.CreateBookmarkResponse(*\*\*extra\_data*)[¶](#xdk.users.models.CreateBookmarkResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for create\_bookmark
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.CreateBookmarkResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.DeleteBookmarkResponse(*\*\*extra\_data*)[¶](#xdk.users.models.DeleteBookmarkResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for delete\_bookmark
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.DeleteBookmarkResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.FollowListRequest[¶](#xdk.users.models.FollowListRequest "Link to this definition")
+:   Bases: `BaseModel`
+
+    Request model for follow\_list
+
+    model\_config*: ClassVar[ConfigDict]* *= {'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.FollowListRequest.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.FollowListResponse(*\*\*extra\_data*)[¶](#xdk.users.models.FollowListResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for follow\_list
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.FollowListResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.FollowUserRequest[¶](#xdk.users.models.FollowUserRequest "Link to this definition")
+:   Bases: `BaseModel`
+
+    Request model for follow\_user
+
+    model\_config*: ClassVar[ConfigDict]* *= {'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.FollowUserRequest.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.FollowUserResponse(*\*\*extra\_data*)[¶](#xdk.users.models.FollowUserResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for follow\_user
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.FollowUserResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetBlockingResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetBlockingResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_blocking
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetBlockingResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetBookmarkFoldersResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetBookmarkFoldersResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_bookmark\_folders
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetBookmarkFoldersResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetBookmarksByFolderIdResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetBookmarksByFolderIdResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_bookmarks\_by\_folder\_id
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetBookmarksByFolderIdResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetBookmarksResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetBookmarksResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_bookmarks
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetBookmarksResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetByIdResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetByIdResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_by\_id
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetByIdResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetByIdsResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetByIdsResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_by\_ids
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetByIdsResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetByUsernameResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetByUsernameResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_by\_username
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetByUsernameResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetByUsernamesResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetByUsernamesResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_by\_usernames
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetByUsernamesResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetFollowedListsResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetFollowedListsResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_followed\_lists
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetFollowedListsResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetFollowersResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetFollowersResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_followers
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetFollowersResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetFollowingResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetFollowingResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_following
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetFollowingResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetLikedPostsResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetLikedPostsResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_liked\_posts
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetLikedPostsResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetListMembershipsResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetListMembershipsResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_list\_memberships
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetListMembershipsResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetMeResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetMeResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_me
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetMeResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetMentionsResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetMentionsResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_mentions
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetMentionsResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetMutingResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetMutingResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_muting
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetMutingResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetOwnedListsResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetOwnedListsResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_owned\_lists
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetOwnedListsResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetPinnedListsResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetPinnedListsResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_pinned\_lists
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetPinnedListsResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetPostsResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetPostsResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_posts
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetPostsResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetRepostsOfMeResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetRepostsOfMeResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_reposts\_of\_me
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetRepostsOfMeResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.GetTimelineResponse(*\*\*extra\_data*)[¶](#xdk.users.models.GetTimelineResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for get\_timeline
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.GetTimelineResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.LikePostRequest[¶](#xdk.users.models.LikePostRequest "Link to this definition")
+:   Bases: `BaseModel`
+
+    Request model for like\_post
+
+    model\_config*: ClassVar[ConfigDict]* *= {'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.LikePostRequest.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.LikePostResponse(*\*\*extra\_data*)[¶](#xdk.users.models.LikePostResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for like\_post
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.LikePostResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.MuteUserRequest[¶](#xdk.users.models.MuteUserRequest "Link to this definition")
+:   Bases: `BaseModel`
+
+    Request model for mute\_user
+
+    model\_config*: ClassVar[ConfigDict]* *= {'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.MuteUserRequest.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.MuteUserResponse(*\*\*extra\_data*)[¶](#xdk.users.models.MuteUserResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for mute\_user
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.MuteUserResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.PinListRequest[¶](#xdk.users.models.PinListRequest "Link to this definition")
+:   Bases: `BaseModel`
+
+    Request model for pin\_list
+
+    model\_config*: ClassVar[ConfigDict]* *= {'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.PinListRequest.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.PinListResponse(*\*\*extra\_data*)[¶](#xdk.users.models.PinListResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for pin\_list
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.PinListResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.RepostPostRequest[¶](#xdk.users.models.RepostPostRequest "Link to this definition")
+:   Bases: `BaseModel`
+
+    Request model for repost\_post
+
+    model\_config*: ClassVar[ConfigDict]* *= {'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.RepostPostRequest.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.RepostPostResponse(*\*\*extra\_data*)[¶](#xdk.users.models.RepostPostResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for repost\_post
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.RepostPostResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.SearchResponse(*\*\*extra\_data*)[¶](#xdk.users.models.SearchResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for search
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.SearchResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.UnblockDmsResponse(*\*\*extra\_data*)[¶](#xdk.users.models.UnblockDmsResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for unblock\_dms
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.UnblockDmsResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.UnfollowListResponse(*\*\*extra\_data*)[¶](#xdk.users.models.UnfollowListResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for unfollow\_list
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.UnfollowListResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.UnfollowUserResponse(*\*\*extra\_data*)[¶](#xdk.users.models.UnfollowUserResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for unfollow\_user
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.UnfollowUserResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.UnlikePostResponse(*\*\*extra\_data*)[¶](#xdk.users.models.UnlikePostResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for unlike\_post
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.UnlikePostResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.UnmuteUserResponse(*\*\*extra\_data*)[¶](#xdk.users.models.UnmuteUserResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for unmute\_user
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.UnmuteUserResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.UnpinListResponse(*\*\*extra\_data*)[¶](#xdk.users.models.UnpinListResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for unpin\_list
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.UnpinListResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+*class* xdk.users.models.UnrepostPostResponse(*\*\*extra\_data*)[¶](#xdk.users.models.UnrepostPostResponse "Link to this definition")
+:   Bases: `BaseModel`
+
+    Response model for unrepost\_post
+
+    Parameters:
+    :   **extra\_data** (*Any*)
+
+    model\_config*: ClassVar[ConfigDict]* *= {'extra': 'allow', 'populate\_by\_name': True, 'validate\_by\_alias': True, 'validate\_by\_name': True}*[¶](#xdk.users.models.UnrepostPostResponse.model_config "Link to this definition")
+    :   Configuration for the model, should be a dictionary conforming to [ConfigDict][pydantic.config.ConfigDict].
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](xdk.html)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - [xdk](xdk.html)
+      * [xdk.users](xdk.users.html)
+        + Previous: [xdk.users.client](xdk.users.client.html "previous chapter")
+        + Next: [xdk.webhooks](xdk.webhooks.html "next chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.users.models.rst.txt)

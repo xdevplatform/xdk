@@ -1,0 +1,103 @@
+---
+title: "User"
+sidebarTitle: "User"
+---
+
+[Schemas](/xdks/typescript/reference/modules/Schemas).User
+
+## Properties
+
+<ResponseField name="affiliation" type="Record&lt;string, any&gt;">
+Metadata about a user's affiliation.
+
+</ResponseField>
+
+<ResponseField name="connectionStatus" type="(&quot;following&quot; | &quot;follow_request_received&quot; | &quot;follow_request_sent&quot; | &quot;blocking&quot; | &quot;followed_by&quot; | &quot;muting&quot;)[]">
+Returns detailed information about the relationship between two users.
+
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+Creation time of this User.
+
+</ResponseField>
+
+<ResponseField name="description" type="string">
+The text of this User's profile description (also known as bio), if the User provided one.
+
+</ResponseField>
+
+<ResponseField name="entities" type="Record&lt;string, any&gt;">
+A list of metadata found in the User's profile description.
+
+</ResponseField>
+
+<ResponseField name="id" type="string" required>
+</ResponseField>
+
+<ResponseField name="location" type="string">
+The location specified in the User's profile, if the User provided one. As this is a freeform value, it may not indicate a valid location, but it may be fuzzily evaluated when performing searches with location queries.
+
+</ResponseField>
+
+<ResponseField name="mostRecentTweetId" type="string">
+</ResponseField>
+
+<ResponseField name="name" type="string" required>
+The friendly name of this User, as shown on their profile.
+
+</ResponseField>
+
+<ResponseField name="pinnedTweetId" type="string">
+</ResponseField>
+
+<ResponseField name="profileBannerUrl" type="string">
+The URL to the profile banner for this User.
+
+</ResponseField>
+
+<ResponseField name="profileImageUrl" type="string">
+The URL to the profile image for this User.
+
+</ResponseField>
+
+<ResponseField name="protected" type="boolean">
+Indicates if this User has chosen to protect their Posts (in other words, if this User's Posts are private).
+
+</ResponseField>
+
+<ResponseField name="publicMetrics" type="Record&lt;string, any&gt;">
+A list of metrics for this User.
+
+</ResponseField>
+
+<ResponseField name="receivesYourDm" type="boolean">
+Indicates if you can send a DM to this User
+
+</ResponseField>
+
+<ResponseField name="subscriptionType" type="&quot;Basic&quot; | &quot;Premium&quot; | &quot;PremiumPlus&quot; | &quot;None&quot;">
+The X Blue subscription type of the user, eg: Basic, Premium, PremiumPlus or None.
+
+</ResponseField>
+
+<ResponseField name="url" type="string">
+The URL specified in the User's profile.
+
+</ResponseField>
+
+<ResponseField name="username" type="string" required>
+</ResponseField>
+
+<ResponseField name="verified" type="boolean">
+Indicate if this User is a verified X User.
+
+</ResponseField>
+
+<ResponseField name="verifiedType" type="&quot;blue&quot; | &quot;government&quot; | &quot;business&quot; | &quot;none&quot;">
+The X Blue verified type of the user, eg: blue, government, business or none.
+
+</ResponseField>
+
+<ResponseField name="withheld" type="UserWithheld">
+</ResponseField>

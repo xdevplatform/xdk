@@ -1,0 +1,77 @@
+/**
+ * Stream client for the X API.
+ *
+ * This module provides a client for interacting with the streaming endpoints of the X API.
+ */
+
+import { Client, ApiResponse, RequestOptions } from '../client.js';
+import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
+import { DeleteAllResponse } from './models.js';
+
+/**
+ * Options for deleteAll method
+ * 
+ * @public
+ */
+export interface DeleteAllStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+
+export class ConnectionsClient {
+  private client: Client;
+
+  constructor(client: Client) {
+    this.client = client;
+  }
+
+  /**
+     * Terminate all connections
+     * Terminates all active streaming connections for the authenticated application.
+     * 
+     * @returns Promise with the API response
+     */
+  async deleteAll(
+    options: DeleteAllStreamingOptions = {}
+  ): Promise<DeleteAllResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'deleteAll');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const { headers = {}, signal, requestOptions = {} } = options || {};
+
+    // Build the path with path parameters
+    let path = '/2/connections/all';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<DeleteAllResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+}

@@ -1,0 +1,309 @@
+"""
+Auto-generated activity client for the X API.
+
+This module provides a client for interacting with the activity endpoints of the X API.
+Real-time streaming operations return generators that yield data as it arrives.
+All methods, parameters, and response models are generated from the OpenAPI specification.
+
+Generated automatically - do not edit manually.
+"""
+
+from __future__ import annotations
+from typing import (
+    Dict,
+    List,
+    Optional,
+    Any,
+    Union,
+    cast,
+    TYPE_CHECKING,
+    Iterator,
+    Generator,
+)
+import requests
+import time
+import json
+
+if TYPE_CHECKING:
+    from ..client import Client
+from .models import (
+    GetSubscriptionsResponse,
+    CreateSubscriptionRequest,
+    CreateSubscriptionResponse,
+    StreamResponse,
+    UpdateSubscriptionRequest,
+    UpdateSubscriptionResponse,
+    DeleteSubscriptionResponse,
+)
+
+
+class ActivityClient:
+    """Streaming Client for activity operations"""
+
+
+    def __init__(self, client: Client):
+        self.client = client
+
+
+    def get_subscriptions(
+        self,
+    ) -> GetSubscriptionsResponse:
+        """
+        Get X activity subscriptions
+        Get a list of active subscriptions for XAA
+        Returns:
+            GetSubscriptionsResponse: Response data
+        """
+        url = self.client.base_url + "/2/activity/subscriptions"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        headers = {}
+        # Prepare request data
+        json_data = None
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetSubscriptionsResponse.model_validate(response_data)
+
+
+    def create_subscription(
+        self, body: Optional[CreateSubscriptionRequest] = None
+    ) -> CreateSubscriptionResponse:
+        """
+        Create X activity subscription
+        Creates a subscription for an X activity event
+        body: Request body
+        Returns:
+            CreateSubscriptionResponse: Response data
+        """
+        url = self.client.base_url + "/2/activity/subscriptions"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Prepare request data
+        json_data = None
+        if body is not None:
+            json_data = (
+                body.model_dump(exclude_none=True)
+                if hasattr(body, "model_dump")
+                else body
+            )
+        # Make the request
+        response = self.client.session.post(
+            url,
+            params=params,
+            headers=headers,
+            json=json_data,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return CreateSubscriptionResponse.model_validate(response_data)
+
+
+    def stream(
+        self,
+        backfill_minutes: int = None,
+        start_time: str = None,
+        end_time: str = None,
+        timeout: Optional[float] = None,
+        chunk_size: int = 1024,
+    ) -> Generator[StreamResponse, None, None]:
+        """
+        Activity Stream (Streaming)
+        Stream of X Activities
+        This is a streaming endpoint that yields data in real-time as it becomes available.
+        Each yielded item represents a single data point from the stream.
+        Args:
+            backfill_minutes: The number of minutes of backfill requested.
+            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided.
+            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided.
+            timeout: Request timeout in seconds (default: None for no timeout)
+            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
+        Yields:
+            StreamResponse: Individual streaming data items
+        Raises:
+            requests.exceptions.RequestException: If the streaming connection fails
+            json.JSONDecodeError: If the streamed data is not valid JSON
+        """
+        url = self.client.base_url + "/2/activity/stream"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        if backfill_minutes is not None:
+            params["backfill_minutes"] = backfill_minutes
+        if start_time is not None:
+            params["start_time"] = start_time
+        if end_time is not None:
+            params["end_time"] = end_time
+        headers = {
+            "Accept": "application/json",
+        }
+        # Prepare request data
+        json_data = None
+        try:
+            # Make streaming request
+            with self.client.session.get(
+                url,
+                params=params,
+                headers=headers,
+                stream=True,
+                timeout=timeout,
+            ) as response:
+                # Check for HTTP errors
+                response.raise_for_status()
+                # Buffer for incomplete lines
+                buffer = ""
+                # Stream data chunk by chunk
+                for chunk in response.iter_content(
+                    chunk_size=chunk_size, decode_unicode=True
+                ):
+                    if chunk:
+                        # Ensure chunk is always a string, not bytes
+                        if isinstance(chunk, bytes):
+                            chunk = chunk.decode("utf-8")
+                        buffer += chunk
+                        # Process complete lines
+                        while "\n" in buffer:
+                            line, buffer = buffer.split("\n", 1)
+                            line = line.strip()
+                            if line:
+                                try:
+                                    # Parse JSON line
+                                    data = json.loads(line)
+                                    # Convert to response model if available
+                                    yield StreamResponse.model_validate(data)
+                                except json.JSONDecodeError:
+                                    # Skip invalid JSON lines
+                                    continue
+                                except Exception:
+                                    # Skip lines that cause processing errors
+                                    continue
+                # Process any remaining data in buffer
+                if buffer.strip():
+                    try:
+                        data = json.loads(buffer.strip())
+                        yield StreamResponse.model_validate(data)
+                    except json.JSONDecodeError:
+                        # Skip invalid JSON in final buffer
+                        pass
+        except requests.exceptions.RequestException:
+            raise
+        except Exception:
+            raise
+
+
+    def update_subscription(
+        self, subscription_id: Any, body: Optional[UpdateSubscriptionRequest] = None
+    ) -> UpdateSubscriptionResponse:
+        """
+        Update X activity subscription
+        Updates a subscription for an X activity event
+        Args:
+            subscription_id: The ID of the subscription to update.
+            body: Request body
+        Returns:
+            UpdateSubscriptionResponse: Response data
+        """
+        url = self.client.base_url + "/2/activity/subscriptions/{subscription_id}"
+        url = url.replace("{subscription_id}", str(subscription_id))
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Prepare request data
+        json_data = None
+        if body is not None:
+            json_data = (
+                body.model_dump(exclude_none=True)
+                if hasattr(body, "model_dump")
+                else body
+            )
+        # Make the request
+        response = self.client.session.put(
+            url,
+            params=params,
+            headers=headers,
+            json=json_data,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return UpdateSubscriptionResponse.model_validate(response_data)
+
+
+    def delete_subscription(self, subscription_id: Any) -> DeleteSubscriptionResponse:
+        """
+        Deletes X activity subscription
+        Deletes a subscription for an X activity event
+        Args:
+            subscription_id: The ID of the subscription to delete.
+            Returns:
+            DeleteSubscriptionResponse: Response data
+        """
+        url = self.client.base_url + "/2/activity/subscriptions/{subscription_id}"
+        url = url.replace("{subscription_id}", str(subscription_id))
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        headers = {}
+        # Prepare request data
+        json_data = None
+        # Make the request
+        response = self.client.session.delete(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return DeleteSubscriptionResponse.model_validate(response_data)

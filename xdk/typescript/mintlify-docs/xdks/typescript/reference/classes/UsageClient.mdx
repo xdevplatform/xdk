@@ -1,0 +1,57 @@
+---
+title: "UsageClient"
+sidebarTitle: "UsageClient"
+---
+
+Client for usage operations
+
+This client provides methods for interacting with the usage endpoints
+of the X API. It handles authentication, request formatting, and response
+parsing for all usage related operations.
+
+## Constructors
+
+### constructor
+
+• **new UsageClient**(`client`): [`UsageClient`](/xdks/typescript/reference/classes/UsageClient)
+
+Creates a new usage client instance
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `client` | [`Client`](/xdks/typescript/reference/classes/Client) | The main X API client instance |
+
+#### Returns
+
+[`UsageClient`](/xdks/typescript/reference/classes/UsageClient)
+
+#### Defined in
+
+[usage/client.ts:49](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/usage/client.ts#L49)
+
+## Methods
+
+### get
+
+▸ **get**(`options?`): `Promise`\<[`Get2UsageTweetsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsageTweetsResponse)\>
+
+Get usage
+Retrieves usage statistics for Posts over a specified number of days.
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `options` | `GetOptions` |
+
+#### Returns
+
+`Promise`\<[`Get2UsageTweetsResponse`](/xdks/typescript/reference/interfaces/Schemas.Get2UsageTweetsResponse)\>
+
+Promise resolving to the API response
+
+#### Defined in
+
+[usage/client.ts:62](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/usage/client.ts#L62)

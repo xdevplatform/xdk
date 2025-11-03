@@ -49,6 +49,7 @@ class TestUsageStructure:
         # Check optional parameters have defaults (excluding 'self')
         optional_params = [
             "days",
+            "usage.fields",
         ]
         for optional_param in optional_params:
             if optional_param in params:

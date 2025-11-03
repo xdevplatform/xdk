@@ -1,0 +1,56 @@
+---
+title: "PlaidAccount"
+sidebarTitle: "PlaidAccount"
+---
+
+[Schemas](/xdks/typescript/reference/modules/Schemas).PlaidAccount
+
+## Properties
+
+<ResponseField name="accountCategory" type="string" required>
+The category of the account (e.g., personal, business).
+
+</ResponseField>
+
+<ResponseField name="accountId" type="string" required>
+The Plaid account ID.
+
+</ResponseField>
+
+<ResponseField name="accountNumberDisplay" type="string" required>
+The last 2-4 digits of the account number.
+
+</ResponseField>
+
+<ResponseField name="accountType" type="string" required>
+The type of the account (e.g., checking, savings).
+
+</ResponseField>
+
+<ResponseField name="availableBalance" type="number">
+The available balance of the account.
+
+</ResponseField>
+
+<ResponseField name="currency" type="PlaidCurrency" required>
+</ResponseField>
+
+<ResponseField name="currentBalance" type="number">
+The current balance of the account.
+
+</ResponseField>
+
+<ResponseField name="nickname" type="string">
+The nickname of the account.
+
+</ResponseField>
+
+<ResponseField name="productName" type="string" required>
+The name of the product associated with the account.
+
+</ResponseField>
+
+<ResponseField name="status" type="string" required>
+The status of the account.
+
+</ResponseField>

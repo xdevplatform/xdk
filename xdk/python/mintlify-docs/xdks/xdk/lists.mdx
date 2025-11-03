@@ -1,0 +1,200 @@
+---
+sidebarTitle: Lists
+---
+
+xdk.lists — XDK Python SDK documentation
+
+# xdk.lists[¶](#module-xdk.lists "Link to this heading")
+
+Auto-generated lists module for the X API.
+
+This module provides access to the lists endpoints of the X API
+and serves as the main entry point for all lists-related functionality.
+
+Generated automatically - do not edit manually.
+
+*class* xdk.lists.ListsClient(*client*)[¶](#xdk.lists.ListsClient "Link to this definition")
+:   Bases: `object`
+
+    Client for lists operations
+
+    Parameters:
+    :   **client** ([*Client*](xdk.html#xdk.Client "xdk.Client"))
+
+    add\_member(*id*, *body=None*)[¶](#xdk.lists.ListsClient.add_member "Link to this definition")
+    :   Add List member
+
+        Adds a User to a specific List by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the List for which to add a member.
+            * **body** ([*AddMemberRequest*](xdk.lists.models.html#xdk.lists.models.AddMemberRequest "xdk.lists.models.AddMemberRequest") *|* *None*) – Request body
+
+        Returns:
+        :   Response data
+
+        Return type:
+        :   [*AddMemberResponse*](xdk.lists.models.html#xdk.lists.models.AddMemberResponse "xdk.lists.models.AddMemberResponse")
+
+    create(*body=None*)[¶](#xdk.lists.ListsClient.create "Link to this definition")
+    :   Create List
+
+        Creates a new List for the authenticated user.
+
+        body: Request body
+        :returns: Response data
+        :rtype: CreateResponse
+
+        Parameters:
+        :   **body** ([*CreateRequest*](xdk.lists.models.html#xdk.lists.models.CreateRequest "xdk.lists.models.CreateRequest") *|* *None*)
+
+        Return type:
+        :   [*CreateResponse*](xdk.lists.models.html#xdk.lists.models.CreateResponse "xdk.lists.models.CreateResponse")
+
+    delete(*id*)[¶](#xdk.lists.ListsClient.delete "Link to this definition")
+    :   Delete List
+
+        Deletes a specific List owned by the authenticated user by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the List to delete.
+            * **Returns**
+            * **DeleteResponse** – Response data
+
+        Return type:
+        :   [*DeleteResponse*](xdk.lists.models.html#xdk.lists.models.DeleteResponse "xdk.lists.models.DeleteResponse")
+
+    get\_by\_id(*id*, *listfields=None*, *expansions=None*, *userfields=None*)[¶](#xdk.lists.ListsClient.get_by_id "Link to this definition")
+    :   Get List by ID
+
+        Retrieves details of a specific List by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the List.
+            * **listfields** (*List*) – A comma separated list of List fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **Returns**
+            * **GetByIdResponse** – Response data
+
+        Return type:
+        :   [*GetByIdResponse*](xdk.lists.models.html#xdk.lists.models.GetByIdResponse "xdk.lists.models.GetByIdResponse")
+
+    get\_followers(*id*, *max\_results=None*, *pagination\_token=None*, *userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.lists.ListsClient.get_followers "Link to this definition")
+    :   Get List followers
+
+        Retrieves a list of Users who follow a specific List by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the List.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get a specified ‘page’ of results.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **GetFollowersResponse** – Response data
+
+        Return type:
+        :   [*GetFollowersResponse*](xdk.lists.models.html#xdk.lists.models.GetFollowersResponse "xdk.lists.models.GetFollowersResponse")
+
+    get\_members(*id*, *max\_results=None*, *pagination\_token=None*, *userfields=None*, *expansions=None*, *tweetfields=None*)[¶](#xdk.lists.ListsClient.get_members "Link to this definition")
+    :   Get List members
+
+        Retrieves a list of Users who are members of a specific List by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the List.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get a specified ‘page’ of results.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **Returns**
+            * **GetMembersResponse** – Response data
+
+        Return type:
+        :   [*GetMembersResponse*](xdk.lists.models.html#xdk.lists.models.GetMembersResponse "xdk.lists.models.GetMembersResponse")
+
+    get\_posts(*id*, *max\_results=None*, *pagination\_token=None*, *tweetfields=None*, *expansions=None*, *mediafields=None*, *pollfields=None*, *userfields=None*, *placefields=None*)[¶](#xdk.lists.ListsClient.get_posts "Link to this definition")
+    :   Get List Posts
+
+        Retrieves a list of Posts associated with a specific List by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the List.
+            * **max\_results** (*int*) – The maximum number of results.
+            * **pagination\_token** (*Any*) – This parameter is used to get the next ‘page’ of results.
+            * **tweetfields** (*List*) – A comma separated list of Tweet fields to display.
+            * **expansions** (*List*) – A comma separated list of fields to expand.
+            * **mediafields** (*List*) – A comma separated list of Media fields to display.
+            * **pollfields** (*List*) – A comma separated list of Poll fields to display.
+            * **userfields** (*List*) – A comma separated list of User fields to display.
+            * **placefields** (*List*) – A comma separated list of Place fields to display.
+            * **Returns**
+            * **GetPostsResponse** – Response data
+
+        Return type:
+        :   [*GetPostsResponse*](xdk.lists.models.html#xdk.lists.models.GetPostsResponse "xdk.lists.models.GetPostsResponse")
+
+    remove\_member\_by\_user\_id(*id*, *user\_id*)[¶](#xdk.lists.ListsClient.remove_member_by_user_id "Link to this definition")
+    :   Remove List member
+
+        Removes a User from a specific List by its ID and the User’s ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the List to remove a member.
+            * **user\_id** (*Any*) – The ID of User that will be removed from the List.
+            * **Returns**
+            * **RemoveMemberByUserIdResponse** – Response data
+
+        Return type:
+        :   [*RemoveMemberByUserIdResponse*](xdk.lists.models.html#xdk.lists.models.RemoveMemberByUserIdResponse "xdk.lists.models.RemoveMemberByUserIdResponse")
+
+    update(*id*, *body=None*)[¶](#xdk.lists.ListsClient.update "Link to this definition")
+    :   Update List
+
+        Updates the details of a specific List owned by the authenticated user by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the List to modify.
+            * **body** ([*UpdateRequest*](xdk.lists.models.html#xdk.lists.models.UpdateRequest "xdk.lists.models.UpdateRequest") *|* *None*) – Request body
+
+        Returns:
+        :   Response data
+
+        Return type:
+        :   [*UpdateResponse*](xdk.lists.models.html#xdk.lists.models.UpdateResponse "xdk.lists.models.UpdateResponse")
+
+Modules
+
+|  |  |
+| --- | --- |
+| [`client`](xdk.lists.client.html#module-xdk.lists.client "xdk.lists.client") | Auto-generated lists client for the X API. |
+| [`models`](xdk.lists.models.html#module-xdk.lists.models "xdk.lists.models") | Auto-generated lists models for the X API. |
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](xdk.html)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - [xdk](xdk.html)
+      * Previous: [xdk.general.models](xdk.general.models.html "previous chapter")
+      * Next: [xdk.lists.client](xdk.lists.client.html "next chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.lists.rst.txt)

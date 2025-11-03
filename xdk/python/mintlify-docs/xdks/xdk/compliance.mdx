@@ -1,0 +1,99 @@
+---
+sidebarTitle: Compliance
+---
+
+xdk.compliance — XDK Python SDK documentation
+
+# xdk.compliance[¶](#module-xdk.compliance "Link to this heading")
+
+Auto-generated compliance module for the X API.
+
+This module provides access to the compliance endpoints of the X API
+and serves as the main entry point for all compliance-related functionality.
+
+Generated automatically - do not edit manually.
+
+*class* xdk.compliance.ComplianceClient(*client*)[¶](#xdk.compliance.ComplianceClient "Link to this definition")
+:   Bases: `object`
+
+    Client for compliance operations
+
+    Parameters:
+    :   **client** ([*Client*](xdk.html#xdk.Client "xdk.Client"))
+
+    create\_jobs(*body*)[¶](#xdk.compliance.ComplianceClient.create_jobs "Link to this definition")
+    :   Create Compliance Job
+
+        Creates a new Compliance Job for the specified job type.
+
+        body: Request body
+        :returns: Response data
+        :rtype: CreateJobsResponse
+
+        Parameters:
+        :   **body** ([*CreateJobsRequest*](xdk.compliance.models.html#xdk.compliance.models.CreateJobsRequest "xdk.compliance.models.CreateJobsRequest"))
+
+        Return type:
+        :   [*CreateJobsResponse*](xdk.compliance.models.html#xdk.compliance.models.CreateJobsResponse "xdk.compliance.models.CreateJobsResponse")
+
+    get\_jobs(*type*, *status=None*, *compliance\_jobfields=None*)[¶](#xdk.compliance.ComplianceClient.get_jobs "Link to this definition")
+    :   Get Compliance Jobs
+
+        Retrieves a list of Compliance Jobs filtered by job type and optional status.
+
+        Parameters:
+        :   * **type** (*str*) – Type of Compliance Job to list.
+            * **status** (*str*) – Status of Compliance Job to list.
+            * **compliance\_jobfields** (*List*) – A comma separated list of ComplianceJob fields to display.
+            * **Returns**
+            * **GetJobsResponse** – Response data
+
+        Return type:
+        :   [*GetJobsResponse*](xdk.compliance.models.html#xdk.compliance.models.GetJobsResponse "xdk.compliance.models.GetJobsResponse")
+
+    get\_jobs\_by\_id(*id*, *compliance\_jobfields=None*)[¶](#xdk.compliance.ComplianceClient.get_jobs_by_id "Link to this definition")
+    :   Get Compliance Job by ID
+
+        Retrieves details of a specific Compliance Job by its ID.
+
+        Parameters:
+        :   * **id** (*Any*) – The ID of the Compliance Job to retrieve.
+            * **compliance\_jobfields** (*List*) – A comma separated list of ComplianceJob fields to display.
+            * **Returns**
+            * **GetJobsByIdResponse** – Response data
+
+        Return type:
+        :   [*GetJobsByIdResponse*](xdk.compliance.models.html#xdk.compliance.models.GetJobsByIdResponse "xdk.compliance.models.GetJobsByIdResponse")
+
+Modules
+
+|  |  |
+| --- | --- |
+| [`client`](xdk.compliance.client.html#module-xdk.compliance.client "xdk.compliance.client") | Auto-generated compliance client for the X API. |
+| [`models`](xdk.compliance.models.html#module-xdk.compliance.models "xdk.compliance.models") | Auto-generated compliance models for the X API. |
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](xdk.html)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - [xdk](xdk.html)
+      * Previous: [xdk.community\_notes.models](xdk.community_notes.models.html "previous chapter")
+      * Next: [xdk.compliance.client](xdk.compliance.client.html "next chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.compliance.rst.txt)

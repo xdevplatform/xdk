@@ -1,0 +1,54 @@
+---
+title: "ApiError"
+sidebarTitle: "ApiError"
+---
+
+API Error class for handling X API errors
+
+## Hierarchy
+
+- `Error`
+
+  ↳ **`ApiError`**
+
+## Constructors
+
+### constructor
+
+• **new ApiError**(`message`, `status`, `statusText`, `headers`, `data?`): [`ApiError`](/xdks/typescript/reference/classes/ApiError)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `message` | `string` |
+| `status` | `number` |
+| `statusText` | `string` |
+| `headers` | `Headers` |
+| `data?` | `any` |
+
+#### Returns
+
+[`ApiError`](/xdks/typescript/reference/classes/ApiError)
+
+#### Overrides
+
+Error.constructor
+
+
+
+[client.ts:118](https://github.com/xdevplatform/xdk/blob/e7c1386f9fab2eee5b465df213d44d7bb91ff7bb/xdk/typescript/src/client.ts#L118)
+
+## Properties
+
+<ResponseField name="status" type="number" required>
+</ResponseField>
+
+<ResponseField name="statusText" type="string" required>
+</ResponseField>
+
+<ResponseField name="headers" type="Headers" required>
+</ResponseField>
+
+<ResponseField name="data" type="any">
+</ResponseField>

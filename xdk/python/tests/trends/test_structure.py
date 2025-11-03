@@ -51,6 +51,7 @@ class TestTrendsStructure:
         # Check optional parameters have defaults (excluding 'self')
         optional_params = [
             "max_trends",
+            "trend.fields",
         ]
         for optional_param in optional_params:
             if optional_param in params:
@@ -96,7 +97,9 @@ class TestTrendsStructure:
                 required_param in params
             ), f"Required parameter '{required_param}' missing from get_personalized"
         # Check optional parameters have defaults (excluding 'self')
-        optional_params = []
+        optional_params = [
+            "personalized_trend.fields",
+        ]
         for optional_param in optional_params:
             if optional_param in params:
                 param_obj = sig.parameters[optional_param]

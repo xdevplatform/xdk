@@ -1,0 +1,288 @@
+/**
+ * Environment-agnostic cryptographic utilities for the X API SDK.
+ * Provides HMAC-SHA1 implementation that works in both Node.js and browser environments.
+ */
+
+/**
+ * HMAC-SHA1 implementation that works in both Node.js and browser environments
+ */
+export class CryptoUtils {
+  /**
+   * Generate HMAC-SHA1 signature
+   * @param key Signing key
+   * @param message Message to sign
+   * @returns Base64 encoded signature
+   */
+  static async hmacSha1(key: string, message: string): Promise<string> {
+    // Try to use native Node.js crypto first
+    if (typeof process !== 'undefined' && process.versions && process.versions.node) {
+      try {
+        return await this._nodeHmacSha1(key, message);
+      } catch (error) {
+        // Fall back to Web Crypto API or polyfill
+        console.warn('Node.js crypto failed, falling back:', error);
+      }
+    }
+
+    // Try Web Crypto API (modern browsers)
+    if (typeof crypto !== 'undefined' && crypto.subtle) {
+      try {
+        return await this._webCryptoHmacSha1(key, message);
+      } catch (error) {
+        // Fall back to polyfill
+        console.warn('Web Crypto API failed, falling back:', error);
+      }
+    }
+
+    // Fall back to polyfill implementation
+    return this._polyfillHmacSha1(key, message);
+  }
+
+  /**
+   * Node.js native HMAC-SHA1 implementation
+   */
+  private static async _nodeHmacSha1(key: string, message: string): Promise<string> {
+    // Dynamic import for Node.js crypto module (ES module compatible)
+    const crypto = await import('crypto');
+    const hmac = crypto.createHmac('sha1', key);
+    hmac.update(message);
+    return hmac.digest('base64');
+  }
+
+  /**
+   * Web Crypto API HMAC-SHA1 implementation
+   */
+  private static async _webCryptoHmacSha1(key: string, message: string): Promise<string> {
+    // Convert string key to ArrayBuffer
+    const keyBuffer = this._stringToArrayBuffer(key);
+    const messageBuffer = this._stringToArrayBuffer(message);
+
+    // Import the key
+    const cryptoKey = await crypto.subtle.importKey(
+      'raw',
+      keyBuffer,
+      { name: 'HMAC', hash: 'SHA-1' },
+      false,
+      ['sign']
+    );
+
+    // Sign the message
+    const signature = await crypto.subtle.sign('HMAC', cryptoKey, messageBuffer);
+
+    // Convert to base64
+    return this._arrayBufferToBase64(signature);
+  }
+
+  /**
+   * Polyfill HMAC-SHA1 implementation using pure JavaScript
+   * This is a fallback that works everywhere but is slower
+   */
+  private static _polyfillHmacSha1(key: string, message: string): string {
+    // For now, throw an error to indicate that proper crypto is needed
+    // This will help identify when the fallback is being used
+    throw new Error('HMAC-SHA1 polyfill not implemented. Please ensure Node.js crypto or Web Crypto API is available.');
+    
+    // In a real implementation, you would use a library like crypto-js:
+    // import CryptoJS from 'crypto-js';
+    // return CryptoJS.HmacSHA1(message, key).toString(CryptoJS.enc.Base64);
+  }
+
+  /**
+   * Convert string to ArrayBuffer
+   */
+  private static _stringToArrayBuffer(str: string): ArrayBuffer {
+    const buffer = new ArrayBuffer(str.length);
+    const view = new Uint8Array(buffer);
+    for (let i = 0; i < str.length; i++) {
+      view[i] = str.charCodeAt(i);
+    }
+    return buffer;
+  }
+
+  /**
+   * Convert ArrayBuffer to base64 string
+   */
+  private static _arrayBufferToBase64(buffer: ArrayBuffer): string {
+    const bytes = new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary);
+  }
+
+  /**
+   * Generate a random nonce for OAuth
+   * @param length Length of the nonce
+   * @returns Random nonce string
+   */
+  static generateNonce(length: number = 32): string {
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      // Use crypto.getRandomValues if available
+      const array = new Uint8Array(length);
+      crypto.getRandomValues(array);
+      return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
+    } else {
+      // Fallback to Math.random (less secure but functional)
+      let result = '';
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      return result;
+    }
+  }
+
+  /**
+   * Generate timestamp for OAuth
+   * @returns Unix timestamp as string
+   */
+  static generateTimestamp(): string {
+    return Math.floor(Date.now() / 1000).toString();
+  }
+
+  /**
+   * Generate a cryptographically secure random string for PKCE code verifier
+   * @param length Length of the code verifier (43-128 characters recommended)
+   * @returns Random code verifier string
+   */
+  static generateCodeVerifier(length: number = 128): string {
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      // Use crypto.getRandomValues if available
+      const array = new Uint8Array(length);
+      crypto.getRandomValues(array);
+      // Convert to base64url encoding (RFC 7636)
+      return this._base64UrlEncode(array);
+    } else {
+      // Fallback to Math.random (less secure but functional)
+      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+      let result = '';
+      for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+      }
+      return result;
+    }
+  }
+
+  /**
+   * Generate PKCE code challenge from code verifier
+   * @param codeVerifier The code verifier string
+   * @returns Base64url encoded SHA256 hash of the code verifier
+   */
+  static async generateCodeChallenge(codeVerifier: string): Promise<string> {
+    // Try to use native Node.js crypto first
+    if (typeof process !== 'undefined' && process.versions && process.versions.node) {
+      try {
+        return await this._nodeSha256(codeVerifier);
+      } catch (error) {
+        console.warn('Node.js crypto failed for SHA256, falling back:', error);
+      }
+    }
+
+    // Try Web Crypto API (modern browsers)
+    if (typeof crypto !== 'undefined' && crypto.subtle) {
+      try {
+        return await this._webCryptoSha256(codeVerifier);
+      } catch (error) {
+        console.warn('Web Crypto API failed for SHA256, falling back:', error);
+      }
+    }
+
+    // Fall back to polyfill implementation
+    return this._polyfillSha256(codeVerifier);
+  }
+
+  /**
+   * Node.js native SHA256 implementation for PKCE
+   */
+  private static async _nodeSha256(message: string): Promise<string> {
+    const crypto = await import('crypto');
+    const hash = crypto.createHash('sha256');
+    hash.update(message);
+    const digest = hash.digest();
+    return this._base64UrlEncode(digest);
+  }
+
+  /**
+   * Web Crypto API SHA256 implementation for PKCE
+   */
+  private static async _webCryptoSha256(message: string): Promise<string> {
+    const messageBuffer = this._stringToArrayBuffer(message);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', messageBuffer);
+    return this._base64UrlEncode(hashBuffer);
+  }
+
+  /**
+   * Polyfill SHA256 implementation for PKCE
+   * This is a fallback that works everywhere but is slower
+   */
+  private static _polyfillSha256(message: string): string {
+    // For now, throw an error to indicate that proper crypto is needed
+    throw new Error('SHA256 polyfill not implemented. Please ensure Node.js crypto or Web Crypto API is available.');
+    
+    // In a real implementation, you would use a library like crypto-js:
+    // import CryptoJS from 'crypto-js';
+    // return CryptoJS.SHA256(message).toString(CryptoJS.enc.Base64url);
+  }
+
+  /**
+   * Convert ArrayBuffer or Uint8Array to base64url encoding (RFC 7636)
+   */
+  private static _base64UrlEncode(buffer: ArrayBuffer | Uint8Array): string {
+    const bytes = buffer instanceof Uint8Array ? buffer : new Uint8Array(buffer);
+    let binary = '';
+    for (let i = 0; i < bytes.byteLength; i++) {
+      binary += String.fromCharCode(bytes[i]);
+    }
+    // Convert to base64url: replace + with -, / with _, and remove padding =
+    return btoa(binary)
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+  }
+}
+
+/**
+ * Convenience function for HMAC-SHA1
+ * @param key Signing key
+ * @param message Message to sign
+ * @returns Promise that resolves to base64 encoded signature
+ */
+export async function hmacSha1(key: string, message: string): Promise<string> {
+  return CryptoUtils.hmacSha1(key, message);
+}
+
+/**
+ * Convenience function for generating nonce
+ * @param length Length of the nonce
+ * @returns Random nonce string
+ */
+export function generateNonce(length: number = 32): string {
+  return CryptoUtils.generateNonce(length);
+}
+
+/**
+ * Convenience function for generating timestamp
+ * @returns Unix timestamp as string
+ */
+export function generateTimestamp(): string {
+  return CryptoUtils.generateTimestamp();
+}
+
+/**
+ * Convenience function for generating PKCE code verifier
+ * @param length Length of the code verifier
+ * @returns Random code verifier string
+ */
+export function generateCodeVerifier(length: number = 128): string {
+  return CryptoUtils.generateCodeVerifier(length);
+}
+
+/**
+ * Convenience function for generating PKCE code challenge
+ * @param codeVerifier The code verifier string
+ * @returns Promise that resolves to base64url encoded SHA256 hash
+ */
+export async function generateCodeChallenge(codeVerifier: string): Promise<string> {
+  return CryptoUtils.generateCodeChallenge(codeVerifier);
+} 

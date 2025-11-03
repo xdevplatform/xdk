@@ -19,15 +19,4 @@ from datetime import datetime
 class DeleteAllResponse(BaseModel):
     """Response model for delete_all"""
 
-    data: Optional["DeleteAllResponseData"] = None
-    errors: Optional[List] = None
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class DeleteAllResponseData(BaseModel):
-    """Nested model for DeleteAllResponseData"""
-
-    killed_connections: Optional[bool] = None
-
-    model_config = ConfigDict(populate_by_name=True)
+    model_config = ConfigDict(populate_by_name=True, extra="allow")

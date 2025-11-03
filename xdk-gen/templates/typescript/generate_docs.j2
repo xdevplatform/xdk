@@ -1,0 +1,59 @@
+#!/usr/bin/env node
+
+/**
+ * Documentation generation script for X API SDK
+ * 
+ * This script generates comprehensive documentation for the TypeScript SDK
+ * using TypeDoc. It creates both HTML and Markdown documentation.
+ */
+
+import { execSync } from 'child_process';
+import { existsSync, mkdirSync } from 'fs';
+import { join } from 'path';
+
+const DOCS_DIR = 'docs';
+const HTML_DOCS_DIR = join(DOCS_DIR, 'html');
+const MARKDOWN_DOCS_DIR = join(DOCS_DIR, 'markdown');
+
+console.log('📚 Generating X API SDK Documentation...\n');
+
+// Create docs directories
+if (!existsSync(DOCS_DIR)) {
+    mkdirSync(DOCS_DIR, { recursive: true });
+}
+
+if (!existsSync(HTML_DOCS_DIR)) {
+    mkdirSync(HTML_DOCS_DIR, { recursive: true });
+}
+
+if (!existsSync(MARKDOWN_DOCS_DIR)) {
+    mkdirSync(MARKDOWN_DOCS_DIR, { recursive: true });
+}
+
+try {
+    // Generate HTML documentation
+    console.log('🔨 Generating HTML documentation...');
+    execSync('npx typedoc --out docs/html --theme default', { stdio: 'inherit' });
+    console.log('✅ HTML documentation generated in docs/html/\n');
+
+    // Generate Markdown documentation
+    console.log('🔨 Generating Markdown documentation...');
+    execSync('npx typedoc --out docs/markdown --plugin typedoc-plugin-markdown', { stdio: 'inherit' });
+    console.log('✅ Markdown documentation generated in docs/markdown/\n');
+
+    // Generate API reference
+    console.log('🔨 Generating API reference...');
+    execSync('npx typedoc --out docs/api --theme minimal --includeVersion false', { stdio: 'inherit' });
+    console.log('✅ API reference generated in docs/api/\n');
+
+    console.log('🎉 Documentation generation complete!');
+    console.log('\n📁 Generated documentation:');
+    console.log('   • HTML docs: docs/html/index.html');
+    console.log('   • Markdown docs: docs/markdown/');
+    console.log('   • API reference: docs/api/');
+    console.log('\n🚀 You can now serve the documentation locally or deploy it to your hosting platform.');
+
+} catch (error) {
+    console.error('❌ Error generating documentation:', error.message);
+    process.exit(1);
+}

@@ -1,0 +1,169 @@
+---
+sidebarTitle: Pagination
+---
+
+xdk.paginator — XDK Python SDK documentation
+
+# xdk.paginator[¶](#module-xdk.paginator "Link to this heading")
+
+Cursor-based pagination utilities for the X API SDK.
+
+This module provides a Cursor class for elegant pagination support across
+all API clients. The Cursor enables easy iteration over paginated results
+using both .pages() and .items() methods with proper type safety.
+
+Generated automatically - do not edit manually.
+
+Functions
+
+|  |  |
+| --- | --- |
+| [`cursor`](#xdk.paginator.cursor "xdk.paginator.cursor")(method, \*args, \*\*kwargs) | Create a cursor with proper type inference and validation. |
+
+Classes
+
+|  |  |
+| --- | --- |
+| [`Cursor`](#xdk.paginator.Cursor "xdk.paginator.Cursor")(method, \*args, \*\*kwargs) | A cursor for handling pagination in API calls. |
+| [`PaginatableMethod`](#xdk.paginator.PaginatableMethod "xdk.paginator.PaginatableMethod")(\*args, \*\*kwargs) | Protocol for methods that support pagination. |
+
+Exceptions
+
+|  |  |
+| --- | --- |
+| [`PaginationError`](#xdk.paginator.PaginationError "xdk.paginator.PaginationError") | Raised when a non-paginatable method is passed to Cursor. |
+
+*class* xdk.paginator.Cursor(*method*, *\*args*, *\*\*kwargs*)[¶](#xdk.paginator.Cursor "Link to this definition")
+:   Bases: `Generic`[`ResponseType`]
+
+    A cursor for handling pagination in API calls.
+
+    This class wraps any API method and provides elegant pagination
+    through .items() and .pages() methods. The cursor preserves the
+    return type of the wrapped method for proper type hints.
+
+    Example usage:
+    :   ```
+        # For methods requiring arguments
+        cursor = Cursor(client.users.get_users_blocking, "user_id", max_results=100)
+        for user in cursor.items(250):  # user is properly typed
+            print(user.name)
+
+        # For methods with query parameters
+        cursor = Cursor(client.posts.search_posts_recent, "python", max_results=50)
+        for page in cursor.pages(5):  # page is SearchResponse type
+            print(f"Got {len(page.data)} posts")
+        ```
+
+    Parameters:
+    :   * **method** ([*PaginatableMethod*](#xdk.paginator.PaginatableMethod "xdk.paginator.PaginatableMethod")*[**ResponseType**]*)
+        * **args** (*Any*)
+        * **kwargs** (*Any*)
+
+    \_\_init\_\_(*method*, *\*args*, *\*\*kwargs*)[¶](#xdk.paginator.Cursor.__init__ "Link to this definition")
+    :   Initialize the cursor.
+
+        Parameters:
+        :   * **method** ([*PaginatableMethod*](#xdk.paginator.PaginatableMethod "xdk.paginator.PaginatableMethod")*[**ResponseType**]*) – The API method to call for each page (must support pagination)
+            * **\*args** (*Any*) – Positional arguments to pass to the API method
+            * **\*\*kwargs** (*Any*) – Keyword arguments to pass to the API method (excluding pagination params)
+
+        Raises:
+        :   [**PaginationError**](#xdk.paginator.PaginationError "xdk.paginator.PaginationError") – If the method doesn’t support pagination parameters
+
+    items(*limit=None*)[¶](#xdk.paginator.Cursor.items "Link to this definition")
+    :   Iterate over individual items from paginated responses.
+
+        Parameters:
+        :   **limit** (*int* *|* *None*) – Maximum number of items to return (None for unlimited)
+
+        Yields:
+        :   Individual items from the API responses
+
+        Return type:
+        :   *Iterator*[*Any*]
+
+    pages(*limit=None*)[¶](#xdk.paginator.Cursor.pages "Link to this definition")
+    :   Iterate over pages of responses.
+
+        Parameters:
+        :   **limit** (*int* *|* *None*) – Maximum number of pages to return (None for unlimited)
+
+        Yields:
+        :   Page responses from the API (same type as the wrapped method returns)
+
+        Return type:
+        :   *Iterator*[*ResponseType*]
+
+*class* xdk.paginator.PaginatableMethod(*\*args*, *\*\*kwargs*)[¶](#xdk.paginator.PaginatableMethod "Link to this definition")
+:   Bases: `Protocol`[`ResponseType`]
+
+    Protocol for methods that support pagination.
+
+    A method is considered paginatable if it accepts pagination\_token
+    and/or max\_results parameters.
+
+*exception* xdk.paginator.PaginationError[¶](#xdk.paginator.PaginationError "Link to this definition")
+:   Bases: `TypeError`
+
+    Raised when a non-paginatable method is passed to Cursor.
+
+xdk.paginator.cursor(*method: [PaginatableMethod](#xdk.paginator.PaginatableMethod "xdk.paginator.PaginatableMethod")[ResponseType]*, *\*args: Any*, *\*\*kwargs: Any*) → [Cursor](#xdk.paginator.Cursor "xdk.paginator.Cursor")[ResponseType][¶](#xdk.paginator.cursor "Link to this definition")
+:   Create a cursor with proper type inference and validation.
+
+    This factory function helps with type inference so you get proper
+    type hints for the response type, and validates that the method
+    supports pagination at both static analysis and runtime.
+
+    Parameters:
+    :   * **method** – The API method to wrap (must support pagination)
+        * **\*args** – Positional arguments to pass to the method
+        * **\*\*kwargs** – Keyword arguments to pass to the method
+
+    Returns:
+    :   A properly typed Cursor instance
+
+    Raises:
+    :   [**PaginationError**](#xdk.paginator.PaginationError "xdk.paginator.PaginationError") – If the method doesn’t support pagination parameters
+
+    Example
+
+    ```
+    # Type is inferred as Cursor[GetUsersResponse]
+    users_cursor = cursor(client.users.get_users_blocking, "user_id", max_results=100)
+
+    # page is typed as GetUsersResponse
+    for page in users_cursor.pages(5):
+        print(len(page.data))
+
+    # For search methods
+    search_cursor = cursor(client.posts.search_posts_recent, "python", max_results=50)
+    for tweet in search_cursor.items(100):
+        print(tweet.text)
+    ```
+
+# [XDK Python SDK](../index.html)
+
+
+
+### Navigation
+
+Contents:
+
+* [API Reference](../modules.html)
+  + [xdk](xdk.html)
+
+### Related Topics
+
+* [Documentation overview](../index.html)
+  + [API Reference](../modules.html)
+    - [xdk](xdk.html)
+      * Previous: [xdk.oauth2\_auth](xdk.oauth2_auth.html "previous chapter")
+      * Next: [xdk.posts](xdk.posts.html "next chapter")
+
+©2025, XDK.
+|
+Powered by [Sphinx 8.2.3](https://www.sphinx-doc.org/)
+& [Alabaster 1.0.0](https://alabaster.readthedocs.io)
+|
+[Page source](../_sources/_autosummary/xdk.paginator.rst.txt)
