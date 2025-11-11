@@ -40,8 +40,6 @@ export interface ClientConfig {
   retry?: boolean;
   /** Maximum number of retry attempts */
   maxRetries?: number;
-  /** User agent string */
-  userAgent?: string;
 }
 
 /**
@@ -159,8 +157,6 @@ export class Client {
   readonly retry: boolean;
   /** Maximum number of retry attempts */
   readonly maxRetries: number;
-  /** User agent string */
-  readonly userAgent: string;
 
   /** HTTP client for making requests */
   readonly httpClient = httpClient;
@@ -211,11 +207,10 @@ export class Client {
     this.timeout = (config as ClientConfig).timeout || 30000;
     this.retry = (config as ClientConfig).retry ?? true;
     this.maxRetries = (config as ClientConfig).maxRetries || 3;
-    this.userAgent = (config as ClientConfig).userAgent || "x-api-sdk/1.0.0";
     
     // Initialize headers
     const defaultHeaders: Record<string, string> = {
-      'User-Agent': this.userAgent,
+      'User-Agent': 'xdk-typescript/{{ version }}',
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       ...((config as ClientConfig).headers || {}),

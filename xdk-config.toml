@@ -1,0 +1,9 @@
+# XDK Configuration
+# This file contains configuration for all SDK generation
+
+[versions]
+# Python SDK version
+python = "0.2.2-beta"
+
+# TypeScript SDK version
+typescript = "0.1.1-beta"

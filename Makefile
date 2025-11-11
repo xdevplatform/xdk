@@ -6,6 +6,9 @@ all: check test
 python:
 	cargo run -- python --latest true
 
+typescript:
+	cargo run -- typescript --latest true
+
 test-python:
 	cd xdk/python && uv run pytest tests/
 

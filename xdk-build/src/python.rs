@@ -5,12 +5,20 @@ use std::fs;
 use std::path::Path;
 use std::process::Command;
 use xdk_gen::Python;
-use xdk_lib::{log_error, log_info, log_success};
+use xdk_lib::{log_error, log_info, log_success, XdkConfig};
 use xdk_openapi::OpenApi; // Add fs for directory removal
 
 /// Generates the Python SDK.
 pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     log_info!("Generating Python SDK code...");
+
+    // Load configuration to get version
+    let config = XdkConfig::load_default().map_err(BuildError::SdkGenError)?;
+    let version = config
+        .get_version("python")
+        .ok_or_else(|| BuildError::SdkGenError(
+            xdk_lib::SdkGeneratorError::FrameworkError("Python version not found in config".to_string())
+        ))?;
 
     // Create output directory if it doesn't exist
     if let Err(e) = std::fs::create_dir_all(output_dir) {
@@ -23,7 +31,7 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     }
 
     // Generate the SDK code
-    if let Err(e) = xdk_lib::generator::generate(Python, openapi, output_dir) {
+    if let Err(e) = xdk_lib::generator::generate(Python, openapi, output_dir, version) {
         log_error!("Failed to generate Python SDK code: {}", e);
         return Err(BuildError::SdkGenError(e));
     }

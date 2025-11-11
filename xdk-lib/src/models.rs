@@ -114,6 +114,13 @@ pub struct TagsContext {
     pub tags: Vec<TagInfo>,
 }
 
+/// Context for rendering SDK-level templates (package.json, main client, etc.)
+#[derive(Debug, Serialize)]
+pub struct SdkContext {
+    pub tags: Vec<TagInfo>,
+    pub version: String,
+}
+
 /// Context for rendering test templates
 #[derive(Debug, Serialize)]
 pub struct TestContext {
