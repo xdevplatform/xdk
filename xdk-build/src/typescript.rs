@@ -1,7 +1,7 @@
 use crate::error::{BuildError, Result};
 use std::path::Path;
 use xdk_gen::TypeScript;
-use xdk_lib::{generate as generate_sdk, log_info, XdkConfig};
+use xdk_lib::{XdkConfig, generate as generate_sdk, log_info};
 use xdk_openapi::OpenApi;
 
 /// Generate TypeScript SDK from OpenAPI spec
@@ -11,11 +11,11 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
 
     // Load configuration to get version
     let config = XdkConfig::load_default().map_err(BuildError::SdkGenError)?;
-    let version = config
-        .get_version("typescript")
-        .ok_or_else(|| BuildError::SdkGenError(
-            xdk_lib::SdkGeneratorError::FrameworkError("TypeScript version not found in config".to_string())
-        ))?;
+    let version = config.get_version("typescript").ok_or_else(|| {
+        BuildError::SdkGenError(xdk_lib::SdkGeneratorError::FrameworkError(
+            "TypeScript version not found in config".to_string(),
+        ))
+    })?;
 
     // Initialize TypeScript generator
     let generator = TypeScript;

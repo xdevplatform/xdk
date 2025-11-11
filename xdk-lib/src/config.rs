@@ -19,8 +19,9 @@ impl XdkConfig {
     /// Load configuration from a file path
     pub fn from_file<P: AsRef<Path>>(path: P) -> crate::Result<Self> {
         let contents = fs::read_to_string(path.as_ref())?;
-        let config: XdkConfig = toml::from_str(&contents)
-            .map_err(|e| crate::SdkGeneratorError::FrameworkError(format!("Failed to parse config: {}", e)))?;
+        let config: XdkConfig = toml::from_str(&contents).map_err(|e| {
+            crate::SdkGeneratorError::FrameworkError(format!("Failed to parse config: {}", e))
+        })?;
         Ok(config)
     }
 
@@ -46,27 +47,28 @@ impl XdkConfig {
         }
 
         Err(crate::SdkGeneratorError::FrameworkError(
-            "Could not find xdk-config.toml. Please ensure it exists in the workspace root.".to_string()
+            "Could not find xdk-config.toml. Please ensure it exists in the workspace root."
+                .to_string(),
         ))
     }
 
     /// Find the config file by searching up the directory tree
     fn find_config_file(start_dir: &Path) -> Option<PathBuf> {
         let mut current = start_dir.to_path_buf();
-        
+
         // Search up to 5 levels
         for _ in 0..5 {
             let config_path = current.join("xdk-config.toml");
             if config_path.exists() {
                 return Some(config_path);
             }
-            
+
             // Move to parent directory
             if !current.pop() {
                 break;
             }
         }
-        
+
         None
     }
 
@@ -145,12 +147,12 @@ python = "0.2.2-beta"
 typescript = "0.1.1-beta"
 "#;
         let config: XdkConfig = toml::from_str(config_str).unwrap();
-        
+
         // Verify beta suffix is preserved
         let python_version = config.get_version("python").unwrap();
         assert!(python_version.ends_with("-beta"));
         assert_eq!(python_version, "0.2.2-beta");
-        
+
         let typescript_version = config.get_version("typescript").unwrap();
         assert!(typescript_version.ends_with("-beta"));
         assert_eq!(typescript_version, "0.1.1-beta");

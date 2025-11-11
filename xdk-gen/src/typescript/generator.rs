@@ -129,10 +129,10 @@ impl xdk_lib::generator::LanguageGenerator for TypeScript {
             let context = SchemasContext { schemas };
             let schemas_path = output_dir.join("src/schemas.ts");
             let content = xdk_lib::templates::render_template_with_path(
-                env, 
-                "schemas", 
-                &context, 
-                schemas_path.to_str().unwrap_or("src/schemas.ts")
+                env,
+                "schemas",
+                &context,
+                schemas_path.to_str().unwrap_or("src/schemas.ts"),
             )?;
             std::fs::write(&schemas_path, content)?;
         }
