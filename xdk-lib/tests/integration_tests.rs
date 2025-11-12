@@ -379,7 +379,9 @@ fn test_template_rendering_functionality() {
     };
 
     let result = render_template(&env, "test", &context).unwrap();
-    assert_eq!(result, "Hello World! Count: 42");
+    // Check that the header is added automatically
+    assert!(result.contains("// AUTO-GENERATED FILE - DO NOT EDIT"));
+    assert!(result.contains("Hello World! Count: 42"));
 }
 
 #[test]
@@ -408,5 +410,7 @@ fn test_template_rendering_with_tag_info() {
     let context = TagContext { tag: tag_info };
 
     let result = render_template(&env, "tag_test", &context).unwrap();
-    assert_eq!(result, "Class: UserProfile, Import: user_profile");
+    // Check that the header is added automatically
+    assert!(result.contains("// AUTO-GENERATED FILE - DO NOT EDIT"));
+    assert!(result.contains("Class: UserProfile, Import: user_profile"));
 }

@@ -14,7 +14,9 @@
 /// - `models`: Common data models for SDK generation
 /// - `testing`: Test generation for SDK generation
 /// - `casing`: Casing conversion utilities for different naming conventions
+/// - `config`: Configuration management for SDK generation
 pub mod casing;
+pub mod config;
 pub mod error;
 pub mod generator;
 pub mod logging;
@@ -24,6 +26,7 @@ pub mod templates;
 pub mod testing;
 
 pub use casing::*;
+pub use config::*;
 pub use error::*;
 pub use generator::*;
 pub use logging::*;

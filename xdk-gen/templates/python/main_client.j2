@@ -41,6 +41,9 @@ class Client:
             scope: Space-separated list of scopes for OAuth2 authorization.
         """
         self.session = requests.Session()
+        self.session.headers.update({
+            'User-Agent': 'xdk-python/{{ version }}'
+        })
         self.base_url = base_url
         self.bearer_token = bearer_token
         

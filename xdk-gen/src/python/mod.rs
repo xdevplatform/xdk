@@ -80,7 +80,7 @@ mod tests {
     }
 
     fn setup_generator_and_generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
-        generate(Python, openapi, output_dir)
+        generate(Python, openapi, output_dir, "0.0.0-test")
     }
 
     #[test]
@@ -236,5 +236,46 @@ mod tests {
         assert_file_contains_text!(output_dir, "xdk/communities/client.py", "search");
 
         verify_sdk_structure(&output_dir);
+    }
+
+    #[test]
+    fn test_version_in_generated_files() {
+        let output_dir = create_output_dir();
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/simple.json").unwrap();
+
+        // Generate with a specific test version
+        let test_version = "1.2.3-test";
+        let result = generate(Python, &openapi, &output_dir, test_version);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+
+        // Verify version appears in pyproject.toml
+        assert_file_contains_text!(output_dir, "pyproject.toml", "version = \"1.2.3-test\"");
+
+        // Verify User-Agent with version appears in client.py
+        assert_file_contains_text!(
+            output_dir,
+            "xdk/client.py",
+            "'User-Agent': 'xdk-python/1.2.3-test'"
+        );
+    }
+
+    #[test]
+    fn test_user_agent_format() {
+        let output_dir = create_output_dir();
+        let _guard = OpenApiContextGuard::new();
+        let openapi = parse_json_file("../tests/openapi/simple.json").unwrap();
+
+        // Test with beta version
+        let test_version = "0.2.2-beta";
+        let result = generate(Python, &openapi, &output_dir, test_version);
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+
+        // Verify User-Agent format: xdk-python/<version>
+        assert_file_contains_text!(
+            output_dir,
+            "xdk/client.py",
+            "'User-Agent': 'xdk-python/0.2.2-beta'"
+        );
     }
 }

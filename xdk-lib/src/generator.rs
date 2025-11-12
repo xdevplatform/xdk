@@ -79,11 +79,13 @@ pub trait LanguageGenerator {
     /// * `env` - The MiniJinja environment with templates and filters
     /// * `operations` - A map of operations grouped by tag
     /// * `output_dir` - The directory where the generated code will be written
+    /// * `version` - The version string for the SDK
     fn generate(
         &self,
         env: &Environment,
         operations: &HashMap<Vec<String>, Vec<OperationGroup>>,
         output_dir: &Path,
+        version: &str,
     ) -> crate::Result<()>;
 
     // Test generation is now integrated into the main generate method
@@ -91,7 +93,12 @@ pub trait LanguageGenerator {
 
 /// SDK generation function that takes a language generator and an OpenAPI specification
 /// and generates the SDK code for the given language in the output directory.
-pub fn generate<T>(language: T, openapi: &OpenApi, output_dir: &Path) -> crate::Result<()>
+pub fn generate<T>(
+    language: T,
+    openapi: &OpenApi,
+    output_dir: &Path,
+    version: &str,
+) -> crate::Result<()>
 where
     T: LanguageGenerator,
 {
@@ -106,7 +113,7 @@ where
     let operations_by_tag = extract_operations_by_tag(openapi)?;
 
     // Generate SDK code
-    language.generate(&env, &operations_by_tag, output_dir)?;
+    language.generate(&env, &operations_by_tag, output_dir, version)?;
 
     Ok(())
 }
@@ -200,12 +207,12 @@ macro_rules! language {
     ) => {
         use std::collections::HashMap;
         use std::path::{Path, PathBuf};
-                use $crate::templates::render_template;
+                use $crate::templates::render_template_with_path;
                 use $crate::models::TagInfo;
         use $crate::models::{OperationInfo, OperationGroup};
         use $crate::generator::LanguageGenerator;
         use $crate::Result;
-        use $crate::models::{OperationContext, TagsContext, TestContext};
+        use $crate::models::{OperationContext, TagsContext, SdkContext, TestContext};
 
         /// Generator implementation for the specified language
         pub struct $name;
@@ -228,11 +235,13 @@ macro_rules! language {
             /// * `env` - The MiniJinja environment with templates and filters
             /// * `operations` - A map of operations grouped by tag
             /// * `output_dir` - The directory where the generated code will be written
+            /// * `version` - The version string for the SDK
             fn generate(
                 &self,
                 env: &minijinja::Environment,
                 operations: &HashMap<Vec<String>, Vec<OperationGroup>>,
                 output_dir: &Path,
+                version: &str,
             ) -> Result<()> {
 
                 let tags: Vec<Vec<String>> = operations.keys().cloned().collect();
@@ -276,7 +285,7 @@ macro_rules! language {
 
                             let template_name = $template;
 
-                            let content = render_template(env, template_name, &context)?;
+                            let content = render_template_with_path(env, template_name, &context, output_path.to_str().unwrap_or(""))?;
                             let full_path = output_dir.join(&output_path);
                             std::fs::create_dir_all(full_path.parent().unwrap_or(output_dir))?;
                             std::fs::write(&full_path, content)?;
@@ -286,13 +295,14 @@ macro_rules! language {
 
                 // Handle singleton template renders (once per SDK)
                 let tag_infos: Vec<_> = tags.iter().map(|tag| TagInfo::new(tag, $class_casing, $import_casing, $variable_casing)).collect();
-                let tags_context = TagsContext {
+                let sdk_context = SdkContext {
                     tags: tag_infos,
+                    version: version.to_string(),
                 };
 
                 $(
                     let output_path = PathBuf::from($s_path);
-                    let content = render_template(env, $s_template, &tags_context)?;
+                    let content = render_template_with_path(env, $s_template, &sdk_context, output_path.to_str().unwrap_or(""))?;
                     let full_path = output_dir.join(&output_path);
                     std::fs::create_dir_all(full_path.parent().unwrap_or(output_dir))?;
                     std::fs::write(&full_path, content)?;
@@ -361,7 +371,7 @@ macro_rules! language {
 
                                     if should_generate {
                                         let output_path = PathBuf::from(format!($test_path, tag_path));
-                                        let content = render_template(env, $test_template, &test_context)?;
+                                        let content = render_template_with_path(env, $test_template, &test_context, output_path.to_str().unwrap_or(""))?;
                                         let full_path = output_dir.join(&output_path);
                                         std::fs::create_dir_all(full_path.parent().unwrap_or(output_dir))?;
                                         std::fs::write(&full_path, content)?;
@@ -391,7 +401,7 @@ macro_rules! language {
                 $(
                     if let Ok(_) = env.get_template($s_test_template) {
                         let output_path = PathBuf::from($s_test_path);
-                        let content = render_template(env, $s_test_template, &test_tags_context)?;
+                        let content = render_template_with_path(env, $s_test_template, &test_tags_context, output_path.to_str().unwrap_or(""))?;
                         let full_path = output_dir.join(&output_path);
                         std::fs::create_dir_all(full_path.parent().unwrap_or(output_dir))?;
                         std::fs::write(&full_path, content)?;

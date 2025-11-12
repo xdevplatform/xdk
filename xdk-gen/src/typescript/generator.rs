@@ -110,9 +110,10 @@ impl xdk_lib::generator::LanguageGenerator for TypeScript {
         env: &minijinja::Environment,
         operations: &std::collections::HashMap<Vec<String>, Vec<xdk_lib::models::OperationGroup>>,
         output_dir: &std::path::Path,
+        version: &str,
     ) -> xdk_lib::Result<()> {
         // First, generate all standard templates using the base generator
-        TypeScriptBase.generate(env, operations, output_dir)?;
+        TypeScriptBase.generate(env, operations, output_dir, version)?;
 
         // Then generate schemas.ts from OpenAPI components
         // Extract schemas with their definitions from the OpenAPI context
@@ -126,8 +127,13 @@ impl xdk_lib::generator::LanguageGenerator for TypeScript {
 
         if !schemas.is_empty() {
             let context = SchemasContext { schemas };
-            let content = xdk_lib::templates::render_template(env, "schemas", &context)?;
             let schemas_path = output_dir.join("src/schemas.ts");
+            let content = xdk_lib::templates::render_template_with_path(
+                env,
+                "schemas",
+                &context,
+                schemas_path.to_str().unwrap_or("src/schemas.ts"),
+            )?;
             std::fs::write(&schemas_path, content)?;
         }
 
