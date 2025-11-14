@@ -140,9 +140,9 @@ export class CryptoUtils {
       // Use crypto.getRandomValues if available
       const array = new Uint8Array(length);
       crypto.getRandomValues(array);
-      return Array.from(array, (byte) =>
-        byte.toString(16).padStart(2, '0')
-      ).join('');
+      return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join(
+        ''
+      );
     } else {
       // Fallback to Math.random (less secure but functional)
       let result = '';

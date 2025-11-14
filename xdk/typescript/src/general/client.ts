@@ -19,21 +19,21 @@ import { GetOpenApiSpecResponse } from './models.js';
 
 /**
  * Client for general operations
- *
+ * 
  * This client provides methods for interacting with the general endpoints
  * of the X API. It handles authentication, request formatting, and response
  * parsing for all general related operations.
- *
+ * 
  * @category general
  */
 export class GeneralClient {
   private client: Client;
 
   /**
-   * Creates a new general client instance
-   *
-   * @param client - The main X API client instance
-   */
+     * Creates a new general client instance
+     * 
+     * @param client - The main X API client instance
+     */
   constructor(client: Client) {
     this.client = client;
   }

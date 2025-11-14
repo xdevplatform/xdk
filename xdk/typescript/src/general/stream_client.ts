@@ -13,7 +13,7 @@ import { GetOpenApiSpecResponse } from './models.js';
 
 /**
  * Options for getOpenApiSpec method
- *
+ * 
  * @public
  */
 export interface GetOpenApiSpecStreamingOptions {
@@ -33,11 +33,11 @@ export class GeneralClient {
   }
 
   /**
-   * Get OpenAPI Spec.
-   * Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)
-   *
-   * @returns Promise with the API response
-   */
+     * Get OpenAPI Spec.
+     * Retrieves the full OpenAPI Specification in JSON format. (See https://github.com/OAI/OpenAPI-Specification/blob/master/README.md)
+     * 
+     * @returns Promise with the API response
+     */
   async getOpenApiSpec(
     options: GetOpenApiSpecStreamingOptions = {}
   ): Promise<GetOpenApiSpecResponse> {

@@ -76,6 +76,7 @@
   },
     "devDependencies": {
         "@types/node": "^20.0.0",
+        "@types/jest": "^29.5.0",
         "typescript": "^5.0.0",
         "tsup": "^7.0.0",
         "prettier": "^3.0.0",
@@ -85,7 +86,9 @@
         "typedoc": "^0.25.0",
         "typedoc-plugin-markdown": "^3.15.0",
         "chokidar": "^3.5.3",
-        "http-server": "^14.1.1"
+        "http-server": "^14.1.1",
+        "jest": "^29.7.0",
+        "ts-jest": "^29.1.0"
     },
   "scripts": {
     "build": "tsup",
@@ -94,7 +97,9 @@
     "format": "prettier --write \"src/**/*.{ts,js}\"",
     "lint": "eslint \"src/**/*.{ts,js}\"",
     "type-check": "tsc --noEmit",
-    "test": "echo \"No tests specified\" && exit 0",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "docs": "typedoc",
     "docs:build": "typedoc && echo \"Documentation generated in docs/\"",
     "docs:build-simple": "node generate-docs-simple.js",

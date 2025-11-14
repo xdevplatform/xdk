@@ -15,11 +15,15 @@ import {
   UserPaginator,
   EventPaginator,
 } from '../paginator.js';
-import { GetByWoeidResponse, GetPersonalizedResponse } from './models.js';
+import {
+  GetByWoeidResponse,
+  GetAiResponse,
+  GetPersonalizedResponse,
+} from './models.js';
 
 /**
  * Options for getByWoeid method
- *
+ * 
  * @public
  */
 export interface GetByWoeidOptions {
@@ -34,8 +38,21 @@ export interface GetByWoeidOptions {
 }
 
 /**
+ * Options for getAi method
+ * 
+ * @public
+ */
+export interface GetAiOptions {
+  /** A comma separated list of AiTrend fields to display. */
+  aiTrendfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
  * Options for getPersonalized method
- *
+ * 
  * @public
  */
 export interface GetPersonalizedOptions {
@@ -48,21 +65,21 @@ export interface GetPersonalizedOptions {
 
 /**
  * Client for trends operations
- *
+ * 
  * This client provides methods for interacting with the trends endpoints
  * of the X API. It handles authentication, request formatting, and response
  * parsing for all trends related operations.
- *
+ * 
  * @category trends
  */
 export class TrendsClient {
   private client: Client;
 
   /**
-   * Creates a new trends client instance
-   *
-   * @param client - The main X API client instance
-   */
+     * Creates a new trends client instance
+     * 
+     * @param client - The main X API client instance
+     */
   constructor(client: Client) {
     this.client = client;
   }
@@ -82,7 +99,6 @@ export class TrendsClient {
   // Overload 1: Default behavior (unwrapped response)
   async getByWoeid(
     woeid: number,
-
     options: GetByWoeidOptions = {}
   ): Promise<GetByWoeidResponse> {
     // Destructure options (exclude path parameters, they're already function params)
@@ -93,7 +109,8 @@ export class TrendsClient {
       trendfields = [],
 
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/trends/by/woeid/{woeid}';
@@ -124,6 +141,53 @@ export class TrendsClient {
   }
 
   /**
+   * Get AI Trends by ID
+   * Retrieves an AI trend by its ID.
+
+
+   * @param id The ID of the ai trend.
+
+
+
+
+   * @returns {Promise<GetAiResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getAi(id: string, options: GetAiOptions = {}): Promise<GetAiResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      aiTrendfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/ai_trends/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (aiTrendfields !== undefined) {
+      params.append('ai_trend.fields', aiTrendfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetAiResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Get personalized Trends
    * Retrieves personalized trending topics for the authenticated user.
 
@@ -141,7 +205,8 @@ export class TrendsClient {
       personalizedTrendfields = [],
 
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/users/personalized_trends';

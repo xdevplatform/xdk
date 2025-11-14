@@ -13,7 +13,7 @@ import { DeleteAllResponse } from './models.js';
 
 /**
  * Options for deleteAll method
- *
+ * 
  * @public
  */
 export interface DeleteAllStreamingOptions {
@@ -33,11 +33,11 @@ export class ConnectionsClient {
   }
 
   /**
-   * Terminate all connections
-   * Terminates all active streaming connections for the authenticated application.
-   *
-   * @returns Promise with the API response
-   */
+     * Terminate all connections
+     * Terminates all active streaming connections for the authenticated application.
+     * 
+     * @returns Promise with the API response
+     */
   async deleteAll(
     options: DeleteAllStreamingOptions = {}
   ): Promise<DeleteAllResponse> {

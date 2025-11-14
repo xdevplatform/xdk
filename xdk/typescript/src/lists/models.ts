@@ -6,75 +6,79 @@
  */
 import type * as Schemas from '../schemas.js';
 
-/**
- * Request for create
- *
- * @public
- */
-export type CreateRequest = Schemas.ListCreateRequest;
-/**
- * Response for create
- *
- * @public
- */
-export type CreateResponse = Schemas.ListCreateResponse;
-/**
- * Response for removeMemberByUserId
- *
- * @public
- */
-export type RemoveMemberByUserIdResponse = Schemas.ListMutateResponse;
+
+
+
+
 /**
  * Response for getById
- *
+ * 
  * @public
  */
 export type GetByIdResponse = Schemas.Get2ListsIdResponse;
 /**
  * Request for update
- *
+ * 
  * @public
  */
 export type UpdateRequest = Schemas.ListUpdateRequest;
 /**
  * Response for update
- *
+ * 
  * @public
  */
 export type UpdateResponse = Schemas.ListUpdateResponse;
 /**
  * Response for delete
- *
+ * 
  * @public
  */
 export type DeleteResponse = Schemas.ListDeleteResponse;
 /**
- * Response for getPosts
- *
+ * Request for create
+ * 
  * @public
  */
-export type GetPostsResponse = Schemas.Get2ListsIdTweetsResponse;
+export type CreateRequest = Schemas.ListCreateRequest;
+/**
+ * Response for create
+ * 
+ * @public
+ */
+export type CreateResponse = Schemas.ListCreateResponse;
 /**
  * Response for getMembers
- *
+ * 
  * @public
  */
 export type GetMembersResponse = Schemas.Get2ListsIdMembersResponse;
 /**
  * Request for addMember
- *
+ * 
  * @public
  */
 export type AddMemberRequest = Schemas.ListAddUserRequest;
 /**
  * Response for addMember
- *
+ * 
  * @public
  */
 export type AddMemberResponse = Schemas.ListMutateResponse;
 /**
  * Response for getFollowers
- *
+ * 
  * @public
  */
 export type GetFollowersResponse = Schemas.Get2ListsIdFollowersResponse;
+/**
+ * Response for getPosts
+ * 
+ * @public
+ */
+export type GetPostsResponse = Schemas.Get2ListsIdTweetsResponse;
+/**
+ * Response for removeMemberByUserId
+ * 
+ * @public
+ */
+export type RemoveMemberByUserIdResponse = Schemas.ListMutateResponse;

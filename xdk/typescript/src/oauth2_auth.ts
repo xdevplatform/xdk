@@ -5,11 +5,7 @@
  * OAuth2 authentication utilities for the X API.
  */
 
-import {
-  CryptoUtils,
-  generateCodeVerifier,
-  generateCodeChallenge,
-} from './crypto_utils.js';
+import { CryptoUtils, generateCodeVerifier, generateCodeChallenge } from './crypto_utils.js';
 
 /**
  * OAuth2 configuration options
@@ -53,7 +49,7 @@ export class OAuth2 {
   constructor(config: OAuth2Config) {
     this.config = {
       scope: ['tweet.read', 'users.read'],
-      ...config,
+      ...config
     };
   }
 
@@ -68,7 +64,7 @@ export class OAuth2 {
       client_id: this.config.clientId,
       redirect_uri: this.config.redirectUri,
       scope: this.config.scope?.join(' ') || '',
-      state: state || '',
+      state: state || ''
     });
 
     // PKCE parameters are handled separately - not generated automatically
@@ -82,14 +78,11 @@ export class OAuth2 {
    * @param codeVerifier Optional code verifier for PKCE
    * @returns Promise with OAuth2 token
    */
-  async exchangeCode(
-    code: string,
-    codeVerifier?: string
-  ): Promise<OAuth2Token> {
+  async exchangeCode(code: string, codeVerifier?: string): Promise<OAuth2Token> {
     const params = new URLSearchParams({
       grant_type: 'authorization_code',
       code,
-      redirect_uri: this.config.redirectUri,
+      redirect_uri: this.config.redirectUri
     });
 
     // Add PKCE code verifier if provided
@@ -99,31 +92,27 @@ export class OAuth2 {
 
     // Prepare headers
     const headers: Record<string, string> = {
-      'Content-Type': 'application/x-www-form-urlencoded',
+      'Content-Type': 'application/x-www-form-urlencoded'
     };
 
     // Add Basic Auth header if client secret is provided (optional but recommended)
     if (this.config.clientSecret) {
-      const credentials = this._base64Encode(
-        `${this.config.clientId}:${this.config.clientSecret}`
-      );
+      const credentials = this._base64Encode(`${this.config.clientId}:${this.config.clientSecret}`);
       headers['Authorization'] = `Basic ${credentials}`;
     } else {
       // Only add client_id to body if no client_secret (public client)
       params.append('client_id', this.config.clientId);
     }
-
+    
     const response = await fetch('https://api.x.com/2/oauth2/token', {
       method: 'POST',
       headers,
-      body: params.toString(),
+      body: params.toString()
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => response.text());
-      throw new Error(
-        `HTTP error! status: ${response.status}, body: ${JSON.stringify(errorData)}`
-      );
+      throw new Error(`HTTP error! status: ${response.status}, body: ${JSON.stringify(errorData)}`);
     }
 
     const data = await response.json();
@@ -132,7 +121,7 @@ export class OAuth2 {
       token_type: data.token_type,
       expires_in: data.expires_in,
       refresh_token: data.refresh_token,
-      scope: data.scope,
+      scope: data.scope
     };
 
     return this.token;
@@ -154,15 +143,13 @@ export class OAuth2 {
     return this.codeVerifier;
   }
 
+
   /**
    * Manually set PKCE parameters
    * @param codeVerifier The code verifier to use
    * @param codeChallenge Optional code challenge (will be generated if not provided)
    */
-  async setPkceParameters(
-    codeVerifier: string,
-    codeChallenge?: string
-  ): Promise<void> {
+  async setPkceParameters(codeVerifier: string, codeChallenge?: string): Promise<void> {
     this.codeVerifier = codeVerifier;
     if (codeChallenge) {
       this.codeChallenge = codeChallenge;
@@ -192,8 +179,7 @@ export class OAuth2 {
       return Buffer.from(str, 'utf8').toString('base64');
     } else {
       // Manual base64 encoding fallback
-      const chars =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+      const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
       let result = '';
       let i = 0;
       while (i < str.length) {
@@ -209,4 +195,4 @@ export class OAuth2 {
       return result;
     }
   }
-}
+} 

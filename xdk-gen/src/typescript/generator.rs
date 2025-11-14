@@ -89,7 +89,13 @@ language! {
         render "readme" => "README.md"
     ],
     tests: [
-        multiple {},
+        multiple {
+            render "test_structure" => "tests/{}/test_structure.test.ts",
+            render "test_generic" => "tests/{}/test_generic.test.ts",
+            render "test_contracts" => "tests/{}/test_contracts.test.ts",
+            render "test_pagination" => "tests/{}/test_pagination.test.ts"
+        },
+        render "jest.config" => "jest.config.cjs"
     ]
 }
 

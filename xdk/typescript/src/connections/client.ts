@@ -19,21 +19,21 @@ import { DeleteAllResponse } from './models.js';
 
 /**
  * Client for connections operations
- *
+ * 
  * This client provides methods for interacting with the connections endpoints
  * of the X API. It handles authentication, request formatting, and response
  * parsing for all connections related operations.
- *
+ * 
  * @category connections
  */
 export class ConnectionsClient {
   private client: Client;
 
   /**
-   * Creates a new connections client instance
-   *
-   * @param client - The main X API client instance
-   */
+     * Creates a new connections client instance
+     * 
+     * @param client - The main X API client instance
+     */
   constructor(client: Client) {
     this.client = client;
   }

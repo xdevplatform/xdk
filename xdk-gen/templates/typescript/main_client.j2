@@ -269,11 +269,9 @@ export class Client {
         const oauthHeader = await this.oauth1.buildRequestHeader(method, url, options.body || '');
         headers.set('Authorization', oauthHeader);
         
-        // Remove Content-Type for OAuth1 requests if it's application/json
-        // OAuth1 typically expects application/x-www-form-urlencoded or no content type
-        if (headers.get('Content-Type') === 'application/json') {
-          headers.delete('Content-Type');
-        }
+        // Keep Content-Type header for JSON requests - X API requires it
+        // Only remove Content-Type for form-encoded OAuth1 requests
+        // JSON bodies are not included in OAuth1 signature (per OAuth1 spec)
       } catch (error) {
         throw new Error(`Failed to build OAuth1 header: ${error instanceof Error ? error.message : 'Unknown error'}`);
       }

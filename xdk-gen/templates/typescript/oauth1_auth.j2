@@ -211,17 +211,32 @@ export class OAuth1 {
   private _buildParamString(oauthParams: Record<string, string>, body: string): string {
     const allParams = { ...oauthParams };
     
-    // Parse body parameters if present
+    // Parse body parameters if present and it's form-encoded (not JSON)
+    // According to OAuth1 spec, JSON bodies should NOT be included in the signature
     if (body) {
+      // Check if body is JSON by attempting to parse it
+      let isJson = false;
       try {
-        const bodyParams = new URLSearchParams(body);
-        bodyParams.forEach((value, key) => {
-          allParams[key] = value;
-        });
-      } catch (error) {
-        // If body parsing fails, ignore it
-        console.warn('Failed to parse body parameters:', error);
+        JSON.parse(body);
+        isJson = true;
+      } catch {
+        // Not valid JSON, treat as form-encoded
+        isJson = false;
       }
+      
+      if (!isJson) {
+        // Only parse form-encoded bodies
+        try {
+          const bodyParams = new URLSearchParams(body);
+          bodyParams.forEach((value, key) => {
+            allParams[key] = value;
+          });
+        } catch (error) {
+          // If body parsing fails, ignore it
+          console.warn('Failed to parse body parameters:', error);
+        }
+      }
+      // If body is JSON, we don't include it in the signature (per OAuth1 spec)
     }
 
     // Sort parameters alphabetically

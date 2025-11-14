@@ -125,7 +125,9 @@ A response from modifying user-specified stream filtering rules.
  * @public
  */
 export interface AddOrDeleteRulesResponse {
-  /** All user-specified stream filtering rules that were created. */ data?: Array<Rule>;
+  /** All user-specified stream filtering rules that were created. */ data?: Array<
+    Rule
+  >;
   /** none */ errors?: Array<Problem>;
   meta: RulesResponseMetadata;
 } /**
@@ -141,6 +143,20 @@ The sum of results returned in this response.
  * @public
  */
 export type Aggregate = number; /**
+An AI generated trend.
+ *
+ * @public
+ */
+export interface AiTrend {
+  /** none */ contexts?: Record<string, any>;
+  /** none */ core?: Record<string, any>;
+  restId: AiTrendId;
+} /**
+Unique identifier of ai trend.
+ *
+ * @public
+ */
+export type AiTrendId = string; /**
 Schema type for AllowDownloadStatus
  *
  * @public
@@ -152,7 +168,9 @@ Client App Rule Counts for all applications in the project
  *
  * @public
  */
-export type AllProjectClientApps = Array<AppRulesCount>; /**
+export type AllProjectClientApps = Array<
+  AppRulesCount
+>; /**
 Schema type for AltText
  *
  * @public
@@ -480,12 +498,16 @@ Represent a boundary range (start and end zero-based indices) for the portion of
  *
  * @public
  */
-export type DisplayTextRange = Array<number>; /**
+export type DisplayTextRange = Array<
+  number
+>; /**
 Attachments to a DM Event.
  *
  * @public
  */
-export type DmAttachments = Array<DmMediaAttachment>; /**
+export type DmAttachments = Array<
+  DmMediaAttachment
+>; /**
 Unique identifier of a DM conversation. This can either be a numeric string, or a pair of numeric strings separated by a '-' character in the case of one-on-one DM Conversations.
  *
  * @public
@@ -507,7 +529,9 @@ export interface DmEvent {
   /** none */ hashtags?: Array<HashtagEntity>;
   id: DmEventId;
   /** none */ mentions?: Array<MentionEntity>;
-  /** A list of participants for a ParticipantsJoin or ParticipantsLeave event_type. */ participantIds?: Array<UserId>;
+  /** A list of participants for a ParticipantsJoin or ParticipantsLeave event_type. */ participantIds?: Array<
+    UserId
+  >;
   /** A list of Posts this DM refers to. */ referencedTweets?: Array<
     Record<string, any>
   >;
@@ -531,7 +555,9 @@ Participants for the DM Conversation.
  *
  * @public
  */
-export type DmParticipants = Array<UserId>; /**
+export type DmParticipants = Array<
+  UserId
+>; /**
 Schema type for DomainRestrictions
  *
  * @public
@@ -679,6 +705,14 @@ Schema type for GeoRestrictions
  * @public
  */
 export type GeoRestrictions = any; /**
+Schema type for Get2AiTrendsIdResponse
+ *
+ * @public
+ */
+export interface Get2AiTrendsIdResponse {
+  data?: AiTrend;
+  /** none */ errors?: Array<Problem>;
+} /**
 Schema type for Get2CommunitiesIdResponse
  *
  * @public
@@ -1611,12 +1645,17 @@ A string enum value which identifies a media use-case. This identifier is used t
  *
  * @public
  */
-export type MediaCategoryOneShot = 'tweet_image' | 'dm_image' | 'subtitles'; /**
+export type MediaCategoryOneShot =
+  | 'tweet_image'
+  | 'dm_image'
+  | 'subtitles'; /**
 The media category of uploaded media to which subtitles should be added/deleted
  *
  * @public
  */
-export type MediaCategorySubtitles = 'AmplifyVideo' | 'TweetVideo'; /**
+export type MediaCategorySubtitles =
+  | 'AmplifyVideo'
+  | 'TweetVideo'; /**
 The height of the media in pixels.
  *
  * @public
@@ -1999,11 +2038,17 @@ Contact information associated with a Plaid account.
  * @public
  */
 export interface PlaidAccountContact {
-  /** List of addresses associated with the account holder. */ addresses: Array<PlaidAddress>;
-  /** List of email addresses associated with the account holder. */ emails: Array<string>;
+  /** List of addresses associated with the account holder. */ addresses: Array<
+    PlaidAddress
+  >;
+  /** List of email addresses associated with the account holder. */ emails: Array<
+    string
+  >;
   name: PlaidName;
   /** Relationship of the contact to the account. */ relationship?: string;
-  /** List of telephone numbers associated with the account holder. */ telephones: Array<PlaidTelephone>;
+  /** List of telephone numbers associated with the account holder. */ telephones: Array<
+    PlaidTelephone
+  >;
 } /**
 Payment network details associated with the account.
  *
@@ -2115,7 +2160,9 @@ A [GeoJson Position](https://tools.ietf.org/html/rfc7946#section-3.1.1) in the f
  *
  * @public
  */
-export type Position = Array<number>; /**
+export type Position = Array<
+  number
+>; /**
 Schema type for PreviewImage
  *
  * @public
@@ -2318,12 +2365,16 @@ export interface Space {
   /** End time of the Space. */ endedAt?: string;
   /** The user ids for the hosts of the Space. */ hostIds?: Array<UserId>;
   id: SpaceId;
-  /** An array of user ids for people who were invited to a Space. */ invitedUserIds?: Array<UserId>;
+  /** An array of user ids for people who were invited to a Space. */ invitedUserIds?: Array<
+    UserId
+  >;
   /** Denotes if the Space is a ticketed Space. */ isTicketed?: boolean;
   /** The language of the Space. */ lang?: string;
   /** The number of participants in a Space. */ participantCount?: number;
   /** A date time stamp for when a Space is scheduled to begin. */ scheduledStart?: string;
-  /** An array of user ids for people who were speakers in a Space. */ speakerIds?: Array<UserId>;
+  /** An array of user ids for people who were speakers in a Space. */ speakerIds?: Array<
+    UserId
+  >;
   /** When the Space was started as a date string. */ startedAt?: string;
   /** The current state of the Space. */ state: 'live' | 'scheduled' | 'ended';
   /** The number of people who have either purchased a ticket or set a reminder for this Space. */ subscriberCount?: number;
@@ -2364,7 +2415,9 @@ Schema type for StickerInfo
  * @public
  */
 export interface StickerInfo {
-  /** Stickers list must not be empty and should not exceed 25 */ stickers: Array<Sticker>;
+  /** Stickers list must not be empty and should not exceed 25 */ stickers: Array<
+    Sticker
+  >;
 } /**
 Schema type for StreamingLikeResponseV2
  *
@@ -2399,7 +2452,10 @@ Schema type for SubscriptionsCreateRequest
  *
  * @public
  */
-export type SubscriptionsCreateRequest = Record<string, any>; /**
+export type SubscriptionsCreateRequest = Record<
+  string,
+  any
+>; /**
 Schema type for SubscriptionsCreateResponse
  *
  * @public
@@ -2539,7 +2595,9 @@ export interface Tweet {
   /** Creation time of the Tweet. */ createdAt?: string;
   displayTextRange?: DisplayTextRange;
   /** none */ editControls?: Record<string, any>;
-  /** A list of Tweet Ids in this Tweet chain. */ editHistoryTweetIds?: Array<TweetId>;
+  /** A list of Tweet Ids in this Tweet chain. */ editHistoryTweetIds?: Array<
+    TweetId
+  >;
   entities?: FullTextEntities;
   /** The location tagged on the Tweet, if the user provided one. */ geo?: Record<
     string,
@@ -2787,7 +2845,9 @@ Indicates withholding details for [withheld content](https://help.twitter.com/en
  */
 export interface TweetWithheld {
   /** Indicates if the content is being withheld for on the basis of copyright infringement. */ copyright: boolean;
-  /** Provides a list of countries where this content is not available. */ countryCodes: Array<CountryCode>;
+  /** Provides a list of countries where this content is not available. */ countryCodes: Array<
+    CountryCode
+  >;
   /** Indicates whether the content being withheld is the `tweet` or a `user`. */ scope?:
     | 'tweet'
     | 'user';
@@ -2877,7 +2937,9 @@ Usage per client app
  */
 export interface Usage {
   /** Number of days left for the Tweet cap to reset */ capResetDay?: number;
-  /** The daily usage breakdown for each Client Application a project */ dailyClientAppUsage?: Array<ClientAppUsage>;
+  /** The daily usage breakdown for each Client Application a project */ dailyClientAppUsage?: Array<
+    ClientAppUsage
+  >;
   /** The daily usage breakdown for a project */ dailyProjectUsage?: Record<
     string,
     any
@@ -3159,7 +3221,9 @@ Indicates withholding details for [withheld content](https://help.twitter.com/en
  * @public
  */
 export interface UserWithheld {
-  /** Provides a list of countries where this content is not available. */ countryCodes: Array<CountryCode>;
+  /** Provides a list of countries where this content is not available. */ countryCodes: Array<
+    CountryCode
+  >;
   /** Indicates that the content being withheld is a `user`. */ scope?: 'user';
 } /**
 Schema type for UserWithheldComplianceSchema

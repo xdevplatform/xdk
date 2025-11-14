@@ -9,11 +9,15 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
-import { GetByWoeidResponse, GetPersonalizedResponse } from './models.js';
+import {
+  GetByWoeidResponse,
+  GetAiResponse,
+  GetPersonalizedResponse,
+} from './models.js';
 
 /**
  * Options for getByWoeid method
- *
+ * 
  * @public
  */
 export interface GetByWoeidStreamingOptions {
@@ -31,8 +35,24 @@ export interface GetByWoeidStreamingOptions {
   signal?: AbortSignal;
 }
 /**
+ * Options for getAi method
+ * 
+ * @public
+ */
+export interface GetAiStreamingOptions {
+  /** A comma separated list of AiTrend fields to display. */
+  aiTrendfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
  * Options for getPersonalized method
- *
+ * 
  * @public
  */
 export interface GetPersonalizedStreamingOptions {
@@ -55,14 +75,13 @@ export class TrendsClient {
   }
 
   /**
-   * Get Trends by WOEID
-   * Retrieves trending topics for a specific location identified by its WOEID.
-   *
-   * @returns Promise with the API response
-   */
+     * Get Trends by WOEID
+     * Retrieves trending topics for a specific location identified by its WOEID.
+     * 
+     * @returns Promise with the API response
+     */
   async getByWoeid(
     woeid: number,
-
     options: GetByWoeidStreamingOptions = {}
   ): Promise<GetByWoeidResponse> {
     // Validate authentication requirements
@@ -83,7 +102,8 @@ export class TrendsClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/trends/by/woeid/{woeid}';
@@ -121,11 +141,71 @@ export class TrendsClient {
   }
 
   /**
-   * Get personalized Trends
-   * Retrieves personalized trending topics for the authenticated user.
-   *
-   * @returns Promise with the API response
-   */
+     * Get AI Trends by ID
+     * Retrieves an AI trend by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getAi(
+    id: string,
+    options: GetAiStreamingOptions = {}
+  ): Promise<GetAiResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getAi');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      aiTrendfields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/ai_trends/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (aiTrendfields !== undefined) {
+      params.append('ai_trend.fields', aiTrendfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<GetAiResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get personalized Trends
+     * Retrieves personalized trending topics for the authenticated user.
+     * 
+     * @returns Promise with the API response
+     */
   async getPersonalized(
     options: GetPersonalizedStreamingOptions = {}
   ): Promise<GetPersonalizedResponse> {
@@ -147,7 +227,8 @@ export class TrendsClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/users/personalized_trends';

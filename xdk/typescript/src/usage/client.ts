@@ -19,7 +19,7 @@ import { GetResponse } from './models.js';
 
 /**
  * Options for get method
- *
+ * 
  * @public
  */
 export interface GetOptions {
@@ -35,21 +35,21 @@ export interface GetOptions {
 
 /**
  * Client for usage operations
- *
+ * 
  * This client provides methods for interacting with the usage endpoints
  * of the X API. It handles authentication, request formatting, and response
  * parsing for all usage related operations.
- *
+ * 
  * @category usage
  */
 export class UsageClient {
   private client: Client;
 
   /**
-   * Creates a new usage client instance
-   *
-   * @param client - The main X API client instance
-   */
+     * Creates a new usage client instance
+     * 
+     * @param client - The main X API client instance
+     */
   constructor(client: Client) {
     this.client = client;
   }
@@ -72,7 +72,8 @@ export class UsageClient {
       usagefields = [],
 
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/usage/tweets';

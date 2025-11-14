@@ -5,11 +5,7 @@
  * OAuth1 authentication utilities for the X API.
  */
 
-import {
-  CryptoUtils,
-  generateNonce,
-  generateTimestamp,
-} from './crypto_utils.js';
+import { CryptoUtils, generateNonce, generateTimestamp } from './crypto_utils.js';
 
 /**
  * OAuth1 configuration options
@@ -57,12 +53,12 @@ export class OAuth1 {
 
   constructor(config: OAuth1Config) {
     this.config = config;
-
+    
     // If access token is provided, set it
     if (config.accessToken && config.accessTokenSecret) {
       this.accessToken = {
         accessToken: config.accessToken,
-        accessTokenSecret: config.accessTokenSecret,
+        accessTokenSecret: config.accessTokenSecret
       };
     }
   }
@@ -74,17 +70,15 @@ export class OAuth1 {
    */
   getAuthorizationUrl(loginWithX: boolean = false): string {
     if (!this.requestToken) {
-      throw new Error(
-        'Request token not obtained. Call getRequestToken() first.'
-      );
+      throw new Error('Request token not obtained. Call getRequestToken() first.');
     }
 
-    const baseUrl = loginWithX
+    const baseUrl = loginWithX 
       ? 'https://x.com/i/oauth/authenticate'
       : 'https://x.com/oauth/authorize';
 
     const params = new URLSearchParams({
-      oauth_token: this.requestToken.oauthToken,
+      oauth_token: this.requestToken.oauthToken
     });
 
     return `${baseUrl}?${params.toString()}`;
@@ -96,34 +90,28 @@ export class OAuth1 {
    */
   async getRequestToken(): Promise<OAuth1RequestToken> {
     const url = 'https://api.x.com/oauth/request_token';
-
+    
     const params = new URLSearchParams({
-      oauth_callback: this.config.callback,
+      oauth_callback: this.config.callback
     });
 
     const response = await fetch(`${url}?${params.toString()}`, {
       method: 'POST',
       headers: {
-        Authorization: await this._buildOAuthHeader(
-          'POST',
-          url,
-          params.toString()
-        ),
-      },
+        'Authorization': await this._buildOAuthHeader('POST', url, params.toString())
+      }
     });
 
     if (!response.ok) {
-      throw new Error(
-        `Failed to get request token: ${response.status} ${response.statusText}`
-      );
+      throw new Error(`Failed to get request token: ${response.status} ${response.statusText}`);
     }
 
     const responseText = await response.text();
     const responseParams = new URLSearchParams(responseText);
-
+    
     this.requestToken = {
       oauthToken: responseParams.get('oauth_token')!,
-      oauthTokenSecret: responseParams.get('oauth_token_secret')!,
+      oauthTokenSecret: responseParams.get('oauth_token_secret')!
     };
 
     return this.requestToken;
@@ -136,41 +124,33 @@ export class OAuth1 {
    */
   async getAccessToken(verifier: string): Promise<OAuth1AccessToken> {
     if (!this.requestToken) {
-      throw new Error(
-        'Request token not obtained. Call getRequestToken() first.'
-      );
+      throw new Error('Request token not obtained. Call getRequestToken() first.');
     }
 
     const url = 'https://api.x.com/oauth/access_token';
-
+    
     const params = new URLSearchParams({
       oauth_token: this.requestToken.oauthToken,
-      oauth_verifier: verifier,
+      oauth_verifier: verifier
     });
 
     const response = await fetch(`${url}?${params.toString()}`, {
       method: 'POST',
       headers: {
-        Authorization: await this._buildOAuthHeader(
-          'POST',
-          url,
-          params.toString()
-        ),
-      },
+        'Authorization': await this._buildOAuthHeader('POST', url, params.toString())
+      }
     });
 
     if (!response.ok) {
-      throw new Error(
-        `Failed to get access token: ${response.status} ${response.statusText}`
-      );
+      throw new Error(`Failed to get access token: ${response.status} ${response.statusText}`);
     }
 
     const responseText = await response.text();
     const responseParams = new URLSearchParams(responseText);
-
+    
     this.accessToken = {
       accessToken: responseParams.get('oauth_token')!,
-      accessTokenSecret: responseParams.get('oauth_token_secret')!,
+      accessTokenSecret: responseParams.get('oauth_token_secret')!
     };
 
     return this.accessToken;
@@ -183,20 +163,16 @@ export class OAuth1 {
    * @param body Request body
    * @returns Promise that resolves to OAuth1 authorization header string
    */
-  private async _buildOAuthHeader(
-    method: string,
-    url: string,
-    body: string
-  ): Promise<string> {
+  private async _buildOAuthHeader(method: string, url: string, body: string): Promise<string> {
     const timestamp = generateTimestamp();
     const nonce = generateNonce();
-
+    
     const oauthParams: Record<string, string> = {
       oauth_consumer_key: this.config.apiKey,
       oauth_nonce: nonce,
       oauth_signature_method: 'HMAC-SHA1',
       oauth_timestamp: timestamp,
-      oauth_version: '1.0',
+      oauth_version: '1.0'
     };
 
     // Add request token if available
@@ -212,14 +188,12 @@ export class OAuth1 {
     // Build signature base string
     const paramString = this._buildParamString(oauthParams, body);
     const signatureBase = `${method.toUpperCase()}&${this._encode(url)}&${this._encode(paramString)}`;
-
+    
     // Generate signature
     const signingKey = `${this._encode(this.config.apiSecret)}&${this._encode(
-      this.requestToken?.oauthTokenSecret ||
-        this.accessToken?.accessTokenSecret ||
-        ''
+      this.requestToken?.oauthTokenSecret || this.accessToken?.accessTokenSecret || ''
     )}`;
-
+    
     const signature = await CryptoUtils.hmacSha1(signingKey, signatureBase);
     oauthParams['oauth_signature'] = signature;
 
@@ -237,30 +211,40 @@ export class OAuth1 {
    * @param body Request body
    * @returns Parameter string
    */
-  private _buildParamString(
-    oauthParams: Record<string, string>,
-    body: string
-  ): string {
+  private _buildParamString(oauthParams: Record<string, string>, body: string): string {
     const allParams = { ...oauthParams };
-
-    // Parse body parameters if present
+    
+    // Parse body parameters if present and it's form-encoded (not JSON)
+    // According to OAuth1 spec, JSON bodies should NOT be included in the signature
     if (body) {
+      // Check if body is JSON by attempting to parse it
+      let isJson = false;
       try {
-        const bodyParams = new URLSearchParams(body);
-        bodyParams.forEach((value, key) => {
-          allParams[key] = value;
-        });
-      } catch (error) {
-        // If body parsing fails, ignore it
-        console.warn('Failed to parse body parameters:', error);
+        JSON.parse(body);
+        isJson = true;
+      } catch {
+        // Not valid JSON, treat as form-encoded
+        isJson = false;
       }
+      
+      if (!isJson) {
+        // Only parse form-encoded bodies
+        try {
+          const bodyParams = new URLSearchParams(body);
+          bodyParams.forEach((value, key) => {
+            allParams[key] = value;
+          });
+        } catch (error) {
+          // If body parsing fails, ignore it
+          console.warn('Failed to parse body parameters:', error);
+        }
+      }
+      // If body is JSON, we don't include it in the signature (per OAuth1 spec)
     }
 
     // Sort parameters alphabetically
-    const sortedParams = Object.entries(allParams).sort(([a], [b]) =>
-      a.localeCompare(b)
-    );
-
+    const sortedParams = Object.entries(allParams).sort(([a], [b]) => a.localeCompare(b));
+    
     return sortedParams
       .map(([key, value]) => `${this._encode(key)}=${this._encode(value)}`)
       .join('&');
@@ -298,21 +282,15 @@ export class OAuth1 {
    * @param body Request body
    * @returns Promise that resolves to OAuth1 authorization header string
    */
-  async buildRequestHeader(
-    method: string,
-    url: string,
-    body: string = ''
-  ): Promise<string> {
+  async buildRequestHeader(method: string, url: string, body: string = ''): Promise<string> {
     if (!this.accessToken) {
-      throw new Error(
-        'Access token not available. Complete OAuth1 flow first.'
-      );
+      throw new Error('Access token not available. Complete OAuth1 flow first.');
     }
 
     // Extract query parameters from URL if present
     let urlWithoutQuery = url;
     let queryParams = '';
-
+    
     try {
       const urlObj = new URL(url);
       if (urlObj.search) {
@@ -336,4 +314,4 @@ export class OAuth1 {
 
     return this._buildOAuthHeader(method, urlWithoutQuery, allParams);
   }
-}
+} 

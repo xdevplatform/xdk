@@ -10,45 +10,16 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  GetSubscriptionsResponse,
-  CreateSubscriptionResponse,
   UpdateSubscriptionResponse,
   DeleteSubscriptionResponse,
   StreamResponse,
+  GetSubscriptionsResponse,
+  CreateSubscriptionResponse,
 } from './models.js';
 
 /**
- * Options for getSubscriptions method
- *
- * @public
- */
-export interface GetSubscriptionsStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for createSubscription method
- *
- * @public
- */
-export interface CreateSubscriptionStreamingOptions {
-  /** Request body */
-  body?: any;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
  * Options for updateSubscription method
- *
+ * 
  * @public
  */
 export interface UpdateSubscriptionStreamingOptions {
@@ -64,7 +35,7 @@ export interface UpdateSubscriptionStreamingOptions {
 }
 /**
  * Options for deleteSubscription method
- *
+ * 
  * @public
  */
 export interface DeleteSubscriptionStreamingOptions {
@@ -77,7 +48,7 @@ export interface DeleteSubscriptionStreamingOptions {
 }
 /**
  * Options for stream method
- *
+ * 
  * @public
  */
 export interface StreamStreamingOptions {
@@ -89,6 +60,35 @@ export interface StreamStreamingOptions {
 
   /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
   endTime?: string;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getSubscriptions method
+ * 
+ * @public
+ */
+export interface GetSubscriptionsStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for createSubscription method
+ * 
+ * @public
+ */
+export interface CreateSubscriptionStreamingOptions {
+  /** Request body */
+  body?: any;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -140,7 +140,8 @@ export class ActivityClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/activity/stream';
@@ -196,11 +197,124 @@ export class ActivityClient {
   }
 
   /**
-   * Get X activity subscriptions
-   * Get a list of active subscriptions for XAA
-   *
-   * @returns Promise with the API response
-   */
+     * Update X activity subscription
+     * Updates a subscription for an X activity event
+     * 
+     * @returns Promise with the API response
+     */
+  async updateSubscription(
+    subscriptionId: string,
+    options: UpdateSubscriptionStreamingOptions = {}
+  ): Promise<UpdateSubscriptionResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'updateSubscription');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      body,
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/activity/subscriptions/{subscription_id}';
+
+    path = path.replace(
+      '{subscription_id}',
+      encodeURIComponent(String(subscriptionId))
+    );
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      body: JSON.stringify(body),
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<UpdateSubscriptionResponse>(
+      'PUT',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Deletes X activity subscription
+     * Deletes a subscription for an X activity event
+     * 
+     * @returns Promise with the API response
+     */
+  async deleteSubscription(
+    subscriptionId: string,
+    options: DeleteSubscriptionStreamingOptions = {}
+  ): Promise<DeleteSubscriptionResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'deleteSubscription');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const { headers = {}, signal, requestOptions = {} } = options || {};
+
+    // Build the path with path parameters
+    let path = '/2/activity/subscriptions/{subscription_id}';
+
+    path = path.replace(
+      '{subscription_id}',
+      encodeURIComponent(String(subscriptionId))
+    );
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<DeleteSubscriptionResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get X activity subscriptions
+     * Get a list of active subscriptions for XAA
+     * 
+     * @returns Promise with the API response
+     */
   async getSubscriptions(
     options: GetSubscriptionsStreamingOptions = {}
   ): Promise<GetSubscriptionsResponse> {
@@ -242,11 +356,11 @@ export class ActivityClient {
   }
 
   /**
-   * Create X activity subscription
-   * Creates a subscription for an X activity event
-   *
-   * @returns Promise with the API response
-   */
+     * Create X activity subscription
+     * Creates a subscription for an X activity event
+     * 
+     * @returns Promise with the API response
+     */
   async createSubscription(
     options: CreateSubscriptionStreamingOptions = {}
   ): Promise<CreateSubscriptionResponse> {
@@ -266,7 +380,8 @@ export class ActivityClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/activity/subscriptions';
@@ -290,120 +405,6 @@ export class ActivityClient {
     // Make the request
     return this.client.request<CreateSubscriptionResponse>(
       'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Update X activity subscription
-   * Updates a subscription for an X activity event
-   *
-   * @returns Promise with the API response
-   */
-  async updateSubscription(
-    subscriptionId: string,
-
-    options: UpdateSubscriptionStreamingOptions = {}
-  ): Promise<UpdateSubscriptionResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'updateSubscription');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      body,
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } = options || {};
-
-    // Build the path with path parameters
-    let path = '/2/activity/subscriptions/{subscription_id}';
-
-    path = path.replace(
-      '{subscription_id}',
-      encodeURIComponent(String(subscriptionId))
-    );
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      body: JSON.stringify(body),
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<UpdateSubscriptionResponse>(
-      'PUT',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Deletes X activity subscription
-   * Deletes a subscription for an X activity event
-   *
-   * @returns Promise with the API response
-   */
-  async deleteSubscription(
-    subscriptionId: string,
-
-    options: DeleteSubscriptionStreamingOptions = {}
-  ): Promise<DeleteSubscriptionResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'deleteSubscription');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const { headers = {}, signal, requestOptions = {} } = options || {};
-
-    // Build the path with path parameters
-    let path = '/2/activity/subscriptions/{subscription_id}';
-
-    path = path.replace(
-      '{subscription_id}',
-      encodeURIComponent(String(subscriptionId))
-    );
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<DeleteSubscriptionResponse>(
-      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

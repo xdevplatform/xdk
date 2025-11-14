@@ -3,7 +3,7 @@
 // Any manual changes will be overwritten on the next generation.
 /**
  * Environment-aware HTTP client for the X API SDK.
- *
+ * 
  * This module provides a universal HTTP client that works in both Node.js and browser environments
  * without requiring manual polyfills.
  */

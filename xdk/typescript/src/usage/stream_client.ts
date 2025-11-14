@@ -13,7 +13,7 @@ import { GetResponse } from './models.js';
 
 /**
  * Options for get method
- *
+ * 
  * @public
  */
 export interface GetStreamingOptions {
@@ -39,11 +39,11 @@ export class UsageClient {
   }
 
   /**
-   * Get usage
-   * Retrieves usage statistics for Posts over a specified number of days.
-   *
-   * @returns Promise with the API response
-   */
+     * Get usage
+     * Retrieves usage statistics for Posts over a specified number of days.
+     * 
+     * @returns Promise with the API response
+     */
   async get(options: GetStreamingOptions = {}): Promise<GetResponse> {
     // Validate authentication requirements
 
@@ -63,7 +63,8 @@ export class UsageClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/usage/tweets';

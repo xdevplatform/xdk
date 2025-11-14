@@ -10,199 +10,30 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  GetLikingUsersResponse,
-  GetInsights28hrResponse,
-  GetByIdResponse,
-  DeleteResponse,
-  GetRepostedByResponse,
-  GetRepostsResponse,
-  GetInsightsHistoricalResponse,
-  GetCountsAllResponse,
-  SearchRecentResponse,
-  GetAnalyticsResponse,
-  SearchAllResponse,
-  HideReplyResponse,
-  GetByIdsResponse,
-  CreateResponse,
   GetCountsRecentResponse,
   GetQuotedResponse,
+  GetAnalyticsResponse,
+  SearchAllResponse,
+  GetRepostedByResponse,
+  GetLikingUsersResponse,
+  GetInsights28hrResponse,
+  GetRepostsResponse,
+  GetByIdsResponse,
+  CreateResponse,
+  GetInsightsHistoricalResponse,
+  SearchRecentResponse,
+  GetCountsAllResponse,
+  HideReplyResponse,
+  GetByIdResponse,
+  DeleteResponse,
 } from './models.js';
 
 /**
- * Options for getLikingUsers method
- *
+ * Options for getCountsRecent method
+ * 
  * @public
  */
-export interface GetLikingUsersStreamingOptions {
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get the next 'page' of results. */
-  paginationToken?: any;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getInsights28hr method
- *
- * @public
- */
-export interface GetInsights28hrStreamingOptions {
-  /** A comma separated list of Engagement fields to display. */
-  engagementfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getById method
- *
- * @public
- */
-export interface GetByIdStreamingOptions {
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
-
-  /** A comma separated list of Poll fields to display. */
-  pollfields?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Place fields to display. */
-  placefields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for delete method
- *
- * @public
- */
-export interface DeleteStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getRepostedBy method
- *
- * @public
- */
-export interface GetRepostedByStreamingOptions {
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get the next 'page' of results. */
-  paginationToken?: any;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getReposts method
- *
- * @public
- */
-export interface GetRepostsStreamingOptions {
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get the next 'page' of results. */
-  paginationToken?: any;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
-
-  /** A comma separated list of Poll fields to display. */
-  pollfields?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Place fields to display. */
-  placefields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getInsightsHistorical method
- *
- * @public
- */
-export interface GetInsightsHistoricalStreamingOptions {
-  /** A comma separated list of Engagement fields to display. */
-  engagementfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getCountsAll method
- *
- * @public
- */
-export interface GetCountsAllStreamingOptions {
+export interface GetCountsRecentStreamingOptions {
   /** YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp (from most recent 7 days) from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute). */
   startTime?: string;
 
@@ -235,34 +66,19 @@ export interface GetCountsAllStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for searchRecent method
- *
+ * Options for getQuoted method
+ * 
  * @public
  */
-export interface SearchRecentStreamingOptions {
-  /** YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute). */
-  startTime?: string;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute). */
-  endTime?: string;
-
-  /** Returns results with a Post ID greater than (that is, more recent than) the specified ID. */
-  sinceId?: any;
-
-  /** Returns results with a Post ID less than (that is, older than) the specified ID. */
-  untilId?: any;
-
-  /** The maximum number of search results to be returned by a request. */
+export interface GetQuotedStreamingOptions {
+  /** The maximum number of results to be returned. */
   maxResults?: number;
 
-  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-  nextToken?: any;
-
-  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+  /** This parameter is used to get a specified 'page' of results. */
   paginationToken?: any;
 
-  /** This order in which to return results. */
-  sortOrder?: string;
+  /** The set of entities to exclude (e.g. 'replies' or 'retweets'). */
+  exclude?: Array<any>;
 
   /** A comma separated list of Tweet fields to display. */
   tweetfields?: Array<any>;
@@ -291,7 +107,7 @@ export interface SearchRecentStreamingOptions {
 }
 /**
  * Options for getAnalytics method
- *
+ * 
  * @public
  */
 export interface GetAnalyticsStreamingOptions {
@@ -307,7 +123,7 @@ export interface GetAnalyticsStreamingOptions {
 }
 /**
  * Options for searchAll method
- *
+ * 
  * @public
  */
 export interface SearchAllStreamingOptions {
@@ -361,13 +177,106 @@ export interface SearchAllStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for hideReply method
- *
+ * Options for getRepostedBy method
+ * 
  * @public
  */
-export interface HideReplyStreamingOptions {
-  /** Request body */
-  body?: any;
+export interface GetRepostedByStreamingOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. */
+  paginationToken?: any;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getLikingUsers method
+ * 
+ * @public
+ */
+export interface GetLikingUsersStreamingOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. */
+  paginationToken?: any;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getInsights28hr method
+ * 
+ * @public
+ */
+export interface GetInsights28hrStreamingOptions {
+  /** A comma separated list of Engagement fields to display. */
+  engagementfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getReposts method
+ * 
+ * @public
+ */
+export interface GetRepostsStreamingOptions {
+  /** The maximum number of results. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. */
+  paginationToken?: any;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. */
+  placefields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -378,7 +287,7 @@ export interface HideReplyStreamingOptions {
 }
 /**
  * Options for getByIds method
- *
+ * 
  * @public
  */
 export interface GetByIdsStreamingOptions {
@@ -409,7 +318,7 @@ export interface GetByIdsStreamingOptions {
 }
 /**
  * Options for create method
- *
+ * 
  * @public
  */
 export interface CreateStreamingOptions {
@@ -421,11 +330,82 @@ export interface CreateStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for getCountsRecent method
- *
+ * Options for getInsightsHistorical method
+ * 
  * @public
  */
-export interface GetCountsRecentStreamingOptions {
+export interface GetInsightsHistoricalStreamingOptions {
+  /** A comma separated list of Engagement fields to display. */
+  engagementfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for searchRecent method
+ * 
+ * @public
+ */
+export interface SearchRecentStreamingOptions {
+  /** YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute). */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute). */
+  endTime?: string;
+
+  /** Returns results with a Post ID greater than (that is, more recent than) the specified ID. */
+  sinceId?: any;
+
+  /** Returns results with a Post ID less than (that is, older than) the specified ID. */
+  untilId?: any;
+
+  /** The maximum number of search results to be returned by a request. */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+  nextToken?: any;
+
+  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+  paginationToken?: any;
+
+  /** This order in which to return results. */
+  sortOrder?: string;
+
+  /** A comma separated list of Tweet fields to display. */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. */
+  placefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getCountsAll method
+ * 
+ * @public
+ */
+export interface GetCountsAllStreamingOptions {
   /** YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp (from most recent 7 days) from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute). */
   startTime?: string;
 
@@ -458,20 +438,27 @@ export interface GetCountsRecentStreamingOptions {
   signal?: AbortSignal;
 }
 /**
- * Options for getQuoted method
- *
+ * Options for hideReply method
+ * 
  * @public
  */
-export interface GetQuotedStreamingOptions {
-  /** The maximum number of results to be returned. */
-  maxResults?: number;
+export interface HideReplyStreamingOptions {
+  /** Request body */
+  body?: any;
 
-  /** This parameter is used to get a specified 'page' of results. */
-  paginationToken?: any;
-
-  /** The set of entities to exclude (e.g. 'replies' or 'retweets'). */
-  exclude?: Array<any>;
-
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
+/**
+ * Options for getById method
+ * 
+ * @public
+ */
+export interface GetByIdStreamingOptions {
   /** A comma separated list of Tweet fields to display. */
   tweetfields?: Array<any>;
 
@@ -497,6 +484,19 @@ export interface GetQuotedStreamingOptions {
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
+/**
+ * Options for delete method
+ * 
+ * @public
+ */
+export interface DeleteStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
 
 export class PostsClient {
   private client: Client;
@@ -506,600 +506,22 @@ export class PostsClient {
   }
 
   /**
-   * Get Liking Users
-   * Retrieves a list of Users who liked a specific Post by its ID.
-   *
-   * @returns Promise with the API response
-   */
-  async getLikingUsers(
-    id: string,
-
-    options: GetLikingUsersStreamingOptions = {}
-  ): Promise<GetLikingUsersResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getLikingUsers');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
-      userfields = [],
-
-      expansions = [],
-
-      tweetfields = [],
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } = options || {};
-
-    // Build the path with path parameters
-    let path = '/2/tweets/{id}/liking_users';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<GetLikingUsersResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get 28-hour Post insights
-   * Retrieves engagement metrics for specified Posts over the last 28 hours.
-   *
-   * @returns Promise with the API response
-   */
-  async getInsights28hr(
-    tweetIds: Array<any>,
-
-    granularity: string,
-
-    requestedMetrics: Array<any>,
-
-    options: GetInsights28hrStreamingOptions = {}
-  ): Promise<GetInsights28hrResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getInsights28hr');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      engagementfields = [],
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } = options || {};
-
-    // Build the path with path parameters
-    let path = '/2/insights/28hr';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    params.append('tweet_ids', tweetIds.join(','));
-
-    params.append('granularity', String(granularity));
-
-    params.append('requested_metrics', requestedMetrics.join(','));
-
-    if (engagementfields !== undefined) {
-      params.append('engagement.fields', engagementfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<GetInsights28hrResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Post by ID
-   * Retrieves details of a specific Post by its ID.
-   *
-   * @returns Promise with the API response
-   */
-  async getById(
-    id: string,
-
-    options: GetByIdStreamingOptions = {}
-  ): Promise<GetByIdResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getById');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      tweetfields = [],
-
-      expansions = [],
-
-      mediafields = [],
-
-      pollfields = [],
-
-      userfields = [],
-
-      placefields = [],
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } = options || {};
-
-    // Build the path with path parameters
-    let path = '/2/tweets/{id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (mediafields !== undefined) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
-    if (pollfields !== undefined) {
-      params.append('poll.fields', pollfields.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (placefields !== undefined) {
-      params.append('place.fields', placefields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<GetByIdResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Delete Post
-   * Deletes a specific Post by its ID, if owned by the authenticated user.
-   *
-   * @returns Promise with the API response
-   */
-  async delete(
-    id: string,
-
-    options: DeleteStreamingOptions = {}
-  ): Promise<DeleteResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'delete');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const { headers = {}, signal, requestOptions = {} } = options || {};
-
-    // Build the path with path parameters
-    let path = '/2/tweets/{id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<DeleteResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Reposted by
-   * Retrieves a list of Users who reposted a specific Post by its ID.
-   *
-   * @returns Promise with the API response
-   */
-  async getRepostedBy(
-    id: string,
-
-    options: GetRepostedByStreamingOptions = {}
-  ): Promise<GetRepostedByResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getRepostedBy');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
-      userfields = [],
-
-      expansions = [],
-
-      tweetfields = [],
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } = options || {};
-
-    // Build the path with path parameters
-    let path = '/2/tweets/{id}/retweeted_by';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<GetRepostedByResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Reposts
-   * Retrieves a list of Posts that repost a specific Post by its ID.
-   *
-   * @returns Promise with the API response
-   */
-  async getReposts(
-    id: string,
-
-    options: GetRepostsStreamingOptions = {}
-  ): Promise<GetRepostsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getReposts');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
-      tweetfields = [],
-
-      expansions = [],
-
-      mediafields = [],
-
-      pollfields = [],
-
-      userfields = [],
-
-      placefields = [],
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } = options || {};
-
-    // Build the path with path parameters
-    let path = '/2/tweets/{id}/retweets';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (mediafields !== undefined) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
-    if (pollfields !== undefined) {
-      params.append('poll.fields', pollfields.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (placefields !== undefined) {
-      params.append('place.fields', placefields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<GetRepostsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get historical Post insights
-   * Retrieves historical engagement metrics for specified Posts within a defined time range.
-   *
-   * @returns Promise with the API response
-   */
-  async getInsightsHistorical(
-    tweetIds: Array<any>,
-
-    endTime: string,
-
-    startTime: string,
-
-    granularity: string,
-
-    requestedMetrics: Array<any>,
-
-    options: GetInsightsHistoricalStreamingOptions = {}
-  ): Promise<GetInsightsHistoricalResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(
-      requiredAuthTypes,
-      'getInsightsHistorical'
-    );
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      engagementfields = [],
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } = options || {};
-
-    // Build the path with path parameters
-    let path = '/2/insights/historical';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    params.append('tweet_ids', tweetIds.join(','));
-
-    params.append('end_time', String(endTime));
-
-    params.append('start_time', String(startTime));
-
-    params.append('granularity', String(granularity));
-
-    params.append('requested_metrics', requestedMetrics.join(','));
-
-    if (engagementfields !== undefined) {
-      params.append('engagement.fields', engagementfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<GetInsightsHistoricalResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get count of all Posts
-   * Retrieves the count of Posts matching a search query from the full archive.
-   *
-   * @returns Promise with the API response
-   */
-  async getCountsAll(
+     * Get count of recent Posts
+     * Retrieves the count of Posts from the last 7 days matching a search query.
+     * 
+     * @returns Promise with the API response
+     */
+  async getCountsRecent(
     query: string,
-
-    options: GetCountsAllStreamingOptions = {}
-  ): Promise<GetCountsAllResponse> {
+    options: GetCountsRecentStreamingOptions = {}
+  ): Promise<GetCountsRecentResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
 
     requiredAuthTypes.push('BearerToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'getCountsAll');
+    this.client.validateAuthentication(requiredAuthTypes, 'getCountsRecent');
 
     // Destructure options (exclude path parameters, they're already function params)
 
@@ -1123,10 +545,11 @@ export class PostsClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
-    let path = '/2/tweets/counts/all';
+    let path = '/2/tweets/counts/recent';
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -1177,7 +600,7 @@ export class PostsClient {
     };
 
     // Make the request
-    return this.client.request<GetCountsAllResponse>(
+    return this.client.request<GetCountsRecentResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -1185,16 +608,15 @@ export class PostsClient {
   }
 
   /**
-   * Search recent Posts
-   * Retrieves Posts from the last 7 days matching a search query.
-   *
-   * @returns Promise with the API response
-   */
-  async searchRecent(
-    query: string,
-
-    options: SearchRecentStreamingOptions = {}
-  ): Promise<SearchRecentResponse> {
+     * Get Quoted Posts
+     * Retrieves a list of Posts that quote a specific Post by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getQuoted(
+    id: string,
+    options: GetQuotedStreamingOptions = {}
+  ): Promise<GetQuotedResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -1205,26 +627,16 @@ export class PostsClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'searchRecent');
+    this.client.validateAuthentication(requiredAuthTypes, 'getQuoted');
 
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
-      startTime = undefined,
-
-      endTime = undefined,
-
-      sinceId = undefined,
-
-      untilId = undefined,
-
       maxResults = undefined,
-
-      nextToken = undefined,
 
       paginationToken = undefined,
 
-      sortOrder = undefined,
+      exclude = [],
 
       tweetfields = [],
 
@@ -1241,46 +653,27 @@ export class PostsClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
-    let path = '/2/tweets/search/recent';
+    let path = '/2/tweets/{id}/quote_tweets';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    params.append('query', String(query));
-
-    if (startTime !== undefined) {
-      params.append('start_time', String(startTime));
-    }
-
-    if (endTime !== undefined) {
-      params.append('end_time', String(endTime));
-    }
-
-    if (sinceId !== undefined) {
-      params.append('since_id', String(sinceId));
-    }
-
-    if (untilId !== undefined) {
-      params.append('until_id', String(untilId));
-    }
-
     if (maxResults !== undefined) {
       params.append('max_results', String(maxResults));
-    }
-
-    if (nextToken !== undefined) {
-      params.append('next_token', String(nextToken));
     }
 
     if (paginationToken !== undefined) {
       params.append('pagination_token', String(paginationToken));
     }
 
-    if (sortOrder !== undefined) {
-      params.append('sort_order', String(sortOrder));
+    if (exclude !== undefined) {
+      params.append('exclude', exclude.join(','));
     }
 
     if (tweetfields !== undefined) {
@@ -1319,7 +712,7 @@ export class PostsClient {
     };
 
     // Make the request
-    return this.client.request<SearchRecentResponse>(
+    return this.client.request<GetQuotedResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -1327,20 +720,16 @@ export class PostsClient {
   }
 
   /**
-   * Get Post analytics
-   * Retrieves analytics data for specified Posts within a defined time range.
-   *
-   * @returns Promise with the API response
-   */
+     * Get Post analytics
+     * Retrieves analytics data for specified Posts within a defined time range.
+     * 
+     * @returns Promise with the API response
+     */
   async getAnalytics(
     ids: Array<any>,
-
     endTime: string,
-
     startTime: string,
-
     granularity: string,
-
     options: GetAnalyticsStreamingOptions = {}
   ): Promise<GetAnalyticsResponse> {
     // Validate authentication requirements
@@ -1361,7 +750,8 @@ export class PostsClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/tweets/analytics';
@@ -1401,14 +791,13 @@ export class PostsClient {
   }
 
   /**
-   * Search all Posts
-   * Retrieves Posts from the full archive matching a search query.
-   *
-   * @returns Promise with the API response
-   */
+     * Search all Posts
+     * Retrieves Posts from the full archive matching a search query.
+     * 
+     * @returns Promise with the API response
+     */
   async searchAll(
     query: string,
-
     options: SearchAllStreamingOptions = {}
   ): Promise<SearchAllResponse> {
     // Validate authentication requirements
@@ -1453,7 +842,8 @@ export class PostsClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/tweets/search/all';
@@ -1539,43 +929,73 @@ export class PostsClient {
   }
 
   /**
-   * Hide reply
-   * Hides or unhides a reply to a conversation owned by the authenticated user.
-   *
-   * @returns Promise with the API response
-   */
-  async hideReply(
-    tweetId: string,
-
-    options: HideReplyStreamingOptions = {}
-  ): Promise<HideReplyResponse> {
+     * Get Reposted by
+     * Retrieves a list of Users who reposted a specific Post by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getRepostedBy(
+    id: string,
+    options: GetRepostedByStreamingOptions = {}
+  ): Promise<GetRepostedByResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
 
     requiredAuthTypes.push('OAuth2UserToken');
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'hideReply');
+    this.client.validateAuthentication(requiredAuthTypes, 'getRepostedBy');
 
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
-      body,
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
 
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
-    let path = '/2/tweets/{tweet_id}/hidden';
+    let path = '/2/tweets/{id}/retweeted_by';
 
-    path = path.replace('{tweet_id}', encodeURIComponent(String(tweetId)));
+    path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -1585,28 +1005,285 @@ export class PostsClient {
       },
       signal: signal,
 
-      body: JSON.stringify(body),
-
       ...requestOptions,
     };
 
     // Make the request
-    return this.client.request<HideReplyResponse>(
-      'PUT',
+    return this.client.request<GetRepostedByResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
   }
 
   /**
-   * Get Posts by IDs
-   * Retrieves details of multiple Posts by their IDs.
-   *
-   * @returns Promise with the API response
-   */
+     * Get Liking Users
+     * Retrieves a list of Users who liked a specific Post by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getLikingUsers(
+    id: string,
+    options: GetLikingUsersStreamingOptions = {}
+  ): Promise<GetLikingUsersResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getLikingUsers');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/tweets/{id}/liking_users';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<GetLikingUsersResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get 28-hour Post insights
+     * Retrieves engagement metrics for specified Posts over the last 28 hours.
+     * 
+     * @returns Promise with the API response
+     */
+  async getInsights28hr(
+    tweetIds: Array<any>,
+    granularity: string,
+    requestedMetrics: Array<any>,
+    options: GetInsights28hrStreamingOptions = {}
+  ): Promise<GetInsights28hrResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getInsights28hr');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      engagementfields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/insights/28hr';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    params.append('tweet_ids', tweetIds.join(','));
+
+    params.append('granularity', String(granularity));
+
+    params.append('requested_metrics', requestedMetrics.join(','));
+
+    if (engagementfields !== undefined) {
+      params.append('engagement.fields', engagementfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<GetInsights28hrResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get Reposts
+     * Retrieves a list of Posts that repost a specific Post by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getReposts(
+    id: string,
+    options: GetRepostsStreamingOptions = {}
+  ): Promise<GetRepostsResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getReposts');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      tweetfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      pollfields = [],
+
+      userfields = [],
+
+      placefields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/tweets/{id}/retweets';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (pollfields !== undefined) {
+      params.append('poll.fields', pollfields.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (placefields !== undefined) {
+      params.append('place.fields', placefields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<GetRepostsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get Posts by IDs
+     * Retrieves details of multiple Posts by their IDs.
+     * 
+     * @returns Promise with the API response
+     */
   async getByIds(
     ids: Array<any>,
-
     options: GetByIdsStreamingOptions = {}
   ): Promise<GetByIdsResponse> {
     // Validate authentication requirements
@@ -1639,7 +1316,8 @@ export class PostsClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
     let path = '/2/tweets';
@@ -1693,14 +1371,13 @@ export class PostsClient {
   }
 
   /**
-   * Create or Edit Post
-   * Creates a new Post for the authenticated user, or edits an existing Post when edit_options are provided.
-   *
-   * @returns Promise with the API response
-   */
+     * Create or Edit Post
+     * Creates a new Post for the authenticated user, or edits an existing Post when edit_options are provided.
+     * 
+     * @returns Promise with the API response
+     */
   async create(
     body: any,
-
     options: CreateStreamingOptions = {}
   ): Promise<CreateResponse> {
     // Validate authentication requirements
@@ -1745,23 +1422,241 @@ export class PostsClient {
   }
 
   /**
-   * Get count of recent Posts
-   * Retrieves the count of Posts from the last 7 days matching a search query.
-   *
-   * @returns Promise with the API response
-   */
-  async getCountsRecent(
-    query: string,
+     * Get historical Post insights
+     * Retrieves historical engagement metrics for specified Posts within a defined time range.
+     * 
+     * @returns Promise with the API response
+     */
+  async getInsightsHistorical(
+    tweetIds: Array<any>,
+    endTime: string,
+    startTime: string,
+    granularity: string,
+    requestedMetrics: Array<any>,
+    options: GetInsightsHistoricalStreamingOptions = {}
+  ): Promise<GetInsightsHistoricalResponse> {
+    // Validate authentication requirements
 
-    options: GetCountsRecentStreamingOptions = {}
-  ): Promise<GetCountsRecentResponse> {
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(
+      requiredAuthTypes,
+      'getInsightsHistorical'
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      engagementfields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/insights/historical';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    params.append('tweet_ids', tweetIds.join(','));
+
+    params.append('end_time', String(endTime));
+
+    params.append('start_time', String(startTime));
+
+    params.append('granularity', String(granularity));
+
+    params.append('requested_metrics', requestedMetrics.join(','));
+
+    if (engagementfields !== undefined) {
+      params.append('engagement.fields', engagementfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<GetInsightsHistoricalResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Search recent Posts
+     * Retrieves Posts from the last 7 days matching a search query.
+     * 
+     * @returns Promise with the API response
+     */
+  async searchRecent(
+    query: string,
+    options: SearchRecentStreamingOptions = {}
+  ): Promise<SearchRecentResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
 
     requiredAuthTypes.push('BearerToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'getCountsRecent');
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'searchRecent');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      startTime = undefined,
+
+      endTime = undefined,
+
+      sinceId = undefined,
+
+      untilId = undefined,
+
+      maxResults = undefined,
+
+      nextToken = undefined,
+
+      paginationToken = undefined,
+
+      sortOrder = undefined,
+
+      tweetfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      pollfields = [],
+
+      userfields = [],
+
+      placefields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/tweets/search/recent';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    params.append('query', String(query));
+
+    if (startTime !== undefined) {
+      params.append('start_time', String(startTime));
+    }
+
+    if (endTime !== undefined) {
+      params.append('end_time', String(endTime));
+    }
+
+    if (sinceId !== undefined) {
+      params.append('since_id', String(sinceId));
+    }
+
+    if (untilId !== undefined) {
+      params.append('until_id', String(untilId));
+    }
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (nextToken !== undefined) {
+      params.append('next_token', String(nextToken));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (sortOrder !== undefined) {
+      params.append('sort_order', String(sortOrder));
+    }
+
+    if (tweetfields !== undefined) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    if (expansions !== undefined) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediafields !== undefined) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (pollfields !== undefined) {
+      params.append('poll.fields', pollfields.join(','));
+    }
+
+    if (userfields !== undefined) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (placefields !== undefined) {
+      params.append('place.fields', placefields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<SearchRecentResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get count of all Posts
+     * Retrieves the count of Posts matching a search query from the full archive.
+     * 
+     * @returns Promise with the API response
+     */
+  async getCountsAll(
+    query: string,
+    options: GetCountsAllStreamingOptions = {}
+  ): Promise<GetCountsAllResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getCountsAll');
 
     // Destructure options (exclude path parameters, they're already function params)
 
@@ -1785,10 +1680,11 @@ export class PostsClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
-    let path = '/2/tweets/counts/recent';
+    let path = '/2/tweets/counts/all';
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -1839,7 +1735,7 @@ export class PostsClient {
     };
 
     // Make the request
-    return this.client.request<GetCountsRecentResponse>(
+    return this.client.request<GetCountsAllResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -1847,16 +1743,75 @@ export class PostsClient {
   }
 
   /**
-   * Get Quoted Posts
-   * Retrieves a list of Posts that quote a specific Post by its ID.
-   *
-   * @returns Promise with the API response
-   */
-  async getQuoted(
-    id: string,
+     * Hide reply
+     * Hides or unhides a reply to a conversation owned by the authenticated user.
+     * 
+     * @returns Promise with the API response
+     */
+  async hideReply(
+    tweetId: string,
+    options: HideReplyStreamingOptions = {}
+  ): Promise<HideReplyResponse> {
+    // Validate authentication requirements
 
-    options: GetQuotedStreamingOptions = {}
-  ): Promise<GetQuotedResponse> {
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'hideReply');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      body,
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/tweets/{tweet_id}/hidden';
+
+    path = path.replace('{tweet_id}', encodeURIComponent(String(tweetId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      body: JSON.stringify(body),
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<HideReplyResponse>(
+      'PUT',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get Post by ID
+     * Retrieves details of a specific Post by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getById(
+    id: string,
+    options: GetByIdStreamingOptions = {}
+  ): Promise<GetByIdResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
@@ -1867,17 +1822,11 @@ export class PostsClient {
 
     requiredAuthTypes.push('UserToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'getQuoted');
+    this.client.validateAuthentication(requiredAuthTypes, 'getById');
 
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
-      exclude = [],
-
       tweetfields = [],
 
       expansions = [],
@@ -1893,27 +1842,16 @@ export class PostsClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } = options || {};
+    } =
+      options || {};
 
     // Build the path with path parameters
-    let path = '/2/tweets/{id}/quote_tweets';
+    let path = '/2/tweets/{id}';
 
     path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (exclude !== undefined) {
-      params.append('exclude', exclude.join(','));
-    }
 
     if (tweetfields !== undefined) {
       params.append('tweet.fields', tweetfields.join(','));
@@ -1951,8 +1889,59 @@ export class PostsClient {
     };
 
     // Make the request
-    return this.client.request<GetQuotedResponse>(
+    return this.client.request<GetByIdResponse>(
       'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Delete Post
+     * Deletes a specific Post by its ID, if owned by the authenticated user.
+     * 
+     * @returns Promise with the API response
+     */
+  async delete(
+    id: string,
+    options: DeleteStreamingOptions = {}
+  ): Promise<DeleteResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'delete');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const { headers = {}, signal, requestOptions = {} } = options || {};
+
+    // Build the path with path parameters
+    let path = '/2/tweets/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<DeleteResponse>(
+      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

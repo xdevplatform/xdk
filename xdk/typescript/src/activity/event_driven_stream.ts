@@ -3,7 +3,7 @@
 // Any manual changes will be overwritten on the next generation.
 /**
  * Event-driven streaming utilities for the X API.
- *
+ * 
  * This module provides event-driven streaming interfaces that are more user-friendly
  * than manual ReadableStream management.
  */
@@ -33,10 +33,10 @@ export interface StreamErrorEvent {
 
 /**
  * Event-driven stream class for handling streaming data from the X API.
- *
+ * 
  * This class provides an event-driven interface for working with streaming endpoints,
  * allowing you to listen to 'data', 'keepAlive', 'error', and 'close' events.
- *
+ * 
  * @public
  */
 export class EventDrivenStream {
@@ -177,11 +177,12 @@ export class EventDrivenStream {
   private async attemptReconnect(): Promise<void> {
     this.reconnectAttempts++;
     this.emit(StreamEvent.Data, {
-      message: `Reconnect attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}`,
+      message: `Reconnect attempt ${this.reconnectAttempts}/${this
+        .maxReconnectAttempts}`,
     });
 
     // Wait before reconnecting
-    await new Promise((resolve) =>
+    await new Promise(resolve =>
       setTimeout(resolve, this.reconnectDelay * this.reconnectAttempts)
     );
 
@@ -254,7 +255,7 @@ export class EventDrivenStream {
   private emit(event: string, data: any): void {
     const listeners = this.eventListeners.get(event);
     if (listeners) {
-      listeners.forEach((listener) => {
+      listeners.forEach(listener => {
         try {
           listener(data);
         } catch (error) {
@@ -333,7 +334,7 @@ export class EventDrivenStream {
           yield dataQueue.shift()!;
         } else {
           // Wait a bit for more data
-          await new Promise((resolve) => setTimeout(resolve, 10));
+          await new Promise(resolve => setTimeout(resolve, 10));
         }
       }
 
