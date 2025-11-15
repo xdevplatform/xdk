@@ -30,45 +30,6 @@ describe('CommunityNotesClient Structure', () => {
 
   
   
-  it('should have create method with correct signature', () => {
-    // Check method exists
-    expect(CommunityNotesClient.prototype).toHaveProperty('create');
-    
-    // Check method is callable
-    const method = communityNotesClient.create;
-    expect(typeof method).toBe('function');
-    
-    // Check method signature by examining parameter count
-    const methodString = method.toString();
-    const paramsMatch = methodString.match(/\(([^)]*)\)/);
-    const params = paramsMatch ? paramsMatch[1].split(',').map(p => p.trim().split(':')[0].trim()).filter(p => p) : [];
-    
-    // Check required parameters exist (convert to camelCase for TypeScript)
-    const requiredParams = [
-      
-    ];
-    
-    for (const requiredParam of requiredParams) {
-      // Check if parameter exists (may be in camelCase or snake_case)
-      const paramExists = params.some(p => 
-        p === requiredParam || 
-        p.toLowerCase() === requiredParam.toLowerCase() ||
-        p.replace(/_/g, '') === requiredParam.replace(/_/g, '')
-      );
-      expect(paramExists).toBe(true);
-    }
-  });
-
-  it('should have create method with return type annotation', () => {
-    const method = communityNotesClient.create;
-    expect(typeof method).toBe('function');
-    // TypeScript will enforce return types at compile time
-    // This test ensures the method exists and is callable
-  });
-
-  
-
-  
   it('should have searchEligiblePosts method with correct signature', () => {
     // Check method exists
     expect(CommunityNotesClient.prototype).toHaveProperty('searchEligiblePosts');
@@ -125,45 +86,6 @@ describe('CommunityNotesClient Structure', () => {
       expect(hasPaginationParam || params.some(p => p.includes('options'))).toBe(true);
     }
   });
-  
-
-  
-  it('should have evaluate method with correct signature', () => {
-    // Check method exists
-    expect(CommunityNotesClient.prototype).toHaveProperty('evaluate');
-    
-    // Check method is callable
-    const method = communityNotesClient.evaluate;
-    expect(typeof method).toBe('function');
-    
-    // Check method signature by examining parameter count
-    const methodString = method.toString();
-    const paramsMatch = methodString.match(/\(([^)]*)\)/);
-    const params = paramsMatch ? paramsMatch[1].split(',').map(p => p.trim().split(':')[0].trim()).filter(p => p) : [];
-    
-    // Check required parameters exist (convert to camelCase for TypeScript)
-    const requiredParams = [
-      
-    ];
-    
-    for (const requiredParam of requiredParams) {
-      // Check if parameter exists (may be in camelCase or snake_case)
-      const paramExists = params.some(p => 
-        p === requiredParam || 
-        p.toLowerCase() === requiredParam.toLowerCase() ||
-        p.replace(/_/g, '') === requiredParam.replace(/_/g, '')
-      );
-      expect(paramExists).toBe(true);
-    }
-  });
-
-  it('should have evaluate method with return type annotation', () => {
-    const method = communityNotesClient.evaluate;
-    expect(typeof method).toBe('function');
-    // TypeScript will enforce return types at compile time
-    // This test ensures the method exists and is callable
-  });
-
   
 
   
@@ -267,19 +189,97 @@ describe('CommunityNotesClient Structure', () => {
   
 
   
+  it('should have create method with correct signature', () => {
+    // Check method exists
+    expect(CommunityNotesClient.prototype).toHaveProperty('create');
+    
+    // Check method is callable
+    const method = communityNotesClient.create;
+    expect(typeof method).toBe('function');
+    
+    // Check method signature by examining parameter count
+    const methodString = method.toString();
+    const paramsMatch = methodString.match(/\(([^)]*)\)/);
+    const params = paramsMatch ? paramsMatch[1].split(',').map(p => p.trim().split(':')[0].trim()).filter(p => p) : [];
+    
+    // Check required parameters exist (convert to camelCase for TypeScript)
+    const requiredParams = [
+      
+    ];
+    
+    for (const requiredParam of requiredParams) {
+      // Check if parameter exists (may be in camelCase or snake_case)
+      const paramExists = params.some(p => 
+        p === requiredParam || 
+        p.toLowerCase() === requiredParam.toLowerCase() ||
+        p.replace(/_/g, '') === requiredParam.replace(/_/g, '')
+      );
+      expect(paramExists).toBe(true);
+    }
+  });
+
+  it('should have create method with return type annotation', () => {
+    const method = communityNotesClient.create;
+    expect(typeof method).toBe('function');
+    // TypeScript will enforce return types at compile time
+    // This test ensures the method exists and is callable
+  });
+
+  
+
+  
+  it('should have evaluate method with correct signature', () => {
+    // Check method exists
+    expect(CommunityNotesClient.prototype).toHaveProperty('evaluate');
+    
+    // Check method is callable
+    const method = communityNotesClient.evaluate;
+    expect(typeof method).toBe('function');
+    
+    // Check method signature by examining parameter count
+    const methodString = method.toString();
+    const paramsMatch = methodString.match(/\(([^)]*)\)/);
+    const params = paramsMatch ? paramsMatch[1].split(',').map(p => p.trim().split(':')[0].trim()).filter(p => p) : [];
+    
+    // Check required parameters exist (convert to camelCase for TypeScript)
+    const requiredParams = [
+      
+    ];
+    
+    for (const requiredParam of requiredParams) {
+      // Check if parameter exists (may be in camelCase or snake_case)
+      const paramExists = params.some(p => 
+        p === requiredParam || 
+        p.toLowerCase() === requiredParam.toLowerCase() ||
+        p.replace(/_/g, '') === requiredParam.replace(/_/g, '')
+      );
+      expect(paramExists).toBe(true);
+    }
+  });
+
+  it('should have evaluate method with return type annotation', () => {
+    const method = communityNotesClient.evaluate;
+    expect(typeof method).toBe('function');
+    // TypeScript will enforce return types at compile time
+    // This test ensures the method exists and is callable
+  });
+
+  
+
+  
 
   it('should have all expected methods', () => {
     const expectedMethods = [
       
-      'create',
-      
       'searchEligiblePosts',
-      
-      'evaluate',
       
       'delete',
       
       'searchWritten',
+      
+      'create',
+      
+      'evaluate',
       
     ];
 

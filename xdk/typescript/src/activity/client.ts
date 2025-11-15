@@ -16,23 +16,29 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  GetSubscriptionsResponse,
-  CreateSubscriptionRequest,
-  CreateSubscriptionResponse,
+  StreamResponse,
   UpdateSubscriptionRequest,
   UpdateSubscriptionResponse,
   DeleteSubscriptionResponse,
-  StreamResponse,
+  GetSubscriptionsResponse,
+  CreateSubscriptionRequest,
+  CreateSubscriptionResponse,
 } from './models.js';
 
 /**
- * Options for createSubscription method
+ * Options for stream method
  * 
  * @public
  */
-export interface CreateSubscriptionOptions {
-  /** Request body */
-  body?: CreateSubscriptionRequest;
+export interface StreamOptions {
+  /** The number of minutes of backfill requested. */
+  backfillMinutes?: number;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
+  endTime?: string;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -52,19 +58,13 @@ export interface UpdateSubscriptionOptions {
 }
 
 /**
- * Options for stream method
+ * Options for createSubscription method
  * 
  * @public
  */
-export interface StreamOptions {
-  /** The number of minutes of backfill requested. */
-  backfillMinutes?: number;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. */
-  startTime?: string;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
-  endTime?: string;
+export interface CreateSubscriptionOptions {
+  /** Request body */
+  body?: CreateSubscriptionRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -92,73 +92,53 @@ export class ActivityClient {
   }
 
   /**
-   * Get X activity subscriptions
-   * Get a list of active subscriptions for XAA
+   * Activity Stream
+   * Stream of X Activities
 
 
 
-   * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
+   * @returns {Promise<StreamResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getSubscriptions(): Promise<GetSubscriptionsResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/activity/subscriptions';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetSubscriptionsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Create X activity subscription
-   * Creates a subscription for an X activity event
-
-
-
-   * @returns {Promise<CreateSubscriptionResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async createSubscription(
-    options: CreateSubscriptionOptions = {}
-  ): Promise<CreateSubscriptionResponse> {
+  async stream(options: StreamOptions = {}): Promise<StreamResponse> {
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
-      body,
+      backfillMinutes = undefined,
+
+      startTime = undefined,
+
+      endTime = undefined,
 
       requestOptions: requestOptions = {},
     } =
       options || {};
 
     // Build the path with path parameters
-    let path = '/2/activity/subscriptions';
+    let path = '/2/activity/stream';
 
     // Build query parameters
     const params = new URLSearchParams();
 
+    if (backfillMinutes !== undefined) {
+      params.append('backfill_minutes', String(backfillMinutes));
+    }
+
+    if (startTime !== undefined) {
+      params.append('start_time', String(startTime));
+    }
+
+    if (endTime !== undefined) {
+      params.append('end_time', String(endTime));
+    }
+
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
       ...requestOptions,
     };
 
-    return this.client.request<CreateSubscriptionResponse>(
-      'POST',
+    return this.client.request<StreamResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -259,53 +239,73 @@ export class ActivityClient {
   }
 
   /**
-   * Activity Stream
-   * Stream of X Activities
+   * Get X activity subscriptions
+   * Get a list of active subscriptions for XAA
 
 
 
-   * @returns {Promise<StreamResponse>} Promise resolving to the API response
+   * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async stream(options: StreamOptions = {}): Promise<StreamResponse> {
+  async getSubscriptions(): Promise<GetSubscriptionsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/activity/subscriptions';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<GetSubscriptionsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Create X activity subscription
+   * Creates a subscription for an X activity event
+
+
+
+   * @returns {Promise<CreateSubscriptionResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async createSubscription(
+    options: CreateSubscriptionOptions = {}
+  ): Promise<CreateSubscriptionResponse> {
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
-      backfillMinutes = undefined,
-
-      startTime = undefined,
-
-      endTime = undefined,
+      body,
 
       requestOptions: requestOptions = {},
     } =
       options || {};
 
     // Build the path with path parameters
-    let path = '/2/activity/stream';
+    let path = '/2/activity/subscriptions';
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (backfillMinutes !== undefined) {
-      params.append('backfill_minutes', String(backfillMinutes));
-    }
-
-    if (startTime !== undefined) {
-      params.append('start_time', String(startTime));
-    }
-
-    if (endTime !== undefined) {
-      params.append('end_time', String(endTime));
-    }
-
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
       ...requestOptions,
     };
 
-    return this.client.request<StreamResponse>(
-      'GET',
+    return this.client.request<CreateSubscriptionResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

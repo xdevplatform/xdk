@@ -16,10 +16,26 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
+  GetByWoeidResponse,
   GetPersonalizedResponse,
   GetAiResponse,
-  GetByWoeidResponse,
 } from './models.js';
+
+/**
+ * Options for getByWoeid method
+ * 
+ * @public
+ */
+export interface GetByWoeidOptions {
+  /** The maximum number of results. */
+  maxTrends?: number;
+
+  /** A comma separated list of Trend fields to display. */
+  trendfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
 
 /**
  * Options for getPersonalized method
@@ -48,22 +64,6 @@ export interface GetAiOptions {
 }
 
 /**
- * Options for getByWoeid method
- * 
- * @public
- */
-export interface GetByWoeidOptions {
-  /** The maximum number of results. */
-  maxTrends?: number;
-
-  /** A comma separated list of Trend fields to display. */
-  trendfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
  * Client for trends operations
  * 
  * This client provides methods for interacting with the trends endpoints
@@ -82,6 +82,62 @@ export class TrendsClient {
      */
   constructor(client: Client) {
     this.client = client;
+  }
+
+  /**
+   * Get Trends by WOEID
+   * Retrieves trending topics for a specific location identified by its WOEID.
+
+
+   * @param woeid The WOEID of the place to lookup a trend for.
+
+
+
+
+   * @returns {Promise<GetByWoeidResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByWoeid(
+    woeid: number,
+    options: GetByWoeidOptions = {}
+  ): Promise<GetByWoeidResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxTrends = undefined,
+
+      trendfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/trends/by/woeid/{woeid}';
+
+    path = path.replace('{woeid}', encodeURIComponent(String(woeid)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxTrends !== undefined) {
+      params.append('max_trends', String(maxTrends));
+    }
+
+    if (trendfields !== undefined) {
+      params.append('trend.fields', trendfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetByWoeidResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 
   /**
@@ -171,62 +227,6 @@ export class TrendsClient {
     };
 
     return this.client.request<GetAiResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Trends by WOEID
-   * Retrieves trending topics for a specific location identified by its WOEID.
-
-
-   * @param woeid The WOEID of the place to lookup a trend for.
-
-
-
-
-   * @returns {Promise<GetByWoeidResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getByWoeid(
-    woeid: number,
-    options: GetByWoeidOptions = {}
-  ): Promise<GetByWoeidResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      maxTrends = undefined,
-
-      trendfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/trends/by/woeid/{woeid}';
-
-    path = path.replace('{woeid}', encodeURIComponent(String(woeid)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxTrends !== undefined) {
-      params.append('max_trends', String(maxTrends));
-    }
-
-    if (trendfields !== undefined) {
-      params.append('trend.fields', trendfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetByWoeidResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

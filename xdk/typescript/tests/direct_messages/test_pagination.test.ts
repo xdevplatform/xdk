@@ -30,169 +30,6 @@ describe('DirectMessagesClient Pagination', () => {
   });
 
   
-  it('should create paginator for getEventsByParticipantId', () => {
-    const method = (directMessagesClient as any)['getEventsByParticipantId'];
-    
-    // Should be able to create paginator without error
-    const params: any = {
-      
-      
-      participant_id: 'test_value',
-      
-      
-      maxResults: 10
-    };
-    
-    // Note: Paginator creation is typically done through the method itself
-    // This test verifies the method supports pagination
-    expect(typeof method).toBe('function');
-  });
-
-  it('should paginate through pages for getEventsByParticipantId', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request to return paginated responses (like Python mocks session)
-    let callCount = 0;
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) {
-        // First page response
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '1', name: 'Item 1' },
-              { id: '2', name: 'Item 2' }
-            ],
-            meta: {
-              
-              'next_token': 'next_page_token',
-              
-              result_count: 2
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      } else {
-        // Second page response (no next token = end of pagination)
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '3', name: 'Item 3' }
-            ],
-            meta: {
-              result_count: 1
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      }
-    });
-
-    try {
-      const method = (directMessagesClient as any)['getEventsByParticipantId'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 2
-      };
-
-      // Call method and get first page
-      const firstPage = await method.apply(directMessagesClient, [...requiredArgs, options]);
-      expect(firstPage).toBeDefined();
-      expect(firstPage.data).toBeDefined();
-      expect(Array.isArray(firstPage.data)).toBe(true);
-      expect(firstPage.data.length).toBe(2);
-
-      // If there's a next token, call again with pagination token
-      
-      if (firstPage.meta && firstPage.meta['next_token']) {
-        options.paginationToken = firstPage.meta['next_token'];
-        const secondPage = await method.apply(directMessagesClient, [...requiredArgs, options]);
-        expect(secondPage).toBeDefined();
-        expect(secondPage.data).toBeDefined();
-        expect(Array.isArray(secondPage.data)).toBe(true);
-      }
-      
-
-      // Should have made multiple requests
-      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  it('should handle pagination parameters correctly for getEventsByParticipantId', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request (like Python mocks session)
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      json: async () => ({
-        data: [],
-        meta: { result_count: 0 }
-      }),
-      text: async () => '{}'
-    } as Response);
-
-    try {
-      const method = (directMessagesClient as any)['getEventsByParticipantId'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 5
-      };
-
-      await method.apply(directMessagesClient, [...requiredArgs, options]);
-
-      // Verify maxResults was passed in request (becomes max_results in query string)
-      expect(client.httpClient.request).toHaveBeenCalled();
-      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
-      const url = callArgs[0] as string;
-      // maxResults in options becomes max_results in query string
-      expect(url).toMatch(/max_results=5|maxResults=5/);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  
   it('should create paginator for getEventsByConversationId', () => {
     const method = (directMessagesClient as any)['getEventsByConversationId'];
     
@@ -484,6 +321,169 @@ describe('DirectMessagesClient Pagination', () => {
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 5
+      };
+
+      await method.apply(directMessagesClient, [...requiredArgs, options]);
+
+      // Verify maxResults was passed in request (becomes max_results in query string)
+      expect(client.httpClient.request).toHaveBeenCalled();
+      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
+      const url = callArgs[0] as string;
+      // maxResults in options becomes max_results in query string
+      expect(url).toMatch(/max_results=5|maxResults=5/);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  
+  it('should create paginator for getEventsByParticipantId', () => {
+    const method = (directMessagesClient as any)['getEventsByParticipantId'];
+    
+    // Should be able to create paginator without error
+    const params: any = {
+      
+      
+      participant_id: 'test_value',
+      
+      
+      maxResults: 10
+    };
+    
+    // Note: Paginator creation is typically done through the method itself
+    // This test verifies the method supports pagination
+    expect(typeof method).toBe('function');
+  });
+
+  it('should paginate through pages for getEventsByParticipantId', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request to return paginated responses (like Python mocks session)
+    let callCount = 0;
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        // First page response
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '1', name: 'Item 1' },
+              { id: '2', name: 'Item 2' }
+            ],
+            meta: {
+              
+              'next_token': 'next_page_token',
+              
+              result_count: 2
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      } else {
+        // Second page response (no next token = end of pagination)
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '3', name: 'Item 3' }
+            ],
+            meta: {
+              result_count: 1
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      }
+    });
+
+    try {
+      const method = (directMessagesClient as any)['getEventsByParticipantId'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 2
+      };
+
+      // Call method and get first page
+      const firstPage = await method.apply(directMessagesClient, [...requiredArgs, options]);
+      expect(firstPage).toBeDefined();
+      expect(firstPage.data).toBeDefined();
+      expect(Array.isArray(firstPage.data)).toBe(true);
+      expect(firstPage.data.length).toBe(2);
+
+      // If there's a next token, call again with pagination token
+      
+      if (firstPage.meta && firstPage.meta['next_token']) {
+        options.paginationToken = firstPage.meta['next_token'];
+        const secondPage = await method.apply(directMessagesClient, [...requiredArgs, options]);
+        expect(secondPage).toBeDefined();
+        expect(secondPage.data).toBeDefined();
+        expect(Array.isArray(secondPage.data)).toBe(true);
+      }
+      
+
+      // Should have made multiple requests
+      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  it('should handle pagination parameters correctly for getEventsByParticipantId', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request (like Python mocks session)
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({
+        data: [],
+        meta: { result_count: 0 }
+      }),
+      text: async () => '{}'
+    } as Response);
+
+    try {
+      const method = (directMessagesClient as any)['getEventsByParticipantId'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
       
       ];
       

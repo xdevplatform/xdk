@@ -10,11 +10,30 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
+  GetByWoeidResponse,
   GetPersonalizedResponse,
   GetAiResponse,
-  GetByWoeidResponse,
 } from './models.js';
 
+/**
+ * Options for getByWoeid method
+ * 
+ * @public
+ */
+export interface GetByWoeidStreamingOptions {
+  /** The maximum number of results. */
+  maxTrends?: number;
+
+  /** A comma separated list of Trend fields to display. */
+  trendfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+}
 /**
  * Options for getPersonalized method
  * 
@@ -47,31 +66,78 @@ export interface GetAiStreamingOptions {
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
 }
-/**
- * Options for getByWoeid method
- * 
- * @public
- */
-export interface GetByWoeidStreamingOptions {
-  /** The maximum number of results. */
-  maxTrends?: number;
-
-  /** A comma separated list of Trend fields to display. */
-  trendfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
 
 export class TrendsClient {
   private client: Client;
 
   constructor(client: Client) {
     this.client = client;
+  }
+
+  /**
+     * Get Trends by WOEID
+     * Retrieves trending topics for a specific location identified by its WOEID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getByWoeid(
+    woeid: number,
+    options: GetByWoeidStreamingOptions = {}
+  ): Promise<GetByWoeidResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getByWoeid');
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxTrends = undefined,
+
+      trendfields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/trends/by/woeid/{woeid}';
+
+    path = path.replace('{woeid}', encodeURIComponent(String(woeid)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxTrends !== undefined) {
+      params.append('max_trends', String(maxTrends));
+    }
+
+    if (trendfields !== undefined) {
+      params.append('trend.fields', trendfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<GetByWoeidResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 
   /**
@@ -190,72 +256,6 @@ export class TrendsClient {
 
     // Make the request
     return this.client.request<GetAiResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get Trends by WOEID
-     * Retrieves trending topics for a specific location identified by its WOEID.
-     * 
-     * @returns Promise with the API response
-     */
-  async getByWoeid(
-    woeid: number,
-    options: GetByWoeidStreamingOptions = {}
-  ): Promise<GetByWoeidResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getByWoeid');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      maxTrends = undefined,
-
-      trendfields = [],
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/trends/by/woeid/{woeid}';
-
-    path = path.replace('{woeid}', encodeURIComponent(String(woeid)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxTrends !== undefined) {
-      params.append('max_trends', String(maxTrends));
-    }
-
-    if (trendfields !== undefined) {
-      params.append('trend.fields', trendfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<GetByWoeidResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

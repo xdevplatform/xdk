@@ -11,53 +11,11 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
- * Request for createMetadata
- * 
- * @public
- */
-export type CreateMetadataRequest = Schemas.MetadataCreateRequest;
-/**
- * Response for createMetadata
- * 
- * @public
- */
-export type CreateMetadataResponse = Schemas.MetadataCreateResponse;
-/**
- * Response for getByKey
- * 
- * @public
- */
-export type GetByKeyResponse = Schemas.Get2MediaMediaKeyResponse;
-/**
- * Response for getByKeys
- * 
- * @public
- */
-export type GetByKeysResponse = Schemas.Get2MediaResponse;
-/**
  * Response for getAnalytics
  * 
  * @public
  */
 export type GetAnalyticsResponse = Schemas.MediaAnalytics;
-/**
- * Response for finalizeUpload
- * 
- * @public
- */
-export type FinalizeUploadResponse = Schemas.MediaUploadResponse;
-/**
- * Request for appendUpload
- * 
- * @public
- */
-export type AppendUploadRequest = Schemas.MediaUploadAppendRequest;
-/**
- * Response for appendUpload
- * 
- * @public
- */
-export type AppendUploadResponse = Schemas.MediaUploadAppendResponse;
 /**
  * Request for createSubtitles
  * 
@@ -101,6 +59,12 @@ export type UploadRequest = Schemas.MediaUploadRequestOneShot;
  */
 export type UploadResponse = Schemas.MediaUploadResponse;
 /**
+ * Response for getByKey
+ * 
+ * @public
+ */
+export type GetByKeyResponse = Schemas.Get2MediaMediaKeyResponse;
+/**
  * Request for initializeUpload
  * 
  * @public
@@ -112,3 +76,39 @@ export type InitializeUploadRequest = Schemas.MediaUploadConfigRequest;
  * @public
  */
 export type InitializeUploadResponse = Schemas.MediaUploadResponse;
+/**
+ * Response for finalizeUpload
+ * 
+ * @public
+ */
+export type FinalizeUploadResponse = Schemas.MediaUploadResponse;
+/**
+ * Request for createMetadata
+ * 
+ * @public
+ */
+export type CreateMetadataRequest = Schemas.MetadataCreateRequest;
+/**
+ * Response for createMetadata
+ * 
+ * @public
+ */
+export type CreateMetadataResponse = Schemas.MetadataCreateResponse;
+/**
+ * Response for getByKeys
+ * 
+ * @public
+ */
+export type GetByKeysResponse = Schemas.Get2MediaResponse;
+/**
+ * Request for appendUpload
+ * 
+ * @public
+ */
+export type AppendUploadRequest = Schemas.MediaUploadAppendRequest;
+/**
+ * Response for appendUpload
+ * 
+ * @public
+ */
+export type AppendUploadResponse = Schemas.MediaUploadAppendResponse;
