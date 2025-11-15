@@ -16,10 +16,23 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  GetByWoeidResponse,
   GetAiResponse,
+  GetByWoeidResponse,
   GetPersonalizedResponse,
 } from './models.js';
+
+/**
+ * Options for getAi method
+ * 
+ * @public
+ */
+export interface GetAiOptions {
+  /** A comma separated list of AiTrend fields to display. */
+  aiTrendfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
 
 /**
  * Options for getByWoeid method
@@ -32,19 +45,6 @@ export interface GetByWoeidOptions {
 
   /** A comma separated list of Trend fields to display. */
   trendfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getAi method
- * 
- * @public
- */
-export interface GetAiOptions {
-  /** A comma separated list of AiTrend fields to display. */
-  aiTrendfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -82,6 +82,53 @@ export class TrendsClient {
      */
   constructor(client: Client) {
     this.client = client;
+  }
+
+  /**
+   * Get AI Trends by ID
+   * Retrieves an AI trend by its ID.
+
+
+   * @param id The ID of the ai trend.
+
+
+
+
+   * @returns {Promise<GetAiResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getAi(id: string, options: GetAiOptions = {}): Promise<GetAiResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      aiTrendfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/ai_trends/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (aiTrendfields !== undefined) {
+      params.append('ai_trend.fields', aiTrendfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetAiResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 
   /**
@@ -134,53 +181,6 @@ export class TrendsClient {
     };
 
     return this.client.request<GetByWoeidResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get AI Trends by ID
-   * Retrieves an AI trend by its ID.
-
-
-   * @param id The ID of the ai trend.
-
-
-
-
-   * @returns {Promise<GetAiResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getAi(id: string, options: GetAiOptions = {}): Promise<GetAiResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      aiTrendfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/ai_trends/{id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (aiTrendfields !== undefined) {
-      params.append('ai_trend.fields', aiTrendfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetAiResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

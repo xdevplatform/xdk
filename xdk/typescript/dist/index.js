@@ -6634,11 +6634,11 @@ var HttpClient = class {
 };
 var httpClient = new HttpClient();
 
-// src/activity/client.ts
-var ActivityClient = class {
+// src/community_notes/client.ts
+var CommunityNotesClient = class {
   client;
   /**
-     * Creates a new activity client instance
+     * Creates a new community notes client instance
      * 
      * @param client - The main X API client instance
      */
@@ -6646,1028 +6646,11 @@ var ActivityClient = class {
     this.client = client;
   }
   /**
-     * Update X activity subscription
-     * Updates a subscription for an X activity event
+     * Delete a Community Note
+     * Deletes a community note.
   
   
-     * @param subscriptionId The ID of the subscription to update.
-  
-  
-  
-  
-     * @returns {Promise<UpdateSubscriptionResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async updateSubscription(subscriptionId, options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/activity/subscriptions/{subscription_id}";
-    path = path.replace(
-      "{subscription_id}",
-      encodeURIComponent(String(subscriptionId))
-    );
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "PUT",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Deletes X activity subscription
-     * Deletes a subscription for an X activity event
-  
-  
-     * @param subscriptionId The ID of the subscription to delete.
-  
-  
-  
-  
-     * @returns {Promise<DeleteSubscriptionResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async deleteSubscription(subscriptionId) {
-    let path = "/2/activity/subscriptions/{subscription_id}";
-    path = path.replace(
-      "{subscription_id}",
-      encodeURIComponent(String(subscriptionId))
-    );
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "DELETE",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Activity Stream
-     * Stream of X Activities
-  
-  
-  
-     * @returns {Promise<StreamResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async stream(options = {}) {
-    const {
-      backfillMinutes = void 0,
-      startTime = void 0,
-      endTime = void 0,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/activity/stream";
-    const params = new URLSearchParams();
-    if (backfillMinutes !== void 0) {
-      params.append("backfill_minutes", String(backfillMinutes));
-    }
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get X activity subscriptions
-     * Get a list of active subscriptions for XAA
-  
-  
-  
-     * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getSubscriptions() {
-    let path = "/2/activity/subscriptions";
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Create X activity subscription
-     * Creates a subscription for an X activity event
-  
-  
-  
-     * @returns {Promise<CreateSubscriptionResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async createSubscription(options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/activity/subscriptions";
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-};
-
-// src/activity/models.ts
-var models_exports = {};
-
-// src/posts/client.ts
-var PostsClient = class {
-  client;
-  /**
-     * Creates a new posts client instance
-     * 
-     * @param client - The main X API client instance
-     */
-  constructor(client) {
-    this.client = client;
-  }
-  /**
-     * Get count of recent Posts
-     * Retrieves the count of Posts from the last 7 days matching a search query.
-  
-  
-  
-     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
-  
-  
-  
-     * @returns {Promise<GetCountsRecentResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getCountsRecent(query, options = {}) {
-    const {
-      startTime = void 0,
-      endTime = void 0,
-      sinceId = void 0,
-      untilId = void 0,
-      nextToken = void 0,
-      paginationToken = void 0,
-      granularity = void 0,
-      searchCountfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/counts/recent";
-    const params = new URLSearchParams();
-    if (query !== void 0) {
-      params.append("query", String(query));
-    }
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (sinceId !== void 0) {
-      params.append("since_id", String(sinceId));
-    }
-    if (untilId !== void 0) {
-      params.append("until_id", String(untilId));
-    }
-    if (nextToken !== void 0) {
-      params.append("next_token", String(nextToken));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (granularity !== void 0) {
-      params.append("granularity", String(granularity));
-    }
-    if (searchCountfields !== void 0) {
-      params.append("search_count.fields", searchCountfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Quoted Posts
-     * Retrieves a list of Posts that quote a specific Post by its ID.
-  
-  
-     * @param id A single Post ID.
-  
-  
-  
-  
-     * @returns {Promise<GetQuotedResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getQuoted(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      exclude = [],
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/{id}/quote_tweets";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (exclude !== void 0) {
-      params.append("exclude", exclude.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Post analytics
-     * Retrieves analytics data for specified Posts within a defined time range.
-  
-  
-  
-     * @param ids A comma separated list of Post IDs. Up to 100 are allowed in a single request.
-  
-  
-  
-     * @param endTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
-  
-  
-  
-     * @param startTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
-  
-  
-  
-     * @param granularity The granularity for the search counts results.
-  
-  
-  
-     * @returns {Promise<GetAnalyticsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getAnalytics(ids, endTime, startTime, granularity, options = {}) {
-    const {
-      analyticsfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/analytics";
-    const params = new URLSearchParams();
-    if (ids !== void 0) {
-      params.append("ids", ids.join(","));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (granularity !== void 0) {
-      params.append("granularity", String(granularity));
-    }
-    if (analyticsfields !== void 0) {
-      params.append("analytics.fields", analyticsfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Search all Posts
-     * Retrieves Posts from the full archive matching a search query.
-  
-  
-  
-     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
-  
-  
-  
-     * @returns {Promise<SearchAllResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async searchAll(query, options = {}) {
-    const {
-      startTime = void 0,
-      endTime = void 0,
-      sinceId = void 0,
-      untilId = void 0,
-      maxResults = void 0,
-      nextToken = void 0,
-      paginationToken = void 0,
-      sortOrder = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/search/all";
-    const params = new URLSearchParams();
-    if (query !== void 0) {
-      params.append("query", String(query));
-    }
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (sinceId !== void 0) {
-      params.append("since_id", String(sinceId));
-    }
-    if (untilId !== void 0) {
-      params.append("until_id", String(untilId));
-    }
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (nextToken !== void 0) {
-      params.append("next_token", String(nextToken));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (sortOrder !== void 0) {
-      params.append("sort_order", String(sortOrder));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Reposted by
-     * Retrieves a list of Users who reposted a specific Post by its ID.
-  
-  
-     * @param id A single Post ID.
-  
-  
-  
-  
-     * @returns {Promise<GetRepostedByResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getRepostedBy(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/{id}/retweeted_by";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Liking Users
-     * Retrieves a list of Users who liked a specific Post by its ID.
-  
-  
-     * @param id A single Post ID.
-  
-  
-  
-  
-     * @returns {Promise<GetLikingUsersResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getLikingUsers(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/{id}/liking_users";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get 28-hour Post insights
-     * Retrieves engagement metrics for specified Posts over the last 28 hours.
-  
-  
-  
-     * @param tweetIds List of PostIds for 28hr metrics.
-  
-  
-  
-     * @param granularity granularity of metrics response.
-  
-  
-  
-     * @param requestedMetrics request metrics for historical request.
-  
-  
-  
-     * @returns {Promise<GetInsights28hrResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getInsights28hr(tweetIds, granularity, requestedMetrics, options = {}) {
-    const {
-      engagementfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/insights/28hr";
-    const params = new URLSearchParams();
-    if (tweetIds !== void 0) {
-      params.append("tweet_ids", tweetIds.join(","));
-    }
-    if (granularity !== void 0) {
-      params.append("granularity", String(granularity));
-    }
-    if (requestedMetrics !== void 0) {
-      params.append("requested_metrics", requestedMetrics.join(","));
-    }
-    if (engagementfields !== void 0) {
-      params.append("engagement.fields", engagementfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Reposts
-     * Retrieves a list of Posts that repost a specific Post by its ID.
-  
-  
-     * @param id A single Post ID.
-  
-  
-  
-  
-     * @returns {Promise<GetRepostsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getReposts(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/{id}/retweets";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Posts by IDs
-     * Retrieves details of multiple Posts by their IDs.
-  
-  
-  
-     * @param ids A comma separated list of Post IDs. Up to 100 are allowed in a single request.
-  
-  
-  
-     * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getByIds(ids, options = {}) {
-    const {
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets";
-    const params = new URLSearchParams();
-    if (ids !== void 0) {
-      params.append("ids", ids.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Create or Edit Post
-     * Creates a new Post for the authenticated user, or edits an existing Post when edit_options are provided.
-  
-  
-  
-     * @param body Request body
-  
-     * @returns {Promise<CreateResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async create(body) {
-    let path = "/2/tweets";
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: JSON.stringify(body || {})
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get historical Post insights
-     * Retrieves historical engagement metrics for specified Posts within a defined time range.
-  
-  
-  
-     * @param tweetIds List of PostIds for historical metrics.
-  
-  
-  
-     * @param endTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
-  
-  
-  
-     * @param startTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
-  
-  
-  
-     * @param granularity granularity of metrics response.
-  
-  
-  
-     * @param requestedMetrics request metrics for historical request.
-  
-  
-  
-     * @returns {Promise<GetInsightsHistoricalResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getInsightsHistorical(tweetIds, endTime, startTime, granularity, requestedMetrics, options = {}) {
-    const {
-      engagementfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/insights/historical";
-    const params = new URLSearchParams();
-    if (tweetIds !== void 0) {
-      params.append("tweet_ids", tweetIds.join(","));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (granularity !== void 0) {
-      params.append("granularity", String(granularity));
-    }
-    if (requestedMetrics !== void 0) {
-      params.append("requested_metrics", requestedMetrics.join(","));
-    }
-    if (engagementfields !== void 0) {
-      params.append("engagement.fields", engagementfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Search recent Posts
-     * Retrieves Posts from the last 7 days matching a search query.
-  
-  
-  
-     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
-  
-  
-  
-     * @returns {Promise<SearchRecentResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async searchRecent(query, options = {}) {
-    const {
-      startTime = void 0,
-      endTime = void 0,
-      sinceId = void 0,
-      untilId = void 0,
-      maxResults = void 0,
-      nextToken = void 0,
-      paginationToken = void 0,
-      sortOrder = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/search/recent";
-    const params = new URLSearchParams();
-    if (query !== void 0) {
-      params.append("query", String(query));
-    }
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (sinceId !== void 0) {
-      params.append("since_id", String(sinceId));
-    }
-    if (untilId !== void 0) {
-      params.append("until_id", String(untilId));
-    }
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (nextToken !== void 0) {
-      params.append("next_token", String(nextToken));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (sortOrder !== void 0) {
-      params.append("sort_order", String(sortOrder));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get count of all Posts
-     * Retrieves the count of Posts matching a search query from the full archive.
-  
-  
-  
-     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
-  
-  
-  
-     * @returns {Promise<GetCountsAllResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getCountsAll(query, options = {}) {
-    const {
-      startTime = void 0,
-      endTime = void 0,
-      sinceId = void 0,
-      untilId = void 0,
-      nextToken = void 0,
-      paginationToken = void 0,
-      granularity = void 0,
-      searchCountfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/counts/all";
-    const params = new URLSearchParams();
-    if (query !== void 0) {
-      params.append("query", String(query));
-    }
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (sinceId !== void 0) {
-      params.append("since_id", String(sinceId));
-    }
-    if (untilId !== void 0) {
-      params.append("until_id", String(untilId));
-    }
-    if (nextToken !== void 0) {
-      params.append("next_token", String(nextToken));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (granularity !== void 0) {
-      params.append("granularity", String(granularity));
-    }
-    if (searchCountfields !== void 0) {
-      params.append("search_count.fields", searchCountfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Hide reply
-     * Hides or unhides a reply to a conversation owned by the authenticated user.
-  
-  
-     * @param tweetId The ID of the reply that you want to hide or unhide.
-  
-  
-  
-  
-     * @returns {Promise<HideReplyResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async hideReply(tweetId, options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/{tweet_id}/hidden";
-    path = path.replace("{tweet_id}", encodeURIComponent(String(tweetId)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "PUT",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Post by ID
-     * Retrieves details of a specific Post by its ID.
-  
-  
-     * @param id A single Post ID.
-  
-  
-  
-  
-     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getById(id, options = {}) {
-    const {
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/{id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Delete Post
-     * Deletes a specific Post by its ID, if owned by the authenticated user.
-  
-  
-     * @param id The ID of the Post to be deleted.
+     * @param id The community note id to delete.
   
   
   
@@ -7676,7 +6659,7 @@ var PostsClient = class {
      */
   // Overload 1: Default behavior (unwrapped response)
   async delete(id) {
-    let path = "/2/tweets/{id}";
+    let path = "/2/notes/{id}";
     path = path.replace("{id}", encodeURIComponent(String(id)));
     const params = new URLSearchParams();
     const finalRequestOptions = {
@@ -7688,10 +6671,172 @@ var PostsClient = class {
       finalRequestOptions
     );
   }
+  /**
+     * Create a Community Note
+     * Creates a community note endpoint for LLM use case.
+  
+  
+  
+     * @returns {Promise<CreateResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async create(options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/notes";
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Search for Community Notes Written
+     * Returns all the community notes written by the user.
+  
+  
+  
+     * @param testMode If true, return the notes the caller wrote for the test. If false, return the notes the caller wrote on the product.
+  
+  
+  
+     * @returns {Promise<SearchWrittenResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async searchWritten(testMode, options = {}) {
+    const {
+      paginationToken = void 0,
+      maxResults = void 0,
+      notefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/notes/search/notes_written";
+    const params = new URLSearchParams();
+    if (testMode !== void 0) {
+      params.append("test_mode", String(testMode));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (notefields !== void 0) {
+      params.append("note.fields", notefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Evaluate a Community Note
+     * Endpoint to evaluate a community note.
+  
+  
+  
+     * @returns {Promise<EvaluateResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async evaluate(options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/evaluate_note";
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Search for Posts Eligible for Community Notes
+     * Returns all the posts that are eligible for community notes.
+  
+  
+  
+     * @param testMode If true, return a list of posts that are for the test. If false, return a list of posts that the bots can write proposed notes on the product.
+  
+  
+  
+     * @returns {Promise<SearchEligiblePostsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async searchEligiblePosts(testMode, options = {}) {
+    const {
+      paginationToken = void 0,
+      maxResults = void 0,
+      postSelection = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/notes/search/posts_eligible_for_notes";
+    const params = new URLSearchParams();
+    if (testMode !== void 0) {
+      params.append("test_mode", String(testMode));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (postSelection !== void 0) {
+      params.append("post_selection", String(postSelection));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
 };
 
-// src/posts/models.ts
-var models_exports2 = {};
+// src/community_notes/models.ts
+var models_exports = {};
 
 // src/spaces/client.ts
 var SpacesClient = class {
@@ -7703,6 +6848,61 @@ var SpacesClient = class {
      */
   constructor(client) {
     this.client = client;
+  }
+  /**
+     * Search Spaces
+     * Retrieves a list of Spaces matching the specified search query.
+  
+  
+  
+     * @param query The search query.
+  
+  
+  
+     * @returns {Promise<SearchResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async search(query, options = {}) {
+    const {
+      state = void 0,
+      maxResults = void 0,
+      spacefields = [],
+      expansions = [],
+      userfields = [],
+      topicfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/spaces/search";
+    const params = new URLSearchParams();
+    if (query !== void 0) {
+      params.append("query", String(query));
+    }
+    if (state !== void 0) {
+      params.append("state", String(state));
+    }
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (spacefields !== void 0) {
+      params.append("space.fields", spacefields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (topicfields !== void 0) {
+      params.append("topic.fields", topicfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
   }
   /**
      * Get Space Posts
@@ -7809,110 +7009,6 @@ var SpacesClient = class {
     );
   }
   /**
-     * Search Spaces
-     * Retrieves a list of Spaces matching the specified search query.
-  
-  
-  
-     * @param query The search query.
-  
-  
-  
-     * @returns {Promise<SearchResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async search(query, options = {}) {
-    const {
-      state = void 0,
-      maxResults = void 0,
-      spacefields = [],
-      expansions = [],
-      userfields = [],
-      topicfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/spaces/search";
-    const params = new URLSearchParams();
-    if (query !== void 0) {
-      params.append("query", String(query));
-    }
-    if (state !== void 0) {
-      params.append("state", String(state));
-    }
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (spacefields !== void 0) {
-      params.append("space.fields", spacefields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (topicfields !== void 0) {
-      params.append("topic.fields", topicfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Space ticket buyers
-     * Retrieves a list of Users who purchased tickets to a specific Space by its ID.
-  
-  
-     * @param id The ID of the Space to be retrieved.
-  
-  
-  
-  
-     * @returns {Promise<GetBuyersResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getBuyers(id, options = {}) {
-    const {
-      paginationToken = void 0,
-      maxResults = void 0,
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/spaces/{id}/buyers";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
      * Get space by ID
      * Retrieves details of a specific space by its ID.
   
@@ -8004,1345 +7100,59 @@ var SpacesClient = class {
       finalRequestOptions
     );
   }
+  /**
+     * Get Space ticket buyers
+     * Retrieves a list of Users who purchased tickets to a specific Space by its ID.
+  
+  
+     * @param id The ID of the Space to be retrieved.
+  
+  
+  
+  
+     * @returns {Promise<GetBuyersResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getBuyers(id, options = {}) {
+    const {
+      paginationToken = void 0,
+      maxResults = void 0,
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/spaces/{id}/buyers";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
 };
 
 // src/spaces/models.ts
-var models_exports3 = {};
-
-// src/communities/client.ts
-var CommunitiesClient = class {
-  client;
-  /**
-     * Creates a new communities client instance
-     * 
-     * @param client - The main X API client instance
-     */
-  constructor(client) {
-    this.client = client;
-  }
-  /**
-     * Search Communities
-     * Retrieves a list of Communities matching the specified search query.
-  
-  
-  
-     * @param query Query to search communities.
-  
-  
-  
-     * @returns {Promise<SearchResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async search(query, options = {}) {
-    const {
-      maxResults = void 0,
-      nextToken = void 0,
-      paginationToken = void 0,
-      communityfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/communities/search";
-    const params = new URLSearchParams();
-    if (query !== void 0) {
-      params.append("query", String(query));
-    }
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (nextToken !== void 0) {
-      params.append("next_token", String(nextToken));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (communityfields !== void 0) {
-      params.append("community.fields", communityfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Community by ID
-     * Retrieves details of a specific Community by its ID.
-  
-  
-     * @param id The ID of the Community.
-  
-  
-  
-  
-     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getById(id, options = {}) {
-    const {
-      communityfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/communities/{id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (communityfields !== void 0) {
-      params.append("community.fields", communityfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-};
-
-// src/communities/models.ts
-var models_exports4 = {};
-
-// src/community_notes/client.ts
-var CommunityNotesClient = class {
-  client;
-  /**
-     * Creates a new community notes client instance
-     * 
-     * @param client - The main X API client instance
-     */
-  constructor(client) {
-    this.client = client;
-  }
-  /**
-     * Evaluate a Community Note
-     * Endpoint to evaluate a community note.
-  
-  
-  
-     * @returns {Promise<EvaluateResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async evaluate(options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/evaluate_note";
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Create a Community Note
-     * Creates a community note endpoint for LLM use case.
-  
-  
-  
-     * @returns {Promise<CreateResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async create(options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/notes";
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Search for Community Notes Written
-     * Returns all the community notes written by the user.
-  
-  
-  
-     * @param testMode If true, return the notes the caller wrote for the test. If false, return the notes the caller wrote on the product.
-  
-  
-  
-     * @returns {Promise<SearchWrittenResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async searchWritten(testMode, options = {}) {
-    const {
-      paginationToken = void 0,
-      maxResults = void 0,
-      notefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/notes/search/notes_written";
-    const params = new URLSearchParams();
-    if (testMode !== void 0) {
-      params.append("test_mode", String(testMode));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (notefields !== void 0) {
-      params.append("note.fields", notefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Search for Posts Eligible for Community Notes
-     * Returns all the posts that are eligible for community notes.
-  
-  
-  
-     * @param testMode If true, return a list of posts that are for the test. If false, return a list of posts that the bots can write proposed notes on the product.
-  
-  
-  
-     * @returns {Promise<SearchEligiblePostsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async searchEligiblePosts(testMode, options = {}) {
-    const {
-      paginationToken = void 0,
-      maxResults = void 0,
-      postSelection = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/notes/search/posts_eligible_for_notes";
-    const params = new URLSearchParams();
-    if (testMode !== void 0) {
-      params.append("test_mode", String(testMode));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (postSelection !== void 0) {
-      params.append("post_selection", String(postSelection));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Delete a Community Note
-     * Deletes a community note.
-  
-  
-     * @param id The community note id to delete.
-  
-  
-  
-  
-     * @returns {Promise<DeleteResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async delete(id) {
-    let path = "/2/notes/{id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "DELETE",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-};
-
-// src/community_notes/models.ts
-var models_exports5 = {};
-
-// src/direct_messages/client.ts
-var DirectMessagesClient = class {
-  client;
-  /**
-     * Creates a new direct messages client instance
-     * 
-     * @param client - The main X API client instance
-     */
-  constructor(client) {
-    this.client = client;
-  }
-  /**
-     * Get DM events
-     * Retrieves a list of recent direct message events across all conversations.
-  
-  
-  
-     * @returns {Promise<GetEventsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getEvents(options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      eventTypes = [],
-      dmEventfields = [],
-      expansions = [],
-      mediafields = [],
-      userfields = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/dm_events";
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (eventTypes !== void 0) {
-      params.append("event_types", eventTypes.join(","));
-    }
-    if (dmEventfields !== void 0) {
-      params.append("dm_event.fields", dmEventfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get DM event by ID
-     * Retrieves details of a specific direct message event by its ID.
-  
-  
-     * @param eventId dm event id.
-  
-  
-  
-  
-     * @returns {Promise<GetEventsByIdResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getEventsById(eventId, options = {}) {
-    const {
-      dmEventfields = [],
-      expansions = [],
-      mediafields = [],
-      userfields = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/dm_events/{event_id}";
-    path = path.replace("{event_id}", encodeURIComponent(String(eventId)));
-    const params = new URLSearchParams();
-    if (dmEventfields !== void 0) {
-      params.append("dm_event.fields", dmEventfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Delete DM event
-     * Deletes a specific direct message event by its ID, if owned by the authenticated user.
-  
-  
-     * @param eventId The ID of the direct-message event to delete.
-  
-  
-  
-  
-     * @returns {Promise<DeleteEventsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async deleteEvents(eventId) {
-    let path = "/2/dm_events/{event_id}";
-    path = path.replace("{event_id}", encodeURIComponent(String(eventId)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "DELETE",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Create DM conversation
-     * Initiates a new direct message conversation with specified participants.
-  
-  
-  
-     * @returns {Promise<CreateConversationResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async createConversation(options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/dm_conversations";
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Create DM message by conversation ID
-     * Sends a new direct message to a specific conversation by its ID.
-  
-  
-     * @param dmConversationId The DM Conversation ID.
-  
-  
-  
-  
-     * @returns {Promise<CreateByConversationIdResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async createByConversationId(dmConversationId, options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/dm_conversations/{dm_conversation_id}/messages";
-    path = path.replace(
-      "{dm_conversation_id}",
-      encodeURIComponent(String(dmConversationId))
-    );
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Create DM message by participant ID
-     * Sends a new direct message to a specific participant by their ID.
-  
-  
-     * @param participantId The ID of the recipient user that will receive the DM.
-  
-  
-  
-  
-     * @returns {Promise<CreateByParticipantIdResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async createByParticipantId(participantId, options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/dm_conversations/with/{participant_id}/messages";
-    path = path.replace(
-      "{participant_id}",
-      encodeURIComponent(String(participantId))
-    );
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get DM events for a DM conversation
-     * Retrieves direct message events for a specific conversation.
-  
-  
-     * @param participantId The ID of the participant user for the One to One DM conversation.
-  
-  
-  
-  
-     * @returns {Promise<GetEventsByParticipantIdResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getEventsByParticipantId(participantId, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      eventTypes = [],
-      dmEventfields = [],
-      expansions = [],
-      mediafields = [],
-      userfields = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/dm_conversations/with/{participant_id}/dm_events";
-    path = path.replace(
-      "{participant_id}",
-      encodeURIComponent(String(participantId))
-    );
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (eventTypes !== void 0) {
-      params.append("event_types", eventTypes.join(","));
-    }
-    if (dmEventfields !== void 0) {
-      params.append("dm_event.fields", dmEventfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get DM events for a DM conversation
-     * Retrieves direct message events for a specific conversation.
-  
-  
-     * @param id The DM conversation ID.
-  
-  
-  
-  
-     * @returns {Promise<GetEventsByConversationIdResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getEventsByConversationId(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      eventTypes = [],
-      dmEventfields = [],
-      expansions = [],
-      mediafields = [],
-      userfields = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/dm_conversations/{id}/dm_events";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (eventTypes !== void 0) {
-      params.append("event_types", eventTypes.join(","));
-    }
-    if (dmEventfields !== void 0) {
-      params.append("dm_event.fields", dmEventfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-};
-
-// src/direct_messages/models.ts
-var models_exports6 = {};
-
-// src/trends/client.ts
-var TrendsClient = class {
-  client;
-  /**
-     * Creates a new trends client instance
-     * 
-     * @param client - The main X API client instance
-     */
-  constructor(client) {
-    this.client = client;
-  }
-  /**
-     * Get Trends by WOEID
-     * Retrieves trending topics for a specific location identified by its WOEID.
-  
-  
-     * @param woeid The WOEID of the place to lookup a trend for.
-  
-  
-  
-  
-     * @returns {Promise<GetByWoeidResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getByWoeid(woeid, options = {}) {
-    const {
-      maxTrends = void 0,
-      trendfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/trends/by/woeid/{woeid}";
-    path = path.replace("{woeid}", encodeURIComponent(String(woeid)));
-    const params = new URLSearchParams();
-    if (maxTrends !== void 0) {
-      params.append("max_trends", String(maxTrends));
-    }
-    if (trendfields !== void 0) {
-      params.append("trend.fields", trendfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get AI Trends by ID
-     * Retrieves an AI trend by its ID.
-  
-  
-     * @param id The ID of the ai trend.
-  
-  
-  
-  
-     * @returns {Promise<GetAiResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getAi(id, options = {}) {
-    const {
-      aiTrendfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/ai_trends/{id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (aiTrendfields !== void 0) {
-      params.append("ai_trend.fields", aiTrendfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get personalized Trends
-     * Retrieves personalized trending topics for the authenticated user.
-  
-  
-  
-     * @returns {Promise<GetPersonalizedResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getPersonalized(options = {}) {
-    const {
-      personalizedTrendfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/personalized_trends";
-    const params = new URLSearchParams();
-    if (personalizedTrendfields !== void 0) {
-      params.append(
-        "personalized_trend.fields",
-        personalizedTrendfields.join(",")
-      );
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-};
-
-// src/trends/models.ts
-var models_exports7 = {};
-
-// src/lists/client.ts
-var ListsClient = class {
-  client;
-  /**
-     * Creates a new lists client instance
-     * 
-     * @param client - The main X API client instance
-     */
-  constructor(client) {
-    this.client = client;
-  }
-  /**
-     * Get List by ID
-     * Retrieves details of a specific List by its ID.
-  
-  
-     * @param id The ID of the List.
-  
-  
-  
-  
-     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getById(id, options = {}) {
-    const {
-      listfields = [],
-      expansions = [],
-      userfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/lists/{id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (listfields !== void 0) {
-      params.append("list.fields", listfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Update List
-     * Updates the details of a specific List owned by the authenticated user by its ID.
-  
-  
-     * @param id The ID of the List to modify.
-  
-  
-  
-  
-     * @returns {Promise<UpdateResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async update(id, options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/lists/{id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "PUT",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Delete List
-     * Deletes a specific List owned by the authenticated user by its ID.
-  
-  
-     * @param id The ID of the List to delete.
-  
-  
-  
-  
-     * @returns {Promise<DeleteResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async delete(id) {
-    let path = "/2/lists/{id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "DELETE",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Create List
-     * Creates a new List for the authenticated user.
-  
-  
-  
-     * @returns {Promise<CreateResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async create(options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/lists";
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get List members
-     * Retrieves a list of Users who are members of a specific List by its ID.
-  
-  
-     * @param id The ID of the List.
-  
-  
-  
-  
-     * @returns {Promise<GetMembersResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getMembers(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/lists/{id}/members";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Add List member
-     * Adds a User to a specific List by its ID.
-  
-  
-     * @param id The ID of the List for which to add a member.
-  
-  
-  
-  
-     * @returns {Promise<AddMemberResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async addMember(id, options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/lists/{id}/members";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get List followers
-     * Retrieves a list of Users who follow a specific List by its ID.
-  
-  
-     * @param id The ID of the List.
-  
-  
-  
-  
-     * @returns {Promise<GetFollowersResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getFollowers(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/lists/{id}/followers";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get List Posts
-     * Retrieves a list of Posts associated with a specific List by its ID.
-  
-  
-     * @param id The ID of the List.
-  
-  
-  
-  
-     * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getPosts(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/lists/{id}/tweets";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Remove List member
-     * Removes a User from a specific List by its ID and the User’s ID.
-  
-  
-     * @param id The ID of the List to remove a member.
-  
-  
-  
-     * @param userId The ID of User that will be removed from the List.
-  
-  
-  
-  
-     * @returns {Promise<RemoveMemberByUserIdResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async removeMemberByUserId(id, userId) {
-    let path = "/2/lists/{id}/members/{user_id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    path = path.replace("{user_id}", encodeURIComponent(String(userId)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "DELETE",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-};
-
-// src/lists/models.ts
-var models_exports8 = {};
-
-// src/account_activity/client.ts
-var AccountActivityClient = class {
-  client;
-  /**
-     * Creates a new account activity client instance
-     * 
-     * @param client - The main X API client instance
-     */
-  constructor(client) {
-    this.client = client;
-  }
-  /**
-     * Validate subscription
-     * Checks a user’s Account Activity subscription for a given webhook.
-  
-  
-     * @param webhookId The webhook ID to check subscription against.
-  
-  
-  
-  
-     * @returns {Promise<ValidateSubscriptionResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async validateSubscription(webhookId) {
-    let path = "/2/account_activity/webhooks/{webhook_id}/subscriptions/all";
-    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Create subscription
-     * Creates an Account Activity subscription for the user and the given webhook.
-  
-  
-     * @param webhookId The webhook ID to check subscription against.
-  
-  
-  
-  
-     * @returns {Promise<CreateSubscriptionResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async createSubscription(webhookId, options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/account_activity/webhooks/{webhook_id}/subscriptions/all";
-    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Delete subscription
-     * Deletes an Account Activity subscription for the given webhook and user ID.
-  
-  
-     * @param webhookId The webhook ID to check subscription against.
-  
-  
-  
-     * @param userId User ID to unsubscribe from.
-  
-  
-  
-  
-     * @returns {Promise<DeleteSubscriptionResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async deleteSubscription(webhookId, userId) {
-    let path = "/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all";
-    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
-    path = path.replace("{user_id}", encodeURIComponent(String(userId)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "DELETE",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get subscription count
-     * Retrieves a count of currently active Account Activity subscriptions.
-  
-  
-  
-     * @returns {Promise<GetSubscriptionCountResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getSubscriptionCount() {
-    let path = "/2/account_activity/subscriptions/count";
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Create replay job
-     * Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
-  
-  
-     * @param webhookId The unique identifier for the webhook configuration.
-  
-  
-  
-  
-     * @param fromDate The oldest (starting) UTC timestamp (inclusive) from which events will be provided, in `yyyymmddhhmm` format.
-  
-  
-  
-     * @param toDate The latest (ending) UTC timestamp (exclusive) up to which events will be provided, in `yyyymmddhhmm` format.
-  
-  
-  
-     * @returns {Promise<CreateReplayJobResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async createReplayJob(webhookId, fromDate, toDate) {
-    let path = "/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all";
-    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
-    const params = new URLSearchParams();
-    if (fromDate !== void 0) {
-      params.append("from_date", String(fromDate));
-    }
-    if (toDate !== void 0) {
-      params.append("to_date", String(toDate));
-    }
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get subscriptions
-     * Retrieves a list of all active subscriptions for a given webhook.
-  
-  
-     * @param webhookId The webhook ID to pull subscriptions for.
-  
-  
-  
-  
-     * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getSubscriptions(webhookId) {
-    let path = "/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list";
-    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-};
-
-// src/account_activity/models.ts
-var models_exports9 = {};
+var models_exports2 = {};
 
 // src/stream/event_driven_stream.ts
 var StreamEvent = {
@@ -9611,349 +7421,6 @@ var StreamClient = class {
     this.client = client;
   }
   /**
-       * Stream all Posts
-       * Streams all public Posts in real-time.
-       * 
-       * Returns an event-driven stream that's easy to use.
-       * Use .on() to listen for events like 'data', 'error', 'close'.
-       * Also supports async iteration with for await...of.
-  
-  
-  
-       * @param partition The partition number.
-  
-  
-  
-       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
-       */
-  async postsFirehose(partition, options = {}) {
-    const requiredAuthTypes = [];
-    requiredAuthTypes.push("BearerToken");
-    this.client.validateAuthentication(requiredAuthTypes, "postsFirehose");
-    const {
-      backfillMinutes = void 0,
-      startTime = void 0,
-      endTime = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      headers = {},
-      signal,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/firehose/stream";
-    const params = new URLSearchParams();
-    if (backfillMinutes !== void 0) {
-      params.append("backfill_minutes", String(backfillMinutes));
-    }
-    params.append("partition", String(partition));
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const url = path + (params.toString() ? `?${params.toString()}` : "");
-    const response = await this.client.request("GET", url, {
-      headers: {
-        "Content-Type": "application/json",
-        ...headers
-      },
-      signal,
-      raw: true,
-      // Get raw Response object for streaming
-      timeout: 0,
-      // Disable timeout for streaming requests
-      ...requestOptions
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    if (!response.body) {
-      throw new Error("Response body is not available for streaming");
-    }
-    const eventStream = new EventDrivenStream();
-    await eventStream.connect(response.body);
-    return eventStream;
-  }
-  /**
-       * Stream 10% sampled Posts
-       * Streams a 10% sample of public Posts in real-time.
-       * 
-       * Returns an event-driven stream that's easy to use.
-       * Use .on() to listen for events like 'data', 'error', 'close'.
-       * Also supports async iteration with for await...of.
-  
-  
-  
-       * @param partition The partition number.
-  
-  
-  
-       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
-       */
-  async postsSample10(partition, options = {}) {
-    const requiredAuthTypes = [];
-    requiredAuthTypes.push("BearerToken");
-    this.client.validateAuthentication(requiredAuthTypes, "postsSample10");
-    const {
-      backfillMinutes = void 0,
-      startTime = void 0,
-      endTime = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      headers = {},
-      signal,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/sample10/stream";
-    const params = new URLSearchParams();
-    if (backfillMinutes !== void 0) {
-      params.append("backfill_minutes", String(backfillMinutes));
-    }
-    params.append("partition", String(partition));
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const url = path + (params.toString() ? `?${params.toString()}` : "");
-    const response = await this.client.request("GET", url, {
-      headers: {
-        "Content-Type": "application/json",
-        ...headers
-      },
-      signal,
-      raw: true,
-      // Get raw Response object for streaming
-      timeout: 0,
-      // Disable timeout for streaming requests
-      ...requestOptions
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    if (!response.body) {
-      throw new Error("Response body is not available for streaming");
-    }
-    const eventStream = new EventDrivenStream();
-    await eventStream.connect(response.body);
-    return eventStream;
-  }
-  /**
-       * Stream Portuguese Posts
-       * Streams all public Portuguese-language Posts in real-time.
-       * 
-       * Returns an event-driven stream that's easy to use.
-       * Use .on() to listen for events like 'data', 'error', 'close'.
-       * Also supports async iteration with for await...of.
-  
-  
-  
-       * @param partition The partition number.
-  
-  
-  
-       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
-       */
-  async postsFirehosePt(partition, options = {}) {
-    const requiredAuthTypes = [];
-    requiredAuthTypes.push("BearerToken");
-    this.client.validateAuthentication(requiredAuthTypes, "postsFirehosePt");
-    const {
-      backfillMinutes = void 0,
-      startTime = void 0,
-      endTime = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      headers = {},
-      signal,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/firehose/stream/lang/pt";
-    const params = new URLSearchParams();
-    if (backfillMinutes !== void 0) {
-      params.append("backfill_minutes", String(backfillMinutes));
-    }
-    params.append("partition", String(partition));
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const url = path + (params.toString() ? `?${params.toString()}` : "");
-    const response = await this.client.request("GET", url, {
-      headers: {
-        "Content-Type": "application/json",
-        ...headers
-      },
-      signal,
-      raw: true,
-      // Get raw Response object for streaming
-      timeout: 0,
-      // Disable timeout for streaming requests
-      ...requestOptions
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    if (!response.body) {
-      throw new Error("Response body is not available for streaming");
-    }
-    const eventStream = new EventDrivenStream();
-    await eventStream.connect(response.body);
-    return eventStream;
-  }
-  /**
-       * Stream all Likes
-       * Streams all public Likes in real-time.
-       * 
-       * Returns an event-driven stream that's easy to use.
-       * Use .on() to listen for events like 'data', 'error', 'close'.
-       * Also supports async iteration with for await...of.
-  
-  
-  
-       * @param partition The partition number.
-  
-  
-  
-       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
-       */
-  async likesFirehose(partition, options = {}) {
-    const requiredAuthTypes = [];
-    requiredAuthTypes.push("BearerToken");
-    this.client.validateAuthentication(requiredAuthTypes, "likesFirehose");
-    const {
-      backfillMinutes = void 0,
-      startTime = void 0,
-      endTime = void 0,
-      likeWithTweetAuthorfields = [],
-      expansions = [],
-      userfields = [],
-      tweetfields = [],
-      headers = {},
-      signal,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/likes/firehose/stream";
-    const params = new URLSearchParams();
-    if (backfillMinutes !== void 0) {
-      params.append("backfill_minutes", String(backfillMinutes));
-    }
-    params.append("partition", String(partition));
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (likeWithTweetAuthorfields !== void 0) {
-      params.append(
-        "like_with_tweet_author.fields",
-        likeWithTweetAuthorfields.join(",")
-      );
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const url = path + (params.toString() ? `?${params.toString()}` : "");
-    const response = await this.client.request("GET", url, {
-      headers: {
-        "Content-Type": "application/json",
-        ...headers
-      },
-      signal,
-      raw: true,
-      // Get raw Response object for streaming
-      timeout: 0,
-      // Disable timeout for streaming requests
-      ...requestOptions
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    if (!response.body) {
-      throw new Error("Response body is not available for streaming");
-    }
-    const eventStream = new EventDrivenStream();
-    await eventStream.connect(response.body);
-    return eventStream;
-  }
-  /**
        * Stream Posts compliance data
        * Streams all compliance data related to Posts.
        * 
@@ -10017,66 +7484,8 @@ var StreamClient = class {
     return eventStream;
   }
   /**
-       * Stream Post labels
-       * Streams all labeling events applied to Posts.
-       * 
-       * Returns an event-driven stream that's easy to use.
-       * Use .on() to listen for events like 'data', 'error', 'close'.
-       * Also supports async iteration with for await...of.
-  
-  
-  
-       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
-       */
-  async labelsCompliance(options = {}) {
-    const requiredAuthTypes = [];
-    requiredAuthTypes.push("BearerToken");
-    this.client.validateAuthentication(requiredAuthTypes, "labelsCompliance");
-    const {
-      backfillMinutes = void 0,
-      startTime = void 0,
-      endTime = void 0,
-      headers = {},
-      signal,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/label/stream";
-    const params = new URLSearchParams();
-    if (backfillMinutes !== void 0) {
-      params.append("backfill_minutes", String(backfillMinutes));
-    }
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    const url = path + (params.toString() ? `?${params.toString()}` : "");
-    const response = await this.client.request("GET", url, {
-      headers: {
-        "Content-Type": "application/json",
-        ...headers
-      },
-      signal,
-      raw: true,
-      // Get raw Response object for streaming
-      timeout: 0,
-      // Disable timeout for streaming requests
-      ...requestOptions
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    if (!response.body) {
-      throw new Error("Response body is not available for streaming");
-    }
-    const eventStream = new EventDrivenStream();
-    await eventStream.connect(response.body);
-    return eventStream;
-  }
-  /**
-       * Stream English Posts
-       * Streams all public English-language Posts in real-time.
+       * Stream Korean Posts
+       * Streams all public Korean-language Posts in real-time.
        * 
        * Returns an event-driven stream that's easy to use.
        * Use .on() to listen for events like 'data', 'error', 'close'.
@@ -10090,10 +7499,10 @@ var StreamClient = class {
   
        * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
        */
-  async postsFirehoseEn(partition, options = {}) {
+  async postsFirehoseKo(partition, options = {}) {
     const requiredAuthTypes = [];
     requiredAuthTypes.push("BearerToken");
-    this.client.validateAuthentication(requiredAuthTypes, "postsFirehoseEn");
+    this.client.validateAuthentication(requiredAuthTypes, "postsFirehoseKo");
     const {
       backfillMinutes = void 0,
       startTime = void 0,
@@ -10108,7 +7517,7 @@ var StreamClient = class {
       signal,
       requestOptions = {}
     } = options || {};
-    let path = "/2/tweets/firehose/stream/lang/en";
+    let path = "/2/tweets/firehose/stream/lang/ko";
     const params = new URLSearchParams();
     if (backfillMinutes !== void 0) {
       params.append("backfill_minutes", String(backfillMinutes));
@@ -10225,6 +7634,542 @@ var StreamClient = class {
     return eventStream;
   }
   /**
+       * Stream all Likes
+       * Streams all public Likes in real-time.
+       * 
+       * Returns an event-driven stream that's easy to use.
+       * Use .on() to listen for events like 'data', 'error', 'close'.
+       * Also supports async iteration with for await...of.
+  
+  
+  
+       * @param partition The partition number.
+  
+  
+  
+       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
+       */
+  async likesFirehose(partition, options = {}) {
+    const requiredAuthTypes = [];
+    requiredAuthTypes.push("BearerToken");
+    this.client.validateAuthentication(requiredAuthTypes, "likesFirehose");
+    const {
+      backfillMinutes = void 0,
+      startTime = void 0,
+      endTime = void 0,
+      likeWithTweetAuthorfields = [],
+      expansions = [],
+      userfields = [],
+      tweetfields = [],
+      headers = {},
+      signal,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/likes/firehose/stream";
+    const params = new URLSearchParams();
+    if (backfillMinutes !== void 0) {
+      params.append("backfill_minutes", String(backfillMinutes));
+    }
+    params.append("partition", String(partition));
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (likeWithTweetAuthorfields !== void 0) {
+      params.append(
+        "like_with_tweet_author.fields",
+        likeWithTweetAuthorfields.join(",")
+      );
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const url = path + (params.toString() ? `?${params.toString()}` : "");
+    const response = await this.client.request("GET", url, {
+      headers: {
+        "Content-Type": "application/json",
+        ...headers
+      },
+      signal,
+      raw: true,
+      // Get raw Response object for streaming
+      timeout: 0,
+      // Disable timeout for streaming requests
+      ...requestOptions
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    if (!response.body) {
+      throw new Error("Response body is not available for streaming");
+    }
+    const eventStream = new EventDrivenStream();
+    await eventStream.connect(response.body);
+    return eventStream;
+  }
+  /**
+       * Stream sampled Likes
+       * Streams a 10% sample of public Likes in real-time.
+       * 
+       * Returns an event-driven stream that's easy to use.
+       * Use .on() to listen for events like 'data', 'error', 'close'.
+       * Also supports async iteration with for await...of.
+  
+  
+  
+       * @param partition The partition number.
+  
+  
+  
+       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
+       */
+  async likesSample10(partition, options = {}) {
+    const requiredAuthTypes = [];
+    requiredAuthTypes.push("BearerToken");
+    this.client.validateAuthentication(requiredAuthTypes, "likesSample10");
+    const {
+      backfillMinutes = void 0,
+      startTime = void 0,
+      endTime = void 0,
+      likeWithTweetAuthorfields = [],
+      expansions = [],
+      userfields = [],
+      tweetfields = [],
+      headers = {},
+      signal,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/likes/sample10/stream";
+    const params = new URLSearchParams();
+    if (backfillMinutes !== void 0) {
+      params.append("backfill_minutes", String(backfillMinutes));
+    }
+    params.append("partition", String(partition));
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (likeWithTweetAuthorfields !== void 0) {
+      params.append(
+        "like_with_tweet_author.fields",
+        likeWithTweetAuthorfields.join(",")
+      );
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const url = path + (params.toString() ? `?${params.toString()}` : "");
+    const response = await this.client.request("GET", url, {
+      headers: {
+        "Content-Type": "application/json",
+        ...headers
+      },
+      signal,
+      raw: true,
+      // Get raw Response object for streaming
+      timeout: 0,
+      // Disable timeout for streaming requests
+      ...requestOptions
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    if (!response.body) {
+      throw new Error("Response body is not available for streaming");
+    }
+    const eventStream = new EventDrivenStream();
+    await eventStream.connect(response.body);
+    return eventStream;
+  }
+  /**
+       * Stream Likes compliance data
+       * Streams all compliance data related to Likes for Users.
+       * 
+       * Returns an event-driven stream that's easy to use.
+       * Use .on() to listen for events like 'data', 'error', 'close'.
+       * Also supports async iteration with for await...of.
+  
+  
+  
+       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
+       */
+  async likesCompliance(options = {}) {
+    const requiredAuthTypes = [];
+    requiredAuthTypes.push("BearerToken");
+    this.client.validateAuthentication(requiredAuthTypes, "likesCompliance");
+    const {
+      backfillMinutes = void 0,
+      startTime = void 0,
+      endTime = void 0,
+      headers = {},
+      signal,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/likes/compliance/stream";
+    const params = new URLSearchParams();
+    if (backfillMinutes !== void 0) {
+      params.append("backfill_minutes", String(backfillMinutes));
+    }
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    const url = path + (params.toString() ? `?${params.toString()}` : "");
+    const response = await this.client.request("GET", url, {
+      headers: {
+        "Content-Type": "application/json",
+        ...headers
+      },
+      signal,
+      raw: true,
+      // Get raw Response object for streaming
+      timeout: 0,
+      // Disable timeout for streaming requests
+      ...requestOptions
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    if (!response.body) {
+      throw new Error("Response body is not available for streaming");
+    }
+    const eventStream = new EventDrivenStream();
+    await eventStream.connect(response.body);
+    return eventStream;
+  }
+  /**
+       * Stream Portuguese Posts
+       * Streams all public Portuguese-language Posts in real-time.
+       * 
+       * Returns an event-driven stream that's easy to use.
+       * Use .on() to listen for events like 'data', 'error', 'close'.
+       * Also supports async iteration with for await...of.
+  
+  
+  
+       * @param partition The partition number.
+  
+  
+  
+       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
+       */
+  async postsFirehosePt(partition, options = {}) {
+    const requiredAuthTypes = [];
+    requiredAuthTypes.push("BearerToken");
+    this.client.validateAuthentication(requiredAuthTypes, "postsFirehosePt");
+    const {
+      backfillMinutes = void 0,
+      startTime = void 0,
+      endTime = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      headers = {},
+      signal,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/firehose/stream/lang/pt";
+    const params = new URLSearchParams();
+    if (backfillMinutes !== void 0) {
+      params.append("backfill_minutes", String(backfillMinutes));
+    }
+    params.append("partition", String(partition));
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const url = path + (params.toString() ? `?${params.toString()}` : "");
+    const response = await this.client.request("GET", url, {
+      headers: {
+        "Content-Type": "application/json",
+        ...headers
+      },
+      signal,
+      raw: true,
+      // Get raw Response object for streaming
+      timeout: 0,
+      // Disable timeout for streaming requests
+      ...requestOptions
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    if (!response.body) {
+      throw new Error("Response body is not available for streaming");
+    }
+    const eventStream = new EventDrivenStream();
+    await eventStream.connect(response.body);
+    return eventStream;
+  }
+  /**
+       * Stream Post labels
+       * Streams all labeling events applied to Posts.
+       * 
+       * Returns an event-driven stream that's easy to use.
+       * Use .on() to listen for events like 'data', 'error', 'close'.
+       * Also supports async iteration with for await...of.
+  
+  
+  
+       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
+       */
+  async labelsCompliance(options = {}) {
+    const requiredAuthTypes = [];
+    requiredAuthTypes.push("BearerToken");
+    this.client.validateAuthentication(requiredAuthTypes, "labelsCompliance");
+    const {
+      backfillMinutes = void 0,
+      startTime = void 0,
+      endTime = void 0,
+      headers = {},
+      signal,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/label/stream";
+    const params = new URLSearchParams();
+    if (backfillMinutes !== void 0) {
+      params.append("backfill_minutes", String(backfillMinutes));
+    }
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    const url = path + (params.toString() ? `?${params.toString()}` : "");
+    const response = await this.client.request("GET", url, {
+      headers: {
+        "Content-Type": "application/json",
+        ...headers
+      },
+      signal,
+      raw: true,
+      // Get raw Response object for streaming
+      timeout: 0,
+      // Disable timeout for streaming requests
+      ...requestOptions
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    if (!response.body) {
+      throw new Error("Response body is not available for streaming");
+    }
+    const eventStream = new EventDrivenStream();
+    await eventStream.connect(response.body);
+    return eventStream;
+  }
+  /**
+       * Stream filtered Posts
+       * Streams Posts in real-time matching the active rule set.
+       * 
+       * Returns an event-driven stream that's easy to use.
+       * Use .on() to listen for events like 'data', 'error', 'close'.
+       * Also supports async iteration with for await...of.
+  
+  
+  
+       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
+       */
+  async posts(options = {}) {
+    const requiredAuthTypes = [];
+    requiredAuthTypes.push("BearerToken");
+    this.client.validateAuthentication(requiredAuthTypes, "posts");
+    const {
+      backfillMinutes = void 0,
+      startTime = void 0,
+      endTime = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      headers = {},
+      signal,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/search/stream";
+    const params = new URLSearchParams();
+    if (backfillMinutes !== void 0) {
+      params.append("backfill_minutes", String(backfillMinutes));
+    }
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const url = path + (params.toString() ? `?${params.toString()}` : "");
+    const response = await this.client.request("GET", url, {
+      headers: {
+        "Content-Type": "application/json",
+        ...headers
+      },
+      signal,
+      raw: true,
+      // Get raw Response object for streaming
+      timeout: 0,
+      // Disable timeout for streaming requests
+      ...requestOptions
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    if (!response.body) {
+      throw new Error("Response body is not available for streaming");
+    }
+    const eventStream = new EventDrivenStream();
+    await eventStream.connect(response.body);
+    return eventStream;
+  }
+  /**
+       * Stream English Posts
+       * Streams all public English-language Posts in real-time.
+       * 
+       * Returns an event-driven stream that's easy to use.
+       * Use .on() to listen for events like 'data', 'error', 'close'.
+       * Also supports async iteration with for await...of.
+  
+  
+  
+       * @param partition The partition number.
+  
+  
+  
+       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
+       */
+  async postsFirehoseEn(partition, options = {}) {
+    const requiredAuthTypes = [];
+    requiredAuthTypes.push("BearerToken");
+    this.client.validateAuthentication(requiredAuthTypes, "postsFirehoseEn");
+    const {
+      backfillMinutes = void 0,
+      startTime = void 0,
+      endTime = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      headers = {},
+      signal,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/firehose/stream/lang/en";
+    const params = new URLSearchParams();
+    if (backfillMinutes !== void 0) {
+      params.append("backfill_minutes", String(backfillMinutes));
+    }
+    params.append("partition", String(partition));
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const url = path + (params.toString() ? `?${params.toString()}` : "");
+    const response = await this.client.request("GET", url, {
+      headers: {
+        "Content-Type": "application/json",
+        ...headers
+      },
+      signal,
+      raw: true,
+      // Get raw Response object for streaming
+      timeout: 0,
+      // Disable timeout for streaming requests
+      ...requestOptions
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    if (!response.body) {
+      throw new Error("Response body is not available for streaming");
+    }
+    const eventStream = new EventDrivenStream();
+    await eventStream.connect(response.body);
+    return eventStream;
+  }
+  /**
        * Stream sampled Posts
        * Streams a 1% sample of public Posts in real-time.
        * 
@@ -10256,6 +8201,93 @@ var StreamClient = class {
     const params = new URLSearchParams();
     if (backfillMinutes !== void 0) {
       params.append("backfill_minutes", String(backfillMinutes));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const url = path + (params.toString() ? `?${params.toString()}` : "");
+    const response = await this.client.request("GET", url, {
+      headers: {
+        "Content-Type": "application/json",
+        ...headers
+      },
+      signal,
+      raw: true,
+      // Get raw Response object for streaming
+      timeout: 0,
+      // Disable timeout for streaming requests
+      ...requestOptions
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    if (!response.body) {
+      throw new Error("Response body is not available for streaming");
+    }
+    const eventStream = new EventDrivenStream();
+    await eventStream.connect(response.body);
+    return eventStream;
+  }
+  /**
+       * Stream all Posts
+       * Streams all public Posts in real-time.
+       * 
+       * Returns an event-driven stream that's easy to use.
+       * Use .on() to listen for events like 'data', 'error', 'close'.
+       * Also supports async iteration with for await...of.
+  
+  
+  
+       * @param partition The partition number.
+  
+  
+  
+       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
+       */
+  async postsFirehose(partition, options = {}) {
+    const requiredAuthTypes = [];
+    requiredAuthTypes.push("BearerToken");
+    this.client.validateAuthentication(requiredAuthTypes, "postsFirehose");
+    const {
+      backfillMinutes = void 0,
+      startTime = void 0,
+      endTime = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      headers = {},
+      signal,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/firehose/stream";
+    const params = new URLSearchParams();
+    if (backfillMinutes !== void 0) {
+      params.append("backfill_minutes", String(backfillMinutes));
+    }
+    params.append("partition", String(partition));
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
     }
     if (tweetfields !== void 0) {
       params.append("tweet.fields", tweetfields.join(","));
@@ -10386,148 +8418,8 @@ var StreamClient = class {
     return eventStream;
   }
   /**
-       * Stream filtered Posts
-       * Streams Posts in real-time matching the active rule set.
-       * 
-       * Returns an event-driven stream that's easy to use.
-       * Use .on() to listen for events like 'data', 'error', 'close'.
-       * Also supports async iteration with for await...of.
-  
-  
-  
-       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
-       */
-  async posts(options = {}) {
-    const requiredAuthTypes = [];
-    requiredAuthTypes.push("BearerToken");
-    this.client.validateAuthentication(requiredAuthTypes, "posts");
-    const {
-      backfillMinutes = void 0,
-      startTime = void 0,
-      endTime = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      headers = {},
-      signal,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/search/stream";
-    const params = new URLSearchParams();
-    if (backfillMinutes !== void 0) {
-      params.append("backfill_minutes", String(backfillMinutes));
-    }
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const url = path + (params.toString() ? `?${params.toString()}` : "");
-    const response = await this.client.request("GET", url, {
-      headers: {
-        "Content-Type": "application/json",
-        ...headers
-      },
-      signal,
-      raw: true,
-      // Get raw Response object for streaming
-      timeout: 0,
-      // Disable timeout for streaming requests
-      ...requestOptions
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    if (!response.body) {
-      throw new Error("Response body is not available for streaming");
-    }
-    const eventStream = new EventDrivenStream();
-    await eventStream.connect(response.body);
-    return eventStream;
-  }
-  /**
-       * Stream Likes compliance data
-       * Streams all compliance data related to Likes for Users.
-       * 
-       * Returns an event-driven stream that's easy to use.
-       * Use .on() to listen for events like 'data', 'error', 'close'.
-       * Also supports async iteration with for await...of.
-  
-  
-  
-       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
-       */
-  async likesCompliance(options = {}) {
-    const requiredAuthTypes = [];
-    requiredAuthTypes.push("BearerToken");
-    this.client.validateAuthentication(requiredAuthTypes, "likesCompliance");
-    const {
-      backfillMinutes = void 0,
-      startTime = void 0,
-      endTime = void 0,
-      headers = {},
-      signal,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/likes/compliance/stream";
-    const params = new URLSearchParams();
-    if (backfillMinutes !== void 0) {
-      params.append("backfill_minutes", String(backfillMinutes));
-    }
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    const url = path + (params.toString() ? `?${params.toString()}` : "");
-    const response = await this.client.request("GET", url, {
-      headers: {
-        "Content-Type": "application/json",
-        ...headers
-      },
-      signal,
-      raw: true,
-      // Get raw Response object for streaming
-      timeout: 0,
-      // Disable timeout for streaming requests
-      ...requestOptions
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    if (!response.body) {
-      throw new Error("Response body is not available for streaming");
-    }
-    const eventStream = new EventDrivenStream();
-    await eventStream.connect(response.body);
-    return eventStream;
-  }
-  /**
-       * Stream Korean Posts
-       * Streams all public Korean-language Posts in real-time.
+       * Stream 10% sampled Posts
+       * Streams a 10% sample of public Posts in real-time.
        * 
        * Returns an event-driven stream that's easy to use.
        * Use .on() to listen for events like 'data', 'error', 'close'.
@@ -10541,10 +8433,10 @@ var StreamClient = class {
   
        * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
        */
-  async postsFirehoseKo(partition, options = {}) {
+  async postsSample10(partition, options = {}) {
     const requiredAuthTypes = [];
     requiredAuthTypes.push("BearerToken");
-    this.client.validateAuthentication(requiredAuthTypes, "postsFirehoseKo");
+    this.client.validateAuthentication(requiredAuthTypes, "postsSample10");
     const {
       backfillMinutes = void 0,
       startTime = void 0,
@@ -10559,7 +8451,7 @@ var StreamClient = class {
       signal,
       requestOptions = {}
     } = options || {};
-    let path = "/2/tweets/firehose/stream/lang/ko";
+    let path = "/2/tweets/sample10/stream";
     const params = new URLSearchParams();
     if (backfillMinutes !== void 0) {
       params.append("backfill_minutes", String(backfillMinutes));
@@ -10588,88 +8480,6 @@ var StreamClient = class {
     }
     if (placefields !== void 0) {
       params.append("place.fields", placefields.join(","));
-    }
-    const url = path + (params.toString() ? `?${params.toString()}` : "");
-    const response = await this.client.request("GET", url, {
-      headers: {
-        "Content-Type": "application/json",
-        ...headers
-      },
-      signal,
-      raw: true,
-      // Get raw Response object for streaming
-      timeout: 0,
-      // Disable timeout for streaming requests
-      ...requestOptions
-    });
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    if (!response.body) {
-      throw new Error("Response body is not available for streaming");
-    }
-    const eventStream = new EventDrivenStream();
-    await eventStream.connect(response.body);
-    return eventStream;
-  }
-  /**
-       * Stream sampled Likes
-       * Streams a 10% sample of public Likes in real-time.
-       * 
-       * Returns an event-driven stream that's easy to use.
-       * Use .on() to listen for events like 'data', 'error', 'close'.
-       * Also supports async iteration with for await...of.
-  
-  
-  
-       * @param partition The partition number.
-  
-  
-  
-       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
-       */
-  async likesSample10(partition, options = {}) {
-    const requiredAuthTypes = [];
-    requiredAuthTypes.push("BearerToken");
-    this.client.validateAuthentication(requiredAuthTypes, "likesSample10");
-    const {
-      backfillMinutes = void 0,
-      startTime = void 0,
-      endTime = void 0,
-      likeWithTweetAuthorfields = [],
-      expansions = [],
-      userfields = [],
-      tweetfields = [],
-      headers = {},
-      signal,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/likes/sample10/stream";
-    const params = new URLSearchParams();
-    if (backfillMinutes !== void 0) {
-      params.append("backfill_minutes", String(backfillMinutes));
-    }
-    params.append("partition", String(partition));
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (likeWithTweetAuthorfields !== void 0) {
-      params.append(
-        "like_with_tweet_author.fields",
-        likeWithTweetAuthorfields.join(",")
-      );
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
     }
     const url = path + (params.toString() ? `?${params.toString()}` : "");
     const response = await this.client.request("GET", url, {
@@ -10814,11 +8624,11 @@ var StreamClient = class {
   }
 };
 
-// src/users/client.ts
-var UsersClient = class {
+// src/account_activity/client.ts
+var AccountActivityClient = class {
   client;
   /**
-     * Creates a new users client instance
+     * Creates a new account activity client instance
      * 
      * @param client - The main X API client instance
      */
@@ -10826,41 +8636,19 @@ var UsersClient = class {
     this.client = client;
   }
   /**
-     * Get Users by IDs
-     * Retrieves details of multiple Users by their IDs.
+     * Get subscription count
+     * Retrieves a count of currently active Account Activity subscriptions.
   
   
   
-     * @param ids A list of User IDs, comma-separated. You can specify up to 100 IDs.
-  
-  
-  
-     * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
+     * @returns {Promise<GetSubscriptionCountResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async getByIds(ids, options = {}) {
-    const {
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users";
+  async getSubscriptionCount() {
+    let path = "/2/account_activity/subscriptions/count";
     const params = new URLSearchParams();
-    if (ids !== void 0) {
-      params.append("ids", ids.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
     const finalRequestOptions = {
-      ...requestOptions
+      // No optional parameters, using empty request options
     };
     return this.client.request(
       "GET",
@@ -10869,59 +8657,24 @@ var UsersClient = class {
     );
   }
   /**
-     * Get liked Posts
-     * Retrieves a list of Posts liked by a specific User by their ID.
+     * Get subscriptions
+     * Retrieves a list of all active subscriptions for a given webhook.
   
   
-     * @param id The ID of the User to lookup.
+     * @param webhookId The webhook ID to pull subscriptions for.
   
   
   
   
-     * @returns {Promise<GetLikedPostsResponse>} Promise resolving to the API response
+     * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async getLikedPosts(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/liked_tweets";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
+  async getSubscriptions(webhookId) {
+    let path = "/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list";
+    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
     const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
     const finalRequestOptions = {
-      ...requestOptions
+      // No optional parameters, using empty request options
     };
     return this.client.request(
       "GET",
@@ -10930,29 +8683,26 @@ var UsersClient = class {
     );
   }
   /**
-     * Unrepost Post
-     * Causes the authenticated user to unrepost a specific Post by its ID.
+     * Delete subscription
+     * Deletes an Account Activity subscription for the given webhook and user ID.
   
   
-     * @param id The ID of the authenticated source User that is requesting to repost the Post.
-  
-  
-  
-     * @param sourceTweetId The ID of the Post that the User is requesting to unretweet.
+     * @param webhookId The webhook ID to check subscription against.
   
   
   
+     * @param userId User ID to unsubscribe from.
   
-     * @returns {Promise<UnrepostPostResponse>} Promise resolving to the API response
+  
+  
+  
+     * @returns {Promise<DeleteSubscriptionResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async unrepostPost(id, sourceTweetId) {
-    let path = "/2/users/{id}/retweets/{source_tweet_id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    path = path.replace(
-      "{source_tweet_id}",
-      encodeURIComponent(String(sourceTweetId))
-    );
+  async deleteSubscription(webhookId, userId) {
+    let path = "/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all";
+    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
+    path = path.replace("{user_id}", encodeURIComponent(String(userId)));
     const params = new URLSearchParams();
     const finalRequestOptions = {
       // No optional parameters, using empty request options
@@ -10964,22 +8714,36 @@ var UsersClient = class {
     );
   }
   /**
-     * Unblock DMs
-     * Unblocks direct messages to or from a specific User by their ID for the authenticated user.
+     * Create replay job
+     * Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
   
   
-     * @param id The ID of the target User that the authenticated user requesting to unblock dms for.
+     * @param webhookId The unique identifier for the webhook configuration.
   
   
   
   
-     * @returns {Promise<UnblockDmsResponse>} Promise resolving to the API response
+     * @param fromDate The oldest (starting) UTC timestamp (inclusive) from which events will be provided, in `yyyymmddhhmm` format.
+  
+  
+  
+     * @param toDate The latest (ending) UTC timestamp (exclusive) up to which events will be provided, in `yyyymmddhhmm` format.
+  
+  
+  
+     * @returns {Promise<CreateReplayJobResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async unblockDms(id) {
-    let path = "/2/users/{id}/dm/unblock";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
+  async createReplayJob(webhookId, fromDate, toDate) {
+    let path = "/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all";
+    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
     const params = new URLSearchParams();
+    if (fromDate !== void 0) {
+      params.append("from_date", String(fromDate));
+    }
+    if (toDate !== void 0) {
+      params.append("to_date", String(toDate));
+    }
     const finalRequestOptions = {
       // No optional parameters, using empty request options
     };
@@ -10990,170 +8754,51 @@ var UsersClient = class {
     );
   }
   /**
-     * Unfollow List
-     * Causes the authenticated user to unfollow a specific List by its ID.
+     * Validate subscription
+     * Checks a user’s Account Activity subscription for a given webhook.
   
   
-     * @param id The ID of the authenticated source User that will unfollow the List.
-  
-  
-  
-     * @param listId The ID of the List to unfollow.
+     * @param webhookId The webhook ID to check subscription against.
   
   
   
   
-     * @returns {Promise<UnfollowListResponse>} Promise resolving to the API response
+     * @returns {Promise<ValidateSubscriptionResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async unfollowList(id, listId) {
-    let path = "/2/users/{id}/followed_lists/{list_id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    path = path.replace("{list_id}", encodeURIComponent(String(listId)));
+  async validateSubscription(webhookId) {
+    let path = "/2/account_activity/webhooks/{webhook_id}/subscriptions/all";
+    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
     const params = new URLSearchParams();
     const finalRequestOptions = {
       // No optional parameters, using empty request options
     };
     return this.client.request(
-      "DELETE",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get mentions
-     * Retrieves a list of Posts that mention a specific User by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
-  
-  
-  
-  
-     * @returns {Promise<GetMentionsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getMentions(id, options = {}) {
-    const {
-      sinceId = void 0,
-      untilId = void 0,
-      maxResults = void 0,
-      paginationToken = void 0,
-      startTime = void 0,
-      endTime = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/mentions";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (sinceId !== void 0) {
-      params.append("since_id", String(sinceId));
-    }
-    if (untilId !== void 0) {
-      params.append("until_id", String(untilId));
-    }
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
       "GET",
       path + (params.toString() ? `?${params.toString()}` : ""),
       finalRequestOptions
     );
   }
   /**
-     * Get Bookmark folders
-     * Retrieves a list of Bookmark folders created by the authenticated user.
+     * Create subscription
+     * Creates an Account Activity subscription for the user and the given webhook.
   
   
-     * @param id The ID of the authenticated source User for whom to return results.
+     * @param webhookId The webhook ID to check subscription against.
   
   
   
   
-     * @returns {Promise<GetBookmarkFoldersResponse>} Promise resolving to the API response
+     * @returns {Promise<CreateSubscriptionResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async getBookmarkFolders(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/bookmarks/folders";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Like Post
-     * Causes the authenticated user to Like a specific Post by its ID.
-  
-  
-     * @param id The ID of the authenticated source User that is requesting to like the Post.
-  
-  
-  
-  
-     * @returns {Promise<LikePostResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async likePost(id, options = {}) {
+  async createSubscription(webhookId, options = {}) {
     const {
       body,
       requestOptions = {}
     } = options || {};
-    let path = "/2/users/{id}/likes";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
+    let path = "/2/account_activity/webhooks/{webhook_id}/subscriptions/all";
+    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
     const params = new URLSearchParams();
     const finalRequestOptions = {
       body: body ? JSON.stringify(body) : void 0,
@@ -11165,33 +8810,33 @@ var UsersClient = class {
       finalRequestOptions
     );
   }
+};
+
+// src/account_activity/models.ts
+var models_exports3 = {};
+
+// src/connections/client.ts
+var ConnectionsClient = class {
+  client;
   /**
-     * Unmute User
-     * Causes the authenticated user to unmute a specific user by their ID.
+     * Creates a new connections client instance
+     * 
+     * @param client - The main X API client instance
+     */
+  constructor(client) {
+    this.client = client;
+  }
+  /**
+     * Terminate all connections
+     * Terminates all active streaming connections for the authenticated application.
   
   
-     * @param sourceUserId The ID of the authenticated source User that is requesting to unmute the target User.
   
-  
-  
-     * @param targetUserId The ID of the User that the source User is requesting to unmute.
-  
-  
-  
-  
-     * @returns {Promise<UnmuteUserResponse>} Promise resolving to the API response
+     * @returns {Promise<DeleteAllResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async unmuteUser(sourceUserId, targetUserId) {
-    let path = "/2/users/{source_user_id}/muting/{target_user_id}";
-    path = path.replace(
-      "{source_user_id}",
-      encodeURIComponent(String(sourceUserId))
-    );
-    path = path.replace(
-      "{target_user_id}",
-      encodeURIComponent(String(targetUserId))
-    );
+  async deleteAll() {
+    let path = "/2/connections/all";
     const params = new URLSearchParams();
     const finalRequestOptions = {
       // No optional parameters, using empty request options
@@ -11202,37 +8847,45 @@ var UsersClient = class {
       finalRequestOptions
     );
   }
+};
+
+// src/connections/models.ts
+var models_exports4 = {};
+
+// src/trends/client.ts
+var TrendsClient = class {
+  client;
   /**
-     * Get pinned Lists
-     * Retrieves a list of Lists pinned by the authenticated user.
+     * Creates a new trends client instance
+     * 
+     * @param client - The main X API client instance
+     */
+  constructor(client) {
+    this.client = client;
+  }
+  /**
+     * Get AI Trends by ID
+     * Retrieves an AI trend by its ID.
   
   
-     * @param id The ID of the authenticated source User for whom to return results.
+     * @param id The ID of the ai trend.
   
   
   
   
-     * @returns {Promise<GetPinnedListsResponse>} Promise resolving to the API response
+     * @returns {Promise<GetAiResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async getPinnedLists(id, options = {}) {
+  async getAi(id, options = {}) {
     const {
-      listfields = [],
-      expansions = [],
-      userfields = [],
+      aiTrendfields = [],
       requestOptions = {}
     } = options || {};
-    let path = "/2/users/{id}/pinned_lists";
+    let path = "/2/ai_trends/{id}";
     path = path.replace("{id}", encodeURIComponent(String(id)));
     const params = new URLSearchParams();
-    if (listfields !== void 0) {
-      params.append("list.fields", listfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
+    if (aiTrendfields !== void 0) {
+      params.append("ai_trend.fields", aiTrendfields.join(","));
     }
     const finalRequestOptions = {
       ...requestOptions
@@ -11244,73 +8897,32 @@ var UsersClient = class {
     );
   }
   /**
-     * Pin List
-     * Causes the authenticated user to pin a specific List by its ID.
+     * Get Trends by WOEID
+     * Retrieves trending topics for a specific location identified by its WOEID.
   
   
-     * @param id The ID of the authenticated source User that will pin the List.
+     * @param woeid The WOEID of the place to lookup a trend for.
   
   
   
   
-     * @param body Request body
-  
-     * @returns {Promise<PinListResponse>} Promise resolving to the API response
+     * @returns {Promise<GetByWoeidResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async pinList(id, body) {
-    let path = "/2/users/{id}/pinned_lists";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: JSON.stringify(body || {})
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get muting
-     * Retrieves a list of Users muted by the authenticated user.
-  
-  
-     * @param id The ID of the authenticated source User for whom to return results.
-  
-  
-  
-  
-     * @returns {Promise<GetMutingResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getMuting(id, options = {}) {
+  async getByWoeid(woeid, options = {}) {
     const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
+      maxTrends = void 0,
+      trendfields = [],
       requestOptions = {}
     } = options || {};
-    let path = "/2/users/{id}/muting";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
+    let path = "/2/trends/by/woeid/{woeid}";
+    path = path.replace("{woeid}", encodeURIComponent(String(woeid)));
     const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
+    if (maxTrends !== void 0) {
+      params.append("max_trends", String(maxTrends));
     }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
+    if (trendfields !== void 0) {
+      params.append("trend.fields", trendfields.join(","));
     }
     const finalRequestOptions = {
       ...requestOptions
@@ -11322,1120 +8934,26 @@ var UsersClient = class {
     );
   }
   /**
-     * Mute User
-     * Causes the authenticated user to mute a specific User by their ID.
-  
-  
-     * @param id The ID of the authenticated source User that is requesting to mute the target User.
+     * Get personalized Trends
+     * Retrieves personalized trending topics for the authenticated user.
   
   
   
-  
-     * @returns {Promise<MuteUserResponse>} Promise resolving to the API response
+     * @returns {Promise<GetPersonalizedResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async muteUser(id, options = {}) {
+  async getPersonalized(options = {}) {
     const {
-      body,
+      personalizedTrendfields = [],
       requestOptions = {}
     } = options || {};
-    let path = "/2/users/{id}/muting";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
+    let path = "/2/users/personalized_trends";
     const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Unfollow User
-     * Causes the authenticated user to unfollow a specific user by their ID.
-  
-  
-     * @param sourceUserId The ID of the authenticated source User that is requesting to unfollow the target User.
-  
-  
-  
-     * @param targetUserId The ID of the User that the source User is requesting to unfollow.
-  
-  
-  
-  
-     * @returns {Promise<UnfollowUserResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async unfollowUser(sourceUserId, targetUserId) {
-    let path = "/2/users/{source_user_id}/following/{target_user_id}";
-    path = path.replace(
-      "{source_user_id}",
-      encodeURIComponent(String(sourceUserId))
-    );
-    path = path.replace(
-      "{target_user_id}",
-      encodeURIComponent(String(targetUserId))
-    );
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "DELETE",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get blocking
-     * Retrieves a list of Users blocked by the specified User ID.
-  
-  
-     * @param id The ID of the authenticated source User for whom to return results.
-  
-  
-  
-  
-     * @returns {Promise<GetBlockingResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getBlocking(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/blocking";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Bookmarks by folder ID
-     * Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
-  
-  
-     * @param id The ID of the authenticated source User for whom to return results.
-  
-  
-  
-     * @param folderId The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.
-  
-  
-  
-  
-     * @returns {Promise<GetBookmarksByFolderIdResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getBookmarksByFolderId(id, folderId) {
-    let path = "/2/users/{id}/bookmarks/folders/{folder_id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    path = path.replace("{folder_id}", encodeURIComponent(String(folderId)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Unpin List
-     * Causes the authenticated user to unpin a specific List by its ID.
-  
-  
-     * @param id The ID of the authenticated source User for whom to return results.
-  
-  
-  
-     * @param listId The ID of the List to unpin.
-  
-  
-  
-  
-     * @returns {Promise<UnpinListResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async unpinList(id, listId) {
-    let path = "/2/users/{id}/pinned_lists/{list_id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    path = path.replace("{list_id}", encodeURIComponent(String(listId)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "DELETE",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Search Users
-     * Retrieves a list of Users matching a search query.
-  
-  
-  
-     * @param query TThe the query string by which to query for users.
-  
-  
-  
-     * @returns {Promise<SearchResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async search(query, options = {}) {
-    const {
-      maxResults = void 0,
-      nextToken = void 0,
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/search";
-    const params = new URLSearchParams();
-    if (query !== void 0) {
-      params.append("query", String(query));
-    }
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (nextToken !== void 0) {
-      params.append("next_token", String(nextToken));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Unlike Post
-     * Causes the authenticated user to Unlike a specific Post by its ID.
-  
-  
-     * @param id The ID of the authenticated source User that is requesting to unlike the Post.
-  
-  
-  
-     * @param tweetId The ID of the Post that the User is requesting to unlike.
-  
-  
-  
-  
-     * @returns {Promise<UnlikePostResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async unlikePost(id, tweetId) {
-    let path = "/2/users/{id}/likes/{tweet_id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    path = path.replace("{tweet_id}", encodeURIComponent(String(tweetId)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "DELETE",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Block DMs
-     * Blocks direct messages to or from a specific User by their ID for the authenticated user.
-  
-  
-     * @param id The ID of the target User that the authenticated user requesting to block dms for.
-  
-  
-  
-  
-     * @returns {Promise<BlockDmsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async blockDms(id) {
-    let path = "/2/users/{id}/dm/block";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Bookmarks
-     * Retrieves a list of Posts bookmarked by the authenticated user.
-  
-  
-     * @param id The ID of the authenticated source User for whom to return results.
-  
-  
-  
-  
-     * @returns {Promise<GetBookmarksResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getBookmarks(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/bookmarks";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Create Bookmark
-     * Adds a post to the authenticated user’s bookmarks.
-  
-  
-     * @param id The ID of the authenticated source User for whom to add bookmarks.
-  
-  
-  
-  
-     * @param body Request body
-  
-     * @returns {Promise<CreateBookmarkResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async createBookmark(id, body) {
-    let path = "/2/users/{id}/bookmarks";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: JSON.stringify(body || {})
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Delete Bookmark
-     * Removes a Post from the authenticated user’s Bookmarks by its ID.
-  
-  
-     * @param id The ID of the authenticated source User whose bookmark is to be removed.
-  
-  
-  
-     * @param tweetId The ID of the Post that the source User is removing from bookmarks.
-  
-  
-  
-  
-     * @returns {Promise<DeleteBookmarkResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async deleteBookmark(id, tweetId) {
-    let path = "/2/users/{id}/bookmarks/{tweet_id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    path = path.replace("{tweet_id}", encodeURIComponent(String(tweetId)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "DELETE",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get followed Lists
-     * Retrieves a list of Lists followed by a specific User by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
-  
-  
-  
-  
-     * @returns {Promise<GetFollowedListsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getFollowedLists(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      listfields = [],
-      expansions = [],
-      userfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/followed_lists";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (listfields !== void 0) {
-      params.append("list.fields", listfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Follow List
-     * Causes the authenticated user to follow a specific List by its ID.
-  
-  
-     * @param id The ID of the authenticated source User that will follow the List.
-  
-  
-  
-  
-     * @returns {Promise<FollowListResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async followList(id, options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/followed_lists";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Users by usernames
-     * Retrieves details of multiple Users by their usernames.
-  
-  
-  
-     * @param usernames A list of usernames, comma-separated.
-  
-  
-  
-     * @returns {Promise<GetByUsernamesResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getByUsernames(usernames, options = {}) {
-    const {
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/by";
-    const params = new URLSearchParams();
-    if (usernames !== void 0) {
-      params.append("usernames", usernames.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Repost Post
-     * Causes the authenticated user to repost a specific Post by its ID.
-  
-  
-     * @param id The ID of the authenticated source User that is requesting to repost the Post.
-  
-  
-  
-  
-     * @returns {Promise<RepostPostResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async repostPost(id, options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/retweets";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Reposts of me
-     * Retrieves a list of Posts that repost content from the authenticated user.
-  
-  
-  
-     * @returns {Promise<GetRepostsOfMeResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getRepostsOfMe(options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/reposts_of_me";
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Posts
-     * Retrieves a list of posts authored by a specific User by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
-  
-  
-  
-  
-     * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getPosts(id, options = {}) {
-    const {
-      sinceId = void 0,
-      untilId = void 0,
-      maxResults = void 0,
-      paginationToken = void 0,
-      exclude = [],
-      startTime = void 0,
-      endTime = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/tweets";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (sinceId !== void 0) {
-      params.append("since_id", String(sinceId));
-    }
-    if (untilId !== void 0) {
-      params.append("until_id", String(untilId));
-    }
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (exclude !== void 0) {
-      params.append("exclude", exclude.join(","));
-    }
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get Timeline
-     * Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
-  
-  
-     * @param id The ID of the authenticated source User to list Reverse Chronological Timeline Posts of.
-  
-  
-  
-  
-     * @returns {Promise<GetTimelineResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getTimeline(id, options = {}) {
-    const {
-      sinceId = void 0,
-      untilId = void 0,
-      maxResults = void 0,
-      paginationToken = void 0,
-      exclude = [],
-      startTime = void 0,
-      endTime = void 0,
-      tweetfields = [],
-      expansions = [],
-      mediafields = [],
-      pollfields = [],
-      userfields = [],
-      placefields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/timelines/reverse_chronological";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (sinceId !== void 0) {
-      params.append("since_id", String(sinceId));
-    }
-    if (untilId !== void 0) {
-      params.append("until_id", String(untilId));
-    }
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (exclude !== void 0) {
-      params.append("exclude", exclude.join(","));
-    }
-    if (startTime !== void 0) {
-      params.append("start_time", String(startTime));
-    }
-    if (endTime !== void 0) {
-      params.append("end_time", String(endTime));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", pollfields.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", placefields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get owned Lists
-     * Retrieves a list of Lists owned by a specific User by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
-  
-  
-  
-  
-     * @returns {Promise<GetOwnedListsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getOwnedLists(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      listfields = [],
-      expansions = [],
-      userfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/owned_lists";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (listfields !== void 0) {
-      params.append("list.fields", listfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get followers
-     * Retrieves a list of Users who follow a specific User by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
-  
-  
-  
-  
-     * @returns {Promise<GetFollowersResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getFollowers(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/followers";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get my User
-     * Retrieves details of the authenticated user.
-  
-  
-  
-     * @returns {Promise<GetMeResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getMe(options = {}) {
-    const {
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/me";
-    const params = new URLSearchParams();
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get User by ID
-     * Retrieves details of a specific User by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
-  
-  
-  
-  
-     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getById(id, options = {}) {
-    const {
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get following
-     * Retrieves a list of Users followed by a specific User by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
-  
-  
-  
-  
-     * @returns {Promise<GetFollowingResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getFollowing(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/following";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Follow User
-     * Causes the authenticated user to follow a specific user by their ID.
-  
-  
-     * @param id The ID of the authenticated source User that is requesting to follow the target User.
-  
-  
-  
-  
-     * @returns {Promise<FollowUserResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async followUser(id, options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/following";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get User by username
-     * Retrieves details of a specific User by their username.
-  
-  
-     * @param username A username.
-  
-  
-  
-  
-     * @returns {Promise<GetByUsernameResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getByUsername(username, options = {}) {
-    const {
-      userfields = [],
-      expansions = [],
-      tweetfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/by/username/{username}";
-    path = path.replace("{username}", encodeURIComponent(String(username)));
-    const params = new URLSearchParams();
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", tweetfields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Get List memberships
-     * Retrieves a list of Lists that a specific User is a member of by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
-  
-  
-  
-  
-     * @returns {Promise<GetListMembershipsResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getListMemberships(id, options = {}) {
-    const {
-      maxResults = void 0,
-      paginationToken = void 0,
-      listfields = [],
-      expansions = [],
-      userfields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/users/{id}/list_memberships";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
-    const params = new URLSearchParams();
-    if (maxResults !== void 0) {
-      params.append("max_results", String(maxResults));
-    }
-    if (paginationToken !== void 0) {
-      params.append("pagination_token", String(paginationToken));
-    }
-    if (listfields !== void 0) {
-      params.append("list.fields", listfields.join(","));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", expansions.join(","));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", userfields.join(","));
+    if (personalizedTrendfields !== void 0) {
+      params.append(
+        "personalized_trend.fields",
+        personalizedTrendfields.join(",")
+      );
     }
     const finalRequestOptions = {
       ...requestOptions
@@ -12448,8 +8966,8 @@ var UsersClient = class {
   }
 };
 
-// src/users/models.ts
-var models_exports10 = {};
+// src/trends/models.ts
+var models_exports5 = {};
 
 // src/usage/client.ts
 var UsageClient = class {
@@ -12497,7 +9015,7 @@ var UsageClient = class {
 };
 
 // src/usage/models.ts
-var models_exports11 = {};
+var models_exports6 = {};
 
 // src/compliance/client.ts
 var ComplianceClient = class {
@@ -12609,13 +9127,13 @@ var ComplianceClient = class {
 };
 
 // src/compliance/models.ts
-var models_exports12 = {};
+var models_exports7 = {};
 
-// src/connections/client.ts
-var ConnectionsClient = class {
+// src/communities/client.ts
+var CommunitiesClient = class {
   client;
   /**
-     * Creates a new connections client instance
+     * Creates a new communities client instance
      * 
      * @param client - The main X API client instance
      */
@@ -12623,16 +9141,354 @@ var ConnectionsClient = class {
     this.client = client;
   }
   /**
-     * Terminate all connections
-     * Terminates all active streaming connections for the authenticated application.
+     * Search Communities
+     * Retrieves a list of Communities matching the specified search query.
   
   
   
-     * @returns {Promise<DeleteAllResponse>} Promise resolving to the API response
+     * @param query Query to search communities.
+  
+  
+  
+     * @returns {Promise<SearchResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async deleteAll() {
-    let path = "/2/connections/all";
+  async search(query, options = {}) {
+    const {
+      maxResults = void 0,
+      nextToken = void 0,
+      paginationToken = void 0,
+      communityfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/communities/search";
+    const params = new URLSearchParams();
+    if (query !== void 0) {
+      params.append("query", String(query));
+    }
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (nextToken !== void 0) {
+      params.append("next_token", String(nextToken));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (communityfields !== void 0) {
+      params.append("community.fields", communityfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Community by ID
+     * Retrieves details of a specific Community by its ID.
+  
+  
+     * @param id The ID of the Community.
+  
+  
+  
+  
+     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getById(id, options = {}) {
+    const {
+      communityfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/communities/{id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (communityfields !== void 0) {
+      params.append("community.fields", communityfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+};
+
+// src/communities/models.ts
+var models_exports8 = {};
+
+// src/direct_messages/client.ts
+var DirectMessagesClient = class {
+  client;
+  /**
+     * Creates a new direct messages client instance
+     * 
+     * @param client - The main X API client instance
+     */
+  constructor(client) {
+    this.client = client;
+  }
+  /**
+     * Create DM message by participant ID
+     * Sends a new direct message to a specific participant by their ID.
+  
+  
+     * @param participantId The ID of the recipient user that will receive the DM.
+  
+  
+  
+  
+     * @returns {Promise<CreateByParticipantIdResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async createByParticipantId(participantId, options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/dm_conversations/with/{participant_id}/messages";
+    path = path.replace(
+      "{participant_id}",
+      encodeURIComponent(String(participantId))
+    );
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Create DM message by conversation ID
+     * Sends a new direct message to a specific conversation by its ID.
+  
+  
+     * @param dmConversationId The DM Conversation ID.
+  
+  
+  
+  
+     * @returns {Promise<CreateByConversationIdResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async createByConversationId(dmConversationId, options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/dm_conversations/{dm_conversation_id}/messages";
+    path = path.replace(
+      "{dm_conversation_id}",
+      encodeURIComponent(String(dmConversationId))
+    );
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get DM events
+     * Retrieves a list of recent direct message events across all conversations.
+  
+  
+  
+     * @returns {Promise<GetEventsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getEvents(options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      eventTypes = [],
+      dmEventfields = [],
+      expansions = [],
+      mediafields = [],
+      userfields = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/dm_events";
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (eventTypes !== void 0) {
+      params.append("event_types", eventTypes.join(","));
+    }
+    if (dmEventfields !== void 0) {
+      params.append("dm_event.fields", dmEventfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get DM events for a DM conversation
+     * Retrieves direct message events for a specific conversation.
+  
+  
+     * @param participantId The ID of the participant user for the One to One DM conversation.
+  
+  
+  
+  
+     * @returns {Promise<GetEventsByParticipantIdResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getEventsByParticipantId(participantId, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      eventTypes = [],
+      dmEventfields = [],
+      expansions = [],
+      mediafields = [],
+      userfields = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/dm_conversations/with/{participant_id}/dm_events";
+    path = path.replace(
+      "{participant_id}",
+      encodeURIComponent(String(participantId))
+    );
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (eventTypes !== void 0) {
+      params.append("event_types", eventTypes.join(","));
+    }
+    if (dmEventfields !== void 0) {
+      params.append("dm_event.fields", dmEventfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get DM event by ID
+     * Retrieves details of a specific direct message event by its ID.
+  
+  
+     * @param eventId dm event id.
+  
+  
+  
+  
+     * @returns {Promise<GetEventsByIdResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getEventsById(eventId, options = {}) {
+    const {
+      dmEventfields = [],
+      expansions = [],
+      mediafields = [],
+      userfields = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/dm_events/{event_id}";
+    path = path.replace("{event_id}", encodeURIComponent(String(eventId)));
+    const params = new URLSearchParams();
+    if (dmEventfields !== void 0) {
+      params.append("dm_event.fields", dmEventfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Delete DM event
+     * Deletes a specific direct message event by its ID, if owned by the authenticated user.
+  
+  
+     * @param eventId The ID of the direct-message event to delete.
+  
+  
+  
+  
+     * @returns {Promise<DeleteEventsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async deleteEvents(eventId) {
+    let path = "/2/dm_events/{event_id}";
+    path = path.replace("{event_id}", encodeURIComponent(String(eventId)));
     const params = new URLSearchParams();
     const finalRequestOptions = {
       // No optional parameters, using empty request options
@@ -12643,10 +9499,2793 @@ var ConnectionsClient = class {
       finalRequestOptions
     );
   }
+  /**
+     * Get DM events for a DM conversation
+     * Retrieves direct message events for a specific conversation.
+  
+  
+     * @param id The DM conversation ID.
+  
+  
+  
+  
+     * @returns {Promise<GetEventsByConversationIdResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getEventsByConversationId(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      eventTypes = [],
+      dmEventfields = [],
+      expansions = [],
+      mediafields = [],
+      userfields = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/dm_conversations/{id}/dm_events";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (eventTypes !== void 0) {
+      params.append("event_types", eventTypes.join(","));
+    }
+    if (dmEventfields !== void 0) {
+      params.append("dm_event.fields", dmEventfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Create DM conversation
+     * Initiates a new direct message conversation with specified participants.
+  
+  
+  
+     * @returns {Promise<CreateConversationResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async createConversation(options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/dm_conversations";
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
 };
 
-// src/connections/models.ts
-var models_exports13 = {};
+// src/direct_messages/models.ts
+var models_exports9 = {};
+
+// src/activity/client.ts
+var ActivityClient = class {
+  client;
+  /**
+     * Creates a new activity client instance
+     * 
+     * @param client - The main X API client instance
+     */
+  constructor(client) {
+    this.client = client;
+  }
+  /**
+     * Update X activity subscription
+     * Updates a subscription for an X activity event
+  
+  
+     * @param subscriptionId The ID of the subscription to update.
+  
+  
+  
+  
+     * @returns {Promise<UpdateSubscriptionResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async updateSubscription(subscriptionId, options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/activity/subscriptions/{subscription_id}";
+    path = path.replace(
+      "{subscription_id}",
+      encodeURIComponent(String(subscriptionId))
+    );
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "PUT",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Deletes X activity subscription
+     * Deletes a subscription for an X activity event
+  
+  
+     * @param subscriptionId The ID of the subscription to delete.
+  
+  
+  
+  
+     * @returns {Promise<DeleteSubscriptionResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async deleteSubscription(subscriptionId) {
+    let path = "/2/activity/subscriptions/{subscription_id}";
+    path = path.replace(
+      "{subscription_id}",
+      encodeURIComponent(String(subscriptionId))
+    );
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "DELETE",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Activity Stream
+     * Stream of X Activities
+  
+  
+  
+     * @returns {Promise<StreamResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async stream(options = {}) {
+    const {
+      backfillMinutes = void 0,
+      startTime = void 0,
+      endTime = void 0,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/activity/stream";
+    const params = new URLSearchParams();
+    if (backfillMinutes !== void 0) {
+      params.append("backfill_minutes", String(backfillMinutes));
+    }
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get X activity subscriptions
+     * Get a list of active subscriptions for XAA
+  
+  
+  
+     * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getSubscriptions() {
+    let path = "/2/activity/subscriptions";
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Create X activity subscription
+     * Creates a subscription for an X activity event
+  
+  
+  
+     * @returns {Promise<CreateSubscriptionResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async createSubscription(options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/activity/subscriptions";
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+};
+
+// src/activity/models.ts
+var models_exports10 = {};
+
+// src/posts/client.ts
+var PostsClient = class {
+  client;
+  /**
+     * Creates a new posts client instance
+     * 
+     * @param client - The main X API client instance
+     */
+  constructor(client) {
+    this.client = client;
+  }
+  /**
+     * Get Post by ID
+     * Retrieves details of a specific Post by its ID.
+  
+  
+     * @param id A single Post ID.
+  
+  
+  
+  
+     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getById(id, options = {}) {
+    const {
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/{id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Delete Post
+     * Deletes a specific Post by its ID, if owned by the authenticated user.
+  
+  
+     * @param id The ID of the Post to be deleted.
+  
+  
+  
+  
+     * @returns {Promise<DeleteResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async delete(id) {
+    let path = "/2/tweets/{id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "DELETE",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Liking Users
+     * Retrieves a list of Users who liked a specific Post by its ID.
+  
+  
+     * @param id A single Post ID.
+  
+  
+  
+  
+     * @returns {Promise<GetLikingUsersResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getLikingUsers(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/{id}/liking_users";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Reposts
+     * Retrieves a list of Posts that repost a specific Post by its ID.
+  
+  
+     * @param id A single Post ID.
+  
+  
+  
+  
+     * @returns {Promise<GetRepostsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getReposts(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/{id}/retweets";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Search recent Posts
+     * Retrieves Posts from the last 7 days matching a search query.
+  
+  
+  
+     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
+  
+  
+  
+     * @returns {Promise<SearchRecentResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async searchRecent(query, options = {}) {
+    const {
+      startTime = void 0,
+      endTime = void 0,
+      sinceId = void 0,
+      untilId = void 0,
+      maxResults = void 0,
+      nextToken = void 0,
+      paginationToken = void 0,
+      sortOrder = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/search/recent";
+    const params = new URLSearchParams();
+    if (query !== void 0) {
+      params.append("query", String(query));
+    }
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (sinceId !== void 0) {
+      params.append("since_id", String(sinceId));
+    }
+    if (untilId !== void 0) {
+      params.append("until_id", String(untilId));
+    }
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (nextToken !== void 0) {
+      params.append("next_token", String(nextToken));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (sortOrder !== void 0) {
+      params.append("sort_order", String(sortOrder));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get count of all Posts
+     * Retrieves the count of Posts matching a search query from the full archive.
+  
+  
+  
+     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
+  
+  
+  
+     * @returns {Promise<GetCountsAllResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getCountsAll(query, options = {}) {
+    const {
+      startTime = void 0,
+      endTime = void 0,
+      sinceId = void 0,
+      untilId = void 0,
+      nextToken = void 0,
+      paginationToken = void 0,
+      granularity = void 0,
+      searchCountfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/counts/all";
+    const params = new URLSearchParams();
+    if (query !== void 0) {
+      params.append("query", String(query));
+    }
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (sinceId !== void 0) {
+      params.append("since_id", String(sinceId));
+    }
+    if (untilId !== void 0) {
+      params.append("until_id", String(untilId));
+    }
+    if (nextToken !== void 0) {
+      params.append("next_token", String(nextToken));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (granularity !== void 0) {
+      params.append("granularity", String(granularity));
+    }
+    if (searchCountfields !== void 0) {
+      params.append("search_count.fields", searchCountfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Reposted by
+     * Retrieves a list of Users who reposted a specific Post by its ID.
+  
+  
+     * @param id A single Post ID.
+  
+  
+  
+  
+     * @returns {Promise<GetRepostedByResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getRepostedBy(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/{id}/retweeted_by";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Search all Posts
+     * Retrieves Posts from the full archive matching a search query.
+  
+  
+  
+     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
+  
+  
+  
+     * @returns {Promise<SearchAllResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async searchAll(query, options = {}) {
+    const {
+      startTime = void 0,
+      endTime = void 0,
+      sinceId = void 0,
+      untilId = void 0,
+      maxResults = void 0,
+      nextToken = void 0,
+      paginationToken = void 0,
+      sortOrder = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/search/all";
+    const params = new URLSearchParams();
+    if (query !== void 0) {
+      params.append("query", String(query));
+    }
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (sinceId !== void 0) {
+      params.append("since_id", String(sinceId));
+    }
+    if (untilId !== void 0) {
+      params.append("until_id", String(untilId));
+    }
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (nextToken !== void 0) {
+      params.append("next_token", String(nextToken));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (sortOrder !== void 0) {
+      params.append("sort_order", String(sortOrder));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get count of recent Posts
+     * Retrieves the count of Posts from the last 7 days matching a search query.
+  
+  
+  
+     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
+  
+  
+  
+     * @returns {Promise<GetCountsRecentResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getCountsRecent(query, options = {}) {
+    const {
+      startTime = void 0,
+      endTime = void 0,
+      sinceId = void 0,
+      untilId = void 0,
+      nextToken = void 0,
+      paginationToken = void 0,
+      granularity = void 0,
+      searchCountfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/counts/recent";
+    const params = new URLSearchParams();
+    if (query !== void 0) {
+      params.append("query", String(query));
+    }
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (sinceId !== void 0) {
+      params.append("since_id", String(sinceId));
+    }
+    if (untilId !== void 0) {
+      params.append("until_id", String(untilId));
+    }
+    if (nextToken !== void 0) {
+      params.append("next_token", String(nextToken));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (granularity !== void 0) {
+      params.append("granularity", String(granularity));
+    }
+    if (searchCountfields !== void 0) {
+      params.append("search_count.fields", searchCountfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get historical Post insights
+     * Retrieves historical engagement metrics for specified Posts within a defined time range.
+  
+  
+  
+     * @param tweetIds List of PostIds for historical metrics.
+  
+  
+  
+     * @param endTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
+  
+  
+  
+     * @param startTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
+  
+  
+  
+     * @param granularity granularity of metrics response.
+  
+  
+  
+     * @param requestedMetrics request metrics for historical request.
+  
+  
+  
+     * @returns {Promise<GetInsightsHistoricalResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getInsightsHistorical(tweetIds, endTime, startTime, granularity, requestedMetrics, options = {}) {
+    const {
+      engagementfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/insights/historical";
+    const params = new URLSearchParams();
+    if (tweetIds !== void 0) {
+      params.append("tweet_ids", tweetIds.join(","));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (granularity !== void 0) {
+      params.append("granularity", String(granularity));
+    }
+    if (requestedMetrics !== void 0) {
+      params.append("requested_metrics", requestedMetrics.join(","));
+    }
+    if (engagementfields !== void 0) {
+      params.append("engagement.fields", engagementfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Quoted Posts
+     * Retrieves a list of Posts that quote a specific Post by its ID.
+  
+  
+     * @param id A single Post ID.
+  
+  
+  
+  
+     * @returns {Promise<GetQuotedResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getQuoted(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      exclude = [],
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/{id}/quote_tweets";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (exclude !== void 0) {
+      params.append("exclude", exclude.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Posts by IDs
+     * Retrieves details of multiple Posts by their IDs.
+  
+  
+  
+     * @param ids A comma separated list of Post IDs. Up to 100 are allowed in a single request.
+  
+  
+  
+     * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByIds(ids, options = {}) {
+    const {
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets";
+    const params = new URLSearchParams();
+    if (ids !== void 0) {
+      params.append("ids", ids.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Create or Edit Post
+     * Creates a new Post for the authenticated user, or edits an existing Post when edit_options are provided.
+  
+  
+  
+     * @param body Request body
+  
+     * @returns {Promise<CreateResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async create(body) {
+    let path = "/2/tweets";
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: JSON.stringify(body || {})
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get 28-hour Post insights
+     * Retrieves engagement metrics for specified Posts over the last 28 hours.
+  
+  
+  
+     * @param tweetIds List of PostIds for 28hr metrics.
+  
+  
+  
+     * @param granularity granularity of metrics response.
+  
+  
+  
+     * @param requestedMetrics request metrics for historical request.
+  
+  
+  
+     * @returns {Promise<GetInsights28hrResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getInsights28hr(tweetIds, granularity, requestedMetrics, options = {}) {
+    const {
+      engagementfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/insights/28hr";
+    const params = new URLSearchParams();
+    if (tweetIds !== void 0) {
+      params.append("tweet_ids", tweetIds.join(","));
+    }
+    if (granularity !== void 0) {
+      params.append("granularity", String(granularity));
+    }
+    if (requestedMetrics !== void 0) {
+      params.append("requested_metrics", requestedMetrics.join(","));
+    }
+    if (engagementfields !== void 0) {
+      params.append("engagement.fields", engagementfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Post analytics
+     * Retrieves analytics data for specified Posts within a defined time range.
+  
+  
+  
+     * @param ids A comma separated list of Post IDs. Up to 100 are allowed in a single request.
+  
+  
+  
+     * @param endTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
+  
+  
+  
+     * @param startTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
+  
+  
+  
+     * @param granularity The granularity for the search counts results.
+  
+  
+  
+     * @returns {Promise<GetAnalyticsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getAnalytics(ids, endTime, startTime, granularity, options = {}) {
+    const {
+      analyticsfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/analytics";
+    const params = new URLSearchParams();
+    if (ids !== void 0) {
+      params.append("ids", ids.join(","));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (granularity !== void 0) {
+      params.append("granularity", String(granularity));
+    }
+    if (analyticsfields !== void 0) {
+      params.append("analytics.fields", analyticsfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Hide reply
+     * Hides or unhides a reply to a conversation owned by the authenticated user.
+  
+  
+     * @param tweetId The ID of the reply that you want to hide or unhide.
+  
+  
+  
+  
+     * @returns {Promise<HideReplyResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async hideReply(tweetId, options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/{tweet_id}/hidden";
+    path = path.replace("{tweet_id}", encodeURIComponent(String(tweetId)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "PUT",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+};
+
+// src/posts/models.ts
+var models_exports11 = {};
+
+// src/users/client.ts
+var UsersClient = class {
+  client;
+  /**
+     * Creates a new users client instance
+     * 
+     * @param client - The main X API client instance
+     */
+  constructor(client) {
+    this.client = client;
+  }
+  /**
+     * Get my User
+     * Retrieves details of the authenticated user.
+  
+  
+  
+     * @returns {Promise<GetMeResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getMe(options = {}) {
+    const {
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/me";
+    const params = new URLSearchParams();
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get following
+     * Retrieves a list of Users followed by a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetFollowingResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getFollowing(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/following";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Follow User
+     * Causes the authenticated user to follow a specific user by their ID.
+  
+  
+     * @param id The ID of the authenticated source User that is requesting to follow the target User.
+  
+  
+  
+  
+     * @returns {Promise<FollowUserResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async followUser(id, options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/following";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Like Post
+     * Causes the authenticated user to Like a specific Post by its ID.
+  
+  
+     * @param id The ID of the authenticated source User that is requesting to like the Post.
+  
+  
+  
+  
+     * @returns {Promise<LikePostResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async likePost(id, options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/likes";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get mentions
+     * Retrieves a list of Posts that mention a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetMentionsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getMentions(id, options = {}) {
+    const {
+      sinceId = void 0,
+      untilId = void 0,
+      maxResults = void 0,
+      paginationToken = void 0,
+      startTime = void 0,
+      endTime = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/mentions";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (sinceId !== void 0) {
+      params.append("since_id", String(sinceId));
+    }
+    if (untilId !== void 0) {
+      params.append("until_id", String(untilId));
+    }
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get followed Lists
+     * Retrieves a list of Lists followed by a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetFollowedListsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getFollowedLists(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      listfields = [],
+      expansions = [],
+      userfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/followed_lists";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (listfields !== void 0) {
+      params.append("list.fields", listfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Follow List
+     * Causes the authenticated user to follow a specific List by its ID.
+  
+  
+     * @param id The ID of the authenticated source User that will follow the List.
+  
+  
+  
+  
+     * @returns {Promise<FollowListResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async followList(id, options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/followed_lists";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get muting
+     * Retrieves a list of Users muted by the authenticated user.
+  
+  
+     * @param id The ID of the authenticated source User for whom to return results.
+  
+  
+  
+  
+     * @returns {Promise<GetMutingResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getMuting(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/muting";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Mute User
+     * Causes the authenticated user to mute a specific User by their ID.
+  
+  
+     * @param id The ID of the authenticated source User that is requesting to mute the target User.
+  
+  
+  
+  
+     * @returns {Promise<MuteUserResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async muteUser(id, options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/muting";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Bookmark folders
+     * Retrieves a list of Bookmark folders created by the authenticated user.
+  
+  
+     * @param id The ID of the authenticated source User for whom to return results.
+  
+  
+  
+  
+     * @returns {Promise<GetBookmarkFoldersResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getBookmarkFolders(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/bookmarks/folders";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Users by usernames
+     * Retrieves details of multiple Users by their usernames.
+  
+  
+  
+     * @param usernames A list of usernames, comma-separated.
+  
+  
+  
+     * @returns {Promise<GetByUsernamesResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByUsernames(usernames, options = {}) {
+    const {
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/by";
+    const params = new URLSearchParams();
+    if (usernames !== void 0) {
+      params.append("usernames", usernames.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Reposts of me
+     * Retrieves a list of Posts that repost content from the authenticated user.
+  
+  
+  
+     * @returns {Promise<GetRepostsOfMeResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getRepostsOfMe(options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/reposts_of_me";
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Unfollow User
+     * Causes the authenticated user to unfollow a specific user by their ID.
+  
+  
+     * @param sourceUserId The ID of the authenticated source User that is requesting to unfollow the target User.
+  
+  
+  
+     * @param targetUserId The ID of the User that the source User is requesting to unfollow.
+  
+  
+  
+  
+     * @returns {Promise<UnfollowUserResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async unfollowUser(sourceUserId, targetUserId) {
+    let path = "/2/users/{source_user_id}/following/{target_user_id}";
+    path = path.replace(
+      "{source_user_id}",
+      encodeURIComponent(String(sourceUserId))
+    );
+    path = path.replace(
+      "{target_user_id}",
+      encodeURIComponent(String(targetUserId))
+    );
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "DELETE",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Unpin List
+     * Causes the authenticated user to unpin a specific List by its ID.
+  
+  
+     * @param id The ID of the authenticated source User for whom to return results.
+  
+  
+  
+     * @param listId The ID of the List to unpin.
+  
+  
+  
+  
+     * @returns {Promise<UnpinListResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async unpinList(id, listId) {
+    let path = "/2/users/{id}/pinned_lists/{list_id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    path = path.replace("{list_id}", encodeURIComponent(String(listId)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "DELETE",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Unfollow List
+     * Causes the authenticated user to unfollow a specific List by its ID.
+  
+  
+     * @param id The ID of the authenticated source User that will unfollow the List.
+  
+  
+  
+     * @param listId The ID of the List to unfollow.
+  
+  
+  
+  
+     * @returns {Promise<UnfollowListResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async unfollowList(id, listId) {
+    let path = "/2/users/{id}/followed_lists/{list_id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    path = path.replace("{list_id}", encodeURIComponent(String(listId)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "DELETE",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Unlike Post
+     * Causes the authenticated user to Unlike a specific Post by its ID.
+  
+  
+     * @param id The ID of the authenticated source User that is requesting to unlike the Post.
+  
+  
+  
+     * @param tweetId The ID of the Post that the User is requesting to unlike.
+  
+  
+  
+  
+     * @returns {Promise<UnlikePostResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async unlikePost(id, tweetId) {
+    let path = "/2/users/{id}/likes/{tweet_id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    path = path.replace("{tweet_id}", encodeURIComponent(String(tweetId)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "DELETE",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Repost Post
+     * Causes the authenticated user to repost a specific Post by its ID.
+  
+  
+     * @param id The ID of the authenticated source User that is requesting to repost the Post.
+  
+  
+  
+  
+     * @returns {Promise<RepostPostResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async repostPost(id, options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/retweets";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Unmute User
+     * Causes the authenticated user to unmute a specific user by their ID.
+  
+  
+     * @param sourceUserId The ID of the authenticated source User that is requesting to unmute the target User.
+  
+  
+  
+     * @param targetUserId The ID of the User that the source User is requesting to unmute.
+  
+  
+  
+  
+     * @returns {Promise<UnmuteUserResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async unmuteUser(sourceUserId, targetUserId) {
+    let path = "/2/users/{source_user_id}/muting/{target_user_id}";
+    path = path.replace(
+      "{source_user_id}",
+      encodeURIComponent(String(sourceUserId))
+    );
+    path = path.replace(
+      "{target_user_id}",
+      encodeURIComponent(String(targetUserId))
+    );
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "DELETE",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get User by ID
+     * Retrieves details of a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getById(id, options = {}) {
+    const {
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Bookmarks
+     * Retrieves a list of Posts bookmarked by the authenticated user.
+  
+  
+     * @param id The ID of the authenticated source User for whom to return results.
+  
+  
+  
+  
+     * @returns {Promise<GetBookmarksResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getBookmarks(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/bookmarks";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Create Bookmark
+     * Adds a post to the authenticated user’s bookmarks.
+  
+  
+     * @param id The ID of the authenticated source User for whom to add bookmarks.
+  
+  
+  
+  
+     * @param body Request body
+  
+     * @returns {Promise<CreateBookmarkResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async createBookmark(id, body) {
+    let path = "/2/users/{id}/bookmarks";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: JSON.stringify(body || {})
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get owned Lists
+     * Retrieves a list of Lists owned by a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetOwnedListsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getOwnedLists(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      listfields = [],
+      expansions = [],
+      userfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/owned_lists";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (listfields !== void 0) {
+      params.append("list.fields", listfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get pinned Lists
+     * Retrieves a list of Lists pinned by the authenticated user.
+  
+  
+     * @param id The ID of the authenticated source User for whom to return results.
+  
+  
+  
+  
+     * @returns {Promise<GetPinnedListsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getPinnedLists(id, options = {}) {
+    const {
+      listfields = [],
+      expansions = [],
+      userfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/pinned_lists";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (listfields !== void 0) {
+      params.append("list.fields", listfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Pin List
+     * Causes the authenticated user to pin a specific List by its ID.
+  
+  
+     * @param id The ID of the authenticated source User that will pin the List.
+  
+  
+  
+  
+     * @param body Request body
+  
+     * @returns {Promise<PinListResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async pinList(id, body) {
+    let path = "/2/users/{id}/pinned_lists";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: JSON.stringify(body || {})
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get blocking
+     * Retrieves a list of Users blocked by the specified User ID.
+  
+  
+     * @param id The ID of the authenticated source User for whom to return results.
+  
+  
+  
+  
+     * @returns {Promise<GetBlockingResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getBlocking(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/blocking";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Timeline
+     * Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
+  
+  
+     * @param id The ID of the authenticated source User to list Reverse Chronological Timeline Posts of.
+  
+  
+  
+  
+     * @returns {Promise<GetTimelineResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getTimeline(id, options = {}) {
+    const {
+      sinceId = void 0,
+      untilId = void 0,
+      maxResults = void 0,
+      paginationToken = void 0,
+      exclude = [],
+      startTime = void 0,
+      endTime = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/timelines/reverse_chronological";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (sinceId !== void 0) {
+      params.append("since_id", String(sinceId));
+    }
+    if (untilId !== void 0) {
+      params.append("until_id", String(untilId));
+    }
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (exclude !== void 0) {
+      params.append("exclude", exclude.join(","));
+    }
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Delete Bookmark
+     * Removes a Post from the authenticated user’s Bookmarks by its ID.
+  
+  
+     * @param id The ID of the authenticated source User whose bookmark is to be removed.
+  
+  
+  
+     * @param tweetId The ID of the Post that the source User is removing from bookmarks.
+  
+  
+  
+  
+     * @returns {Promise<DeleteBookmarkResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async deleteBookmark(id, tweetId) {
+    let path = "/2/users/{id}/bookmarks/{tweet_id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    path = path.replace("{tweet_id}", encodeURIComponent(String(tweetId)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "DELETE",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get liked Posts
+     * Retrieves a list of Posts liked by a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetLikedPostsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getLikedPosts(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/liked_tweets";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get List memberships
+     * Retrieves a list of Lists that a specific User is a member of by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetListMembershipsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getListMemberships(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      listfields = [],
+      expansions = [],
+      userfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/list_memberships";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (listfields !== void 0) {
+      params.append("list.fields", listfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Users by IDs
+     * Retrieves details of multiple Users by their IDs.
+  
+  
+  
+     * @param ids A list of User IDs, comma-separated. You can specify up to 100 IDs.
+  
+  
+  
+     * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByIds(ids, options = {}) {
+    const {
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users";
+    const params = new URLSearchParams();
+    if (ids !== void 0) {
+      params.append("ids", ids.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Bookmarks by folder ID
+     * Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
+  
+  
+     * @param id The ID of the authenticated source User for whom to return results.
+  
+  
+  
+     * @param folderId The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.
+  
+  
+  
+  
+     * @returns {Promise<GetBookmarksByFolderIdResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getBookmarksByFolderId(id, folderId) {
+    let path = "/2/users/{id}/bookmarks/folders/{folder_id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    path = path.replace("{folder_id}", encodeURIComponent(String(folderId)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Search Users
+     * Retrieves a list of Users matching a search query.
+  
+  
+  
+     * @param query TThe the query string by which to query for users.
+  
+  
+  
+     * @returns {Promise<SearchResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async search(query, options = {}) {
+    const {
+      maxResults = void 0,
+      nextToken = void 0,
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/search";
+    const params = new URLSearchParams();
+    if (query !== void 0) {
+      params.append("query", String(query));
+    }
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (nextToken !== void 0) {
+      params.append("next_token", String(nextToken));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get followers
+     * Retrieves a list of Users who follow a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetFollowersResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getFollowers(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/followers";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Unblock DMs
+     * Unblocks direct messages to or from a specific User by their ID for the authenticated user.
+  
+  
+     * @param id The ID of the target User that the authenticated user requesting to unblock dms for.
+  
+  
+  
+  
+     * @returns {Promise<UnblockDmsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async unblockDms(id) {
+    let path = "/2/users/{id}/dm/unblock";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Unrepost Post
+     * Causes the authenticated user to unrepost a specific Post by its ID.
+  
+  
+     * @param id The ID of the authenticated source User that is requesting to repost the Post.
+  
+  
+  
+     * @param sourceTweetId The ID of the Post that the User is requesting to unretweet.
+  
+  
+  
+  
+     * @returns {Promise<UnrepostPostResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async unrepostPost(id, sourceTweetId) {
+    let path = "/2/users/{id}/retweets/{source_tweet_id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    path = path.replace(
+      "{source_tweet_id}",
+      encodeURIComponent(String(sourceTweetId))
+    );
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "DELETE",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Block DMs
+     * Blocks direct messages to or from a specific User by their ID for the authenticated user.
+  
+  
+     * @param id The ID of the target User that the authenticated user requesting to block dms for.
+  
+  
+  
+  
+     * @returns {Promise<BlockDmsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async blockDms(id) {
+    let path = "/2/users/{id}/dm/block";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get User by username
+     * Retrieves details of a specific User by their username.
+  
+  
+     * @param username A username.
+  
+  
+  
+  
+     * @returns {Promise<GetByUsernameResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByUsername(username, options = {}) {
+    const {
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/by/username/{username}";
+    path = path.replace("{username}", encodeURIComponent(String(username)));
+    const params = new URLSearchParams();
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get Posts
+     * Retrieves a list of posts authored by a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getPosts(id, options = {}) {
+    const {
+      sinceId = void 0,
+      untilId = void 0,
+      maxResults = void 0,
+      paginationToken = void 0,
+      exclude = [],
+      startTime = void 0,
+      endTime = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/users/{id}/tweets";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (sinceId !== void 0) {
+      params.append("since_id", String(sinceId));
+    }
+    if (untilId !== void 0) {
+      params.append("until_id", String(untilId));
+    }
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (exclude !== void 0) {
+      params.append("exclude", exclude.join(","));
+    }
+    if (startTime !== void 0) {
+      params.append("start_time", String(startTime));
+    }
+    if (endTime !== void 0) {
+      params.append("end_time", String(endTime));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+};
+
+// src/users/models.ts
+var models_exports12 = {};
 
 // src/webhooks/client.ts
 var WebhooksClient = class {
@@ -12676,85 +12315,6 @@ var WebhooksClient = class {
     };
     return this.client.request(
       "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Create stream link
-     * Creates a link to deliver FilteredStream events to the given webhook.
-  
-  
-     * @param webhookId The webhook ID to link to your FilteredStream ruleset.
-  
-  
-  
-  
-     * @returns {Promise<CreateStreamLinkResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async createStreamLink(webhookId, options = {}) {
-    const {
-      tweetfields = void 0,
-      expansions = void 0,
-      mediafields = void 0,
-      pollfields = void 0,
-      userfields = void 0,
-      placefields = void 0,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/tweets/search/webhooks/{webhook_id}";
-    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
-    const params = new URLSearchParams();
-    if (tweetfields !== void 0) {
-      params.append("tweet.fields", String(tweetfields));
-    }
-    if (expansions !== void 0) {
-      params.append("expansions", String(expansions));
-    }
-    if (mediafields !== void 0) {
-      params.append("media.fields", String(mediafields));
-    }
-    if (pollfields !== void 0) {
-      params.append("poll.fields", String(pollfields));
-    }
-    if (userfields !== void 0) {
-      params.append("user.fields", String(userfields));
-    }
-    if (placefields !== void 0) {
-      params.append("place.fields", String(placefields));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Delete stream link
-     * Deletes a link from FilteredStream events to the given webhook.
-  
-  
-     * @param webhookId The webhook ID to link to your FilteredStream ruleset.
-  
-  
-  
-  
-     * @returns {Promise<DeleteStreamLinkResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async deleteStreamLink(webhookId) {
-    let path = "/2/tweets/search/webhooks/{webhook_id}";
-    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      // No optional parameters, using empty request options
-    };
-    return this.client.request(
-      "DELETE",
       path + (params.toString() ? `?${params.toString()}` : ""),
       finalRequestOptions
     );
@@ -12865,10 +12425,89 @@ var WebhooksClient = class {
       finalRequestOptions
     );
   }
+  /**
+     * Create stream link
+     * Creates a link to deliver FilteredStream events to the given webhook.
+  
+  
+     * @param webhookId The webhook ID to link to your FilteredStream ruleset.
+  
+  
+  
+  
+     * @returns {Promise<CreateStreamLinkResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async createStreamLink(webhookId, options = {}) {
+    const {
+      tweetfields = void 0,
+      expansions = void 0,
+      mediafields = void 0,
+      pollfields = void 0,
+      userfields = void 0,
+      placefields = void 0,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/tweets/search/webhooks/{webhook_id}";
+    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
+    const params = new URLSearchParams();
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", String(tweetfields));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", String(expansions));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", String(mediafields));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", String(pollfields));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", String(userfields));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", String(placefields));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Delete stream link
+     * Deletes a link from FilteredStream events to the given webhook.
+  
+  
+     * @param webhookId The webhook ID to link to your FilteredStream ruleset.
+  
+  
+  
+  
+     * @returns {Promise<DeleteStreamLinkResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async deleteStreamLink(webhookId) {
+    let path = "/2/tweets/search/webhooks/{webhook_id}";
+    path = path.replace("{webhook_id}", encodeURIComponent(String(webhookId)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "DELETE",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
 };
 
 // src/webhooks/models.ts
-var models_exports14 = {};
+var models_exports13 = {};
 
 // src/media/client.ts
 var MediaClient = class {
@@ -12880,39 +12519,6 @@ var MediaClient = class {
      */
   constructor(client) {
     this.client = client;
-  }
-  /**
-     * Get Media by media key
-     * Retrieves details of a specific Media file by its media key.
-  
-  
-     * @param mediaKey A single Media Key.
-  
-  
-  
-  
-     * @returns {Promise<GetByKeyResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async getByKey(mediaKey, options = {}) {
-    const {
-      mediafields = [],
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/media/{media_key}";
-    path = path.replace("{media_key}", encodeURIComponent(String(mediaKey)));
-    const params = new URLSearchParams();
-    if (mediafields !== void 0) {
-      params.append("media.fields", mediafields.join(","));
-    }
-    const finalRequestOptions = {
-      ...requestOptions
-    };
-    return this.client.request(
-      "GET",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
   }
   /**
      * Get Media by media keys
@@ -12950,24 +12556,24 @@ var MediaClient = class {
     );
   }
   /**
-     * Create Media metadata
-     * Creates metadata for a Media file.
+     * Finalize Media upload
+     * Finalizes a Media upload request.
+  
+  
+     * @param id The media id of the targeted media to finalize.
   
   
   
-     * @returns {Promise<CreateMetadataResponse>} Promise resolving to the API response
+  
+     * @returns {Promise<FinalizeUploadResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async createMetadata(options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/media/metadata";
+  async finalizeUpload(id) {
+    let path = "/2/media/upload/{id}/finalize";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
     const params = new URLSearchParams();
     const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
+      // No optional parameters, using empty request options
     };
     return this.client.request(
       "POST",
@@ -12976,20 +12582,25 @@ var MediaClient = class {
     );
   }
   /**
-     * Initialize media upload
-     * Initializes a media upload.
+     * Append Media upload
+     * Appends data to a Media upload request.
+  
+  
+     * @param id The media identifier for the media to perform the append operation.
   
   
   
-     * @returns {Promise<InitializeUploadResponse>} Promise resolving to the API response
+  
+     * @returns {Promise<AppendUploadResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async initializeUpload(options = {}) {
+  async appendUpload(id, options = {}) {
     const {
       body,
       requestOptions = {}
     } = options || {};
-    let path = "/2/media/upload/initialize";
+    let path = "/2/media/upload/{id}/append";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
     const params = new URLSearchParams();
     const finalRequestOptions = {
       body: body ? JSON.stringify(body) : void 0,
@@ -12997,58 +12608,6 @@ var MediaClient = class {
     };
     return this.client.request(
       "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Create Media subtitles
-     * Creates subtitles for a specific Media file.
-  
-  
-  
-     * @returns {Promise<CreateSubtitlesResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async createSubtitles(options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/media/subtitles";
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "POST",
-      path + (params.toString() ? `?${params.toString()}` : ""),
-      finalRequestOptions
-    );
-  }
-  /**
-     * Delete Media subtitles
-     * Deletes subtitles for a specific Media file.
-  
-  
-  
-     * @returns {Promise<DeleteSubtitlesResponse>} Promise resolving to the API response
-     */
-  // Overload 1: Default behavior (unwrapped response)
-  async deleteSubtitles(options = {}) {
-    const {
-      body,
-      requestOptions = {}
-    } = options || {};
-    let path = "/2/media/subtitles";
-    const params = new URLSearchParams();
-    const finalRequestOptions = {
-      body: body ? JSON.stringify(body) : void 0,
-      ...requestOptions
-    };
-    return this.client.request(
-      "DELETE",
       path + (params.toString() ? `?${params.toString()}` : ""),
       finalRequestOptions
     );
@@ -13110,24 +12669,24 @@ var MediaClient = class {
     );
   }
   /**
-     * Finalize Media upload
-     * Finalizes a Media upload request.
-  
-  
-     * @param id The media id of the targeted media to finalize.
+     * Initialize media upload
+     * Initializes a media upload.
   
   
   
-  
-     * @returns {Promise<FinalizeUploadResponse>} Promise resolving to the API response
+     * @returns {Promise<InitializeUploadResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async finalizeUpload(id) {
-    let path = "/2/media/upload/{id}/finalize";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
+  async initializeUpload(options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/media/upload/initialize";
     const params = new URLSearchParams();
     const finalRequestOptions = {
-      // No optional parameters, using empty request options
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
     };
     return this.client.request(
       "POST",
@@ -13197,25 +12756,20 @@ var MediaClient = class {
     );
   }
   /**
-     * Append Media upload
-     * Appends data to a Media upload request.
-  
-  
-     * @param id The media identifier for the media to perform the append operation.
+     * Create Media metadata
+     * Creates metadata for a Media file.
   
   
   
-  
-     * @returns {Promise<AppendUploadResponse>} Promise resolving to the API response
+     * @returns {Promise<CreateMetadataResponse>} Promise resolving to the API response
      */
   // Overload 1: Default behavior (unwrapped response)
-  async appendUpload(id, options = {}) {
+  async createMetadata(options = {}) {
     const {
       body,
       requestOptions = {}
     } = options || {};
-    let path = "/2/media/upload/{id}/append";
-    path = path.replace("{id}", encodeURIComponent(String(id)));
+    let path = "/2/media/metadata";
     const params = new URLSearchParams();
     const finalRequestOptions = {
       body: body ? JSON.stringify(body) : void 0,
@@ -13227,10 +12781,95 @@ var MediaClient = class {
       finalRequestOptions
     );
   }
+  /**
+     * Get Media by media key
+     * Retrieves details of a specific Media file by its media key.
+  
+  
+     * @param mediaKey A single Media Key.
+  
+  
+  
+  
+     * @returns {Promise<GetByKeyResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByKey(mediaKey, options = {}) {
+    const {
+      mediafields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/media/{media_key}";
+    path = path.replace("{media_key}", encodeURIComponent(String(mediaKey)));
+    const params = new URLSearchParams();
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Create Media subtitles
+     * Creates subtitles for a specific Media file.
+  
+  
+  
+     * @returns {Promise<CreateSubtitlesResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async createSubtitles(options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/media/subtitles";
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Delete Media subtitles
+     * Deletes subtitles for a specific Media file.
+  
+  
+  
+     * @returns {Promise<DeleteSubtitlesResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async deleteSubtitles(options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/media/subtitles";
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "DELETE",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
 };
 
 // src/media/models.ts
-var models_exports15 = {};
+var models_exports14 = {};
 
 // src/general/client.ts
 var GeneralClient = class {
@@ -13267,6 +12906,367 @@ var GeneralClient = class {
 };
 
 // src/general/models.ts
+var models_exports15 = {};
+
+// src/lists/client.ts
+var ListsClient = class {
+  client;
+  /**
+     * Creates a new lists client instance
+     * 
+     * @param client - The main X API client instance
+     */
+  constructor(client) {
+    this.client = client;
+  }
+  /**
+     * Get List followers
+     * Retrieves a list of Users who follow a specific List by its ID.
+  
+  
+     * @param id The ID of the List.
+  
+  
+  
+  
+     * @returns {Promise<GetFollowersResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getFollowers(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/lists/{id}/followers";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Remove List member
+     * Removes a User from a specific List by its ID and the User’s ID.
+  
+  
+     * @param id The ID of the List to remove a member.
+  
+  
+  
+     * @param userId The ID of User that will be removed from the List.
+  
+  
+  
+  
+     * @returns {Promise<RemoveMemberByUserIdResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async removeMemberByUserId(id, userId) {
+    let path = "/2/lists/{id}/members/{user_id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    path = path.replace("{user_id}", encodeURIComponent(String(userId)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "DELETE",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get List members
+     * Retrieves a list of Users who are members of a specific List by its ID.
+  
+  
+     * @param id The ID of the List.
+  
+  
+  
+  
+     * @returns {Promise<GetMembersResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getMembers(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      userfields = [],
+      expansions = [],
+      tweetfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/lists/{id}/members";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Add List member
+     * Adds a User to a specific List by its ID.
+  
+  
+     * @param id The ID of the List for which to add a member.
+  
+  
+  
+  
+     * @returns {Promise<AddMemberResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async addMember(id, options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/lists/{id}/members";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Create List
+     * Creates a new List for the authenticated user.
+  
+  
+  
+     * @returns {Promise<CreateResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async create(options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/lists";
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "POST",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get List by ID
+     * Retrieves details of a specific List by its ID.
+  
+  
+     * @param id The ID of the List.
+  
+  
+  
+  
+     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getById(id, options = {}) {
+    const {
+      listfields = [],
+      expansions = [],
+      userfields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/lists/{id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (listfields !== void 0) {
+      params.append("list.fields", listfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Update List
+     * Updates the details of a specific List owned by the authenticated user by its ID.
+  
+  
+     * @param id The ID of the List to modify.
+  
+  
+  
+  
+     * @returns {Promise<UpdateResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async update(id, options = {}) {
+    const {
+      body,
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/lists/{id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      body: body ? JSON.stringify(body) : void 0,
+      ...requestOptions
+    };
+    return this.client.request(
+      "PUT",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Delete List
+     * Deletes a specific List owned by the authenticated user by its ID.
+  
+  
+     * @param id The ID of the List to delete.
+  
+  
+  
+  
+     * @returns {Promise<DeleteResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async delete(id) {
+    let path = "/2/lists/{id}";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    const finalRequestOptions = {
+      // No optional parameters, using empty request options
+    };
+    return this.client.request(
+      "DELETE",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+  /**
+     * Get List Posts
+     * Retrieves a list of Posts associated with a specific List by its ID.
+  
+  
+     * @param id The ID of the List.
+  
+  
+  
+  
+     * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
+     */
+  // Overload 1: Default behavior (unwrapped response)
+  async getPosts(id, options = {}) {
+    const {
+      maxResults = void 0,
+      paginationToken = void 0,
+      tweetfields = [],
+      expansions = [],
+      mediafields = [],
+      pollfields = [],
+      userfields = [],
+      placefields = [],
+      requestOptions = {}
+    } = options || {};
+    let path = "/2/lists/{id}/tweets";
+    path = path.replace("{id}", encodeURIComponent(String(id)));
+    const params = new URLSearchParams();
+    if (maxResults !== void 0) {
+      params.append("max_results", String(maxResults));
+    }
+    if (paginationToken !== void 0) {
+      params.append("pagination_token", String(paginationToken));
+    }
+    if (tweetfields !== void 0) {
+      params.append("tweet.fields", tweetfields.join(","));
+    }
+    if (expansions !== void 0) {
+      params.append("expansions", expansions.join(","));
+    }
+    if (mediafields !== void 0) {
+      params.append("media.fields", mediafields.join(","));
+    }
+    if (pollfields !== void 0) {
+      params.append("poll.fields", pollfields.join(","));
+    }
+    if (userfields !== void 0) {
+      params.append("user.fields", userfields.join(","));
+    }
+    if (placefields !== void 0) {
+      params.append("place.fields", placefields.join(","));
+    }
+    const finalRequestOptions = {
+      ...requestOptions
+    };
+    return this.client.request(
+      "GET",
+      path + (params.toString() ? `?${params.toString()}` : ""),
+      finalRequestOptions
+    );
+  }
+};
+
+// src/lists/models.ts
 var models_exports16 = {};
 
 // src/client.ts
@@ -13303,40 +13303,40 @@ var Client = class {
   maxRetries;
   /** HTTP client for making requests */
   httpClient = httpClient;
-  /** activity client */
-  activity;
-  /** posts client */
-  posts;
-  /** spaces client */
-  spaces;
-  /** communities client */
-  communities;
   /** community notes client */
   communityNotes;
-  /** direct messages client */
-  directMessages;
-  /** trends client */
-  trends;
-  /** lists client */
-  lists;
-  /** account activity client */
-  accountActivity;
+  /** spaces client */
+  spaces;
   /** stream client */
   stream;
-  /** users client */
-  users;
+  /** account activity client */
+  accountActivity;
+  /** connections client */
+  connections;
+  /** trends client */
+  trends;
   /** usage client */
   usage;
   /** compliance client */
   compliance;
-  /** connections client */
-  connections;
+  /** communities client */
+  communities;
+  /** direct messages client */
+  directMessages;
+  /** activity client */
+  activity;
+  /** posts client */
+  posts;
+  /** users client */
+  users;
   /** webhooks client */
   webhooks;
   /** media client */
   media;
   /** general client */
   general;
+  /** lists client */
+  lists;
   /**
    * Creates a new X API client instance
    * 
@@ -13375,29 +13375,29 @@ var Client = class {
     this.retry = config.retry ?? true;
     this.maxRetries = config.maxRetries || 3;
     const defaultHeaders = {
-      "User-Agent": "xdk-typescript/0.1.1-beta",
+      "User-Agent": "xdk-typescript/0.1.2-beta",
       "Content-Type": "application/json",
       "Accept": "application/json",
       ...config.headers || {}
     };
     this.headers = httpClient.createHeaders(defaultHeaders);
-    this.activity = new ActivityClient(this);
-    this.posts = new PostsClient(this);
-    this.spaces = new SpacesClient(this);
-    this.communities = new CommunitiesClient(this);
     this.communityNotes = new CommunityNotesClient(this);
-    this.directMessages = new DirectMessagesClient(this);
-    this.trends = new TrendsClient(this);
-    this.lists = new ListsClient(this);
-    this.accountActivity = new AccountActivityClient(this);
+    this.spaces = new SpacesClient(this);
     this.stream = new StreamClient(this);
-    this.users = new UsersClient(this);
+    this.accountActivity = new AccountActivityClient(this);
+    this.connections = new ConnectionsClient(this);
+    this.trends = new TrendsClient(this);
     this.usage = new UsageClient(this);
     this.compliance = new ComplianceClient(this);
-    this.connections = new ConnectionsClient(this);
+    this.communities = new CommunitiesClient(this);
+    this.directMessages = new DirectMessagesClient(this);
+    this.activity = new ActivityClient(this);
+    this.posts = new PostsClient(this);
+    this.users = new UsersClient(this);
     this.webhooks = new WebhooksClient(this);
     this.media = new MediaClient(this);
     this.general = new GeneralClient(this);
+    this.lists = new ListsClient(this);
   }
   /**
    * Make an authenticated request to the X API
@@ -14407,6 +14407,6 @@ node-domexception/index.js:
   (*! node-domexception. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> *)
 */
 
-export { models_exports9 as AccountActivity, AccountActivityClient, models_exports as Activity, ActivityClient, ApiError, Client, models_exports4 as Communities, CommunitiesClient, models_exports5 as CommunityNotes, CommunityNotesClient, models_exports12 as Compliance, ComplianceClient, models_exports13 as Connections, ConnectionsClient, CryptoUtils, models_exports6 as DirectMessages, DirectMessagesClient, EventPaginator, models_exports16 as General, GeneralClient, HttpClient, models_exports8 as Lists, ListsClient, models_exports15 as Media, MediaClient, OAuth1, OAuth2, Paginator, PostPaginator, models_exports2 as Posts, PostsClient, schemas_exports as Schemas, models_exports3 as Spaces, SpacesClient, models_exports17 as Stream, StreamClient, models_exports7 as Trends, TrendsClient, models_exports11 as Usage, UsageClient, UserPaginator, models_exports10 as Users, UsersClient, models_exports14 as Webhooks, WebhooksClient, generateCodeChallenge, generateCodeVerifier, generateNonce, generateTimestamp, hmacSha1, httpClient };
+export { models_exports3 as AccountActivity, AccountActivityClient, models_exports10 as Activity, ActivityClient, ApiError, Client, models_exports8 as Communities, CommunitiesClient, models_exports as CommunityNotes, CommunityNotesClient, models_exports7 as Compliance, ComplianceClient, models_exports4 as Connections, ConnectionsClient, CryptoUtils, models_exports9 as DirectMessages, DirectMessagesClient, EventPaginator, models_exports15 as General, GeneralClient, HttpClient, models_exports16 as Lists, ListsClient, models_exports14 as Media, MediaClient, OAuth1, OAuth2, Paginator, PostPaginator, models_exports11 as Posts, PostsClient, schemas_exports as Schemas, models_exports2 as Spaces, SpacesClient, models_exports17 as Stream, StreamClient, models_exports5 as Trends, TrendsClient, models_exports6 as Usage, UsageClient, UserPaginator, models_exports12 as Users, UsersClient, models_exports13 as Webhooks, WebhooksClient, generateCodeChallenge, generateCodeVerifier, generateNonce, generateTimestamp, hmacSha1, httpClient };
 //# sourceMappingURL=out.js.map
 //# sourceMappingURL=index.js.map

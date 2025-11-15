@@ -16,27 +16,14 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  EvaluateRequest,
-  EvaluateResponse,
+  DeleteResponse,
   CreateRequest,
   CreateResponse,
   SearchWrittenResponse,
+  EvaluateRequest,
+  EvaluateResponse,
   SearchEligiblePostsResponse,
-  DeleteResponse,
 } from './models.js';
-
-/**
- * Options for evaluate method
- * 
- * @public
- */
-export interface EvaluateOptions {
-  /** Request body */
-  body?: EvaluateRequest;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
 
 /**
  * Options for create method
@@ -65,6 +52,19 @@ export interface SearchWrittenOptions {
 
   /** A comma separated list of Note fields to display. */
   notefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
+
+/**
+ * Options for evaluate method
+ * 
+ * @public
+ */
+export interface EvaluateOptions {
+  /** Request body */
+  body?: EvaluateRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -129,39 +129,38 @@ export class CommunityNotesClient {
   }
 
   /**
-   * Evaluate a Community Note
-   * Endpoint to evaluate a community note.
+   * Delete a Community Note
+   * Deletes a community note.
+
+
+   * @param id The community note id to delete.
 
 
 
-   * @returns {Promise<EvaluateResponse>} Promise resolving to the API response
+
+   * @returns {Promise<DeleteResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async evaluate(options: EvaluateOptions = {}): Promise<EvaluateResponse> {
+  async delete(id: string): Promise<DeleteResponse> {
     // Destructure options (exclude path parameters, they're already function params)
 
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
+    const requestOptions = {};
 
     // Build the path with path parameters
-    let path = '/2/evaluate_note';
+    let path = '/2/notes/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...requestOptions,
+      // No optional parameters, using empty request options
     };
 
-    return this.client.request<EvaluateResponse>(
-      'POST',
+    return this.client.request<DeleteResponse>(
+      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -271,6 +270,45 @@ export class CommunityNotesClient {
   }
 
   /**
+   * Evaluate a Community Note
+   * Endpoint to evaluate a community note.
+
+
+
+   * @returns {Promise<EvaluateResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async evaluate(options: EvaluateOptions = {}): Promise<EvaluateResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/evaluate_note';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<EvaluateResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Search for Posts Eligible for Community Notes
    * Returns all the posts that are eligible for community notes.
 
@@ -365,44 +403,6 @@ export class CommunityNotesClient {
 
     return this.client.request<SearchEligiblePostsResponse>(
       'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Delete a Community Note
-   * Deletes a community note.
-
-
-   * @param id The community note id to delete.
-
-
-
-
-   * @returns {Promise<DeleteResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async delete(id: string): Promise<DeleteResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/notes/{id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<DeleteResponse>(
-      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

@@ -38,18 +38,9 @@ fi
 case "$1" in
     patch)
         if [ -n "$PRERELEASE" ]; then
-            # If it's a prerelease, just increment the prerelease number
-            if [[ $PRERELEASE =~ ^beta([0-9]*)$ ]]; then
-                BETA_NUM="${BASH_REMATCH[1]}"
-                if [ -z "$BETA_NUM" ]; then
-                    BETA_NUM=1
-                else
-                    BETA_NUM=$((BETA_NUM + 1))
-                fi
-                NEW_VERSION="$MAJOR.$MINOR.$PATCH-beta$BETA_NUM"
-            else
-                NEW_VERSION="$MAJOR.$MINOR.$PATCH-$PRERELEASE.1"
-            fi
+            # If it's a prerelease, increment patch version and keep the prerelease tag
+            # e.g., 0.1.1-beta -> 0.1.2-beta
+            NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))-$PRERELEASE"
         else
             NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
         fi
@@ -65,16 +56,22 @@ case "$1" in
         NEW_VERSION="$((MAJOR + 1)).0.0"
         ;;
     beta)
-        if [ -n "$PRERELEASE" ] && [[ $PRERELEASE =~ ^beta([0-9]*)$ ]]; then
+        if [ -n "$PRERELEASE" ] && [[ $PRERELEASE =~ ^beta\.([0-9]+)$ ]]; then
+            # Format: beta.1, beta.2, etc. (standard SemVer)
+            BETA_NUM="${BASH_REMATCH[1]}"
+            BETA_NUM=$((BETA_NUM + 1))
+            NEW_VERSION="$MAJOR.$MINOR.$PATCH-beta.$BETA_NUM"
+        elif [ -n "$PRERELEASE" ] && [[ $PRERELEASE =~ ^beta([0-9]*)$ ]]; then
+            # Legacy format: beta, beta1, beta2, etc. (convert to standard)
             BETA_NUM="${BASH_REMATCH[1]}"
             if [ -z "$BETA_NUM" ]; then
                 BETA_NUM=1
             else
                 BETA_NUM=$((BETA_NUM + 1))
             fi
-            NEW_VERSION="$MAJOR.$MINOR.$PATCH-beta$BETA_NUM"
+            NEW_VERSION="$MAJOR.$MINOR.$PATCH-beta.$BETA_NUM"
         else
-            NEW_VERSION="$MAJOR.$MINOR.$PATCH-beta1"
+            NEW_VERSION="$MAJOR.$MINOR.$PATCH-beta.1"
         fi
         ;;
     *)
@@ -83,10 +80,10 @@ case "$1" in
             NEW_VERSION="$1"
         else
             echo "Usage: $0 [patch|minor|major|beta|version]"
-            echo "  patch  - Increment patch version (0.1.1 -> 0.1.2 or 0.1.1-beta -> 0.1.1-beta2)"
+            echo "  patch  - Increment patch version (0.1.1 -> 0.1.2 or 0.1.1-beta -> 0.1.2-beta)"
             echo "  minor  - Increment minor version (0.1.1 -> 0.2.0)"
             echo "  major  - Increment major version (0.1.1 -> 1.0.0)"
-            echo "  beta   - Add or increment beta tag (0.1.1 -> 0.1.1-beta1)"
+            echo "  beta   - Add or increment beta tag (0.1.1 -> 0.1.1-beta.1)"
             echo "  version - Use specific version (e.g., 0.2.0)"
             exit 1
         fi
