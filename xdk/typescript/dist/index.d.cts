@@ -61,6 +61,101 @@ declare class HttpClient {
 }
 declare const httpClient: HttpClient;
 
+interface StreamDataEvent {
+    data: any;
+    includes?: any;
+    matching_rules?: any[];
+}
+/**
+ * Event-driven stream class for handling streaming data from the X API.
+ *
+ * This class provides an event-driven interface for working with streaming endpoints,
+ * allowing you to listen to 'data', 'keepAlive', 'error', and 'close' events.
+ *
+ * @public
+ */
+declare class EventDrivenStream {
+    private webStream;
+    private reader;
+    private decoder;
+    private isConnected;
+    private isClosed;
+    private buffer;
+    private eventListeners;
+    private autoReconnect;
+    private reconnectAttempts;
+    private maxReconnectAttempts;
+    private reconnectDelay;
+    constructor();
+    /**
+     * Initialize the stream with a Web ReadableStream
+     */
+    connect(webStream: ReadableStream<Uint8Array>): Promise<void>;
+    /**
+     * Start reading from the stream
+     */
+    private startReading;
+    /**
+     * Process incoming data chunks
+     */
+    private processChunk;
+    /**
+     * Check if data is a keep-alive signal (20-second heartbeat)
+     * Twitter sends newline characters every 20 seconds to prevent timeouts
+     */
+    private isKeepAlive;
+    /**
+     * Handle connection errors
+     */
+    private handleConnectionError;
+    /**
+     * Handle connection closed
+     */
+    private handleConnectionClosed;
+    /**
+     * Attempt to reconnect
+     */
+    private attemptReconnect;
+    /**
+     * Clean up resources
+     */
+    private cleanup;
+    /**
+     * Close the stream
+     */
+    close(): void;
+    /**
+     * Add event listener
+     */
+    on(event: string, listener: Function): this;
+    /**
+     * Remove event listener
+     */
+    off(event: string, listener: Function): this;
+    /**
+     * Emit event to listeners
+     */
+    private emit;
+    /**
+     * Setup default event listeners
+     */
+    private setupEventListeners;
+    /**
+     * Enable/disable auto-reconnect
+     */
+    set autoReconnectEnabled(enabled: boolean);
+    get autoReconnectEnabled(): boolean;
+    /**
+     * Set max reconnect attempts
+     */
+    set maxReconnectAttemptsCount(count: number);
+    get maxReconnectAttemptsCount(): number;
+    /**
+     * Async iterator for tweets
+     */
+    [Symbol.asyncIterator](): AsyncGenerator<StreamDataEvent, void, unknown>;
+}
+
 /**
  * OpenAPI Schema Types
  * Auto-generated from OpenAPI components/schemas
@@ -3961,590 +4056,45 @@ declare namespace schemas {
 }
 
 /**
- * Models for community notes operations
- */
-
-/**
- * Response for delete
- *
- * @public
- */
-type DeleteResponse$3 = DeleteNoteResponse;
-/**
- * Request for create
- *
- * @public
- */
-type CreateRequest$3 = CreateNoteRequest;
-/**
- * Response for create
- *
- * @public
- */
-type CreateResponse$3 = CreateNoteResponse;
-/**
- * Response for searchWritten
- *
- * @public
- */
-type SearchWrittenResponse = Get2NotesSearchNotesWrittenResponse;
-/**
- * Request for evaluate
- *
- * @public
- */
-type EvaluateRequest = EvaluateNoteRequest;
-/**
- * Response for evaluate
- *
- * @public
- */
-type EvaluateResponse = EvaluateNoteResponse;
-/**
- * Response for searchEligiblePosts
- *
- * @public
- */
-type SearchEligiblePostsResponse = Get2NotesSearchPostsEligibleForNotesResponse;
-
-type models$g_EvaluateRequest = EvaluateRequest;
-type models$g_EvaluateResponse = EvaluateResponse;
-type models$g_SearchEligiblePostsResponse = SearchEligiblePostsResponse;
-type models$g_SearchWrittenResponse = SearchWrittenResponse;
-declare namespace models$g {
-  export {
-    CreateRequest$3 as CreateRequest,
-    CreateResponse$3 as CreateResponse,
-    DeleteResponse$3 as DeleteResponse,
-    models$g_EvaluateRequest as EvaluateRequest,
-    models$g_EvaluateResponse as EvaluateResponse,
-    models$g_SearchEligiblePostsResponse as SearchEligiblePostsResponse,
-    models$g_SearchWrittenResponse as SearchWrittenResponse,
-  };
-}
-
-/**
- * community notes client for the X API.
- *
- * This module provides a client for interacting with the community notes endpoints of the X API.
- */
-
-/**
- * Options for create method
- *
- * @public
- */
-interface CreateOptions$2 {
-    /** Request body */
-    body?: CreateRequest$3;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for searchWritten method
- *
- * @public
- */
-interface SearchWrittenOptions {
-    /** Pagination token to get next set of posts eligible for notes. */
-    paginationToken?: string;
-    /** Max results to return. */
-    maxResults?: number;
-    /** A comma separated list of Note fields to display. */
-    notefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for evaluate method
- *
- * @public
- */
-interface EvaluateOptions {
-    /** Request body */
-    body?: EvaluateRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for searchEligiblePosts method
- *
- * @public
- */
-interface SearchEligiblePostsOptions {
-    /** Pagination token to get next set of posts eligible for notes. */
-    paginationToken?: string;
-    /** Max results to return. */
-    maxResults?: number;
-    /** The selection of posts to return. Valid values are 'feed_size: small' and 'feed_size: large'. Default is 'feed_size: small', only top AI writers have access to large size feed. */
-    postSelection?: string;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of Poll fields to display. */
-    pollfields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Place fields to display. */
-    placefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Client for community notes operations
- *
- * This client provides methods for interacting with the community notes endpoints
- * of the X API. It handles authentication, request formatting, and response
- * parsing for all community notes related operations.
- *
- * @category community notes
- */
-declare class CommunityNotesClient {
-    private client;
-    /**
-       * Creates a new community notes client instance
-       *
-       * @param client - The main X API client instance
-       */
-    constructor(client: Client);
-    /**
-     * Delete a Community Note
-     * Deletes a community note.
-  
-  
-     * @param id The community note id to delete.
-  
-  
-  
-  
-     * @returns {Promise<DeleteResponse>} Promise resolving to the API response
-     */
-    delete(id: string): Promise<DeleteResponse$3>;
-    /**
-     * Create a Community Note
-     * Creates a community note endpoint for LLM use case.
-  
-  
-  
-     * @returns {Promise<CreateResponse>} Promise resolving to the API response
-     */
-    create(options?: CreateOptions$2): Promise<CreateResponse$3>;
-    /**
-     * Search for Community Notes Written
-     * Returns all the community notes written by the user.
-  
-  
-  
-     * @param testMode If true, return the notes the caller wrote for the test. If false, return the notes the caller wrote on the product.
-  
-  
-  
-     * @returns {Promise<SearchWrittenResponse>} Promise resolving to the API response
-     */
-    searchWritten(testMode: boolean, options?: SearchWrittenOptions): Promise<SearchWrittenResponse>;
-    /**
-     * Evaluate a Community Note
-     * Endpoint to evaluate a community note.
-  
-  
-  
-     * @returns {Promise<EvaluateResponse>} Promise resolving to the API response
-     */
-    evaluate(options?: EvaluateOptions): Promise<EvaluateResponse>;
-    /**
-     * Search for Posts Eligible for Community Notes
-     * Returns all the posts that are eligible for community notes.
-  
-  
-  
-     * @param testMode If true, return a list of posts that are for the test. If false, return a list of posts that the bots can write proposed notes on the product.
-  
-  
-  
-     * @returns {Promise<SearchEligiblePostsResponse>} Promise resolving to the API response
-     */
-    searchEligiblePosts(testMode: boolean, options?: SearchEligiblePostsOptions): Promise<SearchEligiblePostsResponse>;
-}
-
-/**
- * Models for spaces operations
- */
-
-/**
- * Response for search
- *
- * @public
- */
-type SearchResponse$2 = Get2SpacesSearchResponse;
-/**
- * Response for getPosts
- *
- * @public
- */
-type GetPostsResponse$2 = Get2SpacesIdTweetsResponse;
-/**
- * Response for getByCreatorIds
- *
- * @public
- */
-type GetByCreatorIdsResponse = Get2SpacesByCreatorIdsResponse;
-/**
- * Response for getById
- *
- * @public
- */
-type GetByIdResponse$4 = Get2SpacesIdResponse;
-/**
- * Response for getByIds
- *
- * @public
- */
-type GetByIdsResponse$2 = Get2SpacesResponse;
-/**
- * Response for getBuyers
- *
- * @public
- */
-type GetBuyersResponse = Get2SpacesIdBuyersResponse;
-
-type models$f_GetBuyersResponse = GetBuyersResponse;
-type models$f_GetByCreatorIdsResponse = GetByCreatorIdsResponse;
-declare namespace models$f {
-  export {
-    models$f_GetBuyersResponse as GetBuyersResponse,
-    models$f_GetByCreatorIdsResponse as GetByCreatorIdsResponse,
-    GetByIdResponse$4 as GetByIdResponse,
-    GetByIdsResponse$2 as GetByIdsResponse,
-    GetPostsResponse$2 as GetPostsResponse,
-    SearchResponse$2 as SearchResponse,
-  };
-}
-
-/**
- * spaces client for the X API.
- *
- * This module provides a client for interacting with the spaces endpoints of the X API.
- */
-
-/**
- * Options for search method
- *
- * @public
- */
-interface SearchOptions$2 {
-    /** The state of Spaces to search for. */
-    state?: string;
-    /** The number of results to return. */
-    maxResults?: number;
-    /** A comma separated list of Space fields to display. */
-    spacefields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Topic fields to display. */
-    topicfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getPosts method
- *
- * @public
- */
-interface GetPostsOptions$2 {
-    /** The number of Posts to fetch from the provided space. If not provided, the value will default to the maximum of 100. */
-    maxResults?: number;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of Poll fields to display. */
-    pollfields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Place fields to display. */
-    placefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getByCreatorIds method
- *
- * @public
- */
-interface GetByCreatorIdsOptions {
-    /** A comma separated list of Space fields to display. */
-    spacefields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Topic fields to display. */
-    topicfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getById method
- *
- * @public
- */
-interface GetByIdOptions$4 {
-    /** A comma separated list of Space fields to display. */
-    spacefields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Topic fields to display. */
-    topicfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getByIds method
- *
- * @public
- */
-interface GetByIdsOptions$2 {
-    /** A comma separated list of Space fields to display. */
-    spacefields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Topic fields to display. */
-    topicfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getBuyers method
- *
- * @public
- */
-interface GetBuyersOptions {
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: any;
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Client for spaces operations
- *
- * This client provides methods for interacting with the spaces endpoints
- * of the X API. It handles authentication, request formatting, and response
- * parsing for all spaces related operations.
- *
- * @category spaces
- */
-declare class SpacesClient {
-    private client;
-    /**
-       * Creates a new spaces client instance
-       *
-       * @param client - The main X API client instance
-       */
-    constructor(client: Client);
-    /**
-     * Search Spaces
-     * Retrieves a list of Spaces matching the specified search query.
-  
-  
-  
-     * @param query The search query.
-  
-  
-  
-     * @returns {Promise<SearchResponse>} Promise resolving to the API response
-     */
-    search(query: string, options?: SearchOptions$2): Promise<SearchResponse$2>;
-    /**
-     * Get Space Posts
-     * Retrieves a list of Posts shared in a specific Space by its ID.
-  
-  
-     * @param id The ID of the Space to be retrieved.
-  
-  
-  
-  
-     * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
-     */
-    getPosts(id: string, options?: GetPostsOptions$2): Promise<GetPostsResponse$2>;
-    /**
-     * Get Spaces by creator IDs
-     * Retrieves details of Spaces created by specified User IDs.
-  
-  
-  
-     * @param userIds The IDs of Users to search through.
-  
-  
-  
-     * @returns {Promise<GetByCreatorIdsResponse>} Promise resolving to the API response
-     */
-    getByCreatorIds(userIds: Array<any>, options?: GetByCreatorIdsOptions): Promise<GetByCreatorIdsResponse>;
-    /**
-     * Get space by ID
-     * Retrieves details of a specific space by its ID.
-  
-  
-     * @param id The ID of the Space to be retrieved.
-  
-  
-  
-  
-     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
-     */
-    getById(id: string, options?: GetByIdOptions$4): Promise<GetByIdResponse$4>;
-    /**
-     * Get Spaces by IDs
-     * Retrieves details of multiple Spaces by their IDs.
-  
-  
-  
-     * @param ids The list of Space IDs to return.
-  
-  
-  
-     * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
-     */
-    getByIds(ids: Array<any>, options?: GetByIdsOptions$2): Promise<GetByIdsResponse$2>;
-    /**
-     * Get Space ticket buyers
-     * Retrieves a list of Users who purchased tickets to a specific Space by its ID.
-  
-  
-     * @param id The ID of the Space to be retrieved.
-  
-  
-  
-  
-     * @returns {Promise<GetBuyersResponse>} Promise resolving to the API response
-     */
-    getBuyers(id: string, options?: GetBuyersOptions): Promise<GetBuyersResponse>;
-}
-
-interface StreamDataEvent {
-    data: any;
-    includes?: any;
-    matching_rules?: any[];
-}
-/**
- * Event-driven stream class for handling streaming data from the X API.
- *
- * This class provides an event-driven interface for working with streaming endpoints,
- * allowing you to listen to 'data', 'keepAlive', 'error', and 'close' events.
- *
- * @public
- */
-declare class EventDrivenStream {
-    private webStream;
-    private reader;
-    private decoder;
-    private isConnected;
-    private isClosed;
-    private buffer;
-    private eventListeners;
-    private autoReconnect;
-    private reconnectAttempts;
-    private maxReconnectAttempts;
-    private reconnectDelay;
-    constructor();
-    /**
-     * Initialize the stream with a Web ReadableStream
-     */
-    connect(webStream: ReadableStream<Uint8Array>): Promise<void>;
-    /**
-     * Start reading from the stream
-     */
-    private startReading;
-    /**
-     * Process incoming data chunks
-     */
-    private processChunk;
-    /**
-     * Check if data is a keep-alive signal (20-second heartbeat)
-     * Twitter sends newline characters every 20 seconds to prevent timeouts
-     */
-    private isKeepAlive;
-    /**
-     * Handle connection errors
-     */
-    private handleConnectionError;
-    /**
-     * Handle connection closed
-     */
-    private handleConnectionClosed;
-    /**
-     * Attempt to reconnect
-     */
-    private attemptReconnect;
-    /**
-     * Clean up resources
-     */
-    private cleanup;
-    /**
-     * Close the stream
-     */
-    close(): void;
-    /**
-     * Add event listener
-     */
-    on(event: string, listener: Function): this;
-    /**
-     * Remove event listener
-     */
-    off(event: string, listener: Function): this;
-    /**
-     * Emit event to listeners
-     */
-    private emit;
-    /**
-     * Setup default event listeners
-     */
-    private setupEventListeners;
-    /**
-     * Enable/disable auto-reconnect
-     */
-    set autoReconnectEnabled(enabled: boolean);
-    get autoReconnectEnabled(): boolean;
-    /**
-     * Set max reconnect attempts
-     */
-    set maxReconnectAttemptsCount(count: number);
-    get maxReconnectAttemptsCount(): number;
-    /**
-     * Async iterator for tweets
-     */
-    [Symbol.asyncIterator](): AsyncGenerator<StreamDataEvent, void, unknown>;
-}
-
-/**
  * Models for stream operations
  */
 
 /**
- * Response for postsCompliance
+ * Response for postsFirehose
  *
  * @public
  */
-type PostsComplianceResponse = TweetComplianceStreamResponse;
+type PostsFirehoseResponse = StreamingTweetResponse;
+/**
+ * Response for getRuleCounts
+ *
+ * @public
+ */
+type GetRuleCountsResponse = Get2TweetsSearchStreamRulesCountsResponse;
+/**
+ * Response for labelsCompliance
+ *
+ * @public
+ */
+type LabelsComplianceResponse = TweetLabelStreamResponse;
+/**
+ * Response for usersCompliance
+ *
+ * @public
+ */
+type UsersComplianceResponse = UserComplianceStreamResponse;
+/**
+ * Response for likesSample10
+ *
+ * @public
+ */
+type LikesSample10Response = StreamingLikeResponseV2;
+/**
+ * Response for likesFirehose
+ *
+ * @public
+ */
+type LikesFirehoseResponse = StreamingLikeResponseV2;
 /**
  * Response for postsFirehoseKo
  *
@@ -4552,11 +4102,29 @@ type PostsComplianceResponse = TweetComplianceStreamResponse;
  */
 type PostsFirehoseKoResponse = StreamingTweetResponse;
 /**
- * Response for usersCompliance
+ * Response for postsSample
  *
  * @public
  */
-type UsersComplianceResponse = UserComplianceStreamResponse;
+type PostsSampleResponse = StreamingTweetResponse;
+/**
+ * Response for postsFirehoseEn
+ *
+ * @public
+ */
+type PostsFirehoseEnResponse = StreamingTweetResponse;
+/**
+ * Response for likesCompliance
+ *
+ * @public
+ */
+type LikesComplianceResponse = LikesComplianceStreamResponse;
+/**
+ * Response for postsCompliance
+ *
+ * @public
+ */
+type PostsComplianceResponse = TweetComplianceStreamResponse;
 /**
  * Response for getRules
  *
@@ -4576,65 +4144,11 @@ type UpdateRulesRequest = AddOrDeleteRulesRequest;
  */
 type UpdateRulesResponse = AddOrDeleteRulesResponse;
 /**
- * Response for likesFirehose
+ * Response for postsSample10
  *
  * @public
  */
-type LikesFirehoseResponse = StreamingLikeResponseV2;
-/**
- * Response for likesSample10
- *
- * @public
- */
-type LikesSample10Response = StreamingLikeResponseV2;
-/**
- * Response for likesCompliance
- *
- * @public
- */
-type LikesComplianceResponse = LikesComplianceStreamResponse;
-/**
- * Response for postsFirehosePt
- *
- * @public
- */
-type PostsFirehosePtResponse = StreamingTweetResponse;
-/**
- * Response for labelsCompliance
- *
- * @public
- */
-type LabelsComplianceResponse = TweetLabelStreamResponse;
-/**
- * Response for getRuleCounts
- *
- * @public
- */
-type GetRuleCountsResponse = Get2TweetsSearchStreamRulesCountsResponse;
-/**
- * Response for posts
- *
- * @public
- */
-type PostsResponse = FilteredStreamingTweetResponse;
-/**
- * Response for postsFirehoseEn
- *
- * @public
- */
-type PostsFirehoseEnResponse = StreamingTweetResponse;
-/**
- * Response for postsSample
- *
- * @public
- */
-type PostsSampleResponse = StreamingTweetResponse;
-/**
- * Response for postsFirehose
- *
- * @public
- */
-type PostsFirehoseResponse = StreamingTweetResponse;
+type PostsSample10Response = Get2TweetsSample10StreamResponse;
 /**
  * Response for postsFirehoseJa
  *
@@ -4642,50 +4156,56 @@ type PostsFirehoseResponse = StreamingTweetResponse;
  */
 type PostsFirehoseJaResponse = StreamingTweetResponse;
 /**
- * Response for postsSample10
+ * Response for postsFirehosePt
  *
  * @public
  */
-type PostsSample10Response = Get2TweetsSample10StreamResponse;
+type PostsFirehosePtResponse = StreamingTweetResponse;
+/**
+ * Response for posts
+ *
+ * @public
+ */
+type PostsResponse = FilteredStreamingTweetResponse;
 
-type models$e_GetRuleCountsResponse = GetRuleCountsResponse;
-type models$e_GetRulesResponse = GetRulesResponse;
-type models$e_LabelsComplianceResponse = LabelsComplianceResponse;
-type models$e_LikesComplianceResponse = LikesComplianceResponse;
-type models$e_LikesFirehoseResponse = LikesFirehoseResponse;
-type models$e_LikesSample10Response = LikesSample10Response;
-type models$e_PostsComplianceResponse = PostsComplianceResponse;
-type models$e_PostsFirehoseEnResponse = PostsFirehoseEnResponse;
-type models$e_PostsFirehoseJaResponse = PostsFirehoseJaResponse;
-type models$e_PostsFirehoseKoResponse = PostsFirehoseKoResponse;
-type models$e_PostsFirehosePtResponse = PostsFirehosePtResponse;
-type models$e_PostsFirehoseResponse = PostsFirehoseResponse;
-type models$e_PostsResponse = PostsResponse;
-type models$e_PostsSample10Response = PostsSample10Response;
-type models$e_PostsSampleResponse = PostsSampleResponse;
-type models$e_UpdateRulesRequest = UpdateRulesRequest;
-type models$e_UpdateRulesResponse = UpdateRulesResponse;
-type models$e_UsersComplianceResponse = UsersComplianceResponse;
-declare namespace models$e {
+type models$g_GetRuleCountsResponse = GetRuleCountsResponse;
+type models$g_GetRulesResponse = GetRulesResponse;
+type models$g_LabelsComplianceResponse = LabelsComplianceResponse;
+type models$g_LikesComplianceResponse = LikesComplianceResponse;
+type models$g_LikesFirehoseResponse = LikesFirehoseResponse;
+type models$g_LikesSample10Response = LikesSample10Response;
+type models$g_PostsComplianceResponse = PostsComplianceResponse;
+type models$g_PostsFirehoseEnResponse = PostsFirehoseEnResponse;
+type models$g_PostsFirehoseJaResponse = PostsFirehoseJaResponse;
+type models$g_PostsFirehoseKoResponse = PostsFirehoseKoResponse;
+type models$g_PostsFirehosePtResponse = PostsFirehosePtResponse;
+type models$g_PostsFirehoseResponse = PostsFirehoseResponse;
+type models$g_PostsResponse = PostsResponse;
+type models$g_PostsSample10Response = PostsSample10Response;
+type models$g_PostsSampleResponse = PostsSampleResponse;
+type models$g_UpdateRulesRequest = UpdateRulesRequest;
+type models$g_UpdateRulesResponse = UpdateRulesResponse;
+type models$g_UsersComplianceResponse = UsersComplianceResponse;
+declare namespace models$g {
   export {
-    models$e_GetRuleCountsResponse as GetRuleCountsResponse,
-    models$e_GetRulesResponse as GetRulesResponse,
-    models$e_LabelsComplianceResponse as LabelsComplianceResponse,
-    models$e_LikesComplianceResponse as LikesComplianceResponse,
-    models$e_LikesFirehoseResponse as LikesFirehoseResponse,
-    models$e_LikesSample10Response as LikesSample10Response,
-    models$e_PostsComplianceResponse as PostsComplianceResponse,
-    models$e_PostsFirehoseEnResponse as PostsFirehoseEnResponse,
-    models$e_PostsFirehoseJaResponse as PostsFirehoseJaResponse,
-    models$e_PostsFirehoseKoResponse as PostsFirehoseKoResponse,
-    models$e_PostsFirehosePtResponse as PostsFirehosePtResponse,
-    models$e_PostsFirehoseResponse as PostsFirehoseResponse,
-    models$e_PostsResponse as PostsResponse,
-    models$e_PostsSample10Response as PostsSample10Response,
-    models$e_PostsSampleResponse as PostsSampleResponse,
-    models$e_UpdateRulesRequest as UpdateRulesRequest,
-    models$e_UpdateRulesResponse as UpdateRulesResponse,
-    models$e_UsersComplianceResponse as UsersComplianceResponse,
+    models$g_GetRuleCountsResponse as GetRuleCountsResponse,
+    models$g_GetRulesResponse as GetRulesResponse,
+    models$g_LabelsComplianceResponse as LabelsComplianceResponse,
+    models$g_LikesComplianceResponse as LikesComplianceResponse,
+    models$g_LikesFirehoseResponse as LikesFirehoseResponse,
+    models$g_LikesSample10Response as LikesSample10Response,
+    models$g_PostsComplianceResponse as PostsComplianceResponse,
+    models$g_PostsFirehoseEnResponse as PostsFirehoseEnResponse,
+    models$g_PostsFirehoseJaResponse as PostsFirehoseJaResponse,
+    models$g_PostsFirehoseKoResponse as PostsFirehoseKoResponse,
+    models$g_PostsFirehosePtResponse as PostsFirehosePtResponse,
+    models$g_PostsFirehoseResponse as PostsFirehoseResponse,
+    models$g_PostsResponse as PostsResponse,
+    models$g_PostsSample10Response as PostsSample10Response,
+    models$g_PostsSampleResponse as PostsSampleResponse,
+    models$g_UpdateRulesRequest as UpdateRulesRequest,
+    models$g_UpdateRulesResponse as UpdateRulesResponse,
+    models$g_UsersComplianceResponse as UsersComplianceResponse,
   };
 }
 
@@ -4696,30 +4216,11 @@ declare namespace models$e {
  */
 
 /**
- * Options for postsCompliance method
+ * Options for postsFirehose method
  *
  * @public
  */
-interface PostsComplianceStreamingOptions {
-    /** The number of minutes of backfill requested. */
-    backfillMinutes?: number;
-    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post Compliance events will be provided. */
-    startTime?: string;
-    /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Post Compliance events will be provided. */
-    endTime?: string;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-    /** Additional headers */
-    headers?: Record<string, string>;
-    /** AbortSignal for cancelling the request */
-    signal?: AbortSignal;
-}
-/**
- * Options for postsFirehoseKo method
- *
- * @public
- */
-interface PostsFirehoseKoStreamingOptions {
+interface PostsFirehoseStreamingOptions {
     /** The number of minutes of backfill requested. */
     backfillMinutes?: number;
     /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Posts will be provided. */
@@ -4746,6 +4247,40 @@ interface PostsFirehoseKoStreamingOptions {
     signal?: AbortSignal;
 }
 /**
+ * Options for getRuleCounts method
+ *
+ * @public
+ */
+interface GetRuleCountsStreamingOptions {
+    /** A comma separated list of RulesCount fields to display. */
+    rulesCountfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+    /** Additional headers */
+    headers?: Record<string, string>;
+    /** AbortSignal for cancelling the request */
+    signal?: AbortSignal;
+}
+/**
+ * Options for labelsCompliance method
+ *
+ * @public
+ */
+interface LabelsComplianceStreamingOptions {
+    /** The number of minutes of backfill requested. */
+    backfillMinutes?: number;
+    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. */
+    startTime?: string;
+    /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
+    endTime?: string;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+    /** Additional headers */
+    headers?: Record<string, string>;
+    /** AbortSignal for cancelling the request */
+    signal?: AbortSignal;
+}
+/**
  * Options for usersCompliance method
  *
  * @public
@@ -4757,69 +4292,6 @@ interface UsersComplianceStreamingOptions {
     startTime?: string;
     /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the User Compliance events will be provided. */
     endTime?: string;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-    /** Additional headers */
-    headers?: Record<string, string>;
-    /** AbortSignal for cancelling the request */
-    signal?: AbortSignal;
-}
-/**
- * Options for getRules method
- *
- * @public
- */
-interface GetRulesStreamingOptions {
-    /** A comma-separated list of Rule IDs. */
-    ids?: Array<any>;
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This value is populated by passing the 'next_token' returned in a request to paginate through results. */
-    paginationToken?: string;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-    /** Additional headers */
-    headers?: Record<string, string>;
-    /** AbortSignal for cancelling the request */
-    signal?: AbortSignal;
-}
-/**
- * Options for updateRules method
- *
- * @public
- */
-interface UpdateRulesStreamingOptions {
-    /** Dry Run can be used with both the add and delete action, with the expected result given, but without actually taking any action in the system (meaning the end state will always be as it was when the request was submitted). This is particularly useful to validate rule changes. */
-    dryRun?: boolean;
-    /** Delete All can be used to delete all of the rules associated this client app, it should be specified with no other parameters. Once deleted, rules cannot be recovered. */
-    deleteAll?: boolean;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-    /** Additional headers */
-    headers?: Record<string, string>;
-    /** AbortSignal for cancelling the request */
-    signal?: AbortSignal;
-}
-/**
- * Options for likesFirehose method
- *
- * @public
- */
-interface LikesFirehoseStreamingOptions {
-    /** The number of minutes of backfill requested. */
-    backfillMinutes?: number;
-    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Likes will be provided. */
-    startTime?: string;
-    /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. */
-    endTime?: string;
-    /** A comma separated list of LikeWithTweetAuthor fields to display. */
-    likeWithTweetAuthorfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
     /** Additional request options */
     requestOptions?: RequestOptions;
     /** Additional headers */
@@ -4855,113 +4327,25 @@ interface LikesSample10StreamingOptions {
     signal?: AbortSignal;
 }
 /**
- * Options for likesCompliance method
+ * Options for likesFirehose method
  *
  * @public
  */
-interface LikesComplianceStreamingOptions {
+interface LikesFirehoseStreamingOptions {
     /** The number of minutes of backfill requested. */
     backfillMinutes?: number;
-    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Likes Compliance events will be provided. */
-    startTime?: string;
-    /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Likes Compliance events will be provided. */
-    endTime?: string;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-    /** Additional headers */
-    headers?: Record<string, string>;
-    /** AbortSignal for cancelling the request */
-    signal?: AbortSignal;
-}
-/**
- * Options for postsFirehosePt method
- *
- * @public
- */
-interface PostsFirehosePtStreamingOptions {
-    /** The number of minutes of backfill requested. */
-    backfillMinutes?: number;
-    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Posts will be provided. */
+    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Likes will be provided. */
     startTime?: string;
     /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. */
     endTime?: string;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
+    /** A comma separated list of LikeWithTweetAuthor fields to display. */
+    likeWithTweetAuthorfields?: Array<any>;
     /** A comma separated list of fields to expand. */
     expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of Poll fields to display. */
-    pollfields?: Array<any>;
     /** A comma separated list of User fields to display. */
     userfields?: Array<any>;
-    /** A comma separated list of Place fields to display. */
-    placefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-    /** Additional headers */
-    headers?: Record<string, string>;
-    /** AbortSignal for cancelling the request */
-    signal?: AbortSignal;
-}
-/**
- * Options for labelsCompliance method
- *
- * @public
- */
-interface LabelsComplianceStreamingOptions {
-    /** The number of minutes of backfill requested. */
-    backfillMinutes?: number;
-    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. */
-    startTime?: string;
-    /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
-    endTime?: string;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-    /** Additional headers */
-    headers?: Record<string, string>;
-    /** AbortSignal for cancelling the request */
-    signal?: AbortSignal;
-}
-/**
- * Options for getRuleCounts method
- *
- * @public
- */
-interface GetRuleCountsStreamingOptions {
-    /** A comma separated list of RulesCount fields to display. */
-    rulesCountfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-    /** Additional headers */
-    headers?: Record<string, string>;
-    /** AbortSignal for cancelling the request */
-    signal?: AbortSignal;
-}
-/**
- * Options for posts method
- *
- * @public
- */
-interface PostsStreamingOptions {
-    /** The number of minutes of backfill requested. */
-    backfillMinutes?: number;
-    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. */
-    startTime?: string;
-    /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. */
-    endTime?: string;
     /** A comma separated list of Tweet fields to display. */
     tweetfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of Poll fields to display. */
-    pollfields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Place fields to display. */
-    placefields?: Array<any>;
     /** Additional request options */
     requestOptions?: RequestOptions;
     /** Additional headers */
@@ -4970,11 +4354,11 @@ interface PostsStreamingOptions {
     signal?: AbortSignal;
 }
 /**
- * Options for postsFirehoseEn method
+ * Options for postsFirehoseKo method
  *
  * @public
  */
-interface PostsFirehoseEnStreamingOptions {
+interface PostsFirehoseKoStreamingOptions {
     /** The number of minutes of backfill requested. */
     backfillMinutes?: number;
     /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Posts will be provided. */
@@ -5028,11 +4412,116 @@ interface PostsSampleStreamingOptions {
     signal?: AbortSignal;
 }
 /**
- * Options for postsFirehose method
+ * Options for postsFirehoseEn method
  *
  * @public
  */
-interface PostsFirehoseStreamingOptions {
+interface PostsFirehoseEnStreamingOptions {
+    /** The number of minutes of backfill requested. */
+    backfillMinutes?: number;
+    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Posts will be provided. */
+    startTime?: string;
+    /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. */
+    endTime?: string;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of Poll fields to display. */
+    pollfields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Place fields to display. */
+    placefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+    /** Additional headers */
+    headers?: Record<string, string>;
+    /** AbortSignal for cancelling the request */
+    signal?: AbortSignal;
+}
+/**
+ * Options for likesCompliance method
+ *
+ * @public
+ */
+interface LikesComplianceStreamingOptions {
+    /** The number of minutes of backfill requested. */
+    backfillMinutes?: number;
+    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Likes Compliance events will be provided. */
+    startTime?: string;
+    /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Likes Compliance events will be provided. */
+    endTime?: string;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+    /** Additional headers */
+    headers?: Record<string, string>;
+    /** AbortSignal for cancelling the request */
+    signal?: AbortSignal;
+}
+/**
+ * Options for postsCompliance method
+ *
+ * @public
+ */
+interface PostsComplianceStreamingOptions {
+    /** The number of minutes of backfill requested. */
+    backfillMinutes?: number;
+    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post Compliance events will be provided. */
+    startTime?: string;
+    /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Post Compliance events will be provided. */
+    endTime?: string;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+    /** Additional headers */
+    headers?: Record<string, string>;
+    /** AbortSignal for cancelling the request */
+    signal?: AbortSignal;
+}
+/**
+ * Options for getRules method
+ *
+ * @public
+ */
+interface GetRulesStreamingOptions {
+    /** A comma-separated list of Rule IDs. */
+    ids?: Array<any>;
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This value is populated by passing the 'next_token' returned in a request to paginate through results. */
+    paginationToken?: string;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+    /** Additional headers */
+    headers?: Record<string, string>;
+    /** AbortSignal for cancelling the request */
+    signal?: AbortSignal;
+}
+/**
+ * Options for updateRules method
+ *
+ * @public
+ */
+interface UpdateRulesStreamingOptions {
+    /** Dry Run can be used with both the add and delete action, with the expected result given, but without actually taking any action in the system (meaning the end state will always be as it was when the request was submitted). This is particularly useful to validate rule changes. */
+    dryRun?: boolean;
+    /** Delete All can be used to delete all of the rules associated this client app, it should be specified with no other parameters. Once deleted, rules cannot be recovered. */
+    deleteAll?: boolean;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+    /** Additional headers */
+    headers?: Record<string, string>;
+    /** AbortSignal for cancelling the request */
+    signal?: AbortSignal;
+}
+/**
+ * Options for postsSample10 method
+ *
+ * @public
+ */
+interface PostsSample10StreamingOptions {
     /** The number of minutes of backfill requested. */
     backfillMinutes?: number;
     /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Posts will be provided. */
@@ -5090,14 +4579,45 @@ interface PostsFirehoseJaStreamingOptions {
     signal?: AbortSignal;
 }
 /**
- * Options for postsSample10 method
+ * Options for postsFirehosePt method
  *
  * @public
  */
-interface PostsSample10StreamingOptions {
+interface PostsFirehosePtStreamingOptions {
     /** The number of minutes of backfill requested. */
     backfillMinutes?: number;
     /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Posts will be provided. */
+    startTime?: string;
+    /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. */
+    endTime?: string;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of Poll fields to display. */
+    pollfields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Place fields to display. */
+    placefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+    /** Additional headers */
+    headers?: Record<string, string>;
+    /** AbortSignal for cancelling the request */
+    signal?: AbortSignal;
+}
+/**
+ * Options for posts method
+ *
+ * @public
+ */
+interface PostsStreamingOptions {
+    /** The number of minutes of backfill requested. */
+    backfillMinutes?: number;
+    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. */
     startTime?: string;
     /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. */
     endTime?: string;
@@ -5124,8 +4644,8 @@ declare class StreamClient {
     private client;
     constructor(client: Client);
     /**
-       * Stream Posts compliance data
-       * Streams all compliance data related to Posts.
+       * Stream all Posts
+       * Streams all public Posts in real-time.
        *
        * Returns an event-driven stream that's easy to use.
        * Use .on() to listen for events like 'data', 'error', 'close'.
@@ -5139,10 +4659,10 @@ declare class StreamClient {
   
        * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
        */
-    postsCompliance(partition: number, options?: PostsComplianceStreamingOptions): Promise<EventDrivenStream>;
+    postsFirehose(partition: number, options?: PostsFirehoseStreamingOptions): Promise<EventDrivenStream>;
     /**
-       * Stream Korean Posts
-       * Streams all public Korean-language Posts in real-time.
+       * Stream Post labels
+       * Streams all labeling events applied to Posts.
        *
        * Returns an event-driven stream that's easy to use.
        * Use .on() to listen for events like 'data', 'error', 'close'.
@@ -5150,13 +4670,9 @@ declare class StreamClient {
   
   
   
-       * @param partition The partition number.
-  
-  
-  
        * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
        */
-    postsFirehoseKo(partition: number, options?: PostsFirehoseKoStreamingOptions): Promise<EventDrivenStream>;
+    labelsCompliance(options?: LabelsComplianceStreamingOptions): Promise<EventDrivenStream>;
     /**
        * Stream Users compliance data
        * Streams all compliance data related to Users.
@@ -5175,23 +4691,6 @@ declare class StreamClient {
        */
     usersCompliance(partition: number, options?: UsersComplianceStreamingOptions): Promise<EventDrivenStream>;
     /**
-       * Stream all Likes
-       * Streams all public Likes in real-time.
-       *
-       * Returns an event-driven stream that's easy to use.
-       * Use .on() to listen for events like 'data', 'error', 'close'.
-       * Also supports async iteration with for await...of.
-  
-  
-  
-       * @param partition The partition number.
-  
-  
-  
-       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
-       */
-    likesFirehose(partition: number, options?: LikesFirehoseStreamingOptions): Promise<EventDrivenStream>;
-    /**
        * Stream sampled Likes
        * Streams a 10% sample of public Likes in real-time.
        *
@@ -5209,21 +4708,8 @@ declare class StreamClient {
        */
     likesSample10(partition: number, options?: LikesSample10StreamingOptions): Promise<EventDrivenStream>;
     /**
-       * Stream Likes compliance data
-       * Streams all compliance data related to Likes for Users.
-       *
-       * Returns an event-driven stream that's easy to use.
-       * Use .on() to listen for events like 'data', 'error', 'close'.
-       * Also supports async iteration with for await...of.
-  
-  
-  
-       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
-       */
-    likesCompliance(options?: LikesComplianceStreamingOptions): Promise<EventDrivenStream>;
-    /**
-       * Stream Portuguese Posts
-       * Streams all public Portuguese-language Posts in real-time.
+       * Stream all Likes
+       * Streams all public Likes in real-time.
        *
        * Returns an event-driven stream that's easy to use.
        * Use .on() to listen for events like 'data', 'error', 'close'.
@@ -5237,10 +4723,27 @@ declare class StreamClient {
   
        * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
        */
-    postsFirehosePt(partition: number, options?: PostsFirehosePtStreamingOptions): Promise<EventDrivenStream>;
+    likesFirehose(partition: number, options?: LikesFirehoseStreamingOptions): Promise<EventDrivenStream>;
     /**
-       * Stream Post labels
-       * Streams all labeling events applied to Posts.
+       * Stream Korean Posts
+       * Streams all public Korean-language Posts in real-time.
+       *
+       * Returns an event-driven stream that's easy to use.
+       * Use .on() to listen for events like 'data', 'error', 'close'.
+       * Also supports async iteration with for await...of.
+  
+  
+  
+       * @param partition The partition number.
+  
+  
+  
+       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
+       */
+    postsFirehoseKo(partition: number, options?: PostsFirehoseKoStreamingOptions): Promise<EventDrivenStream>;
+    /**
+       * Stream sampled Posts
+       * Streams a 1% sample of public Posts in real-time.
        *
        * Returns an event-driven stream that's easy to use.
        * Use .on() to listen for events like 'data', 'error', 'close'.
@@ -5250,20 +4753,7 @@ declare class StreamClient {
   
        * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
        */
-    labelsCompliance(options?: LabelsComplianceStreamingOptions): Promise<EventDrivenStream>;
-    /**
-       * Stream filtered Posts
-       * Streams Posts in real-time matching the active rule set.
-       *
-       * Returns an event-driven stream that's easy to use.
-       * Use .on() to listen for events like 'data', 'error', 'close'.
-       * Also supports async iteration with for await...of.
-  
-  
-  
-       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
-       */
-    posts(options?: PostsStreamingOptions): Promise<EventDrivenStream>;
+    postsSample(options?: PostsSampleStreamingOptions): Promise<EventDrivenStream>;
     /**
        * Stream English Posts
        * Streams all public English-language Posts in real-time.
@@ -5282,8 +4772,8 @@ declare class StreamClient {
        */
     postsFirehoseEn(partition: number, options?: PostsFirehoseEnStreamingOptions): Promise<EventDrivenStream>;
     /**
-       * Stream sampled Posts
-       * Streams a 1% sample of public Posts in real-time.
+       * Stream Likes compliance data
+       * Streams all compliance data related to Likes for Users.
        *
        * Returns an event-driven stream that's easy to use.
        * Use .on() to listen for events like 'data', 'error', 'close'.
@@ -5293,10 +4783,10 @@ declare class StreamClient {
   
        * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
        */
-    postsSample(options?: PostsSampleStreamingOptions): Promise<EventDrivenStream>;
+    likesCompliance(options?: LikesComplianceStreamingOptions): Promise<EventDrivenStream>;
     /**
-       * Stream all Posts
-       * Streams all public Posts in real-time.
+       * Stream Posts compliance data
+       * Streams all compliance data related to Posts.
        *
        * Returns an event-driven stream that's easy to use.
        * Use .on() to listen for events like 'data', 'error', 'close'.
@@ -5310,24 +4800,7 @@ declare class StreamClient {
   
        * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
        */
-    postsFirehose(partition: number, options?: PostsFirehoseStreamingOptions): Promise<EventDrivenStream>;
-    /**
-       * Stream Japanese Posts
-       * Streams all public Japanese-language Posts in real-time.
-       *
-       * Returns an event-driven stream that's easy to use.
-       * Use .on() to listen for events like 'data', 'error', 'close'.
-       * Also supports async iteration with for await...of.
-  
-  
-  
-       * @param partition The partition number.
-  
-  
-  
-       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
-       */
-    postsFirehoseJa(partition: number, options?: PostsFirehoseJaStreamingOptions): Promise<EventDrivenStream>;
+    postsCompliance(partition: number, options?: PostsComplianceStreamingOptions): Promise<EventDrivenStream>;
     /**
        * Stream 10% sampled Posts
        * Streams a 10% sample of public Posts in real-time.
@@ -5346,6 +4819,60 @@ declare class StreamClient {
        */
     postsSample10(partition: number, options?: PostsSample10StreamingOptions): Promise<EventDrivenStream>;
     /**
+       * Stream Japanese Posts
+       * Streams all public Japanese-language Posts in real-time.
+       *
+       * Returns an event-driven stream that's easy to use.
+       * Use .on() to listen for events like 'data', 'error', 'close'.
+       * Also supports async iteration with for await...of.
+  
+  
+  
+       * @param partition The partition number.
+  
+  
+  
+       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
+       */
+    postsFirehoseJa(partition: number, options?: PostsFirehoseJaStreamingOptions): Promise<EventDrivenStream>;
+    /**
+       * Stream Portuguese Posts
+       * Streams all public Portuguese-language Posts in real-time.
+       *
+       * Returns an event-driven stream that's easy to use.
+       * Use .on() to listen for events like 'data', 'error', 'close'.
+       * Also supports async iteration with for await...of.
+  
+  
+  
+       * @param partition The partition number.
+  
+  
+  
+       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
+       */
+    postsFirehosePt(partition: number, options?: PostsFirehosePtStreamingOptions): Promise<EventDrivenStream>;
+    /**
+       * Stream filtered Posts
+       * Streams Posts in real-time matching the active rule set.
+       *
+       * Returns an event-driven stream that's easy to use.
+       * Use .on() to listen for events like 'data', 'error', 'close'.
+       * Also supports async iteration with for await...of.
+  
+  
+  
+       * @returns {Promise<EventDrivenStream>} Event-driven stream for handling streaming data
+       */
+    posts(options?: PostsStreamingOptions): Promise<EventDrivenStream>;
+    /**
+       * Get stream rule counts
+       * Retrieves the count of rules in the active rule set for the filtered stream.
+       *
+       * @returns Promise with the API response
+       */
+    getRuleCounts(options?: GetRuleCountsStreamingOptions): Promise<GetRuleCountsResponse>;
+    /**
        * Get stream rules
        * Retrieves the active rule set or a subset of rules for the filtered stream.
        *
@@ -5359,679 +4886,451 @@ declare class StreamClient {
        * @returns Promise with the API response
        */
     updateRules(body: any, options?: UpdateRulesStreamingOptions): Promise<UpdateRulesResponse>;
-    /**
-       * Get stream rule counts
-       * Retrieves the count of rules in the active rule set for the filtered stream.
-       *
-       * @returns Promise with the API response
-       */
-    getRuleCounts(options?: GetRuleCountsStreamingOptions): Promise<GetRuleCountsResponse>;
 }
 
 /**
- * Models for account activity operations
+ * Models for media operations
  */
 
 /**
- * Response for getSubscriptionCount
+ * Request for createMetadata
  *
  * @public
  */
-type GetSubscriptionCountResponse = SubscriptionsCountGetResponse;
+type CreateMetadataRequest = MetadataCreateRequest;
 /**
- * Response for getSubscriptions
+ * Response for createMetadata
  *
  * @public
  */
-type GetSubscriptionsResponse$1 = SubscriptionsListGetResponse;
+type CreateMetadataResponse = MetadataCreateResponse;
 /**
- * Response for deleteSubscription
+ * Response for getByKey
  *
  * @public
  */
-type DeleteSubscriptionResponse$1 = SubscriptionsDeleteResponse;
+type GetByKeyResponse = Get2MediaMediaKeyResponse;
 /**
- * Response for createReplayJob
+ * Response for getByKeys
  *
  * @public
  */
-type CreateReplayJobResponse = ReplayJobCreateResponse;
+type GetByKeysResponse = Get2MediaResponse;
 /**
- * Response for validateSubscription
+ * Response for getAnalytics
  *
  * @public
  */
-type ValidateSubscriptionResponse = SubscriptionsGetResponse;
+type GetAnalyticsResponse$1 = MediaAnalytics;
 /**
- * Request for createSubscription
+ * Response for finalizeUpload
  *
  * @public
  */
-type CreateSubscriptionRequest$1 = SubscriptionsCreateRequest;
+type FinalizeUploadResponse = MediaUploadResponse;
 /**
- * Response for createSubscription
+ * Request for appendUpload
  *
  * @public
  */
-type CreateSubscriptionResponse$1 = SubscriptionsCreateResponse;
+type AppendUploadRequest = MediaUploadAppendRequest;
+/**
+ * Response for appendUpload
+ *
+ * @public
+ */
+type AppendUploadResponse = MediaUploadAppendResponse;
+/**
+ * Request for createSubtitles
+ *
+ * @public
+ */
+type CreateSubtitlesRequest = SubtitlesCreateRequest;
+/**
+ * Response for createSubtitles
+ *
+ * @public
+ */
+type CreateSubtitlesResponse = SubtitlesCreateResponse;
+/**
+ * Request for deleteSubtitles
+ *
+ * @public
+ */
+type DeleteSubtitlesRequest = SubtitlesDeleteRequest;
+/**
+ * Response for deleteSubtitles
+ *
+ * @public
+ */
+type DeleteSubtitlesResponse = SubtitlesDeleteResponse;
+/**
+ * Response for getUploadStatus
+ *
+ * @public
+ */
+type GetUploadStatusResponse = MediaUploadResponse;
+/**
+ * Request for upload
+ *
+ * @public
+ */
+type UploadRequest = MediaUploadRequestOneShot;
+/**
+ * Response for upload
+ *
+ * @public
+ */
+type UploadResponse = MediaUploadResponse;
+/**
+ * Request for initializeUpload
+ *
+ * @public
+ */
+type InitializeUploadRequest = MediaUploadConfigRequest;
+/**
+ * Response for initializeUpload
+ *
+ * @public
+ */
+type InitializeUploadResponse = MediaUploadResponse;
 
-type models$d_CreateReplayJobResponse = CreateReplayJobResponse;
-type models$d_GetSubscriptionCountResponse = GetSubscriptionCountResponse;
-type models$d_ValidateSubscriptionResponse = ValidateSubscriptionResponse;
-declare namespace models$d {
+type models$f_AppendUploadRequest = AppendUploadRequest;
+type models$f_AppendUploadResponse = AppendUploadResponse;
+type models$f_CreateMetadataRequest = CreateMetadataRequest;
+type models$f_CreateMetadataResponse = CreateMetadataResponse;
+type models$f_CreateSubtitlesRequest = CreateSubtitlesRequest;
+type models$f_CreateSubtitlesResponse = CreateSubtitlesResponse;
+type models$f_DeleteSubtitlesRequest = DeleteSubtitlesRequest;
+type models$f_DeleteSubtitlesResponse = DeleteSubtitlesResponse;
+type models$f_FinalizeUploadResponse = FinalizeUploadResponse;
+type models$f_GetByKeyResponse = GetByKeyResponse;
+type models$f_GetByKeysResponse = GetByKeysResponse;
+type models$f_GetUploadStatusResponse = GetUploadStatusResponse;
+type models$f_InitializeUploadRequest = InitializeUploadRequest;
+type models$f_InitializeUploadResponse = InitializeUploadResponse;
+type models$f_UploadRequest = UploadRequest;
+type models$f_UploadResponse = UploadResponse;
+declare namespace models$f {
   export {
-    models$d_CreateReplayJobResponse as CreateReplayJobResponse,
-    CreateSubscriptionRequest$1 as CreateSubscriptionRequest,
-    CreateSubscriptionResponse$1 as CreateSubscriptionResponse,
-    DeleteSubscriptionResponse$1 as DeleteSubscriptionResponse,
-    models$d_GetSubscriptionCountResponse as GetSubscriptionCountResponse,
-    GetSubscriptionsResponse$1 as GetSubscriptionsResponse,
-    models$d_ValidateSubscriptionResponse as ValidateSubscriptionResponse,
+    models$f_AppendUploadRequest as AppendUploadRequest,
+    models$f_AppendUploadResponse as AppendUploadResponse,
+    models$f_CreateMetadataRequest as CreateMetadataRequest,
+    models$f_CreateMetadataResponse as CreateMetadataResponse,
+    models$f_CreateSubtitlesRequest as CreateSubtitlesRequest,
+    models$f_CreateSubtitlesResponse as CreateSubtitlesResponse,
+    models$f_DeleteSubtitlesRequest as DeleteSubtitlesRequest,
+    models$f_DeleteSubtitlesResponse as DeleteSubtitlesResponse,
+    models$f_FinalizeUploadResponse as FinalizeUploadResponse,
+    GetAnalyticsResponse$1 as GetAnalyticsResponse,
+    models$f_GetByKeyResponse as GetByKeyResponse,
+    models$f_GetByKeysResponse as GetByKeysResponse,
+    models$f_GetUploadStatusResponse as GetUploadStatusResponse,
+    models$f_InitializeUploadRequest as InitializeUploadRequest,
+    models$f_InitializeUploadResponse as InitializeUploadResponse,
+    models$f_UploadRequest as UploadRequest,
+    models$f_UploadResponse as UploadResponse,
   };
 }
 
 /**
- * account activity client for the X API.
+ * media client for the X API.
  *
- * This module provides a client for interacting with the account activity endpoints of the X API.
+ * This module provides a client for interacting with the media endpoints of the X API.
  */
 
 /**
- * Options for createSubscription method
+ * Options for createMetadata method
  *
  * @public
  */
-interface CreateSubscriptionOptions$1 {
+interface CreateMetadataOptions {
     /** Request body */
-    body?: CreateSubscriptionRequest$1;
+    body?: CreateMetadataRequest;
     /** Additional request options */
     requestOptions?: RequestOptions;
 }
 /**
- * Client for account activity operations
+ * Options for getByKey method
  *
- * This client provides methods for interacting with the account activity endpoints
- * of the X API. It handles authentication, request formatting, and response
- * parsing for all account activity related operations.
- *
- * @category account activity
+ * @public
  */
-declare class AccountActivityClient {
+interface GetByKeyOptions {
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getByKeys method
+ *
+ * @public
+ */
+interface GetByKeysOptions {
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getAnalytics method
+ *
+ * @public
+ */
+interface GetAnalyticsOptions$1 {
+    /** A comma separated list of MediaAnalytics fields to display. */
+    mediaAnalyticsfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for appendUpload method
+ *
+ * @public
+ */
+interface AppendUploadOptions {
+    /** Request body */
+    body?: AppendUploadRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for createSubtitles method
+ *
+ * @public
+ */
+interface CreateSubtitlesOptions {
+    /** Request body */
+    body?: CreateSubtitlesRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for deleteSubtitles method
+ *
+ * @public
+ */
+interface DeleteSubtitlesOptions {
+    /** Request body */
+    body?: DeleteSubtitlesRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getUploadStatus method
+ *
+ * @public
+ */
+interface GetUploadStatusOptions {
+    /** The command for the media upload request. */
+    command?: string;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for upload method
+ *
+ * @public
+ */
+interface UploadOptions {
+    /** Request body */
+    body?: UploadRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for initializeUpload method
+ *
+ * @public
+ */
+interface InitializeUploadOptions {
+    /** Request body */
+    body?: InitializeUploadRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Client for media operations
+ *
+ * This client provides methods for interacting with the media endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all media related operations.
+ *
+ * @category media
+ */
+declare class MediaClient {
     private client;
     /**
-       * Creates a new account activity client instance
+       * Creates a new media client instance
        *
        * @param client - The main X API client instance
        */
     constructor(client: Client);
     /**
-     * Get subscription count
-     * Retrieves a count of currently active Account Activity subscriptions.
+     * Create Media metadata
+     * Creates metadata for a Media file.
   
   
   
-     * @returns {Promise<GetSubscriptionCountResponse>} Promise resolving to the API response
+     * @returns {Promise<CreateMetadataResponse>} Promise resolving to the API response
      */
-    getSubscriptionCount(): Promise<GetSubscriptionCountResponse>;
+    createMetadata(options?: CreateMetadataOptions): Promise<CreateMetadataResponse>;
     /**
-     * Get subscriptions
-     * Retrieves a list of all active subscriptions for a given webhook.
+     * Get Media by media key
+     * Retrieves details of a specific Media file by its media key.
   
   
-     * @param webhookId The webhook ID to pull subscriptions for.
+     * @param mediaKey A single Media Key.
   
   
   
   
-     * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
+     * @returns {Promise<GetByKeyResponse>} Promise resolving to the API response
      */
-    getSubscriptions(webhookId: string): Promise<GetSubscriptionsResponse$1>;
+    getByKey(mediaKey: string, options?: GetByKeyOptions): Promise<GetByKeyResponse>;
     /**
-     * Delete subscription
-     * Deletes an Account Activity subscription for the given webhook and user ID.
-  
-  
-     * @param webhookId The webhook ID to check subscription against.
+     * Get Media by media keys
+     * Retrieves details of Media files by their media keys.
   
   
   
-     * @param userId User ID to unsubscribe from.
+     * @param mediaKeys A comma separated list of Media Keys. Up to 100 are allowed in a single request.
   
   
   
-  
-     * @returns {Promise<DeleteSubscriptionResponse>} Promise resolving to the API response
+     * @returns {Promise<GetByKeysResponse>} Promise resolving to the API response
      */
-    deleteSubscription(webhookId: string, userId: string): Promise<DeleteSubscriptionResponse$1>;
+    getByKeys(mediaKeys: Array<any>, options?: GetByKeysOptions): Promise<GetByKeysResponse>;
     /**
-     * Create replay job
-     * Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
-  
-  
-     * @param webhookId The unique identifier for the webhook configuration.
+     * Get Media analytics
+     * Retrieves analytics data for media.
   
   
   
-  
-     * @param fromDate The oldest (starting) UTC timestamp (inclusive) from which events will be provided, in `yyyymmddhhmm` format.
-  
-  
-  
-     * @param toDate The latest (ending) UTC timestamp (exclusive) up to which events will be provided, in `yyyymmddhhmm` format.
+     * @param mediaKeys A comma separated list of Media Keys. Up to 100 are allowed in a single request.
   
   
   
-     * @returns {Promise<CreateReplayJobResponse>} Promise resolving to the API response
+     * @param endTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
+  
+  
+  
+     * @param startTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
+  
+  
+  
+     * @param granularity The granularity for the search counts results.
+  
+  
+  
+     * @returns {Promise<GetAnalyticsResponse>} Promise resolving to the API response
      */
-    createReplayJob(webhookId: string, fromDate: string, toDate: string): Promise<CreateReplayJobResponse>;
+    getAnalytics(mediaKeys: Array<any>, endTime: string, startTime: string, granularity: string, options?: GetAnalyticsOptions$1): Promise<GetAnalyticsResponse$1>;
     /**
-     * Validate subscription
-     * Checks a user’s Account Activity subscription for a given webhook.
+     * Finalize Media upload
+     * Finalizes a Media upload request.
   
   
-     * @param webhookId The webhook ID to check subscription against.
+     * @param id The media id of the targeted media to finalize.
   
   
   
   
-     * @returns {Promise<ValidateSubscriptionResponse>} Promise resolving to the API response
+     * @returns {Promise<FinalizeUploadResponse>} Promise resolving to the API response
      */
-    validateSubscription(webhookId: string): Promise<ValidateSubscriptionResponse>;
+    finalizeUpload(id: string): Promise<FinalizeUploadResponse>;
     /**
-     * Create subscription
-     * Creates an Account Activity subscription for the user and the given webhook.
+     * Append Media upload
+     * Appends data to a Media upload request.
   
   
-     * @param webhookId The webhook ID to check subscription against.
+     * @param id The media identifier for the media to perform the append operation.
   
   
   
   
-     * @returns {Promise<CreateSubscriptionResponse>} Promise resolving to the API response
+     * @returns {Promise<AppendUploadResponse>} Promise resolving to the API response
      */
-    createSubscription(webhookId: string, options?: CreateSubscriptionOptions$1): Promise<CreateSubscriptionResponse$1>;
-}
-
-/**
- * Models for connections operations
- */
-
-/**
- * Response for deleteAll
- *
- * @public
- */
-type DeleteAllResponse = KillAllConnectionsResponse;
-
-type models$c_DeleteAllResponse = DeleteAllResponse;
-declare namespace models$c {
-  export {
-    models$c_DeleteAllResponse as DeleteAllResponse,
-  };
-}
-
-/**
- * connections client for the X API.
- *
- * This module provides a client for interacting with the connections endpoints of the X API.
- */
-
-/**
- * Client for connections operations
- *
- * This client provides methods for interacting with the connections endpoints
- * of the X API. It handles authentication, request formatting, and response
- * parsing for all connections related operations.
- *
- * @category connections
- */
-declare class ConnectionsClient {
-    private client;
+    appendUpload(id: string, options?: AppendUploadOptions): Promise<AppendUploadResponse>;
     /**
-       * Creates a new connections client instance
-       *
-       * @param client - The main X API client instance
-       */
-    constructor(client: Client);
-    /**
-     * Terminate all connections
-     * Terminates all active streaming connections for the authenticated application.
+     * Create Media subtitles
+     * Creates subtitles for a specific Media file.
   
   
   
-     * @returns {Promise<DeleteAllResponse>} Promise resolving to the API response
+     * @returns {Promise<CreateSubtitlesResponse>} Promise resolving to the API response
      */
-    deleteAll(): Promise<DeleteAllResponse>;
-}
-
-/**
- * Models for trends operations
- */
-
-/**
- * Response for getAi
- *
- * @public
- */
-type GetAiResponse = Get2AiTrendsIdResponse;
-/**
- * Response for getByWoeid
- *
- * @public
- */
-type GetByWoeidResponse = Get2TrendsByWoeidWoeidResponse;
-/**
- * Response for getPersonalized
- *
- * @public
- */
-type GetPersonalizedResponse = Get2UsersPersonalizedTrendsResponse;
-
-type models$b_GetAiResponse = GetAiResponse;
-type models$b_GetByWoeidResponse = GetByWoeidResponse;
-type models$b_GetPersonalizedResponse = GetPersonalizedResponse;
-declare namespace models$b {
-  export {
-    models$b_GetAiResponse as GetAiResponse,
-    models$b_GetByWoeidResponse as GetByWoeidResponse,
-    models$b_GetPersonalizedResponse as GetPersonalizedResponse,
-  };
-}
-
-/**
- * trends client for the X API.
- *
- * This module provides a client for interacting with the trends endpoints of the X API.
- */
-
-/**
- * Options for getAi method
- *
- * @public
- */
-interface GetAiOptions {
-    /** A comma separated list of AiTrend fields to display. */
-    aiTrendfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getByWoeid method
- *
- * @public
- */
-interface GetByWoeidOptions {
-    /** The maximum number of results. */
-    maxTrends?: number;
-    /** A comma separated list of Trend fields to display. */
-    trendfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getPersonalized method
- *
- * @public
- */
-interface GetPersonalizedOptions {
-    /** A comma separated list of PersonalizedTrend fields to display. */
-    personalizedTrendfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Client for trends operations
- *
- * This client provides methods for interacting with the trends endpoints
- * of the X API. It handles authentication, request formatting, and response
- * parsing for all trends related operations.
- *
- * @category trends
- */
-declare class TrendsClient {
-    private client;
+    createSubtitles(options?: CreateSubtitlesOptions): Promise<CreateSubtitlesResponse>;
     /**
-       * Creates a new trends client instance
-       *
-       * @param client - The main X API client instance
-       */
-    constructor(client: Client);
-    /**
-     * Get AI Trends by ID
-     * Retrieves an AI trend by its ID.
-  
-  
-     * @param id The ID of the ai trend.
+     * Delete Media subtitles
+     * Deletes subtitles for a specific Media file.
   
   
   
-  
-     * @returns {Promise<GetAiResponse>} Promise resolving to the API response
+     * @returns {Promise<DeleteSubtitlesResponse>} Promise resolving to the API response
      */
-    getAi(id: string, options?: GetAiOptions): Promise<GetAiResponse>;
+    deleteSubtitles(options?: DeleteSubtitlesOptions): Promise<DeleteSubtitlesResponse>;
     /**
-     * Get Trends by WOEID
-     * Retrieves trending topics for a specific location identified by its WOEID.
-  
-  
-     * @param woeid The WOEID of the place to lookup a trend for.
+     * Get Media upload status
+     * Retrieves the status of a Media upload by its ID.
   
   
   
+     * @param mediaId Media id for the requested media upload status.
   
-     * @returns {Promise<GetByWoeidResponse>} Promise resolving to the API response
+  
+  
+     * @returns {Promise<GetUploadStatusResponse>} Promise resolving to the API response
      */
-    getByWoeid(woeid: number, options?: GetByWoeidOptions): Promise<GetByWoeidResponse>;
+    getUploadStatus(mediaId: any, options?: GetUploadStatusOptions): Promise<GetUploadStatusResponse>;
     /**
-     * Get personalized Trends
-     * Retrieves personalized trending topics for the authenticated user.
+     * Upload media
+     * Uploads a media file for use in posts or other content.
   
   
   
-     * @returns {Promise<GetPersonalizedResponse>} Promise resolving to the API response
+     * @returns {Promise<UploadResponse>} Promise resolving to the API response
      */
-    getPersonalized(options?: GetPersonalizedOptions): Promise<GetPersonalizedResponse>;
-}
-
-/**
- * Models for usage operations
- */
-
-/**
- * Response for get
- *
- * @public
- */
-type GetResponse$1 = Get2UsageTweetsResponse;
-
-declare namespace models$a {
-  export {
-    GetResponse$1 as GetResponse,
-  };
-}
-
-/**
- * usage client for the X API.
- *
- * This module provides a client for interacting with the usage endpoints of the X API.
- */
-
-/**
- * Options for get method
- *
- * @public
- */
-interface GetOptions$1 {
-    /** The number of days for which you need usage for. */
-    days?: number;
-    /** A comma separated list of Usage fields to display. */
-    usagefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Client for usage operations
- *
- * This client provides methods for interacting with the usage endpoints
- * of the X API. It handles authentication, request formatting, and response
- * parsing for all usage related operations.
- *
- * @category usage
- */
-declare class UsageClient {
-    private client;
+    upload(options?: UploadOptions): Promise<UploadResponse>;
     /**
-       * Creates a new usage client instance
-       *
-       * @param client - The main X API client instance
-       */
-    constructor(client: Client);
-    /**
-     * Get usage
-     * Retrieves usage statistics for Posts over a specified number of days.
+     * Initialize media upload
+     * Initializes a media upload.
   
   
   
-     * @returns {Promise<GetResponse>} Promise resolving to the API response
+     * @returns {Promise<InitializeUploadResponse>} Promise resolving to the API response
      */
-    get(options?: GetOptions$1): Promise<GetResponse$1>;
-}
-
-/**
- * Models for compliance operations
- */
-
-/**
- * Response for getJobsById
- *
- * @public
- */
-type GetJobsByIdResponse = Get2ComplianceJobsIdResponse;
-/**
- * Response for getJobs
- *
- * @public
- */
-type GetJobsResponse = Get2ComplianceJobsResponse;
-/**
- * Request for createJobs
- *
- * @public
- */
-type CreateJobsRequest = CreateComplianceJobRequest;
-/**
- * Response for createJobs
- *
- * @public
- */
-type CreateJobsResponse = CreateComplianceJobResponse;
-
-type models$9_CreateJobsRequest = CreateJobsRequest;
-type models$9_CreateJobsResponse = CreateJobsResponse;
-type models$9_GetJobsByIdResponse = GetJobsByIdResponse;
-type models$9_GetJobsResponse = GetJobsResponse;
-declare namespace models$9 {
-  export {
-    models$9_CreateJobsRequest as CreateJobsRequest,
-    models$9_CreateJobsResponse as CreateJobsResponse,
-    models$9_GetJobsByIdResponse as GetJobsByIdResponse,
-    models$9_GetJobsResponse as GetJobsResponse,
-  };
-}
-
-/**
- * compliance client for the X API.
- *
- * This module provides a client for interacting with the compliance endpoints of the X API.
- */
-
-/**
- * Options for getJobsById method
- *
- * @public
- */
-interface GetJobsByIdOptions {
-    /** A comma separated list of ComplianceJob fields to display. */
-    complianceJobfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getJobs method
- *
- * @public
- */
-interface GetJobsOptions {
-    /** Status of Compliance Job to list. */
-    status?: string;
-    /** A comma separated list of ComplianceJob fields to display. */
-    complianceJobfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Client for compliance operations
- *
- * This client provides methods for interacting with the compliance endpoints
- * of the X API. It handles authentication, request formatting, and response
- * parsing for all compliance related operations.
- *
- * @category compliance
- */
-declare class ComplianceClient {
-    private client;
-    /**
-       * Creates a new compliance client instance
-       *
-       * @param client - The main X API client instance
-       */
-    constructor(client: Client);
-    /**
-     * Get Compliance Job by ID
-     * Retrieves details of a specific Compliance Job by its ID.
-  
-  
-     * @param id The ID of the Compliance Job to retrieve.
-  
-  
-  
-  
-     * @returns {Promise<GetJobsByIdResponse>} Promise resolving to the API response
-     */
-    getJobsById(id: string, options?: GetJobsByIdOptions): Promise<GetJobsByIdResponse>;
-    /**
-     * Get Compliance Jobs
-     * Retrieves a list of Compliance Jobs filtered by job type and optional status.
-  
-  
-  
-     * @param type Type of Compliance Job to list.
-  
-  
-  
-     * @returns {Promise<GetJobsResponse>} Promise resolving to the API response
-     */
-    getJobs(type: string, options?: GetJobsOptions): Promise<GetJobsResponse>;
-    /**
-     * Create Compliance Job
-     * Creates a new Compliance Job for the specified job type.
-  
-  
-  
-     * @param body Request body
-  
-     * @returns {Promise<CreateJobsResponse>} Promise resolving to the API response
-     */
-    createJobs(body: CreateJobsRequest): Promise<CreateJobsResponse>;
-}
-
-/**
- * Models for communities operations
- */
-
-/**
- * Response for search
- *
- * @public
- */
-type SearchResponse$1 = Get2CommunitiesSearchResponse;
-/**
- * Response for getById
- *
- * @public
- */
-type GetByIdResponse$3 = Get2CommunitiesIdResponse;
-
-declare namespace models$8 {
-  export {
-    GetByIdResponse$3 as GetByIdResponse,
-    SearchResponse$1 as SearchResponse,
-  };
-}
-
-/**
- * communities client for the X API.
- *
- * This module provides a client for interacting with the communities endpoints of the X API.
- */
-
-/**
- * Options for search method
- *
- * @public
- */
-interface SearchOptions$1 {
-    /** The maximum number of search results to be returned by a request. */
-    maxResults?: number;
-    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-    nextToken?: any;
-    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-    paginationToken?: any;
-    /** A comma separated list of Community fields to display. */
-    communityfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getById method
- *
- * @public
- */
-interface GetByIdOptions$3 {
-    /** A comma separated list of Community fields to display. */
-    communityfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Client for communities operations
- *
- * This client provides methods for interacting with the communities endpoints
- * of the X API. It handles authentication, request formatting, and response
- * parsing for all communities related operations.
- *
- * @category communities
- */
-declare class CommunitiesClient {
-    private client;
-    /**
-       * Creates a new communities client instance
-       *
-       * @param client - The main X API client instance
-       */
-    constructor(client: Client);
-    /**
-     * Search Communities
-     * Retrieves a list of Communities matching the specified search query.
-  
-  
-  
-     * @param query Query to search communities.
-  
-  
-  
-     * @returns {Promise<SearchResponse>} Promise resolving to the API response
-     */
-    search(query: string, options?: SearchOptions$1): Promise<SearchResponse$1>;
-    /**
-     * Get Community by ID
-     * Retrieves details of a specific Community by its ID.
-  
-  
-     * @param id The ID of the Community.
-  
-  
-  
-  
-     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
-     */
-    getById(id: string, options?: GetByIdOptions$3): Promise<GetByIdResponse$3>;
+    initializeUpload(options?: InitializeUploadOptions): Promise<InitializeUploadResponse>;
 }
 
 /**
  * Models for direct messages operations
  */
 
+/**
+ * Response for getEventsByParticipantId
+ *
+ * @public
+ */
+type GetEventsByParticipantIdResponse = Get2DmConversationsWithParticipantIdDmEventsResponse;
+/**
+ * Request for createConversation
+ *
+ * @public
+ */
+type CreateConversationRequest = CreateDmConversationRequest;
+/**
+ * Response for createConversation
+ *
+ * @public
+ */
+type CreateConversationResponse = CreateDmEventResponse;
+/**
+ * Response for getEventsByConversationId
+ *
+ * @public
+ */
+type GetEventsByConversationIdResponse = Get2DmConversationsIdDmEventsResponse;
 /**
  * Request for createByParticipantId
  *
@@ -6045,6 +5344,12 @@ type CreateByParticipantIdRequest = CreateMessageRequest;
  */
 type CreateByParticipantIdResponse = CreateDmEventResponse;
 /**
+ * Response for getEvents
+ *
+ * @public
+ */
+type GetEventsResponse = Get2DmEventsResponse;
+/**
  * Request for createByConversationId
  *
  * @public
@@ -6057,18 +5362,6 @@ type CreateByConversationIdRequest = CreateMessageRequest;
  */
 type CreateByConversationIdResponse = CreateDmEventResponse;
 /**
- * Response for getEvents
- *
- * @public
- */
-type GetEventsResponse = Get2DmEventsResponse;
-/**
- * Response for getEventsByParticipantId
- *
- * @public
- */
-type GetEventsByParticipantIdResponse = Get2DmConversationsWithParticipantIdDmEventsResponse;
-/**
  * Response for getEventsById
  *
  * @public
@@ -6080,49 +5373,31 @@ type GetEventsByIdResponse = Get2DmEventsEventIdResponse;
  * @public
  */
 type DeleteEventsResponse = DeleteDmResponse;
-/**
- * Response for getEventsByConversationId
- *
- * @public
- */
-type GetEventsByConversationIdResponse = Get2DmConversationsIdDmEventsResponse;
-/**
- * Request for createConversation
- *
- * @public
- */
-type CreateConversationRequest = CreateDmConversationRequest;
-/**
- * Response for createConversation
- *
- * @public
- */
-type CreateConversationResponse = CreateDmEventResponse;
 
-type models$7_CreateByConversationIdRequest = CreateByConversationIdRequest;
-type models$7_CreateByConversationIdResponse = CreateByConversationIdResponse;
-type models$7_CreateByParticipantIdRequest = CreateByParticipantIdRequest;
-type models$7_CreateByParticipantIdResponse = CreateByParticipantIdResponse;
-type models$7_CreateConversationRequest = CreateConversationRequest;
-type models$7_CreateConversationResponse = CreateConversationResponse;
-type models$7_DeleteEventsResponse = DeleteEventsResponse;
-type models$7_GetEventsByConversationIdResponse = GetEventsByConversationIdResponse;
-type models$7_GetEventsByIdResponse = GetEventsByIdResponse;
-type models$7_GetEventsByParticipantIdResponse = GetEventsByParticipantIdResponse;
-type models$7_GetEventsResponse = GetEventsResponse;
-declare namespace models$7 {
+type models$e_CreateByConversationIdRequest = CreateByConversationIdRequest;
+type models$e_CreateByConversationIdResponse = CreateByConversationIdResponse;
+type models$e_CreateByParticipantIdRequest = CreateByParticipantIdRequest;
+type models$e_CreateByParticipantIdResponse = CreateByParticipantIdResponse;
+type models$e_CreateConversationRequest = CreateConversationRequest;
+type models$e_CreateConversationResponse = CreateConversationResponse;
+type models$e_DeleteEventsResponse = DeleteEventsResponse;
+type models$e_GetEventsByConversationIdResponse = GetEventsByConversationIdResponse;
+type models$e_GetEventsByIdResponse = GetEventsByIdResponse;
+type models$e_GetEventsByParticipantIdResponse = GetEventsByParticipantIdResponse;
+type models$e_GetEventsResponse = GetEventsResponse;
+declare namespace models$e {
   export {
-    models$7_CreateByConversationIdRequest as CreateByConversationIdRequest,
-    models$7_CreateByConversationIdResponse as CreateByConversationIdResponse,
-    models$7_CreateByParticipantIdRequest as CreateByParticipantIdRequest,
-    models$7_CreateByParticipantIdResponse as CreateByParticipantIdResponse,
-    models$7_CreateConversationRequest as CreateConversationRequest,
-    models$7_CreateConversationResponse as CreateConversationResponse,
-    models$7_DeleteEventsResponse as DeleteEventsResponse,
-    models$7_GetEventsByConversationIdResponse as GetEventsByConversationIdResponse,
-    models$7_GetEventsByIdResponse as GetEventsByIdResponse,
-    models$7_GetEventsByParticipantIdResponse as GetEventsByParticipantIdResponse,
-    models$7_GetEventsResponse as GetEventsResponse,
+    models$e_CreateByConversationIdRequest as CreateByConversationIdRequest,
+    models$e_CreateByConversationIdResponse as CreateByConversationIdResponse,
+    models$e_CreateByParticipantIdRequest as CreateByParticipantIdRequest,
+    models$e_CreateByParticipantIdResponse as CreateByParticipantIdResponse,
+    models$e_CreateConversationRequest as CreateConversationRequest,
+    models$e_CreateConversationResponse as CreateConversationResponse,
+    models$e_DeleteEventsResponse as DeleteEventsResponse,
+    models$e_GetEventsByConversationIdResponse as GetEventsByConversationIdResponse,
+    models$e_GetEventsByIdResponse as GetEventsByIdResponse,
+    models$e_GetEventsByParticipantIdResponse as GetEventsByParticipantIdResponse,
+    models$e_GetEventsResponse as GetEventsResponse,
   };
 }
 
@@ -6133,102 +5408,11 @@ declare namespace models$7 {
  */
 
 /**
- * Options for createByParticipantId method
- *
- * @public
- */
-interface CreateByParticipantIdOptions {
-    /** Request body */
-    body?: CreateByParticipantIdRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for createByConversationId method
- *
- * @public
- */
-interface CreateByConversationIdOptions {
-    /** Request body */
-    body?: CreateByConversationIdRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getEvents method
- *
- * @public
- */
-interface GetEventsOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: any;
-    /** The set of event_types to include in the results. */
-    eventTypes?: Array<any>;
-    /** A comma separated list of DmEvent fields to display. */
-    dmEventfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
  * Options for getEventsByParticipantId method
  *
  * @public
  */
 interface GetEventsByParticipantIdOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: any;
-    /** The set of event_types to include in the results. */
-    eventTypes?: Array<any>;
-    /** A comma separated list of DmEvent fields to display. */
-    dmEventfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getEventsById method
- *
- * @public
- */
-interface GetEventsByIdOptions {
-    /** A comma separated list of DmEvent fields to display. */
-    dmEventfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getEventsByConversationId method
- *
- * @public
- */
-interface GetEventsByConversationIdOptions {
     /** The maximum number of results. */
     maxResults?: number;
     /** This parameter is used to get a specified 'page' of results. */
@@ -6260,6 +5444,97 @@ interface CreateConversationOptions {
     requestOptions?: RequestOptions;
 }
 /**
+ * Options for getEventsByConversationId method
+ *
+ * @public
+ */
+interface GetEventsByConversationIdOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get a specified 'page' of results. */
+    paginationToken?: any;
+    /** The set of event_types to include in the results. */
+    eventTypes?: Array<any>;
+    /** A comma separated list of DmEvent fields to display. */
+    dmEventfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for createByParticipantId method
+ *
+ * @public
+ */
+interface CreateByParticipantIdOptions {
+    /** Request body */
+    body?: CreateByParticipantIdRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getEvents method
+ *
+ * @public
+ */
+interface GetEventsOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get a specified 'page' of results. */
+    paginationToken?: any;
+    /** The set of event_types to include in the results. */
+    eventTypes?: Array<any>;
+    /** A comma separated list of DmEvent fields to display. */
+    dmEventfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for createByConversationId method
+ *
+ * @public
+ */
+interface CreateByConversationIdOptions {
+    /** Request body */
+    body?: CreateByConversationIdRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getEventsById method
+ *
+ * @public
+ */
+interface GetEventsByIdOptions {
+    /** A comma separated list of DmEvent fields to display. */
+    dmEventfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
  * Client for direct messages operations
  *
  * This client provides methods for interacting with the direct messages endpoints
@@ -6277,6 +5552,41 @@ declare class DirectMessagesClient {
        */
     constructor(client: Client);
     /**
+     * Get DM events for a DM conversation
+     * Retrieves direct message events for a specific conversation.
+  
+  
+     * @param participantId The ID of the participant user for the One to One DM conversation.
+  
+  
+  
+  
+     * @returns {Promise<GetEventsByParticipantIdResponse>} Promise resolving to the API response
+     */
+    getEventsByParticipantId(participantId: string, options?: GetEventsByParticipantIdOptions): Promise<GetEventsByParticipantIdResponse>;
+    /**
+     * Create DM conversation
+     * Initiates a new direct message conversation with specified participants.
+  
+  
+  
+     * @returns {Promise<CreateConversationResponse>} Promise resolving to the API response
+     */
+    createConversation(options?: CreateConversationOptions): Promise<CreateConversationResponse>;
+    /**
+     * Get DM events for a DM conversation
+     * Retrieves direct message events for a specific conversation.
+  
+  
+     * @param id The DM conversation ID.
+  
+  
+  
+  
+     * @returns {Promise<GetEventsByConversationIdResponse>} Promise resolving to the API response
+     */
+    getEventsByConversationId(id: string, options?: GetEventsByConversationIdOptions): Promise<GetEventsByConversationIdResponse>;
+    /**
      * Create DM message by participant ID
      * Sends a new direct message to a specific participant by their ID.
   
@@ -6290,6 +5600,15 @@ declare class DirectMessagesClient {
      */
     createByParticipantId(participantId: string, options?: CreateByParticipantIdOptions): Promise<CreateByParticipantIdResponse>;
     /**
+     * Get DM events
+     * Retrieves a list of recent direct message events across all conversations.
+  
+  
+  
+     * @returns {Promise<GetEventsResponse>} Promise resolving to the API response
+     */
+    getEvents(options?: GetEventsOptions): Promise<GetEventsResponse>;
+    /**
      * Create DM message by conversation ID
      * Sends a new direct message to a specific conversation by its ID.
   
@@ -6302,28 +5621,6 @@ declare class DirectMessagesClient {
      * @returns {Promise<CreateByConversationIdResponse>} Promise resolving to the API response
      */
     createByConversationId(dmConversationId: string, options?: CreateByConversationIdOptions): Promise<CreateByConversationIdResponse>;
-    /**
-     * Get DM events
-     * Retrieves a list of recent direct message events across all conversations.
-  
-  
-  
-     * @returns {Promise<GetEventsResponse>} Promise resolving to the API response
-     */
-    getEvents(options?: GetEventsOptions): Promise<GetEventsResponse>;
-    /**
-     * Get DM events for a DM conversation
-     * Retrieves direct message events for a specific conversation.
-  
-  
-     * @param participantId The ID of the participant user for the One to One DM conversation.
-  
-  
-  
-  
-     * @returns {Promise<GetEventsByParticipantIdResponse>} Promise resolving to the API response
-     */
-    getEventsByParticipantId(participantId: string, options?: GetEventsByParticipantIdOptions): Promise<GetEventsByParticipantIdResponse>;
     /**
      * Get DM event by ID
      * Retrieves details of a specific direct message event by its ID.
@@ -6350,924 +5647,6 @@ declare class DirectMessagesClient {
      * @returns {Promise<DeleteEventsResponse>} Promise resolving to the API response
      */
     deleteEvents(eventId: string): Promise<DeleteEventsResponse>;
-    /**
-     * Get DM events for a DM conversation
-     * Retrieves direct message events for a specific conversation.
-  
-  
-     * @param id The DM conversation ID.
-  
-  
-  
-  
-     * @returns {Promise<GetEventsByConversationIdResponse>} Promise resolving to the API response
-     */
-    getEventsByConversationId(id: string, options?: GetEventsByConversationIdOptions): Promise<GetEventsByConversationIdResponse>;
-    /**
-     * Create DM conversation
-     * Initiates a new direct message conversation with specified participants.
-  
-  
-  
-     * @returns {Promise<CreateConversationResponse>} Promise resolving to the API response
-     */
-    createConversation(options?: CreateConversationOptions): Promise<CreateConversationResponse>;
-}
-
-/**
- * Models for activity operations
- */
-
-/**
- * Request for updateSubscription
- *
- * @public
- */
-type UpdateSubscriptionRequest = ActivitySubscriptionUpdateRequest;
-/**
- * Response for updateSubscription
- *
- * @public
- */
-type UpdateSubscriptionResponse = ActivitySubscriptionUpdateResponse;
-/**
- * Response for deleteSubscription
- *
- * @public
- */
-type DeleteSubscriptionResponse = ActivitySubscriptionDeleteResponse;
-/**
- * Response for stream
- *
- * @public
- */
-type StreamResponse = ActivityStreamingResponse;
-/**
- * Response for getSubscriptions
- *
- * @public
- */
-type GetSubscriptionsResponse = ActivitySubscriptionGetResponse;
-/**
- * Request for createSubscription
- *
- * @public
- */
-type CreateSubscriptionRequest = ActivitySubscriptionCreateRequest;
-/**
- * Response for createSubscription
- *
- * @public
- */
-type CreateSubscriptionResponse = ActivitySubscriptionCreateResponse;
-
-type models$6_CreateSubscriptionRequest = CreateSubscriptionRequest;
-type models$6_CreateSubscriptionResponse = CreateSubscriptionResponse;
-type models$6_DeleteSubscriptionResponse = DeleteSubscriptionResponse;
-type models$6_GetSubscriptionsResponse = GetSubscriptionsResponse;
-type models$6_StreamResponse = StreamResponse;
-type models$6_UpdateSubscriptionRequest = UpdateSubscriptionRequest;
-type models$6_UpdateSubscriptionResponse = UpdateSubscriptionResponse;
-declare namespace models$6 {
-  export {
-    models$6_CreateSubscriptionRequest as CreateSubscriptionRequest,
-    models$6_CreateSubscriptionResponse as CreateSubscriptionResponse,
-    models$6_DeleteSubscriptionResponse as DeleteSubscriptionResponse,
-    models$6_GetSubscriptionsResponse as GetSubscriptionsResponse,
-    models$6_StreamResponse as StreamResponse,
-    models$6_UpdateSubscriptionRequest as UpdateSubscriptionRequest,
-    models$6_UpdateSubscriptionResponse as UpdateSubscriptionResponse,
-  };
-}
-
-/**
- * activity client for the X API.
- *
- * This module provides a client for interacting with the activity endpoints of the X API.
- */
-
-/**
- * Options for updateSubscription method
- *
- * @public
- */
-interface UpdateSubscriptionOptions {
-    /** Request body */
-    body?: UpdateSubscriptionRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for stream method
- *
- * @public
- */
-interface StreamOptions {
-    /** The number of minutes of backfill requested. */
-    backfillMinutes?: number;
-    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. */
-    startTime?: string;
-    /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
-    endTime?: string;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for createSubscription method
- *
- * @public
- */
-interface CreateSubscriptionOptions {
-    /** Request body */
-    body?: CreateSubscriptionRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Client for activity operations
- *
- * This client provides methods for interacting with the activity endpoints
- * of the X API. It handles authentication, request formatting, and response
- * parsing for all activity related operations.
- *
- * @category activity
- */
-declare class ActivityClient {
-    private client;
-    /**
-       * Creates a new activity client instance
-       *
-       * @param client - The main X API client instance
-       */
-    constructor(client: Client);
-    /**
-     * Update X activity subscription
-     * Updates a subscription for an X activity event
-  
-  
-     * @param subscriptionId The ID of the subscription to update.
-  
-  
-  
-  
-     * @returns {Promise<UpdateSubscriptionResponse>} Promise resolving to the API response
-     */
-    updateSubscription(subscriptionId: string, options?: UpdateSubscriptionOptions): Promise<UpdateSubscriptionResponse>;
-    /**
-     * Deletes X activity subscription
-     * Deletes a subscription for an X activity event
-  
-  
-     * @param subscriptionId The ID of the subscription to delete.
-  
-  
-  
-  
-     * @returns {Promise<DeleteSubscriptionResponse>} Promise resolving to the API response
-     */
-    deleteSubscription(subscriptionId: string): Promise<DeleteSubscriptionResponse>;
-    /**
-     * Activity Stream
-     * Stream of X Activities
-  
-  
-  
-     * @returns {Promise<StreamResponse>} Promise resolving to the API response
-     */
-    stream(options?: StreamOptions): Promise<StreamResponse>;
-    /**
-     * Get X activity subscriptions
-     * Get a list of active subscriptions for XAA
-  
-  
-  
-     * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
-     */
-    getSubscriptions(): Promise<GetSubscriptionsResponse>;
-    /**
-     * Create X activity subscription
-     * Creates a subscription for an X activity event
-  
-  
-  
-     * @returns {Promise<CreateSubscriptionResponse>} Promise resolving to the API response
-     */
-    createSubscription(options?: CreateSubscriptionOptions): Promise<CreateSubscriptionResponse>;
-}
-
-/**
- * Models for posts operations
- */
-
-/**
- * Response for getById
- *
- * @public
- */
-type GetByIdResponse$2 = Get2TweetsIdResponse;
-/**
- * Response for delete
- *
- * @public
- */
-type DeleteResponse$2 = TweetDeleteResponse;
-/**
- * Response for getLikingUsers
- *
- * @public
- */
-type GetLikingUsersResponse = Get2TweetsIdLikingUsersResponse;
-/**
- * Response for getReposts
- *
- * @public
- */
-type GetRepostsResponse = Get2TweetsIdRetweetsResponse;
-/**
- * Response for searchRecent
- *
- * @public
- */
-type SearchRecentResponse = Get2TweetsSearchRecentResponse;
-/**
- * Response for getCountsAll
- *
- * @public
- */
-type GetCountsAllResponse = Get2TweetsCountsAllResponse;
-/**
- * Response for getRepostedBy
- *
- * @public
- */
-type GetRepostedByResponse = Get2TweetsIdRetweetedByResponse;
-/**
- * Response for searchAll
- *
- * @public
- */
-type SearchAllResponse = Get2TweetsSearchAllResponse;
-/**
- * Response for getCountsRecent
- *
- * @public
- */
-type GetCountsRecentResponse = Get2TweetsCountsRecentResponse;
-/**
- * Response for getInsightsHistorical
- *
- * @public
- */
-type GetInsightsHistoricalResponse = Get2InsightsHistoricalResponse;
-/**
- * Response for getQuoted
- *
- * @public
- */
-type GetQuotedResponse = Get2TweetsIdQuoteTweetsResponse;
-/**
- * Response for getByIds
- *
- * @public
- */
-type GetByIdsResponse$1 = Get2TweetsResponse;
-/**
- * Request for create
- *
- * @public
- */
-type CreateRequest$2 = TweetCreateRequest;
-/**
- * Response for create
- *
- * @public
- */
-type CreateResponse$2 = TweetCreateResponse;
-/**
- * Response for getInsights28hr
- *
- * @public
- */
-type GetInsights28hrResponse = Get2Insights28hrResponse;
-/**
- * Response for getAnalytics
- *
- * @public
- */
-type GetAnalyticsResponse$1 = Analytics;
-/**
- * Request for hideReply
- *
- * @public
- */
-type HideReplyRequest = TweetHideRequest;
-/**
- * Response for hideReply
- *
- * @public
- */
-type HideReplyResponse = TweetHideResponse;
-
-type models$5_GetCountsAllResponse = GetCountsAllResponse;
-type models$5_GetCountsRecentResponse = GetCountsRecentResponse;
-type models$5_GetInsights28hrResponse = GetInsights28hrResponse;
-type models$5_GetInsightsHistoricalResponse = GetInsightsHistoricalResponse;
-type models$5_GetLikingUsersResponse = GetLikingUsersResponse;
-type models$5_GetQuotedResponse = GetQuotedResponse;
-type models$5_GetRepostedByResponse = GetRepostedByResponse;
-type models$5_GetRepostsResponse = GetRepostsResponse;
-type models$5_HideReplyRequest = HideReplyRequest;
-type models$5_HideReplyResponse = HideReplyResponse;
-type models$5_SearchAllResponse = SearchAllResponse;
-type models$5_SearchRecentResponse = SearchRecentResponse;
-declare namespace models$5 {
-  export {
-    CreateRequest$2 as CreateRequest,
-    CreateResponse$2 as CreateResponse,
-    DeleteResponse$2 as DeleteResponse,
-    GetAnalyticsResponse$1 as GetAnalyticsResponse,
-    GetByIdResponse$2 as GetByIdResponse,
-    GetByIdsResponse$1 as GetByIdsResponse,
-    models$5_GetCountsAllResponse as GetCountsAllResponse,
-    models$5_GetCountsRecentResponse as GetCountsRecentResponse,
-    models$5_GetInsights28hrResponse as GetInsights28hrResponse,
-    models$5_GetInsightsHistoricalResponse as GetInsightsHistoricalResponse,
-    models$5_GetLikingUsersResponse as GetLikingUsersResponse,
-    models$5_GetQuotedResponse as GetQuotedResponse,
-    models$5_GetRepostedByResponse as GetRepostedByResponse,
-    models$5_GetRepostsResponse as GetRepostsResponse,
-    models$5_HideReplyRequest as HideReplyRequest,
-    models$5_HideReplyResponse as HideReplyResponse,
-    models$5_SearchAllResponse as SearchAllResponse,
-    models$5_SearchRecentResponse as SearchRecentResponse,
-  };
-}
-
-/**
- * posts client for the X API.
- *
- * This module provides a client for interacting with the posts endpoints of the X API.
- */
-
-/**
- * Options for getById method
- *
- * @public
- */
-interface GetByIdOptions$2 {
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of Poll fields to display. */
-    pollfields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Place fields to display. */
-    placefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getLikingUsers method
- *
- * @public
- */
-interface GetLikingUsersOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get the next 'page' of results. */
-    paginationToken?: any;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getReposts method
- *
- * @public
- */
-interface GetRepostsOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get the next 'page' of results. */
-    paginationToken?: any;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of Poll fields to display. */
-    pollfields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Place fields to display. */
-    placefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for searchRecent method
- *
- * @public
- */
-interface SearchRecentOptions {
-    /** YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute). */
-    startTime?: string;
-    /** YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute). */
-    endTime?: string;
-    /** Returns results with a Post ID greater than (that is, more recent than) the specified ID. */
-    sinceId?: any;
-    /** Returns results with a Post ID less than (that is, older than) the specified ID. */
-    untilId?: any;
-    /** The maximum number of search results to be returned by a request. */
-    maxResults?: number;
-    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-    nextToken?: any;
-    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-    paginationToken?: any;
-    /** This order in which to return results. */
-    sortOrder?: string;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of Poll fields to display. */
-    pollfields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Place fields to display. */
-    placefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getCountsAll method
- *
- * @public
- */
-interface GetCountsAllOptions {
-    /** YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp (from most recent 7 days) from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute). */
-    startTime?: string;
-    /** YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute). */
-    endTime?: string;
-    /** Returns results with a Post ID greater than (that is, more recent than) the specified ID. */
-    sinceId?: any;
-    /** Returns results with a Post ID less than (that is, older than) the specified ID. */
-    untilId?: any;
-    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-    nextToken?: any;
-    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-    paginationToken?: any;
-    /** The granularity for the search counts results. */
-    granularity?: string;
-    /** A comma separated list of SearchCount fields to display. */
-    searchCountfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getRepostedBy method
- *
- * @public
- */
-interface GetRepostedByOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get the next 'page' of results. */
-    paginationToken?: any;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for searchAll method
- *
- * @public
- */
-interface SearchAllOptions {
-    /** YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute). */
-    startTime?: string;
-    /** YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute). */
-    endTime?: string;
-    /** Returns results with a Post ID greater than (that is, more recent than) the specified ID. */
-    sinceId?: any;
-    /** Returns results with a Post ID less than (that is, older than) the specified ID. */
-    untilId?: any;
-    /** The maximum number of search results to be returned by a request. */
-    maxResults?: number;
-    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-    nextToken?: any;
-    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-    paginationToken?: any;
-    /** This order in which to return results. */
-    sortOrder?: string;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of Poll fields to display. */
-    pollfields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Place fields to display. */
-    placefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getCountsRecent method
- *
- * @public
- */
-interface GetCountsRecentOptions {
-    /** YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp (from most recent 7 days) from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute). */
-    startTime?: string;
-    /** YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute). */
-    endTime?: string;
-    /** Returns results with a Post ID greater than (that is, more recent than) the specified ID. */
-    sinceId?: any;
-    /** Returns results with a Post ID less than (that is, older than) the specified ID. */
-    untilId?: any;
-    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-    nextToken?: any;
-    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-    paginationToken?: any;
-    /** The granularity for the search counts results. */
-    granularity?: string;
-    /** A comma separated list of SearchCount fields to display. */
-    searchCountfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getInsightsHistorical method
- *
- * @public
- */
-interface GetInsightsHistoricalOptions {
-    /** A comma separated list of Engagement fields to display. */
-    engagementfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getQuoted method
- *
- * @public
- */
-interface GetQuotedOptions {
-    /** The maximum number of results to be returned. */
-    maxResults?: number;
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: any;
-    /** The set of entities to exclude (e.g. 'replies' or 'retweets'). */
-    exclude?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of Poll fields to display. */
-    pollfields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Place fields to display. */
-    placefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getByIds method
- *
- * @public
- */
-interface GetByIdsOptions$1 {
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of Poll fields to display. */
-    pollfields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Place fields to display. */
-    placefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getInsights28hr method
- *
- * @public
- */
-interface GetInsights28hrOptions {
-    /** A comma separated list of Engagement fields to display. */
-    engagementfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getAnalytics method
- *
- * @public
- */
-interface GetAnalyticsOptions$1 {
-    /** A comma separated list of Analytics fields to display. */
-    analyticsfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for hideReply method
- *
- * @public
- */
-interface HideReplyOptions {
-    /** Request body */
-    body?: HideReplyRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Client for posts operations
- *
- * This client provides methods for interacting with the posts endpoints
- * of the X API. It handles authentication, request formatting, and response
- * parsing for all posts related operations.
- *
- * @category posts
- */
-declare class PostsClient {
-    private client;
-    /**
-       * Creates a new posts client instance
-       *
-       * @param client - The main X API client instance
-       */
-    constructor(client: Client);
-    /**
-     * Get Post by ID
-     * Retrieves details of a specific Post by its ID.
-  
-  
-     * @param id A single Post ID.
-  
-  
-  
-  
-     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
-     */
-    getById(id: string, options?: GetByIdOptions$2): Promise<GetByIdResponse$2>;
-    /**
-     * Delete Post
-     * Deletes a specific Post by its ID, if owned by the authenticated user.
-  
-  
-     * @param id The ID of the Post to be deleted.
-  
-  
-  
-  
-     * @returns {Promise<DeleteResponse>} Promise resolving to the API response
-     */
-    delete(id: string): Promise<DeleteResponse$2>;
-    /**
-     * Get Liking Users
-     * Retrieves a list of Users who liked a specific Post by its ID.
-  
-  
-     * @param id A single Post ID.
-  
-  
-  
-  
-     * @returns {Promise<GetLikingUsersResponse>} Promise resolving to the API response
-     */
-    getLikingUsers(id: string, options?: GetLikingUsersOptions): Promise<GetLikingUsersResponse>;
-    /**
-     * Get Reposts
-     * Retrieves a list of Posts that repost a specific Post by its ID.
-  
-  
-     * @param id A single Post ID.
-  
-  
-  
-  
-     * @returns {Promise<GetRepostsResponse>} Promise resolving to the API response
-     */
-    getReposts(id: string, options?: GetRepostsOptions): Promise<GetRepostsResponse>;
-    /**
-     * Search recent Posts
-     * Retrieves Posts from the last 7 days matching a search query.
-  
-  
-  
-     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
-  
-  
-  
-     * @returns {Promise<SearchRecentResponse>} Promise resolving to the API response
-     */
-    searchRecent(query: string, options?: SearchRecentOptions): Promise<SearchRecentResponse>;
-    /**
-     * Get count of all Posts
-     * Retrieves the count of Posts matching a search query from the full archive.
-  
-  
-  
-     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
-  
-  
-  
-     * @returns {Promise<GetCountsAllResponse>} Promise resolving to the API response
-     */
-    getCountsAll(query: string, options?: GetCountsAllOptions): Promise<GetCountsAllResponse>;
-    /**
-     * Get Reposted by
-     * Retrieves a list of Users who reposted a specific Post by its ID.
-  
-  
-     * @param id A single Post ID.
-  
-  
-  
-  
-     * @returns {Promise<GetRepostedByResponse>} Promise resolving to the API response
-     */
-    getRepostedBy(id: string, options?: GetRepostedByOptions): Promise<GetRepostedByResponse>;
-    /**
-     * Search all Posts
-     * Retrieves Posts from the full archive matching a search query.
-  
-  
-  
-     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
-  
-  
-  
-     * @returns {Promise<SearchAllResponse>} Promise resolving to the API response
-     */
-    searchAll(query: string, options?: SearchAllOptions): Promise<SearchAllResponse>;
-    /**
-     * Get count of recent Posts
-     * Retrieves the count of Posts from the last 7 days matching a search query.
-  
-  
-  
-     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
-  
-  
-  
-     * @returns {Promise<GetCountsRecentResponse>} Promise resolving to the API response
-     */
-    getCountsRecent(query: string, options?: GetCountsRecentOptions): Promise<GetCountsRecentResponse>;
-    /**
-     * Get historical Post insights
-     * Retrieves historical engagement metrics for specified Posts within a defined time range.
-  
-  
-  
-     * @param tweetIds List of PostIds for historical metrics.
-  
-  
-  
-     * @param endTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
-  
-  
-  
-     * @param startTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
-  
-  
-  
-     * @param granularity granularity of metrics response.
-  
-  
-  
-     * @param requestedMetrics request metrics for historical request.
-  
-  
-  
-     * @returns {Promise<GetInsightsHistoricalResponse>} Promise resolving to the API response
-     */
-    getInsightsHistorical(tweetIds: Array<any>, endTime: string, startTime: string, granularity: string, requestedMetrics: Array<any>, options?: GetInsightsHistoricalOptions): Promise<GetInsightsHistoricalResponse>;
-    /**
-     * Get Quoted Posts
-     * Retrieves a list of Posts that quote a specific Post by its ID.
-  
-  
-     * @param id A single Post ID.
-  
-  
-  
-  
-     * @returns {Promise<GetQuotedResponse>} Promise resolving to the API response
-     */
-    getQuoted(id: string, options?: GetQuotedOptions): Promise<GetQuotedResponse>;
-    /**
-     * Get Posts by IDs
-     * Retrieves details of multiple Posts by their IDs.
-  
-  
-  
-     * @param ids A comma separated list of Post IDs. Up to 100 are allowed in a single request.
-  
-  
-  
-     * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
-     */
-    getByIds(ids: Array<any>, options?: GetByIdsOptions$1): Promise<GetByIdsResponse$1>;
-    /**
-     * Create or Edit Post
-     * Creates a new Post for the authenticated user, or edits an existing Post when edit_options are provided.
-  
-  
-  
-     * @param body Request body
-  
-     * @returns {Promise<CreateResponse>} Promise resolving to the API response
-     */
-    create(body: CreateRequest$2): Promise<CreateResponse$2>;
-    /**
-     * Get 28-hour Post insights
-     * Retrieves engagement metrics for specified Posts over the last 28 hours.
-  
-  
-  
-     * @param tweetIds List of PostIds for 28hr metrics.
-  
-  
-  
-     * @param granularity granularity of metrics response.
-  
-  
-  
-     * @param requestedMetrics request metrics for historical request.
-  
-  
-  
-     * @returns {Promise<GetInsights28hrResponse>} Promise resolving to the API response
-     */
-    getInsights28hr(tweetIds: Array<any>, granularity: string, requestedMetrics: Array<any>, options?: GetInsights28hrOptions): Promise<GetInsights28hrResponse>;
-    /**
-     * Get Post analytics
-     * Retrieves analytics data for specified Posts within a defined time range.
-  
-  
-  
-     * @param ids A comma separated list of Post IDs. Up to 100 are allowed in a single request.
-  
-  
-  
-     * @param endTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
-  
-  
-  
-     * @param startTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
-  
-  
-  
-     * @param granularity The granularity for the search counts results.
-  
-  
-  
-     * @returns {Promise<GetAnalyticsResponse>} Promise resolving to the API response
-     */
-    getAnalytics(ids: Array<any>, endTime: string, startTime: string, granularity: string, options?: GetAnalyticsOptions$1): Promise<GetAnalyticsResponse$1>;
-    /**
-     * Hide reply
-     * Hides or unhides a reply to a conversation owned by the authenticated user.
-  
-  
-     * @param tweetId The ID of the reply that you want to hide or unhide.
-  
-  
-  
-  
-     * @returns {Promise<HideReplyResponse>} Promise resolving to the API response
-     */
-    hideReply(tweetId: string, options?: HideReplyOptions): Promise<HideReplyResponse>;
 }
 
 /**
@@ -7275,168 +5654,29 @@ declare class PostsClient {
  */
 
 /**
- * Response for getMe
- *
- * @public
- */
-type GetMeResponse = Get2UsersMeResponse;
-/**
- * Response for getFollowing
- *
- * @public
- */
-type GetFollowingResponse = Get2UsersIdFollowingResponse;
-/**
- * Request for followUser
- *
- * @public
- */
-type FollowUserRequest = UsersFollowingCreateRequest;
-/**
- * Response for followUser
- *
- * @public
- */
-type FollowUserResponse = UsersFollowingCreateResponse;
-/**
- * Request for likePost
- *
- * @public
- */
-type LikePostRequest = UsersLikesCreateRequest;
-/**
- * Response for likePost
- *
- * @public
- */
-type LikePostResponse = UsersLikesCreateResponse;
-/**
  * Response for getMentions
  *
  * @public
  */
 type GetMentionsResponse = Get2UsersIdMentionsResponse;
 /**
- * Response for getFollowedLists
+ * Response for getBlocking
  *
  * @public
  */
-type GetFollowedListsResponse = Get2UsersIdFollowedListsResponse;
+type GetBlockingResponse = Get2UsersIdBlockingResponse;
 /**
- * Request for followList
+ * Response for getTimeline
  *
  * @public
  */
-type FollowListRequest = ListFollowedRequest;
+type GetTimelineResponse = Get2UsersIdTimelinesReverseChronologicalResponse;
 /**
- * Response for followList
+ * Response for getByUsername
  *
  * @public
  */
-type FollowListResponse = ListFollowedResponse;
-/**
- * Response for getMuting
- *
- * @public
- */
-type GetMutingResponse = Get2UsersIdMutingResponse;
-
-/**
- * Response for muteUser
- *
- * @public
- */
-type MuteUserResponse = MuteUserMutationResponse;
-/**
- * Response for getBookmarkFolders
- *
- * @public
- */
-type GetBookmarkFoldersResponse = BookmarkFoldersResponse;
-/**
- * Response for getByUsernames
- *
- * @public
- */
-type GetByUsernamesResponse = Get2UsersByResponse;
-/**
- * Response for getRepostsOfMe
- *
- * @public
- */
-type GetRepostsOfMeResponse = Get2UsersRepostsOfMeResponse;
-/**
- * Response for unfollowUser
- *
- * @public
- */
-type UnfollowUserResponse = UsersFollowingDeleteResponse;
-/**
- * Response for unpinList
- *
- * @public
- */
-type UnpinListResponse = ListUnpinResponse;
-/**
- * Response for unfollowList
- *
- * @public
- */
-type UnfollowListResponse = ListFollowedResponse;
-/**
- * Response for unlikePost
- *
- * @public
- */
-type UnlikePostResponse = UsersLikesDeleteResponse;
-/**
- * Request for repostPost
- *
- * @public
- */
-type RepostPostRequest = UsersRetweetsCreateRequest;
-/**
- * Response for repostPost
- *
- * @public
- */
-type RepostPostResponse = UsersRetweetsCreateResponse;
-/**
- * Response for unmuteUser
- *
- * @public
- */
-type UnmuteUserResponse = MuteUserMutationResponse;
-/**
- * Response for getById
- *
- * @public
- */
-type GetByIdResponse$1 = Get2UsersIdResponse;
-/**
- * Response for getBookmarks
- *
- * @public
- */
-type GetBookmarksResponse = Get2UsersIdBookmarksResponse;
-/**
- * Request for createBookmark
- *
- * @public
- */
-type CreateBookmarkRequest = BookmarkAddRequest;
-/**
- * Response for createBookmark
- *
- * @public
- */
-type CreateBookmarkResponse = BookmarkMutationResponse;
-/**
- * Response for getOwnedLists
- *
- * @public
- */
-type GetOwnedListsResponse = Get2UsersIdOwnedListsResponse;
+type GetByUsernameResponse = Get2UsersByUsernameUsernameResponse;
 /**
  * Response for getPinnedLists
  *
@@ -7456,29 +5696,53 @@ type PinListRequest = ListPinnedRequest;
  */
 type PinListResponse = ListPinnedResponse;
 /**
- * Response for getBlocking
+ * Response for getByIds
  *
  * @public
  */
-type GetBlockingResponse = Get2UsersIdBlockingResponse;
+type GetByIdsResponse$2 = Get2UsersResponse;
 /**
- * Response for getTimeline
+ * Response for getFollowedLists
  *
  * @public
  */
-type GetTimelineResponse = Get2UsersIdTimelinesReverseChronologicalResponse;
+type GetFollowedListsResponse = Get2UsersIdFollowedListsResponse;
 /**
- * Response for deleteBookmark
+ * Request for followList
  *
  * @public
  */
-type DeleteBookmarkResponse = BookmarkMutationResponse;
+type FollowListRequest = ListFollowedRequest;
 /**
- * Response for getLikedPosts
+ * Response for followList
  *
  * @public
  */
-type GetLikedPostsResponse = Get2UsersIdLikedTweetsResponse;
+type FollowListResponse = ListFollowedResponse;
+/**
+ * Response for getOwnedLists
+ *
+ * @public
+ */
+type GetOwnedListsResponse = Get2UsersIdOwnedListsResponse;
+/**
+ * Response for search
+ *
+ * @public
+ */
+type SearchResponse$2 = Get2UsersSearchResponse;
+/**
+ * Response for getBookmarkFolders
+ *
+ * @public
+ */
+type GetBookmarkFoldersResponse = BookmarkFoldersResponse;
+/**
+ * Response for getByUsernames
+ *
+ * @public
+ */
+type GetByUsernamesResponse = Get2UsersByResponse;
 /**
  * Response for getListMemberships
  *
@@ -7486,41 +5750,138 @@ type GetLikedPostsResponse = Get2UsersIdLikedTweetsResponse;
  */
 type GetListMembershipsResponse = Get2UsersIdListMembershipsResponse;
 /**
- * Response for getByIds
+ * Response for getMe
  *
  * @public
  */
-type GetByIdsResponse = Get2UsersResponse;
+type GetMeResponse = Get2UsersMeResponse;
 /**
- * Response for getBookmarksByFolderId
+ * Response for getLikedPosts
  *
  * @public
  */
-type GetBookmarksByFolderIdResponse = BookmarkFolderPostsResponse;
+type GetLikedPostsResponse = Get2UsersIdLikedTweetsResponse;
 /**
- * Response for search
+ * Response for getPosts
  *
  * @public
  */
-type SearchResponse = Get2UsersSearchResponse;
+type GetPostsResponse$2 = Get2UsersIdTweetsResponse;
 /**
- * Response for getFollowers
+ * Request for repostPost
  *
  * @public
  */
-type GetFollowersResponse$1 = Get2UsersIdFollowersResponse;
+type RepostPostRequest = UsersRetweetsCreateRequest;
 /**
- * Response for unblockDms
+ * Response for repostPost
  *
  * @public
  */
-type UnblockDmsResponse = UsersDMUnBlockCreateResponse;
+type RepostPostResponse = UsersRetweetsCreateResponse;
 /**
- * Response for unrepostPost
+ * Response for getFollowing
  *
  * @public
  */
-type UnrepostPostResponse = UsersRetweetsDeleteResponse;
+type GetFollowingResponse = Get2UsersIdFollowingResponse;
+/**
+ * Request for followUser
+ *
+ * @public
+ */
+type FollowUserRequest = UsersFollowingCreateRequest;
+/**
+ * Response for followUser
+ *
+ * @public
+ */
+type FollowUserResponse = UsersFollowingCreateResponse;
+/**
+ * Response for unpinList
+ *
+ * @public
+ */
+type UnpinListResponse = ListUnpinResponse;
+/**
+ * Response for unmuteUser
+ *
+ * @public
+ */
+type UnmuteUserResponse = MuteUserMutationResponse;
+/**
+ * Response for unfollowUser
+ *
+ * @public
+ */
+type UnfollowUserResponse = UsersFollowingDeleteResponse;
+/**
+ * Response for unfollowList
+ *
+ * @public
+ */
+type UnfollowListResponse = ListFollowedResponse;
+/**
+ * Request for likePost
+ *
+ * @public
+ */
+type LikePostRequest = UsersLikesCreateRequest;
+/**
+ * Response for likePost
+ *
+ * @public
+ */
+type LikePostResponse = UsersLikesCreateResponse;
+/**
+ * Response for getById
+ *
+ * @public
+ */
+type GetByIdResponse$4 = Get2UsersIdResponse;
+/**
+ * Response for getMuting
+ *
+ * @public
+ */
+type GetMutingResponse = Get2UsersIdMutingResponse;
+
+/**
+ * Response for muteUser
+ *
+ * @public
+ */
+type MuteUserResponse = MuteUserMutationResponse;
+/**
+ * Response for getBookmarks
+ *
+ * @public
+ */
+type GetBookmarksResponse = Get2UsersIdBookmarksResponse;
+/**
+ * Request for createBookmark
+ *
+ * @public
+ */
+type CreateBookmarkRequest = BookmarkAddRequest;
+/**
+ * Response for createBookmark
+ *
+ * @public
+ */
+type CreateBookmarkResponse = BookmarkMutationResponse;
+/**
+ * Response for deleteBookmark
+ *
+ * @public
+ */
+type DeleteBookmarkResponse = BookmarkMutationResponse;
+/**
+ * Response for getRepostsOfMe
+ *
+ * @public
+ */
+type GetRepostsOfMeResponse = Get2UsersRepostsOfMeResponse;
 /**
  * Response for blockDms
  *
@@ -7528,107 +5889,123 @@ type UnrepostPostResponse = UsersRetweetsDeleteResponse;
  */
 type BlockDmsResponse = UsersDMBlockCreateResponse;
 /**
- * Response for getByUsername
+ * Response for unblockDms
  *
  * @public
  */
-type GetByUsernameResponse = Get2UsersByUsernameUsernameResponse;
+type UnblockDmsResponse = UsersDMUnBlockCreateResponse;
 /**
- * Response for getPosts
+ * Response for unlikePost
  *
  * @public
  */
-type GetPostsResponse$1 = Get2UsersIdTweetsResponse;
+type UnlikePostResponse = UsersLikesDeleteResponse;
+/**
+ * Response for unrepostPost
+ *
+ * @public
+ */
+type UnrepostPostResponse = UsersRetweetsDeleteResponse;
+/**
+ * Response for getFollowers
+ *
+ * @public
+ */
+type GetFollowersResponse$1 = Get2UsersIdFollowersResponse;
+/**
+ * Response for getBookmarksByFolderId
+ *
+ * @public
+ */
+type GetBookmarksByFolderIdResponse = BookmarkFolderPostsResponse;
 
-type models$4_BlockDmsResponse = BlockDmsResponse;
-type models$4_CreateBookmarkRequest = CreateBookmarkRequest;
-type models$4_CreateBookmarkResponse = CreateBookmarkResponse;
-type models$4_DeleteBookmarkResponse = DeleteBookmarkResponse;
-type models$4_FollowListRequest = FollowListRequest;
-type models$4_FollowListResponse = FollowListResponse;
-type models$4_FollowUserRequest = FollowUserRequest;
-type models$4_FollowUserResponse = FollowUserResponse;
-type models$4_GetBlockingResponse = GetBlockingResponse;
-type models$4_GetBookmarkFoldersResponse = GetBookmarkFoldersResponse;
-type models$4_GetBookmarksByFolderIdResponse = GetBookmarksByFolderIdResponse;
-type models$4_GetBookmarksResponse = GetBookmarksResponse;
-type models$4_GetByIdsResponse = GetByIdsResponse;
-type models$4_GetByUsernameResponse = GetByUsernameResponse;
-type models$4_GetByUsernamesResponse = GetByUsernamesResponse;
-type models$4_GetFollowedListsResponse = GetFollowedListsResponse;
-type models$4_GetFollowingResponse = GetFollowingResponse;
-type models$4_GetLikedPostsResponse = GetLikedPostsResponse;
-type models$4_GetListMembershipsResponse = GetListMembershipsResponse;
-type models$4_GetMeResponse = GetMeResponse;
-type models$4_GetMentionsResponse = GetMentionsResponse;
-type models$4_GetMutingResponse = GetMutingResponse;
-type models$4_GetOwnedListsResponse = GetOwnedListsResponse;
-type models$4_GetPinnedListsResponse = GetPinnedListsResponse;
-type models$4_GetRepostsOfMeResponse = GetRepostsOfMeResponse;
-type models$4_GetTimelineResponse = GetTimelineResponse;
-type models$4_LikePostRequest = LikePostRequest;
-type models$4_LikePostResponse = LikePostResponse;
-type models$4_MuteUserRequest = MuteUserRequest;
-type models$4_MuteUserResponse = MuteUserResponse;
-type models$4_PinListRequest = PinListRequest;
-type models$4_PinListResponse = PinListResponse;
-type models$4_RepostPostRequest = RepostPostRequest;
-type models$4_RepostPostResponse = RepostPostResponse;
-type models$4_SearchResponse = SearchResponse;
-type models$4_UnblockDmsResponse = UnblockDmsResponse;
-type models$4_UnfollowListResponse = UnfollowListResponse;
-type models$4_UnfollowUserResponse = UnfollowUserResponse;
-type models$4_UnlikePostResponse = UnlikePostResponse;
-type models$4_UnmuteUserResponse = UnmuteUserResponse;
-type models$4_UnpinListResponse = UnpinListResponse;
-type models$4_UnrepostPostResponse = UnrepostPostResponse;
-declare namespace models$4 {
+type models$d_BlockDmsResponse = BlockDmsResponse;
+type models$d_CreateBookmarkRequest = CreateBookmarkRequest;
+type models$d_CreateBookmarkResponse = CreateBookmarkResponse;
+type models$d_DeleteBookmarkResponse = DeleteBookmarkResponse;
+type models$d_FollowListRequest = FollowListRequest;
+type models$d_FollowListResponse = FollowListResponse;
+type models$d_FollowUserRequest = FollowUserRequest;
+type models$d_FollowUserResponse = FollowUserResponse;
+type models$d_GetBlockingResponse = GetBlockingResponse;
+type models$d_GetBookmarkFoldersResponse = GetBookmarkFoldersResponse;
+type models$d_GetBookmarksByFolderIdResponse = GetBookmarksByFolderIdResponse;
+type models$d_GetBookmarksResponse = GetBookmarksResponse;
+type models$d_GetByUsernameResponse = GetByUsernameResponse;
+type models$d_GetByUsernamesResponse = GetByUsernamesResponse;
+type models$d_GetFollowedListsResponse = GetFollowedListsResponse;
+type models$d_GetFollowingResponse = GetFollowingResponse;
+type models$d_GetLikedPostsResponse = GetLikedPostsResponse;
+type models$d_GetListMembershipsResponse = GetListMembershipsResponse;
+type models$d_GetMeResponse = GetMeResponse;
+type models$d_GetMentionsResponse = GetMentionsResponse;
+type models$d_GetMutingResponse = GetMutingResponse;
+type models$d_GetOwnedListsResponse = GetOwnedListsResponse;
+type models$d_GetPinnedListsResponse = GetPinnedListsResponse;
+type models$d_GetRepostsOfMeResponse = GetRepostsOfMeResponse;
+type models$d_GetTimelineResponse = GetTimelineResponse;
+type models$d_LikePostRequest = LikePostRequest;
+type models$d_LikePostResponse = LikePostResponse;
+type models$d_MuteUserRequest = MuteUserRequest;
+type models$d_MuteUserResponse = MuteUserResponse;
+type models$d_PinListRequest = PinListRequest;
+type models$d_PinListResponse = PinListResponse;
+type models$d_RepostPostRequest = RepostPostRequest;
+type models$d_RepostPostResponse = RepostPostResponse;
+type models$d_UnblockDmsResponse = UnblockDmsResponse;
+type models$d_UnfollowListResponse = UnfollowListResponse;
+type models$d_UnfollowUserResponse = UnfollowUserResponse;
+type models$d_UnlikePostResponse = UnlikePostResponse;
+type models$d_UnmuteUserResponse = UnmuteUserResponse;
+type models$d_UnpinListResponse = UnpinListResponse;
+type models$d_UnrepostPostResponse = UnrepostPostResponse;
+declare namespace models$d {
   export {
-    models$4_BlockDmsResponse as BlockDmsResponse,
-    models$4_CreateBookmarkRequest as CreateBookmarkRequest,
-    models$4_CreateBookmarkResponse as CreateBookmarkResponse,
-    models$4_DeleteBookmarkResponse as DeleteBookmarkResponse,
-    models$4_FollowListRequest as FollowListRequest,
-    models$4_FollowListResponse as FollowListResponse,
-    models$4_FollowUserRequest as FollowUserRequest,
-    models$4_FollowUserResponse as FollowUserResponse,
-    models$4_GetBlockingResponse as GetBlockingResponse,
-    models$4_GetBookmarkFoldersResponse as GetBookmarkFoldersResponse,
-    models$4_GetBookmarksByFolderIdResponse as GetBookmarksByFolderIdResponse,
-    models$4_GetBookmarksResponse as GetBookmarksResponse,
-    GetByIdResponse$1 as GetByIdResponse,
-    models$4_GetByIdsResponse as GetByIdsResponse,
-    models$4_GetByUsernameResponse as GetByUsernameResponse,
-    models$4_GetByUsernamesResponse as GetByUsernamesResponse,
-    models$4_GetFollowedListsResponse as GetFollowedListsResponse,
+    models$d_BlockDmsResponse as BlockDmsResponse,
+    models$d_CreateBookmarkRequest as CreateBookmarkRequest,
+    models$d_CreateBookmarkResponse as CreateBookmarkResponse,
+    models$d_DeleteBookmarkResponse as DeleteBookmarkResponse,
+    models$d_FollowListRequest as FollowListRequest,
+    models$d_FollowListResponse as FollowListResponse,
+    models$d_FollowUserRequest as FollowUserRequest,
+    models$d_FollowUserResponse as FollowUserResponse,
+    models$d_GetBlockingResponse as GetBlockingResponse,
+    models$d_GetBookmarkFoldersResponse as GetBookmarkFoldersResponse,
+    models$d_GetBookmarksByFolderIdResponse as GetBookmarksByFolderIdResponse,
+    models$d_GetBookmarksResponse as GetBookmarksResponse,
+    GetByIdResponse$4 as GetByIdResponse,
+    GetByIdsResponse$2 as GetByIdsResponse,
+    models$d_GetByUsernameResponse as GetByUsernameResponse,
+    models$d_GetByUsernamesResponse as GetByUsernamesResponse,
+    models$d_GetFollowedListsResponse as GetFollowedListsResponse,
     GetFollowersResponse$1 as GetFollowersResponse,
-    models$4_GetFollowingResponse as GetFollowingResponse,
-    models$4_GetLikedPostsResponse as GetLikedPostsResponse,
-    models$4_GetListMembershipsResponse as GetListMembershipsResponse,
-    models$4_GetMeResponse as GetMeResponse,
-    models$4_GetMentionsResponse as GetMentionsResponse,
-    models$4_GetMutingResponse as GetMutingResponse,
-    models$4_GetOwnedListsResponse as GetOwnedListsResponse,
-    models$4_GetPinnedListsResponse as GetPinnedListsResponse,
-    GetPostsResponse$1 as GetPostsResponse,
-    models$4_GetRepostsOfMeResponse as GetRepostsOfMeResponse,
-    models$4_GetTimelineResponse as GetTimelineResponse,
-    models$4_LikePostRequest as LikePostRequest,
-    models$4_LikePostResponse as LikePostResponse,
-    models$4_MuteUserRequest as MuteUserRequest,
-    models$4_MuteUserResponse as MuteUserResponse,
-    models$4_PinListRequest as PinListRequest,
-    models$4_PinListResponse as PinListResponse,
-    models$4_RepostPostRequest as RepostPostRequest,
-    models$4_RepostPostResponse as RepostPostResponse,
-    models$4_SearchResponse as SearchResponse,
-    models$4_UnblockDmsResponse as UnblockDmsResponse,
-    models$4_UnfollowListResponse as UnfollowListResponse,
-    models$4_UnfollowUserResponse as UnfollowUserResponse,
-    models$4_UnlikePostResponse as UnlikePostResponse,
-    models$4_UnmuteUserResponse as UnmuteUserResponse,
-    models$4_UnpinListResponse as UnpinListResponse,
-    models$4_UnrepostPostResponse as UnrepostPostResponse,
+    models$d_GetFollowingResponse as GetFollowingResponse,
+    models$d_GetLikedPostsResponse as GetLikedPostsResponse,
+    models$d_GetListMembershipsResponse as GetListMembershipsResponse,
+    models$d_GetMeResponse as GetMeResponse,
+    models$d_GetMentionsResponse as GetMentionsResponse,
+    models$d_GetMutingResponse as GetMutingResponse,
+    models$d_GetOwnedListsResponse as GetOwnedListsResponse,
+    models$d_GetPinnedListsResponse as GetPinnedListsResponse,
+    GetPostsResponse$2 as GetPostsResponse,
+    models$d_GetRepostsOfMeResponse as GetRepostsOfMeResponse,
+    models$d_GetTimelineResponse as GetTimelineResponse,
+    models$d_LikePostRequest as LikePostRequest,
+    models$d_LikePostResponse as LikePostResponse,
+    models$d_MuteUserRequest as MuteUserRequest,
+    models$d_MuteUserResponse as MuteUserResponse,
+    models$d_PinListRequest as PinListRequest,
+    models$d_PinListResponse as PinListResponse,
+    models$d_RepostPostRequest as RepostPostRequest,
+    models$d_RepostPostResponse as RepostPostResponse,
+    SearchResponse$2 as SearchResponse,
+    models$d_UnblockDmsResponse as UnblockDmsResponse,
+    models$d_UnfollowListResponse as UnfollowListResponse,
+    models$d_UnfollowUserResponse as UnfollowUserResponse,
+    models$d_UnlikePostResponse as UnlikePostResponse,
+    models$d_UnmuteUserResponse as UnmuteUserResponse,
+    models$d_UnpinListResponse as UnpinListResponse,
+    models$d_UnrepostPostResponse as UnrepostPostResponse,
   };
 }
 
@@ -7638,62 +6015,6 @@ declare namespace models$4 {
  * This module provides a client for interacting with the users endpoints of the X API.
  */
 
-/**
- * Options for getMe method
- *
- * @public
- */
-interface GetMeOptions {
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getFollowing method
- *
- * @public
- */
-interface GetFollowingOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: any;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for followUser method
- *
- * @public
- */
-interface FollowUserOptions {
-    /** Request body */
-    body?: FollowUserRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for likePost method
- *
- * @public
- */
-interface LikePostOptions {
-    /** Request body */
-    body?: LikePostRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
 /**
  * Options for getMentions method
  *
@@ -7724,204 +6045,6 @@ interface GetMentionsOptions {
     userfields?: Array<any>;
     /** A comma separated list of Place fields to display. */
     placefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getFollowedLists method
- *
- * @public
- */
-interface GetFollowedListsOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: any;
-    /** A comma separated list of List fields to display. */
-    listfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for followList method
- *
- * @public
- */
-interface FollowListOptions {
-    /** Request body */
-    body?: FollowListRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getMuting method
- *
- * @public
- */
-interface GetMutingOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get the next 'page' of results. */
-    paginationToken?: any;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for muteUser method
- *
- * @public
- */
-interface MuteUserOptions {
-    /** Request body */
-    body?: MuteUserRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getBookmarkFolders method
- *
- * @public
- */
-interface GetBookmarkFoldersOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get the next 'page' of results. */
-    paginationToken?: any;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getByUsernames method
- *
- * @public
- */
-interface GetByUsernamesOptions {
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getRepostsOfMe method
- *
- * @public
- */
-interface GetRepostsOfMeOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get the next 'page' of results. */
-    paginationToken?: any;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of Poll fields to display. */
-    pollfields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Place fields to display. */
-    placefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for repostPost method
- *
- * @public
- */
-interface RepostPostOptions {
-    /** Request body */
-    body?: RepostPostRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getById method
- *
- * @public
- */
-interface GetByIdOptions$1 {
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getBookmarks method
- *
- * @public
- */
-interface GetBookmarksOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get the next 'page' of results. */
-    paginationToken?: any;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** A comma separated list of Poll fields to display. */
-    pollfields?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of Place fields to display. */
-    placefields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getOwnedLists method
- *
- * @public
- */
-interface GetOwnedListsOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: any;
-    /** A comma separated list of List fields to display. */
-    listfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getPinnedLists method
- *
- * @public
- */
-interface GetPinnedListsOptions {
-    /** A comma separated list of List fields to display. */
-    listfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
     /** Additional request options */
     requestOptions?: RequestOptions;
 }
@@ -7980,6 +6103,181 @@ interface GetTimelineOptions {
     requestOptions?: RequestOptions;
 }
 /**
+ * Options for getByUsername method
+ *
+ * @public
+ */
+interface GetByUsernameOptions {
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getPinnedLists method
+ *
+ * @public
+ */
+interface GetPinnedListsOptions {
+    /** A comma separated list of List fields to display. */
+    listfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getByIds method
+ *
+ * @public
+ */
+interface GetByIdsOptions$2 {
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getFollowedLists method
+ *
+ * @public
+ */
+interface GetFollowedListsOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get a specified 'page' of results. */
+    paginationToken?: any;
+    /** A comma separated list of List fields to display. */
+    listfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for followList method
+ *
+ * @public
+ */
+interface FollowListOptions {
+    /** Request body */
+    body?: FollowListRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getOwnedLists method
+ *
+ * @public
+ */
+interface GetOwnedListsOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get a specified 'page' of results. */
+    paginationToken?: any;
+    /** A comma separated list of List fields to display. */
+    listfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for search method
+ *
+ * @public
+ */
+interface SearchOptions$2 {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+    nextToken?: any;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getBookmarkFolders method
+ *
+ * @public
+ */
+interface GetBookmarkFoldersOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get the next 'page' of results. */
+    paginationToken?: any;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getByUsernames method
+ *
+ * @public
+ */
+interface GetByUsernamesOptions {
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getListMemberships method
+ *
+ * @public
+ */
+interface GetListMembershipsOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get a specified 'page' of results. */
+    paginationToken?: any;
+    /** A comma separated list of List fields to display. */
+    listfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getMe method
+ *
+ * @public
+ */
+interface GetMeOptions {
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
  * Options for getLikedPosts method
  *
  * @public
@@ -8005,98 +6303,11 @@ interface GetLikedPostsOptions {
     requestOptions?: RequestOptions;
 }
 /**
- * Options for getListMemberships method
- *
- * @public
- */
-interface GetListMembershipsOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: any;
-    /** A comma separated list of List fields to display. */
-    listfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getByIds method
- *
- * @public
- */
-interface GetByIdsOptions {
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for search method
- *
- * @public
- */
-interface SearchOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-    nextToken?: any;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getFollowers method
- *
- * @public
- */
-interface GetFollowersOptions$1 {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: any;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getByUsername method
- *
- * @public
- */
-interface GetByUsernameOptions {
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
  * Options for getPosts method
  *
  * @public
  */
-interface GetPostsOptions$1 {
+interface GetPostsOptions$2 {
     /** The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified. */
     sinceId?: any;
     /** The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified. */
@@ -8127,6 +6338,172 @@ interface GetPostsOptions$1 {
     requestOptions?: RequestOptions;
 }
 /**
+ * Options for repostPost method
+ *
+ * @public
+ */
+interface RepostPostOptions {
+    /** Request body */
+    body?: RepostPostRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getFollowing method
+ *
+ * @public
+ */
+interface GetFollowingOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get a specified 'page' of results. */
+    paginationToken?: any;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for followUser method
+ *
+ * @public
+ */
+interface FollowUserOptions {
+    /** Request body */
+    body?: FollowUserRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for likePost method
+ *
+ * @public
+ */
+interface LikePostOptions {
+    /** Request body */
+    body?: LikePostRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getById method
+ *
+ * @public
+ */
+interface GetByIdOptions$4 {
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getMuting method
+ *
+ * @public
+ */
+interface GetMutingOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get the next 'page' of results. */
+    paginationToken?: any;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for muteUser method
+ *
+ * @public
+ */
+interface MuteUserOptions {
+    /** Request body */
+    body?: MuteUserRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getBookmarks method
+ *
+ * @public
+ */
+interface GetBookmarksOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get the next 'page' of results. */
+    paginationToken?: any;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of Poll fields to display. */
+    pollfields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Place fields to display. */
+    placefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getRepostsOfMe method
+ *
+ * @public
+ */
+interface GetRepostsOfMeOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get the next 'page' of results. */
+    paginationToken?: any;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of Poll fields to display. */
+    pollfields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Place fields to display. */
+    placefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getFollowers method
+ *
+ * @public
+ */
+interface GetFollowersOptions$1 {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get a specified 'page' of results. */
+    paginationToken?: any;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
  * Client for users operations
  *
  * This client provides methods for interacting with the users endpoints
@@ -8144,54 +6521,6 @@ declare class UsersClient {
        */
     constructor(client: Client);
     /**
-     * Get my User
-     * Retrieves details of the authenticated user.
-  
-  
-  
-     * @returns {Promise<GetMeResponse>} Promise resolving to the API response
-     */
-    getMe(options?: GetMeOptions): Promise<GetMeResponse>;
-    /**
-     * Get following
-     * Retrieves a list of Users followed by a specific User by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
-  
-  
-  
-  
-     * @returns {Promise<GetFollowingResponse>} Promise resolving to the API response
-     */
-    getFollowing(id: string, options?: GetFollowingOptions): Promise<GetFollowingResponse>;
-    /**
-     * Follow User
-     * Causes the authenticated user to follow a specific user by their ID.
-  
-  
-     * @param id The ID of the authenticated source User that is requesting to follow the target User.
-  
-  
-  
-  
-     * @returns {Promise<FollowUserResponse>} Promise resolving to the API response
-     */
-    followUser(id: string, options?: FollowUserOptions): Promise<FollowUserResponse>;
-    /**
-     * Like Post
-     * Causes the authenticated user to Like a specific Post by its ID.
-  
-  
-     * @param id The ID of the authenticated source User that is requesting to like the Post.
-  
-  
-  
-  
-     * @returns {Promise<LikePostResponse>} Promise resolving to the API response
-     */
-    likePost(id: string, options?: LikePostOptions): Promise<LikePostResponse>;
-    /**
      * Get mentions
      * Retrieves a list of Posts that mention a specific User by their ID.
   
@@ -8205,34 +6534,8 @@ declare class UsersClient {
      */
     getMentions(id: string, options?: GetMentionsOptions): Promise<GetMentionsResponse>;
     /**
-     * Get followed Lists
-     * Retrieves a list of Lists followed by a specific User by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
-  
-  
-  
-  
-     * @returns {Promise<GetFollowedListsResponse>} Promise resolving to the API response
-     */
-    getFollowedLists(id: string, options?: GetFollowedListsOptions): Promise<GetFollowedListsResponse>;
-    /**
-     * Follow List
-     * Causes the authenticated user to follow a specific List by its ID.
-  
-  
-     * @param id The ID of the authenticated source User that will follow the List.
-  
-  
-  
-  
-     * @returns {Promise<FollowListResponse>} Promise resolving to the API response
-     */
-    followList(id: string, options?: FollowListOptions): Promise<FollowListResponse>;
-    /**
-     * Get muting
-     * Retrieves a list of Users muted by the authenticated user.
+     * Get blocking
+     * Retrieves a list of Users blocked by the specified User ID.
   
   
      * @param id The ID of the authenticated source User for whom to return results.
@@ -8240,209 +6543,35 @@ declare class UsersClient {
   
   
   
-     * @returns {Promise<GetMutingResponse>} Promise resolving to the API response
+     * @returns {Promise<GetBlockingResponse>} Promise resolving to the API response
      */
-    getMuting(id: string, options?: GetMutingOptions): Promise<GetMutingResponse>;
+    getBlocking(id: string, options?: GetBlockingOptions): Promise<GetBlockingResponse>;
     /**
-     * Mute User
-     * Causes the authenticated user to mute a specific User by their ID.
+     * Get Timeline
+     * Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
   
   
-     * @param id The ID of the authenticated source User that is requesting to mute the target User.
+     * @param id The ID of the authenticated source User to list Reverse Chronological Timeline Posts of.
   
   
   
   
-     * @returns {Promise<MuteUserResponse>} Promise resolving to the API response
+     * @returns {Promise<GetTimelineResponse>} Promise resolving to the API response
      */
-    muteUser(id: string, options?: MuteUserOptions): Promise<MuteUserResponse>;
+    getTimeline(id: string, options?: GetTimelineOptions): Promise<GetTimelineResponse>;
     /**
-     * Get Bookmark folders
-     * Retrieves a list of Bookmark folders created by the authenticated user.
+     * Get User by username
+     * Retrieves details of a specific User by their username.
   
   
-     * @param id The ID of the authenticated source User for whom to return results.
+     * @param username A username.
   
   
   
   
-     * @returns {Promise<GetBookmarkFoldersResponse>} Promise resolving to the API response
+     * @returns {Promise<GetByUsernameResponse>} Promise resolving to the API response
      */
-    getBookmarkFolders(id: string, options?: GetBookmarkFoldersOptions): Promise<GetBookmarkFoldersResponse>;
-    /**
-     * Get Users by usernames
-     * Retrieves details of multiple Users by their usernames.
-  
-  
-  
-     * @param usernames A list of usernames, comma-separated.
-  
-  
-  
-     * @returns {Promise<GetByUsernamesResponse>} Promise resolving to the API response
-     */
-    getByUsernames(usernames: Array<any>, options?: GetByUsernamesOptions): Promise<GetByUsernamesResponse>;
-    /**
-     * Get Reposts of me
-     * Retrieves a list of Posts that repost content from the authenticated user.
-  
-  
-  
-     * @returns {Promise<GetRepostsOfMeResponse>} Promise resolving to the API response
-     */
-    getRepostsOfMe(options?: GetRepostsOfMeOptions): Promise<GetRepostsOfMeResponse>;
-    /**
-     * Unfollow User
-     * Causes the authenticated user to unfollow a specific user by their ID.
-  
-  
-     * @param sourceUserId The ID of the authenticated source User that is requesting to unfollow the target User.
-  
-  
-  
-     * @param targetUserId The ID of the User that the source User is requesting to unfollow.
-  
-  
-  
-  
-     * @returns {Promise<UnfollowUserResponse>} Promise resolving to the API response
-     */
-    unfollowUser(sourceUserId: string, targetUserId: string): Promise<UnfollowUserResponse>;
-    /**
-     * Unpin List
-     * Causes the authenticated user to unpin a specific List by its ID.
-  
-  
-     * @param id The ID of the authenticated source User for whom to return results.
-  
-  
-  
-     * @param listId The ID of the List to unpin.
-  
-  
-  
-  
-     * @returns {Promise<UnpinListResponse>} Promise resolving to the API response
-     */
-    unpinList(id: string, listId: string): Promise<UnpinListResponse>;
-    /**
-     * Unfollow List
-     * Causes the authenticated user to unfollow a specific List by its ID.
-  
-  
-     * @param id The ID of the authenticated source User that will unfollow the List.
-  
-  
-  
-     * @param listId The ID of the List to unfollow.
-  
-  
-  
-  
-     * @returns {Promise<UnfollowListResponse>} Promise resolving to the API response
-     */
-    unfollowList(id: string, listId: string): Promise<UnfollowListResponse>;
-    /**
-     * Unlike Post
-     * Causes the authenticated user to Unlike a specific Post by its ID.
-  
-  
-     * @param id The ID of the authenticated source User that is requesting to unlike the Post.
-  
-  
-  
-     * @param tweetId The ID of the Post that the User is requesting to unlike.
-  
-  
-  
-  
-     * @returns {Promise<UnlikePostResponse>} Promise resolving to the API response
-     */
-    unlikePost(id: string, tweetId: string): Promise<UnlikePostResponse>;
-    /**
-     * Repost Post
-     * Causes the authenticated user to repost a specific Post by its ID.
-  
-  
-     * @param id The ID of the authenticated source User that is requesting to repost the Post.
-  
-  
-  
-  
-     * @returns {Promise<RepostPostResponse>} Promise resolving to the API response
-     */
-    repostPost(id: string, options?: RepostPostOptions): Promise<RepostPostResponse>;
-    /**
-     * Unmute User
-     * Causes the authenticated user to unmute a specific user by their ID.
-  
-  
-     * @param sourceUserId The ID of the authenticated source User that is requesting to unmute the target User.
-  
-  
-  
-     * @param targetUserId The ID of the User that the source User is requesting to unmute.
-  
-  
-  
-  
-     * @returns {Promise<UnmuteUserResponse>} Promise resolving to the API response
-     */
-    unmuteUser(sourceUserId: string, targetUserId: string): Promise<UnmuteUserResponse>;
-    /**
-     * Get User by ID
-     * Retrieves details of a specific User by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
-  
-  
-  
-  
-     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
-     */
-    getById(id: string, options?: GetByIdOptions$1): Promise<GetByIdResponse$1>;
-    /**
-     * Get Bookmarks
-     * Retrieves a list of Posts bookmarked by the authenticated user.
-  
-  
-     * @param id The ID of the authenticated source User for whom to return results.
-  
-  
-  
-  
-     * @returns {Promise<GetBookmarksResponse>} Promise resolving to the API response
-     */
-    getBookmarks(id: string, options?: GetBookmarksOptions): Promise<GetBookmarksResponse>;
-    /**
-     * Create Bookmark
-     * Adds a post to the authenticated user’s bookmarks.
-  
-  
-     * @param id The ID of the authenticated source User for whom to add bookmarks.
-  
-  
-  
-  
-     * @param body Request body
-  
-     * @returns {Promise<CreateBookmarkResponse>} Promise resolving to the API response
-     */
-    createBookmark(id: string, body: CreateBookmarkRequest): Promise<CreateBookmarkResponse>;
-    /**
-     * Get owned Lists
-     * Retrieves a list of Lists owned by a specific User by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
-  
-  
-  
-  
-     * @returns {Promise<GetOwnedListsResponse>} Promise resolving to the API response
-     */
-    getOwnedLists(id: string, options?: GetOwnedListsOptions): Promise<GetOwnedListsResponse>;
+    getByUsername(username: string, options?: GetByUsernameOptions): Promise<GetByUsernameResponse>;
     /**
      * Get pinned Lists
      * Retrieves a list of Lists pinned by the authenticated user.
@@ -8472,8 +6601,73 @@ declare class UsersClient {
      */
     pinList(id: string, body: PinListRequest): Promise<PinListResponse>;
     /**
-     * Get blocking
-     * Retrieves a list of Users blocked by the specified User ID.
+     * Get Users by IDs
+     * Retrieves details of multiple Users by their IDs.
+  
+  
+  
+     * @param ids A list of User IDs, comma-separated. You can specify up to 100 IDs.
+  
+  
+  
+     * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
+     */
+    getByIds(ids: Array<any>, options?: GetByIdsOptions$2): Promise<GetByIdsResponse$2>;
+    /**
+     * Get followed Lists
+     * Retrieves a list of Lists followed by a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetFollowedListsResponse>} Promise resolving to the API response
+     */
+    getFollowedLists(id: string, options?: GetFollowedListsOptions): Promise<GetFollowedListsResponse>;
+    /**
+     * Follow List
+     * Causes the authenticated user to follow a specific List by its ID.
+  
+  
+     * @param id The ID of the authenticated source User that will follow the List.
+  
+  
+  
+  
+     * @returns {Promise<FollowListResponse>} Promise resolving to the API response
+     */
+    followList(id: string, options?: FollowListOptions): Promise<FollowListResponse>;
+    /**
+     * Get owned Lists
+     * Retrieves a list of Lists owned by a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetOwnedListsResponse>} Promise resolving to the API response
+     */
+    getOwnedLists(id: string, options?: GetOwnedListsOptions): Promise<GetOwnedListsResponse>;
+    /**
+     * Search Users
+     * Retrieves a list of Users matching a search query.
+  
+  
+  
+     * @param query TThe the query string by which to query for users.
+  
+  
+  
+     * @returns {Promise<SearchResponse>} Promise resolving to the API response
+     */
+    search(query: any, options?: SearchOptions$2): Promise<SearchResponse$2>;
+    /**
+     * Get Bookmark folders
+     * Retrieves a list of Bookmark folders created by the authenticated user.
   
   
      * @param id The ID of the authenticated source User for whom to return results.
@@ -8481,22 +6675,257 @@ declare class UsersClient {
   
   
   
-     * @returns {Promise<GetBlockingResponse>} Promise resolving to the API response
+     * @returns {Promise<GetBookmarkFoldersResponse>} Promise resolving to the API response
      */
-    getBlocking(id: string, options?: GetBlockingOptions): Promise<GetBlockingResponse>;
+    getBookmarkFolders(id: string, options?: GetBookmarkFoldersOptions): Promise<GetBookmarkFoldersResponse>;
     /**
-     * Get Timeline
-     * Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
-  
-  
-     * @param id The ID of the authenticated source User to list Reverse Chronological Timeline Posts of.
+     * Get Users by usernames
+     * Retrieves details of multiple Users by their usernames.
   
   
   
+     * @param usernames A list of usernames, comma-separated.
   
-     * @returns {Promise<GetTimelineResponse>} Promise resolving to the API response
+  
+  
+     * @returns {Promise<GetByUsernamesResponse>} Promise resolving to the API response
      */
-    getTimeline(id: string, options?: GetTimelineOptions): Promise<GetTimelineResponse>;
+    getByUsernames(usernames: Array<any>, options?: GetByUsernamesOptions): Promise<GetByUsernamesResponse>;
+    /**
+     * Get List memberships
+     * Retrieves a list of Lists that a specific User is a member of by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetListMembershipsResponse>} Promise resolving to the API response
+     */
+    getListMemberships(id: string, options?: GetListMembershipsOptions): Promise<GetListMembershipsResponse>;
+    /**
+     * Get my User
+     * Retrieves details of the authenticated user.
+  
+  
+  
+     * @returns {Promise<GetMeResponse>} Promise resolving to the API response
+     */
+    getMe(options?: GetMeOptions): Promise<GetMeResponse>;
+    /**
+     * Get liked Posts
+     * Retrieves a list of Posts liked by a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetLikedPostsResponse>} Promise resolving to the API response
+     */
+    getLikedPosts(id: string, options?: GetLikedPostsOptions): Promise<GetLikedPostsResponse>;
+    /**
+     * Get Posts
+     * Retrieves a list of posts authored by a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
+     */
+    getPosts(id: string, options?: GetPostsOptions$2): Promise<GetPostsResponse$2>;
+    /**
+     * Repost Post
+     * Causes the authenticated user to repost a specific Post by its ID.
+  
+  
+     * @param id The ID of the authenticated source User that is requesting to repost the Post.
+  
+  
+  
+  
+     * @returns {Promise<RepostPostResponse>} Promise resolving to the API response
+     */
+    repostPost(id: string, options?: RepostPostOptions): Promise<RepostPostResponse>;
+    /**
+     * Get following
+     * Retrieves a list of Users followed by a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetFollowingResponse>} Promise resolving to the API response
+     */
+    getFollowing(id: string, options?: GetFollowingOptions): Promise<GetFollowingResponse>;
+    /**
+     * Follow User
+     * Causes the authenticated user to follow a specific user by their ID.
+  
+  
+     * @param id The ID of the authenticated source User that is requesting to follow the target User.
+  
+  
+  
+  
+     * @returns {Promise<FollowUserResponse>} Promise resolving to the API response
+     */
+    followUser(id: string, options?: FollowUserOptions): Promise<FollowUserResponse>;
+    /**
+     * Unpin List
+     * Causes the authenticated user to unpin a specific List by its ID.
+  
+  
+     * @param id The ID of the authenticated source User for whom to return results.
+  
+  
+  
+     * @param listId The ID of the List to unpin.
+  
+  
+  
+  
+     * @returns {Promise<UnpinListResponse>} Promise resolving to the API response
+     */
+    unpinList(id: string, listId: string): Promise<UnpinListResponse>;
+    /**
+     * Unmute User
+     * Causes the authenticated user to unmute a specific user by their ID.
+  
+  
+     * @param sourceUserId The ID of the authenticated source User that is requesting to unmute the target User.
+  
+  
+  
+     * @param targetUserId The ID of the User that the source User is requesting to unmute.
+  
+  
+  
+  
+     * @returns {Promise<UnmuteUserResponse>} Promise resolving to the API response
+     */
+    unmuteUser(sourceUserId: string, targetUserId: string): Promise<UnmuteUserResponse>;
+    /**
+     * Unfollow User
+     * Causes the authenticated user to unfollow a specific user by their ID.
+  
+  
+     * @param sourceUserId The ID of the authenticated source User that is requesting to unfollow the target User.
+  
+  
+  
+     * @param targetUserId The ID of the User that the source User is requesting to unfollow.
+  
+  
+  
+  
+     * @returns {Promise<UnfollowUserResponse>} Promise resolving to the API response
+     */
+    unfollowUser(sourceUserId: string, targetUserId: string): Promise<UnfollowUserResponse>;
+    /**
+     * Unfollow List
+     * Causes the authenticated user to unfollow a specific List by its ID.
+  
+  
+     * @param id The ID of the authenticated source User that will unfollow the List.
+  
+  
+  
+     * @param listId The ID of the List to unfollow.
+  
+  
+  
+  
+     * @returns {Promise<UnfollowListResponse>} Promise resolving to the API response
+     */
+    unfollowList(id: string, listId: string): Promise<UnfollowListResponse>;
+    /**
+     * Like Post
+     * Causes the authenticated user to Like a specific Post by its ID.
+  
+  
+     * @param id The ID of the authenticated source User that is requesting to like the Post.
+  
+  
+  
+  
+     * @returns {Promise<LikePostResponse>} Promise resolving to the API response
+     */
+    likePost(id: string, options?: LikePostOptions): Promise<LikePostResponse>;
+    /**
+     * Get User by ID
+     * Retrieves details of a specific User by their ID.
+  
+  
+     * @param id The ID of the User to lookup.
+  
+  
+  
+  
+     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
+     */
+    getById(id: string, options?: GetByIdOptions$4): Promise<GetByIdResponse$4>;
+    /**
+     * Get muting
+     * Retrieves a list of Users muted by the authenticated user.
+  
+  
+     * @param id The ID of the authenticated source User for whom to return results.
+  
+  
+  
+  
+     * @returns {Promise<GetMutingResponse>} Promise resolving to the API response
+     */
+    getMuting(id: string, options?: GetMutingOptions): Promise<GetMutingResponse>;
+    /**
+     * Mute User
+     * Causes the authenticated user to mute a specific User by their ID.
+  
+  
+     * @param id The ID of the authenticated source User that is requesting to mute the target User.
+  
+  
+  
+  
+     * @returns {Promise<MuteUserResponse>} Promise resolving to the API response
+     */
+    muteUser(id: string, options?: MuteUserOptions): Promise<MuteUserResponse>;
+    /**
+     * Get Bookmarks
+     * Retrieves a list of Posts bookmarked by the authenticated user.
+  
+  
+     * @param id The ID of the authenticated source User for whom to return results.
+  
+  
+  
+  
+     * @returns {Promise<GetBookmarksResponse>} Promise resolving to the API response
+     */
+    getBookmarks(id: string, options?: GetBookmarksOptions): Promise<GetBookmarksResponse>;
+    /**
+     * Create Bookmark
+     * Adds a post to the authenticated user’s bookmarks.
+  
+  
+     * @param id The ID of the authenticated source User for whom to add bookmarks.
+  
+  
+  
+  
+     * @param body Request body
+  
+     * @returns {Promise<CreateBookmarkResponse>} Promise resolving to the API response
+     */
+    createBookmark(id: string, body: CreateBookmarkRequest): Promise<CreateBookmarkResponse>;
     /**
      * Delete Bookmark
      * Removes a Post from the authenticated user’s Bookmarks by its ID.
@@ -8515,87 +6944,27 @@ declare class UsersClient {
      */
     deleteBookmark(id: string, tweetId: string): Promise<DeleteBookmarkResponse>;
     /**
-     * Get liked Posts
-     * Retrieves a list of Posts liked by a specific User by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
+     * Get Reposts of me
+     * Retrieves a list of Posts that repost content from the authenticated user.
   
   
   
-  
-     * @returns {Promise<GetLikedPostsResponse>} Promise resolving to the API response
+     * @returns {Promise<GetRepostsOfMeResponse>} Promise resolving to the API response
      */
-    getLikedPosts(id: string, options?: GetLikedPostsOptions): Promise<GetLikedPostsResponse>;
+    getRepostsOfMe(options?: GetRepostsOfMeOptions): Promise<GetRepostsOfMeResponse>;
     /**
-     * Get List memberships
-     * Retrieves a list of Lists that a specific User is a member of by their ID.
+     * Block DMs
+     * Blocks direct messages to or from a specific User by their ID for the authenticated user.
   
   
-     * @param id The ID of the User to lookup.
+     * @param id The ID of the target User that the authenticated user requesting to block dms for.
   
   
   
   
-     * @returns {Promise<GetListMembershipsResponse>} Promise resolving to the API response
+     * @returns {Promise<BlockDmsResponse>} Promise resolving to the API response
      */
-    getListMemberships(id: string, options?: GetListMembershipsOptions): Promise<GetListMembershipsResponse>;
-    /**
-     * Get Users by IDs
-     * Retrieves details of multiple Users by their IDs.
-  
-  
-  
-     * @param ids A list of User IDs, comma-separated. You can specify up to 100 IDs.
-  
-  
-  
-     * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
-     */
-    getByIds(ids: Array<any>, options?: GetByIdsOptions): Promise<GetByIdsResponse>;
-    /**
-     * Get Bookmarks by folder ID
-     * Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
-  
-  
-     * @param id The ID of the authenticated source User for whom to return results.
-  
-  
-  
-     * @param folderId The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.
-  
-  
-  
-  
-     * @returns {Promise<GetBookmarksByFolderIdResponse>} Promise resolving to the API response
-     */
-    getBookmarksByFolderId(id: string, folderId: string): Promise<GetBookmarksByFolderIdResponse>;
-    /**
-     * Search Users
-     * Retrieves a list of Users matching a search query.
-  
-  
-  
-     * @param query TThe the query string by which to query for users.
-  
-  
-  
-     * @returns {Promise<SearchResponse>} Promise resolving to the API response
-     */
-    search(query: any, options?: SearchOptions): Promise<SearchResponse>;
-    /**
-     * Get followers
-     * Retrieves a list of Users who follow a specific User by their ID.
-  
-  
-     * @param id The ID of the User to lookup.
-  
-  
-  
-  
-     * @returns {Promise<GetFollowersResponse>} Promise resolving to the API response
-     */
-    getFollowers(id: string, options?: GetFollowersOptions$1): Promise<GetFollowersResponse$1>;
+    blockDms(id: string): Promise<BlockDmsResponse>;
     /**
      * Unblock DMs
      * Unblocks direct messages to or from a specific User by their ID for the authenticated user.
@@ -8609,6 +6978,23 @@ declare class UsersClient {
      * @returns {Promise<UnblockDmsResponse>} Promise resolving to the API response
      */
     unblockDms(id: string): Promise<UnblockDmsResponse>;
+    /**
+     * Unlike Post
+     * Causes the authenticated user to Unlike a specific Post by its ID.
+  
+  
+     * @param id The ID of the authenticated source User that is requesting to unlike the Post.
+  
+  
+  
+     * @param tweetId The ID of the Post that the User is requesting to unlike.
+  
+  
+  
+  
+     * @returns {Promise<UnlikePostResponse>} Promise resolving to the API response
+     */
+    unlikePost(id: string, tweetId: string): Promise<UnlikePostResponse>;
     /**
      * Unrepost Post
      * Causes the authenticated user to unrepost a specific Post by its ID.
@@ -8627,34 +7013,8 @@ declare class UsersClient {
      */
     unrepostPost(id: string, sourceTweetId: string): Promise<UnrepostPostResponse>;
     /**
-     * Block DMs
-     * Blocks direct messages to or from a specific User by their ID for the authenticated user.
-  
-  
-     * @param id The ID of the target User that the authenticated user requesting to block dms for.
-  
-  
-  
-  
-     * @returns {Promise<BlockDmsResponse>} Promise resolving to the API response
-     */
-    blockDms(id: string): Promise<BlockDmsResponse>;
-    /**
-     * Get User by username
-     * Retrieves details of a specific User by their username.
-  
-  
-     * @param username A username.
-  
-  
-  
-  
-     * @returns {Promise<GetByUsernameResponse>} Promise resolving to the API response
-     */
-    getByUsername(username: string, options?: GetByUsernameOptions): Promise<GetByUsernameResponse>;
-    /**
-     * Get Posts
-     * Retrieves a list of posts authored by a specific User by their ID.
+     * Get followers
+     * Retrieves a list of Users who follow a specific User by their ID.
   
   
      * @param id The ID of the User to lookup.
@@ -8662,96 +7022,232 @@ declare class UsersClient {
   
   
   
-     * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
+     * @returns {Promise<GetFollowersResponse>} Promise resolving to the API response
      */
-    getPosts(id: string, options?: GetPostsOptions$1): Promise<GetPostsResponse$1>;
+    getFollowers(id: string, options?: GetFollowersOptions$1): Promise<GetFollowersResponse$1>;
+    /**
+     * Get Bookmarks by folder ID
+     * Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
+  
+  
+     * @param id The ID of the authenticated source User for whom to return results.
+  
+  
+  
+     * @param folderId The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.
+  
+  
+  
+  
+     * @returns {Promise<GetBookmarksByFolderIdResponse>} Promise resolving to the API response
+     */
+    getBookmarksByFolderId(id: string, folderId: string): Promise<GetBookmarksByFolderIdResponse>;
 }
 
 /**
- * Models for webhooks operations
+ * Models for lists operations
  */
 
 /**
- * Response for getStreamLinks
+ * Response for getMembers
  *
  * @public
  */
-type GetStreamLinksResponse = WebhookLinksGetResponse;
+type GetMembersResponse = Get2ListsIdMembersResponse;
 /**
- * Response for get
+ * Request for addMember
  *
  * @public
  */
-type GetResponse = Get2WebhooksResponse;
+type AddMemberRequest = ListAddUserRequest;
 /**
- * Request for create
+ * Response for addMember
  *
  * @public
  */
-type CreateRequest$1 = WebhookConfigCreateRequest;
+type AddMemberResponse = ListMutateResponse;
 /**
- * Response for create
+ * Response for getPosts
  *
  * @public
  */
-type CreateResponse$1 = WebhookConfigCreateResponse;
+type GetPostsResponse$1 = Get2ListsIdTweetsResponse;
 /**
- * Response for validate
+ * Response for removeMemberByUserId
  *
  * @public
  */
-type ValidateResponse = WebhookConfigPutResponse;
+type RemoveMemberByUserIdResponse = ListMutateResponse;
+/**
+ * Response for getById
+ *
+ * @public
+ */
+type GetByIdResponse$3 = Get2ListsIdResponse;
+/**
+ * Request for update
+ *
+ * @public
+ */
+type UpdateRequest = ListUpdateRequest;
+/**
+ * Response for update
+ *
+ * @public
+ */
+type UpdateResponse = ListUpdateResponse;
 /**
  * Response for delete
  *
  * @public
  */
-type DeleteResponse$1 = WebhookConfigDeleteResponse;
+type DeleteResponse$3 = ListDeleteResponse;
 /**
- * Response for createStreamLink
+ * Response for getFollowers
  *
  * @public
  */
-type CreateStreamLinkResponse = WebhookLinksCreateResponse;
+type GetFollowersResponse = Get2ListsIdFollowersResponse;
 /**
- * Response for deleteStreamLink
+ * Request for create
  *
  * @public
  */
-type DeleteStreamLinkResponse = WebhookLinksDeleteResponse;
+type CreateRequest$3 = ListCreateRequest;
+/**
+ * Response for create
+ *
+ * @public
+ */
+type CreateResponse$3 = ListCreateResponse;
 
-type models$3_CreateStreamLinkResponse = CreateStreamLinkResponse;
-type models$3_DeleteStreamLinkResponse = DeleteStreamLinkResponse;
-type models$3_GetResponse = GetResponse;
-type models$3_GetStreamLinksResponse = GetStreamLinksResponse;
-type models$3_ValidateResponse = ValidateResponse;
-declare namespace models$3 {
+type models$c_AddMemberRequest = AddMemberRequest;
+type models$c_AddMemberResponse = AddMemberResponse;
+type models$c_GetFollowersResponse = GetFollowersResponse;
+type models$c_GetMembersResponse = GetMembersResponse;
+type models$c_RemoveMemberByUserIdResponse = RemoveMemberByUserIdResponse;
+type models$c_UpdateRequest = UpdateRequest;
+type models$c_UpdateResponse = UpdateResponse;
+declare namespace models$c {
   export {
-    CreateRequest$1 as CreateRequest,
-    CreateResponse$1 as CreateResponse,
-    models$3_CreateStreamLinkResponse as CreateStreamLinkResponse,
-    DeleteResponse$1 as DeleteResponse,
-    models$3_DeleteStreamLinkResponse as DeleteStreamLinkResponse,
-    models$3_GetResponse as GetResponse,
-    models$3_GetStreamLinksResponse as GetStreamLinksResponse,
-    models$3_ValidateResponse as ValidateResponse,
+    models$c_AddMemberRequest as AddMemberRequest,
+    models$c_AddMemberResponse as AddMemberResponse,
+    CreateRequest$3 as CreateRequest,
+    CreateResponse$3 as CreateResponse,
+    DeleteResponse$3 as DeleteResponse,
+    GetByIdResponse$3 as GetByIdResponse,
+    models$c_GetFollowersResponse as GetFollowersResponse,
+    models$c_GetMembersResponse as GetMembersResponse,
+    GetPostsResponse$1 as GetPostsResponse,
+    models$c_RemoveMemberByUserIdResponse as RemoveMemberByUserIdResponse,
+    models$c_UpdateRequest as UpdateRequest,
+    models$c_UpdateResponse as UpdateResponse,
   };
 }
 
 /**
- * webhooks client for the X API.
+ * lists client for the X API.
  *
- * This module provides a client for interacting with the webhooks endpoints of the X API.
+ * This module provides a client for interacting with the lists endpoints of the X API.
  */
 
 /**
- * Options for get method
+ * Options for getMembers method
  *
  * @public
  */
-interface GetOptions {
-    /** A comma separated list of WebhookConfig fields to display. */
-    webhookConfigfields?: Array<any>;
+interface GetMembersOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get a specified 'page' of results. */
+    paginationToken?: any;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for addMember method
+ *
+ * @public
+ */
+interface AddMemberOptions {
+    /** Request body */
+    body?: AddMemberRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getPosts method
+ *
+ * @public
+ */
+interface GetPostsOptions$1 {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get the next 'page' of results. */
+    paginationToken?: any;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of Poll fields to display. */
+    pollfields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Place fields to display. */
+    placefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getById method
+ *
+ * @public
+ */
+interface GetByIdOptions$3 {
+    /** A comma separated list of List fields to display. */
+    listfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for update method
+ *
+ * @public
+ */
+interface UpdateOptions {
+    /** Request body */
+    body?: UpdateRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getFollowers method
+ *
+ * @public
+ */
+interface GetFollowersOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get a specified 'page' of results. */
+    paginationToken?: any;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
     /** Additional request options */
     requestOptions?: RequestOptions;
 }
@@ -8760,545 +7256,146 @@ interface GetOptions {
  *
  * @public
  */
-interface CreateOptions$1 {
+interface CreateOptions$2 {
     /** Request body */
-    body?: CreateRequest$1;
+    body?: CreateRequest$3;
     /** Additional request options */
     requestOptions?: RequestOptions;
 }
 /**
- * Options for createStreamLink method
+ * Client for lists operations
  *
- * @public
- */
-interface CreateStreamLinkOptions {
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: string;
-    /** A comma separated list of fields to expand. */
-    expansions?: string;
-    /** A comma separated list of Media fields to display. */
-    mediafields?: string;
-    /** A comma separated list of Poll fields to display. */
-    pollfields?: string;
-    /** A comma separated list of User fields to display. */
-    userfields?: string;
-    /** A comma separated list of Place fields to display. */
-    placefields?: string;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Client for webhooks operations
- *
- * This client provides methods for interacting with the webhooks endpoints
+ * This client provides methods for interacting with the lists endpoints
  * of the X API. It handles authentication, request formatting, and response
- * parsing for all webhooks related operations.
+ * parsing for all lists related operations.
  *
- * @category webhooks
+ * @category lists
  */
-declare class WebhooksClient {
+declare class ListsClient {
     private client;
     /**
-       * Creates a new webhooks client instance
+       * Creates a new lists client instance
        *
        * @param client - The main X API client instance
        */
     constructor(client: Client);
     /**
-     * Get stream links
-     * Get a list of webhook links associated with a filtered stream ruleset.
+     * Get List members
+     * Retrieves a list of Users who are members of a specific List by its ID.
+  
+  
+     * @param id The ID of the List.
   
   
   
-     * @returns {Promise<GetStreamLinksResponse>} Promise resolving to the API response
+  
+     * @returns {Promise<GetMembersResponse>} Promise resolving to the API response
      */
-    getStreamLinks(): Promise<GetStreamLinksResponse>;
+    getMembers(id: string, options?: GetMembersOptions): Promise<GetMembersResponse>;
     /**
-     * Get webhook
-     * Get a list of webhook configs associated with a client app.
+     * Add List member
+     * Adds a User to a specific List by its ID.
+  
+  
+     * @param id The ID of the List for which to add a member.
   
   
   
-     * @returns {Promise<GetResponse>} Promise resolving to the API response
+  
+     * @returns {Promise<AddMemberResponse>} Promise resolving to the API response
      */
-    get(options?: GetOptions): Promise<GetResponse>;
+    addMember(id: string, options?: AddMemberOptions): Promise<AddMemberResponse>;
     /**
-     * Create webhook
-     * Creates a new webhook configuration.
+     * Get List Posts
+     * Retrieves a list of Posts associated with a specific List by its ID.
+  
+  
+     * @param id The ID of the List.
   
   
   
-     * @returns {Promise<CreateResponse>} Promise resolving to the API response
+  
+     * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
      */
-    create(options?: CreateOptions$1): Promise<CreateResponse$1>;
+    getPosts(id: string, options?: GetPostsOptions$1): Promise<GetPostsResponse$1>;
     /**
-     * Validate webhook
-     * Triggers a CRC check for a given webhook.
+     * Remove List member
+     * Removes a User from a specific List by its ID and the User’s ID.
   
   
-     * @param webhookId The ID of the webhook to check.
+     * @param id The ID of the List to remove a member.
+  
+  
+  
+     * @param userId The ID of User that will be removed from the List.
   
   
   
   
-     * @returns {Promise<ValidateResponse>} Promise resolving to the API response
+     * @returns {Promise<RemoveMemberByUserIdResponse>} Promise resolving to the API response
      */
-    validate(webhookId: string): Promise<ValidateResponse>;
+    removeMemberByUserId(id: string, userId: string): Promise<RemoveMemberByUserIdResponse>;
     /**
-     * Delete webhook
-     * Deletes an existing webhook configuration.
+     * Get List by ID
+     * Retrieves details of a specific List by its ID.
   
   
-     * @param webhookId The ID of the webhook to delete.
+     * @param id The ID of the List.
+  
+  
+  
+  
+     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
+     */
+    getById(id: string, options?: GetByIdOptions$3): Promise<GetByIdResponse$3>;
+    /**
+     * Update List
+     * Updates the details of a specific List owned by the authenticated user by its ID.
+  
+  
+     * @param id The ID of the List to modify.
+  
+  
+  
+  
+     * @returns {Promise<UpdateResponse>} Promise resolving to the API response
+     */
+    update(id: string, options?: UpdateOptions): Promise<UpdateResponse>;
+    /**
+     * Delete List
+     * Deletes a specific List owned by the authenticated user by its ID.
+  
+  
+     * @param id The ID of the List to delete.
   
   
   
   
      * @returns {Promise<DeleteResponse>} Promise resolving to the API response
      */
-    delete(webhookId: string): Promise<DeleteResponse$1>;
+    delete(id: string): Promise<DeleteResponse$3>;
     /**
-     * Create stream link
-     * Creates a link to deliver FilteredStream events to the given webhook.
+     * Get List followers
+     * Retrieves a list of Users who follow a specific List by its ID.
   
   
-     * @param webhookId The webhook ID to link to your FilteredStream ruleset.
+     * @param id The ID of the List.
   
   
   
   
-     * @returns {Promise<CreateStreamLinkResponse>} Promise resolving to the API response
+     * @returns {Promise<GetFollowersResponse>} Promise resolving to the API response
      */
-    createStreamLink(webhookId: string, options?: CreateStreamLinkOptions): Promise<CreateStreamLinkResponse>;
+    getFollowers(id: string, options?: GetFollowersOptions): Promise<GetFollowersResponse>;
     /**
-     * Delete stream link
-     * Deletes a link from FilteredStream events to the given webhook.
-  
-  
-     * @param webhookId The webhook ID to link to your FilteredStream ruleset.
+     * Create List
+     * Creates a new List for the authenticated user.
   
   
   
-  
-     * @returns {Promise<DeleteStreamLinkResponse>} Promise resolving to the API response
+     * @returns {Promise<CreateResponse>} Promise resolving to the API response
      */
-    deleteStreamLink(webhookId: string): Promise<DeleteStreamLinkResponse>;
-}
-
-/**
- * Models for media operations
- */
-
-/**
- * Response for getByKeys
- *
- * @public
- */
-type GetByKeysResponse = Get2MediaResponse;
-/**
- * Response for finalizeUpload
- *
- * @public
- */
-type FinalizeUploadResponse = MediaUploadResponse;
-/**
- * Request for appendUpload
- *
- * @public
- */
-type AppendUploadRequest = MediaUploadAppendRequest;
-/**
- * Response for appendUpload
- *
- * @public
- */
-type AppendUploadResponse = MediaUploadAppendResponse;
-/**
- * Response for getAnalytics
- *
- * @public
- */
-type GetAnalyticsResponse = MediaAnalytics;
-/**
- * Request for initializeUpload
- *
- * @public
- */
-type InitializeUploadRequest = MediaUploadConfigRequest;
-/**
- * Response for initializeUpload
- *
- * @public
- */
-type InitializeUploadResponse = MediaUploadResponse;
-/**
- * Response for getUploadStatus
- *
- * @public
- */
-type GetUploadStatusResponse = MediaUploadResponse;
-/**
- * Request for upload
- *
- * @public
- */
-type UploadRequest = MediaUploadRequestOneShot;
-/**
- * Response for upload
- *
- * @public
- */
-type UploadResponse = MediaUploadResponse;
-/**
- * Request for createMetadata
- *
- * @public
- */
-type CreateMetadataRequest = MetadataCreateRequest;
-/**
- * Response for createMetadata
- *
- * @public
- */
-type CreateMetadataResponse = MetadataCreateResponse;
-/**
- * Response for getByKey
- *
- * @public
- */
-type GetByKeyResponse = Get2MediaMediaKeyResponse;
-/**
- * Request for createSubtitles
- *
- * @public
- */
-type CreateSubtitlesRequest = SubtitlesCreateRequest;
-/**
- * Response for createSubtitles
- *
- * @public
- */
-type CreateSubtitlesResponse = SubtitlesCreateResponse;
-/**
- * Request for deleteSubtitles
- *
- * @public
- */
-type DeleteSubtitlesRequest = SubtitlesDeleteRequest;
-/**
- * Response for deleteSubtitles
- *
- * @public
- */
-type DeleteSubtitlesResponse = SubtitlesDeleteResponse;
-
-type models$2_AppendUploadRequest = AppendUploadRequest;
-type models$2_AppendUploadResponse = AppendUploadResponse;
-type models$2_CreateMetadataRequest = CreateMetadataRequest;
-type models$2_CreateMetadataResponse = CreateMetadataResponse;
-type models$2_CreateSubtitlesRequest = CreateSubtitlesRequest;
-type models$2_CreateSubtitlesResponse = CreateSubtitlesResponse;
-type models$2_DeleteSubtitlesRequest = DeleteSubtitlesRequest;
-type models$2_DeleteSubtitlesResponse = DeleteSubtitlesResponse;
-type models$2_FinalizeUploadResponse = FinalizeUploadResponse;
-type models$2_GetAnalyticsResponse = GetAnalyticsResponse;
-type models$2_GetByKeyResponse = GetByKeyResponse;
-type models$2_GetByKeysResponse = GetByKeysResponse;
-type models$2_GetUploadStatusResponse = GetUploadStatusResponse;
-type models$2_InitializeUploadRequest = InitializeUploadRequest;
-type models$2_InitializeUploadResponse = InitializeUploadResponse;
-type models$2_UploadRequest = UploadRequest;
-type models$2_UploadResponse = UploadResponse;
-declare namespace models$2 {
-  export {
-    models$2_AppendUploadRequest as AppendUploadRequest,
-    models$2_AppendUploadResponse as AppendUploadResponse,
-    models$2_CreateMetadataRequest as CreateMetadataRequest,
-    models$2_CreateMetadataResponse as CreateMetadataResponse,
-    models$2_CreateSubtitlesRequest as CreateSubtitlesRequest,
-    models$2_CreateSubtitlesResponse as CreateSubtitlesResponse,
-    models$2_DeleteSubtitlesRequest as DeleteSubtitlesRequest,
-    models$2_DeleteSubtitlesResponse as DeleteSubtitlesResponse,
-    models$2_FinalizeUploadResponse as FinalizeUploadResponse,
-    models$2_GetAnalyticsResponse as GetAnalyticsResponse,
-    models$2_GetByKeyResponse as GetByKeyResponse,
-    models$2_GetByKeysResponse as GetByKeysResponse,
-    models$2_GetUploadStatusResponse as GetUploadStatusResponse,
-    models$2_InitializeUploadRequest as InitializeUploadRequest,
-    models$2_InitializeUploadResponse as InitializeUploadResponse,
-    models$2_UploadRequest as UploadRequest,
-    models$2_UploadResponse as UploadResponse,
-  };
-}
-
-/**
- * media client for the X API.
- *
- * This module provides a client for interacting with the media endpoints of the X API.
- */
-
-/**
- * Options for getByKeys method
- *
- * @public
- */
-interface GetByKeysOptions {
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for appendUpload method
- *
- * @public
- */
-interface AppendUploadOptions {
-    /** Request body */
-    body?: AppendUploadRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getAnalytics method
- *
- * @public
- */
-interface GetAnalyticsOptions {
-    /** A comma separated list of MediaAnalytics fields to display. */
-    mediaAnalyticsfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for initializeUpload method
- *
- * @public
- */
-interface InitializeUploadOptions {
-    /** Request body */
-    body?: InitializeUploadRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getUploadStatus method
- *
- * @public
- */
-interface GetUploadStatusOptions {
-    /** The command for the media upload request. */
-    command?: string;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for upload method
- *
- * @public
- */
-interface UploadOptions {
-    /** Request body */
-    body?: UploadRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for createMetadata method
- *
- * @public
- */
-interface CreateMetadataOptions {
-    /** Request body */
-    body?: CreateMetadataRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getByKey method
- *
- * @public
- */
-interface GetByKeyOptions {
-    /** A comma separated list of Media fields to display. */
-    mediafields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for createSubtitles method
- *
- * @public
- */
-interface CreateSubtitlesOptions {
-    /** Request body */
-    body?: CreateSubtitlesRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for deleteSubtitles method
- *
- * @public
- */
-interface DeleteSubtitlesOptions {
-    /** Request body */
-    body?: DeleteSubtitlesRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Client for media operations
- *
- * This client provides methods for interacting with the media endpoints
- * of the X API. It handles authentication, request formatting, and response
- * parsing for all media related operations.
- *
- * @category media
- */
-declare class MediaClient {
-    private client;
-    /**
-       * Creates a new media client instance
-       *
-       * @param client - The main X API client instance
-       */
-    constructor(client: Client);
-    /**
-     * Get Media by media keys
-     * Retrieves details of Media files by their media keys.
-  
-  
-  
-     * @param mediaKeys A comma separated list of Media Keys. Up to 100 are allowed in a single request.
-  
-  
-  
-     * @returns {Promise<GetByKeysResponse>} Promise resolving to the API response
-     */
-    getByKeys(mediaKeys: Array<any>, options?: GetByKeysOptions): Promise<GetByKeysResponse>;
-    /**
-     * Finalize Media upload
-     * Finalizes a Media upload request.
-  
-  
-     * @param id The media id of the targeted media to finalize.
-  
-  
-  
-  
-     * @returns {Promise<FinalizeUploadResponse>} Promise resolving to the API response
-     */
-    finalizeUpload(id: string): Promise<FinalizeUploadResponse>;
-    /**
-     * Append Media upload
-     * Appends data to a Media upload request.
-  
-  
-     * @param id The media identifier for the media to perform the append operation.
-  
-  
-  
-  
-     * @returns {Promise<AppendUploadResponse>} Promise resolving to the API response
-     */
-    appendUpload(id: string, options?: AppendUploadOptions): Promise<AppendUploadResponse>;
-    /**
-     * Get Media analytics
-     * Retrieves analytics data for media.
-  
-  
-  
-     * @param mediaKeys A comma separated list of Media Keys. Up to 100 are allowed in a single request.
-  
-  
-  
-     * @param endTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
-  
-  
-  
-     * @param startTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
-  
-  
-  
-     * @param granularity The granularity for the search counts results.
-  
-  
-  
-     * @returns {Promise<GetAnalyticsResponse>} Promise resolving to the API response
-     */
-    getAnalytics(mediaKeys: Array<any>, endTime: string, startTime: string, granularity: string, options?: GetAnalyticsOptions): Promise<GetAnalyticsResponse>;
-    /**
-     * Initialize media upload
-     * Initializes a media upload.
-  
-  
-  
-     * @returns {Promise<InitializeUploadResponse>} Promise resolving to the API response
-     */
-    initializeUpload(options?: InitializeUploadOptions): Promise<InitializeUploadResponse>;
-    /**
-     * Get Media upload status
-     * Retrieves the status of a Media upload by its ID.
-  
-  
-  
-     * @param mediaId Media id for the requested media upload status.
-  
-  
-  
-     * @returns {Promise<GetUploadStatusResponse>} Promise resolving to the API response
-     */
-    getUploadStatus(mediaId: any, options?: GetUploadStatusOptions): Promise<GetUploadStatusResponse>;
-    /**
-     * Upload media
-     * Uploads a media file for use in posts or other content.
-  
-  
-  
-     * @returns {Promise<UploadResponse>} Promise resolving to the API response
-     */
-    upload(options?: UploadOptions): Promise<UploadResponse>;
-    /**
-     * Create Media metadata
-     * Creates metadata for a Media file.
-  
-  
-  
-     * @returns {Promise<CreateMetadataResponse>} Promise resolving to the API response
-     */
-    createMetadata(options?: CreateMetadataOptions): Promise<CreateMetadataResponse>;
-    /**
-     * Get Media by media key
-     * Retrieves details of a specific Media file by its media key.
-  
-  
-     * @param mediaKey A single Media Key.
-  
-  
-  
-  
-     * @returns {Promise<GetByKeyResponse>} Promise resolving to the API response
-     */
-    getByKey(mediaKey: string, options?: GetByKeyOptions): Promise<GetByKeyResponse>;
-    /**
-     * Create Media subtitles
-     * Creates subtitles for a specific Media file.
-  
-  
-  
-     * @returns {Promise<CreateSubtitlesResponse>} Promise resolving to the API response
-     */
-    createSubtitles(options?: CreateSubtitlesOptions): Promise<CreateSubtitlesResponse>;
-    /**
-     * Delete Media subtitles
-     * Deletes subtitles for a specific Media file.
-  
-  
-  
-     * @returns {Promise<DeleteSubtitlesResponse>} Promise resolving to the API response
-     */
-    deleteSubtitles(options?: DeleteSubtitlesOptions): Promise<DeleteSubtitlesResponse>;
+    create(options?: CreateOptions$2): Promise<CreateResponse$3>;
 }
 
 /**
@@ -9308,10 +7405,10 @@ declare class MediaClient {
  */
 type GetOpenApiSpecResponse = Record<string, any>;
 
-type models$1_GetOpenApiSpecResponse = GetOpenApiSpecResponse;
-declare namespace models$1 {
+type models$b_GetOpenApiSpecResponse = GetOpenApiSpecResponse;
+declare namespace models$b {
   export {
-    models$1_GetOpenApiSpecResponse as GetOpenApiSpecResponse,
+    models$b_GetOpenApiSpecResponse as GetOpenApiSpecResponse,
   };
 }
 
@@ -9350,174 +7447,473 @@ declare class GeneralClient {
 }
 
 /**
- * Models for lists operations
+ * Models for community notes operations
  */
 
-/**
- * Response for getFollowers
- *
- * @public
- */
-type GetFollowersResponse = Get2ListsIdFollowersResponse;
-/**
- * Response for removeMemberByUserId
- *
- * @public
- */
-type RemoveMemberByUserIdResponse = ListMutateResponse;
-/**
- * Response for getMembers
- *
- * @public
- */
-type GetMembersResponse = Get2ListsIdMembersResponse;
-/**
- * Request for addMember
- *
- * @public
- */
-type AddMemberRequest = ListAddUserRequest;
-/**
- * Response for addMember
- *
- * @public
- */
-type AddMemberResponse = ListMutateResponse;
 /**
  * Request for create
  *
  * @public
  */
-type CreateRequest = ListCreateRequest;
+type CreateRequest$2 = CreateNoteRequest;
 /**
  * Response for create
  *
  * @public
  */
-type CreateResponse = ListCreateResponse;
+type CreateResponse$2 = CreateNoteResponse;
 /**
- * Response for getById
+ * Response for searchEligiblePosts
  *
  * @public
  */
-type GetByIdResponse = Get2ListsIdResponse;
+type SearchEligiblePostsResponse = Get2NotesSearchPostsEligibleForNotesResponse;
 /**
- * Request for update
+ * Request for evaluate
  *
  * @public
  */
-type UpdateRequest = ListUpdateRequest;
+type EvaluateRequest = EvaluateNoteRequest;
 /**
- * Response for update
+ * Response for evaluate
  *
  * @public
  */
-type UpdateResponse = ListUpdateResponse;
+type EvaluateResponse = EvaluateNoteResponse;
 /**
  * Response for delete
  *
  * @public
  */
-type DeleteResponse = ListDeleteResponse;
+type DeleteResponse$2 = DeleteNoteResponse;
 /**
- * Response for getPosts
+ * Response for searchWritten
  *
  * @public
  */
-type GetPostsResponse = Get2ListsIdTweetsResponse;
+type SearchWrittenResponse = Get2NotesSearchNotesWrittenResponse;
 
-type models_AddMemberRequest = AddMemberRequest;
-type models_AddMemberResponse = AddMemberResponse;
-type models_CreateRequest = CreateRequest;
-type models_CreateResponse = CreateResponse;
-type models_DeleteResponse = DeleteResponse;
-type models_GetByIdResponse = GetByIdResponse;
-type models_GetFollowersResponse = GetFollowersResponse;
-type models_GetMembersResponse = GetMembersResponse;
-type models_GetPostsResponse = GetPostsResponse;
-type models_RemoveMemberByUserIdResponse = RemoveMemberByUserIdResponse;
-type models_UpdateRequest = UpdateRequest;
-type models_UpdateResponse = UpdateResponse;
-declare namespace models {
+type models$a_EvaluateRequest = EvaluateRequest;
+type models$a_EvaluateResponse = EvaluateResponse;
+type models$a_SearchEligiblePostsResponse = SearchEligiblePostsResponse;
+type models$a_SearchWrittenResponse = SearchWrittenResponse;
+declare namespace models$a {
   export {
-    models_AddMemberRequest as AddMemberRequest,
-    models_AddMemberResponse as AddMemberResponse,
-    models_CreateRequest as CreateRequest,
-    models_CreateResponse as CreateResponse,
-    models_DeleteResponse as DeleteResponse,
-    models_GetByIdResponse as GetByIdResponse,
-    models_GetFollowersResponse as GetFollowersResponse,
-    models_GetMembersResponse as GetMembersResponse,
-    models_GetPostsResponse as GetPostsResponse,
-    models_RemoveMemberByUserIdResponse as RemoveMemberByUserIdResponse,
-    models_UpdateRequest as UpdateRequest,
-    models_UpdateResponse as UpdateResponse,
+    CreateRequest$2 as CreateRequest,
+    CreateResponse$2 as CreateResponse,
+    DeleteResponse$2 as DeleteResponse,
+    models$a_EvaluateRequest as EvaluateRequest,
+    models$a_EvaluateResponse as EvaluateResponse,
+    models$a_SearchEligiblePostsResponse as SearchEligiblePostsResponse,
+    models$a_SearchWrittenResponse as SearchWrittenResponse,
   };
 }
 
 /**
- * lists client for the X API.
+ * community notes client for the X API.
  *
- * This module provides a client for interacting with the lists endpoints of the X API.
+ * This module provides a client for interacting with the community notes endpoints of the X API.
  */
 
-/**
- * Options for getFollowers method
- *
- * @public
- */
-interface GetFollowersOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: any;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for getMembers method
- *
- * @public
- */
-interface GetMembersOptions {
-    /** The maximum number of results. */
-    maxResults?: number;
-    /** This parameter is used to get a specified 'page' of results. */
-    paginationToken?: any;
-    /** A comma separated list of User fields to display. */
-    userfields?: Array<any>;
-    /** A comma separated list of fields to expand. */
-    expansions?: Array<any>;
-    /** A comma separated list of Tweet fields to display. */
-    tweetfields?: Array<any>;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
-/**
- * Options for addMember method
- *
- * @public
- */
-interface AddMemberOptions {
-    /** Request body */
-    body?: AddMemberRequest;
-    /** Additional request options */
-    requestOptions?: RequestOptions;
-}
 /**
  * Options for create method
  *
  * @public
  */
-interface CreateOptions {
+interface CreateOptions$1 {
     /** Request body */
-    body?: CreateRequest;
+    body?: CreateRequest$2;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for searchEligiblePosts method
+ *
+ * @public
+ */
+interface SearchEligiblePostsOptions {
+    /** Pagination token to get next set of posts eligible for notes. */
+    paginationToken?: string;
+    /** Max results to return. */
+    maxResults?: number;
+    /** The selection of posts to return. Valid values are 'feed_size: small' and 'feed_size: large'. Default is 'feed_size: small', only top AI writers have access to large size feed. */
+    postSelection?: string;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of Poll fields to display. */
+    pollfields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Place fields to display. */
+    placefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for evaluate method
+ *
+ * @public
+ */
+interface EvaluateOptions {
+    /** Request body */
+    body?: EvaluateRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for searchWritten method
+ *
+ * @public
+ */
+interface SearchWrittenOptions {
+    /** Pagination token to get next set of posts eligible for notes. */
+    paginationToken?: string;
+    /** Max results to return. */
+    maxResults?: number;
+    /** A comma separated list of Note fields to display. */
+    notefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Client for community notes operations
+ *
+ * This client provides methods for interacting with the community notes endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all community notes related operations.
+ *
+ * @category community notes
+ */
+declare class CommunityNotesClient {
+    private client;
+    /**
+       * Creates a new community notes client instance
+       *
+       * @param client - The main X API client instance
+       */
+    constructor(client: Client);
+    /**
+     * Create a Community Note
+     * Creates a community note endpoint for LLM use case.
+  
+  
+  
+     * @returns {Promise<CreateResponse>} Promise resolving to the API response
+     */
+    create(options?: CreateOptions$1): Promise<CreateResponse$2>;
+    /**
+     * Search for Posts Eligible for Community Notes
+     * Returns all the posts that are eligible for community notes.
+  
+  
+  
+     * @param testMode If true, return a list of posts that are for the test. If false, return a list of posts that the bots can write proposed notes on the product.
+  
+  
+  
+     * @returns {Promise<SearchEligiblePostsResponse>} Promise resolving to the API response
+     */
+    searchEligiblePosts(testMode: boolean, options?: SearchEligiblePostsOptions): Promise<SearchEligiblePostsResponse>;
+    /**
+     * Evaluate a Community Note
+     * Endpoint to evaluate a community note.
+  
+  
+  
+     * @returns {Promise<EvaluateResponse>} Promise resolving to the API response
+     */
+    evaluate(options?: EvaluateOptions): Promise<EvaluateResponse>;
+    /**
+     * Delete a Community Note
+     * Deletes a community note.
+  
+  
+     * @param id The community note id to delete.
+  
+  
+  
+  
+     * @returns {Promise<DeleteResponse>} Promise resolving to the API response
+     */
+    delete(id: string): Promise<DeleteResponse$2>;
+    /**
+     * Search for Community Notes Written
+     * Returns all the community notes written by the user.
+  
+  
+  
+     * @param testMode If true, return the notes the caller wrote for the test. If false, return the notes the caller wrote on the product.
+  
+  
+  
+     * @returns {Promise<SearchWrittenResponse>} Promise resolving to the API response
+     */
+    searchWritten(testMode: boolean, options?: SearchWrittenOptions): Promise<SearchWrittenResponse>;
+}
+
+/**
+ * Models for account activity operations
+ */
+
+/**
+ * Response for createReplayJob
+ *
+ * @public
+ */
+type CreateReplayJobResponse = ReplayJobCreateResponse;
+/**
+ * Response for deleteSubscription
+ *
+ * @public
+ */
+type DeleteSubscriptionResponse$1 = SubscriptionsDeleteResponse;
+/**
+ * Response for getSubscriptions
+ *
+ * @public
+ */
+type GetSubscriptionsResponse$1 = SubscriptionsListGetResponse;
+/**
+ * Response for validateSubscription
+ *
+ * @public
+ */
+type ValidateSubscriptionResponse = SubscriptionsGetResponse;
+/**
+ * Request for createSubscription
+ *
+ * @public
+ */
+type CreateSubscriptionRequest$1 = SubscriptionsCreateRequest;
+/**
+ * Response for createSubscription
+ *
+ * @public
+ */
+type CreateSubscriptionResponse$1 = SubscriptionsCreateResponse;
+/**
+ * Response for getSubscriptionCount
+ *
+ * @public
+ */
+type GetSubscriptionCountResponse = SubscriptionsCountGetResponse;
+
+type models$9_CreateReplayJobResponse = CreateReplayJobResponse;
+type models$9_GetSubscriptionCountResponse = GetSubscriptionCountResponse;
+type models$9_ValidateSubscriptionResponse = ValidateSubscriptionResponse;
+declare namespace models$9 {
+  export {
+    models$9_CreateReplayJobResponse as CreateReplayJobResponse,
+    CreateSubscriptionRequest$1 as CreateSubscriptionRequest,
+    CreateSubscriptionResponse$1 as CreateSubscriptionResponse,
+    DeleteSubscriptionResponse$1 as DeleteSubscriptionResponse,
+    models$9_GetSubscriptionCountResponse as GetSubscriptionCountResponse,
+    GetSubscriptionsResponse$1 as GetSubscriptionsResponse,
+    models$9_ValidateSubscriptionResponse as ValidateSubscriptionResponse,
+  };
+}
+
+/**
+ * account activity client for the X API.
+ *
+ * This module provides a client for interacting with the account activity endpoints of the X API.
+ */
+
+/**
+ * Options for createSubscription method
+ *
+ * @public
+ */
+interface CreateSubscriptionOptions$1 {
+    /** Request body */
+    body?: CreateSubscriptionRequest$1;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Client for account activity operations
+ *
+ * This client provides methods for interacting with the account activity endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all account activity related operations.
+ *
+ * @category account activity
+ */
+declare class AccountActivityClient {
+    private client;
+    /**
+       * Creates a new account activity client instance
+       *
+       * @param client - The main X API client instance
+       */
+    constructor(client: Client);
+    /**
+     * Create replay job
+     * Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
+  
+  
+     * @param webhookId The unique identifier for the webhook configuration.
+  
+  
+  
+  
+     * @param fromDate The oldest (starting) UTC timestamp (inclusive) from which events will be provided, in `yyyymmddhhmm` format.
+  
+  
+  
+     * @param toDate The latest (ending) UTC timestamp (exclusive) up to which events will be provided, in `yyyymmddhhmm` format.
+  
+  
+  
+     * @returns {Promise<CreateReplayJobResponse>} Promise resolving to the API response
+     */
+    createReplayJob(webhookId: string, fromDate: string, toDate: string): Promise<CreateReplayJobResponse>;
+    /**
+     * Delete subscription
+     * Deletes an Account Activity subscription for the given webhook and user ID.
+  
+  
+     * @param webhookId The webhook ID to check subscription against.
+  
+  
+  
+     * @param userId User ID to unsubscribe from.
+  
+  
+  
+  
+     * @returns {Promise<DeleteSubscriptionResponse>} Promise resolving to the API response
+     */
+    deleteSubscription(webhookId: string, userId: string): Promise<DeleteSubscriptionResponse$1>;
+    /**
+     * Get subscriptions
+     * Retrieves a list of all active subscriptions for a given webhook.
+  
+  
+     * @param webhookId The webhook ID to pull subscriptions for.
+  
+  
+  
+  
+     * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
+     */
+    getSubscriptions(webhookId: string): Promise<GetSubscriptionsResponse$1>;
+    /**
+     * Validate subscription
+     * Checks a user’s Account Activity subscription for a given webhook.
+  
+  
+     * @param webhookId The webhook ID to check subscription against.
+  
+  
+  
+  
+     * @returns {Promise<ValidateSubscriptionResponse>} Promise resolving to the API response
+     */
+    validateSubscription(webhookId: string): Promise<ValidateSubscriptionResponse>;
+    /**
+     * Create subscription
+     * Creates an Account Activity subscription for the user and the given webhook.
+  
+  
+     * @param webhookId The webhook ID to check subscription against.
+  
+  
+  
+  
+     * @returns {Promise<CreateSubscriptionResponse>} Promise resolving to the API response
+     */
+    createSubscription(webhookId: string, options?: CreateSubscriptionOptions$1): Promise<CreateSubscriptionResponse$1>;
+    /**
+     * Get subscription count
+     * Retrieves a count of currently active Account Activity subscriptions.
+  
+  
+  
+     * @returns {Promise<GetSubscriptionCountResponse>} Promise resolving to the API response
+     */
+    getSubscriptionCount(): Promise<GetSubscriptionCountResponse>;
+}
+
+/**
+ * Models for spaces operations
+ */
+
+/**
+ * Response for getByCreatorIds
+ *
+ * @public
+ */
+type GetByCreatorIdsResponse = Get2SpacesByCreatorIdsResponse;
+/**
+ * Response for getById
+ *
+ * @public
+ */
+type GetByIdResponse$2 = Get2SpacesIdResponse;
+/**
+ * Response for getBuyers
+ *
+ * @public
+ */
+type GetBuyersResponse = Get2SpacesIdBuyersResponse;
+/**
+ * Response for getPosts
+ *
+ * @public
+ */
+type GetPostsResponse = Get2SpacesIdTweetsResponse;
+/**
+ * Response for search
+ *
+ * @public
+ */
+type SearchResponse$1 = Get2SpacesSearchResponse;
+/**
+ * Response for getByIds
+ *
+ * @public
+ */
+type GetByIdsResponse$1 = Get2SpacesResponse;
+
+type models$8_GetBuyersResponse = GetBuyersResponse;
+type models$8_GetByCreatorIdsResponse = GetByCreatorIdsResponse;
+type models$8_GetPostsResponse = GetPostsResponse;
+declare namespace models$8 {
+  export {
+    models$8_GetBuyersResponse as GetBuyersResponse,
+    models$8_GetByCreatorIdsResponse as GetByCreatorIdsResponse,
+    GetByIdResponse$2 as GetByIdResponse,
+    GetByIdsResponse$1 as GetByIdsResponse,
+    models$8_GetPostsResponse as GetPostsResponse,
+    SearchResponse$1 as SearchResponse,
+  };
+}
+
+/**
+ * spaces client for the X API.
+ *
+ * This module provides a client for interacting with the spaces endpoints of the X API.
+ */
+
+/**
+ * Options for getByCreatorIds method
+ *
+ * @public
+ */
+interface GetByCreatorIdsOptions {
+    /** A comma separated list of Space fields to display. */
+    spacefields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Topic fields to display. */
+    topicfields?: Array<any>;
     /** Additional request options */
     requestOptions?: RequestOptions;
 }
@@ -9526,24 +7922,34 @@ interface CreateOptions {
  *
  * @public
  */
-interface GetByIdOptions {
-    /** A comma separated list of List fields to display. */
-    listfields?: Array<any>;
+interface GetByIdOptions$2 {
+    /** A comma separated list of Space fields to display. */
+    spacefields?: Array<any>;
     /** A comma separated list of fields to expand. */
     expansions?: Array<any>;
     /** A comma separated list of User fields to display. */
     userfields?: Array<any>;
+    /** A comma separated list of Topic fields to display. */
+    topicfields?: Array<any>;
     /** Additional request options */
     requestOptions?: RequestOptions;
 }
 /**
- * Options for update method
+ * Options for getBuyers method
  *
  * @public
  */
-interface UpdateOptions {
-    /** Request body */
-    body?: UpdateRequest;
+interface GetBuyersOptions {
+    /** This parameter is used to get a specified 'page' of results. */
+    paginationToken?: any;
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
     /** Additional request options */
     requestOptions?: RequestOptions;
 }
@@ -9553,6 +7959,640 @@ interface UpdateOptions {
  * @public
  */
 interface GetPostsOptions {
+    /** The number of Posts to fetch from the provided space. If not provided, the value will default to the maximum of 100. */
+    maxResults?: number;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of Poll fields to display. */
+    pollfields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Place fields to display. */
+    placefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for search method
+ *
+ * @public
+ */
+interface SearchOptions$1 {
+    /** The state of Spaces to search for. */
+    state?: string;
+    /** The number of results to return. */
+    maxResults?: number;
+    /** A comma separated list of Space fields to display. */
+    spacefields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Topic fields to display. */
+    topicfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getByIds method
+ *
+ * @public
+ */
+interface GetByIdsOptions$1 {
+    /** A comma separated list of Space fields to display. */
+    spacefields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Topic fields to display. */
+    topicfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Client for spaces operations
+ *
+ * This client provides methods for interacting with the spaces endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all spaces related operations.
+ *
+ * @category spaces
+ */
+declare class SpacesClient {
+    private client;
+    /**
+       * Creates a new spaces client instance
+       *
+       * @param client - The main X API client instance
+       */
+    constructor(client: Client);
+    /**
+     * Get Spaces by creator IDs
+     * Retrieves details of Spaces created by specified User IDs.
+  
+  
+  
+     * @param userIds The IDs of Users to search through.
+  
+  
+  
+     * @returns {Promise<GetByCreatorIdsResponse>} Promise resolving to the API response
+     */
+    getByCreatorIds(userIds: Array<any>, options?: GetByCreatorIdsOptions): Promise<GetByCreatorIdsResponse>;
+    /**
+     * Get space by ID
+     * Retrieves details of a specific space by its ID.
+  
+  
+     * @param id The ID of the Space to be retrieved.
+  
+  
+  
+  
+     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
+     */
+    getById(id: string, options?: GetByIdOptions$2): Promise<GetByIdResponse$2>;
+    /**
+     * Get Space ticket buyers
+     * Retrieves a list of Users who purchased tickets to a specific Space by its ID.
+  
+  
+     * @param id The ID of the Space to be retrieved.
+  
+  
+  
+  
+     * @returns {Promise<GetBuyersResponse>} Promise resolving to the API response
+     */
+    getBuyers(id: string, options?: GetBuyersOptions): Promise<GetBuyersResponse>;
+    /**
+     * Get Space Posts
+     * Retrieves a list of Posts shared in a specific Space by its ID.
+  
+  
+     * @param id The ID of the Space to be retrieved.
+  
+  
+  
+  
+     * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
+     */
+    getPosts(id: string, options?: GetPostsOptions): Promise<GetPostsResponse>;
+    /**
+     * Search Spaces
+     * Retrieves a list of Spaces matching the specified search query.
+  
+  
+  
+     * @param query The search query.
+  
+  
+  
+     * @returns {Promise<SearchResponse>} Promise resolving to the API response
+     */
+    search(query: string, options?: SearchOptions$1): Promise<SearchResponse$1>;
+    /**
+     * Get Spaces by IDs
+     * Retrieves details of multiple Spaces by their IDs.
+  
+  
+  
+     * @param ids The list of Space IDs to return.
+  
+  
+  
+     * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
+     */
+    getByIds(ids: Array<any>, options?: GetByIdsOptions$1): Promise<GetByIdsResponse$1>;
+}
+
+/**
+ * Models for trends operations
+ */
+
+/**
+ * Response for getPersonalized
+ *
+ * @public
+ */
+type GetPersonalizedResponse = Get2UsersPersonalizedTrendsResponse;
+/**
+ * Response for getAi
+ *
+ * @public
+ */
+type GetAiResponse = Get2AiTrendsIdResponse;
+/**
+ * Response for getByWoeid
+ *
+ * @public
+ */
+type GetByWoeidResponse = Get2TrendsByWoeidWoeidResponse;
+
+type models$7_GetAiResponse = GetAiResponse;
+type models$7_GetByWoeidResponse = GetByWoeidResponse;
+type models$7_GetPersonalizedResponse = GetPersonalizedResponse;
+declare namespace models$7 {
+  export {
+    models$7_GetAiResponse as GetAiResponse,
+    models$7_GetByWoeidResponse as GetByWoeidResponse,
+    models$7_GetPersonalizedResponse as GetPersonalizedResponse,
+  };
+}
+
+/**
+ * trends client for the X API.
+ *
+ * This module provides a client for interacting with the trends endpoints of the X API.
+ */
+
+/**
+ * Options for getPersonalized method
+ *
+ * @public
+ */
+interface GetPersonalizedOptions {
+    /** A comma separated list of PersonalizedTrend fields to display. */
+    personalizedTrendfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getAi method
+ *
+ * @public
+ */
+interface GetAiOptions {
+    /** A comma separated list of AiTrend fields to display. */
+    aiTrendfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getByWoeid method
+ *
+ * @public
+ */
+interface GetByWoeidOptions {
+    /** The maximum number of results. */
+    maxTrends?: number;
+    /** A comma separated list of Trend fields to display. */
+    trendfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Client for trends operations
+ *
+ * This client provides methods for interacting with the trends endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all trends related operations.
+ *
+ * @category trends
+ */
+declare class TrendsClient {
+    private client;
+    /**
+       * Creates a new trends client instance
+       *
+       * @param client - The main X API client instance
+       */
+    constructor(client: Client);
+    /**
+     * Get personalized Trends
+     * Retrieves personalized trending topics for the authenticated user.
+  
+  
+  
+     * @returns {Promise<GetPersonalizedResponse>} Promise resolving to the API response
+     */
+    getPersonalized(options?: GetPersonalizedOptions): Promise<GetPersonalizedResponse>;
+    /**
+     * Get AI Trends by ID
+     * Retrieves an AI trend by its ID.
+  
+  
+     * @param id The ID of the ai trend.
+  
+  
+  
+  
+     * @returns {Promise<GetAiResponse>} Promise resolving to the API response
+     */
+    getAi(id: string, options?: GetAiOptions): Promise<GetAiResponse>;
+    /**
+     * Get Trends by WOEID
+     * Retrieves trending topics for a specific location identified by its WOEID.
+  
+  
+     * @param woeid The WOEID of the place to lookup a trend for.
+  
+  
+  
+  
+     * @returns {Promise<GetByWoeidResponse>} Promise resolving to the API response
+     */
+    getByWoeid(woeid: number, options?: GetByWoeidOptions): Promise<GetByWoeidResponse>;
+}
+
+/**
+ * Models for posts operations
+ */
+
+/**
+ * Response for getCountsAll
+ *
+ * @public
+ */
+type GetCountsAllResponse = Get2TweetsCountsAllResponse;
+/**
+ * Response for searchRecent
+ *
+ * @public
+ */
+type SearchRecentResponse = Get2TweetsSearchRecentResponse;
+/**
+ * Response for getQuoted
+ *
+ * @public
+ */
+type GetQuotedResponse = Get2TweetsIdQuoteTweetsResponse;
+/**
+ * Response for getByIds
+ *
+ * @public
+ */
+type GetByIdsResponse = Get2TweetsResponse;
+/**
+ * Request for create
+ *
+ * @public
+ */
+type CreateRequest$1 = TweetCreateRequest;
+/**
+ * Response for create
+ *
+ * @public
+ */
+type CreateResponse$1 = TweetCreateResponse;
+/**
+ * Response for getById
+ *
+ * @public
+ */
+type GetByIdResponse$1 = Get2TweetsIdResponse;
+/**
+ * Response for delete
+ *
+ * @public
+ */
+type DeleteResponse$1 = TweetDeleteResponse;
+/**
+ * Response for getAnalytics
+ *
+ * @public
+ */
+type GetAnalyticsResponse = Analytics;
+/**
+ * Response for getRepostedBy
+ *
+ * @public
+ */
+type GetRepostedByResponse = Get2TweetsIdRetweetedByResponse;
+/**
+ * Response for getInsightsHistorical
+ *
+ * @public
+ */
+type GetInsightsHistoricalResponse = Get2InsightsHistoricalResponse;
+/**
+ * Response for getLikingUsers
+ *
+ * @public
+ */
+type GetLikingUsersResponse = Get2TweetsIdLikingUsersResponse;
+/**
+ * Response for getReposts
+ *
+ * @public
+ */
+type GetRepostsResponse = Get2TweetsIdRetweetsResponse;
+/**
+ * Response for getInsights28hr
+ *
+ * @public
+ */
+type GetInsights28hrResponse = Get2Insights28hrResponse;
+/**
+ * Response for getCountsRecent
+ *
+ * @public
+ */
+type GetCountsRecentResponse = Get2TweetsCountsRecentResponse;
+/**
+ * Response for searchAll
+ *
+ * @public
+ */
+type SearchAllResponse = Get2TweetsSearchAllResponse;
+/**
+ * Request for hideReply
+ *
+ * @public
+ */
+type HideReplyRequest = TweetHideRequest;
+/**
+ * Response for hideReply
+ *
+ * @public
+ */
+type HideReplyResponse = TweetHideResponse;
+
+type models$6_GetAnalyticsResponse = GetAnalyticsResponse;
+type models$6_GetByIdsResponse = GetByIdsResponse;
+type models$6_GetCountsAllResponse = GetCountsAllResponse;
+type models$6_GetCountsRecentResponse = GetCountsRecentResponse;
+type models$6_GetInsights28hrResponse = GetInsights28hrResponse;
+type models$6_GetInsightsHistoricalResponse = GetInsightsHistoricalResponse;
+type models$6_GetLikingUsersResponse = GetLikingUsersResponse;
+type models$6_GetQuotedResponse = GetQuotedResponse;
+type models$6_GetRepostedByResponse = GetRepostedByResponse;
+type models$6_GetRepostsResponse = GetRepostsResponse;
+type models$6_HideReplyRequest = HideReplyRequest;
+type models$6_HideReplyResponse = HideReplyResponse;
+type models$6_SearchAllResponse = SearchAllResponse;
+type models$6_SearchRecentResponse = SearchRecentResponse;
+declare namespace models$6 {
+  export {
+    CreateRequest$1 as CreateRequest,
+    CreateResponse$1 as CreateResponse,
+    DeleteResponse$1 as DeleteResponse,
+    models$6_GetAnalyticsResponse as GetAnalyticsResponse,
+    GetByIdResponse$1 as GetByIdResponse,
+    models$6_GetByIdsResponse as GetByIdsResponse,
+    models$6_GetCountsAllResponse as GetCountsAllResponse,
+    models$6_GetCountsRecentResponse as GetCountsRecentResponse,
+    models$6_GetInsights28hrResponse as GetInsights28hrResponse,
+    models$6_GetInsightsHistoricalResponse as GetInsightsHistoricalResponse,
+    models$6_GetLikingUsersResponse as GetLikingUsersResponse,
+    models$6_GetQuotedResponse as GetQuotedResponse,
+    models$6_GetRepostedByResponse as GetRepostedByResponse,
+    models$6_GetRepostsResponse as GetRepostsResponse,
+    models$6_HideReplyRequest as HideReplyRequest,
+    models$6_HideReplyResponse as HideReplyResponse,
+    models$6_SearchAllResponse as SearchAllResponse,
+    models$6_SearchRecentResponse as SearchRecentResponse,
+  };
+}
+
+/**
+ * posts client for the X API.
+ *
+ * This module provides a client for interacting with the posts endpoints of the X API.
+ */
+
+/**
+ * Options for getCountsAll method
+ *
+ * @public
+ */
+interface GetCountsAllOptions {
+    /** YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp (from most recent 7 days) from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute). */
+    startTime?: string;
+    /** YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute). */
+    endTime?: string;
+    /** Returns results with a Post ID greater than (that is, more recent than) the specified ID. */
+    sinceId?: any;
+    /** Returns results with a Post ID less than (that is, older than) the specified ID. */
+    untilId?: any;
+    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+    nextToken?: any;
+    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+    paginationToken?: any;
+    /** The granularity for the search counts results. */
+    granularity?: string;
+    /** A comma separated list of SearchCount fields to display. */
+    searchCountfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for searchRecent method
+ *
+ * @public
+ */
+interface SearchRecentOptions {
+    /** YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute). */
+    startTime?: string;
+    /** YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute). */
+    endTime?: string;
+    /** Returns results with a Post ID greater than (that is, more recent than) the specified ID. */
+    sinceId?: any;
+    /** Returns results with a Post ID less than (that is, older than) the specified ID. */
+    untilId?: any;
+    /** The maximum number of search results to be returned by a request. */
+    maxResults?: number;
+    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+    nextToken?: any;
+    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+    paginationToken?: any;
+    /** This order in which to return results. */
+    sortOrder?: string;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of Poll fields to display. */
+    pollfields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Place fields to display. */
+    placefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getQuoted method
+ *
+ * @public
+ */
+interface GetQuotedOptions {
+    /** The maximum number of results to be returned. */
+    maxResults?: number;
+    /** This parameter is used to get a specified 'page' of results. */
+    paginationToken?: any;
+    /** The set of entities to exclude (e.g. 'replies' or 'retweets'). */
+    exclude?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of Poll fields to display. */
+    pollfields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Place fields to display. */
+    placefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getByIds method
+ *
+ * @public
+ */
+interface GetByIdsOptions {
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of Poll fields to display. */
+    pollfields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Place fields to display. */
+    placefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getById method
+ *
+ * @public
+ */
+interface GetByIdOptions$1 {
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of Poll fields to display. */
+    pollfields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Place fields to display. */
+    placefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getAnalytics method
+ *
+ * @public
+ */
+interface GetAnalyticsOptions {
+    /** A comma separated list of Analytics fields to display. */
+    analyticsfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getRepostedBy method
+ *
+ * @public
+ */
+interface GetRepostedByOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get the next 'page' of results. */
+    paginationToken?: any;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getInsightsHistorical method
+ *
+ * @public
+ */
+interface GetInsightsHistoricalOptions {
+    /** A comma separated list of Engagement fields to display. */
+    engagementfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getLikingUsers method
+ *
+ * @public
+ */
+interface GetLikingUsersOptions {
+    /** The maximum number of results. */
+    maxResults?: number;
+    /** This parameter is used to get the next 'page' of results. */
+    paginationToken?: any;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getReposts method
+ *
+ * @public
+ */
+interface GetRepostsOptions {
     /** The maximum number of results. */
     maxResults?: number;
     /** This parameter is used to get the next 'page' of results. */
@@ -9573,93 +8613,1092 @@ interface GetPostsOptions {
     requestOptions?: RequestOptions;
 }
 /**
- * Client for lists operations
+ * Options for getInsights28hr method
  *
- * This client provides methods for interacting with the lists endpoints
- * of the X API. It handles authentication, request formatting, and response
- * parsing for all lists related operations.
- *
- * @category lists
+ * @public
  */
-declare class ListsClient {
+interface GetInsights28hrOptions {
+    /** A comma separated list of Engagement fields to display. */
+    engagementfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getCountsRecent method
+ *
+ * @public
+ */
+interface GetCountsRecentOptions {
+    /** YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp (from most recent 7 days) from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute). */
+    startTime?: string;
+    /** YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute). */
+    endTime?: string;
+    /** Returns results with a Post ID greater than (that is, more recent than) the specified ID. */
+    sinceId?: any;
+    /** Returns results with a Post ID less than (that is, older than) the specified ID. */
+    untilId?: any;
+    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+    nextToken?: any;
+    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+    paginationToken?: any;
+    /** The granularity for the search counts results. */
+    granularity?: string;
+    /** A comma separated list of SearchCount fields to display. */
+    searchCountfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for searchAll method
+ *
+ * @public
+ */
+interface SearchAllOptions {
+    /** YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute). */
+    startTime?: string;
+    /** YYYY-MM-DDTHH:mm:ssZ. The newest, most recent UTC timestamp to which the Posts will be provided. Timestamp is in second granularity and is exclusive (i.e. 12:00:01 excludes the first second of the minute). */
+    endTime?: string;
+    /** Returns results with a Post ID greater than (that is, more recent than) the specified ID. */
+    sinceId?: any;
+    /** Returns results with a Post ID less than (that is, older than) the specified ID. */
+    untilId?: any;
+    /** The maximum number of search results to be returned by a request. */
+    maxResults?: number;
+    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+    nextToken?: any;
+    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+    paginationToken?: any;
+    /** This order in which to return results. */
+    sortOrder?: string;
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: Array<any>;
+    /** A comma separated list of fields to expand. */
+    expansions?: Array<any>;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: Array<any>;
+    /** A comma separated list of Poll fields to display. */
+    pollfields?: Array<any>;
+    /** A comma separated list of User fields to display. */
+    userfields?: Array<any>;
+    /** A comma separated list of Place fields to display. */
+    placefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for hideReply method
+ *
+ * @public
+ */
+interface HideReplyOptions {
+    /** Request body */
+    body?: HideReplyRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Client for posts operations
+ *
+ * This client provides methods for interacting with the posts endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all posts related operations.
+ *
+ * @category posts
+ */
+declare class PostsClient {
     private client;
     /**
-       * Creates a new lists client instance
+       * Creates a new posts client instance
        *
        * @param client - The main X API client instance
        */
     constructor(client: Client);
     /**
-     * Get List followers
-     * Retrieves a list of Users who follow a specific List by its ID.
-  
-  
-     * @param id The ID of the List.
+     * Get count of all Posts
+     * Retrieves the count of Posts matching a search query from the full archive.
   
   
   
+     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
   
-     * @returns {Promise<GetFollowersResponse>} Promise resolving to the API response
+  
+  
+     * @returns {Promise<GetCountsAllResponse>} Promise resolving to the API response
      */
-    getFollowers(id: string, options?: GetFollowersOptions): Promise<GetFollowersResponse>;
+    getCountsAll(query: string, options?: GetCountsAllOptions): Promise<GetCountsAllResponse>;
     /**
-     * Remove List member
-     * Removes a User from a specific List by its ID and the User’s ID.
-  
-  
-     * @param id The ID of the List to remove a member.
+     * Search recent Posts
+     * Retrieves Posts from the last 7 days matching a search query.
   
   
   
-     * @param userId The ID of User that will be removed from the List.
+     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
   
   
   
-  
-     * @returns {Promise<RemoveMemberByUserIdResponse>} Promise resolving to the API response
+     * @returns {Promise<SearchRecentResponse>} Promise resolving to the API response
      */
-    removeMemberByUserId(id: string, userId: string): Promise<RemoveMemberByUserIdResponse>;
+    searchRecent(query: string, options?: SearchRecentOptions): Promise<SearchRecentResponse>;
     /**
-     * Get List members
-     * Retrieves a list of Users who are members of a specific List by its ID.
+     * Get Quoted Posts
+     * Retrieves a list of Posts that quote a specific Post by its ID.
   
   
-     * @param id The ID of the List.
+     * @param id A single Post ID.
   
   
   
   
-     * @returns {Promise<GetMembersResponse>} Promise resolving to the API response
+     * @returns {Promise<GetQuotedResponse>} Promise resolving to the API response
      */
-    getMembers(id: string, options?: GetMembersOptions): Promise<GetMembersResponse>;
+    getQuoted(id: string, options?: GetQuotedOptions): Promise<GetQuotedResponse>;
     /**
-     * Add List member
-     * Adds a User to a specific List by its ID.
-  
-  
-     * @param id The ID of the List for which to add a member.
+     * Get Posts by IDs
+     * Retrieves details of multiple Posts by their IDs.
   
   
   
+     * @param ids A comma separated list of Post IDs. Up to 100 are allowed in a single request.
   
-     * @returns {Promise<AddMemberResponse>} Promise resolving to the API response
+  
+  
+     * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
      */
-    addMember(id: string, options?: AddMemberOptions): Promise<AddMemberResponse>;
+    getByIds(ids: Array<any>, options?: GetByIdsOptions): Promise<GetByIdsResponse>;
     /**
-     * Create List
-     * Creates a new List for the authenticated user.
+     * Create or Edit Post
+     * Creates a new Post for the authenticated user, or edits an existing Post when edit_options are provided.
+  
+  
+  
+     * @param body Request body
+  
+     * @returns {Promise<CreateResponse>} Promise resolving to the API response
+     */
+    create(body: CreateRequest$1): Promise<CreateResponse$1>;
+    /**
+     * Get Post by ID
+     * Retrieves details of a specific Post by its ID.
+  
+  
+     * @param id A single Post ID.
+  
+  
+  
+  
+     * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
+     */
+    getById(id: string, options?: GetByIdOptions$1): Promise<GetByIdResponse$1>;
+    /**
+     * Delete Post
+     * Deletes a specific Post by its ID, if owned by the authenticated user.
+  
+  
+     * @param id The ID of the Post to be deleted.
+  
+  
+  
+  
+     * @returns {Promise<DeleteResponse>} Promise resolving to the API response
+     */
+    delete(id: string): Promise<DeleteResponse$1>;
+    /**
+     * Get Post analytics
+     * Retrieves analytics data for specified Posts within a defined time range.
+  
+  
+  
+     * @param ids A comma separated list of Post IDs. Up to 100 are allowed in a single request.
+  
+  
+  
+     * @param endTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
+  
+  
+  
+     * @param startTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
+  
+  
+  
+     * @param granularity The granularity for the search counts results.
+  
+  
+  
+     * @returns {Promise<GetAnalyticsResponse>} Promise resolving to the API response
+     */
+    getAnalytics(ids: Array<any>, endTime: string, startTime: string, granularity: string, options?: GetAnalyticsOptions): Promise<GetAnalyticsResponse>;
+    /**
+     * Get Reposted by
+     * Retrieves a list of Users who reposted a specific Post by its ID.
+  
+  
+     * @param id A single Post ID.
+  
+  
+  
+  
+     * @returns {Promise<GetRepostedByResponse>} Promise resolving to the API response
+     */
+    getRepostedBy(id: string, options?: GetRepostedByOptions): Promise<GetRepostedByResponse>;
+    /**
+     * Get historical Post insights
+     * Retrieves historical engagement metrics for specified Posts within a defined time range.
+  
+  
+  
+     * @param tweetIds List of PostIds for historical metrics.
+  
+  
+  
+     * @param endTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the end of the time range.
+  
+  
+  
+     * @param startTime YYYY-MM-DDTHH:mm:ssZ. The UTC timestamp representing the start of the time range.
+  
+  
+  
+     * @param granularity granularity of metrics response.
+  
+  
+  
+     * @param requestedMetrics request metrics for historical request.
+  
+  
+  
+     * @returns {Promise<GetInsightsHistoricalResponse>} Promise resolving to the API response
+     */
+    getInsightsHistorical(tweetIds: Array<any>, endTime: string, startTime: string, granularity: string, requestedMetrics: Array<any>, options?: GetInsightsHistoricalOptions): Promise<GetInsightsHistoricalResponse>;
+    /**
+     * Get Liking Users
+     * Retrieves a list of Users who liked a specific Post by its ID.
+  
+  
+     * @param id A single Post ID.
+  
+  
+  
+  
+     * @returns {Promise<GetLikingUsersResponse>} Promise resolving to the API response
+     */
+    getLikingUsers(id: string, options?: GetLikingUsersOptions): Promise<GetLikingUsersResponse>;
+    /**
+     * Get Reposts
+     * Retrieves a list of Posts that repost a specific Post by its ID.
+  
+  
+     * @param id A single Post ID.
+  
+  
+  
+  
+     * @returns {Promise<GetRepostsResponse>} Promise resolving to the API response
+     */
+    getReposts(id: string, options?: GetRepostsOptions): Promise<GetRepostsResponse>;
+    /**
+     * Get 28-hour Post insights
+     * Retrieves engagement metrics for specified Posts over the last 28 hours.
+  
+  
+  
+     * @param tweetIds List of PostIds for 28hr metrics.
+  
+  
+  
+     * @param granularity granularity of metrics response.
+  
+  
+  
+     * @param requestedMetrics request metrics for historical request.
+  
+  
+  
+     * @returns {Promise<GetInsights28hrResponse>} Promise resolving to the API response
+     */
+    getInsights28hr(tweetIds: Array<any>, granularity: string, requestedMetrics: Array<any>, options?: GetInsights28hrOptions): Promise<GetInsights28hrResponse>;
+    /**
+     * Get count of recent Posts
+     * Retrieves the count of Posts from the last 7 days matching a search query.
+  
+  
+  
+     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
+  
+  
+  
+     * @returns {Promise<GetCountsRecentResponse>} Promise resolving to the API response
+     */
+    getCountsRecent(query: string, options?: GetCountsRecentOptions): Promise<GetCountsRecentResponse>;
+    /**
+     * Search all Posts
+     * Retrieves Posts from the full archive matching a search query.
+  
+  
+  
+     * @param query One query/rule/filter for matching Posts. Refer to https://t.co/rulelength to identify the max query length.
+  
+  
+  
+     * @returns {Promise<SearchAllResponse>} Promise resolving to the API response
+     */
+    searchAll(query: string, options?: SearchAllOptions): Promise<SearchAllResponse>;
+    /**
+     * Hide reply
+     * Hides or unhides a reply to a conversation owned by the authenticated user.
+  
+  
+     * @param tweetId The ID of the reply that you want to hide or unhide.
+  
+  
+  
+  
+     * @returns {Promise<HideReplyResponse>} Promise resolving to the API response
+     */
+    hideReply(tweetId: string, options?: HideReplyOptions): Promise<HideReplyResponse>;
+}
+
+/**
+ * Models for webhooks operations
+ */
+
+/**
+ * Response for createStreamLink
+ *
+ * @public
+ */
+type CreateStreamLinkResponse = WebhookLinksCreateResponse;
+/**
+ * Response for deleteStreamLink
+ *
+ * @public
+ */
+type DeleteStreamLinkResponse = WebhookLinksDeleteResponse;
+/**
+ * Response for validate
+ *
+ * @public
+ */
+type ValidateResponse = WebhookConfigPutResponse;
+/**
+ * Response for delete
+ *
+ * @public
+ */
+type DeleteResponse = WebhookConfigDeleteResponse;
+/**
+ * Response for getStreamLinks
+ *
+ * @public
+ */
+type GetStreamLinksResponse = WebhookLinksGetResponse;
+/**
+ * Response for get
+ *
+ * @public
+ */
+type GetResponse$1 = Get2WebhooksResponse;
+/**
+ * Request for create
+ *
+ * @public
+ */
+type CreateRequest = WebhookConfigCreateRequest;
+/**
+ * Response for create
+ *
+ * @public
+ */
+type CreateResponse = WebhookConfigCreateResponse;
+
+type models$5_CreateRequest = CreateRequest;
+type models$5_CreateResponse = CreateResponse;
+type models$5_CreateStreamLinkResponse = CreateStreamLinkResponse;
+type models$5_DeleteResponse = DeleteResponse;
+type models$5_DeleteStreamLinkResponse = DeleteStreamLinkResponse;
+type models$5_GetStreamLinksResponse = GetStreamLinksResponse;
+type models$5_ValidateResponse = ValidateResponse;
+declare namespace models$5 {
+  export {
+    models$5_CreateRequest as CreateRequest,
+    models$5_CreateResponse as CreateResponse,
+    models$5_CreateStreamLinkResponse as CreateStreamLinkResponse,
+    models$5_DeleteResponse as DeleteResponse,
+    models$5_DeleteStreamLinkResponse as DeleteStreamLinkResponse,
+    GetResponse$1 as GetResponse,
+    models$5_GetStreamLinksResponse as GetStreamLinksResponse,
+    models$5_ValidateResponse as ValidateResponse,
+  };
+}
+
+/**
+ * webhooks client for the X API.
+ *
+ * This module provides a client for interacting with the webhooks endpoints of the X API.
+ */
+
+/**
+ * Options for createStreamLink method
+ *
+ * @public
+ */
+interface CreateStreamLinkOptions {
+    /** A comma separated list of Tweet fields to display. */
+    tweetfields?: string;
+    /** A comma separated list of fields to expand. */
+    expansions?: string;
+    /** A comma separated list of Media fields to display. */
+    mediafields?: string;
+    /** A comma separated list of Poll fields to display. */
+    pollfields?: string;
+    /** A comma separated list of User fields to display. */
+    userfields?: string;
+    /** A comma separated list of Place fields to display. */
+    placefields?: string;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for get method
+ *
+ * @public
+ */
+interface GetOptions$1 {
+    /** A comma separated list of WebhookConfig fields to display. */
+    webhookConfigfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for create method
+ *
+ * @public
+ */
+interface CreateOptions {
+    /** Request body */
+    body?: CreateRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Client for webhooks operations
+ *
+ * This client provides methods for interacting with the webhooks endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all webhooks related operations.
+ *
+ * @category webhooks
+ */
+declare class WebhooksClient {
+    private client;
+    /**
+       * Creates a new webhooks client instance
+       *
+       * @param client - The main X API client instance
+       */
+    constructor(client: Client);
+    /**
+     * Create stream link
+     * Creates a link to deliver FilteredStream events to the given webhook.
+  
+  
+     * @param webhookId The webhook ID to link to your FilteredStream ruleset.
+  
+  
+  
+  
+     * @returns {Promise<CreateStreamLinkResponse>} Promise resolving to the API response
+     */
+    createStreamLink(webhookId: string, options?: CreateStreamLinkOptions): Promise<CreateStreamLinkResponse>;
+    /**
+     * Delete stream link
+     * Deletes a link from FilteredStream events to the given webhook.
+  
+  
+     * @param webhookId The webhook ID to link to your FilteredStream ruleset.
+  
+  
+  
+  
+     * @returns {Promise<DeleteStreamLinkResponse>} Promise resolving to the API response
+     */
+    deleteStreamLink(webhookId: string): Promise<DeleteStreamLinkResponse>;
+    /**
+     * Validate webhook
+     * Triggers a CRC check for a given webhook.
+  
+  
+     * @param webhookId The ID of the webhook to check.
+  
+  
+  
+  
+     * @returns {Promise<ValidateResponse>} Promise resolving to the API response
+     */
+    validate(webhookId: string): Promise<ValidateResponse>;
+    /**
+     * Delete webhook
+     * Deletes an existing webhook configuration.
+  
+  
+     * @param webhookId The ID of the webhook to delete.
+  
+  
+  
+  
+     * @returns {Promise<DeleteResponse>} Promise resolving to the API response
+     */
+    delete(webhookId: string): Promise<DeleteResponse>;
+    /**
+     * Get stream links
+     * Get a list of webhook links associated with a filtered stream ruleset.
+  
+  
+  
+     * @returns {Promise<GetStreamLinksResponse>} Promise resolving to the API response
+     */
+    getStreamLinks(): Promise<GetStreamLinksResponse>;
+    /**
+     * Get webhook
+     * Get a list of webhook configs associated with a client app.
+  
+  
+  
+     * @returns {Promise<GetResponse>} Promise resolving to the API response
+     */
+    get(options?: GetOptions$1): Promise<GetResponse$1>;
+    /**
+     * Create webhook
+     * Creates a new webhook configuration.
   
   
   
      * @returns {Promise<CreateResponse>} Promise resolving to the API response
      */
     create(options?: CreateOptions): Promise<CreateResponse>;
+}
+
+/**
+ * Models for activity operations
+ */
+
+/**
+ * Response for getSubscriptions
+ *
+ * @public
+ */
+type GetSubscriptionsResponse = ActivitySubscriptionGetResponse;
+/**
+ * Request for createSubscription
+ *
+ * @public
+ */
+type CreateSubscriptionRequest = ActivitySubscriptionCreateRequest;
+/**
+ * Response for createSubscription
+ *
+ * @public
+ */
+type CreateSubscriptionResponse = ActivitySubscriptionCreateResponse;
+/**
+ * Request for updateSubscription
+ *
+ * @public
+ */
+type UpdateSubscriptionRequest = ActivitySubscriptionUpdateRequest;
+/**
+ * Response for updateSubscription
+ *
+ * @public
+ */
+type UpdateSubscriptionResponse = ActivitySubscriptionUpdateResponse;
+/**
+ * Response for deleteSubscription
+ *
+ * @public
+ */
+type DeleteSubscriptionResponse = ActivitySubscriptionDeleteResponse;
+/**
+ * Response for stream
+ *
+ * @public
+ */
+type StreamResponse = ActivityStreamingResponse;
+
+type models$4_CreateSubscriptionRequest = CreateSubscriptionRequest;
+type models$4_CreateSubscriptionResponse = CreateSubscriptionResponse;
+type models$4_DeleteSubscriptionResponse = DeleteSubscriptionResponse;
+type models$4_GetSubscriptionsResponse = GetSubscriptionsResponse;
+type models$4_StreamResponse = StreamResponse;
+type models$4_UpdateSubscriptionRequest = UpdateSubscriptionRequest;
+type models$4_UpdateSubscriptionResponse = UpdateSubscriptionResponse;
+declare namespace models$4 {
+  export {
+    models$4_CreateSubscriptionRequest as CreateSubscriptionRequest,
+    models$4_CreateSubscriptionResponse as CreateSubscriptionResponse,
+    models$4_DeleteSubscriptionResponse as DeleteSubscriptionResponse,
+    models$4_GetSubscriptionsResponse as GetSubscriptionsResponse,
+    models$4_StreamResponse as StreamResponse,
+    models$4_UpdateSubscriptionRequest as UpdateSubscriptionRequest,
+    models$4_UpdateSubscriptionResponse as UpdateSubscriptionResponse,
+  };
+}
+
+/**
+ * activity client for the X API.
+ *
+ * This module provides a client for interacting with the activity endpoints of the X API.
+ */
+
+/**
+ * Options for createSubscription method
+ *
+ * @public
+ */
+interface CreateSubscriptionOptions {
+    /** Request body */
+    body?: CreateSubscriptionRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for updateSubscription method
+ *
+ * @public
+ */
+interface UpdateSubscriptionOptions {
+    /** Request body */
+    body?: UpdateSubscriptionRequest;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for stream method
+ *
+ * @public
+ */
+interface StreamOptions {
+    /** The number of minutes of backfill requested. */
+    backfillMinutes?: number;
+    /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. */
+    startTime?: string;
+    /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
+    endTime?: string;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Client for activity operations
+ *
+ * This client provides methods for interacting with the activity endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all activity related operations.
+ *
+ * @category activity
+ */
+declare class ActivityClient {
+    private client;
     /**
-     * Get List by ID
-     * Retrieves details of a specific List by its ID.
+       * Creates a new activity client instance
+       *
+       * @param client - The main X API client instance
+       */
+    constructor(client: Client);
+    /**
+     * Get X activity subscriptions
+     * Get a list of active subscriptions for XAA
   
   
-     * @param id The ID of the List.
+  
+     * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
+     */
+    getSubscriptions(): Promise<GetSubscriptionsResponse>;
+    /**
+     * Create X activity subscription
+     * Creates a subscription for an X activity event
+  
+  
+  
+     * @returns {Promise<CreateSubscriptionResponse>} Promise resolving to the API response
+     */
+    createSubscription(options?: CreateSubscriptionOptions): Promise<CreateSubscriptionResponse>;
+    /**
+     * Update X activity subscription
+     * Updates a subscription for an X activity event
+  
+  
+     * @param subscriptionId The ID of the subscription to update.
+  
+  
+  
+  
+     * @returns {Promise<UpdateSubscriptionResponse>} Promise resolving to the API response
+     */
+    updateSubscription(subscriptionId: string, options?: UpdateSubscriptionOptions): Promise<UpdateSubscriptionResponse>;
+    /**
+     * Deletes X activity subscription
+     * Deletes a subscription for an X activity event
+  
+  
+     * @param subscriptionId The ID of the subscription to delete.
+  
+  
+  
+  
+     * @returns {Promise<DeleteSubscriptionResponse>} Promise resolving to the API response
+     */
+    deleteSubscription(subscriptionId: string): Promise<DeleteSubscriptionResponse>;
+    /**
+     * Activity Stream
+     * Stream of X Activities
+  
+  
+  
+     * @returns {Promise<StreamResponse>} Promise resolving to the API response
+     */
+    stream(options?: StreamOptions): Promise<StreamResponse>;
+}
+
+/**
+ * Models for usage operations
+ */
+
+/**
+ * Response for get
+ *
+ * @public
+ */
+type GetResponse = Get2UsageTweetsResponse;
+
+type models$3_GetResponse = GetResponse;
+declare namespace models$3 {
+  export {
+    models$3_GetResponse as GetResponse,
+  };
+}
+
+/**
+ * usage client for the X API.
+ *
+ * This module provides a client for interacting with the usage endpoints of the X API.
+ */
+
+/**
+ * Options for get method
+ *
+ * @public
+ */
+interface GetOptions {
+    /** The number of days for which you need usage for. */
+    days?: number;
+    /** A comma separated list of Usage fields to display. */
+    usagefields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Client for usage operations
+ *
+ * This client provides methods for interacting with the usage endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all usage related operations.
+ *
+ * @category usage
+ */
+declare class UsageClient {
+    private client;
+    /**
+       * Creates a new usage client instance
+       *
+       * @param client - The main X API client instance
+       */
+    constructor(client: Client);
+    /**
+     * Get usage
+     * Retrieves usage statistics for Posts over a specified number of days.
+  
+  
+  
+     * @returns {Promise<GetResponse>} Promise resolving to the API response
+     */
+    get(options?: GetOptions): Promise<GetResponse>;
+}
+
+/**
+ * Models for connections operations
+ */
+
+/**
+ * Response for deleteAll
+ *
+ * @public
+ */
+type DeleteAllResponse = KillAllConnectionsResponse;
+
+type models$2_DeleteAllResponse = DeleteAllResponse;
+declare namespace models$2 {
+  export {
+    models$2_DeleteAllResponse as DeleteAllResponse,
+  };
+}
+
+/**
+ * connections client for the X API.
+ *
+ * This module provides a client for interacting with the connections endpoints of the X API.
+ */
+
+/**
+ * Client for connections operations
+ *
+ * This client provides methods for interacting with the connections endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all connections related operations.
+ *
+ * @category connections
+ */
+declare class ConnectionsClient {
+    private client;
+    /**
+       * Creates a new connections client instance
+       *
+       * @param client - The main X API client instance
+       */
+    constructor(client: Client);
+    /**
+     * Terminate all connections
+     * Terminates all active streaming connections for the authenticated application.
+  
+  
+  
+     * @returns {Promise<DeleteAllResponse>} Promise resolving to the API response
+     */
+    deleteAll(): Promise<DeleteAllResponse>;
+}
+
+/**
+ * Models for compliance operations
+ */
+
+/**
+ * Response for getJobs
+ *
+ * @public
+ */
+type GetJobsResponse = Get2ComplianceJobsResponse;
+/**
+ * Request for createJobs
+ *
+ * @public
+ */
+type CreateJobsRequest = CreateComplianceJobRequest;
+/**
+ * Response for createJobs
+ *
+ * @public
+ */
+type CreateJobsResponse = CreateComplianceJobResponse;
+/**
+ * Response for getJobsById
+ *
+ * @public
+ */
+type GetJobsByIdResponse = Get2ComplianceJobsIdResponse;
+
+type models$1_CreateJobsRequest = CreateJobsRequest;
+type models$1_CreateJobsResponse = CreateJobsResponse;
+type models$1_GetJobsByIdResponse = GetJobsByIdResponse;
+type models$1_GetJobsResponse = GetJobsResponse;
+declare namespace models$1 {
+  export {
+    models$1_CreateJobsRequest as CreateJobsRequest,
+    models$1_CreateJobsResponse as CreateJobsResponse,
+    models$1_GetJobsByIdResponse as GetJobsByIdResponse,
+    models$1_GetJobsResponse as GetJobsResponse,
+  };
+}
+
+/**
+ * compliance client for the X API.
+ *
+ * This module provides a client for interacting with the compliance endpoints of the X API.
+ */
+
+/**
+ * Options for getJobs method
+ *
+ * @public
+ */
+interface GetJobsOptions {
+    /** Status of Compliance Job to list. */
+    status?: string;
+    /** A comma separated list of ComplianceJob fields to display. */
+    complianceJobfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getJobsById method
+ *
+ * @public
+ */
+interface GetJobsByIdOptions {
+    /** A comma separated list of ComplianceJob fields to display. */
+    complianceJobfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Client for compliance operations
+ *
+ * This client provides methods for interacting with the compliance endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all compliance related operations.
+ *
+ * @category compliance
+ */
+declare class ComplianceClient {
+    private client;
+    /**
+       * Creates a new compliance client instance
+       *
+       * @param client - The main X API client instance
+       */
+    constructor(client: Client);
+    /**
+     * Get Compliance Jobs
+     * Retrieves a list of Compliance Jobs filtered by job type and optional status.
+  
+  
+  
+     * @param type Type of Compliance Job to list.
+  
+  
+  
+     * @returns {Promise<GetJobsResponse>} Promise resolving to the API response
+     */
+    getJobs(type: string, options?: GetJobsOptions): Promise<GetJobsResponse>;
+    /**
+     * Create Compliance Job
+     * Creates a new Compliance Job for the specified job type.
+  
+  
+  
+     * @param body Request body
+  
+     * @returns {Promise<CreateJobsResponse>} Promise resolving to the API response
+     */
+    createJobs(body: CreateJobsRequest): Promise<CreateJobsResponse>;
+    /**
+     * Get Compliance Job by ID
+     * Retrieves details of a specific Compliance Job by its ID.
+  
+  
+     * @param id The ID of the Compliance Job to retrieve.
+  
+  
+  
+  
+     * @returns {Promise<GetJobsByIdResponse>} Promise resolving to the API response
+     */
+    getJobsById(id: string, options?: GetJobsByIdOptions): Promise<GetJobsByIdResponse>;
+}
+
+/**
+ * Models for communities operations
+ */
+
+/**
+ * Response for search
+ *
+ * @public
+ */
+type SearchResponse = Get2CommunitiesSearchResponse;
+/**
+ * Response for getById
+ *
+ * @public
+ */
+type GetByIdResponse = Get2CommunitiesIdResponse;
+
+type models_GetByIdResponse = GetByIdResponse;
+type models_SearchResponse = SearchResponse;
+declare namespace models {
+  export {
+    models_GetByIdResponse as GetByIdResponse,
+    models_SearchResponse as SearchResponse,
+  };
+}
+
+/**
+ * communities client for the X API.
+ *
+ * This module provides a client for interacting with the communities endpoints of the X API.
+ */
+
+/**
+ * Options for search method
+ *
+ * @public
+ */
+interface SearchOptions {
+    /** The maximum number of search results to be returned by a request. */
+    maxResults?: number;
+    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+    nextToken?: any;
+    /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+    paginationToken?: any;
+    /** A comma separated list of Community fields to display. */
+    communityfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Options for getById method
+ *
+ * @public
+ */
+interface GetByIdOptions {
+    /** A comma separated list of Community fields to display. */
+    communityfields?: Array<any>;
+    /** Additional request options */
+    requestOptions?: RequestOptions;
+}
+/**
+ * Client for communities operations
+ *
+ * This client provides methods for interacting with the communities endpoints
+ * of the X API. It handles authentication, request formatting, and response
+ * parsing for all communities related operations.
+ *
+ * @category communities
+ */
+declare class CommunitiesClient {
+    private client;
+    /**
+       * Creates a new communities client instance
+       *
+       * @param client - The main X API client instance
+       */
+    constructor(client: Client);
+    /**
+     * Search Communities
+     * Retrieves a list of Communities matching the specified search query.
+  
+  
+  
+     * @param query Query to search communities.
+  
+  
+  
+     * @returns {Promise<SearchResponse>} Promise resolving to the API response
+     */
+    search(query: string, options?: SearchOptions): Promise<SearchResponse>;
+    /**
+     * Get Community by ID
+     * Retrieves details of a specific Community by its ID.
+  
+  
+     * @param id The ID of the Community.
   
   
   
@@ -9667,45 +9706,6 @@ declare class ListsClient {
      * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
      */
     getById(id: string, options?: GetByIdOptions): Promise<GetByIdResponse>;
-    /**
-     * Update List
-     * Updates the details of a specific List owned by the authenticated user by its ID.
-  
-  
-     * @param id The ID of the List to modify.
-  
-  
-  
-  
-     * @returns {Promise<UpdateResponse>} Promise resolving to the API response
-     */
-    update(id: string, options?: UpdateOptions): Promise<UpdateResponse>;
-    /**
-     * Delete List
-     * Deletes a specific List owned by the authenticated user by its ID.
-  
-  
-     * @param id The ID of the List to delete.
-  
-  
-  
-  
-     * @returns {Promise<DeleteResponse>} Promise resolving to the API response
-     */
-    delete(id: string): Promise<DeleteResponse>;
-    /**
-     * Get List Posts
-     * Retrieves a list of Posts associated with a specific List by its ID.
-  
-  
-     * @param id The ID of the List.
-  
-  
-  
-  
-     * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
-     */
-    getPosts(id: string, options?: GetPostsOptions): Promise<GetPostsResponse>;
 }
 
 /**
@@ -9833,40 +9833,40 @@ declare class Client {
     readonly maxRetries: number;
     /** HTTP client for making requests */
     readonly httpClient: HttpClient;
-    /** community notes client */
-    readonly communityNotes: CommunityNotesClient;
-    /** spaces client */
-    readonly spaces: SpacesClient;
     /** stream client */
     readonly stream: StreamClient;
+    /** media client */
+    readonly media: MediaClient;
+    /** direct messages client */
+    readonly directMessages: DirectMessagesClient;
+    /** users client */
+    readonly users: UsersClient;
+    /** lists client */
+    readonly lists: ListsClient;
+    /** general client */
+    readonly general: GeneralClient;
+    /** community notes client */
+    readonly communityNotes: CommunityNotesClient;
     /** account activity client */
     readonly accountActivity: AccountActivityClient;
-    /** connections client */
-    readonly connections: ConnectionsClient;
+    /** spaces client */
+    readonly spaces: SpacesClient;
     /** trends client */
     readonly trends: TrendsClient;
+    /** posts client */
+    readonly posts: PostsClient;
+    /** webhooks client */
+    readonly webhooks: WebhooksClient;
+    /** activity client */
+    readonly activity: ActivityClient;
     /** usage client */
     readonly usage: UsageClient;
+    /** connections client */
+    readonly connections: ConnectionsClient;
     /** compliance client */
     readonly compliance: ComplianceClient;
     /** communities client */
     readonly communities: CommunitiesClient;
-    /** direct messages client */
-    readonly directMessages: DirectMessagesClient;
-    /** activity client */
-    readonly activity: ActivityClient;
-    /** posts client */
-    readonly posts: PostsClient;
-    /** users client */
-    readonly users: UsersClient;
-    /** webhooks client */
-    readonly webhooks: WebhooksClient;
-    /** media client */
-    readonly media: MediaClient;
-    /** general client */
-    readonly general: GeneralClient;
-    /** lists client */
-    readonly lists: ListsClient;
     /**
      * Creates a new X API client instance
      *
@@ -10459,4 +10459,4 @@ declare class EventPaginator extends Paginator<any> {
     get events(): any[];
 }
 
-export { models$d as AccountActivity, AccountActivityClient, models$6 as Activity, ActivityClient, ApiError, ApiResponse, Client, ClientConfig, models$8 as Communities, CommunitiesClient, models$g as CommunityNotes, CommunityNotesClient, models$9 as Compliance, ComplianceClient, models$c as Connections, ConnectionsClient, CryptoUtils, models$7 as DirectMessages, DirectMessagesClient, EventPaginator, models$1 as General, GeneralClient, HttpClient, RequestOptions$1 as HttpClientRequestOptions, HttpResponse, models as Lists, ListsClient, models$2 as Media, MediaClient, OAuth1, OAuth1AccessToken, OAuth1Config, OAuth1RequestToken, OAuth2, OAuth2Config, OAuth2Token, PaginatedResponse, PaginationMeta, Paginator, PostPaginator, models$5 as Posts, PostsClient, RequestOptions, schemas as Schemas, models$f as Spaces, SpacesClient, models$e as Stream, StreamClient, StreamListener, models$b as Trends, TrendsClient, TweetStreamListener, models$a as Usage, UsageClient, UserPaginator, models$4 as Users, UsersClient, models$3 as Webhooks, WebhooksClient, generateCodeChallenge, generateCodeVerifier, generateNonce, generateTimestamp, hmacSha1, httpClient };
+export { models$9 as AccountActivity, AccountActivityClient, models$4 as Activity, ActivityClient, ApiError, ApiResponse, Client, ClientConfig, models as Communities, CommunitiesClient, models$a as CommunityNotes, CommunityNotesClient, models$1 as Compliance, ComplianceClient, models$2 as Connections, ConnectionsClient, CryptoUtils, models$e as DirectMessages, DirectMessagesClient, EventPaginator, models$b as General, GeneralClient, HttpClient, RequestOptions$1 as HttpClientRequestOptions, HttpResponse, models$c as Lists, ListsClient, models$f as Media, MediaClient, OAuth1, OAuth1AccessToken, OAuth1Config, OAuth1RequestToken, OAuth2, OAuth2Config, OAuth2Token, PaginatedResponse, PaginationMeta, Paginator, PostPaginator, models$6 as Posts, PostsClient, RequestOptions, schemas as Schemas, models$8 as Spaces, SpacesClient, models$g as Stream, StreamClient, StreamListener, models$7 as Trends, TrendsClient, TweetStreamListener, models$3 as Usage, UsageClient, UserPaginator, models$d as Users, UsersClient, models$5 as Webhooks, WebhooksClient, generateCodeChallenge, generateCodeVerifier, generateNonce, generateTimestamp, hmacSha1, httpClient };

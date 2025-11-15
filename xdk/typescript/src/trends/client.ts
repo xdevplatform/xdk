@@ -16,10 +16,23 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
+  GetPersonalizedResponse,
   GetAiResponse,
   GetByWoeidResponse,
-  GetPersonalizedResponse,
 } from './models.js';
+
+/**
+ * Options for getPersonalized method
+ * 
+ * @public
+ */
+export interface GetPersonalizedOptions {
+  /** A comma separated list of PersonalizedTrend fields to display. */
+  personalizedTrendfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+}
 
 /**
  * Options for getAi method
@@ -51,19 +64,6 @@ export interface GetByWoeidOptions {
 }
 
 /**
- * Options for getPersonalized method
- * 
- * @public
- */
-export interface GetPersonalizedOptions {
-  /** A comma separated list of PersonalizedTrend fields to display. */
-  personalizedTrendfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
  * Client for trends operations
  * 
  * This client provides methods for interacting with the trends endpoints
@@ -82,6 +82,52 @@ export class TrendsClient {
      */
   constructor(client: Client) {
     this.client = client;
+  }
+
+  /**
+   * Get personalized Trends
+   * Retrieves personalized trending topics for the authenticated user.
+
+
+
+   * @returns {Promise<GetPersonalizedResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getPersonalized(
+    options: GetPersonalizedOptions = {}
+  ): Promise<GetPersonalizedResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      personalizedTrendfields = [],
+
+      requestOptions: requestOptions = {},
+    } =
+      options || {};
+
+    // Build the path with path parameters
+    let path = '/2/users/personalized_trends';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (personalizedTrendfields !== undefined) {
+      params.append(
+        'personalized_trend.fields',
+        personalizedTrendfields.join(',')
+      );
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetPersonalizedResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 
   /**
@@ -181,52 +227,6 @@ export class TrendsClient {
     };
 
     return this.client.request<GetByWoeidResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get personalized Trends
-   * Retrieves personalized trending topics for the authenticated user.
-
-
-
-   * @returns {Promise<GetPersonalizedResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getPersonalized(
-    options: GetPersonalizedOptions = {}
-  ): Promise<GetPersonalizedResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      personalizedTrendfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/personalized_trends';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (personalizedTrendfields !== undefined) {
-      params.append(
-        'personalized_trend.fields',
-        personalizedTrendfields.join(',')
-      );
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetPersonalizedResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

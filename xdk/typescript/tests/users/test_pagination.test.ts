@@ -30,169 +30,6 @@ describe('UsersClient Pagination', () => {
   });
 
   
-  it('should create paginator for getFollowing', () => {
-    const method = (usersClient as any)['getFollowing'];
-    
-    // Should be able to create paginator without error
-    const params: any = {
-      
-      
-      id: 'test_value',
-      
-      
-      maxResults: 10
-    };
-    
-    // Note: Paginator creation is typically done through the method itself
-    // This test verifies the method supports pagination
-    expect(typeof method).toBe('function');
-  });
-
-  it('should paginate through pages for getFollowing', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request to return paginated responses (like Python mocks session)
-    let callCount = 0;
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) {
-        // First page response
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '1', name: 'Item 1' },
-              { id: '2', name: 'Item 2' }
-            ],
-            meta: {
-              
-              'next_token': 'next_page_token',
-              
-              result_count: 2
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      } else {
-        // Second page response (no next token = end of pagination)
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '3', name: 'Item 3' }
-            ],
-            meta: {
-              result_count: 1
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      }
-    });
-
-    try {
-      const method = (usersClient as any)['getFollowing'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 2
-      };
-
-      // Call method and get first page
-      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
-      expect(firstPage).toBeDefined();
-      expect(firstPage.data).toBeDefined();
-      expect(Array.isArray(firstPage.data)).toBe(true);
-      expect(firstPage.data.length).toBe(2);
-
-      // If there's a next token, call again with pagination token
-      
-      if (firstPage.meta && firstPage.meta['next_token']) {
-        options.paginationToken = firstPage.meta['next_token'];
-        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
-        expect(secondPage).toBeDefined();
-        expect(secondPage.data).toBeDefined();
-        expect(Array.isArray(secondPage.data)).toBe(true);
-      }
-      
-
-      // Should have made multiple requests
-      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  it('should handle pagination parameters correctly for getFollowing', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request (like Python mocks session)
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      json: async () => ({
-        data: [],
-        meta: { result_count: 0 }
-      }),
-      text: async () => '{}'
-    } as Response);
-
-    try {
-      const method = (usersClient as any)['getFollowing'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 5
-      };
-
-      await method.apply(usersClient, [...requiredArgs, options]);
-
-      // Verify maxResults was passed in request (becomes max_results in query string)
-      expect(client.httpClient.request).toHaveBeenCalled();
-      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
-      const url = callArgs[0] as string;
-      // maxResults in options becomes max_results in query string
-      expect(url).toMatch(/max_results=5|maxResults=5/);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  
   it('should create paginator for getMentions', () => {
     const method = (usersClient as any)['getMentions'];
     
@@ -326,972 +163,6 @@ describe('UsersClient Pagination', () => {
 
     try {
       const method = (usersClient as any)['getMentions'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 5
-      };
-
-      await method.apply(usersClient, [...requiredArgs, options]);
-
-      // Verify maxResults was passed in request (becomes max_results in query string)
-      expect(client.httpClient.request).toHaveBeenCalled();
-      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
-      const url = callArgs[0] as string;
-      // maxResults in options becomes max_results in query string
-      expect(url).toMatch(/max_results=5|maxResults=5/);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  
-  it('should create paginator for getFollowedLists', () => {
-    const method = (usersClient as any)['getFollowedLists'];
-    
-    // Should be able to create paginator without error
-    const params: any = {
-      
-      
-      id: 'test_value',
-      
-      
-      maxResults: 10
-    };
-    
-    // Note: Paginator creation is typically done through the method itself
-    // This test verifies the method supports pagination
-    expect(typeof method).toBe('function');
-  });
-
-  it('should paginate through pages for getFollowedLists', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request to return paginated responses (like Python mocks session)
-    let callCount = 0;
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) {
-        // First page response
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '1', name: 'Item 1' },
-              { id: '2', name: 'Item 2' }
-            ],
-            meta: {
-              
-              'next_token': 'next_page_token',
-              
-              result_count: 2
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      } else {
-        // Second page response (no next token = end of pagination)
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '3', name: 'Item 3' }
-            ],
-            meta: {
-              result_count: 1
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      }
-    });
-
-    try {
-      const method = (usersClient as any)['getFollowedLists'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 2
-      };
-
-      // Call method and get first page
-      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
-      expect(firstPage).toBeDefined();
-      expect(firstPage.data).toBeDefined();
-      expect(Array.isArray(firstPage.data)).toBe(true);
-      expect(firstPage.data.length).toBe(2);
-
-      // If there's a next token, call again with pagination token
-      
-      if (firstPage.meta && firstPage.meta['next_token']) {
-        options.paginationToken = firstPage.meta['next_token'];
-        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
-        expect(secondPage).toBeDefined();
-        expect(secondPage.data).toBeDefined();
-        expect(Array.isArray(secondPage.data)).toBe(true);
-      }
-      
-
-      // Should have made multiple requests
-      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  it('should handle pagination parameters correctly for getFollowedLists', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request (like Python mocks session)
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      json: async () => ({
-        data: [],
-        meta: { result_count: 0 }
-      }),
-      text: async () => '{}'
-    } as Response);
-
-    try {
-      const method = (usersClient as any)['getFollowedLists'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 5
-      };
-
-      await method.apply(usersClient, [...requiredArgs, options]);
-
-      // Verify maxResults was passed in request (becomes max_results in query string)
-      expect(client.httpClient.request).toHaveBeenCalled();
-      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
-      const url = callArgs[0] as string;
-      // maxResults in options becomes max_results in query string
-      expect(url).toMatch(/max_results=5|maxResults=5/);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  
-  it('should create paginator for getMuting', () => {
-    const method = (usersClient as any)['getMuting'];
-    
-    // Should be able to create paginator without error
-    const params: any = {
-      
-      
-      id: 'test_value',
-      
-      
-      maxResults: 10
-    };
-    
-    // Note: Paginator creation is typically done through the method itself
-    // This test verifies the method supports pagination
-    expect(typeof method).toBe('function');
-  });
-
-  it('should paginate through pages for getMuting', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request to return paginated responses (like Python mocks session)
-    let callCount = 0;
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) {
-        // First page response
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '1', name: 'Item 1' },
-              { id: '2', name: 'Item 2' }
-            ],
-            meta: {
-              
-              'next_token': 'next_page_token',
-              
-              result_count: 2
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      } else {
-        // Second page response (no next token = end of pagination)
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '3', name: 'Item 3' }
-            ],
-            meta: {
-              result_count: 1
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      }
-    });
-
-    try {
-      const method = (usersClient as any)['getMuting'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 2
-      };
-
-      // Call method and get first page
-      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
-      expect(firstPage).toBeDefined();
-      expect(firstPage.data).toBeDefined();
-      expect(Array.isArray(firstPage.data)).toBe(true);
-      expect(firstPage.data.length).toBe(2);
-
-      // If there's a next token, call again with pagination token
-      
-      if (firstPage.meta && firstPage.meta['next_token']) {
-        options.paginationToken = firstPage.meta['next_token'];
-        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
-        expect(secondPage).toBeDefined();
-        expect(secondPage.data).toBeDefined();
-        expect(Array.isArray(secondPage.data)).toBe(true);
-      }
-      
-
-      // Should have made multiple requests
-      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  it('should handle pagination parameters correctly for getMuting', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request (like Python mocks session)
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      json: async () => ({
-        data: [],
-        meta: { result_count: 0 }
-      }),
-      text: async () => '{}'
-    } as Response);
-
-    try {
-      const method = (usersClient as any)['getMuting'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 5
-      };
-
-      await method.apply(usersClient, [...requiredArgs, options]);
-
-      // Verify maxResults was passed in request (becomes max_results in query string)
-      expect(client.httpClient.request).toHaveBeenCalled();
-      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
-      const url = callArgs[0] as string;
-      // maxResults in options becomes max_results in query string
-      expect(url).toMatch(/max_results=5|maxResults=5/);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  
-  it('should create paginator for getBookmarkFolders', () => {
-    const method = (usersClient as any)['getBookmarkFolders'];
-    
-    // Should be able to create paginator without error
-    const params: any = {
-      
-      
-      id: 'test_value',
-      
-      
-      maxResults: 10
-    };
-    
-    // Note: Paginator creation is typically done through the method itself
-    // This test verifies the method supports pagination
-    expect(typeof method).toBe('function');
-  });
-
-  it('should paginate through pages for getBookmarkFolders', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request to return paginated responses (like Python mocks session)
-    let callCount = 0;
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) {
-        // First page response
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '1', name: 'Item 1' },
-              { id: '2', name: 'Item 2' }
-            ],
-            meta: {
-              
-              'next_token': 'next_page_token',
-              
-              result_count: 2
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      } else {
-        // Second page response (no next token = end of pagination)
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '3', name: 'Item 3' }
-            ],
-            meta: {
-              result_count: 1
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      }
-    });
-
-    try {
-      const method = (usersClient as any)['getBookmarkFolders'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 2
-      };
-
-      // Call method and get first page
-      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
-      expect(firstPage).toBeDefined();
-      expect(firstPage.data).toBeDefined();
-      expect(Array.isArray(firstPage.data)).toBe(true);
-      expect(firstPage.data.length).toBe(2);
-
-      // If there's a next token, call again with pagination token
-      
-      if (firstPage.meta && firstPage.meta['next_token']) {
-        options.paginationToken = firstPage.meta['next_token'];
-        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
-        expect(secondPage).toBeDefined();
-        expect(secondPage.data).toBeDefined();
-        expect(Array.isArray(secondPage.data)).toBe(true);
-      }
-      
-
-      // Should have made multiple requests
-      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  it('should handle pagination parameters correctly for getBookmarkFolders', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request (like Python mocks session)
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      json: async () => ({
-        data: [],
-        meta: { result_count: 0 }
-      }),
-      text: async () => '{}'
-    } as Response);
-
-    try {
-      const method = (usersClient as any)['getBookmarkFolders'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 5
-      };
-
-      await method.apply(usersClient, [...requiredArgs, options]);
-
-      // Verify maxResults was passed in request (becomes max_results in query string)
-      expect(client.httpClient.request).toHaveBeenCalled();
-      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
-      const url = callArgs[0] as string;
-      // maxResults in options becomes max_results in query string
-      expect(url).toMatch(/max_results=5|maxResults=5/);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  
-  it('should create paginator for getRepostsOfMe', () => {
-    const method = (usersClient as any)['getRepostsOfMe'];
-    
-    // Should be able to create paginator without error
-    const params: any = {
-      
-      maxResults: 10
-    };
-    
-    // Note: Paginator creation is typically done through the method itself
-    // This test verifies the method supports pagination
-    expect(typeof method).toBe('function');
-  });
-
-  it('should paginate through pages for getRepostsOfMe', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request to return paginated responses (like Python mocks session)
-    let callCount = 0;
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) {
-        // First page response
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '1', name: 'Item 1' },
-              { id: '2', name: 'Item 2' }
-            ],
-            meta: {
-              
-              'next_token': 'next_page_token',
-              
-              result_count: 2
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      } else {
-        // Second page response (no next token = end of pagination)
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '3', name: 'Item 3' }
-            ],
-            meta: {
-              result_count: 1
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      }
-    });
-
-    try {
-      const method = (usersClient as any)['getRepostsOfMe'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 2
-      };
-
-      // Call method and get first page
-      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
-      expect(firstPage).toBeDefined();
-      expect(firstPage.data).toBeDefined();
-      expect(Array.isArray(firstPage.data)).toBe(true);
-      expect(firstPage.data.length).toBe(2);
-
-      // If there's a next token, call again with pagination token
-      
-      if (firstPage.meta && firstPage.meta['next_token']) {
-        options.paginationToken = firstPage.meta['next_token'];
-        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
-        expect(secondPage).toBeDefined();
-        expect(secondPage.data).toBeDefined();
-        expect(Array.isArray(secondPage.data)).toBe(true);
-      }
-      
-
-      // Should have made multiple requests
-      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  it('should handle pagination parameters correctly for getRepostsOfMe', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request (like Python mocks session)
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      json: async () => ({
-        data: [],
-        meta: { result_count: 0 }
-      }),
-      text: async () => '{}'
-    } as Response);
-
-    try {
-      const method = (usersClient as any)['getRepostsOfMe'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 5
-      };
-
-      await method.apply(usersClient, [...requiredArgs, options]);
-
-      // Verify maxResults was passed in request (becomes max_results in query string)
-      expect(client.httpClient.request).toHaveBeenCalled();
-      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
-      const url = callArgs[0] as string;
-      // maxResults in options becomes max_results in query string
-      expect(url).toMatch(/max_results=5|maxResults=5/);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  
-  it('should create paginator for getBookmarks', () => {
-    const method = (usersClient as any)['getBookmarks'];
-    
-    // Should be able to create paginator without error
-    const params: any = {
-      
-      
-      id: 'test_value',
-      
-      
-      maxResults: 10
-    };
-    
-    // Note: Paginator creation is typically done through the method itself
-    // This test verifies the method supports pagination
-    expect(typeof method).toBe('function');
-  });
-
-  it('should paginate through pages for getBookmarks', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request to return paginated responses (like Python mocks session)
-    let callCount = 0;
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) {
-        // First page response
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '1', name: 'Item 1' },
-              { id: '2', name: 'Item 2' }
-            ],
-            meta: {
-              
-              'next_token': 'next_page_token',
-              
-              result_count: 2
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      } else {
-        // Second page response (no next token = end of pagination)
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '3', name: 'Item 3' }
-            ],
-            meta: {
-              result_count: 1
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      }
-    });
-
-    try {
-      const method = (usersClient as any)['getBookmarks'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 2
-      };
-
-      // Call method and get first page
-      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
-      expect(firstPage).toBeDefined();
-      expect(firstPage.data).toBeDefined();
-      expect(Array.isArray(firstPage.data)).toBe(true);
-      expect(firstPage.data.length).toBe(2);
-
-      // If there's a next token, call again with pagination token
-      
-      if (firstPage.meta && firstPage.meta['next_token']) {
-        options.paginationToken = firstPage.meta['next_token'];
-        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
-        expect(secondPage).toBeDefined();
-        expect(secondPage.data).toBeDefined();
-        expect(Array.isArray(secondPage.data)).toBe(true);
-      }
-      
-
-      // Should have made multiple requests
-      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  it('should handle pagination parameters correctly for getBookmarks', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request (like Python mocks session)
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      json: async () => ({
-        data: [],
-        meta: { result_count: 0 }
-      }),
-      text: async () => '{}'
-    } as Response);
-
-    try {
-      const method = (usersClient as any)['getBookmarks'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 5
-      };
-
-      await method.apply(usersClient, [...requiredArgs, options]);
-
-      // Verify maxResults was passed in request (becomes max_results in query string)
-      expect(client.httpClient.request).toHaveBeenCalled();
-      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
-      const url = callArgs[0] as string;
-      // maxResults in options becomes max_results in query string
-      expect(url).toMatch(/max_results=5|maxResults=5/);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  
-  it('should create paginator for getOwnedLists', () => {
-    const method = (usersClient as any)['getOwnedLists'];
-    
-    // Should be able to create paginator without error
-    const params: any = {
-      
-      
-      id: 'test_value',
-      
-      
-      maxResults: 10
-    };
-    
-    // Note: Paginator creation is typically done through the method itself
-    // This test verifies the method supports pagination
-    expect(typeof method).toBe('function');
-  });
-
-  it('should paginate through pages for getOwnedLists', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request to return paginated responses (like Python mocks session)
-    let callCount = 0;
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) {
-        // First page response
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '1', name: 'Item 1' },
-              { id: '2', name: 'Item 2' }
-            ],
-            meta: {
-              
-              'next_token': 'next_page_token',
-              
-              result_count: 2
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      } else {
-        // Second page response (no next token = end of pagination)
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '3', name: 'Item 3' }
-            ],
-            meta: {
-              result_count: 1
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      }
-    });
-
-    try {
-      const method = (usersClient as any)['getOwnedLists'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 2
-      };
-
-      // Call method and get first page
-      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
-      expect(firstPage).toBeDefined();
-      expect(firstPage.data).toBeDefined();
-      expect(Array.isArray(firstPage.data)).toBe(true);
-      expect(firstPage.data.length).toBe(2);
-
-      // If there's a next token, call again with pagination token
-      
-      if (firstPage.meta && firstPage.meta['next_token']) {
-        options.paginationToken = firstPage.meta['next_token'];
-        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
-        expect(secondPage).toBeDefined();
-        expect(secondPage.data).toBeDefined();
-        expect(Array.isArray(secondPage.data)).toBe(true);
-      }
-      
-
-      // Should have made multiple requests
-      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  it('should handle pagination parameters correctly for getOwnedLists', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request (like Python mocks session)
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      json: async () => ({
-        data: [],
-        meta: { result_count: 0 }
-      }),
-      text: async () => '{}'
-    } as Response);
-
-    try {
-      const method = (usersClient as any)['getOwnedLists'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
@@ -1648,8 +519,8 @@ describe('UsersClient Pagination', () => {
   });
 
   
-  it('should create paginator for getLikedPosts', () => {
-    const method = (usersClient as any)['getLikedPosts'];
+  it('should create paginator for getFollowedLists', () => {
+    const method = (usersClient as any)['getFollowedLists'];
     
     // Should be able to create paginator without error
     const params: any = {
@@ -1666,7 +537,7 @@ describe('UsersClient Pagination', () => {
     expect(typeof method).toBe('function');
   });
 
-  it('should paginate through pages for getLikedPosts', async () => {
+  it('should paginate through pages for getFollowedLists', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -1718,7 +589,7 @@ describe('UsersClient Pagination', () => {
     });
 
     try {
-      const method = (usersClient as any)['getLikedPosts'];
+      const method = (usersClient as any)['getFollowedLists'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
@@ -1760,7 +631,7 @@ describe('UsersClient Pagination', () => {
     }
   });
 
-  it('should handle pagination parameters correctly for getLikedPosts', async () => {
+  it('should handle pagination parameters correctly for getFollowedLists', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -1780,7 +651,7 @@ describe('UsersClient Pagination', () => {
     } as Response);
 
     try {
-      const method = (usersClient as any)['getLikedPosts'];
+      const method = (usersClient as any)['getFollowedLists'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
@@ -1811,8 +682,8 @@ describe('UsersClient Pagination', () => {
   });
 
   
-  it('should create paginator for getListMemberships', () => {
-    const method = (usersClient as any)['getListMemberships'];
+  it('should create paginator for getOwnedLists', () => {
+    const method = (usersClient as any)['getOwnedLists'];
     
     // Should be able to create paginator without error
     const params: any = {
@@ -1829,7 +700,7 @@ describe('UsersClient Pagination', () => {
     expect(typeof method).toBe('function');
   });
 
-  it('should paginate through pages for getListMemberships', async () => {
+  it('should paginate through pages for getOwnedLists', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -1881,7 +752,7 @@ describe('UsersClient Pagination', () => {
     });
 
     try {
-      const method = (usersClient as any)['getListMemberships'];
+      const method = (usersClient as any)['getOwnedLists'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
@@ -1923,7 +794,7 @@ describe('UsersClient Pagination', () => {
     }
   });
 
-  it('should handle pagination parameters correctly for getListMemberships', async () => {
+  it('should handle pagination parameters correctly for getOwnedLists', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -1943,7 +814,7 @@ describe('UsersClient Pagination', () => {
     } as Response);
 
     try {
-      const method = (usersClient as any)['getListMemberships'];
+      const method = (usersClient as any)['getOwnedLists'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
@@ -2137,8 +1008,8 @@ describe('UsersClient Pagination', () => {
   });
 
   
-  it('should create paginator for getFollowers', () => {
-    const method = (usersClient as any)['getFollowers'];
+  it('should create paginator for getBookmarkFolders', () => {
+    const method = (usersClient as any)['getBookmarkFolders'];
     
     // Should be able to create paginator without error
     const params: any = {
@@ -2155,7 +1026,7 @@ describe('UsersClient Pagination', () => {
     expect(typeof method).toBe('function');
   });
 
-  it('should paginate through pages for getFollowers', async () => {
+  it('should paginate through pages for getBookmarkFolders', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -2207,7 +1078,7 @@ describe('UsersClient Pagination', () => {
     });
 
     try {
-      const method = (usersClient as any)['getFollowers'];
+      const method = (usersClient as any)['getBookmarkFolders'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
@@ -2249,7 +1120,7 @@ describe('UsersClient Pagination', () => {
     }
   });
 
-  it('should handle pagination parameters correctly for getFollowers', async () => {
+  it('should handle pagination parameters correctly for getBookmarkFolders', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -2269,7 +1140,333 @@ describe('UsersClient Pagination', () => {
     } as Response);
 
     try {
-      const method = (usersClient as any)['getFollowers'];
+      const method = (usersClient as any)['getBookmarkFolders'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 5
+      };
+
+      await method.apply(usersClient, [...requiredArgs, options]);
+
+      // Verify maxResults was passed in request (becomes max_results in query string)
+      expect(client.httpClient.request).toHaveBeenCalled();
+      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
+      const url = callArgs[0] as string;
+      // maxResults in options becomes max_results in query string
+      expect(url).toMatch(/max_results=5|maxResults=5/);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  
+  it('should create paginator for getListMemberships', () => {
+    const method = (usersClient as any)['getListMemberships'];
+    
+    // Should be able to create paginator without error
+    const params: any = {
+      
+      
+      id: 'test_value',
+      
+      
+      maxResults: 10
+    };
+    
+    // Note: Paginator creation is typically done through the method itself
+    // This test verifies the method supports pagination
+    expect(typeof method).toBe('function');
+  });
+
+  it('should paginate through pages for getListMemberships', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request to return paginated responses (like Python mocks session)
+    let callCount = 0;
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        // First page response
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '1', name: 'Item 1' },
+              { id: '2', name: 'Item 2' }
+            ],
+            meta: {
+              
+              'next_token': 'next_page_token',
+              
+              result_count: 2
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      } else {
+        // Second page response (no next token = end of pagination)
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '3', name: 'Item 3' }
+            ],
+            meta: {
+              result_count: 1
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      }
+    });
+
+    try {
+      const method = (usersClient as any)['getListMemberships'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 2
+      };
+
+      // Call method and get first page
+      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
+      expect(firstPage).toBeDefined();
+      expect(firstPage.data).toBeDefined();
+      expect(Array.isArray(firstPage.data)).toBe(true);
+      expect(firstPage.data.length).toBe(2);
+
+      // If there's a next token, call again with pagination token
+      
+      if (firstPage.meta && firstPage.meta['next_token']) {
+        options.paginationToken = firstPage.meta['next_token'];
+        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
+        expect(secondPage).toBeDefined();
+        expect(secondPage.data).toBeDefined();
+        expect(Array.isArray(secondPage.data)).toBe(true);
+      }
+      
+
+      // Should have made multiple requests
+      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  it('should handle pagination parameters correctly for getListMemberships', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request (like Python mocks session)
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({
+        data: [],
+        meta: { result_count: 0 }
+      }),
+      text: async () => '{}'
+    } as Response);
+
+    try {
+      const method = (usersClient as any)['getListMemberships'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 5
+      };
+
+      await method.apply(usersClient, [...requiredArgs, options]);
+
+      // Verify maxResults was passed in request (becomes max_results in query string)
+      expect(client.httpClient.request).toHaveBeenCalled();
+      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
+      const url = callArgs[0] as string;
+      // maxResults in options becomes max_results in query string
+      expect(url).toMatch(/max_results=5|maxResults=5/);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  
+  it('should create paginator for getLikedPosts', () => {
+    const method = (usersClient as any)['getLikedPosts'];
+    
+    // Should be able to create paginator without error
+    const params: any = {
+      
+      
+      id: 'test_value',
+      
+      
+      maxResults: 10
+    };
+    
+    // Note: Paginator creation is typically done through the method itself
+    // This test verifies the method supports pagination
+    expect(typeof method).toBe('function');
+  });
+
+  it('should paginate through pages for getLikedPosts', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request to return paginated responses (like Python mocks session)
+    let callCount = 0;
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        // First page response
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '1', name: 'Item 1' },
+              { id: '2', name: 'Item 2' }
+            ],
+            meta: {
+              
+              'next_token': 'next_page_token',
+              
+              result_count: 2
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      } else {
+        // Second page response (no next token = end of pagination)
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '3', name: 'Item 3' }
+            ],
+            meta: {
+              result_count: 1
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      }
+    });
+
+    try {
+      const method = (usersClient as any)['getLikedPosts'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 2
+      };
+
+      // Call method and get first page
+      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
+      expect(firstPage).toBeDefined();
+      expect(firstPage.data).toBeDefined();
+      expect(Array.isArray(firstPage.data)).toBe(true);
+      expect(firstPage.data.length).toBe(2);
+
+      // If there's a next token, call again with pagination token
+      
+      if (firstPage.meta && firstPage.meta['next_token']) {
+        options.paginationToken = firstPage.meta['next_token'];
+        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
+        expect(secondPage).toBeDefined();
+        expect(secondPage.data).toBeDefined();
+        expect(Array.isArray(secondPage.data)).toBe(true);
+      }
+      
+
+      // Should have made multiple requests
+      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  it('should handle pagination parameters correctly for getLikedPosts', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request (like Python mocks session)
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({
+        data: [],
+        meta: { result_count: 0 }
+      }),
+      text: async () => '{}'
+    } as Response);
+
+    try {
+      const method = (usersClient as any)['getLikedPosts'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
@@ -2433,6 +1630,809 @@ describe('UsersClient Pagination', () => {
 
     try {
       const method = (usersClient as any)['getPosts'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 5
+      };
+
+      await method.apply(usersClient, [...requiredArgs, options]);
+
+      // Verify maxResults was passed in request (becomes max_results in query string)
+      expect(client.httpClient.request).toHaveBeenCalled();
+      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
+      const url = callArgs[0] as string;
+      // maxResults in options becomes max_results in query string
+      expect(url).toMatch(/max_results=5|maxResults=5/);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  
+  it('should create paginator for getFollowing', () => {
+    const method = (usersClient as any)['getFollowing'];
+    
+    // Should be able to create paginator without error
+    const params: any = {
+      
+      
+      id: 'test_value',
+      
+      
+      maxResults: 10
+    };
+    
+    // Note: Paginator creation is typically done through the method itself
+    // This test verifies the method supports pagination
+    expect(typeof method).toBe('function');
+  });
+
+  it('should paginate through pages for getFollowing', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request to return paginated responses (like Python mocks session)
+    let callCount = 0;
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        // First page response
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '1', name: 'Item 1' },
+              { id: '2', name: 'Item 2' }
+            ],
+            meta: {
+              
+              'next_token': 'next_page_token',
+              
+              result_count: 2
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      } else {
+        // Second page response (no next token = end of pagination)
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '3', name: 'Item 3' }
+            ],
+            meta: {
+              result_count: 1
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      }
+    });
+
+    try {
+      const method = (usersClient as any)['getFollowing'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 2
+      };
+
+      // Call method and get first page
+      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
+      expect(firstPage).toBeDefined();
+      expect(firstPage.data).toBeDefined();
+      expect(Array.isArray(firstPage.data)).toBe(true);
+      expect(firstPage.data.length).toBe(2);
+
+      // If there's a next token, call again with pagination token
+      
+      if (firstPage.meta && firstPage.meta['next_token']) {
+        options.paginationToken = firstPage.meta['next_token'];
+        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
+        expect(secondPage).toBeDefined();
+        expect(secondPage.data).toBeDefined();
+        expect(Array.isArray(secondPage.data)).toBe(true);
+      }
+      
+
+      // Should have made multiple requests
+      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  it('should handle pagination parameters correctly for getFollowing', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request (like Python mocks session)
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({
+        data: [],
+        meta: { result_count: 0 }
+      }),
+      text: async () => '{}'
+    } as Response);
+
+    try {
+      const method = (usersClient as any)['getFollowing'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 5
+      };
+
+      await method.apply(usersClient, [...requiredArgs, options]);
+
+      // Verify maxResults was passed in request (becomes max_results in query string)
+      expect(client.httpClient.request).toHaveBeenCalled();
+      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
+      const url = callArgs[0] as string;
+      // maxResults in options becomes max_results in query string
+      expect(url).toMatch(/max_results=5|maxResults=5/);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  
+  it('should create paginator for getMuting', () => {
+    const method = (usersClient as any)['getMuting'];
+    
+    // Should be able to create paginator without error
+    const params: any = {
+      
+      
+      id: 'test_value',
+      
+      
+      maxResults: 10
+    };
+    
+    // Note: Paginator creation is typically done through the method itself
+    // This test verifies the method supports pagination
+    expect(typeof method).toBe('function');
+  });
+
+  it('should paginate through pages for getMuting', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request to return paginated responses (like Python mocks session)
+    let callCount = 0;
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        // First page response
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '1', name: 'Item 1' },
+              { id: '2', name: 'Item 2' }
+            ],
+            meta: {
+              
+              'next_token': 'next_page_token',
+              
+              result_count: 2
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      } else {
+        // Second page response (no next token = end of pagination)
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '3', name: 'Item 3' }
+            ],
+            meta: {
+              result_count: 1
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      }
+    });
+
+    try {
+      const method = (usersClient as any)['getMuting'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 2
+      };
+
+      // Call method and get first page
+      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
+      expect(firstPage).toBeDefined();
+      expect(firstPage.data).toBeDefined();
+      expect(Array.isArray(firstPage.data)).toBe(true);
+      expect(firstPage.data.length).toBe(2);
+
+      // If there's a next token, call again with pagination token
+      
+      if (firstPage.meta && firstPage.meta['next_token']) {
+        options.paginationToken = firstPage.meta['next_token'];
+        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
+        expect(secondPage).toBeDefined();
+        expect(secondPage.data).toBeDefined();
+        expect(Array.isArray(secondPage.data)).toBe(true);
+      }
+      
+
+      // Should have made multiple requests
+      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  it('should handle pagination parameters correctly for getMuting', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request (like Python mocks session)
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({
+        data: [],
+        meta: { result_count: 0 }
+      }),
+      text: async () => '{}'
+    } as Response);
+
+    try {
+      const method = (usersClient as any)['getMuting'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 5
+      };
+
+      await method.apply(usersClient, [...requiredArgs, options]);
+
+      // Verify maxResults was passed in request (becomes max_results in query string)
+      expect(client.httpClient.request).toHaveBeenCalled();
+      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
+      const url = callArgs[0] as string;
+      // maxResults in options becomes max_results in query string
+      expect(url).toMatch(/max_results=5|maxResults=5/);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  
+  it('should create paginator for getBookmarks', () => {
+    const method = (usersClient as any)['getBookmarks'];
+    
+    // Should be able to create paginator without error
+    const params: any = {
+      
+      
+      id: 'test_value',
+      
+      
+      maxResults: 10
+    };
+    
+    // Note: Paginator creation is typically done through the method itself
+    // This test verifies the method supports pagination
+    expect(typeof method).toBe('function');
+  });
+
+  it('should paginate through pages for getBookmarks', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request to return paginated responses (like Python mocks session)
+    let callCount = 0;
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        // First page response
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '1', name: 'Item 1' },
+              { id: '2', name: 'Item 2' }
+            ],
+            meta: {
+              
+              'next_token': 'next_page_token',
+              
+              result_count: 2
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      } else {
+        // Second page response (no next token = end of pagination)
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '3', name: 'Item 3' }
+            ],
+            meta: {
+              result_count: 1
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      }
+    });
+
+    try {
+      const method = (usersClient as any)['getBookmarks'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 2
+      };
+
+      // Call method and get first page
+      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
+      expect(firstPage).toBeDefined();
+      expect(firstPage.data).toBeDefined();
+      expect(Array.isArray(firstPage.data)).toBe(true);
+      expect(firstPage.data.length).toBe(2);
+
+      // If there's a next token, call again with pagination token
+      
+      if (firstPage.meta && firstPage.meta['next_token']) {
+        options.paginationToken = firstPage.meta['next_token'];
+        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
+        expect(secondPage).toBeDefined();
+        expect(secondPage.data).toBeDefined();
+        expect(Array.isArray(secondPage.data)).toBe(true);
+      }
+      
+
+      // Should have made multiple requests
+      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  it('should handle pagination parameters correctly for getBookmarks', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request (like Python mocks session)
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({
+        data: [],
+        meta: { result_count: 0 }
+      }),
+      text: async () => '{}'
+    } as Response);
+
+    try {
+      const method = (usersClient as any)['getBookmarks'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 5
+      };
+
+      await method.apply(usersClient, [...requiredArgs, options]);
+
+      // Verify maxResults was passed in request (becomes max_results in query string)
+      expect(client.httpClient.request).toHaveBeenCalled();
+      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
+      const url = callArgs[0] as string;
+      // maxResults in options becomes max_results in query string
+      expect(url).toMatch(/max_results=5|maxResults=5/);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  
+  it('should create paginator for getRepostsOfMe', () => {
+    const method = (usersClient as any)['getRepostsOfMe'];
+    
+    // Should be able to create paginator without error
+    const params: any = {
+      
+      maxResults: 10
+    };
+    
+    // Note: Paginator creation is typically done through the method itself
+    // This test verifies the method supports pagination
+    expect(typeof method).toBe('function');
+  });
+
+  it('should paginate through pages for getRepostsOfMe', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request to return paginated responses (like Python mocks session)
+    let callCount = 0;
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        // First page response
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '1', name: 'Item 1' },
+              { id: '2', name: 'Item 2' }
+            ],
+            meta: {
+              
+              'next_token': 'next_page_token',
+              
+              result_count: 2
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      } else {
+        // Second page response (no next token = end of pagination)
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '3', name: 'Item 3' }
+            ],
+            meta: {
+              result_count: 1
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      }
+    });
+
+    try {
+      const method = (usersClient as any)['getRepostsOfMe'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 2
+      };
+
+      // Call method and get first page
+      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
+      expect(firstPage).toBeDefined();
+      expect(firstPage.data).toBeDefined();
+      expect(Array.isArray(firstPage.data)).toBe(true);
+      expect(firstPage.data.length).toBe(2);
+
+      // If there's a next token, call again with pagination token
+      
+      if (firstPage.meta && firstPage.meta['next_token']) {
+        options.paginationToken = firstPage.meta['next_token'];
+        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
+        expect(secondPage).toBeDefined();
+        expect(secondPage.data).toBeDefined();
+        expect(Array.isArray(secondPage.data)).toBe(true);
+      }
+      
+
+      // Should have made multiple requests
+      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  it('should handle pagination parameters correctly for getRepostsOfMe', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request (like Python mocks session)
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({
+        data: [],
+        meta: { result_count: 0 }
+      }),
+      text: async () => '{}'
+    } as Response);
+
+    try {
+      const method = (usersClient as any)['getRepostsOfMe'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 5
+      };
+
+      await method.apply(usersClient, [...requiredArgs, options]);
+
+      // Verify maxResults was passed in request (becomes max_results in query string)
+      expect(client.httpClient.request).toHaveBeenCalled();
+      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
+      const url = callArgs[0] as string;
+      // maxResults in options becomes max_results in query string
+      expect(url).toMatch(/max_results=5|maxResults=5/);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  
+  it('should create paginator for getFollowers', () => {
+    const method = (usersClient as any)['getFollowers'];
+    
+    // Should be able to create paginator without error
+    const params: any = {
+      
+      
+      id: 'test_value',
+      
+      
+      maxResults: 10
+    };
+    
+    // Note: Paginator creation is typically done through the method itself
+    // This test verifies the method supports pagination
+    expect(typeof method).toBe('function');
+  });
+
+  it('should paginate through pages for getFollowers', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request to return paginated responses (like Python mocks session)
+    let callCount = 0;
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        // First page response
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '1', name: 'Item 1' },
+              { id: '2', name: 'Item 2' }
+            ],
+            meta: {
+              
+              'next_token': 'next_page_token',
+              
+              result_count: 2
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      } else {
+        // Second page response (no next token = end of pagination)
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '3', name: 'Item 3' }
+            ],
+            meta: {
+              result_count: 1
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      }
+    });
+
+    try {
+      const method = (usersClient as any)['getFollowers'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 2
+      };
+
+      // Call method and get first page
+      const firstPage = await method.apply(usersClient, [...requiredArgs, options]);
+      expect(firstPage).toBeDefined();
+      expect(firstPage.data).toBeDefined();
+      expect(Array.isArray(firstPage.data)).toBe(true);
+      expect(firstPage.data.length).toBe(2);
+
+      // If there's a next token, call again with pagination token
+      
+      if (firstPage.meta && firstPage.meta['next_token']) {
+        options.paginationToken = firstPage.meta['next_token'];
+        const secondPage = await method.apply(usersClient, [...requiredArgs, options]);
+        expect(secondPage).toBeDefined();
+        expect(secondPage.data).toBeDefined();
+        expect(Array.isArray(secondPage.data)).toBe(true);
+      }
+      
+
+      // Should have made multiple requests
+      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  it('should handle pagination parameters correctly for getFollowers', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request (like Python mocks session)
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({
+        data: [],
+        meta: { result_count: 0 }
+      }),
+      text: async () => '{}'
+    } as Response);
+
+    try {
+      const method = (usersClient as any)['getFollowers'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [

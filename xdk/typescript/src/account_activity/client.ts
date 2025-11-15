@@ -16,13 +16,13 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  GetSubscriptionCountResponse,
-  GetSubscriptionsResponse,
-  DeleteSubscriptionResponse,
   CreateReplayJobResponse,
+  DeleteSubscriptionResponse,
+  GetSubscriptionsResponse,
   ValidateSubscriptionResponse,
   CreateSubscriptionRequest,
   CreateSubscriptionResponse,
+  GetSubscriptionCountResponse,
 } from './models.js';
 
 /**
@@ -57,125 +57,6 @@ export class AccountActivityClient {
      */
   constructor(client: Client) {
     this.client = client;
-  }
-
-  /**
-   * Get subscription count
-   * Retrieves a count of currently active Account Activity subscriptions.
-
-
-
-   * @returns {Promise<GetSubscriptionCountResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getSubscriptionCount(): Promise<GetSubscriptionCountResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/account_activity/subscriptions/count';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetSubscriptionCountResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get subscriptions
-   * Retrieves a list of all active subscriptions for a given webhook.
-
-
-   * @param webhookId The webhook ID to pull subscriptions for.
-
-
-
-
-   * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getSubscriptions(webhookId: string): Promise<GetSubscriptionsResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path =
-      '/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetSubscriptionsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Delete subscription
-   * Deletes an Account Activity subscription for the given webhook and user ID.
-
-
-   * @param webhookId The webhook ID to check subscription against.
-
-
-
-   * @param userId User ID to unsubscribe from.
-
-
-
-
-   * @returns {Promise<DeleteSubscriptionResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async deleteSubscription(
-    webhookId: string,
-    userId: string
-  ): Promise<DeleteSubscriptionResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path =
-      '/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
-
-    path = path.replace('{user_id}', encodeURIComponent(String(userId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<DeleteSubscriptionResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
   }
 
   /**
@@ -232,6 +113,93 @@ export class AccountActivityClient {
 
     return this.client.request<CreateReplayJobResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Delete subscription
+   * Deletes an Account Activity subscription for the given webhook and user ID.
+
+
+   * @param webhookId The webhook ID to check subscription against.
+
+
+
+   * @param userId User ID to unsubscribe from.
+
+
+
+
+   * @returns {Promise<DeleteSubscriptionResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async deleteSubscription(
+    webhookId: string,
+    userId: string
+  ): Promise<DeleteSubscriptionResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path =
+      '/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    path = path.replace('{user_id}', encodeURIComponent(String(userId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<DeleteSubscriptionResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get subscriptions
+   * Retrieves a list of all active subscriptions for a given webhook.
+
+
+   * @param webhookId The webhook ID to pull subscriptions for.
+
+
+
+
+   * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getSubscriptions(webhookId: string): Promise<GetSubscriptionsResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path =
+      '/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<GetSubscriptionsResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -320,6 +288,38 @@ export class AccountActivityClient {
 
     return this.client.request<CreateSubscriptionResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get subscription count
+   * Retrieves a count of currently active Account Activity subscriptions.
+
+
+
+   * @returns {Promise<GetSubscriptionCountResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getSubscriptionCount(): Promise<GetSubscriptionCountResponse> {
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/account_activity/subscriptions/count';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<GetSubscriptionCountResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

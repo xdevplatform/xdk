@@ -11,17 +11,11 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
- * Response for getSubscriptionCount
+ * Response for createReplayJob
  * 
  * @public
  */
-export type GetSubscriptionCountResponse = Schemas.SubscriptionsCountGetResponse;
-/**
- * Response for getSubscriptions
- * 
- * @public
- */
-export type GetSubscriptionsResponse = Schemas.SubscriptionsListGetResponse;
+export type CreateReplayJobResponse = Schemas.ReplayJobCreateResponse;
 /**
  * Response for deleteSubscription
  * 
@@ -29,11 +23,11 @@ export type GetSubscriptionsResponse = Schemas.SubscriptionsListGetResponse;
  */
 export type DeleteSubscriptionResponse = Schemas.SubscriptionsDeleteResponse;
 /**
- * Response for createReplayJob
+ * Response for getSubscriptions
  * 
  * @public
  */
-export type CreateReplayJobResponse = Schemas.ReplayJobCreateResponse;
+export type GetSubscriptionsResponse = Schemas.SubscriptionsListGetResponse;
 /**
  * Response for validateSubscription
  * 
@@ -52,3 +46,9 @@ export type CreateSubscriptionRequest = Schemas.SubscriptionsCreateRequest;
  * @public
  */
 export type CreateSubscriptionResponse = Schemas.SubscriptionsCreateResponse;
+/**
+ * Response for getSubscriptionCount
+ * 
+ * @public
+ */
+export type GetSubscriptionCountResponse = Schemas.SubscriptionsCountGetResponse;
