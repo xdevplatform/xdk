@@ -143,15 +143,6 @@ The sum of results returned in this response.
  * @public
  */
 export type Aggregate = number; /**
-An AI generated trend.
- *
- * @public
- */
-export interface AiTrend {
-  /** none */ contexts?: Record<string, any>;
-  /** none */ core?: Record<string, any>;
-  restId: AiTrendId;
-} /**
 Unique identifier of ai trend.
  *
  * @public
@@ -710,7 +701,7 @@ Schema type for Get2AiTrendsIdResponse
  * @public
  */
 export interface Get2AiTrendsIdResponse {
-  data?: AiTrend;
+  data?: News;
   /** none */ errors?: Array<Problem>;
 } /**
 Schema type for Get2CommunitiesIdResponse
@@ -921,6 +912,14 @@ Schema type for Get2MediaResponse
  */
 export interface Get2MediaResponse {
   /** none */ data?: Array<Media>;
+  /** none */ errors?: Array<Problem>;
+} /**
+Schema type for Get2NewsIdResponse
+ *
+ * @public
+ */
+export interface Get2NewsIdResponse {
+  data?: News;
   /** none */ errors?: Array<Problem>;
 } /**
 Schema type for Get2NotesSearchNotesWrittenResponse
@@ -1870,6 +1869,27 @@ The newest id in this response.
  * @public
  */
 export type NewestId = string; /**
+An AI generated news story.
+ *
+ * @public
+ */
+export interface News {
+  /** The news category. */ category?: string;
+  /** none */ clusterPostsResults?: Array<Record<string, any>>;
+  /** none */ contexts?: Record<string, any>;
+  /** none */ disclaimer?: string;
+  /** The news hook. */ hook?: string;
+  /** none */ keywords?: Array<string>;
+  /** none */ lastUpdatedAtMs?: string;
+  /** The headline. */ name?: string;
+  restId: NewsId;
+  /** The news summary. */ summary?: string;
+} /**
+Unique identifier of news story.
+ *
+ * @public
+ */
+export type NewsId = string; /**
 The next token.
  *
  * @public

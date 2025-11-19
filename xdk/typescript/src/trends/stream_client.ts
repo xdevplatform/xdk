@@ -21,10 +21,12 @@ import {
  * @public
  */
 export interface GetByWoeidStreamingOptions {
-  /** The maximum number of results. */
+  /** The maximum number of results. 
+     * Also accepts: max_trends or proper camelCase format */
   maxTrends?: number;
 
-  /** A comma separated list of Trend fields to display. */
+  /** A comma separated list of Trend fields to display. 
+     * Also accepts: trend.fields or proper camelCase format */
   trendfields?: Array<any>;
 
   /** Additional request options */
@@ -33,6 +35,8 @@ export interface GetByWoeidStreamingOptions {
   headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 /**
  * Options for getPersonalized method
@@ -40,7 +44,8 @@ export interface GetByWoeidStreamingOptions {
  * @public
  */
 export interface GetPersonalizedStreamingOptions {
-  /** A comma separated list of PersonalizedTrend fields to display. */
+  /** A comma separated list of PersonalizedTrend fields to display. 
+     * Also accepts: personalized_trend.fields or proper camelCase format */
   personalizedTrendfields?: Array<any>;
 
   /** Additional request options */
@@ -49,6 +54,8 @@ export interface GetPersonalizedStreamingOptions {
   headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 /**
  * Options for getAi method
@@ -56,8 +63,9 @@ export interface GetPersonalizedStreamingOptions {
  * @public
  */
 export interface GetAiStreamingOptions {
-  /** A comma separated list of AiTrend fields to display. */
-  aiTrendfields?: Array<any>;
+  /** A comma separated list of News fields to display. 
+     * Also accepts: news.fields or proper camelCase format */
+  newsfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -65,6 +73,8 @@ export interface GetAiStreamingOptions {
   headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 export class TrendsClient {
@@ -72,6 +82,52 @@ export class TrendsClient {
 
   constructor(client: Client) {
     this.client = client;
+  }
+
+  /**
+     * Normalize options object to handle both camelCase and original API parameter names
+     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     */
+  private _normalizeOptions<T extends Record<string, any>>(
+    options: T,
+    paramMappings: Record<string, string>
+  ): T {
+    if (!options || typeof options !== 'object') {
+      return options;
+    }
+
+    const normalized: any = { ...options };
+
+    // For each parameter mapping (original -> camelCase)
+    for (const [originalName, camelName] of Object.entries(paramMappings)) {
+      // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
+      if (originalName in normalized && !(camelName in normalized)) {
+        normalized[camelName] = normalized[originalName];
+        delete normalized[originalName];
+      }
+      // Also check for camelCase with proper casing (e.g., 'tweetFields')
+      const properCamel = this._toCamelCase(originalName);
+      if (
+        properCamel !== camelName &&
+        properCamel in normalized &&
+        !(camelName in normalized)
+      ) {
+        normalized[camelName] = normalized[properCamel];
+        delete normalized[properCamel];
+      }
+    }
+
+    return normalized as T;
+  }
+
+  /**
+     * Convert a parameter name to proper camelCase
+     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
+     */
+  private _toCamelCase(name: string): string {
+    return name
+      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
+      .replace(/^[A-Z]/, letter => letter.toLowerCase());
   }
 
   /**
@@ -92,6 +148,18 @@ export class TrendsClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'getByWoeid');
 
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_trends: 'maxTrends',
+
+      'trend.fields': 'trendfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
@@ -102,8 +170,7 @@ export class TrendsClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/trends/by/woeid/{woeid}';
@@ -117,7 +184,7 @@ export class TrendsClient {
       params.append('max_trends', String(maxTrends));
     }
 
-    if (trendfields !== undefined) {
+    if (trendfields !== undefined && trendfields.length > 0) {
       params.append('trend.fields', trendfields.join(','));
     }
 
@@ -159,6 +226,16 @@ export class TrendsClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'getPersonalized');
 
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'personalized_trend.fields': 'personalizedTrendfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
@@ -167,8 +244,7 @@ export class TrendsClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/users/personalized_trends';
@@ -176,7 +252,10 @@ export class TrendsClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (personalizedTrendfields !== undefined) {
+    if (
+      personalizedTrendfields !== undefined &&
+      personalizedTrendfields.length > 0
+    ) {
       params.append(
         'personalized_trend.fields',
         personalizedTrendfields.join(',')
@@ -220,16 +299,25 @@ export class TrendsClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'getAi');
 
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'news.fields': 'newsfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
-      aiTrendfields = [],
+      newsfields = [],
 
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/ai_trends/{id}';
@@ -239,8 +327,8 @@ export class TrendsClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (aiTrendfields !== undefined) {
-      params.append('ai_trend.fields', aiTrendfields.join(','));
+    if (newsfields !== undefined && newsfields.length > 0) {
+      params.append('news.fields', newsfields.join(','));
     }
 
     // Prepare request options

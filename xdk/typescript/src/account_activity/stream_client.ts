@@ -10,40 +10,14 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  DeleteSubscriptionResponse,
-  GetSubscriptionsResponse,
   GetSubscriptionCountResponse,
-  CreateReplayJobResponse,
   ValidateSubscriptionResponse,
   CreateSubscriptionResponse,
+  GetSubscriptionsResponse,
+  CreateReplayJobResponse,
+  DeleteSubscriptionResponse,
 } from './models.js';
 
-/**
- * Options for deleteSubscription method
- * 
- * @public
- */
-export interface DeleteSubscriptionStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getSubscriptions method
- * 
- * @public
- */
-export interface GetSubscriptionsStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
 /**
  * Options for getSubscriptionCount method
  * 
@@ -56,19 +30,8 @@ export interface GetSubscriptionCountStreamingOptions {
   headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
-}
-/**
- * Options for createReplayJob method
- * 
- * @public
- */
-export interface CreateReplayJobStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 /**
  * Options for validateSubscription method
@@ -82,6 +45,8 @@ export interface ValidateSubscriptionStreamingOptions {
   headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 /**
  * Options for createSubscription method
@@ -98,6 +63,53 @@ export interface CreateSubscriptionStreamingOptions {
   headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+/**
+ * Options for getSubscriptions method
+ * 
+ * @public
+ */
+export interface GetSubscriptionsStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+/**
+ * Options for createReplayJob method
+ * 
+ * @public
+ */
+export interface CreateReplayJobStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+/**
+ * Options for deleteSubscription method
+ * 
+ * @public
+ */
+export interface DeleteSubscriptionStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 export class AccountActivityClient {
@@ -108,106 +120,49 @@ export class AccountActivityClient {
   }
 
   /**
-     * Delete subscription
-     * Deletes an Account Activity subscription for the given webhook and user ID.
-     * 
-     * @returns Promise with the API response
+     * Normalize options object to handle both camelCase and original API parameter names
+     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
      */
-  async deleteSubscription(
-    webhookId: string,
-    userId: string,
-    options: DeleteSubscriptionStreamingOptions = {}
-  ): Promise<DeleteSubscriptionResponse> {
-    // Validate authentication requirements
+  private _normalizeOptions<T extends Record<string, any>>(
+    options: T,
+    paramMappings: Record<string, string>
+  ): T {
+    if (!options || typeof options !== 'object') {
+      return options;
+    }
 
-    const requiredAuthTypes = [];
+    const normalized: any = { ...options };
 
-    requiredAuthTypes.push('BearerToken');
+    // For each parameter mapping (original -> camelCase)
+    for (const [originalName, camelName] of Object.entries(paramMappings)) {
+      // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
+      if (originalName in normalized && !(camelName in normalized)) {
+        normalized[camelName] = normalized[originalName];
+        delete normalized[originalName];
+      }
+      // Also check for camelCase with proper casing (e.g., 'tweetFields')
+      const properCamel = this._toCamelCase(originalName);
+      if (
+        properCamel !== camelName &&
+        properCamel in normalized &&
+        !(camelName in normalized)
+      ) {
+        normalized[camelName] = normalized[properCamel];
+        delete normalized[properCamel];
+      }
+    }
 
-    this.client.validateAuthentication(requiredAuthTypes, 'deleteSubscription');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const { headers = {}, signal, requestOptions = {} } = options || {};
-
-    // Build the path with path parameters
-    let path =
-      '/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
-
-    path = path.replace('{user_id}', encodeURIComponent(String(userId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<DeleteSubscriptionResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
+    return normalized as T;
   }
 
   /**
-     * Get subscriptions
-     * Retrieves a list of all active subscriptions for a given webhook.
-     * 
-     * @returns Promise with the API response
+     * Convert a parameter name to proper camelCase
+     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
      */
-  async getSubscriptions(
-    webhookId: string,
-    options: GetSubscriptionsStreamingOptions = {}
-  ): Promise<GetSubscriptionsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getSubscriptions');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const { headers = {}, signal, requestOptions = {} } = options || {};
-
-    // Build the path with path parameters
-    let path =
-      '/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<GetSubscriptionsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
+  private _toCamelCase(name: string): string {
+    return name
+      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
+      .replace(/^[A-Z]/, letter => letter.toLowerCase());
   }
 
   /**
@@ -230,9 +185,13 @@ export class AccountActivityClient {
       'getSubscriptionCount'
     );
 
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
     // Destructure options (exclude path parameters, they're already function params)
 
-    const { headers = {}, signal, requestOptions = {} } = options || {};
+    const { headers = {}, signal, requestOptions = {} } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/account_activity/subscriptions/count';
@@ -254,62 +213,6 @@ export class AccountActivityClient {
     // Make the request
     return this.client.request<GetSubscriptionCountResponse>(
       'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Create replay job
-     * Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
-     * 
-     * @returns Promise with the API response
-     */
-  async createReplayJob(
-    webhookId: string,
-    fromDate: string,
-    toDate: string,
-    options: CreateReplayJobStreamingOptions = {}
-  ): Promise<CreateReplayJobResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'createReplayJob');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const { headers = {}, signal, requestOptions = {} } = options || {};
-
-    // Build the path with path parameters
-    let path =
-      '/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    params.append('from_date', String(fromDate));
-
-    params.append('to_date', String(toDate));
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<CreateReplayJobResponse>(
-      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -338,9 +241,13 @@ export class AccountActivityClient {
       'validateSubscription'
     );
 
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
     // Destructure options (exclude path parameters, they're already function params)
 
-    const { headers = {}, signal, requestOptions = {} } = options || {};
+    const { headers = {}, signal, requestOptions = {} } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/account_activity/webhooks/{webhook_id}/subscriptions/all';
@@ -389,6 +296,10 @@ export class AccountActivityClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'createSubscription');
 
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
@@ -397,8 +308,7 @@ export class AccountActivityClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/account_activity/webhooks/{webhook_id}/subscriptions/all';
@@ -424,6 +334,181 @@ export class AccountActivityClient {
     // Make the request
     return this.client.request<CreateSubscriptionResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get subscriptions
+     * Retrieves a list of all active subscriptions for a given webhook.
+     * 
+     * @returns Promise with the API response
+     */
+  async getSubscriptions(
+    webhookId: string,
+    options: GetSubscriptionsStreamingOptions = {}
+  ): Promise<GetSubscriptionsResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getSubscriptions');
+
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const { headers = {}, signal, requestOptions = {} } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path =
+      '/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<GetSubscriptionsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Create replay job
+     * Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
+     * 
+     * @returns Promise with the API response
+     */
+  async createReplayJob(
+    webhookId: string,
+    fromDate: string,
+    toDate: string,
+    options: CreateReplayJobStreamingOptions = {}
+  ): Promise<CreateReplayJobResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'createReplayJob');
+
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const { headers = {}, signal, requestOptions = {} } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path =
+      '/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (fromDate !== undefined) {
+      params.append('from_date', String(fromDate));
+    }
+
+    if (toDate !== undefined) {
+      params.append('to_date', String(toDate));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<CreateReplayJobResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Delete subscription
+     * Deletes an Account Activity subscription for the given webhook and user ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async deleteSubscription(
+    webhookId: string,
+    userId: string,
+    options: DeleteSubscriptionStreamingOptions = {}
+  ): Promise<DeleteSubscriptionResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'deleteSubscription');
+
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const { headers = {}, signal, requestOptions = {} } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path =
+      '/2/account_activity/webhooks/{webhook_id}/subscriptions/{user_id}/all';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    path = path.replace('{user_id}', encodeURIComponent(String(userId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<DeleteSubscriptionResponse>(
+      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

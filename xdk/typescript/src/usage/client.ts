@@ -23,14 +23,18 @@ import { GetResponse } from './models.js';
  * @public
  */
 export interface GetOptions {
-  /** The number of days for which you need usage for. */
+  /** The number of days for which you need usage for. 
+     * Also accepts: days or proper camelCase format */
   days?: number;
 
-  /** A comma separated list of Usage fields to display. */
+  /** A comma separated list of Usage fields to display. 
+     * Also accepts: usage.fields or proper camelCase format */
   usagefields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -55,6 +59,52 @@ export class UsageClient {
   }
 
   /**
+     * Normalize options object to handle both camelCase and original API parameter names
+     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     */
+  private _normalizeOptions<T extends Record<string, any>>(
+    options: T,
+    paramMappings: Record<string, string>
+  ): T {
+    if (!options || typeof options !== 'object') {
+      return options;
+    }
+
+    const normalized: any = { ...options };
+
+    // For each parameter mapping (original -> camelCase)
+    for (const [originalName, camelName] of Object.entries(paramMappings)) {
+      // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
+      if (originalName in normalized && !(camelName in normalized)) {
+        normalized[camelName] = normalized[originalName];
+        delete normalized[originalName];
+      }
+      // Also check for camelCase with proper casing (e.g., 'tweetFields')
+      const properCamel = this._toCamelCase(originalName);
+      if (
+        properCamel !== camelName &&
+        properCamel in normalized &&
+        !(camelName in normalized)
+      ) {
+        normalized[camelName] = normalized[properCamel];
+        delete normalized[properCamel];
+      }
+    }
+
+    return normalized as T;
+  }
+
+  /**
+     * Convert a parameter name to proper camelCase
+     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
+     */
+  private _toCamelCase(name: string): string {
+    return name
+      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
+      .replace(/^[A-Z]/, letter => letter.toLowerCase());
+  }
+
+  /**
    * Get usage
    * Retrieves usage statistics for Posts over a specified number of days.
 
@@ -64,16 +114,24 @@ export class UsageClient {
    */
   // Overload 1: Default behavior (unwrapped response)
   async get(options: GetOptions = {}): Promise<GetResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const paramMappings: Record<string, string> = {
+      'usage.fields': 'usagefields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
       days = undefined,
 
       usagefields = [],
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/usage/tweets';
@@ -85,7 +143,7 @@ export class UsageClient {
       params.append('days', String(days));
     }
 
-    if (usagefields !== undefined) {
+    if (usagefields !== undefined && usagefields.length > 0) {
       params.append('usage.fields', usagefields.join(','));
     }
 

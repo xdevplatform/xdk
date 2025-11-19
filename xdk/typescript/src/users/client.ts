@@ -16,471 +16,83 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  UnblockDmsResponse,
-  GetTimelineResponse,
-  GetByIdsResponse,
-  GetBookmarkFoldersResponse,
-  GetListMembershipsResponse,
-  GetByUsernamesResponse,
-  GetBookmarksResponse,
-  CreateBookmarkRequest,
-  CreateBookmarkResponse,
-  GetRepostsOfMeResponse,
-  RepostPostRequest,
-  RepostPostResponse,
-  UnpinListResponse,
-  GetPostsResponse,
-  GetByUsernameResponse,
-  UnrepostPostResponse,
-  UnlikePostResponse,
-  UnmuteUserResponse,
-  GetMentionsResponse,
-  GetFollowersResponse,
-  GetLikedPostsResponse,
-  UnfollowUserResponse,
-  GetMutingResponse,
-  MuteUserRequest,
-  MuteUserResponse,
-  GetByIdResponse,
   GetOwnedListsResponse,
-  GetMeResponse,
-  GetFollowingResponse,
-  FollowUserRequest,
-  FollowUserResponse,
-  GetFollowedListsResponse,
-  FollowListRequest,
-  FollowListResponse,
+  GetByIdResponse,
   UnfollowListResponse,
+  GetBlockingResponse,
+  UnblockDmsResponse,
+  UnmuteUserResponse,
   GetPinnedListsResponse,
   PinListRequest,
   PinListResponse,
-  GetBlockingResponse,
-  BlockDmsResponse,
+  GetBookmarksResponse,
+  CreateBookmarkRequest,
+  CreateBookmarkResponse,
+  SearchResponse,
+  GetPostsResponse,
+  GetBookmarksByFolderIdResponse,
+  GetFollowingResponse,
+  FollowUserRequest,
+  FollowUserResponse,
+  GetLikedPostsResponse,
+  DeleteBookmarkResponse,
+  GetFollowedListsResponse,
+  FollowListRequest,
+  FollowListResponse,
+  UnrepostPostResponse,
+  GetMeResponse,
+  GetByIdsResponse,
+  GetByUsernameResponse,
+  RepostPostRequest,
+  RepostPostResponse,
+  GetListMembershipsResponse,
   LikePostRequest,
   LikePostResponse,
-  DeleteBookmarkResponse,
-  GetBookmarksByFolderIdResponse,
-  SearchResponse,
+  BlockDmsResponse,
+  GetRepostsOfMeResponse,
+  UnlikePostResponse,
+  GetMutingResponse,
+  MuteUserRequest,
+  MuteUserResponse,
+  UnpinListResponse,
+  GetFollowersResponse,
+  GetByUsernamesResponse,
+  GetMentionsResponse,
+  GetTimelineResponse,
+  UnfollowUserResponse,
+  GetBookmarkFoldersResponse,
 } from './models.js';
 
 /**
- * Options for getTimeline method
+ * Options for getOwnedLists method
  * 
  * @public
  */
-export interface GetTimelineOptions {
-  /** The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified. */
-  sinceId?: any;
-
-  /** The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified. */
-  untilId?: any;
-
-  /** The maximum number of results. */
+export interface GetOwnedListsOptions {
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
   maxResults?: number;
 
-  /** This parameter is used to get the next 'page' of results. */
+  /** This parameter is used to get a specified 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
   paginationToken?: any;
 
-  /** The set of entities to exclude (e.g. 'replies' or 'retweets'). */
-  exclude?: Array<any>;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since_id parameter takes precedence if it is also specified. */
-  startTime?: string;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until_id parameter takes precedence if it is also specified. */
-  endTime?: string;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
-
-  /** A comma separated list of Poll fields to display. */
-  pollfields?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Place fields to display. */
-  placefields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getByIds method
- * 
- * @public
- */
-export interface GetByIdsOptions {
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getBookmarkFolders method
- * 
- * @public
- */
-export interface GetBookmarkFoldersOptions {
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get the next 'page' of results. */
-  paginationToken?: any;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getListMemberships method
- * 
- * @public
- */
-export interface GetListMembershipsOptions {
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get a specified 'page' of results. */
-  paginationToken?: any;
-
-  /** A comma separated list of List fields to display. */
+  /** A comma separated list of List fields to display. 
+     * Also accepts: list.fields or proper camelCase format */
   listfields?: Array<any>;
 
-  /** A comma separated list of fields to expand. */
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
   expansions?: Array<any>;
 
-  /** A comma separated list of User fields to display. */
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
   userfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getByUsernames method
- * 
- * @public
- */
-export interface GetByUsernamesOptions {
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getBookmarks method
- * 
- * @public
- */
-export interface GetBookmarksOptions {
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get the next 'page' of results. */
-  paginationToken?: any;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
-
-  /** A comma separated list of Poll fields to display. */
-  pollfields?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Place fields to display. */
-  placefields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getRepostsOfMe method
- * 
- * @public
- */
-export interface GetRepostsOfMeOptions {
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get the next 'page' of results. */
-  paginationToken?: any;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
-
-  /** A comma separated list of Poll fields to display. */
-  pollfields?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Place fields to display. */
-  placefields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for repostPost method
- * 
- * @public
- */
-export interface RepostPostOptions {
-  /** Request body */
-  body?: RepostPostRequest;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getPosts method
- * 
- * @public
- */
-export interface GetPostsOptions {
-  /** The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified. */
-  sinceId?: any;
-
-  /** The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified. */
-  untilId?: any;
-
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get the next 'page' of results. */
-  paginationToken?: any;
-
-  /** The set of entities to exclude (e.g. 'replies' or 'retweets'). */
-  exclude?: Array<any>;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since_id parameter takes precedence if it is also specified. */
-  startTime?: string;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until_id parameter takes precedence if it is also specified. */
-  endTime?: string;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
-
-  /** A comma separated list of Poll fields to display. */
-  pollfields?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Place fields to display. */
-  placefields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getByUsername method
- * 
- * @public
- */
-export interface GetByUsernameOptions {
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getMentions method
- * 
- * @public
- */
-export interface GetMentionsOptions {
-  /** The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified. */
-  sinceId?: any;
-
-  /** The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified. */
-  untilId?: any;
-
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get the next 'page' of results. */
-  paginationToken?: any;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since_id parameter takes precedence if it is also specified. */
-  startTime?: string;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until_id parameter takes precedence if it is also specified. */
-  endTime?: string;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
-
-  /** A comma separated list of Poll fields to display. */
-  pollfields?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Place fields to display. */
-  placefields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getFollowers method
- * 
- * @public
- */
-export interface GetFollowersOptions {
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get a specified 'page' of results. */
-  paginationToken?: any;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getLikedPosts method
- * 
- * @public
- */
-export interface GetLikedPostsOptions {
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get the next 'page' of results. */
-  paginationToken?: any;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Media fields to display. */
-  mediafields?: Array<any>;
-
-  /** A comma separated list of Poll fields to display. */
-  pollfields?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Place fields to display. */
-  placefields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getMuting method
- * 
- * @public
- */
-export interface GetMutingOptions {
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get the next 'page' of results. */
-  paginationToken?: any;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for muteUser method
- * 
- * @public
- */
-export interface MuteUserOptions {
-  /** Request body */
-  body?: MuteUserRequest;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -489,61 +101,218 @@ export interface MuteUserOptions {
  * @public
  */
 export interface GetByIdOptions {
-  /** A comma separated list of User fields to display. */
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
   userfields?: Array<any>;
 
-  /** A comma separated list of fields to expand. */
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
   expansions?: Array<any>;
 
-  /** A comma separated list of Tweet fields to display. */
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
   tweetfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
- * Options for getOwnedLists method
+ * Options for getBlocking method
  * 
  * @public
  */
-export interface GetOwnedListsOptions {
-  /** The maximum number of results. */
+export interface GetBlockingOptions {
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
   maxResults?: number;
 
-  /** This parameter is used to get a specified 'page' of results. */
+  /** This parameter is used to get a specified 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
   paginationToken?: any;
 
-  /** A comma separated list of List fields to display. */
-  listfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
   userfields?: Array<any>;
 
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getMe method
- * 
- * @public
- */
-export interface GetMeOptions {
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
   expansions?: Array<any>;
 
-  /** A comma separated list of Tweet fields to display. */
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
   tweetfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getPinnedLists method
+ * 
+ * @public
+ */
+export interface GetPinnedListsOptions {
+  /** A comma separated list of List fields to display. 
+     * Also accepts: list.fields or proper camelCase format */
+  listfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getBookmarks method
+ * 
+ * @public
+ */
+export interface GetBookmarksOptions {
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
+  paginationToken?: any;
+
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. 
+     * Also accepts: media.fields or proper camelCase format */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. 
+     * Also accepts: poll.fields or proper camelCase format */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. 
+     * Also accepts: place.fields or proper camelCase format */
+  placefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for search method
+ * 
+ * @public
+ */
+export interface SearchOptions {
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. 
+     * Also accepts: next_token or proper camelCase format */
+  nextToken?: any;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getPosts method
+ * 
+ * @public
+ */
+export interface GetPostsOptions {
+  /** The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified. 
+     * Also accepts: since_id or proper camelCase format */
+  sinceId?: any;
+
+  /** The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified. 
+     * Also accepts: until_id or proper camelCase format */
+  untilId?: any;
+
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
+  paginationToken?: any;
+
+  /** The set of entities to exclude (e.g. 'replies' or 'retweets'). 
+     * Also accepts: exclude or proper camelCase format */
+  exclude?: Array<any>;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since_id parameter takes precedence if it is also specified. 
+     * Also accepts: start_time or proper camelCase format */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until_id parameter takes precedence if it is also specified. 
+     * Also accepts: end_time or proper camelCase format */
+  endTime?: string;
+
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. 
+     * Also accepts: media.fields or proper camelCase format */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. 
+     * Also accepts: poll.fields or proper camelCase format */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. 
+     * Also accepts: place.fields or proper camelCase format */
+  placefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -552,23 +321,30 @@ export interface GetMeOptions {
  * @public
  */
 export interface GetFollowingOptions {
-  /** The maximum number of results. */
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
   maxResults?: number;
 
-  /** This parameter is used to get a specified 'page' of results. */
+  /** This parameter is used to get a specified 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
   paginationToken?: any;
 
-  /** A comma separated list of User fields to display. */
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
   userfields?: Array<any>;
 
-  /** A comma separated list of fields to expand. */
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
   expansions?: Array<any>;
 
-  /** A comma separated list of Tweet fields to display. */
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
   tweetfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -582,6 +358,52 @@ export interface FollowUserOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getLikedPosts method
+ * 
+ * @public
+ */
+export interface GetLikedPostsOptions {
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
+  paginationToken?: any;
+
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. 
+     * Also accepts: media.fields or proper camelCase format */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. 
+     * Also accepts: poll.fields or proper camelCase format */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. 
+     * Also accepts: place.fields or proper camelCase format */
+  placefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -590,23 +412,30 @@ export interface FollowUserOptions {
  * @public
  */
 export interface GetFollowedListsOptions {
-  /** The maximum number of results. */
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
   maxResults?: number;
 
-  /** This parameter is used to get a specified 'page' of results. */
+  /** This parameter is used to get a specified 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
   paginationToken?: any;
 
-  /** A comma separated list of List fields to display. */
+  /** A comma separated list of List fields to display. 
+     * Also accepts: list.fields or proper camelCase format */
   listfields?: Array<any>;
 
-  /** A comma separated list of fields to expand. */
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
   expansions?: Array<any>;
 
-  /** A comma separated list of User fields to display. */
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
   userfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -620,50 +449,127 @@ export interface FollowListOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
- * Options for getPinnedLists method
+ * Options for getMe method
  * 
  * @public
  */
-export interface GetPinnedListsOptions {
-  /** A comma separated list of List fields to display. */
-  listfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
+export interface GetMeOptions {
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
   userfields?: Array<any>;
 
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getBlocking method
- * 
- * @public
- */
-export interface GetBlockingOptions {
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** This parameter is used to get a specified 'page' of results. */
-  paginationToken?: any;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
   expansions?: Array<any>;
 
-  /** A comma separated list of Tweet fields to display. */
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
   tweetfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getByIds method
+ * 
+ * @public
+ */
+export interface GetByIdsOptions {
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getByUsername method
+ * 
+ * @public
+ */
+export interface GetByUsernameOptions {
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for repostPost method
+ * 
+ * @public
+ */
+export interface RepostPostOptions {
+  /** Request body */
+  body?: RepostPostRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getListMemberships method
+ * 
+ * @public
+ */
+export interface GetListMembershipsOptions {
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
+  maxResults?: number;
+
+  /** This parameter is used to get a specified 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
+  paginationToken?: any;
+
+  /** A comma separated list of List fields to display. 
+     * Also accepts: list.fields or proper camelCase format */
+  listfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -677,31 +583,299 @@ export interface LikePostOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
- * Options for search method
+ * Options for getRepostsOfMe method
  * 
  * @public
  */
-export interface SearchOptions {
-  /** The maximum number of results. */
+export interface GetRepostsOfMeOptions {
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
   maxResults?: number;
 
-  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
-  nextToken?: any;
+  /** This parameter is used to get the next 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
+  paginationToken?: any;
 
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
+  tweetfields?: Array<any>;
 
-  /** A comma separated list of fields to expand. */
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
   expansions?: Array<any>;
 
-  /** A comma separated list of Tweet fields to display. */
+  /** A comma separated list of Media fields to display. 
+     * Also accepts: media.fields or proper camelCase format */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. 
+     * Also accepts: poll.fields or proper camelCase format */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. 
+     * Also accepts: place.fields or proper camelCase format */
+  placefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getMuting method
+ * 
+ * @public
+ */
+export interface GetMutingOptions {
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
+  paginationToken?: any;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
   tweetfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for muteUser method
+ * 
+ * @public
+ */
+export interface MuteUserOptions {
+  /** Request body */
+  body?: MuteUserRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getFollowers method
+ * 
+ * @public
+ */
+export interface GetFollowersOptions {
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
+  maxResults?: number;
+
+  /** This parameter is used to get a specified 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
+  paginationToken?: any;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getByUsernames method
+ * 
+ * @public
+ */
+export interface GetByUsernamesOptions {
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getMentions method
+ * 
+ * @public
+ */
+export interface GetMentionsOptions {
+  /** The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified. 
+     * Also accepts: since_id or proper camelCase format */
+  sinceId?: any;
+
+  /** The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified. 
+     * Also accepts: until_id or proper camelCase format */
+  untilId?: any;
+
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
+  paginationToken?: any;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since_id parameter takes precedence if it is also specified. 
+     * Also accepts: start_time or proper camelCase format */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until_id parameter takes precedence if it is also specified. 
+     * Also accepts: end_time or proper camelCase format */
+  endTime?: string;
+
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. 
+     * Also accepts: media.fields or proper camelCase format */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. 
+     * Also accepts: poll.fields or proper camelCase format */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. 
+     * Also accepts: place.fields or proper camelCase format */
+  placefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getTimeline method
+ * 
+ * @public
+ */
+export interface GetTimelineOptions {
+  /** The minimum Post ID to be included in the result set. This parameter takes precedence over start_time if both are specified. 
+     * Also accepts: since_id or proper camelCase format */
+  sinceId?: any;
+
+  /** The maximum Post ID to be included in the result set. This parameter takes precedence over end_time if both are specified. 
+     * Also accepts: until_id or proper camelCase format */
+  untilId?: any;
+
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
+  paginationToken?: any;
+
+  /** The set of entities to exclude (e.g. 'replies' or 'retweets'). 
+     * Also accepts: exclude or proper camelCase format */
+  exclude?: Array<any>;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Posts will be provided. The since_id parameter takes precedence if it is also specified. 
+     * Also accepts: start_time or proper camelCase format */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided. The until_id parameter takes precedence if it is also specified. 
+     * Also accepts: end_time or proper camelCase format */
+  endTime?: string;
+
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
+  tweetfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. 
+     * Also accepts: media.fields or proper camelCase format */
+  mediafields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. 
+     * Also accepts: poll.fields or proper camelCase format */
+  pollfields?: Array<any>;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. 
+     * Also accepts: place.fields or proper camelCase format */
+  placefields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getBookmarkFolders method
+ * 
+ * @public
+ */
+export interface GetBookmarkFoldersOptions {
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
+  maxResults?: number;
+
+  /** This parameter is used to get the next 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
+  paginationToken?: any;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -726,6 +900,347 @@ export class UsersClient {
   }
 
   /**
+     * Normalize options object to handle both camelCase and original API parameter names
+     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     */
+  private _normalizeOptions<T extends Record<string, any>>(
+    options: T,
+    paramMappings: Record<string, string>
+  ): T {
+    if (!options || typeof options !== 'object') {
+      return options;
+    }
+
+    const normalized: any = { ...options };
+
+    // For each parameter mapping (original -> camelCase)
+    for (const [originalName, camelName] of Object.entries(paramMappings)) {
+      // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
+      if (originalName in normalized && !(camelName in normalized)) {
+        normalized[camelName] = normalized[originalName];
+        delete normalized[originalName];
+      }
+      // Also check for camelCase with proper casing (e.g., 'tweetFields')
+      const properCamel = this._toCamelCase(originalName);
+      if (
+        properCamel !== camelName &&
+        properCamel in normalized &&
+        !(camelName in normalized)
+      ) {
+        normalized[camelName] = normalized[properCamel];
+        delete normalized[properCamel];
+      }
+    }
+
+    return normalized as T;
+  }
+
+  /**
+     * Convert a parameter name to proper camelCase
+     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
+     */
+  private _toCamelCase(name: string): string {
+    return name
+      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
+      .replace(/^[A-Z]/, letter => letter.toLowerCase());
+  }
+
+  /**
+   * Get owned Lists
+   * Retrieves a list of Lists owned by a specific User by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetOwnedListsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getOwnedLists(
+    id: string,
+    options: GetOwnedListsOptions = {}
+  ): Promise<GetOwnedListsResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      'list.fields': 'listfields',
+
+      'user.fields': 'userfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      listfields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/owned_lists';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (listfields !== undefined && listfields.length > 0) {
+      params.append('list.fields', listfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetOwnedListsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get User by ID
+   * Retrieves details of a specific User by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getById(
+    id: string,
+    options: GetByIdOptions = {}
+  ): Promise<GetByIdResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'user.fields': 'userfields',
+
+      'tweet.fields': 'tweetfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetByIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Unfollow List
+   * Causes the authenticated user to unfollow a specific List by its ID.
+
+
+   * @param id The ID of the authenticated source User that will unfollow the List.
+
+
+
+   * @param listId The ID of the List to unfollow.
+
+
+
+
+   * @returns {Promise<UnfollowListResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async unfollowList(
+    id: string,
+    listId: string
+  ): Promise<UnfollowListResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/followed_lists/{list_id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    path = path.replace('{list_id}', encodeURIComponent(String(listId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<UnfollowListResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get blocking
+   * Retrieves a list of Users blocked by the specified User ID.
+
+
+   * @param id The ID of the authenticated source User for whom to return results.
+
+
+
+
+   * @returns {Promise<GetBlockingResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getBlocking(
+    id: string,
+    options: GetBlockingOptions = {}
+  ): Promise<GetBlockingResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      'user.fields': 'userfields',
+
+      'tweet.fields': 'tweetfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/blocking';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetBlockingResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Unblock DMs
    * Unblocks direct messages to or from a specific User by their ID for the authenticated user.
 
@@ -739,7 +1254,7 @@ export class UsersClient {
    */
   // Overload 1: Default behavior (unwrapped response)
   async unblockDms(id: string): Promise<UnblockDmsResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
     const requestOptions = {};
 
@@ -764,194 +1279,61 @@ export class UsersClient {
   }
 
   /**
-   * Get Timeline
-   * Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
+   * Unmute User
+   * Causes the authenticated user to unmute a specific user by their ID.
 
 
-   * @param id The ID of the authenticated source User to list Reverse Chronological Timeline Posts of.
+   * @param sourceUserId The ID of the authenticated source User that is requesting to unmute the target User.
+
+
+
+   * @param targetUserId The ID of the User that the source User is requesting to unmute.
 
 
 
 
-   * @returns {Promise<GetTimelineResponse>} Promise resolving to the API response
+   * @returns {Promise<UnmuteUserResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getTimeline(
-    id: string,
-    options: GetTimelineOptions = {}
-  ): Promise<GetTimelineResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+  async unmuteUser(
+    sourceUserId: string,
+    targetUserId: string
+  ): Promise<UnmuteUserResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
 
-    const {
-      sinceId = undefined,
-
-      untilId = undefined,
-
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
-      exclude = [],
-
-      startTime = undefined,
-
-      endTime = undefined,
-
-      tweetfields = [],
-
-      expansions = [],
-
-      mediafields = [],
-
-      pollfields = [],
-
-      userfields = [],
-
-      placefields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
+    const requestOptions = {};
 
     // Build the path with path parameters
-    let path = '/2/users/{id}/timelines/reverse_chronological';
+    let path = '/2/users/{source_user_id}/muting/{target_user_id}';
 
-    path = path.replace('{id}', encodeURIComponent(String(id)));
+    path = path.replace(
+      '{source_user_id}',
+      encodeURIComponent(String(sourceUserId))
+    );
+
+    path = path.replace(
+      '{target_user_id}',
+      encodeURIComponent(String(targetUserId))
+    );
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (sinceId !== undefined) {
-      params.append('since_id', String(sinceId));
-    }
-
-    if (untilId !== undefined) {
-      params.append('until_id', String(untilId));
-    }
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (exclude !== undefined) {
-      params.append('exclude', exclude.join(','));
-    }
-
-    if (startTime !== undefined) {
-      params.append('start_time', String(startTime));
-    }
-
-    if (endTime !== undefined) {
-      params.append('end_time', String(endTime));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (mediafields !== undefined) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
-    if (pollfields !== undefined) {
-      params.append('poll.fields', pollfields.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (placefields !== undefined) {
-      params.append('place.fields', placefields.join(','));
-    }
-
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
+      // No optional parameters, using empty request options
     };
 
-    return this.client.request<GetTimelineResponse>(
-      'GET',
+    return this.client.request<UnmuteUserResponse>(
+      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
   }
 
   /**
-   * Get Users by IDs
-   * Retrieves details of multiple Users by their IDs.
-
-
-
-   * @param ids A list of User IDs, comma-separated. You can specify up to 100 IDs.
-
-
-
-   * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getByIds(
-    ids: Array<any>,
-    options: GetByIdsOptions = {}
-  ): Promise<GetByIdsResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      userfields = [],
-
-      expansions = [],
-
-      tweetfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (ids !== undefined) {
-      params.append('ids', ids.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetByIdsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Bookmark folders
-   * Retrieves a list of Bookmark folders created by the authenticated user.
+   * Get pinned Lists
+   * Retrieves a list of Lists pinned by the authenticated user.
 
 
    * @param id The ID of the authenticated source User for whom to return results.
@@ -959,76 +1341,27 @@ export class UsersClient {
 
 
 
-   * @returns {Promise<GetBookmarkFoldersResponse>} Promise resolving to the API response
+   * @returns {Promise<GetPinnedListsResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getBookmarkFolders(
+  async getPinnedLists(
     id: string,
-    options: GetBookmarkFoldersOptions = {}
-  ): Promise<GetBookmarkFoldersResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    options: GetPinnedListsOptions = {}
+  ): Promise<GetPinnedListsResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
 
-    const {
-      maxResults = undefined,
+    const paramMappings: Record<string, string> = {
+      'list.fields': 'listfields',
 
-      paginationToken = undefined,
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/bookmarks/folders';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
+      'user.fields': 'userfields',
     };
-
-    return this.client.request<GetBookmarkFoldersResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
     );
-  }
 
-  /**
-   * Get List memberships
-   * Retrieves a list of Lists that a specific User is a member of by their ID.
-
-
-   * @param id The ID of the User to lookup.
-
-
-
-
-   * @returns {Promise<GetListMembershipsResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getListMemberships(
-    id: string,
-    options: GetListMembershipsOptions = {}
-  ): Promise<GetListMembershipsResponse> {
     // Destructure options (exclude path parameters, they're already function params)
-
     const {
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
       listfields = [],
 
       expansions = [],
@@ -1036,34 +1369,25 @@ export class UsersClient {
       userfields = [],
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
-    let path = '/2/users/{id}/list_memberships';
+    let path = '/2/users/{id}/pinned_lists';
 
     path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (listfields !== undefined) {
+    if (listfields !== undefined && listfields.length > 0) {
       params.append('list.fields', listfields.join(','));
     }
 
-    if (expansions !== undefined) {
+    if (expansions !== undefined && expansions.length > 0) {
       params.append('expansions', expansions.join(','));
     }
 
-    if (userfields !== undefined) {
+    if (userfields !== undefined && userfields.length > 0) {
       params.append('user.fields', userfields.join(','));
     }
 
@@ -1072,7 +1396,7 @@ export class UsersClient {
       ...requestOptions,
     };
 
-    return this.client.request<GetListMembershipsResponse>(
+    return this.client.request<GetPinnedListsResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -1080,64 +1404,42 @@ export class UsersClient {
   }
 
   /**
-   * Get Users by usernames
-   * Retrieves details of multiple Users by their usernames.
+   * Pin List
+   * Causes the authenticated user to pin a specific List by its ID.
+
+
+   * @param id The ID of the authenticated source User that will pin the List.
 
 
 
-   * @param usernames A list of usernames, comma-separated.
 
+   * @param body Request body
 
-
-   * @returns {Promise<GetByUsernamesResponse>} Promise resolving to the API response
+   * @returns {Promise<PinListResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getByUsernames(
-    usernames: Array<any>,
-    options: GetByUsernamesOptions = {}
-  ): Promise<GetByUsernamesResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+  async pinList(id: string, body: PinListRequest): Promise<PinListResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
 
-    const {
-      userfields = [],
-
-      expansions = [],
-
-      tweetfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
+    const requestOptions = {};
 
     // Build the path with path parameters
-    let path = '/2/users/by';
+    let path = '/2/users/{id}/pinned_lists';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (usernames !== undefined) {
-      params.append('usernames', usernames.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
+      body: JSON.stringify(body || {}),
+
+      // No optional parameters, using empty request options
     };
 
-    return this.client.request<GetByUsernamesResponse>(
-      'GET',
+    return this.client.request<PinListResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -1160,8 +1462,29 @@ export class UsersClient {
     id: string,
     options: GetBookmarksOptions = {}
   ): Promise<GetBookmarksResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      'tweet.fields': 'tweetfields',
+
+      'media.fields': 'mediafields',
+
+      'poll.fields': 'pollfields',
+
+      'user.fields': 'userfields',
+
+      'place.fields': 'placefields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
       maxResults = undefined,
 
@@ -1180,8 +1503,7 @@ export class UsersClient {
       placefields = [],
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/users/{id}/bookmarks';
@@ -1199,27 +1521,27 @@ export class UsersClient {
       params.append('pagination_token', String(paginationToken));
     }
 
-    if (tweetfields !== undefined) {
+    if (tweetfields !== undefined && tweetfields.length > 0) {
       params.append('tweet.fields', tweetfields.join(','));
     }
 
-    if (expansions !== undefined) {
+    if (expansions !== undefined && expansions.length > 0) {
       params.append('expansions', expansions.join(','));
     }
 
-    if (mediafields !== undefined) {
+    if (mediafields !== undefined && mediafields.length > 0) {
       params.append('media.fields', mediafields.join(','));
     }
 
-    if (pollfields !== undefined) {
+    if (pollfields !== undefined && pollfields.length > 0) {
       params.append('poll.fields', pollfields.join(','));
     }
 
-    if (userfields !== undefined) {
+    if (userfields !== undefined && userfields.length > 0) {
       params.append('user.fields', userfields.join(','));
     }
 
-    if (placefields !== undefined) {
+    if (placefields !== undefined && placefields.length > 0) {
       params.append('place.fields', placefields.join(','));
     }
 
@@ -1254,7 +1576,7 @@ export class UsersClient {
     id: string,
     body: CreateBookmarkRequest
   ): Promise<CreateBookmarkResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
     const requestOptions = {};
 
@@ -1281,76 +1603,81 @@ export class UsersClient {
   }
 
   /**
-   * Get Reposts of me
-   * Retrieves a list of Posts that repost content from the authenticated user.
+   * Search Users
+   * Retrieves a list of Users matching a search query.
 
 
 
-   * @returns {Promise<GetRepostsOfMeResponse>} Promise resolving to the API response
+   * @param query TThe the query string by which to query for users.
+
+
+
+   * @returns {Promise<SearchResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getRepostsOfMe(
-    options: GetRepostsOfMeOptions = {}
-  ): Promise<GetRepostsOfMeResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+  async search(
+    query: any,
+    options: SearchOptions = {}
+  ): Promise<SearchResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      next_token: 'nextToken',
+
+      'user.fields': 'userfields',
+
+      'tweet.fields': 'tweetfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
       maxResults = undefined,
 
-      paginationToken = undefined,
-
-      tweetfields = [],
-
-      expansions = [],
-
-      mediafields = [],
-
-      pollfields = [],
+      nextToken = undefined,
 
       userfields = [],
 
-      placefields = [],
+      expansions = [],
+
+      tweetfields = [],
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
-    let path = '/2/users/reposts_of_me';
+    let path = '/2/users/search';
 
     // Build query parameters
     const params = new URLSearchParams();
+
+    if (query !== undefined) {
+      params.append('query', String(query));
+    }
 
     if (maxResults !== undefined) {
       params.append('max_results', String(maxResults));
     }
 
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
+    if (nextToken !== undefined) {
+      params.append('next_token', String(nextToken));
     }
 
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (mediafields !== undefined) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
-    if (pollfields !== undefined) {
-      params.append('poll.fields', pollfields.join(','));
-    }
-
-    if (userfields !== undefined) {
+    if (userfields !== undefined && userfields.length > 0) {
       params.append('user.fields', userfields.join(','));
     }
 
-    if (placefields !== undefined) {
-      params.append('place.fields', placefields.join(','));
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
     }
 
     // Prepare request options
@@ -1358,100 +1685,8 @@ export class UsersClient {
       ...requestOptions,
     };
 
-    return this.client.request<GetRepostsOfMeResponse>(
+    return this.client.request<SearchResponse>(
       'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Repost Post
-   * Causes the authenticated user to repost a specific Post by its ID.
-
-
-   * @param id The ID of the authenticated source User that is requesting to repost the Post.
-
-
-
-
-   * @returns {Promise<RepostPostResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async repostPost(
-    id: string,
-    options: RepostPostOptions = {}
-  ): Promise<RepostPostResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/retweets';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...requestOptions,
-    };
-
-    return this.client.request<RepostPostResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Unpin List
-   * Causes the authenticated user to unpin a specific List by its ID.
-
-
-   * @param id The ID of the authenticated source User for whom to return results.
-
-
-
-   * @param listId The ID of the List to unpin.
-
-
-
-
-   * @returns {Promise<UnpinListResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async unpinList(id: string, listId: string): Promise<UnpinListResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/pinned_lists/{list_id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    path = path.replace('{list_id}', encodeURIComponent(String(listId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<UnpinListResponse>(
-      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -1474,8 +1709,37 @@ export class UsersClient {
     id: string,
     options: GetPostsOptions = {}
   ): Promise<GetPostsResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const paramMappings: Record<string, string> = {
+      since_id: 'sinceId',
+
+      until_id: 'untilId',
+
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      start_time: 'startTime',
+
+      end_time: 'endTime',
+
+      'tweet.fields': 'tweetfields',
+
+      'media.fields': 'mediafields',
+
+      'poll.fields': 'pollfields',
+
+      'user.fields': 'userfields',
+
+      'place.fields': 'placefields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
       sinceId = undefined,
 
@@ -1504,8 +1768,7 @@ export class UsersClient {
       placefields = [],
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/users/{id}/tweets';
@@ -1531,7 +1794,7 @@ export class UsersClient {
       params.append('pagination_token', String(paginationToken));
     }
 
-    if (exclude !== undefined) {
+    if (exclude !== undefined && exclude.length > 0) {
       params.append('exclude', exclude.join(','));
     }
 
@@ -1543,27 +1806,27 @@ export class UsersClient {
       params.append('end_time', String(endTime));
     }
 
-    if (tweetfields !== undefined) {
+    if (tweetfields !== undefined && tweetfields.length > 0) {
       params.append('tweet.fields', tweetfields.join(','));
     }
 
-    if (expansions !== undefined) {
+    if (expansions !== undefined && expansions.length > 0) {
       params.append('expansions', expansions.join(','));
     }
 
-    if (mediafields !== undefined) {
+    if (mediafields !== undefined && mediafields.length > 0) {
       params.append('media.fields', mediafields.join(','));
     }
 
-    if (pollfields !== undefined) {
+    if (pollfields !== undefined && pollfields.length > 0) {
       params.append('poll.fields', pollfields.join(','));
     }
 
-    if (userfields !== undefined) {
+    if (userfields !== undefined && userfields.length > 0) {
       params.append('user.fields', userfields.join(','));
     }
 
-    if (placefields !== undefined) {
+    if (placefields !== undefined && placefields.length > 0) {
       params.append('place.fields', placefields.join(','));
     }
 
@@ -1580,25 +1843,91 @@ export class UsersClient {
   }
 
   /**
-   * Get User by username
-   * Retrieves details of a specific User by their username.
+   * Get Bookmarks by folder ID
+   * Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
 
 
-   * @param username A username.
+   * @param id The ID of the authenticated source User for whom to return results.
+
+
+
+   * @param folderId The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.
 
 
 
 
-   * @returns {Promise<GetByUsernameResponse>} Promise resolving to the API response
+   * @returns {Promise<GetBookmarksByFolderIdResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getByUsername(
-    username: string,
-    options: GetByUsernameOptions = {}
-  ): Promise<GetByUsernameResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+  async getBookmarksByFolderId(
+    id: string,
+    folderId: string
+  ): Promise<GetBookmarksByFolderIdResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/bookmarks/folders/{folder_id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    path = path.replace('{folder_id}', encodeURIComponent(String(folderId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<GetBookmarksByFolderIdResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get following
+   * Retrieves a list of Users followed by a specific User by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetFollowingResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getFollowing(
+    id: string,
+    options: GetFollowingOptions = {}
+  ): Promise<GetFollowingResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      'user.fields': 'userfields',
+
+      'tweet.fields': 'tweetfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
       userfields = [],
 
       expansions = [],
@@ -1606,26 +1935,33 @@ export class UsersClient {
       tweetfields = [],
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
-    let path = '/2/users/by/username/{username}';
+    let path = '/2/users/{id}/following';
 
-    path = path.replace('{username}', encodeURIComponent(String(username)));
+    path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (userfields !== undefined) {
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
       params.append('user.fields', userfields.join(','));
     }
 
-    if (expansions !== undefined) {
+    if (expansions !== undefined && expansions.length > 0) {
       params.append('expansions', expansions.join(','));
     }
 
-    if (tweetfields !== undefined) {
+    if (tweetfields !== undefined && tweetfields.length > 0) {
       params.append('tweet.fields', tweetfields.join(','));
     }
 
@@ -1634,8 +1970,355 @@ export class UsersClient {
       ...requestOptions,
     };
 
-    return this.client.request<GetByUsernameResponse>(
+    return this.client.request<GetFollowingResponse>(
       'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Follow User
+   * Causes the authenticated user to follow a specific user by their ID.
+
+
+   * @param id The ID of the authenticated source User that is requesting to follow the target User.
+
+
+
+
+   * @returns {Promise<FollowUserResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async followUser(
+    id: string,
+    options: FollowUserOptions = {}
+  ): Promise<FollowUserResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/following';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<FollowUserResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get liked Posts
+   * Retrieves a list of Posts liked by a specific User by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetLikedPostsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getLikedPosts(
+    id: string,
+    options: GetLikedPostsOptions = {}
+  ): Promise<GetLikedPostsResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      'tweet.fields': 'tweetfields',
+
+      'media.fields': 'mediafields',
+
+      'poll.fields': 'pollfields',
+
+      'user.fields': 'userfields',
+
+      'place.fields': 'placefields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      tweetfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      pollfields = [],
+
+      userfields = [],
+
+      placefields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/liked_tweets';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediafields !== undefined && mediafields.length > 0) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (pollfields !== undefined && pollfields.length > 0) {
+      params.append('poll.fields', pollfields.join(','));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (placefields !== undefined && placefields.length > 0) {
+      params.append('place.fields', placefields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetLikedPostsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Delete Bookmark
+   * Removes a Post from the authenticated user’s Bookmarks by its ID.
+
+
+   * @param id The ID of the authenticated source User whose bookmark is to be removed.
+
+
+
+   * @param tweetId The ID of the Post that the source User is removing from bookmarks.
+
+
+
+
+   * @returns {Promise<DeleteBookmarkResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async deleteBookmark(
+    id: string,
+    tweetId: string
+  ): Promise<DeleteBookmarkResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/bookmarks/{tweet_id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    path = path.replace('{tweet_id}', encodeURIComponent(String(tweetId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<DeleteBookmarkResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get followed Lists
+   * Retrieves a list of Lists followed by a specific User by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetFollowedListsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getFollowedLists(
+    id: string,
+    options: GetFollowedListsOptions = {}
+  ): Promise<GetFollowedListsResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      'list.fields': 'listfields',
+
+      'user.fields': 'userfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      listfields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/followed_lists';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (listfields !== undefined && listfields.length > 0) {
+      params.append('list.fields', listfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetFollowedListsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Follow List
+   * Causes the authenticated user to follow a specific List by its ID.
+
+
+   * @param id The ID of the authenticated source User that will follow the List.
+
+
+
+
+   * @returns {Promise<FollowListResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async followList(
+    id: string,
+    options: FollowListOptions = {}
+  ): Promise<FollowListResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/followed_lists';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<FollowListResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -1662,7 +2345,7 @@ export class UsersClient {
     id: string,
     sourceTweetId: string
   ): Promise<UnrepostPostResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
     const requestOptions = {};
 
@@ -1692,6 +2375,546 @@ export class UsersClient {
   }
 
   /**
+   * Get my User
+   * Retrieves details of the authenticated user.
+
+
+
+   * @returns {Promise<GetMeResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getMe(options: GetMeOptions = {}): Promise<GetMeResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'user.fields': 'userfields',
+
+      'tweet.fields': 'tweetfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/me';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetMeResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Users by IDs
+   * Retrieves details of multiple Users by their IDs.
+
+
+
+   * @param ids A list of User IDs, comma-separated. You can specify up to 100 IDs.
+
+
+
+   * @returns {Promise<GetByIdsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByIds(
+    ids: Array<any>,
+    options: GetByIdsOptions = {}
+  ): Promise<GetByIdsResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'user.fields': 'userfields',
+
+      'tweet.fields': 'tweetfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (ids !== undefined && ids.length > 0) {
+      params.append('ids', ids.join(','));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetByIdsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get User by username
+   * Retrieves details of a specific User by their username.
+
+
+   * @param username A username.
+
+
+
+
+   * @returns {Promise<GetByUsernameResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByUsername(
+    username: string,
+    options: GetByUsernameOptions = {}
+  ): Promise<GetByUsernameResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'user.fields': 'userfields',
+
+      'tweet.fields': 'tweetfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/by/username/{username}';
+
+    path = path.replace('{username}', encodeURIComponent(String(username)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetByUsernameResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Repost Post
+   * Causes the authenticated user to repost a specific Post by its ID.
+
+
+   * @param id The ID of the authenticated source User that is requesting to repost the Post.
+
+
+
+
+   * @returns {Promise<RepostPostResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async repostPost(
+    id: string,
+    options: RepostPostOptions = {}
+  ): Promise<RepostPostResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/retweets';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<RepostPostResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get List memberships
+   * Retrieves a list of Lists that a specific User is a member of by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetListMembershipsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getListMemberships(
+    id: string,
+    options: GetListMembershipsOptions = {}
+  ): Promise<GetListMembershipsResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      'list.fields': 'listfields',
+
+      'user.fields': 'userfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      listfields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/list_memberships';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (listfields !== undefined && listfields.length > 0) {
+      params.append('list.fields', listfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetListMembershipsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Like Post
+   * Causes the authenticated user to Like a specific Post by its ID.
+
+
+   * @param id The ID of the authenticated source User that is requesting to like the Post.
+
+
+
+
+   * @returns {Promise<LikePostResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async likePost(
+    id: string,
+    options: LikePostOptions = {}
+  ): Promise<LikePostResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/likes';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<LikePostResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Block DMs
+   * Blocks direct messages to or from a specific User by their ID for the authenticated user.
+
+
+   * @param id The ID of the target User that the authenticated user requesting to block dms for.
+
+
+
+
+   * @returns {Promise<BlockDmsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async blockDms(id: string): Promise<BlockDmsResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/dm/block';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<BlockDmsResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Reposts of me
+   * Retrieves a list of Posts that repost content from the authenticated user.
+
+
+
+   * @returns {Promise<GetRepostsOfMeResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getRepostsOfMe(
+    options: GetRepostsOfMeOptions = {}
+  ): Promise<GetRepostsOfMeResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      'tweet.fields': 'tweetfields',
+
+      'media.fields': 'mediafields',
+
+      'poll.fields': 'pollfields',
+
+      'user.fields': 'userfields',
+
+      'place.fields': 'placefields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      tweetfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      pollfields = [],
+
+      userfields = [],
+
+      placefields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/reposts_of_me';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediafields !== undefined && mediafields.length > 0) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (pollfields !== undefined && pollfields.length > 0) {
+      params.append('poll.fields', pollfields.join(','));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (placefields !== undefined && placefields.length > 0) {
+      params.append('place.fields', placefields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetRepostsOfMeResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Unlike Post
    * Causes the authenticated user to Unlike a specific Post by its ID.
 
@@ -1709,7 +2932,7 @@ export class UsersClient {
    */
   // Overload 1: Default behavior (unwrapped response)
   async unlikePost(id: string, tweetId: string): Promise<UnlikePostResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
     const requestOptions = {};
 
@@ -1736,42 +2959,171 @@ export class UsersClient {
   }
 
   /**
-   * Unmute User
-   * Causes the authenticated user to unmute a specific user by their ID.
+   * Get muting
+   * Retrieves a list of Users muted by the authenticated user.
 
 
-   * @param sourceUserId The ID of the authenticated source User that is requesting to unmute the target User.
-
-
-
-   * @param targetUserId The ID of the User that the source User is requesting to unmute.
+   * @param id The ID of the authenticated source User for whom to return results.
 
 
 
 
-   * @returns {Promise<UnmuteUserResponse>} Promise resolving to the API response
+   * @returns {Promise<GetMutingResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async unmuteUser(
-    sourceUserId: string,
-    targetUserId: string
-  ): Promise<UnmuteUserResponse> {
+  async getMuting(
+    id: string,
+    options: GetMutingOptions = {}
+  ): Promise<GetMutingResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      'user.fields': 'userfields',
+
+      'tweet.fields': 'tweetfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
     // Destructure options (exclude path parameters, they're already function params)
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/muting';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetMutingResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Mute User
+   * Causes the authenticated user to mute a specific User by their ID.
+
+
+   * @param id The ID of the authenticated source User that is requesting to mute the target User.
+
+
+
+
+   * @returns {Promise<MuteUserResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async muteUser(
+    id: string,
+    options: MuteUserOptions = {}
+  ): Promise<MuteUserResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/muting';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<MuteUserResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Unpin List
+   * Causes the authenticated user to unpin a specific List by its ID.
+
+
+   * @param id The ID of the authenticated source User for whom to return results.
+
+
+
+   * @param listId The ID of the List to unpin.
+
+
+
+
+   * @returns {Promise<UnpinListResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async unpinList(id: string, listId: string): Promise<UnpinListResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
 
     const requestOptions = {};
 
     // Build the path with path parameters
-    let path = '/2/users/{source_user_id}/muting/{target_user_id}';
+    let path = '/2/users/{id}/pinned_lists/{list_id}';
 
-    path = path.replace(
-      '{source_user_id}',
-      encodeURIComponent(String(sourceUserId))
-    );
+    path = path.replace('{id}', encodeURIComponent(String(id)));
 
-    path = path.replace(
-      '{target_user_id}',
-      encodeURIComponent(String(targetUserId))
-    );
+    path = path.replace('{list_id}', encodeURIComponent(String(listId)));
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -1781,8 +3133,170 @@ export class UsersClient {
       // No optional parameters, using empty request options
     };
 
-    return this.client.request<UnmuteUserResponse>(
+    return this.client.request<UnpinListResponse>(
       'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get followers
+   * Retrieves a list of Users who follow a specific User by their ID.
+
+
+   * @param id The ID of the User to lookup.
+
+
+
+
+   * @returns {Promise<GetFollowersResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getFollowers(
+    id: string,
+    options: GetFollowersOptions = {}
+  ): Promise<GetFollowersResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      'user.fields': 'userfields',
+
+      'tweet.fields': 'tweetfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/{id}/followers';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetFollowersResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get Users by usernames
+   * Retrieves details of multiple Users by their usernames.
+
+
+
+   * @param usernames A list of usernames, comma-separated.
+
+
+
+   * @returns {Promise<GetByUsernamesResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getByUsernames(
+    usernames: Array<any>,
+    options: GetByUsernamesOptions = {}
+  ): Promise<GetByUsernamesResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'user.fields': 'userfields',
+
+      'tweet.fields': 'tweetfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/by';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (usernames !== undefined && usernames.length > 0) {
+      params.append('usernames', usernames.join(','));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetByUsernamesResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -1805,8 +3319,37 @@ export class UsersClient {
     id: string,
     options: GetMentionsOptions = {}
   ): Promise<GetMentionsResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const paramMappings: Record<string, string> = {
+      since_id: 'sinceId',
+
+      until_id: 'untilId',
+
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      start_time: 'startTime',
+
+      end_time: 'endTime',
+
+      'tweet.fields': 'tweetfields',
+
+      'media.fields': 'mediafields',
+
+      'poll.fields': 'pollfields',
+
+      'user.fields': 'userfields',
+
+      'place.fields': 'placefields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
       sinceId = undefined,
 
@@ -1833,8 +3376,7 @@ export class UsersClient {
       placefields = [],
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/users/{id}/mentions';
@@ -1868,27 +3410,27 @@ export class UsersClient {
       params.append('end_time', String(endTime));
     }
 
-    if (tweetfields !== undefined) {
+    if (tweetfields !== undefined && tweetfields.length > 0) {
       params.append('tweet.fields', tweetfields.join(','));
     }
 
-    if (expansions !== undefined) {
+    if (expansions !== undefined && expansions.length > 0) {
       params.append('expansions', expansions.join(','));
     }
 
-    if (mediafields !== undefined) {
+    if (mediafields !== undefined && mediafields.length > 0) {
       params.append('media.fields', mediafields.join(','));
     }
 
-    if (pollfields !== undefined) {
+    if (pollfields !== undefined && pollfields.length > 0) {
       params.append('poll.fields', pollfields.join(','));
     }
 
-    if (userfields !== undefined) {
+    if (userfields !== undefined && userfields.length > 0) {
       params.append('user.fields', userfields.join(','));
     }
 
-    if (placefields !== undefined) {
+    if (placefields !== undefined && placefields.length > 0) {
       params.append('place.fields', placefields.join(','));
     }
 
@@ -1905,102 +3447,67 @@ export class UsersClient {
   }
 
   /**
-   * Get followers
-   * Retrieves a list of Users who follow a specific User by their ID.
+   * Get Timeline
+   * Retrieves a reverse chronological list of Posts in the authenticated User’s Timeline.
 
 
-   * @param id The ID of the User to lookup.
+   * @param id The ID of the authenticated source User to list Reverse Chronological Timeline Posts of.
 
 
 
 
-   * @returns {Promise<GetFollowersResponse>} Promise resolving to the API response
+   * @returns {Promise<GetTimelineResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getFollowers(
+  async getTimeline(
     id: string,
-    options: GetFollowersOptions = {}
-  ): Promise<GetFollowersResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    options: GetTimelineOptions = {}
+  ): Promise<GetTimelineResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
 
-    const {
-      maxResults = undefined,
+    const paramMappings: Record<string, string> = {
+      since_id: 'sinceId',
 
-      paginationToken = undefined,
+      until_id: 'untilId',
 
-      userfields = [],
+      max_results: 'maxResults',
 
-      expansions = [],
+      pagination_token: 'paginationToken',
 
-      tweetfields = [],
+      start_time: 'startTime',
 
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
+      end_time: 'endTime',
 
-    // Build the path with path parameters
-    let path = '/2/users/{id}/followers';
+      'tweet.fields': 'tweetfields',
 
-    path = path.replace('{id}', encodeURIComponent(String(id)));
+      'media.fields': 'mediafields',
 
-    // Build query parameters
-    const params = new URLSearchParams();
+      'poll.fields': 'pollfields',
 
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
+      'user.fields': 'userfields',
 
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
+      'place.fields': 'placefields',
     };
-
-    return this.client.request<GetFollowersResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
     );
-  }
 
-  /**
-   * Get liked Posts
-   * Retrieves a list of Posts liked by a specific User by their ID.
-
-
-   * @param id The ID of the User to lookup.
-
-
-
-
-   * @returns {Promise<GetLikedPostsResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getLikedPosts(
-    id: string,
-    options: GetLikedPostsOptions = {}
-  ): Promise<GetLikedPostsResponse> {
     // Destructure options (exclude path parameters, they're already function params)
-
     const {
+      sinceId = undefined,
+
+      untilId = undefined,
+
       maxResults = undefined,
 
       paginationToken = undefined,
+
+      exclude = [],
+
+      startTime = undefined,
+
+      endTime = undefined,
 
       tweetfields = [],
 
@@ -2015,16 +3522,23 @@ export class UsersClient {
       placefields = [],
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
-    let path = '/2/users/{id}/liked_tweets';
+    let path = '/2/users/{id}/timelines/reverse_chronological';
 
     path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
+
+    if (sinceId !== undefined) {
+      params.append('since_id', String(sinceId));
+    }
+
+    if (untilId !== undefined) {
+      params.append('until_id', String(untilId));
+    }
 
     if (maxResults !== undefined) {
       params.append('max_results', String(maxResults));
@@ -2034,27 +3548,39 @@ export class UsersClient {
       params.append('pagination_token', String(paginationToken));
     }
 
-    if (tweetfields !== undefined) {
+    if (exclude !== undefined && exclude.length > 0) {
+      params.append('exclude', exclude.join(','));
+    }
+
+    if (startTime !== undefined) {
+      params.append('start_time', String(startTime));
+    }
+
+    if (endTime !== undefined) {
+      params.append('end_time', String(endTime));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
       params.append('tweet.fields', tweetfields.join(','));
     }
 
-    if (expansions !== undefined) {
+    if (expansions !== undefined && expansions.length > 0) {
       params.append('expansions', expansions.join(','));
     }
 
-    if (mediafields !== undefined) {
+    if (mediafields !== undefined && mediafields.length > 0) {
       params.append('media.fields', mediafields.join(','));
     }
 
-    if (pollfields !== undefined) {
+    if (pollfields !== undefined && pollfields.length > 0) {
       params.append('poll.fields', pollfields.join(','));
     }
 
-    if (userfields !== undefined) {
+    if (userfields !== undefined && userfields.length > 0) {
       params.append('user.fields', userfields.join(','));
     }
 
-    if (placefields !== undefined) {
+    if (placefields !== undefined && placefields.length > 0) {
       params.append('place.fields', placefields.join(','));
     }
 
@@ -2063,7 +3589,7 @@ export class UsersClient {
       ...requestOptions,
     };
 
-    return this.client.request<GetLikedPostsResponse>(
+    return this.client.request<GetTimelineResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -2091,7 +3617,7 @@ export class UsersClient {
     sourceUserId: string,
     targetUserId: string
   ): Promise<UnfollowUserResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
     const requestOptions = {};
 
@@ -2124,8 +3650,8 @@ export class UsersClient {
   }
 
   /**
-   * Get muting
-   * Retrieves a list of Users muted by the authenticated user.
+   * Get Bookmark folders
+   * Retrieves a list of Bookmark folders created by the authenticated user.
 
 
    * @param id The ID of the authenticated source User for whom to return results.
@@ -2133,32 +3659,36 @@ export class UsersClient {
 
 
 
-   * @returns {Promise<GetMutingResponse>} Promise resolving to the API response
+   * @returns {Promise<GetBookmarkFoldersResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getMuting(
+  async getBookmarkFolders(
     id: string,
-    options: GetMutingOptions = {}
-  ): Promise<GetMutingResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    options: GetBookmarkFoldersOptions = {}
+  ): Promise<GetBookmarkFoldersResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
       maxResults = undefined,
 
       paginationToken = undefined,
 
-      userfields = [],
-
-      expansions = [],
-
-      tweetfields = [],
-
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
-    let path = '/2/users/{id}/muting';
+    let path = '/2/users/{id}/bookmarks/folders';
 
     path = path.replace('{id}', encodeURIComponent(String(id)));
 
@@ -2173,986 +3703,12 @@ export class UsersClient {
       params.append('pagination_token', String(paginationToken));
     }
 
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
       ...requestOptions,
     };
 
-    return this.client.request<GetMutingResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Mute User
-   * Causes the authenticated user to mute a specific User by their ID.
-
-
-   * @param id The ID of the authenticated source User that is requesting to mute the target User.
-
-
-
-
-   * @returns {Promise<MuteUserResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async muteUser(
-    id: string,
-    options: MuteUserOptions = {}
-  ): Promise<MuteUserResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/muting';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...requestOptions,
-    };
-
-    return this.client.request<MuteUserResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get User by ID
-   * Retrieves details of a specific User by their ID.
-
-
-   * @param id The ID of the User to lookup.
-
-
-
-
-   * @returns {Promise<GetByIdResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getById(
-    id: string,
-    options: GetByIdOptions = {}
-  ): Promise<GetByIdResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      userfields = [],
-
-      expansions = [],
-
-      tweetfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetByIdResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get owned Lists
-   * Retrieves a list of Lists owned by a specific User by their ID.
-
-
-   * @param id The ID of the User to lookup.
-
-
-
-
-   * @returns {Promise<GetOwnedListsResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getOwnedLists(
-    id: string,
-    options: GetOwnedListsOptions = {}
-  ): Promise<GetOwnedListsResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
-      listfields = [],
-
-      expansions = [],
-
-      userfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/owned_lists';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (listfields !== undefined) {
-      params.append('list.fields', listfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetOwnedListsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get my User
-   * Retrieves details of the authenticated user.
-
-
-
-   * @returns {Promise<GetMeResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getMe(options: GetMeOptions = {}): Promise<GetMeResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      userfields = [],
-
-      expansions = [],
-
-      tweetfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/me';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetMeResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get following
-   * Retrieves a list of Users followed by a specific User by their ID.
-
-
-   * @param id The ID of the User to lookup.
-
-
-
-
-   * @returns {Promise<GetFollowingResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getFollowing(
-    id: string,
-    options: GetFollowingOptions = {}
-  ): Promise<GetFollowingResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
-      userfields = [],
-
-      expansions = [],
-
-      tweetfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/following';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetFollowingResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Follow User
-   * Causes the authenticated user to follow a specific user by their ID.
-
-
-   * @param id The ID of the authenticated source User that is requesting to follow the target User.
-
-
-
-
-   * @returns {Promise<FollowUserResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async followUser(
-    id: string,
-    options: FollowUserOptions = {}
-  ): Promise<FollowUserResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/following';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...requestOptions,
-    };
-
-    return this.client.request<FollowUserResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get followed Lists
-   * Retrieves a list of Lists followed by a specific User by their ID.
-
-
-   * @param id The ID of the User to lookup.
-
-
-
-
-   * @returns {Promise<GetFollowedListsResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getFollowedLists(
-    id: string,
-    options: GetFollowedListsOptions = {}
-  ): Promise<GetFollowedListsResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
-      listfields = [],
-
-      expansions = [],
-
-      userfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/followed_lists';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (listfields !== undefined) {
-      params.append('list.fields', listfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetFollowedListsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Follow List
-   * Causes the authenticated user to follow a specific List by its ID.
-
-
-   * @param id The ID of the authenticated source User that will follow the List.
-
-
-
-
-   * @returns {Promise<FollowListResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async followList(
-    id: string,
-    options: FollowListOptions = {}
-  ): Promise<FollowListResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/followed_lists';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...requestOptions,
-    };
-
-    return this.client.request<FollowListResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Unfollow List
-   * Causes the authenticated user to unfollow a specific List by its ID.
-
-
-   * @param id The ID of the authenticated source User that will unfollow the List.
-
-
-
-   * @param listId The ID of the List to unfollow.
-
-
-
-
-   * @returns {Promise<UnfollowListResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async unfollowList(
-    id: string,
-    listId: string
-  ): Promise<UnfollowListResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/followed_lists/{list_id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    path = path.replace('{list_id}', encodeURIComponent(String(listId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<UnfollowListResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get pinned Lists
-   * Retrieves a list of Lists pinned by the authenticated user.
-
-
-   * @param id The ID of the authenticated source User for whom to return results.
-
-
-
-
-   * @returns {Promise<GetPinnedListsResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getPinnedLists(
-    id: string,
-    options: GetPinnedListsOptions = {}
-  ): Promise<GetPinnedListsResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      listfields = [],
-
-      expansions = [],
-
-      userfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/pinned_lists';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (listfields !== undefined) {
-      params.append('list.fields', listfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetPinnedListsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Pin List
-   * Causes the authenticated user to pin a specific List by its ID.
-
-
-   * @param id The ID of the authenticated source User that will pin the List.
-
-
-
-
-   * @param body Request body
-
-   * @returns {Promise<PinListResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async pinList(id: string, body: PinListRequest): Promise<PinListResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/pinned_lists';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: JSON.stringify(body || {}),
-
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<PinListResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get blocking
-   * Retrieves a list of Users blocked by the specified User ID.
-
-
-   * @param id The ID of the authenticated source User for whom to return results.
-
-
-
-
-   * @returns {Promise<GetBlockingResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getBlocking(
-    id: string,
-    options: GetBlockingOptions = {}
-  ): Promise<GetBlockingResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
-      userfields = [],
-
-      expansions = [],
-
-      tweetfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/blocking';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetBlockingResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Block DMs
-   * Blocks direct messages to or from a specific User by their ID for the authenticated user.
-
-
-   * @param id The ID of the target User that the authenticated user requesting to block dms for.
-
-
-
-
-   * @returns {Promise<BlockDmsResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async blockDms(id: string): Promise<BlockDmsResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/dm/block';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<BlockDmsResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Like Post
-   * Causes the authenticated user to Like a specific Post by its ID.
-
-
-   * @param id The ID of the authenticated source User that is requesting to like the Post.
-
-
-
-
-   * @returns {Promise<LikePostResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async likePost(
-    id: string,
-    options: LikePostOptions = {}
-  ): Promise<LikePostResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/likes';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...requestOptions,
-    };
-
-    return this.client.request<LikePostResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Delete Bookmark
-   * Removes a Post from the authenticated user’s Bookmarks by its ID.
-
-
-   * @param id The ID of the authenticated source User whose bookmark is to be removed.
-
-
-
-   * @param tweetId The ID of the Post that the source User is removing from bookmarks.
-
-
-
-
-   * @returns {Promise<DeleteBookmarkResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async deleteBookmark(
-    id: string,
-    tweetId: string
-  ): Promise<DeleteBookmarkResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/bookmarks/{tweet_id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    path = path.replace('{tweet_id}', encodeURIComponent(String(tweetId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<DeleteBookmarkResponse>(
-      'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get Bookmarks by folder ID
-   * Retrieves Posts in a specific Bookmark folder by its ID for the authenticated user.
-
-
-   * @param id The ID of the authenticated source User for whom to return results.
-
-
-
-   * @param folderId The ID of the Bookmark Folder that the authenticated User is trying to fetch Posts for.
-
-
-
-
-   * @returns {Promise<GetBookmarksByFolderIdResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getBookmarksByFolderId(
-    id: string,
-    folderId: string
-  ): Promise<GetBookmarksByFolderIdResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/users/{id}/bookmarks/folders/{folder_id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    path = path.replace('{folder_id}', encodeURIComponent(String(folderId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetBookmarksByFolderIdResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Search Users
-   * Retrieves a list of Users matching a search query.
-
-
-
-   * @param query TThe the query string by which to query for users.
-
-
-
-   * @returns {Promise<SearchResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async search(
-    query: any,
-    options: SearchOptions = {}
-  ): Promise<SearchResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      maxResults = undefined,
-
-      nextToken = undefined,
-
-      userfields = [],
-
-      expansions = [],
-
-      tweetfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/users/search';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (query !== undefined) {
-      params.append('query', String(query));
-    }
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (nextToken !== undefined) {
-      params.append('next_token', String(nextToken));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<SearchResponse>(
+    return this.client.request<GetBookmarkFoldersResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

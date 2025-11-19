@@ -54,7 +54,7 @@ fn split_into_words(value: &str) -> Vec<String> {
     let chars = value.chars().peekable();
 
     for c in chars {
-        if c == '_' || c == '-' || c == ' ' {
+        if c == '_' || c == '-' || c == ' ' || c == '.' {
             // Delimiter found, finish current word
             if !current_word.is_empty() {
                 words.push(current_word);
@@ -87,7 +87,7 @@ pub fn pascal_case(value: &str) -> String {
     let mut capitalize_next = true;
 
     for c in value.chars() {
-        if c == '_' || c == '-' || c == ' ' {
+        if c == '_' || c == '-' || c == ' ' || c == '.' {
             // Skip separators and capitalize the next character
             capitalize_next = true;
         } else if c.is_uppercase() {

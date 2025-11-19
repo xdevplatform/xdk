@@ -11,17 +11,29 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
- * Response for searchEligiblePosts
+ * Request for evaluate
  * 
  * @public
  */
-export type SearchEligiblePostsResponse = Schemas.Get2NotesSearchPostsEligibleForNotesResponse;
+export type EvaluateRequest = Schemas.EvaluateNoteRequest;
+/**
+ * Response for evaluate
+ * 
+ * @public
+ */
+export type EvaluateResponse = Schemas.EvaluateNoteResponse;
 /**
  * Response for delete
  * 
  * @public
  */
 export type DeleteResponse = Schemas.DeleteNoteResponse;
+/**
+ * Response for searchEligiblePosts
+ * 
+ * @public
+ */
+export type SearchEligiblePostsResponse = Schemas.Get2NotesSearchPostsEligibleForNotesResponse;
 /**
  * Response for searchWritten
  * 
@@ -40,15 +52,3 @@ export type CreateRequest = Schemas.CreateNoteRequest;
  * @public
  */
 export type CreateResponse = Schemas.CreateNoteResponse;
-/**
- * Request for evaluate
- * 
- * @public
- */
-export type EvaluateRequest = Schemas.EvaluateNoteRequest;
-/**
- * Response for evaluate
- * 
- * @public
- */
-export type EvaluateResponse = Schemas.EvaluateNoteResponse;

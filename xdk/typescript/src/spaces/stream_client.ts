@@ -10,39 +10,112 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  GetPostsResponse,
   GetByIdsResponse,
   GetBuyersResponse,
+  GetPostsResponse,
+  GetByIdResponse,
   SearchResponse,
   GetByCreatorIdsResponse,
-  GetByIdResponse,
 } from './models.js';
 
+/**
+ * Options for getByIds method
+ * 
+ * @public
+ */
+export interface GetByIdsStreamingOptions {
+  /** A comma separated list of Space fields to display. 
+     * Also accepts: space.fields or proper camelCase format */
+  spacefields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Topic fields to display. 
+     * Also accepts: topic.fields or proper camelCase format */
+  topicfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+/**
+ * Options for getBuyers method
+ * 
+ * @public
+ */
+export interface GetBuyersStreamingOptions {
+  /** This parameter is used to get a specified 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
+  paginationToken?: any;
+
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
+  maxResults?: number;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
+  tweetfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
 /**
  * Options for getPosts method
  * 
  * @public
  */
 export interface GetPostsStreamingOptions {
-  /** The number of Posts to fetch from the provided space. If not provided, the value will default to the maximum of 100. */
+  /** The number of Posts to fetch from the provided space. If not provided, the value will default to the maximum of 100. 
+     * Also accepts: max_results or proper camelCase format */
   maxResults?: number;
 
-  /** A comma separated list of Tweet fields to display. */
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
   tweetfields?: Array<any>;
 
-  /** A comma separated list of fields to expand. */
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
   expansions?: Array<any>;
 
-  /** A comma separated list of Media fields to display. */
+  /** A comma separated list of Media fields to display. 
+     * Also accepts: media.fields or proper camelCase format */
   mediafields?: Array<any>;
 
-  /** A comma separated list of Poll fields to display. */
+  /** A comma separated list of Poll fields to display. 
+     * Also accepts: poll.fields or proper camelCase format */
   pollfields?: Array<any>;
 
-  /** A comma separated list of User fields to display. */
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
   userfields?: Array<any>;
 
-  /** A comma separated list of Place fields to display. */
+  /** A comma separated list of Place fields to display. 
+     * Also accepts: place.fields or proper camelCase format */
   placefields?: Array<any>;
 
   /** Additional request options */
@@ -51,115 +124,8 @@ export interface GetPostsStreamingOptions {
   headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
-}
-/**
- * Options for getByIds method
- * 
- * @public
- */
-export interface GetByIdsStreamingOptions {
-  /** A comma separated list of Space fields to display. */
-  spacefields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Topic fields to display. */
-  topicfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getBuyers method
- * 
- * @public
- */
-export interface GetBuyersStreamingOptions {
-  /** This parameter is used to get a specified 'page' of results. */
-  paginationToken?: any;
-
-  /** The maximum number of results. */
-  maxResults?: number;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Tweet fields to display. */
-  tweetfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for search method
- * 
- * @public
- */
-export interface SearchStreamingOptions {
-  /** The state of Spaces to search for. */
-  state?: string;
-
-  /** The number of results to return. */
-  maxResults?: number;
-
-  /** A comma separated list of Space fields to display. */
-  spacefields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Topic fields to display. */
-  topicfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-}
-/**
- * Options for getByCreatorIds method
- * 
- * @public
- */
-export interface GetByCreatorIdsStreamingOptions {
-  /** A comma separated list of Space fields to display. */
-  spacefields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Topic fields to display. */
-  topicfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 /**
  * Options for getById method
@@ -167,16 +133,20 @@ export interface GetByCreatorIdsStreamingOptions {
  * @public
  */
 export interface GetByIdStreamingOptions {
-  /** A comma separated list of Space fields to display. */
+  /** A comma separated list of Space fields to display. 
+     * Also accepts: space.fields or proper camelCase format */
   spacefields?: Array<any>;
 
-  /** A comma separated list of fields to expand. */
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
   expansions?: Array<any>;
 
-  /** A comma separated list of User fields to display. */
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
   userfields?: Array<any>;
 
-  /** A comma separated list of Topic fields to display. */
+  /** A comma separated list of Topic fields to display. 
+     * Also accepts: topic.fields or proper camelCase format */
   topicfields?: Array<any>;
 
   /** Additional request options */
@@ -185,6 +155,78 @@ export interface GetByIdStreamingOptions {
   headers?: Record<string, string>;
   /** AbortSignal for cancelling the request */
   signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+/**
+ * Options for search method
+ * 
+ * @public
+ */
+export interface SearchStreamingOptions {
+  /** The state of Spaces to search for. 
+     * Also accepts: state or proper camelCase format */
+  state?: string;
+
+  /** The number of results to return. 
+     * Also accepts: max_results or proper camelCase format */
+  maxResults?: number;
+
+  /** A comma separated list of Space fields to display. 
+     * Also accepts: space.fields or proper camelCase format */
+  spacefields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Topic fields to display. 
+     * Also accepts: topic.fields or proper camelCase format */
+  topicfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+/**
+ * Options for getByCreatorIds method
+ * 
+ * @public
+ */
+export interface GetByCreatorIdsStreamingOptions {
+  /** A comma separated list of Space fields to display. 
+     * Also accepts: space.fields or proper camelCase format */
+  spacefields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** A comma separated list of Topic fields to display. 
+     * Also accepts: topic.fields or proper camelCase format */
+  topicfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 export class SpacesClient {
@@ -195,101 +237,49 @@ export class SpacesClient {
   }
 
   /**
-     * Get Space Posts
-     * Retrieves a list of Posts shared in a specific Space by its ID.
-     * 
-     * @returns Promise with the API response
+     * Normalize options object to handle both camelCase and original API parameter names
+     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
      */
-  async getPosts(
-    id: string,
-    options: GetPostsStreamingOptions = {}
-  ): Promise<GetPostsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getPosts');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      maxResults = undefined,
-
-      tweetfields = [],
-
-      expansions = [],
-
-      mediafields = [],
-
-      pollfields = [],
-
-      userfields = [],
-
-      placefields = [],
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/spaces/{id}/tweets';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
+  private _normalizeOptions<T extends Record<string, any>>(
+    options: T,
+    paramMappings: Record<string, string>
+  ): T {
+    if (!options || typeof options !== 'object') {
+      return options;
     }
 
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
+    const normalized: any = { ...options };
+
+    // For each parameter mapping (original -> camelCase)
+    for (const [originalName, camelName] of Object.entries(paramMappings)) {
+      // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
+      if (originalName in normalized && !(camelName in normalized)) {
+        normalized[camelName] = normalized[originalName];
+        delete normalized[originalName];
+      }
+      // Also check for camelCase with proper casing (e.g., 'tweetFields')
+      const properCamel = this._toCamelCase(originalName);
+      if (
+        properCamel !== camelName &&
+        properCamel in normalized &&
+        !(camelName in normalized)
+      ) {
+        normalized[camelName] = normalized[properCamel];
+        delete normalized[properCamel];
+      }
     }
 
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
+    return normalized as T;
+  }
 
-    if (mediafields !== undefined) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
-    if (pollfields !== undefined) {
-      params.append('poll.fields', pollfields.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (placefields !== undefined) {
-      params.append('place.fields', placefields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<GetPostsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
+  /**
+     * Convert a parameter name to proper camelCase
+     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
+     */
+  private _toCamelCase(name: string): string {
+    return name
+      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
+      .replace(/^[A-Z]/, letter => letter.toLowerCase());
   }
 
   /**
@@ -312,6 +302,20 @@ export class SpacesClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'getByIds');
 
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'space.fields': 'spacefields',
+
+      'user.fields': 'userfields',
+
+      'topic.fields': 'topicfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
@@ -326,8 +330,7 @@ export class SpacesClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/spaces';
@@ -335,21 +338,23 @@ export class SpacesClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    params.append('ids', ids.join(','));
+    if (ids !== undefined && ids.length > 0) {
+      params.append('ids', ids.join(','));
+    }
 
-    if (spacefields !== undefined) {
+    if (spacefields !== undefined && spacefields.length > 0) {
       params.append('space.fields', spacefields.join(','));
     }
 
-    if (expansions !== undefined) {
+    if (expansions !== undefined && expansions.length > 0) {
       params.append('expansions', expansions.join(','));
     }
 
-    if (userfields !== undefined) {
+    if (userfields !== undefined && userfields.length > 0) {
       params.append('user.fields', userfields.join(','));
     }
 
-    if (topicfields !== undefined) {
+    if (topicfields !== undefined && topicfields.length > 0) {
       params.append('topic.fields', topicfields.join(','));
     }
 
@@ -390,6 +395,22 @@ export class SpacesClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'getBuyers');
 
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      pagination_token: 'paginationToken',
+
+      max_results: 'maxResults',
+
+      'user.fields': 'userfields',
+
+      'tweet.fields': 'tweetfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
@@ -406,8 +427,7 @@ export class SpacesClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/spaces/{id}/buyers';
@@ -425,15 +445,15 @@ export class SpacesClient {
       params.append('max_results', String(maxResults));
     }
 
-    if (userfields !== undefined) {
+    if (userfields !== undefined && userfields.length > 0) {
       params.append('user.fields', userfields.join(','));
     }
 
-    if (expansions !== undefined) {
+    if (expansions !== undefined && expansions.length > 0) {
       params.append('expansions', expansions.join(','));
     }
 
-    if (tweetfields !== undefined) {
+    if (tweetfields !== undefined && tweetfields.length > 0) {
       params.append('tweet.fields', tweetfields.join(','));
     }
 
@@ -450,6 +470,216 @@ export class SpacesClient {
 
     // Make the request
     return this.client.request<GetBuyersResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get Space Posts
+     * Retrieves a list of Posts shared in a specific Space by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getPosts(
+    id: string,
+    options: GetPostsStreamingOptions = {}
+  ): Promise<GetPostsResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getPosts');
+
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      'tweet.fields': 'tweetfields',
+
+      'media.fields': 'mediafields',
+
+      'poll.fields': 'pollfields',
+
+      'user.fields': 'userfields',
+
+      'place.fields': 'placefields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      maxResults = undefined,
+
+      tweetfields = [],
+
+      expansions = [],
+
+      mediafields = [],
+
+      pollfields = [],
+
+      userfields = [],
+
+      placefields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/spaces/{id}/tweets';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediafields !== undefined && mediafields.length > 0) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (pollfields !== undefined && pollfields.length > 0) {
+      params.append('poll.fields', pollfields.join(','));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (placefields !== undefined && placefields.length > 0) {
+      params.append('place.fields', placefields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<GetPostsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get space by ID
+     * Retrieves details of a specific space by its ID.
+     * 
+     * @returns Promise with the API response
+     */
+  async getById(
+    id: string,
+    options: GetByIdStreamingOptions = {}
+  ): Promise<GetByIdResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getById');
+
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'space.fields': 'spacefields',
+
+      'user.fields': 'userfields',
+
+      'topic.fields': 'topicfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      spacefields = [],
+
+      expansions = [],
+
+      userfields = [],
+
+      topicfields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/spaces/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (spacefields !== undefined && spacefields.length > 0) {
+      params.append('space.fields', spacefields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (topicfields !== undefined && topicfields.length > 0) {
+      params.append('topic.fields', topicfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<GetByIdResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -476,6 +706,22 @@ export class SpacesClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'search');
 
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      'space.fields': 'spacefields',
+
+      'user.fields': 'userfields',
+
+      'topic.fields': 'topicfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
@@ -494,8 +740,7 @@ export class SpacesClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/spaces/search';
@@ -503,7 +748,9 @@ export class SpacesClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    params.append('query', String(query));
+    if (query !== undefined) {
+      params.append('query', String(query));
+    }
 
     if (state !== undefined) {
       params.append('state', String(state));
@@ -513,19 +760,19 @@ export class SpacesClient {
       params.append('max_results', String(maxResults));
     }
 
-    if (spacefields !== undefined) {
+    if (spacefields !== undefined && spacefields.length > 0) {
       params.append('space.fields', spacefields.join(','));
     }
 
-    if (expansions !== undefined) {
+    if (expansions !== undefined && expansions.length > 0) {
       params.append('expansions', expansions.join(','));
     }
 
-    if (userfields !== undefined) {
+    if (userfields !== undefined && userfields.length > 0) {
       params.append('user.fields', userfields.join(','));
     }
 
-    if (topicfields !== undefined) {
+    if (topicfields !== undefined && topicfields.length > 0) {
       params.append('topic.fields', topicfields.join(','));
     }
 
@@ -568,6 +815,20 @@ export class SpacesClient {
 
     this.client.validateAuthentication(requiredAuthTypes, 'getByCreatorIds');
 
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'space.fields': 'spacefields',
+
+      'user.fields': 'userfields',
+
+      'topic.fields': 'topicfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
@@ -582,8 +843,7 @@ export class SpacesClient {
       headers = {},
       signal,
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/spaces/by/creator_ids';
@@ -591,21 +851,23 @@ export class SpacesClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    params.append('user_ids', userIds.join(','));
+    if (userIds !== undefined && userIds.length > 0) {
+      params.append('user_ids', userIds.join(','));
+    }
 
-    if (spacefields !== undefined) {
+    if (spacefields !== undefined && spacefields.length > 0) {
       params.append('space.fields', spacefields.join(','));
     }
 
-    if (expansions !== undefined) {
+    if (expansions !== undefined && expansions.length > 0) {
       params.append('expansions', expansions.join(','));
     }
 
-    if (userfields !== undefined) {
+    if (userfields !== undefined && userfields.length > 0) {
       params.append('user.fields', userfields.join(','));
     }
 
-    if (topicfields !== undefined) {
+    if (topicfields !== undefined && topicfields.length > 0) {
       params.append('topic.fields', topicfields.join(','));
     }
 
@@ -622,86 +884,6 @@ export class SpacesClient {
 
     // Make the request
     return this.client.request<GetByCreatorIdsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get space by ID
-     * Retrieves details of a specific space by its ID.
-     * 
-     * @returns Promise with the API response
-     */
-  async getById(
-    id: string,
-    options: GetByIdStreamingOptions = {}
-  ): Promise<GetByIdResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getById');
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      spacefields = [],
-
-      expansions = [],
-
-      userfields = [],
-
-      topicfields = [],
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/spaces/{id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (spacefields !== undefined) {
-      params.append('space.fields', spacefields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (topicfields !== undefined) {
-      params.append('topic.fields', topicfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<GetByIdResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

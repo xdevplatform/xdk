@@ -16,32 +16,19 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
+  GetFollowersResponse,
+  GetMembersResponse,
+  AddMemberRequest,
+  AddMemberResponse,
   CreateRequest,
   CreateResponse,
-  GetFollowersResponse,
+  GetPostsResponse,
   RemoveMemberByUserIdResponse,
   GetByIdResponse,
   UpdateRequest,
   UpdateResponse,
   DeleteResponse,
-  GetMembersResponse,
-  AddMemberRequest,
-  AddMemberResponse,
-  GetPostsResponse,
 } from './models.js';
-
-/**
- * Options for create method
- * 
- * @public
- */
-export interface CreateOptions {
-  /** Request body */
-  body?: CreateRequest;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
 
 /**
  * Options for getFollowers method
@@ -49,55 +36,30 @@ export interface CreateOptions {
  * @public
  */
 export interface GetFollowersOptions {
-  /** The maximum number of results. */
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
   maxResults?: number;
 
-  /** This parameter is used to get a specified 'page' of results. */
+  /** This parameter is used to get a specified 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
   paginationToken?: any;
 
-  /** A comma separated list of User fields to display. */
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
   userfields?: Array<any>;
 
-  /** A comma separated list of fields to expand. */
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
   expansions?: Array<any>;
 
-  /** A comma separated list of Tweet fields to display. */
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
   tweetfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
-}
-
-/**
- * Options for getById method
- * 
- * @public
- */
-export interface GetByIdOptions {
-  /** A comma separated list of List fields to display. */
-  listfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. */
-  expansions?: Array<any>;
-
-  /** A comma separated list of User fields to display. */
-  userfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-}
-
-/**
- * Options for update method
- * 
- * @public
- */
-export interface UpdateOptions {
-  /** Request body */
-  body?: UpdateRequest;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -106,23 +68,30 @@ export interface UpdateOptions {
  * @public
  */
 export interface GetMembersOptions {
-  /** The maximum number of results. */
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
   maxResults?: number;
 
-  /** This parameter is used to get a specified 'page' of results. */
+  /** This parameter is used to get a specified 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
   paginationToken?: any;
 
-  /** A comma separated list of User fields to display. */
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
   userfields?: Array<any>;
 
-  /** A comma separated list of fields to expand. */
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
   expansions?: Array<any>;
 
-  /** A comma separated list of Tweet fields to display. */
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
   tweetfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -136,6 +105,23 @@ export interface AddMemberOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for create method
+ * 
+ * @public
+ */
+export interface CreateOptions {
+  /** Request body */
+  body?: CreateRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -144,32 +130,81 @@ export interface AddMemberOptions {
  * @public
  */
 export interface GetPostsOptions {
-  /** The maximum number of results. */
+  /** The maximum number of results. 
+     * Also accepts: max_results or proper camelCase format */
   maxResults?: number;
 
-  /** This parameter is used to get the next 'page' of results. */
+  /** This parameter is used to get the next 'page' of results. 
+     * Also accepts: pagination_token or proper camelCase format */
   paginationToken?: any;
 
-  /** A comma separated list of Tweet fields to display. */
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase format */
   tweetfields?: Array<any>;
 
-  /** A comma separated list of fields to expand. */
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
   expansions?: Array<any>;
 
-  /** A comma separated list of Media fields to display. */
+  /** A comma separated list of Media fields to display. 
+     * Also accepts: media.fields or proper camelCase format */
   mediafields?: Array<any>;
 
-  /** A comma separated list of Poll fields to display. */
+  /** A comma separated list of Poll fields to display. 
+     * Also accepts: poll.fields or proper camelCase format */
   pollfields?: Array<any>;
 
-  /** A comma separated list of User fields to display. */
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
   userfields?: Array<any>;
 
-  /** A comma separated list of Place fields to display. */
+  /** A comma separated list of Place fields to display. 
+     * Also accepts: place.fields or proper camelCase format */
   placefields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getById method
+ * 
+ * @public
+ */
+export interface GetByIdOptions {
+  /** A comma separated list of List fields to display. 
+     * Also accepts: list.fields or proper camelCase format */
+  listfields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase format */
+  expansions?: Array<any>;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase format */
+  userfields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for update method
+ * 
+ * @public
+ */
+export interface UpdateOptions {
+  /** Request body */
+  body?: UpdateRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -194,6 +229,278 @@ export class ListsClient {
   }
 
   /**
+     * Normalize options object to handle both camelCase and original API parameter names
+     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     */
+  private _normalizeOptions<T extends Record<string, any>>(
+    options: T,
+    paramMappings: Record<string, string>
+  ): T {
+    if (!options || typeof options !== 'object') {
+      return options;
+    }
+
+    const normalized: any = { ...options };
+
+    // For each parameter mapping (original -> camelCase)
+    for (const [originalName, camelName] of Object.entries(paramMappings)) {
+      // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
+      if (originalName in normalized && !(camelName in normalized)) {
+        normalized[camelName] = normalized[originalName];
+        delete normalized[originalName];
+      }
+      // Also check for camelCase with proper casing (e.g., 'tweetFields')
+      const properCamel = this._toCamelCase(originalName);
+      if (
+        properCamel !== camelName &&
+        properCamel in normalized &&
+        !(camelName in normalized)
+      ) {
+        normalized[camelName] = normalized[properCamel];
+        delete normalized[properCamel];
+      }
+    }
+
+    return normalized as T;
+  }
+
+  /**
+     * Convert a parameter name to proper camelCase
+     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
+     */
+  private _toCamelCase(name: string): string {
+    return name
+      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
+      .replace(/^[A-Z]/, letter => letter.toLowerCase());
+  }
+
+  /**
+   * Get List followers
+   * Retrieves a list of Users who follow a specific List by its ID.
+
+
+   * @param id The ID of the List.
+
+
+
+
+   * @returns {Promise<GetFollowersResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getFollowers(
+    id: string,
+    options: GetFollowersOptions = {}
+  ): Promise<GetFollowersResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      'user.fields': 'userfields',
+
+      'tweet.fields': 'tweetfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/lists/{id}/followers';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetFollowersResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get List members
+   * Retrieves a list of Users who are members of a specific List by its ID.
+
+
+   * @param id The ID of the List.
+
+
+
+
+   * @returns {Promise<GetMembersResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getMembers(
+    id: string,
+    options: GetMembersOptions = {}
+  ): Promise<GetMembersResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      'user.fields': 'userfields',
+
+      'tweet.fields': 'tweetfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      maxResults = undefined,
+
+      paginationToken = undefined,
+
+      userfields = [],
+
+      expansions = [],
+
+      tweetfields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/lists/{id}/members';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      ...requestOptions,
+    };
+
+    return this.client.request<GetMembersResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Add List member
+   * Adds a User to a specific List by its ID.
+
+
+   * @param id The ID of the List for which to add a member.
+
+
+
+
+   * @returns {Promise<AddMemberResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async addMember(
+    id: string,
+    options: AddMemberOptions = {}
+  ): Promise<AddMemberResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/lists/{id}/members';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      ...requestOptions,
+    };
+
+    return this.client.request<AddMemberResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
    * Create List
    * Creates a new List for the authenticated user.
 
@@ -203,14 +510,16 @@ export class ListsClient {
    */
   // Overload 1: Default behavior (unwrapped response)
   async create(options: CreateOptions = {}): Promise<CreateResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
       body,
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/lists';
@@ -233,8 +542,8 @@ export class ListsClient {
   }
 
   /**
-   * Get List followers
-   * Retrieves a list of Users who follow a specific List by its ID.
+   * Get List Posts
+   * Retrieves a list of Posts associated with a specific List by its ID.
 
 
    * @param id The ID of the List.
@@ -242,32 +551,58 @@ export class ListsClient {
 
 
 
-   * @returns {Promise<GetFollowersResponse>} Promise resolving to the API response
+   * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getFollowers(
+  async getPosts(
     id: string,
-    options: GetFollowersOptions = {}
-  ): Promise<GetFollowersResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    options: GetPostsOptions = {}
+  ): Promise<GetPostsResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      pagination_token: 'paginationToken',
+
+      'tweet.fields': 'tweetfields',
+
+      'media.fields': 'mediafields',
+
+      'poll.fields': 'pollfields',
+
+      'user.fields': 'userfields',
+
+      'place.fields': 'placefields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
       maxResults = undefined,
 
       paginationToken = undefined,
 
-      userfields = [],
+      tweetfields = [],
 
       expansions = [],
 
-      tweetfields = [],
+      mediafields = [],
+
+      pollfields = [],
+
+      userfields = [],
+
+      placefields = [],
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
-    let path = '/2/lists/{id}/followers';
+    let path = '/2/lists/{id}/tweets';
 
     path = path.replace('{id}', encodeURIComponent(String(id)));
 
@@ -282,16 +617,28 @@ export class ListsClient {
       params.append('pagination_token', String(paginationToken));
     }
 
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
+    if (tweetfields !== undefined && tweetfields.length > 0) {
+      params.append('tweet.fields', tweetfields.join(','));
     }
 
-    if (expansions !== undefined) {
+    if (expansions !== undefined && expansions.length > 0) {
       params.append('expansions', expansions.join(','));
     }
 
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
+    if (mediafields !== undefined && mediafields.length > 0) {
+      params.append('media.fields', mediafields.join(','));
+    }
+
+    if (pollfields !== undefined && pollfields.length > 0) {
+      params.append('poll.fields', pollfields.join(','));
+    }
+
+    if (userfields !== undefined && userfields.length > 0) {
+      params.append('user.fields', userfields.join(','));
+    }
+
+    if (placefields !== undefined && placefields.length > 0) {
+      params.append('place.fields', placefields.join(','));
     }
 
     // Prepare request options
@@ -299,7 +646,7 @@ export class ListsClient {
       ...requestOptions,
     };
 
-    return this.client.request<GetFollowersResponse>(
+    return this.client.request<GetPostsResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -327,7 +674,7 @@ export class ListsClient {
     id: string,
     userId: string
   ): Promise<RemoveMemberByUserIdResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
     const requestOptions = {};
 
@@ -370,8 +717,19 @@ export class ListsClient {
     id: string,
     options: GetByIdOptions = {}
   ): Promise<GetByIdResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const paramMappings: Record<string, string> = {
+      'list.fields': 'listfields',
+
+      'user.fields': 'userfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
       listfields = [],
 
@@ -380,8 +738,7 @@ export class ListsClient {
       userfields = [],
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/lists/{id}';
@@ -391,15 +748,15 @@ export class ListsClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (listfields !== undefined) {
+    if (listfields !== undefined && listfields.length > 0) {
       params.append('list.fields', listfields.join(','));
     }
 
-    if (expansions !== undefined) {
+    if (expansions !== undefined && expansions.length > 0) {
       params.append('expansions', expansions.join(','));
     }
 
-    if (userfields !== undefined) {
+    if (userfields !== undefined && userfields.length > 0) {
       params.append('user.fields', userfields.join(','));
     }
 
@@ -432,14 +789,16 @@ export class ListsClient {
     id: string,
     options: UpdateOptions = {}
   ): Promise<UpdateResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
       body,
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/lists/{id}';
@@ -477,7 +836,7 @@ export class ListsClient {
    */
   // Overload 1: Default behavior (unwrapped response)
   async delete(id: string): Promise<DeleteResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
     const requestOptions = {};
 
@@ -496,220 +855,6 @@ export class ListsClient {
 
     return this.client.request<DeleteResponse>(
       'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get List members
-   * Retrieves a list of Users who are members of a specific List by its ID.
-
-
-   * @param id The ID of the List.
-
-
-
-
-   * @returns {Promise<GetMembersResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getMembers(
-    id: string,
-    options: GetMembersOptions = {}
-  ): Promise<GetMembersResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
-      userfields = [],
-
-      expansions = [],
-
-      tweetfields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/lists/{id}/members';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetMembersResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Add List member
-   * Adds a User to a specific List by its ID.
-
-
-   * @param id The ID of the List for which to add a member.
-
-
-
-
-   * @returns {Promise<AddMemberResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async addMember(
-    id: string,
-    options: AddMemberOptions = {}
-  ): Promise<AddMemberResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/lists/{id}/members';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      ...requestOptions,
-    };
-
-    return this.client.request<AddMemberResponse>(
-      'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get List Posts
-   * Retrieves a list of Posts associated with a specific List by its ID.
-
-
-   * @param id The ID of the List.
-
-
-
-
-   * @returns {Promise<GetPostsResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getPosts(
-    id: string,
-    options: GetPostsOptions = {}
-  ): Promise<GetPostsResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      maxResults = undefined,
-
-      paginationToken = undefined,
-
-      tweetfields = [],
-
-      expansions = [],
-
-      mediafields = [],
-
-      pollfields = [],
-
-      userfields = [],
-
-      placefields = [],
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
-
-    // Build the path with path parameters
-    let path = '/2/lists/{id}/tweets';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    if (expansions !== undefined) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (mediafields !== undefined) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
-    if (pollfields !== undefined) {
-      params.append('poll.fields', pollfields.join(','));
-    }
-
-    if (userfields !== undefined) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (placefields !== undefined) {
-      params.append('place.fields', placefields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      ...requestOptions,
-    };
-
-    return this.client.request<GetPostsResponse>(
-      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

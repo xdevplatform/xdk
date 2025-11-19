@@ -23,20 +23,26 @@ import { SearchResponse, GetByIdResponse } from './models.js';
  * @public
  */
 export interface SearchOptions {
-  /** The maximum number of search results to be returned by a request. */
+  /** The maximum number of search results to be returned by a request. 
+     * Also accepts: max_results or proper camelCase format */
   maxResults?: number;
 
-  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. 
+     * Also accepts: next_token or proper camelCase format */
   nextToken?: any;
 
-  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. */
+  /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. 
+     * Also accepts: pagination_token or proper camelCase format */
   paginationToken?: any;
 
-  /** A comma separated list of Community fields to display. */
+  /** A comma separated list of Community fields to display. 
+     * Also accepts: community.fields or proper camelCase format */
   communityfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -45,11 +51,14 @@ export interface SearchOptions {
  * @public
  */
 export interface GetByIdOptions {
-  /** A comma separated list of Community fields to display. */
+  /** A comma separated list of Community fields to display. 
+     * Also accepts: community.fields or proper camelCase format */
   communityfields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -74,6 +83,52 @@ export class CommunitiesClient {
   }
 
   /**
+     * Normalize options object to handle both camelCase and original API parameter names
+     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     */
+  private _normalizeOptions<T extends Record<string, any>>(
+    options: T,
+    paramMappings: Record<string, string>
+  ): T {
+    if (!options || typeof options !== 'object') {
+      return options;
+    }
+
+    const normalized: any = { ...options };
+
+    // For each parameter mapping (original -> camelCase)
+    for (const [originalName, camelName] of Object.entries(paramMappings)) {
+      // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
+      if (originalName in normalized && !(camelName in normalized)) {
+        normalized[camelName] = normalized[originalName];
+        delete normalized[originalName];
+      }
+      // Also check for camelCase with proper casing (e.g., 'tweetFields')
+      const properCamel = this._toCamelCase(originalName);
+      if (
+        properCamel !== camelName &&
+        properCamel in normalized &&
+        !(camelName in normalized)
+      ) {
+        normalized[camelName] = normalized[properCamel];
+        delete normalized[properCamel];
+      }
+    }
+
+    return normalized as T;
+  }
+
+  /**
+     * Convert a parameter name to proper camelCase
+     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
+     */
+  private _toCamelCase(name: string): string {
+    return name
+      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
+      .replace(/^[A-Z]/, letter => letter.toLowerCase());
+  }
+
+  /**
    * Search Communities
    * Retrieves a list of Communities matching the specified search query.
 
@@ -90,8 +145,23 @@ export class CommunitiesClient {
     query: string,
     options: SearchOptions = {}
   ): Promise<SearchResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      next_token: 'nextToken',
+
+      pagination_token: 'paginationToken',
+
+      'community.fields': 'communityfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
       maxResults = undefined,
 
@@ -102,8 +172,7 @@ export class CommunitiesClient {
       communityfields = [],
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/communities/search';
@@ -127,7 +196,7 @@ export class CommunitiesClient {
       params.append('pagination_token', String(paginationToken));
     }
 
-    if (communityfields !== undefined) {
+    if (communityfields !== undefined && communityfields.length > 0) {
       params.append('community.fields', communityfields.join(','));
     }
 
@@ -160,14 +229,22 @@ export class CommunitiesClient {
     id: string,
     options: GetByIdOptions = {}
   ): Promise<GetByIdResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const paramMappings: Record<string, string> = {
+      'community.fields': 'communityfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
       communityfields = [],
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/communities/{id}';
@@ -177,7 +254,7 @@ export class CommunitiesClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (communityfields !== undefined) {
+    if (communityfields !== undefined && communityfields.length > 0) {
       params.append('community.fields', communityfields.join(','));
     }
 

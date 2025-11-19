@@ -9,14 +9,18 @@
 
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
-import { DeleteAllResponse } from './models.js';
+import { GetResponse } from './models.js';
 
 /**
- * Options for deleteAll method
+ * Options for get method
  * 
  * @public
  */
-export interface DeleteAllStreamingOptions {
+export interface GetStreamingOptions {
+  /** A comma separated list of News fields to display. 
+     * Also accepts: news.fields or proper camelCase format */
+  newsfields?: Array<any>;
+
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -27,7 +31,7 @@ export interface DeleteAllStreamingOptions {
   [key: string]: any;
 }
 
-export class ConnectionsClient {
+export class NewsClient {
   private client: Client;
 
   constructor(client: Client) {
@@ -81,35 +85,58 @@ export class ConnectionsClient {
   }
 
   /**
-     * Terminate all connections
-     * Terminates all active streaming connections for the authenticated application.
+     * Get news stories by ID
+     * Retrieves news story by its ID.
      * 
      * @returns Promise with the API response
      */
-  async deleteAll(
-    options: DeleteAllStreamingOptions = {}
-  ): Promise<DeleteAllResponse> {
+  async get(
+    id: string,
+    options: GetStreamingOptions = {}
+  ): Promise<GetResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
 
     requiredAuthTypes.push('BearerToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'deleteAll');
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'get');
 
     // Normalize options to handle both camelCase and original API parameter names
 
-    const normalizedOptions = options || {};
+    const paramMappings: Record<string, string> = {
+      'news.fields': 'newsfields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
 
     // Destructure options (exclude path parameters, they're already function params)
 
-    const { headers = {}, signal, requestOptions = {} } = normalizedOptions;
+    const {
+      newsfields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
 
     // Build the path with path parameters
-    let path = '/2/connections/all';
+    let path = '/2/news/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
+
+    if (newsfields !== undefined && newsfields.length > 0) {
+      params.append('news.fields', newsfields.join(','));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -123,8 +150,8 @@ export class ConnectionsClient {
     };
 
     // Make the request
-    return this.client.request<DeleteAllResponse>(
-      'DELETE',
+    return this.client.request<GetResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

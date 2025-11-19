@@ -28,7 +28,7 @@ describe('ActivityClient Contracts', () => {
   });
 
   
-  it('should have correct request structure for stream', async () => {
+  it('should have correct request structure for getSubscriptions', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -64,7 +64,7 @@ describe('ActivityClient Contracts', () => {
       const options: any = {};
       
       // Call the method
-      const method = (activityClient as any)['stream'];
+      const method = (activityClient as any)['getSubscriptions'];
       const result = await method.apply(activityClient, [...requiredArgs, options]);
       
       // Verify the request was made
@@ -76,7 +76,7 @@ describe('ActivityClient Contracts', () => {
       const requestOptions = callArgs[1] as RequestInit;
       
       // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/activity/stream';
+      const expectedPath = '/2/activity/subscriptions';
       // Path parameters are replaced with actual values, so check for the base path structure
       const basePath = expectedPath.split('{')[0];
       expect(url).toContain(basePath);
@@ -89,7 +89,7 @@ describe('ActivityClient Contracts', () => {
     }
   });
 
-  it('should handle required parameters correctly for stream', async () => {
+  it('should handle required parameters correctly for getSubscriptions', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -107,7 +107,7 @@ describe('ActivityClient Contracts', () => {
     } as Response);
 
     try {
-      const method = (activityClient as any)['stream'];
+      const method = (activityClient as any)['getSubscriptions'];
       
       
       // Method has required parameters - verify it can be called with proper args
@@ -128,7 +128,7 @@ describe('ActivityClient Contracts', () => {
     }
   });
 
-  it('should validate response structure for stream', async () => {
+  it('should validate response structure for getSubscriptions', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -160,7 +160,157 @@ describe('ActivityClient Contracts', () => {
       ];
       const options: any = {};
 
-      const method = (activityClient as any)['stream'];
+      const method = (activityClient as any)['getSubscriptions'];
+      const result = await method.apply(activityClient, [...requiredArgs, options]);
+
+      // Verify response object has expected structure
+      expect(result).toBeDefined();
+      
+      // Regular JSON response - check for expected fields
+      
+      expect(result).toHaveProperty('data');
+      
+      
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  
+  it('should have correct request structure for createSubscription', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request to capture request details (like Python mocks session)
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      
+      json: async () => ({
+        
+        
+        data: null,
+        
+        
+      }),
+      text: async () => '{}'
+    } as Response);
+
+    try {
+      // Prepare test parameters
+      // In TypeScript, ALL required parameters (path and query) are direct function arguments
+      // Only optional parameters go in the options object
+      // Build required parameter arguments
+      const requiredArgs: any[] = [
+      
+      ];
+      
+      // Build options object (empty for required params test, optional params go here)
+      const options: any = {};
+      
+      // Call the method
+      const method = (activityClient as any)['createSubscription'];
+      const result = await method.apply(activityClient, [...requiredArgs, options]);
+      
+      // Verify the request was made
+      expect(client.httpClient.request).toHaveBeenCalled();
+      
+      // Verify request structure
+      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
+      const url = callArgs[0] as string;
+      const requestOptions = callArgs[1] as RequestInit;
+      
+      // Check URL structure - path parameters are replaced in the URL
+      const expectedPath = '/2/activity/subscriptions';
+      // Path parameters are replaced with actual values, so check for the base path structure
+      const basePath = expectedPath.split('{')[0];
+      expect(url).toContain(basePath);
+      
+      // Verify response structure
+      expect(result).toBeDefined();
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  it('should handle required parameters correctly for createSubscription', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request (like Python mocks session)
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      
+      json: async () => ({}),
+      text: async () => '{}'
+    } as Response);
+
+    try {
+      const method = (activityClient as any)['createSubscription'];
+      
+      
+      // Method has required parameters - verify it can be called with proper args
+      // Build required parameter arguments (all required params are direct args in TypeScript)
+      const requiredArgs: any[] = [
+      
+      ];
+      
+      // Build options object (empty for required params, optional params go here)
+      const options: any = {};
+      
+      // Method should be callable with required parameters
+      await expect(method.apply(activityClient, [...requiredArgs, options])).resolves.toBeDefined();
+      
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  it('should validate response structure for createSubscription', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    const mockResponseData = {
+      
+      
+      data: null,
+      
+      
+    };
+
+    // Mock httpClient.request (like Python mocks session)
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      
+      json: async () => mockResponseData,
+      text: async () => JSON.stringify(mockResponseData)
+    } as Response);
+
+    try {
+      // Build arguments (all required params are direct args in TypeScript)
+      const requiredArgs: any[] = [
+      
+      ];
+      const options: any = {};
+
+      const method = (activityClient as any)['createSubscription'];
       const result = await method.apply(activityClient, [...requiredArgs, options]);
 
       // Verify response object has expected structure
@@ -502,7 +652,7 @@ describe('ActivityClient Contracts', () => {
   });
 
   
-  it('should have correct request structure for getSubscriptions', async () => {
+  it('should have correct request structure for stream', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -538,7 +688,7 @@ describe('ActivityClient Contracts', () => {
       const options: any = {};
       
       // Call the method
-      const method = (activityClient as any)['getSubscriptions'];
+      const method = (activityClient as any)['stream'];
       const result = await method.apply(activityClient, [...requiredArgs, options]);
       
       // Verify the request was made
@@ -550,7 +700,7 @@ describe('ActivityClient Contracts', () => {
       const requestOptions = callArgs[1] as RequestInit;
       
       // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/activity/subscriptions';
+      const expectedPath = '/2/activity/stream';
       // Path parameters are replaced with actual values, so check for the base path structure
       const basePath = expectedPath.split('{')[0];
       expect(url).toContain(basePath);
@@ -563,7 +713,7 @@ describe('ActivityClient Contracts', () => {
     }
   });
 
-  it('should handle required parameters correctly for getSubscriptions', async () => {
+  it('should handle required parameters correctly for stream', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -581,7 +731,7 @@ describe('ActivityClient Contracts', () => {
     } as Response);
 
     try {
-      const method = (activityClient as any)['getSubscriptions'];
+      const method = (activityClient as any)['stream'];
       
       
       // Method has required parameters - verify it can be called with proper args
@@ -602,7 +752,7 @@ describe('ActivityClient Contracts', () => {
     }
   });
 
-  it('should validate response structure for getSubscriptions', async () => {
+  it('should validate response structure for stream', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -634,157 +784,7 @@ describe('ActivityClient Contracts', () => {
       ];
       const options: any = {};
 
-      const method = (activityClient as any)['getSubscriptions'];
-      const result = await method.apply(activityClient, [...requiredArgs, options]);
-
-      // Verify response object has expected structure
-      expect(result).toBeDefined();
-      
-      // Regular JSON response - check for expected fields
-      
-      expect(result).toHaveProperty('data');
-      
-      
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  
-  it('should have correct request structure for createSubscription', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request to capture request details (like Python mocks session)
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      
-      json: async () => ({
-        
-        
-        data: null,
-        
-        
-      }),
-      text: async () => '{}'
-    } as Response);
-
-    try {
-      // Prepare test parameters
-      // In TypeScript, ALL required parameters (path and query) are direct function arguments
-      // Only optional parameters go in the options object
-      // Build required parameter arguments
-      const requiredArgs: any[] = [
-      
-      ];
-      
-      // Build options object (empty for required params test, optional params go here)
-      const options: any = {};
-      
-      // Call the method
-      const method = (activityClient as any)['createSubscription'];
-      const result = await method.apply(activityClient, [...requiredArgs, options]);
-      
-      // Verify the request was made
-      expect(client.httpClient.request).toHaveBeenCalled();
-      
-      // Verify request structure
-      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
-      const url = callArgs[0] as string;
-      const requestOptions = callArgs[1] as RequestInit;
-      
-      // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/activity/subscriptions';
-      // Path parameters are replaced with actual values, so check for the base path structure
-      const basePath = expectedPath.split('{')[0];
-      expect(url).toContain(basePath);
-      
-      // Verify response structure
-      expect(result).toBeDefined();
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  it('should handle required parameters correctly for createSubscription', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request (like Python mocks session)
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      
-      json: async () => ({}),
-      text: async () => '{}'
-    } as Response);
-
-    try {
-      const method = (activityClient as any)['createSubscription'];
-      
-      
-      // Method has required parameters - verify it can be called with proper args
-      // Build required parameter arguments (all required params are direct args in TypeScript)
-      const requiredArgs: any[] = [
-      
-      ];
-      
-      // Build options object (empty for required params, optional params go here)
-      const options: any = {};
-      
-      // Method should be callable with required parameters
-      await expect(method.apply(activityClient, [...requiredArgs, options])).resolves.toBeDefined();
-      
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  it('should validate response structure for createSubscription', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    const mockResponseData = {
-      
-      
-      data: null,
-      
-      
-    };
-
-    // Mock httpClient.request (like Python mocks session)
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      
-      json: async () => mockResponseData,
-      text: async () => JSON.stringify(mockResponseData)
-    } as Response);
-
-    try {
-      // Build arguments (all required params are direct args in TypeScript)
-      const requiredArgs: any[] = [
-      
-      ];
-      const options: any = {};
-
-      const method = (activityClient as any)['createSubscription'];
+      const method = (activityClient as any)['stream'];
       const result = await method.apply(activityClient, [...requiredArgs, options]);
 
       // Verify response object has expected structure

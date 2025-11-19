@@ -16,32 +16,28 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  StreamResponse,
-  UpdateSubscriptionRequest,
-  UpdateSubscriptionResponse,
-  DeleteSubscriptionResponse,
   GetSubscriptionsResponse,
   CreateSubscriptionRequest,
   CreateSubscriptionResponse,
+  UpdateSubscriptionRequest,
+  UpdateSubscriptionResponse,
+  DeleteSubscriptionResponse,
+  StreamResponse,
 } from './models.js';
 
 /**
- * Options for stream method
+ * Options for createSubscription method
  * 
  * @public
  */
-export interface StreamOptions {
-  /** The number of minutes of backfill requested. */
-  backfillMinutes?: number;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. */
-  startTime?: string;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. */
-  endTime?: string;
+export interface CreateSubscriptionOptions {
+  /** Request body */
+  body?: CreateSubscriptionRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -55,19 +51,32 @@ export interface UpdateSubscriptionOptions {
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
- * Options for createSubscription method
+ * Options for stream method
  * 
  * @public
  */
-export interface CreateSubscriptionOptions {
-  /** Request body */
-  body?: CreateSubscriptionRequest;
+export interface StreamOptions {
+  /** The number of minutes of backfill requested. 
+     * Also accepts: backfill_minutes or proper camelCase format */
+  backfillMinutes?: number;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. 
+     * Also accepts: start_time or proper camelCase format */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. 
+     * Also accepts: end_time or proper camelCase format */
+  endTime?: string;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
 }
 
 /**
@@ -92,53 +101,121 @@ export class ActivityClient {
   }
 
   /**
-   * Activity Stream
-   * Stream of X Activities
+     * Normalize options object to handle both camelCase and original API parameter names
+     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     */
+  private _normalizeOptions<T extends Record<string, any>>(
+    options: T,
+    paramMappings: Record<string, string>
+  ): T {
+    if (!options || typeof options !== 'object') {
+      return options;
+    }
+
+    const normalized: any = { ...options };
+
+    // For each parameter mapping (original -> camelCase)
+    for (const [originalName, camelName] of Object.entries(paramMappings)) {
+      // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
+      if (originalName in normalized && !(camelName in normalized)) {
+        normalized[camelName] = normalized[originalName];
+        delete normalized[originalName];
+      }
+      // Also check for camelCase with proper casing (e.g., 'tweetFields')
+      const properCamel = this._toCamelCase(originalName);
+      if (
+        properCamel !== camelName &&
+        properCamel in normalized &&
+        !(camelName in normalized)
+      ) {
+        normalized[camelName] = normalized[properCamel];
+        delete normalized[properCamel];
+      }
+    }
+
+    return normalized as T;
+  }
+
+  /**
+     * Convert a parameter name to proper camelCase
+     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
+     */
+  private _toCamelCase(name: string): string {
+    return name
+      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
+      .replace(/^[A-Z]/, letter => letter.toLowerCase());
+  }
+
+  /**
+   * Get X activity subscriptions
+   * Get a list of active subscriptions for XAA
 
 
 
-   * @returns {Promise<StreamResponse>} Promise resolving to the API response
+   * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async stream(options: StreamOptions = {}): Promise<StreamResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+  async getSubscriptions(): Promise<GetSubscriptionsResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
 
-    const {
-      backfillMinutes = undefined,
-
-      startTime = undefined,
-
-      endTime = undefined,
-
-      requestOptions: requestOptions = {},
-    } =
-      options || {};
+    const requestOptions = {};
 
     // Build the path with path parameters
-    let path = '/2/activity/stream';
+    let path = '/2/activity/subscriptions';
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (backfillMinutes !== undefined) {
-      params.append('backfill_minutes', String(backfillMinutes));
-    }
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // No optional parameters, using empty request options
+    };
 
-    if (startTime !== undefined) {
-      params.append('start_time', String(startTime));
-    }
+    return this.client.request<GetSubscriptionsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
 
-    if (endTime !== undefined) {
-      params.append('end_time', String(endTime));
-    }
+  /**
+   * Create X activity subscription
+   * Creates a subscription for an X activity event
+
+
+
+   * @returns {Promise<CreateSubscriptionResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async createSubscription(
+    options: CreateSubscriptionOptions = {}
+  ): Promise<CreateSubscriptionResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/activity/subscriptions';
+
+    // Build query parameters
+    const params = new URLSearchParams();
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
       ...requestOptions,
     };
 
-    return this.client.request<StreamResponse>(
-      'GET',
+    return this.client.request<CreateSubscriptionResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -161,14 +238,16 @@ export class ActivityClient {
     subscriptionId: string,
     options: UpdateSubscriptionOptions = {}
   ): Promise<UpdateSubscriptionResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
     const {
       body,
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
     let path = '/2/activity/subscriptions/{subscription_id}';
@@ -211,7 +290,7 @@ export class ActivityClient {
   async deleteSubscription(
     subscriptionId: string
   ): Promise<DeleteSubscriptionResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+    // Normalize options to handle both camelCase and original API parameter names
 
     const requestOptions = {};
 
@@ -239,73 +318,65 @@ export class ActivityClient {
   }
 
   /**
-   * Get X activity subscriptions
-   * Get a list of active subscriptions for XAA
+   * Activity Stream
+   * Stream of X Activities
 
 
 
-   * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
+   * @returns {Promise<StreamResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getSubscriptions(): Promise<GetSubscriptionsResponse> {
-    // Destructure options (exclude path parameters, they're already function params)
+  async stream(options: StreamOptions = {}): Promise<StreamResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
 
-    const requestOptions = {};
+    const paramMappings: Record<string, string> = {
+      backfill_minutes: 'backfillMinutes',
 
-    // Build the path with path parameters
-    let path = '/2/activity/subscriptions';
+      start_time: 'startTime',
 
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
+      end_time: 'endTime',
     };
-
-    return this.client.request<GetSubscriptionsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
     );
-  }
 
-  /**
-   * Create X activity subscription
-   * Creates a subscription for an X activity event
-
-
-
-   * @returns {Promise<CreateSubscriptionResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async createSubscription(
-    options: CreateSubscriptionOptions = {}
-  ): Promise<CreateSubscriptionResponse> {
     // Destructure options (exclude path parameters, they're already function params)
-
     const {
-      body,
+      backfillMinutes = undefined,
+
+      startTime = undefined,
+
+      endTime = undefined,
 
       requestOptions: requestOptions = {},
-    } =
-      options || {};
+    } = normalizedOptions;
 
     // Build the path with path parameters
-    let path = '/2/activity/subscriptions';
+    let path = '/2/activity/stream';
 
     // Build query parameters
     const params = new URLSearchParams();
 
+    if (backfillMinutes !== undefined) {
+      params.append('backfill_minutes', String(backfillMinutes));
+    }
+
+    if (startTime !== undefined) {
+      params.append('start_time', String(startTime));
+    }
+
+    if (endTime !== undefined) {
+      params.append('end_time', String(endTime));
+    }
+
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
       ...requestOptions,
     };
 
-    return this.client.request<CreateSubscriptionResponse>(
-      'POST',
+    return this.client.request<StreamResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

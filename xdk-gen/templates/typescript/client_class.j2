@@ -35,7 +35,8 @@ import {
 export interface {{ operation.class_name }}Options {
     {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
     {% if param.variable_name %}
-    /** {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %} */
+    /** {% if param.description %}{{ param.description }}{% else %}{{ param.original_name }}{% endif %} 
+     * Also accepts: {{ param.original_name }} or proper camelCase (e.g., {{ param.variable_name }}) */
     {{ param.variable_name }}?: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %};
     {% endif %}
     {% endfor %}
@@ -45,6 +46,8 @@ export interface {{ operation.class_name }}Options {
     {% endif %}
     /** Additional request options */
     requestOptions?: RequestOptions;
+    /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+    [key: string]: any;
 }
 {% endif %}
 {% endfor %}
@@ -69,6 +72,33 @@ export class {{ tag.class_name }}Client {
     constructor(client: Client) {
         this.client = client;
     }
+
+    /**
+     * Normalize options object to handle both camelCase and original API parameter names
+     * Only accepts: proper camelCase (tweetFields) and original API format (tweet.fields)
+     */
+    private _normalizeOptions<T extends Record<string, any>>(options: T, paramMappings: Record<string, string>): T {
+        if (!options || typeof options !== 'object') {
+            return options;
+        }
+        
+        const normalized: any = { ...options };
+        
+        // For each parameter mapping (original -> proper camelCase)
+        for (const [originalName, camelName] of Object.entries(paramMappings)) {
+            // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
+            if (originalName in normalized && !(camelName in normalized)) {
+                normalized[camelName] = normalized[originalName];
+                delete normalized[originalName];
+            }
+            // Also check for proper camelCase (e.g., 'tweetFields')
+            // If it's already in proper camelCase, keep it (no conversion needed)
+            // The camelName is already the proper camelCase format
+        }
+        
+        return normalized as T;
+    }
+
 {% for operation in operations %}
 {% if not (operation.parameters and (operation.parameters | selectattr('name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('name', 'equalto', 'next_token') | list | length > 0)) %}
   /**
@@ -112,8 +142,22 @@ export class {{ tag.class_name }}Client {
         options: {{ operation.class_name }}Options = {}
         {% endif %}
     ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}> {
-        // Destructure options (exclude path parameters, they're already function params)
+        // Normalize options to handle both camelCase and original API parameter names
         {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 %}
+        const paramMappings: Record<string, string> = {
+            {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+            {% if param.variable_name and ('.' in param.original_name or '_' in param.original_name) %}
+            '{{ param.original_name }}': '{{ param.variable_name }}',
+            {% endif %}
+            {% endfor %}
+        };
+        const normalizedOptions = this._normalizeOptions(options || {}, paramMappings);
+        {% else %}
+        const normalizedOptions = options || {};
+        {% endif %}
+        
+        // Destructure options (exclude path parameters, they're already function params)
         const {
             {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
             {% if param.variable_name %}
@@ -124,7 +168,7 @@ export class {{ tag.class_name }}Client {
             body,
             {% endif %}
             requestOptions: requestOptions = {}
-        } = options || {};
+        } = normalizedOptions;
         {% else %}
         const requestOptions = {};
         {% endif %}
@@ -141,20 +185,21 @@ export class {{ tag.class_name }}Client {
         const params = new URLSearchParams();
         {% for param in operation.parameters | selectattr('location', 'equalto', 'query') %}
         {% if param.variable_name %}
+        {% set var_name = param.variable_name %}
         {% if param.required %}
-        if ({{ param.variable_name }} !== undefined) {
+        if ({{ var_name }} !== undefined{% if param.schema and param.schema.type == 'array' %} && {{ var_name }}.length > 0{% endif %}) {
             {% if param.schema and param.schema.type == 'array' %}
-            params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+            params.append('{{ param.original_name }}', {{ var_name }}.join(','));
             {% else %}
-            params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+            params.append('{{ param.original_name }}', String({{ var_name }}));
             {% endif %}
         }
         {% else %}
-        if ({{ param.variable_name }} !== undefined) {
+        if ({{ var_name }} !== undefined{% if param.schema and param.schema.type == 'array' %} && {{ var_name }}.length > 0{% endif %}) {
             {% if param.schema and param.schema.type == 'array' %}
-            params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+            params.append('{{ param.original_name }}', {{ var_name }}.join(','));
             {% else %}
-            params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+            params.append('{{ param.original_name }}', String({{ var_name }}));
             {% endif %}
         }
         {% endif %}
@@ -224,6 +269,20 @@ export class {{ tag.class_name }}Client {
     options: { requestOptions?: RequestOptions } = {}
     {% endif %}
   ): Promise<{% if 'tweet' in operation.method_name|lower or 'post' in operation.method_name|lower %}PostPaginator{% elif 'user' in operation.method_name|lower or 'users' in operation.method_name|lower or 'list' in operation.method_name|lower %}UserPaginator{% elif 'event' in operation.method_name|lower or 'dm' in operation.method_name|lower %}EventPaginator{% else %}Paginator<any>{% endif %}> {
+    // Normalize options to handle both camelCase and original API parameter names
+    {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 %}
+        const paramMappings: Record<string, string> = {
+        {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name and ('.' in param.original_name or '_' in param.original_name) %}
+        '{{ param.original_name }}': '{{ param.variable_name }}',
+        {% endif %}
+        {% endfor %}
+    };
+    const normalizedOptions = this._normalizeOptions(options || {}, paramMappings);
+    {% else %}
+    const normalizedOptions = options || {};
+    {% endif %}
+    
     // Destructure options (exclude path parameters)
     {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 %}
     const {
@@ -233,9 +292,9 @@ export class {{ tag.class_name }}Client {
         {% endif %}
         {% endfor %}
         requestOptions: requestOptions = {}
-    } = options || {};
+    } = normalizedOptions;
     {% else %}
-    const { requestOptions: requestOptions = {} } = options;
+    const { requestOptions: requestOptions = {} } = normalizedOptions;
     {% endif %}
 
     // Build the path with path parameters
@@ -252,20 +311,21 @@ export class {{ tag.class_name }}Client {
       const params = new URLSearchParams();
       {% for param in operation.parameters | selectattr('location', 'equalto', 'query') %}
       {% if param.variable_name %}
+      {% set var_name = param.variable_name %}
       {% if param.required %}
-      if ({{ param.variable_name }} !== undefined) {
+      if ({{ var_name }} !== undefined{% if param.schema and param.schema.type == 'array' %} && {{ var_name }}.length > 0{% endif %}) {
           {% if param.schema and param.schema.type == 'array' %}
-          params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+          params.append('{{ param.original_name }}', {{ var_name }}.join(','));
           {% else %}
-          params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+          params.append('{{ param.original_name }}', String({{ var_name }}));
           {% endif %}
       }
       {% else %}
-      if ({{ param.variable_name }} !== undefined) {
+      if ({{ var_name }} !== undefined{% if param.schema and param.schema.type == 'array' %} && {{ var_name }}.length > 0{% endif %}) {
           {% if param.schema and param.schema.type == 'array' %}
-          params.append('{{ param.original_name }}', {{ param.variable_name }}.join(','));
+          params.append('{{ param.original_name }}', {{ var_name }}.join(','));
           {% else %}
-          params.append('{{ param.original_name }}', String({{ param.variable_name }}));
+          params.append('{{ param.original_name }}', String({{ var_name }}));
           {% endif %}
       }
       {% endif %}
