@@ -11,6 +11,24 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
+ * Response for getSubscriptions
+ * 
+ * @public
+ */
+export type GetSubscriptionsResponse = Schemas.ActivitySubscriptionGetResponse;
+/**
+ * Request for createSubscription
+ * 
+ * @public
+ */
+export type CreateSubscriptionRequest = Schemas.ActivitySubscriptionCreateRequest;
+/**
+ * Response for createSubscription
+ * 
+ * @public
+ */
+export type CreateSubscriptionResponse = Schemas.ActivitySubscriptionCreateResponse;
+/**
  * Request for updateSubscription
  * 
  * @public
@@ -34,21 +52,3 @@ export type DeleteSubscriptionResponse = Schemas.ActivitySubscriptionDeleteRespo
  * @public
  */
 export type StreamResponse = Schemas.ActivityStreamingResponse;
-/**
- * Response for getSubscriptions
- * 
- * @public
- */
-export type GetSubscriptionsResponse = Schemas.ActivitySubscriptionGetResponse;
-/**
- * Request for createSubscription
- * 
- * @public
- */
-export type CreateSubscriptionRequest = Schemas.ActivitySubscriptionCreateRequest;
-/**
- * Response for createSubscription
- * 
- * @public
- */
-export type CreateSubscriptionResponse = Schemas.ActivitySubscriptionCreateResponse;

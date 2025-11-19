@@ -11,6 +11,30 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
+ * Response for getPosts
+ * 
+ * @public
+ */
+export type GetPostsResponse = Schemas.Get2ListsIdTweetsResponse;
+/**
+ * Response for getMembers
+ * 
+ * @public
+ */
+export type GetMembersResponse = Schemas.Get2ListsIdMembersResponse;
+/**
+ * Request for addMember
+ * 
+ * @public
+ */
+export type AddMemberRequest = Schemas.ListAddUserRequest;
+/**
+ * Response for addMember
+ * 
+ * @public
+ */
+export type AddMemberResponse = Schemas.ListMutateResponse;
+/**
  * Response for getFollowers
  * 
  * @public
@@ -28,6 +52,12 @@ export type CreateRequest = Schemas.ListCreateRequest;
  * @public
  */
 export type CreateResponse = Schemas.ListCreateResponse;
+/**
+ * Response for removeMemberByUserId
+ * 
+ * @public
+ */
+export type RemoveMemberByUserIdResponse = Schemas.ListMutateResponse;
 /**
  * Response for getById
  * 
@@ -52,33 +82,3 @@ export type UpdateResponse = Schemas.ListUpdateResponse;
  * @public
  */
 export type DeleteResponse = Schemas.ListDeleteResponse;
-/**
- * Response for getPosts
- * 
- * @public
- */
-export type GetPostsResponse = Schemas.Get2ListsIdTweetsResponse;
-/**
- * Response for removeMemberByUserId
- * 
- * @public
- */
-export type RemoveMemberByUserIdResponse = Schemas.ListMutateResponse;
-/**
- * Response for getMembers
- * 
- * @public
- */
-export type GetMembersResponse = Schemas.Get2ListsIdMembersResponse;
-/**
- * Request for addMember
- * 
- * @public
- */
-export type AddMemberRequest = Schemas.ListAddUserRequest;
-/**
- * Response for addMember
- * 
- * @public
- */
-export type AddMemberResponse = Schemas.ListMutateResponse;

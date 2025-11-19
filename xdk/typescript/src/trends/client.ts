@@ -16,10 +16,26 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
+  GetAiResponse,
   GetPersonalizedResponse,
   GetByWoeidResponse,
-  GetAiResponse,
 } from './models.js';
+
+/**
+ * Options for getAi method
+ * 
+ * @public
+ */
+export interface GetAiOptions {
+  /** A comma separated list of News fields to display. 
+     * Also accepts: news.fields or proper camelCase (e.g., newsFields) */
+  newsFields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
 
 /**
  * Options for getPersonalized method
@@ -50,22 +66,6 @@ export interface GetByWoeidOptions {
   /** A comma separated list of Trend fields to display. 
      * Also accepts: trend.fields or proper camelCase (e.g., trendFields) */
   trendFields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
-  [key: string]: any;
-}
-
-/**
- * Options for getAi method
- * 
- * @public
- */
-export interface GetAiOptions {
-  /** A comma separated list of News fields to display. 
-     * Also accepts: news.fields or proper camelCase (e.g., newsFields) */
-  newsFields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -121,6 +121,68 @@ export class TrendsClient {
     }
 
     return normalized as T;
+  }
+
+  /**
+   * Get AI Trends by ID
+   * Retrieves an AI trend by its ID.
+
+
+   * @param id The ID of the ai trend.
+
+
+
+
+   * @returns {Promise<GetAiResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getAi(id: string, options: GetAiOptions = {}): Promise<GetAiResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'news.fields': 'newsFields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      newsFields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/ai_trends/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (newsFields !== undefined && newsFields.length > 0) {
+      params.append('news.fields', newsFields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
+
+      ...requestOptions,
+    };
+
+    return this.client.request<GetAiResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 
   /**
@@ -258,68 +320,6 @@ export class TrendsClient {
     };
 
     return this.client.request<GetByWoeidResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get AI Trends by ID
-   * Retrieves an AI trend by its ID.
-
-
-   * @param id The ID of the ai trend.
-
-
-
-
-   * @returns {Promise<GetAiResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getAi(id: string, options: GetAiOptions = {}): Promise<GetAiResponse> {
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const paramMappings: Record<string, string> = {
-      'news.fields': 'newsFields',
-    };
-    const normalizedOptions = this._normalizeOptions(
-      options || {},
-      paramMappings
-    );
-
-    // Destructure options (exclude path parameters, they're already function params)
-    const {
-      newsFields = [],
-
-      requestOptions: requestOptions = {},
-    } = normalizedOptions;
-
-    // Build the path with path parameters
-    let path = '/2/ai_trends/{id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (newsFields !== undefined && newsFields.length > 0) {
-      params.append('news.fields', newsFields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // Pass security requirements for smart auth selection
-      security: [
-        {
-          BearerToken: [],
-        },
-      ],
-
-      ...requestOptions,
-    };
-
-    return this.client.request<GetAiResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

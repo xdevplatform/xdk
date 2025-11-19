@@ -16,15 +16,46 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
+  GetResponse,
+  CreateRequest,
+  CreateResponse,
   ValidateResponse,
   DeleteResponse,
   GetStreamLinksResponse,
   CreateStreamLinkResponse,
   DeleteStreamLinkResponse,
-  GetResponse,
-  CreateRequest,
-  CreateResponse,
 } from './models.js';
+
+/**
+ * Options for get method
+ * 
+ * @public
+ */
+export interface GetOptions {
+  /** A comma separated list of WebhookConfig fields to display. 
+     * Also accepts: webhook_config.fields or proper camelCase (e.g., webhookConfigFields) */
+  webhookConfigFields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for create method
+ * 
+ * @public
+ */
+export interface CreateOptions {
+  /** Request body */
+  body?: CreateRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
 
 /**
  * Options for createStreamLink method
@@ -55,37 +86,6 @@ export interface CreateStreamLinkOptions {
   /** A comma separated list of Place fields to display. 
      * Also accepts: place.fields or proper camelCase (e.g., placeFields) */
   placeFields?: string;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
-  [key: string]: any;
-}
-
-/**
- * Options for get method
- * 
- * @public
- */
-export interface GetOptions {
-  /** A comma separated list of WebhookConfig fields to display. 
-     * Also accepts: webhook_config.fields or proper camelCase (e.g., webhookConfigFields) */
-  webhookConfigFields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
-  [key: string]: any;
-}
-
-/**
- * Options for create method
- * 
- * @public
- */
-export interface CreateOptions {
-  /** Request body */
-  body?: CreateRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -141,6 +141,114 @@ export class WebhooksClient {
     }
 
     return normalized as T;
+  }
+
+  /**
+   * Get webhook
+   * Get a list of webhook configs associated with a client app.
+
+
+
+   * @returns {Promise<GetResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async get(options: GetOptions = {}): Promise<GetResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'webhook_config.fields': 'webhookConfigFields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      webhookConfigFields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/webhooks';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (webhookConfigFields !== undefined && webhookConfigFields.length > 0) {
+      params.append('webhook_config.fields', webhookConfigFields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
+
+      ...requestOptions,
+    };
+
+    return this.client.request<GetResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Create webhook
+   * Creates a new webhook configuration.
+
+
+
+   * @returns {Promise<CreateResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async create(options: CreateOptions = {}): Promise<CreateResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/webhooks';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+
+        {
+          UserToken: [],
+        },
+      ],
+
+      ...requestOptions,
+    };
+
+    return this.client.request<CreateResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 
   /**
@@ -423,114 +531,6 @@ export class WebhooksClient {
 
     return this.client.request<DeleteStreamLinkResponse>(
       'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Get webhook
-   * Get a list of webhook configs associated with a client app.
-
-
-
-   * @returns {Promise<GetResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async get(options: GetOptions = {}): Promise<GetResponse> {
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const paramMappings: Record<string, string> = {
-      'webhook_config.fields': 'webhookConfigFields',
-    };
-    const normalizedOptions = this._normalizeOptions(
-      options || {},
-      paramMappings
-    );
-
-    // Destructure options (exclude path parameters, they're already function params)
-    const {
-      webhookConfigFields = [],
-
-      requestOptions: requestOptions = {},
-    } = normalizedOptions;
-
-    // Build the path with path parameters
-    let path = '/2/webhooks';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (webhookConfigFields !== undefined && webhookConfigFields.length > 0) {
-      params.append('webhook_config.fields', webhookConfigFields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // Pass security requirements for smart auth selection
-      security: [
-        {
-          BearerToken: [],
-        },
-      ],
-
-      ...requestOptions,
-    };
-
-    return this.client.request<GetResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Create webhook
-   * Creates a new webhook configuration.
-
-
-
-   * @returns {Promise<CreateResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async create(options: CreateOptions = {}): Promise<CreateResponse> {
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const normalizedOptions = options || {};
-
-    // Destructure options (exclude path parameters, they're already function params)
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } = normalizedOptions;
-
-    // Build the path with path parameters
-    let path = '/2/webhooks';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      // Pass security requirements for smart auth selection
-      security: [
-        {
-          BearerToken: [],
-        },
-
-        {
-          UserToken: [],
-        },
-      ],
-
-      ...requestOptions,
-    };
-
-    return this.client.request<CreateResponse>(
-      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
