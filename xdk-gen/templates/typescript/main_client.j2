@@ -75,6 +75,8 @@ export interface RequestOptions {
   body?: string;
   /** Return raw HTTP wrapper instead of parsed body */
   raw?: boolean;
+  /** Security requirements for the endpoint (from OpenAPI spec) - used for smart auth selection */
+  security?: Array<Record<string, string[]>>;
 }
 
 /**
@@ -258,12 +260,15 @@ export class Client {
     const url = `${this.baseUrl}${path}`;
     const headers = new Headers(this.headers);
     
-    // Add authentication headers
-    if (this.bearerToken) {
+    // Select the best authentication method based on endpoint requirements
+    const selectedAuth = this.selectAuthMethod(method, options.security);
+    
+    // Add authentication headers based on selected method
+    if (selectedAuth === 'bearer_token' && this.bearerToken) {
       headers.set('Authorization', `Bearer ${this.bearerToken}`);
-    } else if (this.accessToken) {
+    } else if (selectedAuth === 'oauth2_user_context' && this.accessToken) {
       headers.set('Authorization', `Bearer ${this.accessToken}`);
-    } else if (this.oauth1 && this.oauth1.accessToken) {
+    } else if (selectedAuth === 'oauth1' && this.oauth1 && this.oauth1.accessToken) {
       // OAuth1 authentication - build proper OAuth1 header
       try {
         const oauthHeader = await this.oauth1.buildRequestHeader(method, url, options.body || '');
@@ -274,6 +279,14 @@ export class Client {
         // JSON bodies are not included in OAuth1 signature (per OAuth1 spec)
       } catch (error) {
         throw new Error(`Failed to build OAuth1 header: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
+    } else if (!selectedAuth) {
+      // No suitable auth method found - validate authentication
+      const requiredSchemes = options.security 
+        ? options.security.flatMap(req => Object.keys(req))
+        : [];
+      if (requiredSchemes.length > 0) {
+        this.validateAuthentication(requiredSchemes, path);
       }
     }
     
@@ -381,6 +394,86 @@ export class Client {
     };
 
     return schemeMapping[securitySchemeName] || [securitySchemeName.toLowerCase()];
+  }
+
+  /**
+   * Select the best authentication method based on endpoint requirements and available credentials
+   * 
+   * Priority strategy:
+   * 1. If endpoint only accepts one method, use that (if available)
+   * 2. If endpoint accepts multiple methods:
+   *    - For write operations (POST/PUT/DELETE): Prefer OAuth1 > OAuth2 User Token > Bearer Token
+   *    - For read operations (GET): Prefer Bearer Token > OAuth2 User Token > OAuth1
+   *    - This allows Bearer Token for read-only operations while using user context for writes
+   * 
+   * @param method HTTP method (GET, POST, etc.)
+   * @param securityRequirements Security requirements from OpenAPI spec (array of security requirement objects)
+   * @returns Selected auth method: 'bearer_token', 'oauth2_user_context', 'oauth1', or null if none available
+   */
+  private selectAuthMethod(method: string, securityRequirements?: Array<Record<string, string[]>>): 'bearer_token' | 'oauth2_user_context' | 'oauth1' | null {
+    // If no security requirements, use default priority
+    if (!securityRequirements || securityRequirements.length === 0) {
+      if (this.bearerToken) return 'bearer_token';
+      if (this.accessToken) return 'oauth2_user_context';
+      if (this.oauth1 && this.oauth1.accessToken) return 'oauth1';
+      return null;
+    }
+
+    // Extract all acceptable security schemes from requirements
+    // Security requirements are OR'd together (any one can be used)
+    const acceptableSchemes = new Set<string>();
+    for (const requirement of securityRequirements) {
+      for (const schemeName of Object.keys(requirement)) {
+        acceptableSchemes.add(schemeName);
+      }
+    }
+
+    // Check what auth methods we have available
+    const availableAuth: Record<string, boolean> = {
+      'BearerToken': !!this.bearerToken,
+      'OAuth2UserToken': !!this.accessToken,
+      'UserToken': !!(this.oauth1 && this.oauth1.accessToken),
+    };
+
+    // If only one scheme is acceptable, use it if available
+    if (acceptableSchemes.size === 1) {
+      const scheme = Array.from(acceptableSchemes)[0];
+      if (availableAuth[scheme]) {
+        return this.mapSecuritySchemeToAuthTypes(scheme)[0] as 'bearer_token' | 'oauth2_user_context' | 'oauth1';
+      }
+      return null;
+    }
+
+    // Multiple schemes acceptable - use priority based on operation type
+    const isWriteOperation = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method.toUpperCase());
+    
+    // Priority order for write operations: OAuth1 > OAuth2 User Token > Bearer Token
+    // (User context is required for most write operations)
+    if (isWriteOperation) {
+      if (acceptableSchemes.has('UserToken') && availableAuth['UserToken']) {
+        return 'oauth1';
+      }
+      if (acceptableSchemes.has('OAuth2UserToken') && availableAuth['OAuth2UserToken']) {
+        return 'oauth2_user_context';
+      }
+      if (acceptableSchemes.has('BearerToken') && availableAuth['BearerToken']) {
+        return 'bearer_token';
+      }
+    } else {
+      // Priority order for read operations: Bearer Token > OAuth2 User Token > OAuth1
+      // (Bearer Token is simpler for read-only operations)
+      if (acceptableSchemes.has('BearerToken') && availableAuth['BearerToken']) {
+        return 'bearer_token';
+      }
+      if (acceptableSchemes.has('OAuth2UserToken') && availableAuth['OAuth2UserToken']) {
+        return 'oauth2_user_context';
+      }
+      if (acceptableSchemes.has('UserToken') && availableAuth['UserToken']) {
+        return 'oauth1';
+      }
+    }
+
+    return null;
   }
 
   /**

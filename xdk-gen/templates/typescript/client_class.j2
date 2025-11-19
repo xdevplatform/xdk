@@ -213,6 +213,18 @@ export class {{ tag.class_name }}Client {
             {% elif operation.request_body and not operation.request_body.required %}
             body: body ? JSON.stringify(body) : undefined,
             {% endif %}
+            {% if operation.security %}
+            // Pass security requirements for smart auth selection
+            security: [
+                {% for security_req in operation.security %}
+                {
+                    {% for scheme_name in security_req %}
+                    '{{ scheme_name }}': [{% for scope in security_req[scheme_name] %}'{{ scope }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                    {% endfor %}
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
+            {% endif %}
             {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
             ...requestOptions
             {% else %}
@@ -347,6 +359,18 @@ export class {{ tag.class_name }}Client {
           body: JSON.stringify(body || {}),
           {% elif operation.request_body and not operation.request_body.required %}
           body: body ? JSON.stringify(body) : undefined,
+          {% endif %}
+          {% if operation.security %}
+          // Pass security requirements for smart auth selection
+          security: [
+              {% for security_req in operation.security %}
+              {
+                  {% for scheme_name in security_req %}
+                  '{{ scheme_name }}': [{% for scope in security_req[scheme_name] %}'{{ scope }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                  {% endfor %}
+              }{% if not loop.last %},{% endif %}
+              {% endfor %}
+          ],
           {% endif %}
           ...requestOptions
       };
