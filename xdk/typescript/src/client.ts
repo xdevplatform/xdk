@@ -17,7 +17,27 @@ import {
 
 
 
-import { ComplianceClient } from "./compliance/index.js";
+import { WebhooksClient } from "./webhooks/index.js";
+
+
+
+import { CommunitiesClient } from "./communities/index.js";
+
+
+
+import { MediaClient } from "./media/index.js";
+
+
+
+import { AccountActivityClient } from "./account_activity/index.js";
+
+
+
+import { ListsClient } from "./lists/index.js";
+
+
+
+import { SpacesClient } from "./spaces/index.js";
 
 
 
@@ -29,31 +49,7 @@ import { ActivityClient } from "./activity/index.js";
 
 
 
-import { MediaClient } from "./media/index.js";
-
-
-
-import { SpacesClient } from "./spaces/index.js";
-
-
-
-import { AccountActivityClient } from "./account_activity/index.js";
-
-
-
-import { CommunitiesClient } from "./communities/index.js";
-
-
-
-import { NewsClient } from "./news/index.js";
-
-
-
-import { StreamClient } from "./stream/client.js";
-
-
-
-import { ListsClient } from "./lists/index.js";
+import { CommunityNotesClient } from "./community_notes/index.js";
 
 
 
@@ -61,11 +57,27 @@ import { DirectMessagesClient } from "./direct_messages/index.js";
 
 
 
-import { ConnectionsClient } from "./connections/index.js";
+import { NewsClient } from "./news/index.js";
+
+
+
+import { ComplianceClient } from "./compliance/index.js";
 
 
 
 import { UsageClient } from "./usage/index.js";
+
+
+
+import { GeneralClient } from "./general/index.js";
+
+
+
+import { StreamClient } from "./stream/client.js";
+
+
+
+import { ConnectionsClient } from "./connections/index.js";
 
 
 
@@ -74,18 +86,6 @@ import { PostsClient } from "./posts/index.js";
 
 
 import { UsersClient } from "./users/index.js";
-
-
-
-import { WebhooksClient } from "./webhooks/index.js";
-
-
-
-import { GeneralClient } from "./general/index.js";
-
-
-
-import { CommunityNotesClient } from "./community_notes/index.js";
 
 
 
@@ -144,6 +144,8 @@ export interface RequestOptions {
   body?: string;
   /** Return raw HTTP wrapper instead of parsed body */
   raw?: boolean;
+  /** Security requirements for the endpoint (from OpenAPI spec) - used for smart auth selection */
+  security?: Array<Record<string, string[]>>;
 }
 
 /**
@@ -231,8 +233,23 @@ export class Client {
   readonly httpClient = httpClient;
 
 
-  /** compliance client */
-  readonly compliance: ComplianceClient;
+  /** webhooks client */
+  readonly webhooks: WebhooksClient;
+
+  /** communities client */
+  readonly communities: CommunitiesClient;
+
+  /** media client */
+  readonly media: MediaClient;
+
+  /** account activity client */
+  readonly accountActivity: AccountActivityClient;
+
+  /** lists client */
+  readonly lists: ListsClient;
+
+  /** spaces client */
+  readonly spaces: SpacesClient;
 
   /** trends client */
   readonly trends: TrendsClient;
@@ -240,50 +257,35 @@ export class Client {
   /** activity client */
   readonly activity: ActivityClient;
 
-  /** media client */
-  readonly media: MediaClient;
-
-  /** spaces client */
-  readonly spaces: SpacesClient;
-
-  /** account activity client */
-  readonly accountActivity: AccountActivityClient;
-
-  /** communities client */
-  readonly communities: CommunitiesClient;
-
-  /** news client */
-  readonly news: NewsClient;
-
-  /** stream client */
-  readonly stream: StreamClient;
-
-  /** lists client */
-  readonly lists: ListsClient;
+  /** community notes client */
+  readonly communityNotes: CommunityNotesClient;
 
   /** direct messages client */
   readonly directMessages: DirectMessagesClient;
 
-  /** connections client */
-  readonly connections: ConnectionsClient;
+  /** news client */
+  readonly news: NewsClient;
+
+  /** compliance client */
+  readonly compliance: ComplianceClient;
 
   /** usage client */
   readonly usage: UsageClient;
+
+  /** general client */
+  readonly general: GeneralClient;
+
+  /** stream client */
+  readonly stream: StreamClient;
+
+  /** connections client */
+  readonly connections: ConnectionsClient;
 
   /** posts client */
   readonly posts: PostsClient;
 
   /** users client */
   readonly users: UsersClient;
-
-  /** webhooks client */
-  readonly webhooks: WebhooksClient;
-
-  /** general client */
-  readonly general: GeneralClient;
-
-  /** community notes client */
-  readonly communityNotes: CommunityNotesClient;
 
 
   /**
@@ -339,41 +341,41 @@ export class Client {
     this.headers = httpClient.createHeaders(defaultHeaders);
 
 
-    this.compliance = new ComplianceClient(this);
+    this.webhooks = new WebhooksClient(this);
+
+    this.communities = new CommunitiesClient(this);
+
+    this.media = new MediaClient(this);
+
+    this.accountActivity = new AccountActivityClient(this);
+
+    this.lists = new ListsClient(this);
+
+    this.spaces = new SpacesClient(this);
 
     this.trends = new TrendsClient(this);
 
     this.activity = new ActivityClient(this);
 
-    this.media = new MediaClient(this);
-
-    this.spaces = new SpacesClient(this);
-
-    this.accountActivity = new AccountActivityClient(this);
-
-    this.communities = new CommunitiesClient(this);
-
-    this.news = new NewsClient(this);
-
-    this.stream = new StreamClient(this);
-
-    this.lists = new ListsClient(this);
+    this.communityNotes = new CommunityNotesClient(this);
 
     this.directMessages = new DirectMessagesClient(this);
 
-    this.connections = new ConnectionsClient(this);
+    this.news = new NewsClient(this);
+
+    this.compliance = new ComplianceClient(this);
 
     this.usage = new UsageClient(this);
+
+    this.general = new GeneralClient(this);
+
+    this.stream = new StreamClient(this);
+
+    this.connections = new ConnectionsClient(this);
 
     this.posts = new PostsClient(this);
 
     this.users = new UsersClient(this);
-
-    this.webhooks = new WebhooksClient(this);
-
-    this.general = new GeneralClient(this);
-
-    this.communityNotes = new CommunityNotesClient(this);
 
   }
 
@@ -412,12 +414,15 @@ export class Client {
     const url = `${this.baseUrl}${path}`;
     const headers = new Headers(this.headers);
     
-    // Add authentication headers
-    if (this.bearerToken) {
+    // Select the best authentication method based on endpoint requirements
+    const selectedAuth = this.selectAuthMethod(method, options.security);
+    
+    // Add authentication headers based on selected method
+    if (selectedAuth === 'bearer_token' && this.bearerToken) {
       headers.set('Authorization', `Bearer ${this.bearerToken}`);
-    } else if (this.accessToken) {
+    } else if (selectedAuth === 'oauth2_user_context' && this.accessToken) {
       headers.set('Authorization', `Bearer ${this.accessToken}`);
-    } else if (this.oauth1 && this.oauth1.accessToken) {
+    } else if (selectedAuth === 'oauth1' && this.oauth1 && this.oauth1.accessToken) {
       // OAuth1 authentication - build proper OAuth1 header
       try {
         const oauthHeader = await this.oauth1.buildRequestHeader(method, url, options.body || '');
@@ -428,6 +433,14 @@ export class Client {
         // JSON bodies are not included in OAuth1 signature (per OAuth1 spec)
       } catch (error) {
         throw new Error(`Failed to build OAuth1 header: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      }
+    } else if (!selectedAuth) {
+      // No suitable auth method found - validate authentication
+      const requiredSchemes = options.security 
+        ? options.security.flatMap(req => Object.keys(req))
+        : [];
+      if (requiredSchemes.length > 0) {
+        this.validateAuthentication(requiredSchemes, path);
       }
     }
     
@@ -535,6 +548,86 @@ export class Client {
     };
 
     return schemeMapping[securitySchemeName] || [securitySchemeName.toLowerCase()];
+  }
+
+  /**
+   * Select the best authentication method based on endpoint requirements and available credentials
+   * 
+   * Priority strategy:
+   * 1. If endpoint only accepts one method, use that (if available)
+   * 2. If endpoint accepts multiple methods:
+   *    - For write operations (POST/PUT/DELETE): Prefer OAuth1 > OAuth2 User Token > Bearer Token
+   *    - For read operations (GET): Prefer Bearer Token > OAuth2 User Token > OAuth1
+   *    - This allows Bearer Token for read-only operations while using user context for writes
+   * 
+   * @param method HTTP method (GET, POST, etc.)
+   * @param securityRequirements Security requirements from OpenAPI spec (array of security requirement objects)
+   * @returns Selected auth method: 'bearer_token', 'oauth2_user_context', 'oauth1', or null if none available
+   */
+  private selectAuthMethod(method: string, securityRequirements?: Array<Record<string, string[]>>): 'bearer_token' | 'oauth2_user_context' | 'oauth1' | null {
+    // If no security requirements, use default priority
+    if (!securityRequirements || securityRequirements.length === 0) {
+      if (this.bearerToken) return 'bearer_token';
+      if (this.accessToken) return 'oauth2_user_context';
+      if (this.oauth1 && this.oauth1.accessToken) return 'oauth1';
+      return null;
+    }
+
+    // Extract all acceptable security schemes from requirements
+    // Security requirements are OR'd together (any one can be used)
+    const acceptableSchemes = new Set<string>();
+    for (const requirement of securityRequirements) {
+      for (const schemeName of Object.keys(requirement)) {
+        acceptableSchemes.add(schemeName);
+      }
+    }
+
+    // Check what auth methods we have available
+    const availableAuth: Record<string, boolean> = {
+      'BearerToken': !!this.bearerToken,
+      'OAuth2UserToken': !!this.accessToken,
+      'UserToken': !!(this.oauth1 && this.oauth1.accessToken),
+    };
+
+    // If only one scheme is acceptable, use it if available
+    if (acceptableSchemes.size === 1) {
+      const scheme = Array.from(acceptableSchemes)[0];
+      if (availableAuth[scheme]) {
+        return this.mapSecuritySchemeToAuthTypes(scheme)[0] as 'bearer_token' | 'oauth2_user_context' | 'oauth1';
+      }
+      return null;
+    }
+
+    // Multiple schemes acceptable - use priority based on operation type
+    const isWriteOperation = ['POST', 'PUT', 'DELETE', 'PATCH'].includes(method.toUpperCase());
+    
+    // Priority order for write operations: OAuth1 > OAuth2 User Token > Bearer Token
+    // (User context is required for most write operations)
+    if (isWriteOperation) {
+      if (acceptableSchemes.has('UserToken') && availableAuth['UserToken']) {
+        return 'oauth1';
+      }
+      if (acceptableSchemes.has('OAuth2UserToken') && availableAuth['OAuth2UserToken']) {
+        return 'oauth2_user_context';
+      }
+      if (acceptableSchemes.has('BearerToken') && availableAuth['BearerToken']) {
+        return 'bearer_token';
+      }
+    } else {
+      // Priority order for read operations: Bearer Token > OAuth2 User Token > OAuth1
+      // (Bearer Token is simpler for read-only operations)
+      if (acceptableSchemes.has('BearerToken') && availableAuth['BearerToken']) {
+        return 'bearer_token';
+      }
+      if (acceptableSchemes.has('OAuth2UserToken') && availableAuth['OAuth2UserToken']) {
+        return 'oauth2_user_context';
+      }
+      if (acceptableSchemes.has('UserToken') && availableAuth['UserToken']) {
+        return 'oauth1';
+      }
+    }
+
+    return null;
   }
 
   /**

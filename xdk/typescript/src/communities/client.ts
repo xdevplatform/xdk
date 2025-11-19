@@ -24,20 +24,20 @@ import { SearchResponse, GetByIdResponse } from './models.js';
  */
 export interface SearchOptions {
   /** The maximum number of search results to be returned by a request. 
-     * Also accepts: max_results or proper camelCase format */
+     * Also accepts: max_results or proper camelCase (e.g., maxResults) */
   maxResults?: number;
 
   /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. 
-     * Also accepts: next_token or proper camelCase format */
+     * Also accepts: next_token or proper camelCase (e.g., nextToken) */
   nextToken?: any;
 
   /** This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified. 
-     * Also accepts: pagination_token or proper camelCase format */
+     * Also accepts: pagination_token or proper camelCase (e.g., paginationToken) */
   paginationToken?: any;
 
   /** A comma separated list of Community fields to display. 
-     * Also accepts: community.fields or proper camelCase format */
-  communityfields?: Array<any>;
+     * Also accepts: community.fields or proper camelCase (e.g., communityFields) */
+  communityFields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -52,8 +52,8 @@ export interface SearchOptions {
  */
 export interface GetByIdOptions {
   /** A comma separated list of Community fields to display. 
-     * Also accepts: community.fields or proper camelCase format */
-  communityfields?: Array<any>;
+     * Also accepts: community.fields or proper camelCase (e.g., communityFields) */
+  communityFields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -84,7 +84,7 @@ export class CommunitiesClient {
 
   /**
      * Normalize options object to handle both camelCase and original API parameter names
-     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     * Only accepts: proper camelCase (tweetFields) and original API format (tweet.fields)
      */
   private _normalizeOptions<T extends Record<string, any>>(
     options: T,
@@ -96,36 +96,19 @@ export class CommunitiesClient {
 
     const normalized: any = { ...options };
 
-    // For each parameter mapping (original -> camelCase)
+    // For each parameter mapping (original -> proper camelCase)
     for (const [originalName, camelName] of Object.entries(paramMappings)) {
       // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
       if (originalName in normalized && !(camelName in normalized)) {
         normalized[camelName] = normalized[originalName];
         delete normalized[originalName];
       }
-      // Also check for camelCase with proper casing (e.g., 'tweetFields')
-      const properCamel = this._toCamelCase(originalName);
-      if (
-        properCamel !== camelName &&
-        properCamel in normalized &&
-        !(camelName in normalized)
-      ) {
-        normalized[camelName] = normalized[properCamel];
-        delete normalized[properCamel];
-      }
+      // Also check for proper camelCase (e.g., 'tweetFields')
+      // If it's already in proper camelCase, keep it (no conversion needed)
+      // The camelName is already the proper camelCase format
     }
 
     return normalized as T;
-  }
-
-  /**
-     * Convert a parameter name to proper camelCase
-     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
-     */
-  private _toCamelCase(name: string): string {
-    return name
-      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
-      .replace(/^[A-Z]/, letter => letter.toLowerCase());
   }
 
   /**
@@ -154,7 +137,7 @@ export class CommunitiesClient {
 
       pagination_token: 'paginationToken',
 
-      'community.fields': 'communityfields',
+      'community.fields': 'communityFields',
     };
     const normalizedOptions = this._normalizeOptions(
       options || {},
@@ -169,7 +152,7 @@ export class CommunitiesClient {
 
       paginationToken = undefined,
 
-      communityfields = [],
+      communityFields = [],
 
       requestOptions: requestOptions = {},
     } = normalizedOptions;
@@ -196,12 +179,23 @@ export class CommunitiesClient {
       params.append('pagination_token', String(paginationToken));
     }
 
-    if (communityfields !== undefined && communityfields.length > 0) {
-      params.append('community.fields', communityfields.join(','));
+    if (communityFields !== undefined && communityFields.length > 0) {
+      params.append('community.fields', communityFields.join(','));
     }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          OAuth2UserToken: ['tweet.read', 'users.read'],
+        },
+
+        {
+          UserToken: [],
+        },
+      ],
+
       ...requestOptions,
     };
 
@@ -232,7 +226,7 @@ export class CommunitiesClient {
     // Normalize options to handle both camelCase and original API parameter names
 
     const paramMappings: Record<string, string> = {
-      'community.fields': 'communityfields',
+      'community.fields': 'communityFields',
     };
     const normalizedOptions = this._normalizeOptions(
       options || {},
@@ -241,7 +235,7 @@ export class CommunitiesClient {
 
     // Destructure options (exclude path parameters, they're already function params)
     const {
-      communityfields = [],
+      communityFields = [],
 
       requestOptions: requestOptions = {},
     } = normalizedOptions;
@@ -254,12 +248,27 @@ export class CommunitiesClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (communityfields !== undefined && communityfields.length > 0) {
-      params.append('community.fields', communityfields.join(','));
+    if (communityFields !== undefined && communityFields.length > 0) {
+      params.append('community.fields', communityFields.join(','));
     }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+
+        {
+          OAuth2UserToken: ['list.read', 'tweet.read', 'users.read'],
+        },
+
+        {
+          UserToken: [],
+        },
+      ],
+
       ...requestOptions,
     };
 

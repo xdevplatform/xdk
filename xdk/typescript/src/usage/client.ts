@@ -24,12 +24,12 @@ import { GetResponse } from './models.js';
  */
 export interface GetOptions {
   /** The number of days for which you need usage for. 
-     * Also accepts: days or proper camelCase format */
+     * Also accepts: days or proper camelCase (e.g., days) */
   days?: number;
 
   /** A comma separated list of Usage fields to display. 
-     * Also accepts: usage.fields or proper camelCase format */
-  usagefields?: Array<any>;
+     * Also accepts: usage.fields or proper camelCase (e.g., usageFields) */
+  usageFields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -60,7 +60,7 @@ export class UsageClient {
 
   /**
      * Normalize options object to handle both camelCase and original API parameter names
-     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     * Only accepts: proper camelCase (tweetFields) and original API format (tweet.fields)
      */
   private _normalizeOptions<T extends Record<string, any>>(
     options: T,
@@ -72,36 +72,19 @@ export class UsageClient {
 
     const normalized: any = { ...options };
 
-    // For each parameter mapping (original -> camelCase)
+    // For each parameter mapping (original -> proper camelCase)
     for (const [originalName, camelName] of Object.entries(paramMappings)) {
       // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
       if (originalName in normalized && !(camelName in normalized)) {
         normalized[camelName] = normalized[originalName];
         delete normalized[originalName];
       }
-      // Also check for camelCase with proper casing (e.g., 'tweetFields')
-      const properCamel = this._toCamelCase(originalName);
-      if (
-        properCamel !== camelName &&
-        properCamel in normalized &&
-        !(camelName in normalized)
-      ) {
-        normalized[camelName] = normalized[properCamel];
-        delete normalized[properCamel];
-      }
+      // Also check for proper camelCase (e.g., 'tweetFields')
+      // If it's already in proper camelCase, keep it (no conversion needed)
+      // The camelName is already the proper camelCase format
     }
 
     return normalized as T;
-  }
-
-  /**
-     * Convert a parameter name to proper camelCase
-     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
-     */
-  private _toCamelCase(name: string): string {
-    return name
-      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
-      .replace(/^[A-Z]/, letter => letter.toLowerCase());
   }
 
   /**
@@ -117,7 +100,7 @@ export class UsageClient {
     // Normalize options to handle both camelCase and original API parameter names
 
     const paramMappings: Record<string, string> = {
-      'usage.fields': 'usagefields',
+      'usage.fields': 'usageFields',
     };
     const normalizedOptions = this._normalizeOptions(
       options || {},
@@ -128,7 +111,7 @@ export class UsageClient {
     const {
       days = undefined,
 
-      usagefields = [],
+      usageFields = [],
 
       requestOptions: requestOptions = {},
     } = normalizedOptions;
@@ -143,12 +126,19 @@ export class UsageClient {
       params.append('days', String(days));
     }
 
-    if (usagefields !== undefined && usagefields.length > 0) {
-      params.append('usage.fields', usagefields.join(','));
+    if (usageFields !== undefined && usageFields.length > 0) {
+      params.append('usage.fields', usageFields.join(','));
     }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
+
       ...requestOptions,
     };
 

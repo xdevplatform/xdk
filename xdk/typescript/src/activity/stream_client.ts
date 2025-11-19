@@ -10,13 +10,40 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
+  StreamResponse,
   GetSubscriptionsResponse,
   CreateSubscriptionResponse,
   UpdateSubscriptionResponse,
   DeleteSubscriptionResponse,
-  StreamResponse,
 } from './models.js';
 
+/**
+ * Options for stream method
+ * 
+ * @public
+ */
+export interface StreamStreamingOptions {
+  /** The number of minutes of backfill requested. 
+     * Also accepts: backfill_minutes or proper camelCase (e.g., backfillMinutes) */
+  backfillMinutes?: number;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. 
+     * Also accepts: start_time or proper camelCase (e.g., startTime) */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. 
+     * Also accepts: end_time or proper camelCase (e.g., endTime) */
+  endTime?: string;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
 /**
  * Options for getSubscriptions method
  * 
@@ -83,33 +110,6 @@ export interface DeleteSubscriptionStreamingOptions {
   /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
   [key: string]: any;
 }
-/**
- * Options for stream method
- * 
- * @public
- */
-export interface StreamStreamingOptions {
-  /** The number of minutes of backfill requested. 
-     * Also accepts: backfill_minutes or proper camelCase format */
-  backfillMinutes?: number;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. 
-     * Also accepts: start_time or proper camelCase format */
-  startTime?: string;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. 
-     * Also accepts: end_time or proper camelCase format */
-  endTime?: string;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
-  [key: string]: any;
-}
 
 export class ActivityClient {
   private client: Client;
@@ -120,7 +120,7 @@ export class ActivityClient {
 
   /**
      * Normalize options object to handle both camelCase and original API parameter names
-     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     * Only accepts: proper camelCase (tweetFields) and original API format (tweet.fields)
      */
   private _normalizeOptions<T extends Record<string, any>>(
     options: T,
@@ -132,36 +132,19 @@ export class ActivityClient {
 
     const normalized: any = { ...options };
 
-    // For each parameter mapping (original -> camelCase)
+    // For each parameter mapping (original -> proper camelCase)
     for (const [originalName, camelName] of Object.entries(paramMappings)) {
       // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
       if (originalName in normalized && !(camelName in normalized)) {
         normalized[camelName] = normalized[originalName];
         delete normalized[originalName];
       }
-      // Also check for camelCase with proper casing (e.g., 'tweetFields')
-      const properCamel = this._toCamelCase(originalName);
-      if (
-        properCamel !== camelName &&
-        properCamel in normalized &&
-        !(camelName in normalized)
-      ) {
-        normalized[camelName] = normalized[properCamel];
-        delete normalized[properCamel];
-      }
+      // Also check for proper camelCase (e.g., 'tweetFields')
+      // If it's already in proper camelCase, keep it (no conversion needed)
+      // The camelName is already the proper camelCase format
     }
 
     return normalized as T;
-  }
-
-  /**
-     * Convert a parameter name to proper camelCase
-     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
-     */
-  private _toCamelCase(name: string): string {
-    return name
-      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
-      .replace(/^[A-Z]/, letter => letter.toLowerCase());
   }
 
   /**
@@ -244,6 +227,13 @@ export class ActivityClient {
         'Content-Type': 'application/json',
         ...headers,
       },
+
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
 
       signal: signal,
       raw: true, // Get raw Response object for streaming

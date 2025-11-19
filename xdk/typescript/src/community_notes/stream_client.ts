@@ -10,13 +10,64 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
+  SearchEligiblePostsResponse,
   EvaluateResponse,
   DeleteResponse,
-  SearchEligiblePostsResponse,
-  SearchWrittenResponse,
   CreateResponse,
+  SearchWrittenResponse,
 } from './models.js';
 
+/**
+ * Options for searchEligiblePosts method
+ * 
+ * @public
+ */
+export interface SearchEligiblePostsStreamingOptions {
+  /** Pagination token to get next set of posts eligible for notes. 
+     * Also accepts: pagination_token or proper camelCase (e.g., paginationToken) */
+  paginationToken?: string;
+
+  /** Max results to return. 
+     * Also accepts: max_results or proper camelCase (e.g., maxResults) */
+  maxResults?: number;
+
+  /** The selection of posts to return. Valid values are 'feed_size: small' and 'feed_size: large'. Default is 'feed_size: small', only top AI writers have access to large size feed. 
+     * Also accepts: post_selection or proper camelCase (e.g., postSelection) */
+  postSelection?: string;
+
+  /** A comma separated list of Tweet fields to display. 
+     * Also accepts: tweet.fields or proper camelCase (e.g., tweetFields) */
+  tweetFields?: Array<any>;
+
+  /** A comma separated list of fields to expand. 
+     * Also accepts: expansions or proper camelCase (e.g., expansions) */
+  expansions?: Array<any>;
+
+  /** A comma separated list of Media fields to display. 
+     * Also accepts: media.fields or proper camelCase (e.g., mediaFields) */
+  mediaFields?: Array<any>;
+
+  /** A comma separated list of Poll fields to display. 
+     * Also accepts: poll.fields or proper camelCase (e.g., pollFields) */
+  pollFields?: Array<any>;
+
+  /** A comma separated list of User fields to display. 
+     * Also accepts: user.fields or proper camelCase (e.g., userFields) */
+  userFields?: Array<any>;
+
+  /** A comma separated list of Place fields to display. 
+     * Also accepts: place.fields or proper camelCase (e.g., placeFields) */
+  placeFields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
 /**
  * Options for evaluate method
  * 
@@ -51,46 +102,13 @@ export interface DeleteStreamingOptions {
   [key: string]: any;
 }
 /**
- * Options for searchEligiblePosts method
+ * Options for create method
  * 
  * @public
  */
-export interface SearchEligiblePostsStreamingOptions {
-  /** Pagination token to get next set of posts eligible for notes. 
-     * Also accepts: pagination_token or proper camelCase format */
-  paginationToken?: string;
-
-  /** Max results to return. 
-     * Also accepts: max_results or proper camelCase format */
-  maxResults?: number;
-
-  /** The selection of posts to return. Valid values are 'feed_size: small' and 'feed_size: large'. Default is 'feed_size: small', only top AI writers have access to large size feed. 
-     * Also accepts: post_selection or proper camelCase format */
-  postSelection?: string;
-
-  /** A comma separated list of Tweet fields to display. 
-     * Also accepts: tweet.fields or proper camelCase format */
-  tweetfields?: Array<any>;
-
-  /** A comma separated list of fields to expand. 
-     * Also accepts: expansions or proper camelCase format */
-  expansions?: Array<any>;
-
-  /** A comma separated list of Media fields to display. 
-     * Also accepts: media.fields or proper camelCase format */
-  mediafields?: Array<any>;
-
-  /** A comma separated list of Poll fields to display. 
-     * Also accepts: poll.fields or proper camelCase format */
-  pollfields?: Array<any>;
-
-  /** A comma separated list of User fields to display. 
-     * Also accepts: user.fields or proper camelCase format */
-  userfields?: Array<any>;
-
-  /** A comma separated list of Place fields to display. 
-     * Also accepts: place.fields or proper camelCase format */
-  placefields?: Array<any>;
+export interface CreateStreamingOptions {
+  /** Request body */
+  body?: any;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -108,34 +126,16 @@ export interface SearchEligiblePostsStreamingOptions {
  */
 export interface SearchWrittenStreamingOptions {
   /** Pagination token to get next set of posts eligible for notes. 
-     * Also accepts: pagination_token or proper camelCase format */
+     * Also accepts: pagination_token or proper camelCase (e.g., paginationToken) */
   paginationToken?: string;
 
   /** Max results to return. 
-     * Also accepts: max_results or proper camelCase format */
+     * Also accepts: max_results or proper camelCase (e.g., maxResults) */
   maxResults?: number;
 
   /** A comma separated list of Note fields to display. 
-     * Also accepts: note.fields or proper camelCase format */
-  notefields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
-  [key: string]: any;
-}
-/**
- * Options for create method
- * 
- * @public
- */
-export interface CreateStreamingOptions {
-  /** Request body */
-  body?: any;
+     * Also accepts: note.fields or proper camelCase (e.g., noteFields) */
+  noteFields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -156,7 +156,7 @@ export class CommunityNotesClient {
 
   /**
      * Normalize options object to handle both camelCase and original API parameter names
-     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     * Only accepts: proper camelCase (tweetFields) and original API format (tweet.fields)
      */
   private _normalizeOptions<T extends Record<string, any>>(
     options: T,
@@ -168,36 +168,157 @@ export class CommunityNotesClient {
 
     const normalized: any = { ...options };
 
-    // For each parameter mapping (original -> camelCase)
+    // For each parameter mapping (original -> proper camelCase)
     for (const [originalName, camelName] of Object.entries(paramMappings)) {
       // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
       if (originalName in normalized && !(camelName in normalized)) {
         normalized[camelName] = normalized[originalName];
         delete normalized[originalName];
       }
-      // Also check for camelCase with proper casing (e.g., 'tweetFields')
-      const properCamel = this._toCamelCase(originalName);
-      if (
-        properCamel !== camelName &&
-        properCamel in normalized &&
-        !(camelName in normalized)
-      ) {
-        normalized[camelName] = normalized[properCamel];
-        delete normalized[properCamel];
-      }
+      // Also check for proper camelCase (e.g., 'tweetFields')
+      // If it's already in proper camelCase, keep it (no conversion needed)
+      // The camelName is already the proper camelCase format
     }
 
     return normalized as T;
   }
 
   /**
-     * Convert a parameter name to proper camelCase
-     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
+     * Search for Posts Eligible for Community Notes
+     * Returns all the posts that are eligible for community notes.
+     * 
+     * @returns Promise with the API response
      */
-  private _toCamelCase(name: string): string {
-    return name
-      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
-      .replace(/^[A-Z]/, letter => letter.toLowerCase());
+  async searchEligiblePosts(
+    testMode: boolean,
+    options: SearchEligiblePostsStreamingOptions = {}
+  ): Promise<SearchEligiblePostsResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(
+      requiredAuthTypes,
+      'searchEligiblePosts'
+    );
+
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      pagination_token: 'paginationToken',
+
+      max_results: 'maxResults',
+
+      post_selection: 'postSelection',
+
+      'tweet.fields': 'tweetFields',
+
+      'media.fields': 'mediaFields',
+
+      'poll.fields': 'pollFields',
+
+      'user.fields': 'userFields',
+
+      'place.fields': 'placeFields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      paginationToken = undefined,
+
+      maxResults = undefined,
+
+      postSelection = undefined,
+
+      tweetFields = [],
+
+      expansions = [],
+
+      mediaFields = [],
+
+      pollFields = [],
+
+      userFields = [],
+
+      placeFields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/notes/search/posts_eligible_for_notes';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (testMode !== undefined) {
+      params.append('test_mode', String(testMode));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (postSelection !== undefined) {
+      params.append('post_selection', String(postSelection));
+    }
+
+    if (tweetFields !== undefined && tweetFields.length > 0) {
+      params.append('tweet.fields', tweetFields.join(','));
+    }
+
+    if (expansions !== undefined && expansions.length > 0) {
+      params.append('expansions', expansions.join(','));
+    }
+
+    if (mediaFields !== undefined && mediaFields.length > 0) {
+      params.append('media.fields', mediaFields.join(','));
+    }
+
+    if (pollFields !== undefined && pollFields.length > 0) {
+      params.append('poll.fields', pollFields.join(','));
+    }
+
+    if (userFields !== undefined && userFields.length > 0) {
+      params.append('user.fields', userFields.join(','));
+    }
+
+    if (placeFields !== undefined && placeFields.length > 0) {
+      params.append('place.fields', placeFields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<SearchEligiblePostsResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 
   /**
@@ -316,233 +437,6 @@ export class CommunityNotesClient {
   }
 
   /**
-     * Search for Posts Eligible for Community Notes
-     * Returns all the posts that are eligible for community notes.
-     * 
-     * @returns Promise with the API response
-     */
-  async searchEligiblePosts(
-    testMode: boolean,
-    options: SearchEligiblePostsStreamingOptions = {}
-  ): Promise<SearchEligiblePostsResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(
-      requiredAuthTypes,
-      'searchEligiblePosts'
-    );
-
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const paramMappings: Record<string, string> = {
-      pagination_token: 'paginationToken',
-
-      max_results: 'maxResults',
-
-      post_selection: 'postSelection',
-
-      'tweet.fields': 'tweetfields',
-
-      'media.fields': 'mediafields',
-
-      'poll.fields': 'pollfields',
-
-      'user.fields': 'userfields',
-
-      'place.fields': 'placefields',
-    };
-    const normalizedOptions = this._normalizeOptions(
-      options || {},
-      paramMappings
-    );
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      paginationToken = undefined,
-
-      maxResults = undefined,
-
-      postSelection = undefined,
-
-      tweetfields = [],
-
-      expansions = [],
-
-      mediafields = [],
-
-      pollfields = [],
-
-      userfields = [],
-
-      placefields = [],
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } = normalizedOptions;
-
-    // Build the path with path parameters
-    let path = '/2/notes/search/posts_eligible_for_notes';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (testMode !== undefined) {
-      params.append('test_mode', String(testMode));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (postSelection !== undefined) {
-      params.append('post_selection', String(postSelection));
-    }
-
-    if (tweetfields !== undefined && tweetfields.length > 0) {
-      params.append('tweet.fields', tweetfields.join(','));
-    }
-
-    if (expansions !== undefined && expansions.length > 0) {
-      params.append('expansions', expansions.join(','));
-    }
-
-    if (mediafields !== undefined && mediafields.length > 0) {
-      params.append('media.fields', mediafields.join(','));
-    }
-
-    if (pollfields !== undefined && pollfields.length > 0) {
-      params.append('poll.fields', pollfields.join(','));
-    }
-
-    if (userfields !== undefined && userfields.length > 0) {
-      params.append('user.fields', userfields.join(','));
-    }
-
-    if (placefields !== undefined && placefields.length > 0) {
-      params.append('place.fields', placefields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<SearchEligiblePostsResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Search for Community Notes Written
-     * Returns all the community notes written by the user.
-     * 
-     * @returns Promise with the API response
-     */
-  async searchWritten(
-    testMode: boolean,
-    options: SearchWrittenStreamingOptions = {}
-  ): Promise<SearchWrittenResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'searchWritten');
-
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const paramMappings: Record<string, string> = {
-      pagination_token: 'paginationToken',
-
-      max_results: 'maxResults',
-
-      'note.fields': 'notefields',
-    };
-    const normalizedOptions = this._normalizeOptions(
-      options || {},
-      paramMappings
-    );
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      paginationToken = undefined,
-
-      maxResults = undefined,
-
-      notefields = [],
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } = normalizedOptions;
-
-    // Build the path with path parameters
-    let path = '/2/notes/search/notes_written';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (testMode !== undefined) {
-      params.append('test_mode', String(testMode));
-    }
-
-    if (paginationToken !== undefined) {
-      params.append('pagination_token', String(paginationToken));
-    }
-
-    if (maxResults !== undefined) {
-      params.append('max_results', String(maxResults));
-    }
-
-    if (notefields !== undefined && notefields.length > 0) {
-      params.append('note.fields', notefields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<SearchWrittenResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
      * Create a Community Note
      * Creates a community note endpoint for LLM use case.
      * 
@@ -595,6 +489,95 @@ export class CommunityNotesClient {
     // Make the request
     return this.client.request<CreateResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Search for Community Notes Written
+     * Returns all the community notes written by the user.
+     * 
+     * @returns Promise with the API response
+     */
+  async searchWritten(
+    testMode: boolean,
+    options: SearchWrittenStreamingOptions = {}
+  ): Promise<SearchWrittenResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'searchWritten');
+
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      pagination_token: 'paginationToken',
+
+      max_results: 'maxResults',
+
+      'note.fields': 'noteFields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      paginationToken = undefined,
+
+      maxResults = undefined,
+
+      noteFields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/notes/search/notes_written';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (testMode !== undefined) {
+      params.append('test_mode', String(testMode));
+    }
+
+    if (paginationToken !== undefined) {
+      params.append('pagination_token', String(paginationToken));
+    }
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (noteFields !== undefined && noteFields.length > 0) {
+      params.append('note.fields', noteFields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<SearchWrittenResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

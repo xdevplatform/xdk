@@ -13,10 +13,10 @@ import {
   CreateStreamLinkResponse,
   DeleteStreamLinkResponse,
   GetStreamLinksResponse,
-  ValidateResponse,
-  DeleteResponse,
   GetResponse,
   CreateResponse,
+  ValidateResponse,
+  DeleteResponse,
 } from './models.js';
 
 /**
@@ -26,28 +26,28 @@ import {
  */
 export interface CreateStreamLinkStreamingOptions {
   /** A comma separated list of Tweet fields to display. 
-     * Also accepts: tweet.fields or proper camelCase format */
-  tweetfields?: string;
+     * Also accepts: tweet.fields or proper camelCase (e.g., tweetFields) */
+  tweetFields?: string;
 
   /** A comma separated list of fields to expand. 
-     * Also accepts: expansions or proper camelCase format */
+     * Also accepts: expansions or proper camelCase (e.g., expansions) */
   expansions?: string;
 
   /** A comma separated list of Media fields to display. 
-     * Also accepts: media.fields or proper camelCase format */
-  mediafields?: string;
+     * Also accepts: media.fields or proper camelCase (e.g., mediaFields) */
+  mediaFields?: string;
 
   /** A comma separated list of Poll fields to display. 
-     * Also accepts: poll.fields or proper camelCase format */
-  pollfields?: string;
+     * Also accepts: poll.fields or proper camelCase (e.g., pollFields) */
+  pollFields?: string;
 
   /** A comma separated list of User fields to display. 
-     * Also accepts: user.fields or proper camelCase format */
-  userfields?: string;
+     * Also accepts: user.fields or proper camelCase (e.g., userFields) */
+  userFields?: string;
 
   /** A comma separated list of Place fields to display. 
-     * Also accepts: place.fields or proper camelCase format */
-  placefields?: string;
+     * Also accepts: place.fields or proper camelCase (e.g., placeFields) */
+  placeFields?: string;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -89,6 +89,43 @@ export interface GetStreamLinksStreamingOptions {
   [key: string]: any;
 }
 /**
+ * Options for get method
+ * 
+ * @public
+ */
+export interface GetStreamingOptions {
+  /** A comma separated list of WebhookConfig fields to display. 
+     * Also accepts: webhook_config.fields or proper camelCase (e.g., webhookConfigFields) */
+  webhookConfigFields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+/**
+ * Options for create method
+ * 
+ * @public
+ */
+export interface CreateStreamingOptions {
+  /** Request body */
+  body?: any;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+/**
  * Options for validate method
  * 
  * @public
@@ -118,43 +155,6 @@ export interface DeleteStreamingOptions {
   /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
   [key: string]: any;
 }
-/**
- * Options for get method
- * 
- * @public
- */
-export interface GetStreamingOptions {
-  /** A comma separated list of WebhookConfig fields to display. 
-     * Also accepts: webhook_config.fields or proper camelCase format */
-  webhookConfigfields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
-  [key: string]: any;
-}
-/**
- * Options for create method
- * 
- * @public
- */
-export interface CreateStreamingOptions {
-  /** Request body */
-  body?: any;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
-  [key: string]: any;
-}
 
 export class WebhooksClient {
   private client: Client;
@@ -165,7 +165,7 @@ export class WebhooksClient {
 
   /**
      * Normalize options object to handle both camelCase and original API parameter names
-     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     * Only accepts: proper camelCase (tweetFields) and original API format (tweet.fields)
      */
   private _normalizeOptions<T extends Record<string, any>>(
     options: T,
@@ -177,36 +177,19 @@ export class WebhooksClient {
 
     const normalized: any = { ...options };
 
-    // For each parameter mapping (original -> camelCase)
+    // For each parameter mapping (original -> proper camelCase)
     for (const [originalName, camelName] of Object.entries(paramMappings)) {
       // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
       if (originalName in normalized && !(camelName in normalized)) {
         normalized[camelName] = normalized[originalName];
         delete normalized[originalName];
       }
-      // Also check for camelCase with proper casing (e.g., 'tweetFields')
-      const properCamel = this._toCamelCase(originalName);
-      if (
-        properCamel !== camelName &&
-        properCamel in normalized &&
-        !(camelName in normalized)
-      ) {
-        normalized[camelName] = normalized[properCamel];
-        delete normalized[properCamel];
-      }
+      // Also check for proper camelCase (e.g., 'tweetFields')
+      // If it's already in proper camelCase, keep it (no conversion needed)
+      // The camelName is already the proper camelCase format
     }
 
     return normalized as T;
-  }
-
-  /**
-     * Convert a parameter name to proper camelCase
-     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
-     */
-  private _toCamelCase(name: string): string {
-    return name
-      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
-      .replace(/^[A-Z]/, letter => letter.toLowerCase());
   }
 
   /**
@@ -230,15 +213,15 @@ export class WebhooksClient {
     // Normalize options to handle both camelCase and original API parameter names
 
     const paramMappings: Record<string, string> = {
-      'tweet.fields': 'tweetfields',
+      'tweet.fields': 'tweetFields',
 
-      'media.fields': 'mediafields',
+      'media.fields': 'mediaFields',
 
-      'poll.fields': 'pollfields',
+      'poll.fields': 'pollFields',
 
-      'user.fields': 'userfields',
+      'user.fields': 'userFields',
 
-      'place.fields': 'placefields',
+      'place.fields': 'placeFields',
     };
     const normalizedOptions = this._normalizeOptions(
       options || {},
@@ -248,17 +231,17 @@ export class WebhooksClient {
     // Destructure options (exclude path parameters, they're already function params)
 
     const {
-      tweetfields = undefined,
+      tweetFields = undefined,
 
       expansions = undefined,
 
-      mediafields = undefined,
+      mediaFields = undefined,
 
-      pollfields = undefined,
+      pollFields = undefined,
 
-      userfields = undefined,
+      userFields = undefined,
 
-      placefields = undefined,
+      placeFields = undefined,
 
       headers = {},
       signal,
@@ -273,28 +256,28 @@ export class WebhooksClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', String(tweetfields));
+    if (tweetFields !== undefined) {
+      params.append('tweet.fields', String(tweetFields));
     }
 
     if (expansions !== undefined) {
       params.append('expansions', String(expansions));
     }
 
-    if (mediafields !== undefined) {
-      params.append('media.fields', String(mediafields));
+    if (mediaFields !== undefined) {
+      params.append('media.fields', String(mediaFields));
     }
 
-    if (pollfields !== undefined) {
-      params.append('poll.fields', String(pollfields));
+    if (pollFields !== undefined) {
+      params.append('poll.fields', String(pollFields));
     }
 
-    if (userfields !== undefined) {
-      params.append('user.fields', String(userfields));
+    if (userFields !== undefined) {
+      params.append('user.fields', String(userFields));
     }
 
-    if (placefields !== undefined) {
-      params.append('place.fields', String(placefields));
+    if (placeFields !== undefined) {
+      params.append('place.fields', String(placeFields));
     }
 
     // Prepare request options
@@ -420,6 +403,128 @@ export class WebhooksClient {
   }
 
   /**
+     * Get webhook
+     * Get a list of webhook configs associated with a client app.
+     * 
+     * @returns Promise with the API response
+     */
+  async get(options: GetStreamingOptions = {}): Promise<GetResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'get');
+
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'webhook_config.fields': 'webhookConfigFields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      webhookConfigFields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/webhooks';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (webhookConfigFields !== undefined && webhookConfigFields.length > 0) {
+      params.append('webhook_config.fields', webhookConfigFields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<GetResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Create webhook
+     * Creates a new webhook configuration.
+     * 
+     * @returns Promise with the API response
+     */
+  async create(options: CreateStreamingOptions = {}): Promise<CreateResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'create');
+
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      body,
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/webhooks';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      body: JSON.stringify(body),
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<CreateResponse>(
+      'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
      * Validate webhook
      * Triggers a CRC check for a given webhook.
      * 
@@ -524,128 +629,6 @@ export class WebhooksClient {
     // Make the request
     return this.client.request<DeleteResponse>(
       'DELETE',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Get webhook
-     * Get a list of webhook configs associated with a client app.
-     * 
-     * @returns Promise with the API response
-     */
-  async get(options: GetStreamingOptions = {}): Promise<GetResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'get');
-
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const paramMappings: Record<string, string> = {
-      'webhook_config.fields': 'webhookConfigfields',
-    };
-    const normalizedOptions = this._normalizeOptions(
-      options || {},
-      paramMappings
-    );
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      webhookConfigfields = [],
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } = normalizedOptions;
-
-    // Build the path with path parameters
-    let path = '/2/webhooks';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (webhookConfigfields !== undefined && webhookConfigfields.length > 0) {
-      params.append('webhook_config.fields', webhookConfigfields.join(','));
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<GetResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-     * Create webhook
-     * Creates a new webhook configuration.
-     * 
-     * @returns Promise with the API response
-     */
-  async create(options: CreateStreamingOptions = {}): Promise<CreateResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'create');
-
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const normalizedOptions = options || {};
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      body,
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } = normalizedOptions;
-
-    // Build the path with path parameters
-    let path = '/2/webhooks';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      body: JSON.stringify(body),
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<CreateResponse>(
-      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

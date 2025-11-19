@@ -10,29 +10,14 @@
 import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
-  GetSubscriptionCountResponse,
   ValidateSubscriptionResponse,
   CreateSubscriptionResponse,
-  GetSubscriptionsResponse,
+  GetSubscriptionCountResponse,
   CreateReplayJobResponse,
+  GetSubscriptionsResponse,
   DeleteSubscriptionResponse,
 } from './models.js';
 
-/**
- * Options for getSubscriptionCount method
- * 
- * @public
- */
-export interface GetSubscriptionCountStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
-  [key: string]: any;
-}
 /**
  * Options for validateSubscription method
  * 
@@ -67,11 +52,11 @@ export interface CreateSubscriptionStreamingOptions {
   [key: string]: any;
 }
 /**
- * Options for getSubscriptions method
+ * Options for getSubscriptionCount method
  * 
  * @public
  */
-export interface GetSubscriptionsStreamingOptions {
+export interface GetSubscriptionCountStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -87,6 +72,21 @@ export interface GetSubscriptionsStreamingOptions {
  * @public
  */
 export interface CreateReplayJobStreamingOptions {
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+/**
+ * Options for getSubscriptions method
+ * 
+ * @public
+ */
+export interface GetSubscriptionsStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -121,7 +121,7 @@ export class AccountActivityClient {
 
   /**
      * Normalize options object to handle both camelCase and original API parameter names
-     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     * Only accepts: proper camelCase (tweetFields) and original API format (tweet.fields)
      */
   private _normalizeOptions<T extends Record<string, any>>(
     options: T,
@@ -133,89 +133,19 @@ export class AccountActivityClient {
 
     const normalized: any = { ...options };
 
-    // For each parameter mapping (original -> camelCase)
+    // For each parameter mapping (original -> proper camelCase)
     for (const [originalName, camelName] of Object.entries(paramMappings)) {
       // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
       if (originalName in normalized && !(camelName in normalized)) {
         normalized[camelName] = normalized[originalName];
         delete normalized[originalName];
       }
-      // Also check for camelCase with proper casing (e.g., 'tweetFields')
-      const properCamel = this._toCamelCase(originalName);
-      if (
-        properCamel !== camelName &&
-        properCamel in normalized &&
-        !(camelName in normalized)
-      ) {
-        normalized[camelName] = normalized[properCamel];
-        delete normalized[properCamel];
-      }
+      // Also check for proper camelCase (e.g., 'tweetFields')
+      // If it's already in proper camelCase, keep it (no conversion needed)
+      // The camelName is already the proper camelCase format
     }
 
     return normalized as T;
-  }
-
-  /**
-     * Convert a parameter name to proper camelCase
-     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
-     */
-  private _toCamelCase(name: string): string {
-    return name
-      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
-      .replace(/^[A-Z]/, letter => letter.toLowerCase());
-  }
-
-  /**
-     * Get subscription count
-     * Retrieves a count of currently active Account Activity subscriptions.
-     * 
-     * @returns Promise with the API response
-     */
-  async getSubscriptionCount(
-    options: GetSubscriptionCountStreamingOptions = {}
-  ): Promise<GetSubscriptionCountResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('BearerToken');
-
-    this.client.validateAuthentication(
-      requiredAuthTypes,
-      'getSubscriptionCount'
-    );
-
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const normalizedOptions = options || {};
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const { headers = {}, signal, requestOptions = {} } = normalizedOptions;
-
-    // Build the path with path parameters
-    let path = '/2/account_activity/subscriptions/count';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<GetSubscriptionCountResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
   }
 
   /**
@@ -340,22 +270,24 @@ export class AccountActivityClient {
   }
 
   /**
-     * Get subscriptions
-     * Retrieves a list of all active subscriptions for a given webhook.
+     * Get subscription count
+     * Retrieves a count of currently active Account Activity subscriptions.
      * 
      * @returns Promise with the API response
      */
-  async getSubscriptions(
-    webhookId: string,
-    options: GetSubscriptionsStreamingOptions = {}
-  ): Promise<GetSubscriptionsResponse> {
+  async getSubscriptionCount(
+    options: GetSubscriptionCountStreamingOptions = {}
+  ): Promise<GetSubscriptionCountResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
 
     requiredAuthTypes.push('BearerToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'getSubscriptions');
+    this.client.validateAuthentication(
+      requiredAuthTypes,
+      'getSubscriptionCount'
+    );
 
     // Normalize options to handle both camelCase and original API parameter names
 
@@ -366,10 +298,7 @@ export class AccountActivityClient {
     const { headers = {}, signal, requestOptions = {} } = normalizedOptions;
 
     // Build the path with path parameters
-    let path =
-      '/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+    let path = '/2/account_activity/subscriptions/count';
 
     // Build query parameters
     const params = new URLSearchParams();
@@ -386,7 +315,7 @@ export class AccountActivityClient {
     };
 
     // Make the request
-    return this.client.request<GetSubscriptionsResponse>(
+    return this.client.request<GetSubscriptionCountResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -452,6 +381,60 @@ export class AccountActivityClient {
     // Make the request
     return this.client.request<CreateReplayJobResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get subscriptions
+     * Retrieves a list of all active subscriptions for a given webhook.
+     * 
+     * @returns Promise with the API response
+     */
+  async getSubscriptions(
+    webhookId: string,
+    options: GetSubscriptionsStreamingOptions = {}
+  ): Promise<GetSubscriptionsResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('BearerToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getSubscriptions');
+
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const { headers = {}, signal, requestOptions = {} } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path =
+      '/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<GetSubscriptionsResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

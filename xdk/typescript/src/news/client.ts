@@ -24,8 +24,8 @@ import { GetResponse } from './models.js';
  */
 export interface GetOptions {
   /** A comma separated list of News fields to display. 
-     * Also accepts: news.fields or proper camelCase format */
-  newsfields?: Array<any>;
+     * Also accepts: news.fields or proper camelCase (e.g., newsFields) */
+  newsFields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -56,7 +56,7 @@ export class NewsClient {
 
   /**
      * Normalize options object to handle both camelCase and original API parameter names
-     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     * Only accepts: proper camelCase (tweetFields) and original API format (tweet.fields)
      */
   private _normalizeOptions<T extends Record<string, any>>(
     options: T,
@@ -68,36 +68,19 @@ export class NewsClient {
 
     const normalized: any = { ...options };
 
-    // For each parameter mapping (original -> camelCase)
+    // For each parameter mapping (original -> proper camelCase)
     for (const [originalName, camelName] of Object.entries(paramMappings)) {
       // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
       if (originalName in normalized && !(camelName in normalized)) {
         normalized[camelName] = normalized[originalName];
         delete normalized[originalName];
       }
-      // Also check for camelCase with proper casing (e.g., 'tweetFields')
-      const properCamel = this._toCamelCase(originalName);
-      if (
-        properCamel !== camelName &&
-        properCamel in normalized &&
-        !(camelName in normalized)
-      ) {
-        normalized[camelName] = normalized[properCamel];
-        delete normalized[properCamel];
-      }
+      // Also check for proper camelCase (e.g., 'tweetFields')
+      // If it's already in proper camelCase, keep it (no conversion needed)
+      // The camelName is already the proper camelCase format
     }
 
     return normalized as T;
-  }
-
-  /**
-     * Convert a parameter name to proper camelCase
-     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
-     */
-  private _toCamelCase(name: string): string {
-    return name
-      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
-      .replace(/^[A-Z]/, letter => letter.toLowerCase());
   }
 
   /**
@@ -117,7 +100,7 @@ export class NewsClient {
     // Normalize options to handle both camelCase and original API parameter names
 
     const paramMappings: Record<string, string> = {
-      'news.fields': 'newsfields',
+      'news.fields': 'newsFields',
     };
     const normalizedOptions = this._normalizeOptions(
       options || {},
@@ -126,7 +109,7 @@ export class NewsClient {
 
     // Destructure options (exclude path parameters, they're already function params)
     const {
-      newsfields = [],
+      newsFields = [],
 
       requestOptions: requestOptions = {},
     } = normalizedOptions;
@@ -139,12 +122,27 @@ export class NewsClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (newsfields !== undefined && newsfields.length > 0) {
-      params.append('news.fields', newsfields.join(','));
+    if (newsFields !== undefined && newsFields.length > 0) {
+      params.append('news.fields', newsFields.join(','));
     }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+
+        {
+          OAuth2UserToken: ['tweet.read', 'users.read'],
+        },
+
+        {
+          UserToken: [],
+        },
+      ],
+
       ...requestOptions,
     };
 

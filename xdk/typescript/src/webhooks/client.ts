@@ -19,11 +19,11 @@ import {
   CreateStreamLinkResponse,
   DeleteStreamLinkResponse,
   GetStreamLinksResponse,
-  ValidateResponse,
-  DeleteResponse,
   GetResponse,
   CreateRequest,
   CreateResponse,
+  ValidateResponse,
+  DeleteResponse,
 } from './models.js';
 
 /**
@@ -33,28 +33,28 @@ import {
  */
 export interface CreateStreamLinkOptions {
   /** A comma separated list of Tweet fields to display. 
-     * Also accepts: tweet.fields or proper camelCase format */
-  tweetfields?: string;
+     * Also accepts: tweet.fields or proper camelCase (e.g., tweetFields) */
+  tweetFields?: string;
 
   /** A comma separated list of fields to expand. 
-     * Also accepts: expansions or proper camelCase format */
+     * Also accepts: expansions or proper camelCase (e.g., expansions) */
   expansions?: string;
 
   /** A comma separated list of Media fields to display. 
-     * Also accepts: media.fields or proper camelCase format */
-  mediafields?: string;
+     * Also accepts: media.fields or proper camelCase (e.g., mediaFields) */
+  mediaFields?: string;
 
   /** A comma separated list of Poll fields to display. 
-     * Also accepts: poll.fields or proper camelCase format */
-  pollfields?: string;
+     * Also accepts: poll.fields or proper camelCase (e.g., pollFields) */
+  pollFields?: string;
 
   /** A comma separated list of User fields to display. 
-     * Also accepts: user.fields or proper camelCase format */
-  userfields?: string;
+     * Also accepts: user.fields or proper camelCase (e.g., userFields) */
+  userFields?: string;
 
   /** A comma separated list of Place fields to display. 
-     * Also accepts: place.fields or proper camelCase format */
-  placefields?: string;
+     * Also accepts: place.fields or proper camelCase (e.g., placeFields) */
+  placeFields?: string;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -69,8 +69,8 @@ export interface CreateStreamLinkOptions {
  */
 export interface GetOptions {
   /** A comma separated list of WebhookConfig fields to display. 
-     * Also accepts: webhook_config.fields or proper camelCase format */
-  webhookConfigfields?: Array<any>;
+     * Also accepts: webhook_config.fields or proper camelCase (e.g., webhookConfigFields) */
+  webhookConfigFields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -116,7 +116,7 @@ export class WebhooksClient {
 
   /**
      * Normalize options object to handle both camelCase and original API parameter names
-     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     * Only accepts: proper camelCase (tweetFields) and original API format (tweet.fields)
      */
   private _normalizeOptions<T extends Record<string, any>>(
     options: T,
@@ -128,36 +128,19 @@ export class WebhooksClient {
 
     const normalized: any = { ...options };
 
-    // For each parameter mapping (original -> camelCase)
+    // For each parameter mapping (original -> proper camelCase)
     for (const [originalName, camelName] of Object.entries(paramMappings)) {
       // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
       if (originalName in normalized && !(camelName in normalized)) {
         normalized[camelName] = normalized[originalName];
         delete normalized[originalName];
       }
-      // Also check for camelCase with proper casing (e.g., 'tweetFields')
-      const properCamel = this._toCamelCase(originalName);
-      if (
-        properCamel !== camelName &&
-        properCamel in normalized &&
-        !(camelName in normalized)
-      ) {
-        normalized[camelName] = normalized[properCamel];
-        delete normalized[properCamel];
-      }
+      // Also check for proper camelCase (e.g., 'tweetFields')
+      // If it's already in proper camelCase, keep it (no conversion needed)
+      // The camelName is already the proper camelCase format
     }
 
     return normalized as T;
-  }
-
-  /**
-     * Convert a parameter name to proper camelCase
-     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
-     */
-  private _toCamelCase(name: string): string {
-    return name
-      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
-      .replace(/^[A-Z]/, letter => letter.toLowerCase());
   }
 
   /**
@@ -180,15 +163,15 @@ export class WebhooksClient {
     // Normalize options to handle both camelCase and original API parameter names
 
     const paramMappings: Record<string, string> = {
-      'tweet.fields': 'tweetfields',
+      'tweet.fields': 'tweetFields',
 
-      'media.fields': 'mediafields',
+      'media.fields': 'mediaFields',
 
-      'poll.fields': 'pollfields',
+      'poll.fields': 'pollFields',
 
-      'user.fields': 'userfields',
+      'user.fields': 'userFields',
 
-      'place.fields': 'placefields',
+      'place.fields': 'placeFields',
     };
     const normalizedOptions = this._normalizeOptions(
       options || {},
@@ -197,17 +180,17 @@ export class WebhooksClient {
 
     // Destructure options (exclude path parameters, they're already function params)
     const {
-      tweetfields = undefined,
+      tweetFields = undefined,
 
       expansions = undefined,
 
-      mediafields = undefined,
+      mediaFields = undefined,
 
-      pollfields = undefined,
+      pollFields = undefined,
 
-      userfields = undefined,
+      userFields = undefined,
 
-      placefields = undefined,
+      placeFields = undefined,
 
       requestOptions: requestOptions = {},
     } = normalizedOptions;
@@ -220,32 +203,39 @@ export class WebhooksClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (tweetfields !== undefined) {
-      params.append('tweet.fields', String(tweetfields));
+    if (tweetFields !== undefined) {
+      params.append('tweet.fields', String(tweetFields));
     }
 
     if (expansions !== undefined) {
       params.append('expansions', String(expansions));
     }
 
-    if (mediafields !== undefined) {
-      params.append('media.fields', String(mediafields));
+    if (mediaFields !== undefined) {
+      params.append('media.fields', String(mediaFields));
     }
 
-    if (pollfields !== undefined) {
-      params.append('poll.fields', String(pollfields));
+    if (pollFields !== undefined) {
+      params.append('poll.fields', String(pollFields));
     }
 
-    if (userfields !== undefined) {
-      params.append('user.fields', String(userfields));
+    if (userFields !== undefined) {
+      params.append('user.fields', String(userFields));
     }
 
-    if (placefields !== undefined) {
-      params.append('place.fields', String(placefields));
+    if (placeFields !== undefined) {
+      params.append('place.fields', String(placeFields));
     }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
+
       ...requestOptions,
     };
 
@@ -284,6 +274,13 @@ export class WebhooksClient {
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
+
       // No optional parameters, using empty request options
     };
 
@@ -316,87 +313,18 @@ export class WebhooksClient {
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
+
       // No optional parameters, using empty request options
     };
 
     return this.client.request<GetStreamLinksResponse>(
       'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Validate webhook
-   * Triggers a CRC check for a given webhook.
-
-
-   * @param webhookId The ID of the webhook to check.
-
-
-
-
-   * @returns {Promise<ValidateResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async validate(webhookId: string): Promise<ValidateResponse> {
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/webhooks/{webhook_id}';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<ValidateResponse>(
-      'PUT',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Delete webhook
-   * Deletes an existing webhook configuration.
-
-
-   * @param webhookId The ID of the webhook to delete.
-
-
-
-
-   * @returns {Promise<DeleteResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async delete(webhookId: string): Promise<DeleteResponse> {
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/webhooks/{webhook_id}';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<DeleteResponse>(
-      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -415,7 +343,7 @@ export class WebhooksClient {
     // Normalize options to handle both camelCase and original API parameter names
 
     const paramMappings: Record<string, string> = {
-      'webhook_config.fields': 'webhookConfigfields',
+      'webhook_config.fields': 'webhookConfigFields',
     };
     const normalizedOptions = this._normalizeOptions(
       options || {},
@@ -424,7 +352,7 @@ export class WebhooksClient {
 
     // Destructure options (exclude path parameters, they're already function params)
     const {
-      webhookConfigfields = [],
+      webhookConfigFields = [],
 
       requestOptions: requestOptions = {},
     } = normalizedOptions;
@@ -435,12 +363,19 @@ export class WebhooksClient {
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (webhookConfigfields !== undefined && webhookConfigfields.length > 0) {
-      params.append('webhook_config.fields', webhookConfigfields.join(','));
+    if (webhookConfigFields !== undefined && webhookConfigFields.length > 0) {
+      params.append('webhook_config.fields', webhookConfigFields.join(','));
     }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
+
       ...requestOptions,
     };
 
@@ -482,11 +417,120 @@ export class WebhooksClient {
     const finalRequestOptions: RequestOptions = {
       body: body ? JSON.stringify(body) : undefined,
 
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+
+        {
+          UserToken: [],
+        },
+      ],
+
       ...requestOptions,
     };
 
     return this.client.request<CreateResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Validate webhook
+   * Triggers a CRC check for a given webhook.
+
+
+   * @param webhookId The ID of the webhook to check.
+
+
+
+
+   * @returns {Promise<ValidateResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async validate(webhookId: string): Promise<ValidateResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/webhooks/{webhook_id}';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+
+        {
+          UserToken: [],
+        },
+      ],
+
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<ValidateResponse>(
+      'PUT',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Delete webhook
+   * Deletes an existing webhook configuration.
+
+
+   * @param webhookId The ID of the webhook to delete.
+
+
+
+
+   * @returns {Promise<DeleteResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async delete(webhookId: string): Promise<DeleteResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/webhooks/{webhook_id}';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+
+        {
+          UserToken: [],
+        },
+      ],
+
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<DeleteResponse>(
+      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

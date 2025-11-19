@@ -16,12 +16,12 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  GetSubscriptionCountResponse,
   ValidateSubscriptionResponse,
   CreateSubscriptionRequest,
   CreateSubscriptionResponse,
-  GetSubscriptionsResponse,
+  GetSubscriptionCountResponse,
   CreateReplayJobResponse,
+  GetSubscriptionsResponse,
   DeleteSubscriptionResponse,
 } from './models.js';
 
@@ -63,7 +63,7 @@ export class AccountActivityClient {
 
   /**
      * Normalize options object to handle both camelCase and original API parameter names
-     * Accepts both formats: tweetFields/tweetfields and tweet.fields/tweet_fields
+     * Only accepts: proper camelCase (tweetFields) and original API format (tweet.fields)
      */
   private _normalizeOptions<T extends Record<string, any>>(
     options: T,
@@ -75,68 +75,19 @@ export class AccountActivityClient {
 
     const normalized: any = { ...options };
 
-    // For each parameter mapping (original -> camelCase)
+    // For each parameter mapping (original -> proper camelCase)
     for (const [originalName, camelName] of Object.entries(paramMappings)) {
       // Check if original format is used (e.g., 'tweet.fields', 'tweet_fields')
       if (originalName in normalized && !(camelName in normalized)) {
         normalized[camelName] = normalized[originalName];
         delete normalized[originalName];
       }
-      // Also check for camelCase with proper casing (e.g., 'tweetFields')
-      const properCamel = this._toCamelCase(originalName);
-      if (
-        properCamel !== camelName &&
-        properCamel in normalized &&
-        !(camelName in normalized)
-      ) {
-        normalized[camelName] = normalized[properCamel];
-        delete normalized[properCamel];
-      }
+      // Also check for proper camelCase (e.g., 'tweetFields')
+      // If it's already in proper camelCase, keep it (no conversion needed)
+      // The camelName is already the proper camelCase format
     }
 
     return normalized as T;
-  }
-
-  /**
-     * Convert a parameter name to proper camelCase
-     * e.g., 'tweet.fields' -> 'tweetFields', 'user_fields' -> 'userFields'
-     */
-  private _toCamelCase(name: string): string {
-    return name
-      .replace(/[._-]([a-z])/g, (_, letter) => letter.toUpperCase())
-      .replace(/^[A-Z]/, letter => letter.toLowerCase());
-  }
-
-  /**
-   * Get subscription count
-   * Retrieves a count of currently active Account Activity subscriptions.
-
-
-
-   * @returns {Promise<GetSubscriptionCountResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getSubscriptionCount(): Promise<GetSubscriptionCountResponse> {
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/account_activity/subscriptions/count';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<GetSubscriptionCountResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
   }
 
   /**
@@ -169,6 +120,17 @@ export class AccountActivityClient {
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          OAuth2UserToken: ['dm.read', 'dm.write', 'tweet.read', 'users.read'],
+        },
+
+        {
+          UserToken: [],
+        },
+      ],
+
       // No optional parameters, using empty request options
     };
 
@@ -219,6 +181,17 @@ export class AccountActivityClient {
     const finalRequestOptions: RequestOptions = {
       body: body ? JSON.stringify(body) : undefined,
 
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          OAuth2UserToken: ['dm.read', 'dm.write', 'tweet.read', 'users.read'],
+        },
+
+        {
+          UserToken: [],
+        },
+      ],
+
       ...requestOptions,
     };
 
@@ -230,38 +203,38 @@ export class AccountActivityClient {
   }
 
   /**
-   * Get subscriptions
-   * Retrieves a list of all active subscriptions for a given webhook.
-
-
-   * @param webhookId The webhook ID to pull subscriptions for.
+   * Get subscription count
+   * Retrieves a count of currently active Account Activity subscriptions.
 
 
 
-
-   * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
+   * @returns {Promise<GetSubscriptionCountResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getSubscriptions(webhookId: string): Promise<GetSubscriptionsResponse> {
+  async getSubscriptionCount(): Promise<GetSubscriptionCountResponse> {
     // Normalize options to handle both camelCase and original API parameter names
 
     const requestOptions = {};
 
     // Build the path with path parameters
-    let path =
-      '/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+    let path = '/2/account_activity/subscriptions/count';
 
     // Build query parameters
     const params = new URLSearchParams();
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
+
       // No optional parameters, using empty request options
     };
 
-    return this.client.request<GetSubscriptionsResponse>(
+    return this.client.request<GetSubscriptionCountResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -317,11 +290,64 @@ export class AccountActivityClient {
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
+
       // No optional parameters, using empty request options
     };
 
     return this.client.request<CreateReplayJobResponse>(
       'POST',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get subscriptions
+   * Retrieves a list of all active subscriptions for a given webhook.
+
+
+   * @param webhookId The webhook ID to pull subscriptions for.
+
+
+
+
+   * @returns {Promise<GetSubscriptionsResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getSubscriptions(webhookId: string): Promise<GetSubscriptionsResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path =
+      '/2/account_activity/webhooks/{webhook_id}/subscriptions/all/list';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
+
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<GetSubscriptionsResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -365,6 +391,13 @@ export class AccountActivityClient {
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
+
       // No optional parameters, using empty request options
     };
 
