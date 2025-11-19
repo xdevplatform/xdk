@@ -17,11 +17,7 @@ import {
 
 
 
-import { WebhooksClient } from "./webhooks/index.js";
-
-
-
-import { CommunitiesClient } from "./communities/index.js";
+import { DirectMessagesClient } from "./direct_messages/index.js";
 
 
 
@@ -29,7 +25,27 @@ import { MediaClient } from "./media/index.js";
 
 
 
-import { AccountActivityClient } from "./account_activity/index.js";
+import { WebhooksClient } from "./webhooks/index.js";
+
+
+
+import { ComplianceClient } from "./compliance/index.js";
+
+
+
+import { CommunitiesClient } from "./communities/index.js";
+
+
+
+import { StreamClient } from "./stream/client.js";
+
+
+
+import { UsersClient } from "./users/index.js";
+
+
+
+import { PostsClient } from "./posts/index.js";
 
 
 
@@ -37,15 +53,7 @@ import { ListsClient } from "./lists/index.js";
 
 
 
-import { SpacesClient } from "./spaces/index.js";
-
-
-
-import { TrendsClient } from "./trends/index.js";
-
-
-
-import { ActivityClient } from "./activity/index.js";
+import { NewsClient } from "./news/index.js";
 
 
 
@@ -53,15 +61,15 @@ import { CommunityNotesClient } from "./community_notes/index.js";
 
 
 
-import { DirectMessagesClient } from "./direct_messages/index.js";
+import { ActivityClient } from "./activity/index.js";
 
 
 
-import { NewsClient } from "./news/index.js";
+import { SpacesClient } from "./spaces/index.js";
 
 
 
-import { ComplianceClient } from "./compliance/index.js";
+import { AccountActivityClient } from "./account_activity/index.js";
 
 
 
@@ -73,19 +81,11 @@ import { GeneralClient } from "./general/index.js";
 
 
 
-import { StreamClient } from "./stream/client.js";
+import { TrendsClient } from "./trends/index.js";
 
 
 
 import { ConnectionsClient } from "./connections/index.js";
-
-
-
-import { PostsClient } from "./posts/index.js";
-
-
-
-import { UsersClient } from "./users/index.js";
 
 
 
@@ -233,41 +233,47 @@ export class Client {
   readonly httpClient = httpClient;
 
 
-  /** webhooks client */
-  readonly webhooks: WebhooksClient;
-
-  /** communities client */
-  readonly communities: CommunitiesClient;
+  /** direct messages client */
+  readonly directMessages: DirectMessagesClient;
 
   /** media client */
   readonly media: MediaClient;
 
-  /** account activity client */
-  readonly accountActivity: AccountActivityClient;
+  /** webhooks client */
+  readonly webhooks: WebhooksClient;
+
+  /** compliance client */
+  readonly compliance: ComplianceClient;
+
+  /** communities client */
+  readonly communities: CommunitiesClient;
+
+  /** stream client */
+  readonly stream: StreamClient;
+
+  /** users client */
+  readonly users: UsersClient;
+
+  /** posts client */
+  readonly posts: PostsClient;
 
   /** lists client */
   readonly lists: ListsClient;
 
-  /** spaces client */
-  readonly spaces: SpacesClient;
-
-  /** trends client */
-  readonly trends: TrendsClient;
-
-  /** activity client */
-  readonly activity: ActivityClient;
+  /** news client */
+  readonly news: NewsClient;
 
   /** community notes client */
   readonly communityNotes: CommunityNotesClient;
 
-  /** direct messages client */
-  readonly directMessages: DirectMessagesClient;
+  /** activity client */
+  readonly activity: ActivityClient;
 
-  /** news client */
-  readonly news: NewsClient;
+  /** spaces client */
+  readonly spaces: SpacesClient;
 
-  /** compliance client */
-  readonly compliance: ComplianceClient;
+  /** account activity client */
+  readonly accountActivity: AccountActivityClient;
 
   /** usage client */
   readonly usage: UsageClient;
@@ -275,17 +281,11 @@ export class Client {
   /** general client */
   readonly general: GeneralClient;
 
-  /** stream client */
-  readonly stream: StreamClient;
+  /** trends client */
+  readonly trends: TrendsClient;
 
   /** connections client */
   readonly connections: ConnectionsClient;
-
-  /** posts client */
-  readonly posts: PostsClient;
-
-  /** users client */
-  readonly users: UsersClient;
 
 
   /**
@@ -332,7 +332,7 @@ export class Client {
     
     // Initialize headers
     const defaultHeaders: Record<string, string> = {
-      'User-Agent': 'xdk-typescript/0.1.2-beta',
+      'User-Agent': 'xdk-typescript/0.2.0-beta',
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       ...((config as ClientConfig).headers || {}),
@@ -341,41 +341,41 @@ export class Client {
     this.headers = httpClient.createHeaders(defaultHeaders);
 
 
-    this.webhooks = new WebhooksClient(this);
-
-    this.communities = new CommunitiesClient(this);
+    this.directMessages = new DirectMessagesClient(this);
 
     this.media = new MediaClient(this);
 
-    this.accountActivity = new AccountActivityClient(this);
+    this.webhooks = new WebhooksClient(this);
+
+    this.compliance = new ComplianceClient(this);
+
+    this.communities = new CommunitiesClient(this);
+
+    this.stream = new StreamClient(this);
+
+    this.users = new UsersClient(this);
+
+    this.posts = new PostsClient(this);
 
     this.lists = new ListsClient(this);
 
-    this.spaces = new SpacesClient(this);
-
-    this.trends = new TrendsClient(this);
-
-    this.activity = new ActivityClient(this);
+    this.news = new NewsClient(this);
 
     this.communityNotes = new CommunityNotesClient(this);
 
-    this.directMessages = new DirectMessagesClient(this);
+    this.activity = new ActivityClient(this);
 
-    this.news = new NewsClient(this);
+    this.spaces = new SpacesClient(this);
 
-    this.compliance = new ComplianceClient(this);
+    this.accountActivity = new AccountActivityClient(this);
 
     this.usage = new UsageClient(this);
 
     this.general = new GeneralClient(this);
 
-    this.stream = new StreamClient(this);
+    this.trends = new TrendsClient(this);
 
     this.connections = new ConnectionsClient(this);
-
-    this.posts = new PostsClient(this);
-
-    this.users = new UsersClient(this);
 
   }
 

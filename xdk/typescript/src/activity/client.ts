@@ -16,14 +16,29 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
+  UpdateSubscriptionRequest,
+  UpdateSubscriptionResponse,
+  DeleteSubscriptionResponse,
   StreamResponse,
   GetSubscriptionsResponse,
   CreateSubscriptionRequest,
   CreateSubscriptionResponse,
-  UpdateSubscriptionRequest,
-  UpdateSubscriptionResponse,
-  DeleteSubscriptionResponse,
 } from './models.js';
+
+/**
+ * Options for updateSubscription method
+ * 
+ * @public
+ */
+export interface UpdateSubscriptionOptions {
+  /** Request body */
+  body?: UpdateSubscriptionRequest;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
 
 /**
  * Options for stream method
@@ -57,21 +72,6 @@ export interface StreamOptions {
 export interface CreateSubscriptionOptions {
   /** Request body */
   body?: CreateSubscriptionRequest;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
-  [key: string]: any;
-}
-
-/**
- * Options for updateSubscription method
- * 
- * @public
- */
-export interface UpdateSubscriptionOptions {
-  /** Request body */
-  body?: UpdateSubscriptionRequest;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -127,6 +127,116 @@ export class ActivityClient {
     }
 
     return normalized as T;
+  }
+
+  /**
+   * Update X activity subscription
+   * Updates a subscription for an X activity event
+
+
+   * @param subscriptionId The ID of the subscription to update.
+
+
+
+
+   * @returns {Promise<UpdateSubscriptionResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async updateSubscription(
+    subscriptionId: string,
+    options: UpdateSubscriptionOptions = {}
+  ): Promise<UpdateSubscriptionResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const normalizedOptions = options || {};
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      body,
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/activity/subscriptions/{subscription_id}';
+
+    path = path.replace(
+      '{subscription_id}',
+      encodeURIComponent(String(subscriptionId))
+    );
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      body: body ? JSON.stringify(body) : undefined,
+
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
+
+      ...requestOptions,
+    };
+
+    return this.client.request<UpdateSubscriptionResponse>(
+      'PUT',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Deletes X activity subscription
+   * Deletes a subscription for an X activity event
+
+
+   * @param subscriptionId The ID of the subscription to delete.
+
+
+
+
+   * @returns {Promise<DeleteSubscriptionResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async deleteSubscription(
+    subscriptionId: string
+  ): Promise<DeleteSubscriptionResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const requestOptions = {};
+
+    // Build the path with path parameters
+    let path = '/2/activity/subscriptions/{subscription_id}';
+
+    path = path.replace(
+      '{subscription_id}',
+      encodeURIComponent(String(subscriptionId))
+    );
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+      ],
+
+      // No optional parameters, using empty request options
+    };
+
+    return this.client.request<DeleteSubscriptionResponse>(
+      'DELETE',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
   }
 
   /**
@@ -285,116 +395,6 @@ export class ActivityClient {
 
     return this.client.request<CreateSubscriptionResponse>(
       'POST',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Update X activity subscription
-   * Updates a subscription for an X activity event
-
-
-   * @param subscriptionId The ID of the subscription to update.
-
-
-
-
-   * @returns {Promise<UpdateSubscriptionResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async updateSubscription(
-    subscriptionId: string,
-    options: UpdateSubscriptionOptions = {}
-  ): Promise<UpdateSubscriptionResponse> {
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const normalizedOptions = options || {};
-
-    // Destructure options (exclude path parameters, they're already function params)
-    const {
-      body,
-
-      requestOptions: requestOptions = {},
-    } = normalizedOptions;
-
-    // Build the path with path parameters
-    let path = '/2/activity/subscriptions/{subscription_id}';
-
-    path = path.replace(
-      '{subscription_id}',
-      encodeURIComponent(String(subscriptionId))
-    );
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      body: body ? JSON.stringify(body) : undefined,
-
-      // Pass security requirements for smart auth selection
-      security: [
-        {
-          BearerToken: [],
-        },
-      ],
-
-      ...requestOptions,
-    };
-
-    return this.client.request<UpdateSubscriptionResponse>(
-      'PUT',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
-   * Deletes X activity subscription
-   * Deletes a subscription for an X activity event
-
-
-   * @param subscriptionId The ID of the subscription to delete.
-
-
-
-
-   * @returns {Promise<DeleteSubscriptionResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async deleteSubscription(
-    subscriptionId: string
-  ): Promise<DeleteSubscriptionResponse> {
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const requestOptions = {};
-
-    // Build the path with path parameters
-    let path = '/2/activity/subscriptions/{subscription_id}';
-
-    path = path.replace(
-      '{subscription_id}',
-      encodeURIComponent(String(subscriptionId))
-    );
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // Pass security requirements for smart auth selection
-      security: [
-        {
-          BearerToken: [],
-        },
-      ],
-
-      // No optional parameters, using empty request options
-    };
-
-    return this.client.request<DeleteSubscriptionResponse>(
-      'DELETE',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

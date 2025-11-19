@@ -28,7 +28,7 @@ describe('CommunityNotesClient Contracts', () => {
   });
 
   
-  it('should have correct request structure for searchEligiblePosts', async () => {
+  it('should have correct request structure for searchWritten', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -68,7 +68,7 @@ describe('CommunityNotesClient Contracts', () => {
       const options: any = {};
       
       // Call the method
-      const method = (communityNotesClient as any)['searchEligiblePosts'];
+      const method = (communityNotesClient as any)['searchWritten'];
       const result = await method.apply(communityNotesClient, [...requiredArgs, options]);
       
       // Verify the request was made
@@ -80,7 +80,7 @@ describe('CommunityNotesClient Contracts', () => {
       const requestOptions = callArgs[1] as RequestInit;
       
       // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/notes/search/posts_eligible_for_notes';
+      const expectedPath = '/2/notes/search/notes_written';
       // Path parameters are replaced with actual values, so check for the base path structure
       const basePath = expectedPath.split('{')[0];
       expect(url).toContain(basePath);
@@ -93,7 +93,7 @@ describe('CommunityNotesClient Contracts', () => {
     }
   });
 
-  it('should handle required parameters correctly for searchEligiblePosts', async () => {
+  it('should handle required parameters correctly for searchWritten', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -111,7 +111,7 @@ describe('CommunityNotesClient Contracts', () => {
     } as Response);
 
     try {
-      const method = (communityNotesClient as any)['searchEligiblePosts'];
+      const method = (communityNotesClient as any)['searchWritten'];
       
       
       // Method has required parameters - verify it can be called with proper args
@@ -136,7 +136,7 @@ describe('CommunityNotesClient Contracts', () => {
     }
   });
 
-  it('should validate response structure for searchEligiblePosts', async () => {
+  it('should validate response structure for searchWritten', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -172,7 +172,7 @@ describe('CommunityNotesClient Contracts', () => {
       ];
       const options: any = {};
 
-      const method = (communityNotesClient as any)['searchEligiblePosts'];
+      const method = (communityNotesClient as any)['searchWritten'];
       const result = await method.apply(communityNotesClient, [...requiredArgs, options]);
 
       // Verify response object has expected structure
@@ -340,7 +340,7 @@ describe('CommunityNotesClient Contracts', () => {
   });
 
   
-  it('should have correct request structure for delete', async () => {
+  it('should have correct request structure for searchEligiblePosts', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -371,7 +371,7 @@ describe('CommunityNotesClient Contracts', () => {
       const requiredArgs: any[] = [
       
       
-      'test_value',
+      true,
       
       
       ];
@@ -380,7 +380,7 @@ describe('CommunityNotesClient Contracts', () => {
       const options: any = {};
       
       // Call the method
-      const method = (communityNotesClient as any)['delete'];
+      const method = (communityNotesClient as any)['searchEligiblePosts'];
       const result = await method.apply(communityNotesClient, [...requiredArgs, options]);
       
       // Verify the request was made
@@ -392,7 +392,7 @@ describe('CommunityNotesClient Contracts', () => {
       const requestOptions = callArgs[1] as RequestInit;
       
       // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/notes/{id}';
+      const expectedPath = '/2/notes/search/posts_eligible_for_notes';
       // Path parameters are replaced with actual values, so check for the base path structure
       const basePath = expectedPath.split('{')[0];
       expect(url).toContain(basePath);
@@ -405,7 +405,7 @@ describe('CommunityNotesClient Contracts', () => {
     }
   });
 
-  it('should handle required parameters correctly for delete', async () => {
+  it('should handle required parameters correctly for searchEligiblePosts', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -423,7 +423,7 @@ describe('CommunityNotesClient Contracts', () => {
     } as Response);
 
     try {
-      const method = (communityNotesClient as any)['delete'];
+      const method = (communityNotesClient as any)['searchEligiblePosts'];
       
       
       // Method has required parameters - verify it can be called with proper args
@@ -431,7 +431,7 @@ describe('CommunityNotesClient Contracts', () => {
       const requiredArgs: any[] = [
       
       
-      'test_value',
+      true,
       
       
       ];
@@ -448,7 +448,7 @@ describe('CommunityNotesClient Contracts', () => {
     }
   });
 
-  it('should validate response structure for delete', async () => {
+  it('should validate response structure for searchEligiblePosts', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -478,13 +478,13 @@ describe('CommunityNotesClient Contracts', () => {
       const requiredArgs: any[] = [
       
       
-      'test_value',
+      true,
       
       
       ];
       const options: any = {};
 
-      const method = (communityNotesClient as any)['delete'];
+      const method = (communityNotesClient as any)['searchEligiblePosts'];
       const result = await method.apply(communityNotesClient, [...requiredArgs, options]);
 
       // Verify response object has expected structure
@@ -652,7 +652,7 @@ describe('CommunityNotesClient Contracts', () => {
   });
 
   
-  it('should have correct request structure for searchWritten', async () => {
+  it('should have correct request structure for delete', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -683,7 +683,7 @@ describe('CommunityNotesClient Contracts', () => {
       const requiredArgs: any[] = [
       
       
-      true,
+      'test_value',
       
       
       ];
@@ -692,7 +692,7 @@ describe('CommunityNotesClient Contracts', () => {
       const options: any = {};
       
       // Call the method
-      const method = (communityNotesClient as any)['searchWritten'];
+      const method = (communityNotesClient as any)['delete'];
       const result = await method.apply(communityNotesClient, [...requiredArgs, options]);
       
       // Verify the request was made
@@ -704,7 +704,7 @@ describe('CommunityNotesClient Contracts', () => {
       const requestOptions = callArgs[1] as RequestInit;
       
       // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/notes/search/notes_written';
+      const expectedPath = '/2/notes/{id}';
       // Path parameters are replaced with actual values, so check for the base path structure
       const basePath = expectedPath.split('{')[0];
       expect(url).toContain(basePath);
@@ -717,7 +717,7 @@ describe('CommunityNotesClient Contracts', () => {
     }
   });
 
-  it('should handle required parameters correctly for searchWritten', async () => {
+  it('should handle required parameters correctly for delete', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -735,7 +735,7 @@ describe('CommunityNotesClient Contracts', () => {
     } as Response);
 
     try {
-      const method = (communityNotesClient as any)['searchWritten'];
+      const method = (communityNotesClient as any)['delete'];
       
       
       // Method has required parameters - verify it can be called with proper args
@@ -743,7 +743,7 @@ describe('CommunityNotesClient Contracts', () => {
       const requiredArgs: any[] = [
       
       
-      true,
+      'test_value',
       
       
       ];
@@ -760,7 +760,7 @@ describe('CommunityNotesClient Contracts', () => {
     }
   });
 
-  it('should validate response structure for searchWritten', async () => {
+  it('should validate response structure for delete', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -790,13 +790,13 @@ describe('CommunityNotesClient Contracts', () => {
       const requiredArgs: any[] = [
       
       
-      true,
+      'test_value',
       
       
       ];
       const options: any = {};
 
-      const method = (communityNotesClient as any)['searchWritten'];
+      const method = (communityNotesClient as any)['delete'];
       const result = await method.apply(communityNotesClient, [...requiredArgs, options]);
 
       // Verify response object has expected structure

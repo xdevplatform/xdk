@@ -30,15 +30,11 @@ describe('DirectMessagesClient Pagination', () => {
   });
 
   
-  it('should create paginator for getEventsByParticipantId', () => {
-    const method = (directMessagesClient as any)['getEventsByParticipantId'];
+  it('should create paginator for getEvents', () => {
+    const method = (directMessagesClient as any)['getEvents'];
     
     // Should be able to create paginator without error
     const params: any = {
-      
-      
-      participant_id: 'test_value',
-      
       
       maxResults: 10
     };
@@ -48,7 +44,7 @@ describe('DirectMessagesClient Pagination', () => {
     expect(typeof method).toBe('function');
   });
 
-  it('should paginate through pages for getEventsByParticipantId', async () => {
+  it('should paginate through pages for getEvents', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -100,14 +96,10 @@ describe('DirectMessagesClient Pagination', () => {
     });
 
     try {
-      const method = (directMessagesClient as any)['getEventsByParticipantId'];
+      const method = (directMessagesClient as any)['getEvents'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
       
       ];
       
@@ -142,7 +134,7 @@ describe('DirectMessagesClient Pagination', () => {
     }
   });
 
-  it('should handle pagination parameters correctly for getEventsByParticipantId', async () => {
+  it('should handle pagination parameters correctly for getEvents', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -162,14 +154,10 @@ describe('DirectMessagesClient Pagination', () => {
     } as Response);
 
     try {
-      const method = (directMessagesClient as any)['getEventsByParticipantId'];
+      const method = (directMessagesClient as any)['getEvents'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
       
       ];
       
@@ -356,11 +344,15 @@ describe('DirectMessagesClient Pagination', () => {
   });
 
   
-  it('should create paginator for getEvents', () => {
-    const method = (directMessagesClient as any)['getEvents'];
+  it('should create paginator for getEventsByParticipantId', () => {
+    const method = (directMessagesClient as any)['getEventsByParticipantId'];
     
     // Should be able to create paginator without error
     const params: any = {
+      
+      
+      participant_id: 'test_value',
+      
       
       maxResults: 10
     };
@@ -370,7 +362,7 @@ describe('DirectMessagesClient Pagination', () => {
     expect(typeof method).toBe('function');
   });
 
-  it('should paginate through pages for getEvents', async () => {
+  it('should paginate through pages for getEventsByParticipantId', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -422,10 +414,14 @@ describe('DirectMessagesClient Pagination', () => {
     });
 
     try {
-      const method = (directMessagesClient as any)['getEvents'];
+      const method = (directMessagesClient as any)['getEventsByParticipantId'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
       
       ];
       
@@ -460,7 +456,7 @@ describe('DirectMessagesClient Pagination', () => {
     }
   });
 
-  it('should handle pagination parameters correctly for getEvents', async () => {
+  it('should handle pagination parameters correctly for getEventsByParticipantId', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -480,10 +476,14 @@ describe('DirectMessagesClient Pagination', () => {
     } as Response);
 
     try {
-      const method = (directMessagesClient as any)['getEvents'];
+      const method = (directMessagesClient as any)['getEventsByParticipantId'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
       
       ];
       
