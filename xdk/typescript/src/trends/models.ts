@@ -17,14 +17,14 @@ import type * as Schemas from '../schemas.js';
  */
 export type GetAiResponse = Schemas.Get2AiTrendsIdResponse;
 /**
- * Response for getPersonalized
- * 
- * @public
- */
-export type GetPersonalizedResponse = Schemas.Get2UsersPersonalizedTrendsResponse;
-/**
  * Response for getByWoeid
  * 
  * @public
  */
 export type GetByWoeidResponse = Schemas.Get2TrendsByWoeidWoeidResponse;
+/**
+ * Response for getPersonalized
+ * 
+ * @public
+ */
+export type GetPersonalizedResponse = Schemas.Get2UsersPersonalizedTrendsResponse;

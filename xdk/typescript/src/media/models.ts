@@ -11,6 +11,12 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
+ * Response for getAnalytics
+ * 
+ * @public
+ */
+export type GetAnalyticsResponse = Schemas.MediaAnalytics;
+/**
  * Request for createSubtitles
  * 
  * @public
@@ -35,11 +41,17 @@ export type DeleteSubtitlesRequest = Schemas.SubtitlesDeleteRequest;
  */
 export type DeleteSubtitlesResponse = Schemas.SubtitlesDeleteResponse;
 /**
- * Response for getByKeys
+ * Request for initializeUpload
  * 
  * @public
  */
-export type GetByKeysResponse = Schemas.Get2MediaResponse;
+export type InitializeUploadRequest = Schemas.MediaUploadConfigRequest;
+/**
+ * Response for initializeUpload
+ * 
+ * @public
+ */
+export type InitializeUploadResponse = Schemas.MediaUploadResponse;
 /**
  * Response for getUploadStatus
  * 
@@ -59,41 +71,11 @@ export type UploadRequest = Schemas.MediaUploadRequestOneShot;
  */
 export type UploadResponse = Schemas.MediaUploadResponse;
 /**
- * Response for finalizeUpload
- * 
- * @public
- */
-export type FinalizeUploadResponse = Schemas.MediaUploadResponse;
-/**
- * Request for initializeUpload
- * 
- * @public
- */
-export type InitializeUploadRequest = Schemas.MediaUploadConfigRequest;
-/**
- * Response for initializeUpload
- * 
- * @public
- */
-export type InitializeUploadResponse = Schemas.MediaUploadResponse;
-/**
  * Response for getByKey
  * 
  * @public
  */
 export type GetByKeyResponse = Schemas.Get2MediaMediaKeyResponse;
-/**
- * Request for createMetadata
- * 
- * @public
- */
-export type CreateMetadataRequest = Schemas.MetadataCreateRequest;
-/**
- * Response for createMetadata
- * 
- * @public
- */
-export type CreateMetadataResponse = Schemas.MetadataCreateResponse;
 /**
  * Request for appendUpload
  * 
@@ -107,8 +89,26 @@ export type AppendUploadRequest = Schemas.MediaUploadAppendRequest;
  */
 export type AppendUploadResponse = Schemas.MediaUploadAppendResponse;
 /**
- * Response for getAnalytics
+ * Response for getByKeys
  * 
  * @public
  */
-export type GetAnalyticsResponse = Schemas.MediaAnalytics;
+export type GetByKeysResponse = Schemas.Get2MediaResponse;
+/**
+ * Response for finalizeUpload
+ * 
+ * @public
+ */
+export type FinalizeUploadResponse = Schemas.MediaUploadResponse;
+/**
+ * Request for createMetadata
+ * 
+ * @public
+ */
+export type CreateMetadataRequest = Schemas.MetadataCreateRequest;
+/**
+ * Response for createMetadata
+ * 
+ * @public
+ */
+export type CreateMetadataResponse = Schemas.MetadataCreateResponse;

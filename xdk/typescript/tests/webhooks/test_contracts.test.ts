@@ -28,7 +28,7 @@ describe('WebhooksClient Contracts', () => {
   });
 
   
-  it('should have correct request structure for get', async () => {
+  it('should have correct request structure for createStreamLink', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -58,13 +58,17 @@ describe('WebhooksClient Contracts', () => {
       // Build required parameter arguments
       const requiredArgs: any[] = [
       
+      
+      'test_value',
+      
+      
       ];
       
       // Build options object (empty for required params test, optional params go here)
       const options: any = {};
       
       // Call the method
-      const method = (webhooksClient as any)['get'];
+      const method = (webhooksClient as any)['createStreamLink'];
       const result = await method.apply(webhooksClient, [...requiredArgs, options]);
       
       // Verify the request was made
@@ -76,7 +80,7 @@ describe('WebhooksClient Contracts', () => {
       const requestOptions = callArgs[1] as RequestInit;
       
       // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/webhooks';
+      const expectedPath = '/2/tweets/search/webhooks/{webhook_id}';
       // Path parameters are replaced with actual values, so check for the base path structure
       const basePath = expectedPath.split('{')[0];
       expect(url).toContain(basePath);
@@ -89,7 +93,7 @@ describe('WebhooksClient Contracts', () => {
     }
   });
 
-  it('should handle required parameters correctly for get', async () => {
+  it('should handle required parameters correctly for createStreamLink', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -107,12 +111,16 @@ describe('WebhooksClient Contracts', () => {
     } as Response);
 
     try {
-      const method = (webhooksClient as any)['get'];
+      const method = (webhooksClient as any)['createStreamLink'];
       
       
       // Method has required parameters - verify it can be called with proper args
       // Build required parameter arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
       
       ];
       
@@ -128,7 +136,7 @@ describe('WebhooksClient Contracts', () => {
     }
   });
 
-  it('should validate response structure for get', async () => {
+  it('should validate response structure for createStreamLink', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -157,10 +165,14 @@ describe('WebhooksClient Contracts', () => {
       // Build arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
       
+      
+      'test_value',
+      
+      
       ];
       const options: any = {};
 
-      const method = (webhooksClient as any)['get'];
+      const method = (webhooksClient as any)['createStreamLink'];
       const result = await method.apply(webhooksClient, [...requiredArgs, options]);
 
       // Verify response object has expected structure
@@ -178,7 +190,7 @@ describe('WebhooksClient Contracts', () => {
   });
 
   
-  it('should have correct request structure for create', async () => {
+  it('should have correct request structure for deleteStreamLink', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -208,13 +220,17 @@ describe('WebhooksClient Contracts', () => {
       // Build required parameter arguments
       const requiredArgs: any[] = [
       
+      
+      'test_value',
+      
+      
       ];
       
       // Build options object (empty for required params test, optional params go here)
       const options: any = {};
       
       // Call the method
-      const method = (webhooksClient as any)['create'];
+      const method = (webhooksClient as any)['deleteStreamLink'];
       const result = await method.apply(webhooksClient, [...requiredArgs, options]);
       
       // Verify the request was made
@@ -226,7 +242,7 @@ describe('WebhooksClient Contracts', () => {
       const requestOptions = callArgs[1] as RequestInit;
       
       // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/webhooks';
+      const expectedPath = '/2/tweets/search/webhooks/{webhook_id}';
       // Path parameters are replaced with actual values, so check for the base path structure
       const basePath = expectedPath.split('{')[0];
       expect(url).toContain(basePath);
@@ -239,7 +255,7 @@ describe('WebhooksClient Contracts', () => {
     }
   });
 
-  it('should handle required parameters correctly for create', async () => {
+  it('should handle required parameters correctly for deleteStreamLink', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -257,12 +273,16 @@ describe('WebhooksClient Contracts', () => {
     } as Response);
 
     try {
-      const method = (webhooksClient as any)['create'];
+      const method = (webhooksClient as any)['deleteStreamLink'];
       
       
       // Method has required parameters - verify it can be called with proper args
       // Build required parameter arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
       
       ];
       
@@ -278,7 +298,7 @@ describe('WebhooksClient Contracts', () => {
     }
   });
 
-  it('should validate response structure for create', async () => {
+  it('should validate response structure for deleteStreamLink', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -307,10 +327,14 @@ describe('WebhooksClient Contracts', () => {
       // Build arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
       
+      
+      'test_value',
+      
+      
       ];
       const options: any = {};
 
-      const method = (webhooksClient as any)['create'];
+      const method = (webhooksClient as any)['deleteStreamLink'];
       const result = await method.apply(webhooksClient, [...requiredArgs, options]);
 
       // Verify response object has expected structure
@@ -802,7 +826,7 @@ describe('WebhooksClient Contracts', () => {
   });
 
   
-  it('should have correct request structure for createStreamLink', async () => {
+  it('should have correct request structure for get', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -832,17 +856,13 @@ describe('WebhooksClient Contracts', () => {
       // Build required parameter arguments
       const requiredArgs: any[] = [
       
-      
-      'test_value',
-      
-      
       ];
       
       // Build options object (empty for required params test, optional params go here)
       const options: any = {};
       
       // Call the method
-      const method = (webhooksClient as any)['createStreamLink'];
+      const method = (webhooksClient as any)['get'];
       const result = await method.apply(webhooksClient, [...requiredArgs, options]);
       
       // Verify the request was made
@@ -854,7 +874,7 @@ describe('WebhooksClient Contracts', () => {
       const requestOptions = callArgs[1] as RequestInit;
       
       // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/tweets/search/webhooks/{webhook_id}';
+      const expectedPath = '/2/webhooks';
       // Path parameters are replaced with actual values, so check for the base path structure
       const basePath = expectedPath.split('{')[0];
       expect(url).toContain(basePath);
@@ -867,7 +887,7 @@ describe('WebhooksClient Contracts', () => {
     }
   });
 
-  it('should handle required parameters correctly for createStreamLink', async () => {
+  it('should handle required parameters correctly for get', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -885,16 +905,12 @@ describe('WebhooksClient Contracts', () => {
     } as Response);
 
     try {
-      const method = (webhooksClient as any)['createStreamLink'];
+      const method = (webhooksClient as any)['get'];
       
       
       // Method has required parameters - verify it can be called with proper args
       // Build required parameter arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
       
       ];
       
@@ -910,7 +926,7 @@ describe('WebhooksClient Contracts', () => {
     }
   });
 
-  it('should validate response structure for createStreamLink', async () => {
+  it('should validate response structure for get', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -939,14 +955,10 @@ describe('WebhooksClient Contracts', () => {
       // Build arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
       
-      
-      'test_value',
-      
-      
       ];
       const options: any = {};
 
-      const method = (webhooksClient as any)['createStreamLink'];
+      const method = (webhooksClient as any)['get'];
       const result = await method.apply(webhooksClient, [...requiredArgs, options]);
 
       // Verify response object has expected structure
@@ -964,7 +976,7 @@ describe('WebhooksClient Contracts', () => {
   });
 
   
-  it('should have correct request structure for deleteStreamLink', async () => {
+  it('should have correct request structure for create', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -994,17 +1006,13 @@ describe('WebhooksClient Contracts', () => {
       // Build required parameter arguments
       const requiredArgs: any[] = [
       
-      
-      'test_value',
-      
-      
       ];
       
       // Build options object (empty for required params test, optional params go here)
       const options: any = {};
       
       // Call the method
-      const method = (webhooksClient as any)['deleteStreamLink'];
+      const method = (webhooksClient as any)['create'];
       const result = await method.apply(webhooksClient, [...requiredArgs, options]);
       
       // Verify the request was made
@@ -1016,7 +1024,7 @@ describe('WebhooksClient Contracts', () => {
       const requestOptions = callArgs[1] as RequestInit;
       
       // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/tweets/search/webhooks/{webhook_id}';
+      const expectedPath = '/2/webhooks';
       // Path parameters are replaced with actual values, so check for the base path structure
       const basePath = expectedPath.split('{')[0];
       expect(url).toContain(basePath);
@@ -1029,7 +1037,7 @@ describe('WebhooksClient Contracts', () => {
     }
   });
 
-  it('should handle required parameters correctly for deleteStreamLink', async () => {
+  it('should handle required parameters correctly for create', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -1047,16 +1055,12 @@ describe('WebhooksClient Contracts', () => {
     } as Response);
 
     try {
-      const method = (webhooksClient as any)['deleteStreamLink'];
+      const method = (webhooksClient as any)['create'];
       
       
       // Method has required parameters - verify it can be called with proper args
       // Build required parameter arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
       
       ];
       
@@ -1072,7 +1076,7 @@ describe('WebhooksClient Contracts', () => {
     }
   });
 
-  it('should validate response structure for deleteStreamLink', async () => {
+  it('should validate response structure for create', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -1101,14 +1105,10 @@ describe('WebhooksClient Contracts', () => {
       // Build arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
       
-      
-      'test_value',
-      
-      
       ];
       const options: any = {};
 
-      const method = (webhooksClient as any)['deleteStreamLink'];
+      const method = (webhooksClient as any)['create'];
       const result = await method.apply(webhooksClient, [...requiredArgs, options]);
 
       // Verify response object has expected structure

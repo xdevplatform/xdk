@@ -30,12 +30,12 @@ describe('WebhooksClient Structure', () => {
 
   
   
-  it('should have get method with correct signature', () => {
+  it('should have createStreamLink method with correct signature', () => {
     // Check method exists
-    expect(WebhooksClient.prototype).toHaveProperty('get');
+    expect(WebhooksClient.prototype).toHaveProperty('createStreamLink');
     
     // Check method is callable
-    const method = webhooksClient.get;
+    const method = webhooksClient.createStreamLink;
     expect(typeof method).toBe('function');
     
     // Check method signature by examining parameter count
@@ -45,6 +45,8 @@ describe('WebhooksClient Structure', () => {
     
     // Check required parameters exist (convert to camelCase for TypeScript)
     const requiredParams = [
+      
+      'webhookId',
       
     ];
     
@@ -59,8 +61,8 @@ describe('WebhooksClient Structure', () => {
     }
   });
 
-  it('should have get method with return type annotation', () => {
-    const method = webhooksClient.get;
+  it('should have createStreamLink method with return type annotation', () => {
+    const method = webhooksClient.createStreamLink;
     expect(typeof method).toBe('function');
     // TypeScript will enforce return types at compile time
     // This test ensures the method exists and is callable
@@ -69,12 +71,12 @@ describe('WebhooksClient Structure', () => {
   
 
   
-  it('should have create method with correct signature', () => {
+  it('should have deleteStreamLink method with correct signature', () => {
     // Check method exists
-    expect(WebhooksClient.prototype).toHaveProperty('create');
+    expect(WebhooksClient.prototype).toHaveProperty('deleteStreamLink');
     
     // Check method is callable
-    const method = webhooksClient.create;
+    const method = webhooksClient.deleteStreamLink;
     expect(typeof method).toBe('function');
     
     // Check method signature by examining parameter count
@@ -84,6 +86,8 @@ describe('WebhooksClient Structure', () => {
     
     // Check required parameters exist (convert to camelCase for TypeScript)
     const requiredParams = [
+      
+      'webhookId',
       
     ];
     
@@ -98,8 +102,8 @@ describe('WebhooksClient Structure', () => {
     }
   });
 
-  it('should have create method with return type annotation', () => {
-    const method = webhooksClient.create;
+  it('should have deleteStreamLink method with return type annotation', () => {
+    const method = webhooksClient.deleteStreamLink;
     expect(typeof method).toBe('function');
     // TypeScript will enforce return types at compile time
     // This test ensures the method exists and is callable
@@ -229,12 +233,12 @@ describe('WebhooksClient Structure', () => {
   
 
   
-  it('should have createStreamLink method with correct signature', () => {
+  it('should have get method with correct signature', () => {
     // Check method exists
-    expect(WebhooksClient.prototype).toHaveProperty('createStreamLink');
+    expect(WebhooksClient.prototype).toHaveProperty('get');
     
     // Check method is callable
-    const method = webhooksClient.createStreamLink;
+    const method = webhooksClient.get;
     expect(typeof method).toBe('function');
     
     // Check method signature by examining parameter count
@@ -244,8 +248,6 @@ describe('WebhooksClient Structure', () => {
     
     // Check required parameters exist (convert to camelCase for TypeScript)
     const requiredParams = [
-      
-      'webhookId',
       
     ];
     
@@ -260,8 +262,8 @@ describe('WebhooksClient Structure', () => {
     }
   });
 
-  it('should have createStreamLink method with return type annotation', () => {
-    const method = webhooksClient.createStreamLink;
+  it('should have get method with return type annotation', () => {
+    const method = webhooksClient.get;
     expect(typeof method).toBe('function');
     // TypeScript will enforce return types at compile time
     // This test ensures the method exists and is callable
@@ -270,12 +272,12 @@ describe('WebhooksClient Structure', () => {
   
 
   
-  it('should have deleteStreamLink method with correct signature', () => {
+  it('should have create method with correct signature', () => {
     // Check method exists
-    expect(WebhooksClient.prototype).toHaveProperty('deleteStreamLink');
+    expect(WebhooksClient.prototype).toHaveProperty('create');
     
     // Check method is callable
-    const method = webhooksClient.deleteStreamLink;
+    const method = webhooksClient.create;
     expect(typeof method).toBe('function');
     
     // Check method signature by examining parameter count
@@ -285,8 +287,6 @@ describe('WebhooksClient Structure', () => {
     
     // Check required parameters exist (convert to camelCase for TypeScript)
     const requiredParams = [
-      
-      'webhookId',
       
     ];
     
@@ -301,8 +301,8 @@ describe('WebhooksClient Structure', () => {
     }
   });
 
-  it('should have deleteStreamLink method with return type annotation', () => {
-    const method = webhooksClient.deleteStreamLink;
+  it('should have create method with return type annotation', () => {
+    const method = webhooksClient.create;
     expect(typeof method).toBe('function');
     // TypeScript will enforce return types at compile time
     // This test ensures the method exists and is callable
@@ -315,9 +315,9 @@ describe('WebhooksClient Structure', () => {
   it('should have all expected methods', () => {
     const expectedMethods = [
       
-      'get',
+      'createStreamLink',
       
-      'create',
+      'deleteStreamLink',
       
       'validate',
       
@@ -325,9 +325,9 @@ describe('WebhooksClient Structure', () => {
       
       'getStreamLinks',
       
-      'createStreamLink',
+      'get',
       
-      'deleteStreamLink',
+      'create',
       
     ];
 

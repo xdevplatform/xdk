@@ -12,9 +12,9 @@ import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
   ValidateSubscriptionResponse,
   CreateSubscriptionResponse,
-  CreateReplayJobResponse,
-  GetSubscriptionsResponse,
   GetSubscriptionCountResponse,
+  GetSubscriptionsResponse,
+  CreateReplayJobResponse,
   DeleteSubscriptionResponse,
 } from './models.js';
 
@@ -52,11 +52,11 @@ export interface CreateSubscriptionStreamingOptions {
   [key: string]: any;
 }
 /**
- * Options for createReplayJob method
+ * Options for getSubscriptionCount method
  * 
  * @public
  */
-export interface CreateReplayJobStreamingOptions {
+export interface GetSubscriptionCountStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -82,11 +82,11 @@ export interface GetSubscriptionsStreamingOptions {
   [key: string]: any;
 }
 /**
- * Options for getSubscriptionCount method
+ * Options for createReplayJob method
  * 
  * @public
  */
-export interface GetSubscriptionCountStreamingOptions {
+export interface CreateReplayJobStreamingOptions {
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */
@@ -270,24 +270,24 @@ export class AccountActivityClient {
   }
 
   /**
-     * Create replay job
-     * Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
+     * Get subscription count
+     * Retrieves a count of currently active Account Activity subscriptions.
      * 
      * @returns Promise with the API response
      */
-  async createReplayJob(
-    webhookId: string,
-    fromDate: string,
-    toDate: string,
-    options: CreateReplayJobStreamingOptions = {}
-  ): Promise<CreateReplayJobResponse> {
+  async getSubscriptionCount(
+    options: GetSubscriptionCountStreamingOptions = {}
+  ): Promise<GetSubscriptionCountResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
 
     requiredAuthTypes.push('BearerToken');
 
-    this.client.validateAuthentication(requiredAuthTypes, 'createReplayJob');
+    this.client.validateAuthentication(
+      requiredAuthTypes,
+      'getSubscriptionCount'
+    );
 
     // Normalize options to handle both camelCase and original API parameter names
 
@@ -298,21 +298,10 @@ export class AccountActivityClient {
     const { headers = {}, signal, requestOptions = {} } = normalizedOptions;
 
     // Build the path with path parameters
-    let path =
-      '/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all';
-
-    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
+    let path = '/2/account_activity/subscriptions/count';
 
     // Build query parameters
     const params = new URLSearchParams();
-
-    if (fromDate !== undefined) {
-      params.append('from_date', String(fromDate));
-    }
-
-    if (toDate !== undefined) {
-      params.append('to_date', String(toDate));
-    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -326,8 +315,8 @@ export class AccountActivityClient {
     };
 
     // Make the request
-    return this.client.request<CreateReplayJobResponse>(
-      'POST',
+    return this.client.request<GetSubscriptionCountResponse>(
+      'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );
@@ -388,24 +377,24 @@ export class AccountActivityClient {
   }
 
   /**
-     * Get subscription count
-     * Retrieves a count of currently active Account Activity subscriptions.
+     * Create replay job
+     * Creates a replay job to retrieve activities from up to the past 5 days for all subscriptions associated with a given webhook.
      * 
      * @returns Promise with the API response
      */
-  async getSubscriptionCount(
-    options: GetSubscriptionCountStreamingOptions = {}
-  ): Promise<GetSubscriptionCountResponse> {
+  async createReplayJob(
+    webhookId: string,
+    fromDate: string,
+    toDate: string,
+    options: CreateReplayJobStreamingOptions = {}
+  ): Promise<CreateReplayJobResponse> {
     // Validate authentication requirements
 
     const requiredAuthTypes = [];
 
     requiredAuthTypes.push('BearerToken');
 
-    this.client.validateAuthentication(
-      requiredAuthTypes,
-      'getSubscriptionCount'
-    );
+    this.client.validateAuthentication(requiredAuthTypes, 'createReplayJob');
 
     // Normalize options to handle both camelCase and original API parameter names
 
@@ -416,10 +405,21 @@ export class AccountActivityClient {
     const { headers = {}, signal, requestOptions = {} } = normalizedOptions;
 
     // Build the path with path parameters
-    let path = '/2/account_activity/subscriptions/count';
+    let path =
+      '/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all';
+
+    path = path.replace('{webhook_id}', encodeURIComponent(String(webhookId)));
 
     // Build query parameters
     const params = new URLSearchParams();
+
+    if (fromDate !== undefined) {
+      params.append('from_date', String(fromDate));
+    }
+
+    if (toDate !== undefined) {
+      params.append('to_date', String(toDate));
+    }
 
     // Prepare request options
     const finalRequestOptions: RequestOptions = {
@@ -433,8 +433,8 @@ export class AccountActivityClient {
     };
 
     // Make the request
-    return this.client.request<GetSubscriptionCountResponse>(
-      'GET',
+    return this.client.request<CreateReplayJobResponse>(
+      'POST',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
     );

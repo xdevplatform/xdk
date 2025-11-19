@@ -352,7 +352,7 @@ describe('AccountActivityClient Contracts', () => {
   });
 
   
-  it('should have correct request structure for createReplayJob', async () => {
+  it('should have correct request structure for getSubscriptionCount', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -382,25 +382,13 @@ describe('AccountActivityClient Contracts', () => {
       // Build required parameter arguments
       const requiredArgs: any[] = [
       
-      
-      'test_value',
-      
-      
-      
-      'test_from_date',
-      
-      
-      
-      'test_to_date',
-      
-      
       ];
       
       // Build options object (empty for required params test, optional params go here)
       const options: any = {};
       
       // Call the method
-      const method = (accountActivityClient as any)['createReplayJob'];
+      const method = (accountActivityClient as any)['getSubscriptionCount'];
       const result = await method.apply(accountActivityClient, [...requiredArgs, options]);
       
       // Verify the request was made
@@ -412,7 +400,7 @@ describe('AccountActivityClient Contracts', () => {
       const requestOptions = callArgs[1] as RequestInit;
       
       // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all';
+      const expectedPath = '/2/account_activity/subscriptions/count';
       // Path parameters are replaced with actual values, so check for the base path structure
       const basePath = expectedPath.split('{')[0];
       expect(url).toContain(basePath);
@@ -425,7 +413,7 @@ describe('AccountActivityClient Contracts', () => {
     }
   });
 
-  it('should handle required parameters correctly for createReplayJob', async () => {
+  it('should handle required parameters correctly for getSubscriptionCount', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -443,24 +431,12 @@ describe('AccountActivityClient Contracts', () => {
     } as Response);
 
     try {
-      const method = (accountActivityClient as any)['createReplayJob'];
+      const method = (accountActivityClient as any)['getSubscriptionCount'];
       
       
       // Method has required parameters - verify it can be called with proper args
       // Build required parameter arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      
-      'test_from_date',
-      
-      
-      
-      'test_to_date',
-      
       
       ];
       
@@ -476,7 +452,7 @@ describe('AccountActivityClient Contracts', () => {
     }
   });
 
-  it('should validate response structure for createReplayJob', async () => {
+  it('should validate response structure for getSubscriptionCount', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -505,22 +481,10 @@ describe('AccountActivityClient Contracts', () => {
       // Build arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
       
-      
-      'test_value',
-      
-      
-      
-      'test_from_date',
-      
-      
-      
-      'test_to_date',
-      
-      
       ];
       const options: any = {};
 
-      const method = (accountActivityClient as any)['createReplayJob'];
+      const method = (accountActivityClient as any)['getSubscriptionCount'];
       const result = await method.apply(accountActivityClient, [...requiredArgs, options]);
 
       // Verify response object has expected structure
@@ -700,7 +664,7 @@ describe('AccountActivityClient Contracts', () => {
   });
 
   
-  it('should have correct request structure for getSubscriptionCount', async () => {
+  it('should have correct request structure for createReplayJob', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -730,13 +694,25 @@ describe('AccountActivityClient Contracts', () => {
       // Build required parameter arguments
       const requiredArgs: any[] = [
       
+      
+      'test_value',
+      
+      
+      
+      'test_from_date',
+      
+      
+      
+      'test_to_date',
+      
+      
       ];
       
       // Build options object (empty for required params test, optional params go here)
       const options: any = {};
       
       // Call the method
-      const method = (accountActivityClient as any)['getSubscriptionCount'];
+      const method = (accountActivityClient as any)['createReplayJob'];
       const result = await method.apply(accountActivityClient, [...requiredArgs, options]);
       
       // Verify the request was made
@@ -748,7 +724,7 @@ describe('AccountActivityClient Contracts', () => {
       const requestOptions = callArgs[1] as RequestInit;
       
       // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/account_activity/subscriptions/count';
+      const expectedPath = '/2/account_activity/replay/webhooks/{webhook_id}/subscriptions/all';
       // Path parameters are replaced with actual values, so check for the base path structure
       const basePath = expectedPath.split('{')[0];
       expect(url).toContain(basePath);
@@ -761,7 +737,7 @@ describe('AccountActivityClient Contracts', () => {
     }
   });
 
-  it('should handle required parameters correctly for getSubscriptionCount', async () => {
+  it('should handle required parameters correctly for createReplayJob', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -779,12 +755,24 @@ describe('AccountActivityClient Contracts', () => {
     } as Response);
 
     try {
-      const method = (accountActivityClient as any)['getSubscriptionCount'];
+      const method = (accountActivityClient as any)['createReplayJob'];
       
       
       // Method has required parameters - verify it can be called with proper args
       // Build required parameter arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      
+      'test_from_date',
+      
+      
+      
+      'test_to_date',
+      
       
       ];
       
@@ -800,7 +788,7 @@ describe('AccountActivityClient Contracts', () => {
     }
   });
 
-  it('should validate response structure for getSubscriptionCount', async () => {
+  it('should validate response structure for createReplayJob', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -829,10 +817,22 @@ describe('AccountActivityClient Contracts', () => {
       // Build arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
       
+      
+      'test_value',
+      
+      
+      
+      'test_from_date',
+      
+      
+      
+      'test_to_date',
+      
+      
       ];
       const options: any = {};
 
-      const method = (accountActivityClient as any)['getSubscriptionCount'];
+      const method = (accountActivityClient as any)['createReplayJob'];
       const result = await method.apply(accountActivityClient, [...requiredArgs, options]);
 
       // Verify response object has expected structure

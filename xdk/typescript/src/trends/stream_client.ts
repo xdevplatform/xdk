@@ -11,8 +11,8 @@ import { Client, ApiResponse, RequestOptions } from '../client.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
   GetAiResponse,
-  GetPersonalizedResponse,
   GetByWoeidResponse,
+  GetPersonalizedResponse,
 } from './models.js';
 
 /**
@@ -24,25 +24,6 @@ export interface GetAiStreamingOptions {
   /** A comma separated list of News fields to display. 
      * Also accepts: news.fields or proper camelCase (e.g., newsFields) */
   newsFields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
-  [key: string]: any;
-}
-/**
- * Options for getPersonalized method
- * 
- * @public
- */
-export interface GetPersonalizedStreamingOptions {
-  /** A comma separated list of PersonalizedTrend fields to display. 
-     * Also accepts: personalized_trend.fields or proper camelCase (e.g., personalizedTrendFields) */
-  personalizedTrendFields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -66,6 +47,25 @@ export interface GetByWoeidStreamingOptions {
   /** A comma separated list of Trend fields to display. 
      * Also accepts: trend.fields or proper camelCase (e.g., trendFields) */
   trendFields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+/**
+ * Options for getPersonalized method
+ * 
+ * @public
+ */
+export interface GetPersonalizedStreamingOptions {
+  /** A comma separated list of PersonalizedTrend fields to display. 
+     * Also accepts: personalized_trend.fields or proper camelCase (e.g., personalizedTrendFields) */
+  personalizedTrendFields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -183,80 +183,6 @@ export class TrendsClient {
   }
 
   /**
-     * Get personalized Trends
-     * Retrieves personalized trending topics for the authenticated user.
-     * 
-     * @returns Promise with the API response
-     */
-  async getPersonalized(
-    options: GetPersonalizedStreamingOptions = {}
-  ): Promise<GetPersonalizedResponse> {
-    // Validate authentication requirements
-
-    const requiredAuthTypes = [];
-
-    requiredAuthTypes.push('OAuth2UserToken');
-
-    requiredAuthTypes.push('UserToken');
-
-    this.client.validateAuthentication(requiredAuthTypes, 'getPersonalized');
-
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const paramMappings: Record<string, string> = {
-      'personalized_trend.fields': 'personalizedTrendFields',
-    };
-    const normalizedOptions = this._normalizeOptions(
-      options || {},
-      paramMappings
-    );
-
-    // Destructure options (exclude path parameters, they're already function params)
-
-    const {
-      personalizedTrendFields = [],
-
-      headers = {},
-      signal,
-      requestOptions: requestOptions = {},
-    } = normalizedOptions;
-
-    // Build the path with path parameters
-    let path = '/2/users/personalized_trends';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (
-      personalizedTrendFields !== undefined &&
-      personalizedTrendFields.length > 0
-    ) {
-      params.append(
-        'personalized_trend.fields',
-        personalizedTrendFields.join(',')
-      );
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      headers: {
-        'Content-Type': 'application/json',
-        ...headers,
-      },
-      signal: signal,
-
-      ...requestOptions,
-    };
-
-    // Make the request
-    return this.client.request<GetPersonalizedResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
      * Get Trends by WOEID
      * Retrieves trending topics for a specific location identified by its WOEID.
      * 
@@ -327,6 +253,80 @@ export class TrendsClient {
 
     // Make the request
     return this.client.request<GetByWoeidResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+     * Get personalized Trends
+     * Retrieves personalized trending topics for the authenticated user.
+     * 
+     * @returns Promise with the API response
+     */
+  async getPersonalized(
+    options: GetPersonalizedStreamingOptions = {}
+  ): Promise<GetPersonalizedResponse> {
+    // Validate authentication requirements
+
+    const requiredAuthTypes = [];
+
+    requiredAuthTypes.push('OAuth2UserToken');
+
+    requiredAuthTypes.push('UserToken');
+
+    this.client.validateAuthentication(requiredAuthTypes, 'getPersonalized');
+
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'personalized_trend.fields': 'personalizedTrendFields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+
+    const {
+      personalizedTrendFields = [],
+
+      headers = {},
+      signal,
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/personalized_trends';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (
+      personalizedTrendFields !== undefined &&
+      personalizedTrendFields.length > 0
+    ) {
+      params.append(
+        'personalized_trend.fields',
+        personalizedTrendFields.join(',')
+      );
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers,
+      },
+      signal: signal,
+
+      ...requestOptions,
+    };
+
+    // Make the request
+    return this.client.request<GetPersonalizedResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

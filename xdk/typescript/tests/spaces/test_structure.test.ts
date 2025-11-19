@@ -30,47 +30,6 @@ describe('SpacesClient Structure', () => {
 
   
   
-  it('should have getByCreatorIds method with correct signature', () => {
-    // Check method exists
-    expect(SpacesClient.prototype).toHaveProperty('getByCreatorIds');
-    
-    // Check method is callable
-    const method = spacesClient.getByCreatorIds;
-    expect(typeof method).toBe('function');
-    
-    // Check method signature by examining parameter count
-    const methodString = method.toString();
-    const paramsMatch = methodString.match(/\(([^)]*)\)/);
-    const params = paramsMatch ? paramsMatch[1].split(',').map(p => p.trim().split(':')[0].trim()).filter(p => p) : [];
-    
-    // Check required parameters exist (convert to camelCase for TypeScript)
-    const requiredParams = [
-      
-      'userIds',
-      
-    ];
-    
-    for (const requiredParam of requiredParams) {
-      // Check if parameter exists (may be in camelCase or snake_case)
-      const paramExists = params.some(p => 
-        p === requiredParam || 
-        p.toLowerCase() === requiredParam.toLowerCase() ||
-        p.replace(/_/g, '') === requiredParam.replace(/_/g, '')
-      );
-      expect(paramExists).toBe(true);
-    }
-  });
-
-  it('should have getByCreatorIds method with return type annotation', () => {
-    const method = spacesClient.getByCreatorIds;
-    expect(typeof method).toBe('function');
-    // TypeScript will enforce return types at compile time
-    // This test ensures the method exists and is callable
-  });
-
-  
-
-  
   it('should have getPosts method with correct signature', () => {
     // Check method exists
     expect(SpacesClient.prototype).toHaveProperty('getPosts');
@@ -112,6 +71,47 @@ describe('SpacesClient Structure', () => {
   
 
   
+  it('should have search method with correct signature', () => {
+    // Check method exists
+    expect(SpacesClient.prototype).toHaveProperty('search');
+    
+    // Check method is callable
+    const method = spacesClient.search;
+    expect(typeof method).toBe('function');
+    
+    // Check method signature by examining parameter count
+    const methodString = method.toString();
+    const paramsMatch = methodString.match(/\(([^)]*)\)/);
+    const params = paramsMatch ? paramsMatch[1].split(',').map(p => p.trim().split(':')[0].trim()).filter(p => p) : [];
+    
+    // Check required parameters exist (convert to camelCase for TypeScript)
+    const requiredParams = [
+      
+      'query',
+      
+    ];
+    
+    for (const requiredParam of requiredParams) {
+      // Check if parameter exists (may be in camelCase or snake_case)
+      const paramExists = params.some(p => 
+        p === requiredParam || 
+        p.toLowerCase() === requiredParam.toLowerCase() ||
+        p.replace(/_/g, '') === requiredParam.replace(/_/g, '')
+      );
+      expect(paramExists).toBe(true);
+    }
+  });
+
+  it('should have search method with return type annotation', () => {
+    const method = spacesClient.search;
+    expect(typeof method).toBe('function');
+    // TypeScript will enforce return types at compile time
+    // This test ensures the method exists and is callable
+  });
+
+  
+
+  
   it('should have getById method with correct signature', () => {
     // Check method exists
     expect(SpacesClient.prototype).toHaveProperty('getById');
@@ -145,6 +145,47 @@ describe('SpacesClient Structure', () => {
 
   it('should have getById method with return type annotation', () => {
     const method = spacesClient.getById;
+    expect(typeof method).toBe('function');
+    // TypeScript will enforce return types at compile time
+    // This test ensures the method exists and is callable
+  });
+
+  
+
+  
+  it('should have getByCreatorIds method with correct signature', () => {
+    // Check method exists
+    expect(SpacesClient.prototype).toHaveProperty('getByCreatorIds');
+    
+    // Check method is callable
+    const method = spacesClient.getByCreatorIds;
+    expect(typeof method).toBe('function');
+    
+    // Check method signature by examining parameter count
+    const methodString = method.toString();
+    const paramsMatch = methodString.match(/\(([^)]*)\)/);
+    const params = paramsMatch ? paramsMatch[1].split(',').map(p => p.trim().split(':')[0].trim()).filter(p => p) : [];
+    
+    // Check required parameters exist (convert to camelCase for TypeScript)
+    const requiredParams = [
+      
+      'userIds',
+      
+    ];
+    
+    for (const requiredParam of requiredParams) {
+      // Check if parameter exists (may be in camelCase or snake_case)
+      const paramExists = params.some(p => 
+        p === requiredParam || 
+        p.toLowerCase() === requiredParam.toLowerCase() ||
+        p.replace(/_/g, '') === requiredParam.replace(/_/g, '')
+      );
+      expect(paramExists).toBe(true);
+    }
+  });
+
+  it('should have getByCreatorIds method with return type annotation', () => {
+    const method = spacesClient.getByCreatorIds;
     expect(typeof method).toBe('function');
     // TypeScript will enforce return types at compile time
     // This test ensures the method exists and is callable
@@ -253,62 +294,21 @@ describe('SpacesClient Structure', () => {
   
 
   
-  it('should have search method with correct signature', () => {
-    // Check method exists
-    expect(SpacesClient.prototype).toHaveProperty('search');
-    
-    // Check method is callable
-    const method = spacesClient.search;
-    expect(typeof method).toBe('function');
-    
-    // Check method signature by examining parameter count
-    const methodString = method.toString();
-    const paramsMatch = methodString.match(/\(([^)]*)\)/);
-    const params = paramsMatch ? paramsMatch[1].split(',').map(p => p.trim().split(':')[0].trim()).filter(p => p) : [];
-    
-    // Check required parameters exist (convert to camelCase for TypeScript)
-    const requiredParams = [
-      
-      'query',
-      
-    ];
-    
-    for (const requiredParam of requiredParams) {
-      // Check if parameter exists (may be in camelCase or snake_case)
-      const paramExists = params.some(p => 
-        p === requiredParam || 
-        p.toLowerCase() === requiredParam.toLowerCase() ||
-        p.replace(/_/g, '') === requiredParam.replace(/_/g, '')
-      );
-      expect(paramExists).toBe(true);
-    }
-  });
-
-  it('should have search method with return type annotation', () => {
-    const method = spacesClient.search;
-    expect(typeof method).toBe('function');
-    // TypeScript will enforce return types at compile time
-    // This test ensures the method exists and is callable
-  });
-
-  
-
-  
 
   it('should have all expected methods', () => {
     const expectedMethods = [
       
-      'getByCreatorIds',
-      
       'getPosts',
       
+      'search',
+      
       'getById',
+      
+      'getByCreatorIds',
       
       'getBuyers',
       
       'getByIds',
-      
-      'search',
       
     ];
 

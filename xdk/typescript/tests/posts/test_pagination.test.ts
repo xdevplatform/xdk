@@ -30,16 +30,14 @@ describe('PostsClient Pagination', () => {
   });
 
   
-  it('should create paginator for searchAll', () => {
-    const method = (postsClient as any)['searchAll'];
+  it('should create paginator for getReposts', () => {
+    const method = (postsClient as any)['getReposts'];
     
     // Should be able to create paginator without error
     const params: any = {
       
       
-      
-      query: 'test_query',
-      
+      id: 'test_value',
       
       
       maxResults: 10
@@ -50,7 +48,7 @@ describe('PostsClient Pagination', () => {
     expect(typeof method).toBe('function');
   });
 
-  it('should paginate through pages for searchAll', async () => {
+  it('should paginate through pages for getReposts', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -102,15 +100,13 @@ describe('PostsClient Pagination', () => {
     });
 
     try {
-      const method = (postsClient as any)['searchAll'];
+      const method = (postsClient as any)['getReposts'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
       
       
-      
-      'test_query',
-      
+      'test_value',
       
       
       ];
@@ -146,7 +142,7 @@ describe('PostsClient Pagination', () => {
     }
   });
 
-  it('should handle pagination parameters correctly for searchAll', async () => {
+  it('should handle pagination parameters correctly for getReposts', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -166,15 +162,176 @@ describe('PostsClient Pagination', () => {
     } as Response);
 
     try {
-      const method = (postsClient as any)['searchAll'];
+      const method = (postsClient as any)['getReposts'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
       
       
+      'test_value',
       
-      'test_query',
       
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 5
+      };
+
+      await method.apply(postsClient, [...requiredArgs, options]);
+
+      // Verify maxResults was passed in request (becomes max_results in query string)
+      expect(client.httpClient.request).toHaveBeenCalled();
+      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
+      const url = callArgs[0] as string;
+      // maxResults in options becomes max_results in query string
+      expect(url).toMatch(/max_results=5|maxResults=5/);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  
+  it('should create paginator for getRepostedBy', () => {
+    const method = (postsClient as any)['getRepostedBy'];
+    
+    // Should be able to create paginator without error
+    const params: any = {
+      
+      
+      id: 'test_value',
+      
+      
+      maxResults: 10
+    };
+    
+    // Note: Paginator creation is typically done through the method itself
+    // This test verifies the method supports pagination
+    expect(typeof method).toBe('function');
+  });
+
+  it('should paginate through pages for getRepostedBy', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request to return paginated responses (like Python mocks session)
+    let callCount = 0;
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
+      callCount++;
+      if (callCount === 1) {
+        // First page response
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '1', name: 'Item 1' },
+              { id: '2', name: 'Item 2' }
+            ],
+            meta: {
+              
+              'next_token': 'next_page_token',
+              
+              result_count: 2
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      } else {
+        // Second page response (no next token = end of pagination)
+        return Promise.resolve({
+          ok: true,
+          status: 200,
+          statusText: 'OK',
+          headers: new Headers({ 'content-type': 'application/json' }),
+          json: async () => ({
+            data: [
+              { id: '3', name: 'Item 3' }
+            ],
+            meta: {
+              result_count: 1
+            }
+          }),
+          text: async () => '{}'
+        } as Response);
+      }
+    });
+
+    try {
+      const method = (postsClient as any)['getRepostedBy'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
+      
+      ];
+      
+      // Build options object with optional query parameters (maxResults is always in options)
+      const options: any = {
+      maxResults: 2
+      };
+
+      // Call method and get first page
+      const firstPage = await method.apply(postsClient, [...requiredArgs, options]);
+      expect(firstPage).toBeDefined();
+      expect(firstPage.data).toBeDefined();
+      expect(Array.isArray(firstPage.data)).toBe(true);
+      expect(firstPage.data.length).toBe(2);
+
+      // If there's a next token, call again with pagination token
+      
+      if (firstPage.meta && firstPage.meta['next_token']) {
+        options.paginationToken = firstPage.meta['next_token'];
+        const secondPage = await method.apply(postsClient, [...requiredArgs, options]);
+        expect(secondPage).toBeDefined();
+        expect(secondPage.data).toBeDefined();
+        expect(Array.isArray(secondPage.data)).toBe(true);
+      }
+      
+
+      // Should have made multiple requests
+      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
+    } finally {
+      client.httpClient.request = originalRequest;
+      client.validateAuthentication = originalValidateAuth;
+    }
+  });
+
+  it('should handle pagination parameters correctly for getRepostedBy', async () => {
+    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
+    const originalValidateAuth = client.validateAuthentication;
+    client.validateAuthentication = jest.fn();
+    
+    // Mock httpClient.request (like Python mocks session)
+    const originalRequest = client.httpClient.request;
+    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
+      ok: true,
+      status: 200,
+      statusText: 'OK',
+      headers: new Headers({ 'content-type': 'application/json' }),
+      json: async () => ({
+        data: [],
+        meta: { result_count: 0 }
+      }),
+      text: async () => '{}'
+    } as Response);
+
+    try {
+      const method = (postsClient as any)['getRepostedBy'];
+      
+      // Build required parameters as direct arguments (both path and required query params)
+      const requiredArgs: any[] = [
+      
+      
+      'test_value',
       
       
       ];
@@ -362,14 +519,16 @@ describe('PostsClient Pagination', () => {
   });
 
   
-  it('should create paginator for getReposts', () => {
-    const method = (postsClient as any)['getReposts'];
+  it('should create paginator for searchAll', () => {
+    const method = (postsClient as any)['searchAll'];
     
     // Should be able to create paginator without error
     const params: any = {
       
       
-      id: 'test_value',
+      
+      query: 'test_query',
+      
       
       
       maxResults: 10
@@ -380,7 +539,7 @@ describe('PostsClient Pagination', () => {
     expect(typeof method).toBe('function');
   });
 
-  it('should paginate through pages for getReposts', async () => {
+  it('should paginate through pages for searchAll', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -432,13 +591,15 @@ describe('PostsClient Pagination', () => {
     });
 
     try {
-      const method = (postsClient as any)['getReposts'];
+      const method = (postsClient as any)['searchAll'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
       
       
-      'test_value',
+      
+      'test_query',
+      
       
       
       ];
@@ -474,7 +635,7 @@ describe('PostsClient Pagination', () => {
     }
   });
 
-  it('should handle pagination parameters correctly for getReposts', async () => {
+  it('should handle pagination parameters correctly for searchAll', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -494,13 +655,15 @@ describe('PostsClient Pagination', () => {
     } as Response);
 
     try {
-      const method = (postsClient as any)['getReposts'];
+      const method = (postsClient as any)['searchAll'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [
       
       
-      'test_value',
+      
+      'test_query',
+      
       
       
       ];
@@ -658,169 +821,6 @@ describe('PostsClient Pagination', () => {
 
     try {
       const method = (postsClient as any)['getQuoted'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 5
-      };
-
-      await method.apply(postsClient, [...requiredArgs, options]);
-
-      // Verify maxResults was passed in request (becomes max_results in query string)
-      expect(client.httpClient.request).toHaveBeenCalled();
-      const callArgs = (client.httpClient.request as jest.Mock).mock.calls[0];
-      const url = callArgs[0] as string;
-      // maxResults in options becomes max_results in query string
-      expect(url).toMatch(/max_results=5|maxResults=5/);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  
-  it('should create paginator for getRepostedBy', () => {
-    const method = (postsClient as any)['getRepostedBy'];
-    
-    // Should be able to create paginator without error
-    const params: any = {
-      
-      
-      id: 'test_value',
-      
-      
-      maxResults: 10
-    };
-    
-    // Note: Paginator creation is typically done through the method itself
-    // This test verifies the method supports pagination
-    expect(typeof method).toBe('function');
-  });
-
-  it('should paginate through pages for getRepostedBy', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request to return paginated responses (like Python mocks session)
-    let callCount = 0;
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockImplementation(() => {
-      callCount++;
-      if (callCount === 1) {
-        // First page response
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '1', name: 'Item 1' },
-              { id: '2', name: 'Item 2' }
-            ],
-            meta: {
-              
-              'next_token': 'next_page_token',
-              
-              result_count: 2
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      } else {
-        // Second page response (no next token = end of pagination)
-        return Promise.resolve({
-          ok: true,
-          status: 200,
-          statusText: 'OK',
-          headers: new Headers({ 'content-type': 'application/json' }),
-          json: async () => ({
-            data: [
-              { id: '3', name: 'Item 3' }
-            ],
-            meta: {
-              result_count: 1
-            }
-          }),
-          text: async () => '{}'
-        } as Response);
-      }
-    });
-
-    try {
-      const method = (postsClient as any)['getRepostedBy'];
-      
-      // Build required parameters as direct arguments (both path and required query params)
-      const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
-      
-      ];
-      
-      // Build options object with optional query parameters (maxResults is always in options)
-      const options: any = {
-      maxResults: 2
-      };
-
-      // Call method and get first page
-      const firstPage = await method.apply(postsClient, [...requiredArgs, options]);
-      expect(firstPage).toBeDefined();
-      expect(firstPage.data).toBeDefined();
-      expect(Array.isArray(firstPage.data)).toBe(true);
-      expect(firstPage.data.length).toBe(2);
-
-      // If there's a next token, call again with pagination token
-      
-      if (firstPage.meta && firstPage.meta['next_token']) {
-        options.paginationToken = firstPage.meta['next_token'];
-        const secondPage = await method.apply(postsClient, [...requiredArgs, options]);
-        expect(secondPage).toBeDefined();
-        expect(secondPage.data).toBeDefined();
-        expect(Array.isArray(secondPage.data)).toBe(true);
-      }
-      
-
-      // Should have made multiple requests
-      expect((client.httpClient.request as jest.Mock).mock.calls.length).toBeGreaterThan(0);
-    } finally {
-      client.httpClient.request = originalRequest;
-      client.validateAuthentication = originalValidateAuth;
-    }
-  });
-
-  it('should handle pagination parameters correctly for getRepostedBy', async () => {
-    // Mock validateAuthentication to bypass auth checks (like Python mocks session)
-    const originalValidateAuth = client.validateAuthentication;
-    client.validateAuthentication = jest.fn();
-    
-    // Mock httpClient.request (like Python mocks session)
-    const originalRequest = client.httpClient.request;
-    (client.httpClient.request as any) = jest.fn().mockResolvedValue({
-      ok: true,
-      status: 200,
-      statusText: 'OK',
-      headers: new Headers({ 'content-type': 'application/json' }),
-      json: async () => ({
-        data: [],
-        meta: { result_count: 0 }
-      }),
-      text: async () => '{}'
-    } as Response);
-
-    try {
-      const method = (postsClient as any)['getRepostedBy'];
       
       // Build required parameters as direct arguments (both path and required query params)
       const requiredArgs: any[] = [

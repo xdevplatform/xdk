@@ -17,8 +17,8 @@ import {
 } from '../paginator.js';
 import {
   GetAiResponse,
-  GetPersonalizedResponse,
   GetByWoeidResponse,
+  GetPersonalizedResponse,
 } from './models.js';
 
 /**
@@ -30,22 +30,6 @@ export interface GetAiOptions {
   /** A comma separated list of News fields to display. 
      * Also accepts: news.fields or proper camelCase (e.g., newsFields) */
   newsFields?: Array<any>;
-
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
-  [key: string]: any;
-}
-
-/**
- * Options for getPersonalized method
- * 
- * @public
- */
-export interface GetPersonalizedOptions {
-  /** A comma separated list of PersonalizedTrend fields to display. 
-     * Also accepts: personalized_trend.fields or proper camelCase (e.g., personalizedTrendFields) */
-  personalizedTrendFields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -66,6 +50,22 @@ export interface GetByWoeidOptions {
   /** A comma separated list of Trend fields to display. 
      * Also accepts: trend.fields or proper camelCase (e.g., trendFields) */
   trendFields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for getPersonalized method
+ * 
+ * @public
+ */
+export interface GetPersonalizedOptions {
+  /** A comma separated list of PersonalizedTrend fields to display. 
+     * Also accepts: personalized_trend.fields or proper camelCase (e.g., personalizedTrendFields) */
+  personalizedTrendFields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -186,74 +186,6 @@ export class TrendsClient {
   }
 
   /**
-   * Get personalized Trends
-   * Retrieves personalized trending topics for the authenticated user.
-
-
-
-   * @returns {Promise<GetPersonalizedResponse>} Promise resolving to the API response
-   */
-  // Overload 1: Default behavior (unwrapped response)
-  async getPersonalized(
-    options: GetPersonalizedOptions = {}
-  ): Promise<GetPersonalizedResponse> {
-    // Normalize options to handle both camelCase and original API parameter names
-
-    const paramMappings: Record<string, string> = {
-      'personalized_trend.fields': 'personalizedTrendFields',
-    };
-    const normalizedOptions = this._normalizeOptions(
-      options || {},
-      paramMappings
-    );
-
-    // Destructure options (exclude path parameters, they're already function params)
-    const {
-      personalizedTrendFields = [],
-
-      requestOptions: requestOptions = {},
-    } = normalizedOptions;
-
-    // Build the path with path parameters
-    let path = '/2/users/personalized_trends';
-
-    // Build query parameters
-    const params = new URLSearchParams();
-
-    if (
-      personalizedTrendFields !== undefined &&
-      personalizedTrendFields.length > 0
-    ) {
-      params.append(
-        'personalized_trend.fields',
-        personalizedTrendFields.join(',')
-      );
-    }
-
-    // Prepare request options
-    const finalRequestOptions: RequestOptions = {
-      // Pass security requirements for smart auth selection
-      security: [
-        {
-          OAuth2UserToken: ['tweet.read', 'users.read'],
-        },
-
-        {
-          UserToken: [],
-        },
-      ],
-
-      ...requestOptions,
-    };
-
-    return this.client.request<GetPersonalizedResponse>(
-      'GET',
-      path + (params.toString() ? `?${params.toString()}` : ''),
-      finalRequestOptions
-    );
-  }
-
-  /**
    * Get Trends by WOEID
    * Retrieves trending topics for a specific location identified by its WOEID.
 
@@ -320,6 +252,74 @@ export class TrendsClient {
     };
 
     return this.client.request<GetByWoeidResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Get personalized Trends
+   * Retrieves personalized trending topics for the authenticated user.
+
+
+
+   * @returns {Promise<GetPersonalizedResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async getPersonalized(
+    options: GetPersonalizedOptions = {}
+  ): Promise<GetPersonalizedResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      'personalized_trend.fields': 'personalizedTrendFields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      personalizedTrendFields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/users/personalized_trends';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (
+      personalizedTrendFields !== undefined &&
+      personalizedTrendFields.length > 0
+    ) {
+      params.append(
+        'personalized_trend.fields',
+        personalizedTrendFields.join(',')
+      );
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          OAuth2UserToken: ['tweet.read', 'users.read'],
+        },
+
+        {
+          UserToken: [],
+        },
+      ],
+
+      ...requestOptions,
+    };
+
+    return this.client.request<GetPersonalizedResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
