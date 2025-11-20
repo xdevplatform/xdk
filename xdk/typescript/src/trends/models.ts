@@ -11,11 +11,11 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
- * Response for getAi
+ * Response for getPersonalized
  * 
  * @public
  */
-export type GetAiResponse = Schemas.Get2AiTrendsIdResponse;
+export type GetPersonalizedResponse = Schemas.Get2UsersPersonalizedTrendsResponse;
 /**
  * Response for getByWoeid
  * 
@@ -23,8 +23,8 @@ export type GetAiResponse = Schemas.Get2AiTrendsIdResponse;
  */
 export type GetByWoeidResponse = Schemas.Get2TrendsByWoeidWoeidResponse;
 /**
- * Response for getPersonalized
+ * Response for getAi
  * 
  * @public
  */
-export type GetPersonalizedResponse = Schemas.Get2UsersPersonalizedTrendsResponse;
+export type GetAiResponse = Schemas.Get2AiTrendsIdResponse;

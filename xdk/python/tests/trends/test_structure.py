@@ -28,34 +28,32 @@ class TestTrendsStructure:
         self.trends_client = getattr(self.client, "trends")
 
 
-    def test_get_personalized_exists(self):
-        """Test that get_personalized method exists with correct signature."""
+    def test_get_ai_exists(self):
+        """Test that get_ai method exists with correct signature."""
         # Check method exists
-        method = getattr(TrendsClient, "get_personalized", None)
-        assert (
-            method is not None
-        ), f"Method get_personalized does not exist on TrendsClient"
+        method = getattr(TrendsClient, "get_ai", None)
+        assert method is not None, f"Method get_ai does not exist on TrendsClient"
         # Check method is callable
-        assert callable(method), f"get_personalized is not callable"
+        assert callable(method), f"get_ai is not callable"
         # Check method signature
         sig = inspect.signature(method)
         params = list(sig.parameters.keys())
         # Should have 'self' as first parameter
-        assert (
-            len(params) >= 1
-        ), f"get_personalized should have at least 'self' parameter"
+        assert len(params) >= 1, f"get_ai should have at least 'self' parameter"
         assert (
             params[0] == "self"
         ), f"First parameter should be 'self', got '{params[0]}'"
         # Check required parameters exist (excluding 'self')
-        required_params = []
+        required_params = [
+            "id",
+        ]
         for required_param in required_params:
             assert (
                 required_param in params
-            ), f"Required parameter '{required_param}' missing from get_personalized"
+            ), f"Required parameter '{required_param}' missing from get_ai"
         # Check optional parameters have defaults (excluding 'self')
         optional_params = [
-            "personalized_trend.fields",
+            "news.fields",
         ]
         for optional_param in optional_params:
             if optional_param in params:
@@ -65,14 +63,14 @@ class TestTrendsStructure:
                 ), f"Optional parameter '{optional_param}' should have a default value"
 
 
-    def test_get_personalized_return_annotation(self):
-        """Test that get_personalized has proper return type annotation."""
-        method = getattr(TrendsClient, "get_personalized")
+    def test_get_ai_return_annotation(self):
+        """Test that get_ai has proper return type annotation."""
+        method = getattr(TrendsClient, "get_ai")
         sig = inspect.signature(method)
         # Check return annotation exists
         assert (
             sig.return_annotation is not inspect.Signature.empty
-        ), f"Method get_personalized should have return type annotation"
+        ), f"Method get_ai should have return type annotation"
 
 
     def test_get_by_woeid_exists(self):
@@ -121,11 +119,59 @@ class TestTrendsStructure:
         ), f"Method get_by_woeid should have return type annotation"
 
 
+    def test_get_personalized_exists(self):
+        """Test that get_personalized method exists with correct signature."""
+        # Check method exists
+        method = getattr(TrendsClient, "get_personalized", None)
+        assert (
+            method is not None
+        ), f"Method get_personalized does not exist on TrendsClient"
+        # Check method is callable
+        assert callable(method), f"get_personalized is not callable"
+        # Check method signature
+        sig = inspect.signature(method)
+        params = list(sig.parameters.keys())
+        # Should have 'self' as first parameter
+        assert (
+            len(params) >= 1
+        ), f"get_personalized should have at least 'self' parameter"
+        assert (
+            params[0] == "self"
+        ), f"First parameter should be 'self', got '{params[0]}'"
+        # Check required parameters exist (excluding 'self')
+        required_params = []
+        for required_param in required_params:
+            assert (
+                required_param in params
+            ), f"Required parameter '{required_param}' missing from get_personalized"
+        # Check optional parameters have defaults (excluding 'self')
+        optional_params = [
+            "personalized_trend.fields",
+        ]
+        for optional_param in optional_params:
+            if optional_param in params:
+                param_obj = sig.parameters[optional_param]
+                assert (
+                    param_obj.default is not inspect.Parameter.empty
+                ), f"Optional parameter '{optional_param}' should have a default value"
+
+
+    def test_get_personalized_return_annotation(self):
+        """Test that get_personalized has proper return type annotation."""
+        method = getattr(TrendsClient, "get_personalized")
+        sig = inspect.signature(method)
+        # Check return annotation exists
+        assert (
+            sig.return_annotation is not inspect.Signature.empty
+        ), f"Method get_personalized should have return type annotation"
+
+
     def test_all_expected_methods_exist(self):
         """Test that all expected methods exist on the client."""
         expected_methods = [
-            "get_personalized",
+            "get_ai",
             "get_by_woeid",
+            "get_personalized",
         ]
         for expected_method in expected_methods:
             assert hasattr(

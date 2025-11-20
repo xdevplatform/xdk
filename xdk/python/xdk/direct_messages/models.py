@@ -16,30 +16,6 @@ from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
 
-# Models for get_events_by_participant_id
-
-
-class GetEventsByParticipantIdResponse(BaseModel):
-    """Response model for get_events_by_participant_id"""
-
-    model_config = ConfigDict(populate_by_name=True, extra="allow")
-
-
-# Models for create_by_conversation_id
-
-
-class CreateByConversationIdRequest(BaseModel):
-    """Request model for create_by_conversation_id"""
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class CreateByConversationIdResponse(BaseModel):
-    """Response model for create_by_conversation_id"""
-
-    model_config = ConfigDict(populate_by_name=True, extra="allow")
-
-
 # Models for get_events_by_conversation_id
 
 
@@ -60,6 +36,30 @@ class CreateConversationRequest(BaseModel):
 
 class CreateConversationResponse(BaseModel):
     """Response model for create_conversation"""
+
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
+
+
+# Models for create_by_conversation_id
+
+
+class CreateByConversationIdRequest(BaseModel):
+    """Request model for create_by_conversation_id"""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class CreateByConversationIdResponse(BaseModel):
+    """Response model for create_by_conversation_id"""
+
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
+
+
+# Models for get_events_by_participant_id
+
+
+class GetEventsByParticipantIdResponse(BaseModel):
+    """Response model for get_events_by_participant_id"""
 
     model_config = ConfigDict(populate_by_name=True, extra="allow")
 

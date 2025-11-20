@@ -37,7 +37,7 @@ class ComplianceClient:
 
 
     def get_jobs(
-        self, type: str, status: str = None, compliance_jobfields: List = None
+        self, type: str, status: str = None, compliance_job_fields: List = None
     ) -> GetJobsResponse:
         """
         Get Compliance Jobs
@@ -45,7 +45,7 @@ class ComplianceClient:
         Args:
             type: Type of Compliance Job to list.
             status: Status of Compliance Job to list.
-            compliance_jobfields: A comma separated list of ComplianceJob fields to display.
+            compliance_job_fields: A comma separated list of ComplianceJob fields to display.
             Returns:
             GetJobsResponse: Response data
         """
@@ -63,9 +63,9 @@ class ComplianceClient:
             params["type"] = type
         if status is not None:
             params["status"] = status
-        if compliance_jobfields is not None:
+        if compliance_job_fields is not None:
             params["compliance_job.fields"] = ",".join(
-                str(item) for item in compliance_jobfields
+                str(item) for item in compliance_job_fields
             )
         headers = {}
         # Prepare request data
@@ -128,14 +128,14 @@ class ComplianceClient:
 
 
     def get_jobs_by_id(
-        self, id: Any, compliance_jobfields: List = None
+        self, id: Any, compliance_job_fields: List = None
     ) -> GetJobsByIdResponse:
         """
         Get Compliance Job by ID
         Retrieves details of a specific Compliance Job by its ID.
         Args:
             id: The ID of the Compliance Job to retrieve.
-            compliance_jobfields: A comma separated list of ComplianceJob fields to display.
+            compliance_job_fields: A comma separated list of ComplianceJob fields to display.
             Returns:
             GetJobsByIdResponse: Response data
         """
@@ -150,9 +150,9 @@ class ComplianceClient:
                 f"Bearer {self.client.access_token}"
             )
         params = {}
-        if compliance_jobfields is not None:
+        if compliance_job_fields is not None:
             params["compliance_job.fields"] = ",".join(
-                str(item) for item in compliance_jobfields
+                str(item) for item in compliance_job_fields
             )
         headers = {}
         # Prepare request data

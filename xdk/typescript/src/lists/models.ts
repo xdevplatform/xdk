@@ -11,36 +11,6 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
- * Response for removeMemberByUserId
- * 
- * @public
- */
-export type RemoveMemberByUserIdResponse = Schemas.ListMutateResponse;
-/**
- * Response for getById
- * 
- * @public
- */
-export type GetByIdResponse = Schemas.Get2ListsIdResponse;
-/**
- * Request for update
- * 
- * @public
- */
-export type UpdateRequest = Schemas.ListUpdateRequest;
-/**
- * Response for update
- * 
- * @public
- */
-export type UpdateResponse = Schemas.ListUpdateResponse;
-/**
- * Response for delete
- * 
- * @public
- */
-export type DeleteResponse = Schemas.ListDeleteResponse;
-/**
  * Response for getMembers
  * 
  * @public
@@ -70,6 +40,36 @@ export type GetFollowersResponse = Schemas.Get2ListsIdFollowersResponse;
  * @public
  */
 export type GetPostsResponse = Schemas.Get2ListsIdTweetsResponse;
+/**
+ * Response for removeMemberByUserId
+ * 
+ * @public
+ */
+export type RemoveMemberByUserIdResponse = Schemas.ListMutateResponse;
+/**
+ * Response for getById
+ * 
+ * @public
+ */
+export type GetByIdResponse = Schemas.Get2ListsIdResponse;
+/**
+ * Request for update
+ * 
+ * @public
+ */
+export type UpdateRequest = Schemas.ListUpdateRequest;
+/**
+ * Response for update
+ * 
+ * @public
+ */
+export type UpdateResponse = Schemas.ListUpdateResponse;
+/**
+ * Response for delete
+ * 
+ * @public
+ */
+export type DeleteResponse = Schemas.ListDeleteResponse;
 /**
  * Request for create
  * 

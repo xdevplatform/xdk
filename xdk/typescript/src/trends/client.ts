@@ -16,20 +16,20 @@ import {
   EventPaginator,
 } from '../paginator.js';
 import {
-  GetAiResponse,
-  GetByWoeidResponse,
   GetPersonalizedResponse,
+  GetByWoeidResponse,
+  GetAiResponse,
 } from './models.js';
 
 /**
- * Options for getAi method
+ * Options for getPersonalized method
  * 
  * @public
  */
-export interface GetAiOptions {
-  /** A comma separated list of News fields to display. 
-     * Also accepts: news.fields or proper camelCase (e.g., newsFields) */
-  newsFields?: Array<any>;
+export interface GetPersonalizedOptions {
+  /** A comma separated list of PersonalizedTrend fields to display. 
+     * Also accepts: personalized_trend.fields or proper camelCase (e.g., personalizedTrendFields) */
+  personalizedTrendFields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -58,14 +58,14 @@ export interface GetByWoeidOptions {
 }
 
 /**
- * Options for getPersonalized method
+ * Options for getAi method
  * 
  * @public
  */
-export interface GetPersonalizedOptions {
-  /** A comma separated list of PersonalizedTrend fields to display. 
-     * Also accepts: personalized_trend.fields or proper camelCase (e.g., personalizedTrendFields) */
-  personalizedTrendFields?: Array<any>;
+export interface GetAiOptions {
+  /** A comma separated list of News fields to display. 
+     * Also accepts: news.fields or proper camelCase (e.g., newsFields) */
+  newsFields?: Array<any>;
 
   /** Additional request options */
   requestOptions?: RequestOptions;
@@ -124,23 +124,21 @@ export class TrendsClient {
   }
 
   /**
-   * Get AI Trends by ID
-   * Retrieves an AI trend by its ID.
-
-
-   * @param id The ID of the ai trend.
+   * Get personalized Trends
+   * Retrieves personalized trending topics for the authenticated user.
 
 
 
-
-   * @returns {Promise<GetAiResponse>} Promise resolving to the API response
+   * @returns {Promise<GetPersonalizedResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getAi(id: string, options: GetAiOptions = {}): Promise<GetAiResponse> {
+  async getPersonalized(
+    options: GetPersonalizedOptions = {}
+  ): Promise<GetPersonalizedResponse> {
     // Normalize options to handle both camelCase and original API parameter names
 
     const paramMappings: Record<string, string> = {
-      'news.fields': 'newsFields',
+      'personalized_trend.fields': 'personalizedTrendFields',
     };
     const normalizedOptions = this._normalizeOptions(
       options || {},
@@ -149,21 +147,25 @@ export class TrendsClient {
 
     // Destructure options (exclude path parameters, they're already function params)
     const {
-      newsFields = [],
+      personalizedTrendFields = [],
 
       requestOptions: requestOptions = {},
     } = normalizedOptions;
 
     // Build the path with path parameters
-    let path = '/2/ai_trends/{id}';
-
-    path = path.replace('{id}', encodeURIComponent(String(id)));
+    let path = '/2/users/personalized_trends';
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (newsFields !== undefined && newsFields.length > 0) {
-      params.append('news.fields', newsFields.join(','));
+    if (
+      personalizedTrendFields !== undefined &&
+      personalizedTrendFields.length > 0
+    ) {
+      params.append(
+        'personalized_trend.fields',
+        personalizedTrendFields.join(',')
+      );
     }
 
     // Prepare request options
@@ -171,14 +173,18 @@ export class TrendsClient {
       // Pass security requirements for smart auth selection
       security: [
         {
-          BearerToken: [],
+          OAuth2UserToken: ['tweet.read', 'users.read'],
+        },
+
+        {
+          UserToken: [],
         },
       ],
 
       ...requestOptions,
     };
 
-    return this.client.request<GetAiResponse>(
+    return this.client.request<GetPersonalizedResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions
@@ -259,21 +265,23 @@ export class TrendsClient {
   }
 
   /**
-   * Get personalized Trends
-   * Retrieves personalized trending topics for the authenticated user.
+   * Get AI Trends by ID
+   * Retrieves an AI trend by its ID.
+
+
+   * @param id The ID of the ai trend.
 
 
 
-   * @returns {Promise<GetPersonalizedResponse>} Promise resolving to the API response
+
+   * @returns {Promise<GetAiResponse>} Promise resolving to the API response
    */
   // Overload 1: Default behavior (unwrapped response)
-  async getPersonalized(
-    options: GetPersonalizedOptions = {}
-  ): Promise<GetPersonalizedResponse> {
+  async getAi(id: string, options: GetAiOptions = {}): Promise<GetAiResponse> {
     // Normalize options to handle both camelCase and original API parameter names
 
     const paramMappings: Record<string, string> = {
-      'personalized_trend.fields': 'personalizedTrendFields',
+      'news.fields': 'newsFields',
     };
     const normalizedOptions = this._normalizeOptions(
       options || {},
@@ -282,25 +290,21 @@ export class TrendsClient {
 
     // Destructure options (exclude path parameters, they're already function params)
     const {
-      personalizedTrendFields = [],
+      newsFields = [],
 
       requestOptions: requestOptions = {},
     } = normalizedOptions;
 
     // Build the path with path parameters
-    let path = '/2/users/personalized_trends';
+    let path = '/2/ai_trends/{id}';
+
+    path = path.replace('{id}', encodeURIComponent(String(id)));
 
     // Build query parameters
     const params = new URLSearchParams();
 
-    if (
-      personalizedTrendFields !== undefined &&
-      personalizedTrendFields.length > 0
-    ) {
-      params.append(
-        'personalized_trend.fields',
-        personalizedTrendFields.join(',')
-      );
+    if (newsFields !== undefined && newsFields.length > 0) {
+      params.append('news.fields', newsFields.join(','));
     }
 
     // Prepare request options
@@ -308,18 +312,14 @@ export class TrendsClient {
       // Pass security requirements for smart auth selection
       security: [
         {
-          OAuth2UserToken: ['tweet.read', 'users.read'],
-        },
-
-        {
-          UserToken: [],
+          BearerToken: [],
         },
       ],
 
       ...requestOptions,
     };
 
-    return this.client.request<GetPersonalizedResponse>(
+    return this.client.request<GetAiResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

@@ -11,12 +11,6 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
- * Response for getJobsById
- * 
- * @public
- */
-export type GetJobsByIdResponse = Schemas.Get2ComplianceJobsIdResponse;
-/**
  * Response for getJobs
  * 
  * @public
@@ -34,3 +28,9 @@ export type CreateJobsRequest = Schemas.CreateComplianceJobRequest;
  * @public
  */
 export type CreateJobsResponse = Schemas.CreateComplianceJobResponse;
+/**
+ * Response for getJobsById
+ * 
+ * @public
+ */
+export type GetJobsByIdResponse = Schemas.Get2ComplianceJobsIdResponse;

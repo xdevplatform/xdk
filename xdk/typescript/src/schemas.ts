@@ -922,6 +922,15 @@ export interface Get2NewsIdResponse {
   data?: News;
   /** none */ errors?: Array<Problem>;
 } /**
+Schema type for Get2NewsSearchResponse
+ *
+ * @public
+ */
+export interface Get2NewsSearchResponse {
+  /** none */ data?: Array<News>;
+  /** none */ errors?: Array<Problem>;
+  /** none */ meta?: Record<string, any>;
+} /**
 Schema type for Get2NotesSearchNotesWrittenResponse
  *
  * @public

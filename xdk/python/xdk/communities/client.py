@@ -40,7 +40,7 @@ class CommunitiesClient:
         max_results: int = None,
         next_token: Any = None,
         pagination_token: Any = None,
-        communityfields: List = None,
+        community_fields: List = None,
     ) -> SearchResponse:
         """
         Search Communities
@@ -50,7 +50,7 @@ class CommunitiesClient:
             max_results: The maximum number of search results to be returned by a request.
             next_token: This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
             pagination_token: This parameter is used to get the next 'page' of results. The value used with the parameter is pulled directly from the response provided by the API, and should not be modified.
-            communityfields: A comma separated list of Community fields to display.
+            community_fields: A comma separated list of Community fields to display.
             Returns:
             SearchResponse: Response data
         """
@@ -69,8 +69,10 @@ class CommunitiesClient:
             params["next_token"] = next_token
         if pagination_token is not None:
             params["pagination_token"] = pagination_token
-        if communityfields is not None:
-            params["community.fields"] = ",".join(str(item) for item in communityfields)
+        if community_fields is not None:
+            params["community.fields"] = ",".join(
+                str(item) for item in community_fields
+            )
         headers = {}
         # Prepare request data
         json_data = None
@@ -95,13 +97,13 @@ class CommunitiesClient:
         return SearchResponse.model_validate(response_data)
 
 
-    def get_by_id(self, id: Any, communityfields: List = None) -> GetByIdResponse:
+    def get_by_id(self, id: Any, community_fields: List = None) -> GetByIdResponse:
         """
         Get Community by ID
         Retrieves details of a specific Community by its ID.
         Args:
             id: The ID of the Community.
-            communityfields: A comma separated list of Community fields to display.
+            community_fields: A comma separated list of Community fields to display.
             Returns:
             GetByIdResponse: Response data
         """
@@ -121,8 +123,10 @@ class CommunitiesClient:
             if self.client.is_token_expired():
                 self.client.refresh_token()
         params = {}
-        if communityfields is not None:
-            params["community.fields"] = ",".join(str(item) for item in communityfields)
+        if community_fields is not None:
+            params["community.fields"] = ",".join(
+                str(item) for item in community_fields
+            )
         headers = {}
         # Prepare request data
         json_data = None

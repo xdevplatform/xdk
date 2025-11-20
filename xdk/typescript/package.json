@@ -102,10 +102,10 @@
     "test:coverage": "jest --coverage",
     "docs": "typedoc",
     "docs:build": "typedoc && echo \"Documentation generated in docs/\"",
-    "docs:build-simple": "node generate-docs-simple.js",
+    "docs:build-simple": "node scripts/generate-docs-simple.js",
     "docs:serve": "npx http-server docs -p 8080 -o",
-    "docs:watch": "node watch-docs.js",
-    "docs:mintlify": "node process-for-mintlify.js"
+    "docs:watch": "node scripts/watch-docs.js",
+    "docs:mintlify": "node scripts/process-for-mintlify.js"
   },
   "prettier": {
     "semi": true,

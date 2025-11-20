@@ -21,8 +21,9 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    GetPersonalizedResponse,
+    GetAiResponse,
     GetByWoeidResponse,
+    GetPersonalizedResponse,
 )
 
 
@@ -34,14 +35,99 @@ class TrendsClient:
         self.client = client
 
 
+    def get_ai(self, id: Any, news_fields: List = None) -> GetAiResponse:
+        """
+        Get AI Trends by ID
+        Retrieves an AI trend by its ID.
+        Args:
+            id: The ID of the ai trend.
+            news_fields: A comma separated list of News fields to display.
+            Returns:
+            GetAiResponse: Response data
+        """
+        url = self.client.base_url + "/2/ai_trends/{id}"
+        url = url.replace("{id}", str(id))
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        if news_fields is not None:
+            params["news.fields"] = ",".join(str(item) for item in news_fields)
+        headers = {}
+        # Prepare request data
+        json_data = None
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetAiResponse.model_validate(response_data)
+
+
+    def get_by_woeid(
+        self, woeid: int, max_trends: int = None, trend_fields: List = None
+    ) -> GetByWoeidResponse:
+        """
+        Get Trends by WOEID
+        Retrieves trending topics for a specific location identified by its WOEID.
+        Args:
+            woeid: The WOEID of the place to lookup a trend for.
+            max_trends: The maximum number of results.
+            trend_fields: A comma separated list of Trend fields to display.
+            Returns:
+            GetByWoeidResponse: Response data
+        """
+        url = self.client.base_url + "/2/trends/by/woeid/{woeid}"
+        url = url.replace("{woeid}", str(woeid))
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        if max_trends is not None:
+            params["max_trends"] = max_trends
+        if trend_fields is not None:
+            params["trend.fields"] = ",".join(str(item) for item in trend_fields)
+        headers = {}
+        # Prepare request data
+        json_data = None
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetByWoeidResponse.model_validate(response_data)
+
+
     def get_personalized(
-        self, personalized_trendfields: List = None
+        self, personalized_trend_fields: List = None
     ) -> GetPersonalizedResponse:
         """
         Get personalized Trends
         Retrieves personalized trending topics for the authenticated user.
         Args:
-            personalized_trendfields: A comma separated list of PersonalizedTrend fields to display.
+            personalized_trend_fields: A comma separated list of PersonalizedTrend fields to display.
             Returns:
             GetPersonalizedResponse: Response data
         """
@@ -52,9 +138,9 @@ class TrendsClient:
             if self.client.is_token_expired():
                 self.client.refresh_token()
         params = {}
-        if personalized_trendfields is not None:
+        if personalized_trend_fields is not None:
             params["personalized_trend.fields"] = ",".join(
-                str(item) for item in personalized_trendfields
+                str(item) for item in personalized_trend_fields
             )
         headers = {}
         # Prepare request data
@@ -78,48 +164,3 @@ class TrendsClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return GetPersonalizedResponse.model_validate(response_data)
-
-
-    def get_by_woeid(
-        self, woeid: int, max_trends: int = None, trendfields: List = None
-    ) -> GetByWoeidResponse:
-        """
-        Get Trends by WOEID
-        Retrieves trending topics for a specific location identified by its WOEID.
-        Args:
-            woeid: The WOEID of the place to lookup a trend for.
-            max_trends: The maximum number of results.
-            trendfields: A comma separated list of Trend fields to display.
-            Returns:
-            GetByWoeidResponse: Response data
-        """
-        url = self.client.base_url + "/2/trends/by/woeid/{woeid}"
-        url = url.replace("{woeid}", str(woeid))
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        if max_trends is not None:
-            params["max_trends"] = max_trends
-        if trendfields is not None:
-            params["trend.fields"] = ",".join(str(item) for item in trendfields)
-        headers = {}
-        # Prepare request data
-        json_data = None
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetByWoeidResponse.model_validate(response_data)

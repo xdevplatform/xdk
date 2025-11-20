@@ -1,0 +1,62 @@
+import { execSync } from 'child_process';
+import fs from 'fs';
+import path from 'path';
+
+console.log('🚀 Generating X API SDK Documentation...');
+
+// Create a temporary tsconfig that excludes problematic files
+const tsconfig = {
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "allowJs": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "declaration": true,
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": [
+    "src/client.ts",
+    "src/paginator.ts", 
+    "src/index.ts",
+    "src/http-client.ts"
+  ],
+  "exclude": [
+    "**/stream_client.ts",
+    "**/event_driven_stream.ts",
+    "**/stream_listener.ts",
+    "**/oauth1_auth.ts",
+    "**/oauth2_auth.ts",
+    "**/crypto_utils.ts",
+    "**/models.ts"
+  ]
+};
+
+// Write temporary tsconfig
+fs.writeFileSync('tsconfig.docs.json', JSON.stringify(tsconfig, null, 2));
+
+try {
+  // Generate documentation using the temporary tsconfig
+  execSync('npx typedoc --tsconfig tsconfig.docs.json --out docs --name "X API SDK v{{ version }}" --readme README.md --theme default --includeVersion true --excludePrivate true --excludeProtected true --excludeExternals true --excludeInternal true --searchInComments true --cleanOutputDir true', { stdio: 'inherit' });
+  
+  console.log('✅ Documentation generated successfully in docs/');
+  
+  // Clean up temporary file
+  fs.unlinkSync('tsconfig.docs.json');
+  
+} catch (error) {
+  console.error('❌ Documentation generation failed:', error.message);
+  
+  // Clean up temporary file
+  if (fs.existsSync('tsconfig.docs.json')) {
+    fs.unlinkSync('tsconfig.docs.json');
+  }
+  
+  process.exit(1);
+}
+

@@ -34,17 +34,11 @@ class DeleteResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=True, extra="allow")
 
 
-# Models for evaluate
+# Models for search_written
 
 
-class EvaluateRequest(BaseModel):
-    """Request model for evaluate"""
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class EvaluateResponse(BaseModel):
-    """Response model for evaluate"""
+class SearchWrittenResponse(BaseModel):
+    """Response model for search_written"""
 
     model_config = ConfigDict(populate_by_name=True, extra="allow")
 
@@ -64,10 +58,16 @@ class CreateResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=True, extra="allow")
 
 
-# Models for search_written
+# Models for evaluate
 
 
-class SearchWrittenResponse(BaseModel):
-    """Response model for search_written"""
+class EvaluateRequest(BaseModel):
+    """Request model for evaluate"""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class EvaluateResponse(BaseModel):
+    """Response model for evaluate"""
 
     model_config = ConfigDict(populate_by_name=True, extra="allow")

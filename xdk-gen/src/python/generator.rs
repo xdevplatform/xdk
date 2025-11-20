@@ -49,7 +49,12 @@ language! {
         render "paginator" => "xdk/paginator.py",
         render "init_py" => "xdk/__init__.py",
         render "pyproject_toml" => "pyproject.toml",
-        render "readme" => "README.md"
+        render "sphinx_conf" => "conf.py",
+        render "generate_docs_simple" => "scripts/generate-docs-simple.py",
+        render "process_for_mintlify" => "scripts/process-for-mintlify.py",
+        render "watch_docs" => "scripts/watch-docs.py",
+        render "readme" => "README.md",
+        render "gitignore" => ".gitignore"
     ],
     tests: [
         multiple {
