@@ -30,12 +30,12 @@ describe('TrendsClient Structure', () => {
 
   
   
-  it('should have getAi method with correct signature', () => {
+  it('should have getPersonalized method with correct signature', () => {
     // Check method exists
-    expect(TrendsClient.prototype).toHaveProperty('getAi');
+    expect(TrendsClient.prototype).toHaveProperty('getPersonalized');
     
     // Check method is callable
-    const method = trendsClient.getAi;
+    const method = trendsClient.getPersonalized;
     expect(typeof method).toBe('function');
     
     // Check method signature by examining parameter count
@@ -45,8 +45,6 @@ describe('TrendsClient Structure', () => {
     
     // Check required parameters exist (convert to camelCase for TypeScript)
     const requiredParams = [
-      
-      'id',
       
     ];
     
@@ -61,8 +59,8 @@ describe('TrendsClient Structure', () => {
     }
   });
 
-  it('should have getAi method with return type annotation', () => {
-    const method = trendsClient.getAi;
+  it('should have getPersonalized method with return type annotation', () => {
+    const method = trendsClient.getPersonalized;
     expect(typeof method).toBe('function');
     // TypeScript will enforce return types at compile time
     // This test ensures the method exists and is callable
@@ -112,12 +110,12 @@ describe('TrendsClient Structure', () => {
   
 
   
-  it('should have getPersonalized method with correct signature', () => {
+  it('should have getAi method with correct signature', () => {
     // Check method exists
-    expect(TrendsClient.prototype).toHaveProperty('getPersonalized');
+    expect(TrendsClient.prototype).toHaveProperty('getAi');
     
     // Check method is callable
-    const method = trendsClient.getPersonalized;
+    const method = trendsClient.getAi;
     expect(typeof method).toBe('function');
     
     // Check method signature by examining parameter count
@@ -127,6 +125,8 @@ describe('TrendsClient Structure', () => {
     
     // Check required parameters exist (convert to camelCase for TypeScript)
     const requiredParams = [
+      
+      'id',
       
     ];
     
@@ -141,8 +141,8 @@ describe('TrendsClient Structure', () => {
     }
   });
 
-  it('should have getPersonalized method with return type annotation', () => {
-    const method = trendsClient.getPersonalized;
+  it('should have getAi method with return type annotation', () => {
+    const method = trendsClient.getAi;
     expect(typeof method).toBe('function');
     // TypeScript will enforce return types at compile time
     // This test ensures the method exists and is callable
@@ -155,11 +155,11 @@ describe('TrendsClient Structure', () => {
   it('should have all expected methods', () => {
     const expectedMethods = [
       
-      'getAi',
+      'getPersonalized',
       
       'getByWoeid',
       
-      'getPersonalized',
+      'getAi',
       
     ];
 

@@ -32,12 +32,12 @@ if TYPE_CHECKING:
     from ..client import Client
 from .models import (
     StreamResponse,
-    GetSubscriptionsResponse,
-    CreateSubscriptionRequest,
-    CreateSubscriptionResponse,
     UpdateSubscriptionRequest,
     UpdateSubscriptionResponse,
     DeleteSubscriptionResponse,
+    GetSubscriptionsResponse,
+    CreateSubscriptionRequest,
+    CreateSubscriptionResponse,
 )
 
 
@@ -147,87 +147,6 @@ class ActivityClient:
             raise
 
 
-    def get_subscriptions(
-        self,
-    ) -> GetSubscriptionsResponse:
-        """
-        Get X activity subscriptions
-        Get a list of active subscriptions for XAA
-        Returns:
-            GetSubscriptionsResponse: Response data
-        """
-        url = self.client.base_url + "/2/activity/subscriptions"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        headers = {}
-        # Prepare request data
-        json_data = None
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetSubscriptionsResponse.model_validate(response_data)
-
-
-    def create_subscription(
-        self, body: Optional[CreateSubscriptionRequest] = None
-    ) -> CreateSubscriptionResponse:
-        """
-        Create X activity subscription
-        Creates a subscription for an X activity event
-        body: Request body
-        Returns:
-            CreateSubscriptionResponse: Response data
-        """
-        url = self.client.base_url + "/2/activity/subscriptions"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        headers = {}
-        headers["Content-Type"] = "application/json"
-        # Prepare request data
-        json_data = None
-        if body is not None:
-            json_data = (
-                body.model_dump(exclude_none=True)
-                if hasattr(body, "model_dump")
-                else body
-            )
-        # Make the request
-        response = self.client.session.post(
-            url,
-            params=params,
-            headers=headers,
-            json=json_data,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return CreateSubscriptionResponse.model_validate(response_data)
-
-
     def update_subscription(
         self, subscription_id: Any, body: Optional[UpdateSubscriptionRequest] = None
     ) -> UpdateSubscriptionResponse:
@@ -311,3 +230,84 @@ class ActivityClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return DeleteSubscriptionResponse.model_validate(response_data)
+
+
+    def get_subscriptions(
+        self,
+    ) -> GetSubscriptionsResponse:
+        """
+        Get X activity subscriptions
+        Get a list of active subscriptions for XAA
+        Returns:
+            GetSubscriptionsResponse: Response data
+        """
+        url = self.client.base_url + "/2/activity/subscriptions"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        headers = {}
+        # Prepare request data
+        json_data = None
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetSubscriptionsResponse.model_validate(response_data)
+
+
+    def create_subscription(
+        self, body: Optional[CreateSubscriptionRequest] = None
+    ) -> CreateSubscriptionResponse:
+        """
+        Create X activity subscription
+        Creates a subscription for an X activity event
+        body: Request body
+        Returns:
+            CreateSubscriptionResponse: Response data
+        """
+        url = self.client.base_url + "/2/activity/subscriptions"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        headers = {}
+        headers["Content-Type"] = "application/json"
+        # Prepare request data
+        json_data = None
+        if body is not None:
+            json_data = (
+                body.model_dump(exclude_none=True)
+                if hasattr(body, "model_dump")
+                else body
+            )
+        # Make the request
+        response = self.client.session.post(
+            url,
+            params=params,
+            headers=headers,
+            json=json_data,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return CreateSubscriptionResponse.model_validate(response_data)

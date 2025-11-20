@@ -17,12 +17,6 @@ import type * as Schemas from '../schemas.js';
  */
 export type DeleteResponse = Schemas.DeleteNoteResponse;
 /**
- * Response for searchEligiblePosts
- * 
- * @public
- */
-export type SearchEligiblePostsResponse = Schemas.Get2NotesSearchPostsEligibleForNotesResponse;
-/**
  * Request for evaluate
  * 
  * @public
@@ -52,3 +46,9 @@ export type CreateRequest = Schemas.CreateNoteRequest;
  * @public
  */
 export type CreateResponse = Schemas.CreateNoteResponse;
+/**
+ * Response for searchEligiblePosts
+ * 
+ * @public
+ */
+export type SearchEligiblePostsResponse = Schemas.Get2NotesSearchPostsEligibleForNotesResponse;

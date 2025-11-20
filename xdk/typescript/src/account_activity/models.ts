@@ -11,6 +11,12 @@ import type * as Schemas from '../schemas.js';
 
 
 /**
+ * Response for getSubscriptions
+ * 
+ * @public
+ */
+export type GetSubscriptionsResponse = Schemas.SubscriptionsListGetResponse;
+/**
  * Response for validateSubscription
  * 
  * @public
@@ -35,20 +41,14 @@ export type CreateSubscriptionResponse = Schemas.SubscriptionsCreateResponse;
  */
 export type GetSubscriptionCountResponse = Schemas.SubscriptionsCountGetResponse;
 /**
- * Response for getSubscriptions
+ * Response for deleteSubscription
  * 
  * @public
  */
-export type GetSubscriptionsResponse = Schemas.SubscriptionsListGetResponse;
+export type DeleteSubscriptionResponse = Schemas.SubscriptionsDeleteResponse;
 /**
  * Response for createReplayJob
  * 
  * @public
  */
 export type CreateReplayJobResponse = Schemas.ReplayJobCreateResponse;
-/**
- * Response for deleteSubscription
- * 
- * @public
- */
-export type DeleteSubscriptionResponse = Schemas.SubscriptionsDeleteResponse;

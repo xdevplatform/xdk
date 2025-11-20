@@ -12,9 +12,9 @@ import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
   GetSubscriptionsResponse,
   CreateSubscriptionResponse,
+  StreamResponse,
   UpdateSubscriptionResponse,
   DeleteSubscriptionResponse,
-  StreamResponse,
 } from './models.js';
 
 /**
@@ -51,6 +51,33 @@ export interface CreateSubscriptionStreamingOptions {
   [key: string]: any;
 }
 /**
+ * Options for stream method
+ * 
+ * @public
+ */
+export interface StreamStreamingOptions {
+  /** The number of minutes of backfill requested. 
+     * Also accepts: backfill_minutes or proper camelCase (e.g., backfillMinutes) */
+  backfillMinutes?: number;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. 
+     * Also accepts: start_time or proper camelCase (e.g., startTime) */
+  startTime?: string;
+
+  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. 
+     * Also accepts: end_time or proper camelCase (e.g., endTime) */
+  endTime?: string;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Additional headers */
+  headers?: Record<string, string>;
+  /** AbortSignal for cancelling the request */
+  signal?: AbortSignal;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+/**
  * Options for updateSubscription method
  * 
  * @public
@@ -74,33 +101,6 @@ export interface UpdateSubscriptionStreamingOptions {
  * @public
  */
 export interface DeleteSubscriptionStreamingOptions {
-  /** Additional request options */
-  requestOptions?: RequestOptions;
-  /** Additional headers */
-  headers?: Record<string, string>;
-  /** AbortSignal for cancelling the request */
-  signal?: AbortSignal;
-  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
-  [key: string]: any;
-}
-/**
- * Options for stream method
- * 
- * @public
- */
-export interface StreamStreamingOptions {
-  /** The number of minutes of backfill requested. 
-     * Also accepts: backfill_minutes or proper camelCase (e.g., backfillMinutes) */
-  backfillMinutes?: number;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post labels will be provided. 
-     * Also accepts: start_time or proper camelCase (e.g., startTime) */
-  startTime?: string;
-
-  /** YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp from which the Post labels will be provided. 
-     * Also accepts: end_time or proper camelCase (e.g., endTime) */
-  endTime?: string;
-
   /** Additional request options */
   requestOptions?: RequestOptions;
   /** Additional headers */

@@ -15,7 +15,7 @@ import {
   UserPaginator,
   EventPaginator,
 } from '../paginator.js';
-import { GetResponse } from './models.js';
+import { GetResponse, SearchResponse } from './models.js';
 
 /**
  * Options for get method
@@ -23,6 +23,30 @@ import { GetResponse } from './models.js';
  * @public
  */
 export interface GetOptions {
+  /** A comma separated list of News fields to display. 
+     * Also accepts: news.fields or proper camelCase (e.g., newsFields) */
+  newsFields?: Array<any>;
+
+  /** Additional request options */
+  requestOptions?: RequestOptions;
+  /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
+  [key: string]: any;
+}
+
+/**
+ * Options for search method
+ * 
+ * @public
+ */
+export interface SearchOptions {
+  /** The number of results to return. 
+     * Also accepts: max_results or proper camelCase (e.g., maxResults) */
+  maxResults?: number;
+
+  /** The maximum age of the News story to search for. 
+     * Also accepts: max_age_hours or proper camelCase (e.g., maxAgeHours) */
+  maxAgeHours?: number;
+
   /** A comma separated list of News fields to display. 
      * Also accepts: news.fields or proper camelCase (e.g., newsFields) */
   newsFields?: Array<any>;
@@ -147,6 +171,93 @@ export class NewsClient {
     };
 
     return this.client.request<GetResponse>(
+      'GET',
+      path + (params.toString() ? `?${params.toString()}` : ''),
+      finalRequestOptions
+    );
+  }
+
+  /**
+   * Search News
+   * Retrieves a list of News stories matching the specified search query.
+
+
+
+   * @param query The search query.
+
+
+
+   * @returns {Promise<SearchResponse>} Promise resolving to the API response
+   */
+  // Overload 1: Default behavior (unwrapped response)
+  async search(
+    query: string,
+    options: SearchOptions = {}
+  ): Promise<SearchResponse> {
+    // Normalize options to handle both camelCase and original API parameter names
+
+    const paramMappings: Record<string, string> = {
+      max_results: 'maxResults',
+
+      max_age_hours: 'maxAgeHours',
+
+      'news.fields': 'newsFields',
+    };
+    const normalizedOptions = this._normalizeOptions(
+      options || {},
+      paramMappings
+    );
+
+    // Destructure options (exclude path parameters, they're already function params)
+    const {
+      maxResults = undefined,
+
+      maxAgeHours = undefined,
+
+      newsFields = [],
+
+      requestOptions: requestOptions = {},
+    } = normalizedOptions;
+
+    // Build the path with path parameters
+    let path = '/2/news/search';
+
+    // Build query parameters
+    const params = new URLSearchParams();
+
+    if (query !== undefined) {
+      params.append('query', String(query));
+    }
+
+    if (maxResults !== undefined) {
+      params.append('max_results', String(maxResults));
+    }
+
+    if (maxAgeHours !== undefined) {
+      params.append('max_age_hours', String(maxAgeHours));
+    }
+
+    if (newsFields !== undefined && newsFields.length > 0) {
+      params.append('news.fields', newsFields.join(','));
+    }
+
+    // Prepare request options
+    const finalRequestOptions: RequestOptions = {
+      // Pass security requirements for smart auth selection
+      security: [
+        {
+          BearerToken: [],
+        },
+
+        {
+          OAuth2UserToken: ['tweet.read', 'users.read'],
+        },
+      ],
+
+      ...requestOptions,
+    };
+
+    return this.client.request<SearchResponse>(
       'GET',
       path + (params.toString() ? `?${params.toString()}` : ''),
       finalRequestOptions

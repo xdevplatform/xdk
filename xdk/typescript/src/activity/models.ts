@@ -29,6 +29,12 @@ export type CreateSubscriptionRequest = Schemas.ActivitySubscriptionCreateReques
  */
 export type CreateSubscriptionResponse = Schemas.ActivitySubscriptionCreateResponse;
 /**
+ * Response for stream
+ * 
+ * @public
+ */
+export type StreamResponse = Schemas.ActivityStreamingResponse;
+/**
  * Request for updateSubscription
  * 
  * @public
@@ -46,9 +52,3 @@ export type UpdateSubscriptionResponse = Schemas.ActivitySubscriptionUpdateRespo
  * @public
  */
 export type DeleteSubscriptionResponse = Schemas.ActivitySubscriptionDeleteResponse;
-/**
- * Response for stream
- * 
- * @public
- */
-export type StreamResponse = Schemas.ActivityStreamingResponse;

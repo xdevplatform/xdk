@@ -28,7 +28,7 @@ describe('TrendsClient Contracts', () => {
   });
 
   
-  it('should have correct request structure for getAi', async () => {
+  it('should have correct request structure for getPersonalized', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -58,17 +58,13 @@ describe('TrendsClient Contracts', () => {
       // Build required parameter arguments
       const requiredArgs: any[] = [
       
-      
-      'test_value',
-      
-      
       ];
       
       // Build options object (empty for required params test, optional params go here)
       const options: any = {};
       
       // Call the method
-      const method = (trendsClient as any)['getAi'];
+      const method = (trendsClient as any)['getPersonalized'];
       const result = await method.apply(trendsClient, [...requiredArgs, options]);
       
       // Verify the request was made
@@ -80,7 +76,7 @@ describe('TrendsClient Contracts', () => {
       const requestOptions = callArgs[1] as RequestInit;
       
       // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/ai_trends/{id}';
+      const expectedPath = '/2/users/personalized_trends';
       // Path parameters are replaced with actual values, so check for the base path structure
       const basePath = expectedPath.split('{')[0];
       expect(url).toContain(basePath);
@@ -93,7 +89,7 @@ describe('TrendsClient Contracts', () => {
     }
   });
 
-  it('should handle required parameters correctly for getAi', async () => {
+  it('should handle required parameters correctly for getPersonalized', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -111,16 +107,12 @@ describe('TrendsClient Contracts', () => {
     } as Response);
 
     try {
-      const method = (trendsClient as any)['getAi'];
+      const method = (trendsClient as any)['getPersonalized'];
       
       
       // Method has required parameters - verify it can be called with proper args
       // Build required parameter arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
-      
-      
-      'test_value',
-      
       
       ];
       
@@ -136,7 +128,7 @@ describe('TrendsClient Contracts', () => {
     }
   });
 
-  it('should validate response structure for getAi', async () => {
+  it('should validate response structure for getPersonalized', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -165,14 +157,10 @@ describe('TrendsClient Contracts', () => {
       // Build arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
       
-      
-      'test_value',
-      
-      
       ];
       const options: any = {};
 
-      const method = (trendsClient as any)['getAi'];
+      const method = (trendsClient as any)['getPersonalized'];
       const result = await method.apply(trendsClient, [...requiredArgs, options]);
 
       // Verify response object has expected structure
@@ -352,7 +340,7 @@ describe('TrendsClient Contracts', () => {
   });
 
   
-  it('should have correct request structure for getPersonalized', async () => {
+  it('should have correct request structure for getAi', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -382,13 +370,17 @@ describe('TrendsClient Contracts', () => {
       // Build required parameter arguments
       const requiredArgs: any[] = [
       
+      
+      'test_value',
+      
+      
       ];
       
       // Build options object (empty for required params test, optional params go here)
       const options: any = {};
       
       // Call the method
-      const method = (trendsClient as any)['getPersonalized'];
+      const method = (trendsClient as any)['getAi'];
       const result = await method.apply(trendsClient, [...requiredArgs, options]);
       
       // Verify the request was made
@@ -400,7 +392,7 @@ describe('TrendsClient Contracts', () => {
       const requestOptions = callArgs[1] as RequestInit;
       
       // Check URL structure - path parameters are replaced in the URL
-      const expectedPath = '/2/users/personalized_trends';
+      const expectedPath = '/2/ai_trends/{id}';
       // Path parameters are replaced with actual values, so check for the base path structure
       const basePath = expectedPath.split('{')[0];
       expect(url).toContain(basePath);
@@ -413,7 +405,7 @@ describe('TrendsClient Contracts', () => {
     }
   });
 
-  it('should handle required parameters correctly for getPersonalized', async () => {
+  it('should handle required parameters correctly for getAi', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -431,12 +423,16 @@ describe('TrendsClient Contracts', () => {
     } as Response);
 
     try {
-      const method = (trendsClient as any)['getPersonalized'];
+      const method = (trendsClient as any)['getAi'];
       
       
       // Method has required parameters - verify it can be called with proper args
       // Build required parameter arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
+      
+      
+      'test_value',
+      
       
       ];
       
@@ -452,7 +448,7 @@ describe('TrendsClient Contracts', () => {
     }
   });
 
-  it('should validate response structure for getPersonalized', async () => {
+  it('should validate response structure for getAi', async () => {
     // Mock validateAuthentication to bypass auth checks (like Python mocks session)
     const originalValidateAuth = client.validateAuthentication;
     client.validateAuthentication = jest.fn();
@@ -481,10 +477,14 @@ describe('TrendsClient Contracts', () => {
       // Build arguments (all required params are direct args in TypeScript)
       const requiredArgs: any[] = [
       
+      
+      'test_value',
+      
+      
       ];
       const options: any = {};
 
-      const method = (trendsClient as any)['getPersonalized'];
+      const method = (trendsClient as any)['getAi'];
       const result = await method.apply(trendsClient, [...requiredArgs, options]);
 
       // Verify response object has expected structure

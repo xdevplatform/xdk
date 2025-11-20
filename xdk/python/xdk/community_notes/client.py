@@ -23,11 +23,11 @@ if TYPE_CHECKING:
 from .models import (
     SearchEligiblePostsResponse,
     DeleteResponse,
-    EvaluateRequest,
-    EvaluateResponse,
+    SearchWrittenResponse,
     CreateRequest,
     CreateResponse,
-    SearchWrittenResponse,
+    EvaluateRequest,
+    EvaluateResponse,
 )
 
 
@@ -44,12 +44,13 @@ class CommunityNotesClient:
         test_mode: bool,
         pagination_token: str = None,
         max_results: int = None,
-        tweetfields: List = None,
+        post_selection: str = None,
+        tweet_fields: List = None,
         expansions: List = None,
-        mediafields: List = None,
-        pollfields: List = None,
-        userfields: List = None,
-        placefields: List = None,
+        media_fields: List = None,
+        poll_fields: List = None,
+        user_fields: List = None,
+        place_fields: List = None,
     ) -> SearchEligiblePostsResponse:
         """
         Search for Posts Eligible for Community Notes
@@ -58,12 +59,13 @@ class CommunityNotesClient:
             test_mode: If true, return a list of posts that are for the test. If false, return a list of posts that the bots can write proposed notes on the product.
             pagination_token: Pagination token to get next set of posts eligible for notes.
             max_results: Max results to return.
-            tweetfields: A comma separated list of Tweet fields to display.
+            post_selection: The selection of posts to return. Valid values are 'feed_size: small' and 'feed_size: large'. Default is 'feed_size: small', only top AI writers have access to large size feed.
+            tweet_fields: A comma separated list of Tweet fields to display.
             expansions: A comma separated list of fields to expand.
-            mediafields: A comma separated list of Media fields to display.
-            pollfields: A comma separated list of Poll fields to display.
-            userfields: A comma separated list of User fields to display.
-            placefields: A comma separated list of Place fields to display.
+            media_fields: A comma separated list of Media fields to display.
+            poll_fields: A comma separated list of Poll fields to display.
+            user_fields: A comma separated list of User fields to display.
+            place_fields: A comma separated list of Place fields to display.
             Returns:
             SearchEligiblePostsResponse: Response data
         """
@@ -80,18 +82,20 @@ class CommunityNotesClient:
             params["pagination_token"] = pagination_token
         if max_results is not None:
             params["max_results"] = max_results
-        if tweetfields is not None:
-            params["tweet.fields"] = ",".join(str(item) for item in tweetfields)
+        if post_selection is not None:
+            params["post_selection"] = post_selection
+        if tweet_fields is not None:
+            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
         if expansions is not None:
             params["expansions"] = ",".join(str(item) for item in expansions)
-        if mediafields is not None:
-            params["media.fields"] = ",".join(str(item) for item in mediafields)
-        if pollfields is not None:
-            params["poll.fields"] = ",".join(str(item) for item in pollfields)
-        if userfields is not None:
-            params["user.fields"] = ",".join(str(item) for item in userfields)
-        if placefields is not None:
-            params["place.fields"] = ",".join(str(item) for item in placefields)
+        if media_fields is not None:
+            params["media.fields"] = ",".join(str(item) for item in media_fields)
+        if poll_fields is not None:
+            params["poll.fields"] = ",".join(str(item) for item in poll_fields)
+        if user_fields is not None:
+            params["user.fields"] = ",".join(str(item) for item in user_fields)
+        if place_fields is not None:
+            params["place.fields"] = ",".join(str(item) for item in place_fields)
         headers = {}
         # Prepare request data
         json_data = None
@@ -157,52 +161,61 @@ class CommunityNotesClient:
         return DeleteResponse.model_validate(response_data)
 
 
-    def evaluate(self, body: Optional[EvaluateRequest] = None) -> EvaluateResponse:
+    def search_written(
+        self,
+        test_mode: bool,
+        pagination_token: str = None,
+        max_results: int = None,
+        note_fields: List = None,
+    ) -> SearchWrittenResponse:
         """
-        Evaluate a Community Note
-        Endpoint to evaluate a community note.
-        body: Request body
-        Returns:
-            EvaluateResponse: Response data
+        Search for Community Notes Written
+        Returns all the community notes written by the user.
+        Args:
+            test_mode: If true, return the notes the caller wrote for the test. If false, return the notes the caller wrote on the product.
+            pagination_token: Pagination token to get next set of posts eligible for notes.
+            max_results: Max results to return.
+            note_fields: A comma separated list of Note fields to display.
+            Returns:
+            SearchWrittenResponse: Response data
         """
-        url = self.client.base_url + "/2/evaluate_note"
+        url = self.client.base_url + "/2/notes/search/notes_written"
         # Ensure we have a valid access token
         if self.client.oauth2_auth and self.client.token:
             # Check if token needs refresh
             if self.client.is_token_expired():
                 self.client.refresh_token()
         params = {}
+        if test_mode is not None:
+            params["test_mode"] = test_mode
+        if pagination_token is not None:
+            params["pagination_token"] = pagination_token
+        if max_results is not None:
+            params["max_results"] = max_results
+        if note_fields is not None:
+            params["note.fields"] = ",".join(str(item) for item in note_fields)
         headers = {}
-        headers["Content-Type"] = "application/json"
         # Prepare request data
         json_data = None
-        if body is not None:
-            json_data = (
-                body.model_dump(exclude_none=True)
-                if hasattr(body, "model_dump")
-                else body
-            )
         # Make the request
         if self.client.oauth2_session:
-            response = self.client.oauth2_session.post(
+            response = self.client.oauth2_session.get(
                 url,
                 params=params,
                 headers=headers,
-                json=json_data,
             )
         else:
-            response = self.client.session.post(
+            response = self.client.session.get(
                 url,
                 params=params,
                 headers=headers,
-                json=json_data,
             )
         # Check for errors
         response.raise_for_status()
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return EvaluateResponse.model_validate(response_data)
+        return SearchWrittenResponse.model_validate(response_data)
 
 
     def create(self, body: Optional[CreateRequest] = None) -> CreateResponse:
@@ -253,58 +266,49 @@ class CommunityNotesClient:
         return CreateResponse.model_validate(response_data)
 
 
-    def search_written(
-        self,
-        test_mode: bool,
-        pagination_token: str = None,
-        max_results: int = None,
-        notefields: List = None,
-    ) -> SearchWrittenResponse:
+    def evaluate(self, body: Optional[EvaluateRequest] = None) -> EvaluateResponse:
         """
-        Search for Community Notes Written
-        Returns all the community notes written by the user.
-        Args:
-            test_mode: If true, return the notes the caller wrote for the test. If false, return the notes the caller wrote on the product.
-            pagination_token: Pagination token to get next set of posts eligible for notes.
-            max_results: Max results to return.
-            notefields: A comma separated list of Note fields to display.
-            Returns:
-            SearchWrittenResponse: Response data
+        Evaluate a Community Note
+        Endpoint to evaluate a community note.
+        body: Request body
+        Returns:
+            EvaluateResponse: Response data
         """
-        url = self.client.base_url + "/2/notes/search/notes_written"
+        url = self.client.base_url + "/2/evaluate_note"
         # Ensure we have a valid access token
         if self.client.oauth2_auth and self.client.token:
             # Check if token needs refresh
             if self.client.is_token_expired():
                 self.client.refresh_token()
         params = {}
-        if test_mode is not None:
-            params["test_mode"] = test_mode
-        if pagination_token is not None:
-            params["pagination_token"] = pagination_token
-        if max_results is not None:
-            params["max_results"] = max_results
-        if notefields is not None:
-            params["note.fields"] = ",".join(str(item) for item in notefields)
         headers = {}
+        headers["Content-Type"] = "application/json"
         # Prepare request data
         json_data = None
+        if body is not None:
+            json_data = (
+                body.model_dump(exclude_none=True)
+                if hasattr(body, "model_dump")
+                else body
+            )
         # Make the request
         if self.client.oauth2_session:
-            response = self.client.oauth2_session.get(
+            response = self.client.oauth2_session.post(
                 url,
                 params=params,
                 headers=headers,
+                json=json_data,
             )
         else:
-            response = self.client.session.get(
+            response = self.client.session.post(
                 url,
                 params=params,
                 headers=headers,
+                json=json_data,
             )
         # Check for errors
         response.raise_for_status()
         # Parse the response data
         response_data = response.json()
         # Convert to Pydantic model if applicable
-        return SearchWrittenResponse.model_validate(response_data)
+        return EvaluateResponse.model_validate(response_data)
