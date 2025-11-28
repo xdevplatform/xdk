@@ -21,9 +21,9 @@ import time
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    GetAiResponse,
     GetByWoeidResponse,
     GetPersonalizedResponse,
+    GetAiResponse,
 )
 
 
@@ -33,46 +33,6 @@ class TrendsClient:
 
     def __init__(self, client: Client):
         self.client = client
-
-
-    def get_ai(self, id: Any, news_fields: List = None) -> GetAiResponse:
-        """
-        Get AI Trends by ID
-        Retrieves an AI trend by its ID.
-        Args:
-            id: The ID of the ai trend.
-            news_fields: A comma separated list of News fields to display.
-            Returns:
-            GetAiResponse: Response data
-        """
-        url = self.client.base_url + "/2/ai_trends/{id}"
-        url = url.replace("{id}", str(id))
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        if news_fields is not None:
-            params["news.fields"] = ",".join(str(item) for item in news_fields)
-        headers = {}
-        # Prepare request data
-        json_data = None
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetAiResponse.model_validate(response_data)
 
 
     def get_by_woeid(
@@ -164,3 +124,43 @@ class TrendsClient:
         response_data = response.json()
         # Convert to Pydantic model if applicable
         return GetPersonalizedResponse.model_validate(response_data)
+
+
+    def get_ai(self, id: Any, news_fields: List = None) -> GetAiResponse:
+        """
+        Get AI Trends by ID
+        Retrieves an AI trend by its ID.
+        Args:
+            id: The ID of the ai trend.
+            news_fields: A comma separated list of News fields to display.
+            Returns:
+            GetAiResponse: Response data
+        """
+        url = self.client.base_url + "/2/ai_trends/{id}"
+        url = url.replace("{id}", str(id))
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        if news_fields is not None:
+            params["news.fields"] = ",".join(str(item) for item in news_fields)
+        headers = {}
+        # Prepare request data
+        json_data = None
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetAiResponse.model_validate(response_data)

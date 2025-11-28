@@ -31,24 +31,24 @@ import json
 if TYPE_CHECKING:
     from ..client import Client
 from .models import (
-    LikesFirehoseResponse,
-    PostsFirehosePtResponse,
+    PostsFirehoseResponse,
     PostsFirehoseJaResponse,
+    PostsSampleResponse,
+    LikesSample10Response,
     LabelsComplianceResponse,
-    PostsFirehoseKoResponse,
     PostsResponse,
+    PostsComplianceResponse,
     LikesComplianceResponse,
     GetRulesResponse,
     UpdateRulesRequest,
     UpdateRulesResponse,
-    GetRuleCountsResponse,
-    LikesSample10Response,
-    PostsFirehoseResponse,
     UsersComplianceResponse,
-    PostsComplianceResponse,
     PostsSample10Response,
+    PostsFirehosePtResponse,
+    PostsFirehoseKoResponse,
+    GetRuleCountsResponse,
+    LikesFirehoseResponse,
     PostsFirehoseEnResponse,
-    PostsSampleResponse,
 )
 
 
@@ -60,127 +60,7 @@ class StreamClient:
         self.client = client
 
 
-    def likes_firehose(
-        self,
-        partition: int,
-        backfill_minutes: int = None,
-        start_time: str = None,
-        end_time: str = None,
-        like_with_tweet_author_fields: List = None,
-        expansions: List = None,
-        user_fields: List = None,
-        tweet_fields: List = None,
-        timeout: Optional[float] = None,
-        chunk_size: int = 1024,
-    ) -> Generator[LikesFirehoseResponse, None, None]:
-        """
-        Stream all Likes (Streaming)
-        Streams all public Likes in real-time.
-        This is a streaming endpoint that yields data in real-time as it becomes available.
-        Each yielded item represents a single data point from the stream.
-        Args:
-            backfill_minutes: The number of minutes of backfill requested.
-            partition: The partition number.
-            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Likes will be provided.
-            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided.
-            like_with_tweet_author_fields: A comma separated list of LikeWithTweetAuthor fields to display.
-            expansions: A comma separated list of fields to expand.
-            user_fields: A comma separated list of User fields to display.
-            tweet_fields: A comma separated list of Tweet fields to display.
-            timeout: Request timeout in seconds (default: None for no timeout)
-            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
-        Yields:
-            LikesFirehoseResponse: Individual streaming data items
-        Raises:
-            requests.exceptions.RequestException: If the streaming connection fails
-            json.JSONDecodeError: If the streamed data is not valid JSON
-        """
-        url = self.client.base_url + "/2/likes/firehose/stream"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        if backfill_minutes is not None:
-            params["backfill_minutes"] = backfill_minutes
-        if partition is not None:
-            params["partition"] = partition
-        if start_time is not None:
-            params["start_time"] = start_time
-        if end_time is not None:
-            params["end_time"] = end_time
-        if like_with_tweet_author_fields is not None:
-            params["like_with_tweet_author.fields"] = ",".join(
-                str(item) for item in like_with_tweet_author_fields
-            )
-        if expansions is not None:
-            params["expansions"] = ",".join(str(item) for item in expansions)
-        if user_fields is not None:
-            params["user.fields"] = ",".join(str(item) for item in user_fields)
-        if tweet_fields is not None:
-            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
-        headers = {
-            "Accept": "application/json",
-        }
-        # Prepare request data
-        json_data = None
-        try:
-            # Make streaming request
-            with self.client.session.get(
-                url,
-                params=params,
-                headers=headers,
-                stream=True,
-                timeout=timeout,
-            ) as response:
-                # Check for HTTP errors
-                response.raise_for_status()
-                # Buffer for incomplete lines
-                buffer = ""
-                # Stream data chunk by chunk
-                for chunk in response.iter_content(
-                    chunk_size=chunk_size, decode_unicode=True
-                ):
-                    if chunk:
-                        # Ensure chunk is always a string, not bytes
-                        if isinstance(chunk, bytes):
-                            chunk = chunk.decode("utf-8")
-                        buffer += chunk
-                        # Process complete lines
-                        while "\n" in buffer:
-                            line, buffer = buffer.split("\n", 1)
-                            line = line.strip()
-                            if line:
-                                try:
-                                    # Parse JSON line
-                                    data = json.loads(line)
-                                    # Convert to response model if available
-                                    yield LikesFirehoseResponse.model_validate(data)
-                                except json.JSONDecodeError:
-                                    # Skip invalid JSON lines
-                                    continue
-                                except Exception:
-                                    # Skip lines that cause processing errors
-                                    continue
-                # Process any remaining data in buffer
-                if buffer.strip():
-                    try:
-                        data = json.loads(buffer.strip())
-                        yield LikesFirehoseResponse.model_validate(data)
-                    except json.JSONDecodeError:
-                        # Skip invalid JSON in final buffer
-                        pass
-        except requests.exceptions.RequestException:
-            raise
-        except Exception:
-            raise
-
-
-    def posts_firehose_pt(
+    def posts_firehose(
         self,
         partition: int,
         backfill_minutes: int = None,
@@ -194,10 +74,10 @@ class StreamClient:
         place_fields: List = None,
         timeout: Optional[float] = None,
         chunk_size: int = 1024,
-    ) -> Generator[PostsFirehosePtResponse, None, None]:
+    ) -> Generator[PostsFirehoseResponse, None, None]:
         """
-        Stream Portuguese Posts (Streaming)
-        Streams all public Portuguese-language Posts in real-time.
+        Stream all Posts (Streaming)
+        Streams all public Posts in real-time.
         This is a streaming endpoint that yields data in real-time as it becomes available.
         Each yielded item represents a single data point from the stream.
         Args:
@@ -214,12 +94,12 @@ class StreamClient:
             timeout: Request timeout in seconds (default: None for no timeout)
             chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
         Yields:
-            PostsFirehosePtResponse: Individual streaming data items
+            PostsFirehoseResponse: Individual streaming data items
         Raises:
             requests.exceptions.RequestException: If the streaming connection fails
             json.JSONDecodeError: If the streamed data is not valid JSON
         """
-        url = self.client.base_url + "/2/tweets/firehose/stream/lang/pt"
+        url = self.client.base_url + "/2/tweets/firehose/stream"
         if self.client.bearer_token:
             self.client.session.headers["Authorization"] = (
                 f"Bearer {self.client.bearer_token}"
@@ -285,7 +165,7 @@ class StreamClient:
                                     # Parse JSON line
                                     data = json.loads(line)
                                     # Convert to response model if available
-                                    yield PostsFirehosePtResponse.model_validate(data)
+                                    yield PostsFirehoseResponse.model_validate(data)
                                 except json.JSONDecodeError:
                                     # Skip invalid JSON lines
                                     continue
@@ -296,7 +176,7 @@ class StreamClient:
                 if buffer.strip():
                     try:
                         data = json.loads(buffer.strip())
-                        yield PostsFirehosePtResponse.model_validate(data)
+                        yield PostsFirehoseResponse.model_validate(data)
                     except json.JSONDecodeError:
                         # Skip invalid JSON in final buffer
                         pass
@@ -432,6 +312,240 @@ class StreamClient:
             raise
 
 
+    def posts_sample(
+        self,
+        backfill_minutes: int = None,
+        tweet_fields: List = None,
+        expansions: List = None,
+        media_fields: List = None,
+        poll_fields: List = None,
+        user_fields: List = None,
+        place_fields: List = None,
+        timeout: Optional[float] = None,
+        chunk_size: int = 1024,
+    ) -> Generator[PostsSampleResponse, None, None]:
+        """
+        Stream sampled Posts (Streaming)
+        Streams a 1% sample of public Posts in real-time.
+        This is a streaming endpoint that yields data in real-time as it becomes available.
+        Each yielded item represents a single data point from the stream.
+        Args:
+            backfill_minutes: The number of minutes of backfill requested.
+            tweet_fields: A comma separated list of Tweet fields to display.
+            expansions: A comma separated list of fields to expand.
+            media_fields: A comma separated list of Media fields to display.
+            poll_fields: A comma separated list of Poll fields to display.
+            user_fields: A comma separated list of User fields to display.
+            place_fields: A comma separated list of Place fields to display.
+            timeout: Request timeout in seconds (default: None for no timeout)
+            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
+        Yields:
+            PostsSampleResponse: Individual streaming data items
+        Raises:
+            requests.exceptions.RequestException: If the streaming connection fails
+            json.JSONDecodeError: If the streamed data is not valid JSON
+        """
+        url = self.client.base_url + "/2/tweets/sample/stream"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        if backfill_minutes is not None:
+            params["backfill_minutes"] = backfill_minutes
+        if tweet_fields is not None:
+            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
+        if expansions is not None:
+            params["expansions"] = ",".join(str(item) for item in expansions)
+        if media_fields is not None:
+            params["media.fields"] = ",".join(str(item) for item in media_fields)
+        if poll_fields is not None:
+            params["poll.fields"] = ",".join(str(item) for item in poll_fields)
+        if user_fields is not None:
+            params["user.fields"] = ",".join(str(item) for item in user_fields)
+        if place_fields is not None:
+            params["place.fields"] = ",".join(str(item) for item in place_fields)
+        headers = {
+            "Accept": "application/json",
+        }
+        # Prepare request data
+        json_data = None
+        try:
+            # Make streaming request
+            with self.client.session.get(
+                url,
+                params=params,
+                headers=headers,
+                stream=True,
+                timeout=timeout,
+            ) as response:
+                # Check for HTTP errors
+                response.raise_for_status()
+                # Buffer for incomplete lines
+                buffer = ""
+                # Stream data chunk by chunk
+                for chunk in response.iter_content(
+                    chunk_size=chunk_size, decode_unicode=True
+                ):
+                    if chunk:
+                        # Ensure chunk is always a string, not bytes
+                        if isinstance(chunk, bytes):
+                            chunk = chunk.decode("utf-8")
+                        buffer += chunk
+                        # Process complete lines
+                        while "\n" in buffer:
+                            line, buffer = buffer.split("\n", 1)
+                            line = line.strip()
+                            if line:
+                                try:
+                                    # Parse JSON line
+                                    data = json.loads(line)
+                                    # Convert to response model if available
+                                    yield PostsSampleResponse.model_validate(data)
+                                except json.JSONDecodeError:
+                                    # Skip invalid JSON lines
+                                    continue
+                                except Exception:
+                                    # Skip lines that cause processing errors
+                                    continue
+                # Process any remaining data in buffer
+                if buffer.strip():
+                    try:
+                        data = json.loads(buffer.strip())
+                        yield PostsSampleResponse.model_validate(data)
+                    except json.JSONDecodeError:
+                        # Skip invalid JSON in final buffer
+                        pass
+        except requests.exceptions.RequestException:
+            raise
+        except Exception:
+            raise
+
+
+    def likes_sample10(
+        self,
+        partition: int,
+        backfill_minutes: int = None,
+        start_time: str = None,
+        end_time: str = None,
+        like_with_tweet_author_fields: List = None,
+        expansions: List = None,
+        user_fields: List = None,
+        tweet_fields: List = None,
+        timeout: Optional[float] = None,
+        chunk_size: int = 1024,
+    ) -> Generator[LikesSample10Response, None, None]:
+        """
+        Stream sampled Likes (Streaming)
+        Streams a 10% sample of public Likes in real-time.
+        This is a streaming endpoint that yields data in real-time as it becomes available.
+        Each yielded item represents a single data point from the stream.
+        Args:
+            backfill_minutes: The number of minutes of backfill requested.
+            partition: The partition number.
+            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Likes will be provided.
+            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided.
+            like_with_tweet_author_fields: A comma separated list of LikeWithTweetAuthor fields to display.
+            expansions: A comma separated list of fields to expand.
+            user_fields: A comma separated list of User fields to display.
+            tweet_fields: A comma separated list of Tweet fields to display.
+            timeout: Request timeout in seconds (default: None for no timeout)
+            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
+        Yields:
+            LikesSample10Response: Individual streaming data items
+        Raises:
+            requests.exceptions.RequestException: If the streaming connection fails
+            json.JSONDecodeError: If the streamed data is not valid JSON
+        """
+        url = self.client.base_url + "/2/likes/sample10/stream"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        if backfill_minutes is not None:
+            params["backfill_minutes"] = backfill_minutes
+        if partition is not None:
+            params["partition"] = partition
+        if start_time is not None:
+            params["start_time"] = start_time
+        if end_time is not None:
+            params["end_time"] = end_time
+        if like_with_tweet_author_fields is not None:
+            params["like_with_tweet_author.fields"] = ",".join(
+                str(item) for item in like_with_tweet_author_fields
+            )
+        if expansions is not None:
+            params["expansions"] = ",".join(str(item) for item in expansions)
+        if user_fields is not None:
+            params["user.fields"] = ",".join(str(item) for item in user_fields)
+        if tweet_fields is not None:
+            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
+        headers = {
+            "Accept": "application/json",
+        }
+        # Prepare request data
+        json_data = None
+        try:
+            # Make streaming request
+            with self.client.session.get(
+                url,
+                params=params,
+                headers=headers,
+                stream=True,
+                timeout=timeout,
+            ) as response:
+                # Check for HTTP errors
+                response.raise_for_status()
+                # Buffer for incomplete lines
+                buffer = ""
+                # Stream data chunk by chunk
+                for chunk in response.iter_content(
+                    chunk_size=chunk_size, decode_unicode=True
+                ):
+                    if chunk:
+                        # Ensure chunk is always a string, not bytes
+                        if isinstance(chunk, bytes):
+                            chunk = chunk.decode("utf-8")
+                        buffer += chunk
+                        # Process complete lines
+                        while "\n" in buffer:
+                            line, buffer = buffer.split("\n", 1)
+                            line = line.strip()
+                            if line:
+                                try:
+                                    # Parse JSON line
+                                    data = json.loads(line)
+                                    # Convert to response model if available
+                                    yield LikesSample10Response.model_validate(data)
+                                except json.JSONDecodeError:
+                                    # Skip invalid JSON lines
+                                    continue
+                                except Exception:
+                                    # Skip lines that cause processing errors
+                                    continue
+                # Process any remaining data in buffer
+                if buffer.strip():
+                    try:
+                        data = json.loads(buffer.strip())
+                        yield LikesSample10Response.model_validate(data)
+                    except json.JSONDecodeError:
+                        # Skip invalid JSON in final buffer
+                        pass
+        except requests.exceptions.RequestException:
+            raise
+        except Exception:
+            raise
+
+
     def labels_compliance(
         self,
         backfill_minutes: int = None,
@@ -521,132 +635,6 @@ class StreamClient:
                     try:
                         data = json.loads(buffer.strip())
                         yield LabelsComplianceResponse.model_validate(data)
-                    except json.JSONDecodeError:
-                        # Skip invalid JSON in final buffer
-                        pass
-        except requests.exceptions.RequestException:
-            raise
-        except Exception:
-            raise
-
-
-    def posts_firehose_ko(
-        self,
-        partition: int,
-        backfill_minutes: int = None,
-        start_time: str = None,
-        end_time: str = None,
-        tweet_fields: List = None,
-        expansions: List = None,
-        media_fields: List = None,
-        poll_fields: List = None,
-        user_fields: List = None,
-        place_fields: List = None,
-        timeout: Optional[float] = None,
-        chunk_size: int = 1024,
-    ) -> Generator[PostsFirehoseKoResponse, None, None]:
-        """
-        Stream Korean Posts (Streaming)
-        Streams all public Korean-language Posts in real-time.
-        This is a streaming endpoint that yields data in real-time as it becomes available.
-        Each yielded item represents a single data point from the stream.
-        Args:
-            backfill_minutes: The number of minutes of backfill requested.
-            partition: The partition number.
-            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Posts will be provided.
-            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided.
-            tweet_fields: A comma separated list of Tweet fields to display.
-            expansions: A comma separated list of fields to expand.
-            media_fields: A comma separated list of Media fields to display.
-            poll_fields: A comma separated list of Poll fields to display.
-            user_fields: A comma separated list of User fields to display.
-            place_fields: A comma separated list of Place fields to display.
-            timeout: Request timeout in seconds (default: None for no timeout)
-            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
-        Yields:
-            PostsFirehoseKoResponse: Individual streaming data items
-        Raises:
-            requests.exceptions.RequestException: If the streaming connection fails
-            json.JSONDecodeError: If the streamed data is not valid JSON
-        """
-        url = self.client.base_url + "/2/tweets/firehose/stream/lang/ko"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        if backfill_minutes is not None:
-            params["backfill_minutes"] = backfill_minutes
-        if partition is not None:
-            params["partition"] = partition
-        if start_time is not None:
-            params["start_time"] = start_time
-        if end_time is not None:
-            params["end_time"] = end_time
-        if tweet_fields is not None:
-            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
-        if expansions is not None:
-            params["expansions"] = ",".join(str(item) for item in expansions)
-        if media_fields is not None:
-            params["media.fields"] = ",".join(str(item) for item in media_fields)
-        if poll_fields is not None:
-            params["poll.fields"] = ",".join(str(item) for item in poll_fields)
-        if user_fields is not None:
-            params["user.fields"] = ",".join(str(item) for item in user_fields)
-        if place_fields is not None:
-            params["place.fields"] = ",".join(str(item) for item in place_fields)
-        headers = {
-            "Accept": "application/json",
-        }
-        # Prepare request data
-        json_data = None
-        try:
-            # Make streaming request
-            with self.client.session.get(
-                url,
-                params=params,
-                headers=headers,
-                stream=True,
-                timeout=timeout,
-            ) as response:
-                # Check for HTTP errors
-                response.raise_for_status()
-                # Buffer for incomplete lines
-                buffer = ""
-                # Stream data chunk by chunk
-                for chunk in response.iter_content(
-                    chunk_size=chunk_size, decode_unicode=True
-                ):
-                    if chunk:
-                        # Ensure chunk is always a string, not bytes
-                        if isinstance(chunk, bytes):
-                            chunk = chunk.decode("utf-8")
-                        buffer += chunk
-                        # Process complete lines
-                        while "\n" in buffer:
-                            line, buffer = buffer.split("\n", 1)
-                            line = line.strip()
-                            if line:
-                                try:
-                                    # Parse JSON line
-                                    data = json.loads(line)
-                                    # Convert to response model if available
-                                    yield PostsFirehoseKoResponse.model_validate(data)
-                                except json.JSONDecodeError:
-                                    # Skip invalid JSON lines
-                                    continue
-                                except Exception:
-                                    # Skip lines that cause processing errors
-                                    continue
-                # Process any remaining data in buffer
-                if buffer.strip():
-                    try:
-                        data = json.loads(buffer.strip())
-                        yield PostsFirehoseKoResponse.model_validate(data)
                     except json.JSONDecodeError:
                         # Skip invalid JSON in final buffer
                         pass
@@ -769,6 +757,108 @@ class StreamClient:
                     try:
                         data = json.loads(buffer.strip())
                         yield PostsResponse.model_validate(data)
+                    except json.JSONDecodeError:
+                        # Skip invalid JSON in final buffer
+                        pass
+        except requests.exceptions.RequestException:
+            raise
+        except Exception:
+            raise
+
+
+    def posts_compliance(
+        self,
+        partition: int,
+        backfill_minutes: int = None,
+        start_time: str = None,
+        end_time: str = None,
+        timeout: Optional[float] = None,
+        chunk_size: int = 1024,
+    ) -> Generator[PostsComplianceResponse, None, None]:
+        """
+        Stream Posts compliance data (Streaming)
+        Streams all compliance data related to Posts.
+        This is a streaming endpoint that yields data in real-time as it becomes available.
+        Each yielded item represents a single data point from the stream.
+        Args:
+            backfill_minutes: The number of minutes of backfill requested.
+            partition: The partition number.
+            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post Compliance events will be provided.
+            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Post Compliance events will be provided.
+            timeout: Request timeout in seconds (default: None for no timeout)
+            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
+        Yields:
+            PostsComplianceResponse: Individual streaming data items
+        Raises:
+            requests.exceptions.RequestException: If the streaming connection fails
+            json.JSONDecodeError: If the streamed data is not valid JSON
+        """
+        url = self.client.base_url + "/2/tweets/compliance/stream"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        if backfill_minutes is not None:
+            params["backfill_minutes"] = backfill_minutes
+        if partition is not None:
+            params["partition"] = partition
+        if start_time is not None:
+            params["start_time"] = start_time
+        if end_time is not None:
+            params["end_time"] = end_time
+        headers = {
+            "Accept": "application/json",
+        }
+        # Prepare request data
+        json_data = None
+        try:
+            # Make streaming request
+            with self.client.session.get(
+                url,
+                params=params,
+                headers=headers,
+                stream=True,
+                timeout=timeout,
+            ) as response:
+                # Check for HTTP errors
+                response.raise_for_status()
+                # Buffer for incomplete lines
+                buffer = ""
+                # Stream data chunk by chunk
+                for chunk in response.iter_content(
+                    chunk_size=chunk_size, decode_unicode=True
+                ):
+                    if chunk:
+                        # Ensure chunk is always a string, not bytes
+                        if isinstance(chunk, bytes):
+                            chunk = chunk.decode("utf-8")
+                        buffer += chunk
+                        # Process complete lines
+                        while "\n" in buffer:
+                            line, buffer = buffer.split("\n", 1)
+                            line = line.strip()
+                            if line:
+                                try:
+                                    # Parse JSON line
+                                    data = json.loads(line)
+                                    # Convert to response model if available
+                                    yield PostsComplianceResponse.model_validate(data)
+                                except json.JSONDecodeError:
+                                    # Skip invalid JSON lines
+                                    continue
+                                except Exception:
+                                    # Skip lines that cause processing errors
+                                    continue
+                # Process any remaining data in buffer
+                if buffer.strip():
+                    try:
+                        data = json.loads(buffer.strip())
+                        yield PostsComplianceResponse.model_validate(data)
                     except json.JSONDecodeError:
                         # Skip invalid JSON in final buffer
                         pass
@@ -974,292 +1064,6 @@ class StreamClient:
         return UpdateRulesResponse.model_validate(response_data)
 
 
-    def get_rule_counts(self, rules_count_fields: List = None) -> GetRuleCountsResponse:
-        """
-        Get stream rule counts
-        Retrieves the count of rules in the active rule set for the filtered stream.
-        Args:
-            rules_count_fields: A comma separated list of RulesCount fields to display.
-            Returns:
-            GetRuleCountsResponse: Response data
-        """
-        url = self.client.base_url + "/2/tweets/search/stream/rules/counts"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        if rules_count_fields is not None:
-            params["rules_count.fields"] = ",".join(
-                str(item) for item in rules_count_fields
-            )
-        headers = {}
-        # Prepare request data
-        json_data = None
-        # Make the request
-        response = self.client.session.get(
-            url,
-            params=params,
-            headers=headers,
-        )
-        # Check for errors
-        response.raise_for_status()
-        # Parse the response data
-        response_data = response.json()
-        # Convert to Pydantic model if applicable
-        return GetRuleCountsResponse.model_validate(response_data)
-
-
-    def likes_sample10(
-        self,
-        partition: int,
-        backfill_minutes: int = None,
-        start_time: str = None,
-        end_time: str = None,
-        like_with_tweet_author_fields: List = None,
-        expansions: List = None,
-        user_fields: List = None,
-        tweet_fields: List = None,
-        timeout: Optional[float] = None,
-        chunk_size: int = 1024,
-    ) -> Generator[LikesSample10Response, None, None]:
-        """
-        Stream sampled Likes (Streaming)
-        Streams a 10% sample of public Likes in real-time.
-        This is a streaming endpoint that yields data in real-time as it becomes available.
-        Each yielded item represents a single data point from the stream.
-        Args:
-            backfill_minutes: The number of minutes of backfill requested.
-            partition: The partition number.
-            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Likes will be provided.
-            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided.
-            like_with_tweet_author_fields: A comma separated list of LikeWithTweetAuthor fields to display.
-            expansions: A comma separated list of fields to expand.
-            user_fields: A comma separated list of User fields to display.
-            tweet_fields: A comma separated list of Tweet fields to display.
-            timeout: Request timeout in seconds (default: None for no timeout)
-            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
-        Yields:
-            LikesSample10Response: Individual streaming data items
-        Raises:
-            requests.exceptions.RequestException: If the streaming connection fails
-            json.JSONDecodeError: If the streamed data is not valid JSON
-        """
-        url = self.client.base_url + "/2/likes/sample10/stream"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        if backfill_minutes is not None:
-            params["backfill_minutes"] = backfill_minutes
-        if partition is not None:
-            params["partition"] = partition
-        if start_time is not None:
-            params["start_time"] = start_time
-        if end_time is not None:
-            params["end_time"] = end_time
-        if like_with_tweet_author_fields is not None:
-            params["like_with_tweet_author.fields"] = ",".join(
-                str(item) for item in like_with_tweet_author_fields
-            )
-        if expansions is not None:
-            params["expansions"] = ",".join(str(item) for item in expansions)
-        if user_fields is not None:
-            params["user.fields"] = ",".join(str(item) for item in user_fields)
-        if tweet_fields is not None:
-            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
-        headers = {
-            "Accept": "application/json",
-        }
-        # Prepare request data
-        json_data = None
-        try:
-            # Make streaming request
-            with self.client.session.get(
-                url,
-                params=params,
-                headers=headers,
-                stream=True,
-                timeout=timeout,
-            ) as response:
-                # Check for HTTP errors
-                response.raise_for_status()
-                # Buffer for incomplete lines
-                buffer = ""
-                # Stream data chunk by chunk
-                for chunk in response.iter_content(
-                    chunk_size=chunk_size, decode_unicode=True
-                ):
-                    if chunk:
-                        # Ensure chunk is always a string, not bytes
-                        if isinstance(chunk, bytes):
-                            chunk = chunk.decode("utf-8")
-                        buffer += chunk
-                        # Process complete lines
-                        while "\n" in buffer:
-                            line, buffer = buffer.split("\n", 1)
-                            line = line.strip()
-                            if line:
-                                try:
-                                    # Parse JSON line
-                                    data = json.loads(line)
-                                    # Convert to response model if available
-                                    yield LikesSample10Response.model_validate(data)
-                                except json.JSONDecodeError:
-                                    # Skip invalid JSON lines
-                                    continue
-                                except Exception:
-                                    # Skip lines that cause processing errors
-                                    continue
-                # Process any remaining data in buffer
-                if buffer.strip():
-                    try:
-                        data = json.loads(buffer.strip())
-                        yield LikesSample10Response.model_validate(data)
-                    except json.JSONDecodeError:
-                        # Skip invalid JSON in final buffer
-                        pass
-        except requests.exceptions.RequestException:
-            raise
-        except Exception:
-            raise
-
-
-    def posts_firehose(
-        self,
-        partition: int,
-        backfill_minutes: int = None,
-        start_time: str = None,
-        end_time: str = None,
-        tweet_fields: List = None,
-        expansions: List = None,
-        media_fields: List = None,
-        poll_fields: List = None,
-        user_fields: List = None,
-        place_fields: List = None,
-        timeout: Optional[float] = None,
-        chunk_size: int = 1024,
-    ) -> Generator[PostsFirehoseResponse, None, None]:
-        """
-        Stream all Posts (Streaming)
-        Streams all public Posts in real-time.
-        This is a streaming endpoint that yields data in real-time as it becomes available.
-        Each yielded item represents a single data point from the stream.
-        Args:
-            backfill_minutes: The number of minutes of backfill requested.
-            partition: The partition number.
-            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Posts will be provided.
-            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided.
-            tweet_fields: A comma separated list of Tweet fields to display.
-            expansions: A comma separated list of fields to expand.
-            media_fields: A comma separated list of Media fields to display.
-            poll_fields: A comma separated list of Poll fields to display.
-            user_fields: A comma separated list of User fields to display.
-            place_fields: A comma separated list of Place fields to display.
-            timeout: Request timeout in seconds (default: None for no timeout)
-            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
-        Yields:
-            PostsFirehoseResponse: Individual streaming data items
-        Raises:
-            requests.exceptions.RequestException: If the streaming connection fails
-            json.JSONDecodeError: If the streamed data is not valid JSON
-        """
-        url = self.client.base_url + "/2/tweets/firehose/stream"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        if backfill_minutes is not None:
-            params["backfill_minutes"] = backfill_minutes
-        if partition is not None:
-            params["partition"] = partition
-        if start_time is not None:
-            params["start_time"] = start_time
-        if end_time is not None:
-            params["end_time"] = end_time
-        if tweet_fields is not None:
-            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
-        if expansions is not None:
-            params["expansions"] = ",".join(str(item) for item in expansions)
-        if media_fields is not None:
-            params["media.fields"] = ",".join(str(item) for item in media_fields)
-        if poll_fields is not None:
-            params["poll.fields"] = ",".join(str(item) for item in poll_fields)
-        if user_fields is not None:
-            params["user.fields"] = ",".join(str(item) for item in user_fields)
-        if place_fields is not None:
-            params["place.fields"] = ",".join(str(item) for item in place_fields)
-        headers = {
-            "Accept": "application/json",
-        }
-        # Prepare request data
-        json_data = None
-        try:
-            # Make streaming request
-            with self.client.session.get(
-                url,
-                params=params,
-                headers=headers,
-                stream=True,
-                timeout=timeout,
-            ) as response:
-                # Check for HTTP errors
-                response.raise_for_status()
-                # Buffer for incomplete lines
-                buffer = ""
-                # Stream data chunk by chunk
-                for chunk in response.iter_content(
-                    chunk_size=chunk_size, decode_unicode=True
-                ):
-                    if chunk:
-                        # Ensure chunk is always a string, not bytes
-                        if isinstance(chunk, bytes):
-                            chunk = chunk.decode("utf-8")
-                        buffer += chunk
-                        # Process complete lines
-                        while "\n" in buffer:
-                            line, buffer = buffer.split("\n", 1)
-                            line = line.strip()
-                            if line:
-                                try:
-                                    # Parse JSON line
-                                    data = json.loads(line)
-                                    # Convert to response model if available
-                                    yield PostsFirehoseResponse.model_validate(data)
-                                except json.JSONDecodeError:
-                                    # Skip invalid JSON lines
-                                    continue
-                                except Exception:
-                                    # Skip lines that cause processing errors
-                                    continue
-                # Process any remaining data in buffer
-                if buffer.strip():
-                    try:
-                        data = json.loads(buffer.strip())
-                        yield PostsFirehoseResponse.model_validate(data)
-                    except json.JSONDecodeError:
-                        # Skip invalid JSON in final buffer
-                        pass
-        except requests.exceptions.RequestException:
-            raise
-        except Exception:
-            raise
-
-
     def users_compliance(
         self,
         partition: int,
@@ -1353,108 +1157,6 @@ class StreamClient:
                     try:
                         data = json.loads(buffer.strip())
                         yield UsersComplianceResponse.model_validate(data)
-                    except json.JSONDecodeError:
-                        # Skip invalid JSON in final buffer
-                        pass
-        except requests.exceptions.RequestException:
-            raise
-        except Exception:
-            raise
-
-
-    def posts_compliance(
-        self,
-        partition: int,
-        backfill_minutes: int = None,
-        start_time: str = None,
-        end_time: str = None,
-        timeout: Optional[float] = None,
-        chunk_size: int = 1024,
-    ) -> Generator[PostsComplianceResponse, None, None]:
-        """
-        Stream Posts compliance data (Streaming)
-        Streams all compliance data related to Posts.
-        This is a streaming endpoint that yields data in real-time as it becomes available.
-        Each yielded item represents a single data point from the stream.
-        Args:
-            backfill_minutes: The number of minutes of backfill requested.
-            partition: The partition number.
-            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp from which the Post Compliance events will be provided.
-            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Post Compliance events will be provided.
-            timeout: Request timeout in seconds (default: None for no timeout)
-            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
-        Yields:
-            PostsComplianceResponse: Individual streaming data items
-        Raises:
-            requests.exceptions.RequestException: If the streaming connection fails
-            json.JSONDecodeError: If the streamed data is not valid JSON
-        """
-        url = self.client.base_url + "/2/tweets/compliance/stream"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        if backfill_minutes is not None:
-            params["backfill_minutes"] = backfill_minutes
-        if partition is not None:
-            params["partition"] = partition
-        if start_time is not None:
-            params["start_time"] = start_time
-        if end_time is not None:
-            params["end_time"] = end_time
-        headers = {
-            "Accept": "application/json",
-        }
-        # Prepare request data
-        json_data = None
-        try:
-            # Make streaming request
-            with self.client.session.get(
-                url,
-                params=params,
-                headers=headers,
-                stream=True,
-                timeout=timeout,
-            ) as response:
-                # Check for HTTP errors
-                response.raise_for_status()
-                # Buffer for incomplete lines
-                buffer = ""
-                # Stream data chunk by chunk
-                for chunk in response.iter_content(
-                    chunk_size=chunk_size, decode_unicode=True
-                ):
-                    if chunk:
-                        # Ensure chunk is always a string, not bytes
-                        if isinstance(chunk, bytes):
-                            chunk = chunk.decode("utf-8")
-                        buffer += chunk
-                        # Process complete lines
-                        while "\n" in buffer:
-                            line, buffer = buffer.split("\n", 1)
-                            line = line.strip()
-                            if line:
-                                try:
-                                    # Parse JSON line
-                                    data = json.loads(line)
-                                    # Convert to response model if available
-                                    yield PostsComplianceResponse.model_validate(data)
-                                except json.JSONDecodeError:
-                                    # Skip invalid JSON lines
-                                    continue
-                                except Exception:
-                                    # Skip lines that cause processing errors
-                                    continue
-                # Process any remaining data in buffer
-                if buffer.strip():
-                    try:
-                        data = json.loads(buffer.strip())
-                        yield PostsComplianceResponse.model_validate(data)
                     except json.JSONDecodeError:
                         # Skip invalid JSON in final buffer
                         pass
@@ -1590,6 +1292,418 @@ class StreamClient:
             raise
 
 
+    def posts_firehose_pt(
+        self,
+        partition: int,
+        backfill_minutes: int = None,
+        start_time: str = None,
+        end_time: str = None,
+        tweet_fields: List = None,
+        expansions: List = None,
+        media_fields: List = None,
+        poll_fields: List = None,
+        user_fields: List = None,
+        place_fields: List = None,
+        timeout: Optional[float] = None,
+        chunk_size: int = 1024,
+    ) -> Generator[PostsFirehosePtResponse, None, None]:
+        """
+        Stream Portuguese Posts (Streaming)
+        Streams all public Portuguese-language Posts in real-time.
+        This is a streaming endpoint that yields data in real-time as it becomes available.
+        Each yielded item represents a single data point from the stream.
+        Args:
+            backfill_minutes: The number of minutes of backfill requested.
+            partition: The partition number.
+            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Posts will be provided.
+            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided.
+            tweet_fields: A comma separated list of Tweet fields to display.
+            expansions: A comma separated list of fields to expand.
+            media_fields: A comma separated list of Media fields to display.
+            poll_fields: A comma separated list of Poll fields to display.
+            user_fields: A comma separated list of User fields to display.
+            place_fields: A comma separated list of Place fields to display.
+            timeout: Request timeout in seconds (default: None for no timeout)
+            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
+        Yields:
+            PostsFirehosePtResponse: Individual streaming data items
+        Raises:
+            requests.exceptions.RequestException: If the streaming connection fails
+            json.JSONDecodeError: If the streamed data is not valid JSON
+        """
+        url = self.client.base_url + "/2/tweets/firehose/stream/lang/pt"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        if backfill_minutes is not None:
+            params["backfill_minutes"] = backfill_minutes
+        if partition is not None:
+            params["partition"] = partition
+        if start_time is not None:
+            params["start_time"] = start_time
+        if end_time is not None:
+            params["end_time"] = end_time
+        if tweet_fields is not None:
+            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
+        if expansions is not None:
+            params["expansions"] = ",".join(str(item) for item in expansions)
+        if media_fields is not None:
+            params["media.fields"] = ",".join(str(item) for item in media_fields)
+        if poll_fields is not None:
+            params["poll.fields"] = ",".join(str(item) for item in poll_fields)
+        if user_fields is not None:
+            params["user.fields"] = ",".join(str(item) for item in user_fields)
+        if place_fields is not None:
+            params["place.fields"] = ",".join(str(item) for item in place_fields)
+        headers = {
+            "Accept": "application/json",
+        }
+        # Prepare request data
+        json_data = None
+        try:
+            # Make streaming request
+            with self.client.session.get(
+                url,
+                params=params,
+                headers=headers,
+                stream=True,
+                timeout=timeout,
+            ) as response:
+                # Check for HTTP errors
+                response.raise_for_status()
+                # Buffer for incomplete lines
+                buffer = ""
+                # Stream data chunk by chunk
+                for chunk in response.iter_content(
+                    chunk_size=chunk_size, decode_unicode=True
+                ):
+                    if chunk:
+                        # Ensure chunk is always a string, not bytes
+                        if isinstance(chunk, bytes):
+                            chunk = chunk.decode("utf-8")
+                        buffer += chunk
+                        # Process complete lines
+                        while "\n" in buffer:
+                            line, buffer = buffer.split("\n", 1)
+                            line = line.strip()
+                            if line:
+                                try:
+                                    # Parse JSON line
+                                    data = json.loads(line)
+                                    # Convert to response model if available
+                                    yield PostsFirehosePtResponse.model_validate(data)
+                                except json.JSONDecodeError:
+                                    # Skip invalid JSON lines
+                                    continue
+                                except Exception:
+                                    # Skip lines that cause processing errors
+                                    continue
+                # Process any remaining data in buffer
+                if buffer.strip():
+                    try:
+                        data = json.loads(buffer.strip())
+                        yield PostsFirehosePtResponse.model_validate(data)
+                    except json.JSONDecodeError:
+                        # Skip invalid JSON in final buffer
+                        pass
+        except requests.exceptions.RequestException:
+            raise
+        except Exception:
+            raise
+
+
+    def posts_firehose_ko(
+        self,
+        partition: int,
+        backfill_minutes: int = None,
+        start_time: str = None,
+        end_time: str = None,
+        tweet_fields: List = None,
+        expansions: List = None,
+        media_fields: List = None,
+        poll_fields: List = None,
+        user_fields: List = None,
+        place_fields: List = None,
+        timeout: Optional[float] = None,
+        chunk_size: int = 1024,
+    ) -> Generator[PostsFirehoseKoResponse, None, None]:
+        """
+        Stream Korean Posts (Streaming)
+        Streams all public Korean-language Posts in real-time.
+        This is a streaming endpoint that yields data in real-time as it becomes available.
+        Each yielded item represents a single data point from the stream.
+        Args:
+            backfill_minutes: The number of minutes of backfill requested.
+            partition: The partition number.
+            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Posts will be provided.
+            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided.
+            tweet_fields: A comma separated list of Tweet fields to display.
+            expansions: A comma separated list of fields to expand.
+            media_fields: A comma separated list of Media fields to display.
+            poll_fields: A comma separated list of Poll fields to display.
+            user_fields: A comma separated list of User fields to display.
+            place_fields: A comma separated list of Place fields to display.
+            timeout: Request timeout in seconds (default: None for no timeout)
+            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
+        Yields:
+            PostsFirehoseKoResponse: Individual streaming data items
+        Raises:
+            requests.exceptions.RequestException: If the streaming connection fails
+            json.JSONDecodeError: If the streamed data is not valid JSON
+        """
+        url = self.client.base_url + "/2/tweets/firehose/stream/lang/ko"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        if backfill_minutes is not None:
+            params["backfill_minutes"] = backfill_minutes
+        if partition is not None:
+            params["partition"] = partition
+        if start_time is not None:
+            params["start_time"] = start_time
+        if end_time is not None:
+            params["end_time"] = end_time
+        if tweet_fields is not None:
+            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
+        if expansions is not None:
+            params["expansions"] = ",".join(str(item) for item in expansions)
+        if media_fields is not None:
+            params["media.fields"] = ",".join(str(item) for item in media_fields)
+        if poll_fields is not None:
+            params["poll.fields"] = ",".join(str(item) for item in poll_fields)
+        if user_fields is not None:
+            params["user.fields"] = ",".join(str(item) for item in user_fields)
+        if place_fields is not None:
+            params["place.fields"] = ",".join(str(item) for item in place_fields)
+        headers = {
+            "Accept": "application/json",
+        }
+        # Prepare request data
+        json_data = None
+        try:
+            # Make streaming request
+            with self.client.session.get(
+                url,
+                params=params,
+                headers=headers,
+                stream=True,
+                timeout=timeout,
+            ) as response:
+                # Check for HTTP errors
+                response.raise_for_status()
+                # Buffer for incomplete lines
+                buffer = ""
+                # Stream data chunk by chunk
+                for chunk in response.iter_content(
+                    chunk_size=chunk_size, decode_unicode=True
+                ):
+                    if chunk:
+                        # Ensure chunk is always a string, not bytes
+                        if isinstance(chunk, bytes):
+                            chunk = chunk.decode("utf-8")
+                        buffer += chunk
+                        # Process complete lines
+                        while "\n" in buffer:
+                            line, buffer = buffer.split("\n", 1)
+                            line = line.strip()
+                            if line:
+                                try:
+                                    # Parse JSON line
+                                    data = json.loads(line)
+                                    # Convert to response model if available
+                                    yield PostsFirehoseKoResponse.model_validate(data)
+                                except json.JSONDecodeError:
+                                    # Skip invalid JSON lines
+                                    continue
+                                except Exception:
+                                    # Skip lines that cause processing errors
+                                    continue
+                # Process any remaining data in buffer
+                if buffer.strip():
+                    try:
+                        data = json.loads(buffer.strip())
+                        yield PostsFirehoseKoResponse.model_validate(data)
+                    except json.JSONDecodeError:
+                        # Skip invalid JSON in final buffer
+                        pass
+        except requests.exceptions.RequestException:
+            raise
+        except Exception:
+            raise
+
+
+    def get_rule_counts(self, rules_count_fields: List = None) -> GetRuleCountsResponse:
+        """
+        Get stream rule counts
+        Retrieves the count of rules in the active rule set for the filtered stream.
+        Args:
+            rules_count_fields: A comma separated list of RulesCount fields to display.
+            Returns:
+            GetRuleCountsResponse: Response data
+        """
+        url = self.client.base_url + "/2/tweets/search/stream/rules/counts"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        if rules_count_fields is not None:
+            params["rules_count.fields"] = ",".join(
+                str(item) for item in rules_count_fields
+            )
+        headers = {}
+        # Prepare request data
+        json_data = None
+        # Make the request
+        response = self.client.session.get(
+            url,
+            params=params,
+            headers=headers,
+        )
+        # Check for errors
+        response.raise_for_status()
+        # Parse the response data
+        response_data = response.json()
+        # Convert to Pydantic model if applicable
+        return GetRuleCountsResponse.model_validate(response_data)
+
+
+    def likes_firehose(
+        self,
+        partition: int,
+        backfill_minutes: int = None,
+        start_time: str = None,
+        end_time: str = None,
+        like_with_tweet_author_fields: List = None,
+        expansions: List = None,
+        user_fields: List = None,
+        tweet_fields: List = None,
+        timeout: Optional[float] = None,
+        chunk_size: int = 1024,
+    ) -> Generator[LikesFirehoseResponse, None, None]:
+        """
+        Stream all Likes (Streaming)
+        Streams all public Likes in real-time.
+        This is a streaming endpoint that yields data in real-time as it becomes available.
+        Each yielded item represents a single data point from the stream.
+        Args:
+            backfill_minutes: The number of minutes of backfill requested.
+            partition: The partition number.
+            start_time: YYYY-MM-DDTHH:mm:ssZ. The earliest UTC timestamp to which the Likes will be provided.
+            end_time: YYYY-MM-DDTHH:mm:ssZ. The latest UTC timestamp to which the Posts will be provided.
+            like_with_tweet_author_fields: A comma separated list of LikeWithTweetAuthor fields to display.
+            expansions: A comma separated list of fields to expand.
+            user_fields: A comma separated list of User fields to display.
+            tweet_fields: A comma separated list of Tweet fields to display.
+            timeout: Request timeout in seconds (default: None for no timeout)
+            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
+        Yields:
+            LikesFirehoseResponse: Individual streaming data items
+        Raises:
+            requests.exceptions.RequestException: If the streaming connection fails
+            json.JSONDecodeError: If the streamed data is not valid JSON
+        """
+        url = self.client.base_url + "/2/likes/firehose/stream"
+        if self.client.bearer_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.bearer_token}"
+            )
+        elif self.client.access_token:
+            self.client.session.headers["Authorization"] = (
+                f"Bearer {self.client.access_token}"
+            )
+        params = {}
+        if backfill_minutes is not None:
+            params["backfill_minutes"] = backfill_minutes
+        if partition is not None:
+            params["partition"] = partition
+        if start_time is not None:
+            params["start_time"] = start_time
+        if end_time is not None:
+            params["end_time"] = end_time
+        if like_with_tweet_author_fields is not None:
+            params["like_with_tweet_author.fields"] = ",".join(
+                str(item) for item in like_with_tweet_author_fields
+            )
+        if expansions is not None:
+            params["expansions"] = ",".join(str(item) for item in expansions)
+        if user_fields is not None:
+            params["user.fields"] = ",".join(str(item) for item in user_fields)
+        if tweet_fields is not None:
+            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
+        headers = {
+            "Accept": "application/json",
+        }
+        # Prepare request data
+        json_data = None
+        try:
+            # Make streaming request
+            with self.client.session.get(
+                url,
+                params=params,
+                headers=headers,
+                stream=True,
+                timeout=timeout,
+            ) as response:
+                # Check for HTTP errors
+                response.raise_for_status()
+                # Buffer for incomplete lines
+                buffer = ""
+                # Stream data chunk by chunk
+                for chunk in response.iter_content(
+                    chunk_size=chunk_size, decode_unicode=True
+                ):
+                    if chunk:
+                        # Ensure chunk is always a string, not bytes
+                        if isinstance(chunk, bytes):
+                            chunk = chunk.decode("utf-8")
+                        buffer += chunk
+                        # Process complete lines
+                        while "\n" in buffer:
+                            line, buffer = buffer.split("\n", 1)
+                            line = line.strip()
+                            if line:
+                                try:
+                                    # Parse JSON line
+                                    data = json.loads(line)
+                                    # Convert to response model if available
+                                    yield LikesFirehoseResponse.model_validate(data)
+                                except json.JSONDecodeError:
+                                    # Skip invalid JSON lines
+                                    continue
+                                except Exception:
+                                    # Skip lines that cause processing errors
+                                    continue
+                # Process any remaining data in buffer
+                if buffer.strip():
+                    try:
+                        data = json.loads(buffer.strip())
+                        yield LikesFirehoseResponse.model_validate(data)
+                    except json.JSONDecodeError:
+                        # Skip invalid JSON in final buffer
+                        pass
+        except requests.exceptions.RequestException:
+            raise
+        except Exception:
+            raise
+
+
     def posts_firehose_en(
         self,
         partition: int,
@@ -1707,120 +1821,6 @@ class StreamClient:
                     try:
                         data = json.loads(buffer.strip())
                         yield PostsFirehoseEnResponse.model_validate(data)
-                    except json.JSONDecodeError:
-                        # Skip invalid JSON in final buffer
-                        pass
-        except requests.exceptions.RequestException:
-            raise
-        except Exception:
-            raise
-
-
-    def posts_sample(
-        self,
-        backfill_minutes: int = None,
-        tweet_fields: List = None,
-        expansions: List = None,
-        media_fields: List = None,
-        poll_fields: List = None,
-        user_fields: List = None,
-        place_fields: List = None,
-        timeout: Optional[float] = None,
-        chunk_size: int = 1024,
-    ) -> Generator[PostsSampleResponse, None, None]:
-        """
-        Stream sampled Posts (Streaming)
-        Streams a 1% sample of public Posts in real-time.
-        This is a streaming endpoint that yields data in real-time as it becomes available.
-        Each yielded item represents a single data point from the stream.
-        Args:
-            backfill_minutes: The number of minutes of backfill requested.
-            tweet_fields: A comma separated list of Tweet fields to display.
-            expansions: A comma separated list of fields to expand.
-            media_fields: A comma separated list of Media fields to display.
-            poll_fields: A comma separated list of Poll fields to display.
-            user_fields: A comma separated list of User fields to display.
-            place_fields: A comma separated list of Place fields to display.
-            timeout: Request timeout in seconds (default: None for no timeout)
-            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
-        Yields:
-            PostsSampleResponse: Individual streaming data items
-        Raises:
-            requests.exceptions.RequestException: If the streaming connection fails
-            json.JSONDecodeError: If the streamed data is not valid JSON
-        """
-        url = self.client.base_url + "/2/tweets/sample/stream"
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.bearer_token}"
-            )
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = (
-                f"Bearer {self.client.access_token}"
-            )
-        params = {}
-        if backfill_minutes is not None:
-            params["backfill_minutes"] = backfill_minutes
-        if tweet_fields is not None:
-            params["tweet.fields"] = ",".join(str(item) for item in tweet_fields)
-        if expansions is not None:
-            params["expansions"] = ",".join(str(item) for item in expansions)
-        if media_fields is not None:
-            params["media.fields"] = ",".join(str(item) for item in media_fields)
-        if poll_fields is not None:
-            params["poll.fields"] = ",".join(str(item) for item in poll_fields)
-        if user_fields is not None:
-            params["user.fields"] = ",".join(str(item) for item in user_fields)
-        if place_fields is not None:
-            params["place.fields"] = ",".join(str(item) for item in place_fields)
-        headers = {
-            "Accept": "application/json",
-        }
-        # Prepare request data
-        json_data = None
-        try:
-            # Make streaming request
-            with self.client.session.get(
-                url,
-                params=params,
-                headers=headers,
-                stream=True,
-                timeout=timeout,
-            ) as response:
-                # Check for HTTP errors
-                response.raise_for_status()
-                # Buffer for incomplete lines
-                buffer = ""
-                # Stream data chunk by chunk
-                for chunk in response.iter_content(
-                    chunk_size=chunk_size, decode_unicode=True
-                ):
-                    if chunk:
-                        # Ensure chunk is always a string, not bytes
-                        if isinstance(chunk, bytes):
-                            chunk = chunk.decode("utf-8")
-                        buffer += chunk
-                        # Process complete lines
-                        while "\n" in buffer:
-                            line, buffer = buffer.split("\n", 1)
-                            line = line.strip()
-                            if line:
-                                try:
-                                    # Parse JSON line
-                                    data = json.loads(line)
-                                    # Convert to response model if available
-                                    yield PostsSampleResponse.model_validate(data)
-                                except json.JSONDecodeError:
-                                    # Skip invalid JSON lines
-                                    continue
-                                except Exception:
-                                    # Skip lines that cause processing errors
-                                    continue
-                # Process any remaining data in buffer
-                if buffer.strip():
-                    try:
-                        data = json.loads(buffer.strip())
-                        yield PostsSampleResponse.model_validate(data)
                     except json.JSONDecodeError:
                         # Skip invalid JSON in final buffer
                         pass

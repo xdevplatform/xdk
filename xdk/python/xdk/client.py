@@ -17,41 +17,41 @@ from typing import Dict, List, Optional, Union, Any, Callable
 from .oauth2_auth import OAuth2PKCEAuth
 from .paginator import Cursor, cursor, PaginationError
 
-from .news.client import NewsClient
-
-from .communities.client import CommunitiesClient
-
 from .account_activity.client import AccountActivityClient
-
-from .compliance.client import ComplianceClient
-
-from .trends.client import TrendsClient
-
-from .users.client import UsersClient
-
-from .stream.client import StreamClient
-
-from .media.client import MediaClient
-
-from .direct_messages.client import DirectMessagesClient
-
-from .spaces.client import SpacesClient
-
-from .activity.client import ActivityClient
-
-from .usage.client import UsageClient
 
 from .community_notes.client import CommunityNotesClient
 
+from .trends.client import TrendsClient
+
+from .direct_messages.client import DirectMessagesClient
+
+from .activity.client import ActivityClient
+
+from .media.client import MediaClient
+
+from .spaces.client import SpacesClient
+
 from .lists.client import ListsClient
 
-from .posts.client import PostsClient
+from .general.client import GeneralClient
+
+from .users.client import UsersClient
+
+from .usage.client import UsageClient
+
+from .communities.client import CommunitiesClient
 
 from .webhooks.client import WebhooksClient
 
+from .compliance.client import ComplianceClient
+
+from .posts.client import PostsClient
+
 from .connections.client import ConnectionsClient
 
-from .general.client import GeneralClient
+from .stream.client import StreamClient
+
+from .news.client import NewsClient
 
 
 class Client:
@@ -79,7 +79,7 @@ class Client:
             scope: Space-separated list of scopes for OAuth2 authorization.
         """
         self.session = requests.Session()
-        self.session.headers.update({"User-Agent": "xdk-python/0.2.2-beta"})
+        self.session.headers.update({"User-Agent": "xdk-python/0.2.3-beta"})
         self.base_url = base_url
         self.bearer_token = bearer_token
         # Set up OAuth2 PKCE authentication if credentials are provided
@@ -94,24 +94,24 @@ class Client:
                 scope=scope,
             )
         # Initialize clients for each tag
-        self.news = NewsClient(self)
-        self.communities = CommunitiesClient(self)
         self.account_activity = AccountActivityClient(self)
-        self.compliance = ComplianceClient(self)
-        self.trends = TrendsClient(self)
-        self.users = UsersClient(self)
-        self.stream = StreamClient(self)
-        self.media = MediaClient(self)
-        self.direct_messages = DirectMessagesClient(self)
-        self.spaces = SpacesClient(self)
-        self.activity = ActivityClient(self)
-        self.usage = UsageClient(self)
         self.community_notes = CommunityNotesClient(self)
+        self.trends = TrendsClient(self)
+        self.direct_messages = DirectMessagesClient(self)
+        self.activity = ActivityClient(self)
+        self.media = MediaClient(self)
+        self.spaces = SpacesClient(self)
         self.lists = ListsClient(self)
-        self.posts = PostsClient(self)
-        self.webhooks = WebhooksClient(self)
-        self.connections = ConnectionsClient(self)
         self.general = GeneralClient(self)
+        self.users = UsersClient(self)
+        self.usage = UsageClient(self)
+        self.communities = CommunitiesClient(self)
+        self.webhooks = WebhooksClient(self)
+        self.compliance = ComplianceClient(self)
+        self.posts = PostsClient(self)
+        self.connections = ConnectionsClient(self)
+        self.stream = StreamClient(self)
+        self.news = NewsClient(self)
 
     @property
 

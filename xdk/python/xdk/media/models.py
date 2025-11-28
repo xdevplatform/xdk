@@ -40,6 +40,15 @@ class UploadResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=True, extra="allow")
 
 
+# Models for get_analytics
+
+
+class GetAnalyticsResponse(BaseModel):
+    """Response model for get_analytics"""
+
+    model_config = ConfigDict(populate_by_name=True, extra="allow")
+
+
 # Models for create_subtitles
 
 
@@ -70,17 +79,17 @@ class DeleteSubtitlesResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=True, extra="allow")
 
 
-# Models for initialize_upload
+# Models for create_metadata
 
 
-class InitializeUploadRequest(BaseModel):
-    """Request model for initialize_upload"""
+class CreateMetadataRequest(BaseModel):
+    """Request model for create_metadata"""
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class InitializeUploadResponse(BaseModel):
-    """Response model for initialize_upload"""
+class CreateMetadataResponse(BaseModel):
+    """Response model for create_metadata"""
 
     model_config = ConfigDict(populate_by_name=True, extra="allow")
 
@@ -94,32 +103,17 @@ class GetByKeysResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=True, extra="allow")
 
 
-# Models for append_upload
+# Models for initialize_upload
 
 
-class AppendUploadRequest(BaseModel):
-    """Request model for append_upload"""
-
-    model_config = ConfigDict(populate_by_name=True)
-
-
-class AppendUploadResponse(BaseModel):
-    """Response model for append_upload"""
-
-    model_config = ConfigDict(populate_by_name=True, extra="allow")
-
-
-# Models for create_metadata
-
-
-class CreateMetadataRequest(BaseModel):
-    """Request model for create_metadata"""
+class InitializeUploadRequest(BaseModel):
+    """Request model for initialize_upload"""
 
     model_config = ConfigDict(populate_by_name=True)
 
 
-class CreateMetadataResponse(BaseModel):
-    """Response model for create_metadata"""
+class InitializeUploadResponse(BaseModel):
+    """Response model for initialize_upload"""
 
     model_config = ConfigDict(populate_by_name=True, extra="allow")
 
@@ -142,10 +136,16 @@ class GetByKeyResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=True, extra="allow")
 
 
-# Models for get_analytics
+# Models for append_upload
 
 
-class GetAnalyticsResponse(BaseModel):
-    """Response model for get_analytics"""
+class AppendUploadRequest(BaseModel):
+    """Request model for append_upload"""
+
+    model_config = ConfigDict(populate_by_name=True)
+
+
+class AppendUploadResponse(BaseModel):
+    """Response model for append_upload"""
 
     model_config = ConfigDict(populate_by_name=True, extra="allow")

@@ -59,7 +59,7 @@ post = client.posts.create(post_data={"text": "Hello, world!"})
 
 ## Documentation
 
-For more information, see the [documentation](https://xdk.com/docs/python).
+For more information, see the [documentation](https://docs.x.com/xdks/python/overview).
 
 ## License
 

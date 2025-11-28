@@ -14,10 +14,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "xdk"
-version = "0.2.2-beta"
+version = "0.2.3-beta"
 description = "Python SDK for the X API"
 authors = [
-    {name = "X Developer Platform", email = "twitterdev@x.com"},
+    {name = "X Developer Platform", email = "devs@x.com"},
 ]
 readme = "README.md"
 requires-python = ">=3.8"
@@ -39,8 +39,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/xdk/xdk-python"
-Repository = "https://github.com/xdk/xdk-python"
+Homepage = "https://github.com/xdevplatform/xdk"
+Repository = "https://github.com/xdevplatform/xdk/tree/main/xdk/python"
 
 [project.optional-dependencies]
 dev = [
