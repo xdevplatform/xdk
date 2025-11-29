@@ -156,15 +156,33 @@ jobs:
       
       - name: Push to SDK repository
         if: ${{ !inputs.dry_run }}
-        uses: cpina/github-action-push-to-another-repository@main
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SDK_DEPLOY_KEY_PYTHON }}
-        with:
-          source-directory: 'xdk/python'
-          destination-github-username: 'xdevplatform'
-          destination-repository-name: 'xdk-python'
-          target-branch: main
-          commit-message: 'chore: update SDK to v${{ needs.prepare.outputs.python_version }}'
+        run: |
+          # Setup SSH
+          mkdir -p ~/.ssh
+          echo "$SSH_DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          
+          # Clone SDK repo
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key" git clone git@github.com:xdevplatform/xdk-python.git /tmp/sdk-repo
+          
+          # Preserve .github folder
+          cp -r /tmp/sdk-repo/.github xdk/python/.github 2>/dev/null || true
+          
+          # Copy generated files to SDK repo (preserve .git)
+          rm -rf /tmp/sdk-repo/*
+          cp -r xdk/python/* /tmp/sdk-repo/
+          cp -r xdk/python/.* /tmp/sdk-repo/ 2>/dev/null || true
+          
+          # Commit and push
+          cd /tmp/sdk-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: update SDK to v${{ needs.prepare.outputs.python_version }}" || echo "No changes"
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key" git push
       
       - name: Summary
         run: |
@@ -224,15 +242,33 @@ jobs:
       
       - name: Push to SDK repository
         if: ${{ !inputs.dry_run }}
-        uses: cpina/github-action-push-to-another-repository@main
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SDK_DEPLOY_KEY_TYPESCRIPT }}
-        with:
-          source-directory: 'xdk/typescript'
-          destination-github-username: 'xdevplatform'
-          destination-repository-name: 'xdk-typescript'
-          target-branch: main
-          commit-message: 'chore: update SDK to v${{ needs.prepare.outputs.typescript_version }}'
+        run: |
+          # Setup SSH
+          mkdir -p ~/.ssh
+          echo "$SSH_DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          
+          # Clone SDK repo
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key" git clone git@github.com:xdevplatform/xdk-typescript.git /tmp/sdk-repo
+          
+          # Preserve .github folder
+          cp -r /tmp/sdk-repo/.github xdk/typescript/.github 2>/dev/null || true
+          
+          # Copy generated files to SDK repo (preserve .git)
+          rm -rf /tmp/sdk-repo/*
+          cp -r xdk/typescript/* /tmp/sdk-repo/
+          cp -r xdk/typescript/.* /tmp/sdk-repo/ 2>/dev/null || true
+          
+          # Commit and push
+          cd /tmp/sdk-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: update SDK to v${{ needs.prepare.outputs.typescript_version }}" || echo "No changes"
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key" git push
       
       - name: Summary
         run: |
