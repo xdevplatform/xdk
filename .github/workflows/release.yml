@@ -32,6 +32,10 @@ on:
         description: 'Dry run (generate and test, but do not push)'
         type: boolean
         default: false
+      skip_publish:
+        description: 'Push to SDK repos but skip publishing (no version bump)'
+        type: boolean
+        default: false
 
 env:
   CARGO_TERM_COLOR: always
@@ -54,6 +58,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       
       - name: Bump version
+        if: ${{ !inputs.skip_publish }}
         run: |
           chmod +x ./scripts/version.sh
           ./scripts/version.sh ${{ inputs.sdk }} ${{ inputs.bump }}
@@ -80,7 +85,7 @@ jobs:
           fi
       
       - name: Commit version bump
-        if: ${{ !inputs.dry_run }}
+        if: ${{ !inputs.dry_run && !inputs.skip_publish }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -105,6 +110,7 @@ jobs:
           echo "| SDK | ${{ inputs.sdk }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Bump | ${{ inputs.bump }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Dry Run | ${{ inputs.dry_run }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Skip Publish | ${{ inputs.skip_publish }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "### Versions" >> $GITHUB_STEP_SUMMARY
           echo "- Python: \`${{ steps.versions.outputs.python }}\`" >> $GITHUB_STEP_SUMMARY
