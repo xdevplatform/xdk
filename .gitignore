@@ -1,6 +1,35 @@
+# Rust build artifacts
 /target
+
+# Generated SDKs (pushed to separate repos)
+/xdk/python/
+/xdk/typescript/
+
+# Deploy keys (never commit)
+/.keys/
+
+# Python
 .venv/
-test_output/
 __pycache__/
+*.pyc
+dist/
+*.egg-info/
+
+# Node.js
 node_modules/
+
+# Test output
+test_output/
+
+# Logs
 *.log
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db

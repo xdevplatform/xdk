@@ -1,0 +1,106 @@
+# Unified CI workflow for SDK generator and all SDKs
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # ============================================
+  # Test the Rust SDK Generator
+  # ============================================
+  generator:
+    name: Generator Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+      
+      - name: Check formatting
+        run: cargo fmt --all -- --check
+      
+      - name: Run Clippy
+        run: cargo clippy --all --all-targets --all-features -- -D warnings
+      
+      - name: Run tests
+        run: cargo test --verbose
+
+  # ============================================
+  # Generate and Test Python SDK
+  # ============================================
+  python-sdk:
+    name: Python SDK
+    needs: generator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+      
+      - name: Generate Python SDK
+        run: cargo run -- python --latest true
+      
+      - name: Install dependencies
+        run: cd xdk/python && uv sync
+      
+      - name: Run tests
+        run: cd xdk/python && uv run pytest tests/ -v
+
+  # ============================================
+  # Generate and Test TypeScript SDK
+  # ============================================
+  typescript-sdk:
+    name: TypeScript SDK
+    needs: generator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: xdk/typescript/package-lock.json
+      
+      - name: Generate TypeScript SDK
+        run: cargo run -- typescript --latest true
+      
+      - name: Install dependencies
+        run: cd xdk/typescript && npm ci
+      
+      - name: Build
+        run: cd xdk/typescript && npm run build
+      
+      - name: Type check
+        run: cd xdk/typescript && npm run type-check
+      
+      - name: Run tests
+        run: cd xdk/typescript && npm test
+

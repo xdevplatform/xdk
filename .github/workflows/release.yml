@@ -1,0 +1,241 @@
+# Multi-Repo Release Workflow
+# Generates SDKs and pushes to separate SDK repositories
+# SDK repos auto-publish when they detect a version change
+#
+# Required Secrets:
+#   - SDK_DEPLOY_KEY_PYTHON: SSH deploy key for xdk-python repo
+#   - SDK_DEPLOY_KEY_TYPESCRIPT: SSH deploy key for xdk-typescript repo
+
+name: Release SDK
+
+on:
+  workflow_dispatch:
+    inputs:
+      sdk:
+        description: 'SDK to release'
+        required: true
+        type: choice
+        options:
+          - python
+          - typescript
+          - all
+      bump:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - beta
+      dry_run:
+        description: 'Dry run (generate and test, but do not push)'
+        type: boolean
+        default: false
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # ============================================
+  # Prepare: Bump version and commit
+  # ============================================
+  prepare:
+    name: Prepare Release
+    runs-on: ubuntu-latest
+    outputs:
+      python_version: ${{ steps.versions.outputs.python }}
+      typescript_version: ${{ steps.versions.outputs.typescript }}
+      release_python: ${{ steps.matrix.outputs.python }}
+      release_typescript: ${{ steps.matrix.outputs.typescript }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Bump version
+        run: |
+          chmod +x ./scripts/version.sh
+          ./scripts/version.sh ${{ inputs.sdk }} ${{ inputs.bump }}
+      
+      - name: Read versions
+        id: versions
+        run: |
+          echo "python=$(grep '^python = ' xdk-config.toml | sed 's/.*= "\(.*\)"/\1/')" >> $GITHUB_OUTPUT
+          echo "typescript=$(grep '^typescript = ' xdk-config.toml | sed 's/.*= "\(.*\)"/\1/')" >> $GITHUB_OUTPUT
+      
+      - name: Determine which SDKs to release
+        id: matrix
+        run: |
+          if [ "${{ inputs.sdk }}" = "all" ] || [ "${{ inputs.sdk }}" = "python" ]; then
+            echo "python=true" >> $GITHUB_OUTPUT
+          else
+            echo "python=false" >> $GITHUB_OUTPUT
+          fi
+          
+          if [ "${{ inputs.sdk }}" = "all" ] || [ "${{ inputs.sdk }}" = "typescript" ]; then
+            echo "typescript=true" >> $GITHUB_OUTPUT
+          else
+            echo "typescript=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Commit version bump
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add xdk-config.toml
+          
+          if [ "${{ inputs.sdk }}" = "all" ]; then
+            git commit -m "chore: bump SDK versions - Python v${{ steps.versions.outputs.python }}, TypeScript v${{ steps.versions.outputs.typescript }}"
+          elif [ "${{ inputs.sdk }}" = "python" ]; then
+            git commit -m "chore: bump Python SDK to v${{ steps.versions.outputs.python }}"
+          else
+            git commit -m "chore: bump TypeScript SDK to v${{ steps.versions.outputs.typescript }}"
+          fi
+          
+          git push
+      
+      - name: Release Summary
+        run: |
+          echo "## 📦 Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Setting | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| SDK | ${{ inputs.sdk }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bump | ${{ inputs.bump }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Dry Run | ${{ inputs.dry_run }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Versions" >> $GITHUB_STEP_SUMMARY
+          echo "- Python: \`${{ steps.versions.outputs.python }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- TypeScript: \`${{ steps.versions.outputs.typescript }}\`" >> $GITHUB_STEP_SUMMARY
+
+  # ============================================
+  # Release Python SDK
+  # ============================================
+  release-python:
+    name: Release Python SDK
+    needs: prepare
+    if: needs.prepare.outputs.release_python == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.dry_run && github.ref || 'main' }}
+      
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+      
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+      
+      - name: Generate Python SDK
+        run: cargo run -- python --latest true
+      
+      - name: Run tests
+        run: |
+          cd xdk/python
+          uv sync
+          uv run pytest tests/ -v
+      
+      - name: Prepare SDK for push
+        run: |
+          cd xdk/python
+          rm -rf .venv __pycache__ .pytest_cache *.egg-info dist/
+          find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+          find . -type f -name "*.pyc" -delete 2>/dev/null || true
+      
+      - name: Push to SDK repository
+        if: ${{ !inputs.dry_run }}
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SDK_DEPLOY_KEY_PYTHON }}
+        with:
+          source-directory: 'xdk/python'
+          destination-github-username: 'xdevplatform'
+          destination-repository-name: 'xdk-python'
+          target-branch: main
+          commit-message: 'chore: update SDK to v${{ needs.prepare.outputs.python_version }}'
+      
+      - name: Summary
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "## 🧪 Python SDK Dry Run" >> $GITHUB_STEP_SUMMARY
+            echo "Would push v${{ needs.prepare.outputs.python_version }} to xdk-python" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ✅ Python SDK Released" >> $GITHUB_STEP_SUMMARY
+            echo "Pushed v${{ needs.prepare.outputs.python_version }} to [xdk-python](https://github.com/xdevplatform/xdk-python)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "SDK repo will auto-publish to PyPI" >> $GITHUB_STEP_SUMMARY
+          fi
+
+  # ============================================
+  # Release TypeScript SDK
+  # ============================================
+  release-typescript:
+    name: Release TypeScript SDK
+    needs: prepare
+    if: needs.prepare.outputs.release_typescript == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.dry_run && github.ref || 'main' }}
+      
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+      
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      
+      - name: Generate TypeScript SDK
+        run: cargo run -- typescript --latest true
+      
+      - name: Install dependencies
+        run: cd xdk/typescript && npm ci
+      
+      - name: Build
+        run: cd xdk/typescript && npm run build
+      
+      - name: Type check
+        run: cd xdk/typescript && npm run type-check
+      
+      - name: Run tests
+        run: cd xdk/typescript && npm test
+      
+      - name: Prepare SDK for push
+        run: |
+          cd xdk/typescript
+          rm -rf node_modules
+      
+      - name: Push to SDK repository
+        if: ${{ !inputs.dry_run }}
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SDK_DEPLOY_KEY_TYPESCRIPT }}
+        with:
+          source-directory: 'xdk/typescript'
+          destination-github-username: 'xdevplatform'
+          destination-repository-name: 'xdk-typescript'
+          target-branch: main
+          commit-message: 'chore: update SDK to v${{ needs.prepare.outputs.typescript_version }}'
+      
+      - name: Summary
+        run: |
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            echo "## 🧪 TypeScript SDK Dry Run" >> $GITHUB_STEP_SUMMARY
+            echo "Would push v${{ needs.prepare.outputs.typescript_version }} to xdk-typescript" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ✅ TypeScript SDK Released" >> $GITHUB_STEP_SUMMARY
+            echo "Pushed v${{ needs.prepare.outputs.typescript_version }} to [xdk-typescript](https://github.com/xdevplatform/xdk-typescript)" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "SDK repo will auto-publish to npm" >> $GITHUB_STEP_SUMMARY
+          fi

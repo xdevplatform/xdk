@@ -1,7 +1,22 @@
-# Makefile for Rust project
+# XDK SDK Generator
 
-# Default target: runs checks and tests
-all: check test
+.PHONY: all check build test clean help
+.PHONY: generate python typescript
+.PHONY: test-python test-typescript test-sdks
+.PHONY: fmt clippy test-generator
+.PHONY: versions
+
+# =====================================
+# Default
+# =====================================
+
+all: check test-generator
+
+# =====================================
+# SDK Generation (local dev)
+# =====================================
+
+generate: python typescript
 
 python:
 	cargo run -- python --latest true
@@ -9,69 +24,74 @@ python:
 typescript:
 	cargo run -- typescript --latest true
 
-test-python:
-	cd xdk/python && uv run pytest tests/
+# =====================================
+# SDK Testing (local dev)
+# =====================================
 
-# Check formatting
+test-sdks: test-python test-typescript
+
+test-python: python
+	cd xdk/python && uv sync && uv run pytest tests/ -v
+
+test-typescript: typescript
+	cd xdk/typescript && npm ci && npm run build && npm run type-check && npm test
+
+# =====================================
+# Generator
+# =====================================
+
 fmt:
 	cargo fmt --all -- --check
 
-# Run clippy linter
 clippy:
 	cargo clippy --all --all-targets --all-features -- -D warnings
 
-# Run all checks (fmt and clippy)
 check: fmt clippy
 
-# Build the project
 build:
 	cargo build
 
-# Run tests
-test:
+test-generator:
 	cargo test --verbose
 
-# Clean build artifacts
+test: test-generator test-sdks
+
+# =====================================
+# Version Management
+# =====================================
+
+versions:
+	@grep -E "^(python|typescript) = " xdk-config.toml
+
+# =====================================
+# Cleanup
+# =====================================
+
 clean:
-	rm -rf xdk/*
+	rm -rf xdk/python xdk/typescript
 
 cargo-clean:
 	cargo clean
 
-# Version management
-version-patch:
-	@./scripts/bump-version.sh patch
+# =====================================
+# Help
+# =====================================
 
-version-minor:
-	@./scripts/bump-version.sh minor
-
-version-major:
-	@./scripts/bump-version.sh major
-
-version-beta:
-	@./scripts/bump-version.sh beta
-
-# TypeScript SDK publishing
-publish-typescript: typescript
-	@./scripts/publish-typescript.sh
-
-publish-typescript-dry-run: typescript
-	@./scripts/publish-typescript.sh --dry-run
-
-# Full workflow: bump version, regenerate, and prepare for publishing
-release-typescript-patch: version-patch typescript
-	@echo "✓ Version bumped and SDK regenerated"
-	@echo "Next: Review changes, commit, tag, and publish"
-
-release-typescript-minor: version-minor typescript
-	@echo "✓ Version bumped and SDK regenerated"
-	@echo "Next: Review changes, commit, tag, and publish"
-
-release-typescript-major: version-major typescript
-	@echo "✓ Version bumped and SDK regenerated"
-	@echo "Next: Review changes, commit, tag, and publish"
-
-.PHONY: all python test-python fmt clippy check build test clean cargo-clean
-.PHONY: version-patch version-minor version-major version-beta
-.PHONY: publish-typescript publish-typescript-dry-run
-.PHONY: release-typescript-patch release-typescript-minor release-typescript-major
+help:
+	@echo "XDK SDK Generator"
+	@echo ""
+	@echo "Local Development:"
+	@echo "  make python          Generate Python SDK"
+	@echo "  make typescript      Generate TypeScript SDK"
+	@echo "  make test-python     Generate + test Python SDK"
+	@echo "  make test-typescript Generate + test TypeScript SDK"
+	@echo ""
+	@echo "Generator:"
+	@echo "  make check           Run fmt + clippy"
+	@echo "  make test-generator  Run Rust tests"
+	@echo "  make build           Build generator"
+	@echo ""
+	@echo "Release:"
+	@echo "  ./scripts/version.sh <python|typescript|all> <patch|minor|major>"
+	@echo "  git add xdk-config.toml && git commit && git push"
+	@echo "  Then: Actions -> Release SDK -> Run workflow"
