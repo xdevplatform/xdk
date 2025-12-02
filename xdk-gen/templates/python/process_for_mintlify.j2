@@ -1042,43 +1042,48 @@ This example shows how to use OAuth 2.0 with Proof Key for Code Exchange (PKCE).
 **Example** (using a web server for callback):
 
 ```python
-from xdk.auth import OAuth2PKCE
+from xdk.oauth2_auth import OAuth2PKCEAuth
 from urllib.parse import urlparse
 import webbrowser
 
 # Step 1: Create PKCE instance
-auth = OAuth2PKCE(
-    client_id="your_client_id",
-    redirect_uri="http://localhost:8080/callback",
-    scopes=["tweet.read", "users.read", "offline.access"]  # Adjust scopes as needed
+auth = OAuth2PKCEAuth(
+    client_id="YOUR_CLIENT_ID",
+    redirect_uri="YOUR_CALLBACK_URL",
+    scope="tweet.read users.read offline.access"
 )
 
 # Step 2: Get authorization URL
-auth_url = auth.get_authorization_url()
+auth_url, state = auth.get_authorization_url()
 print(f"Visit this URL to authorize: {auth_url}")
 webbrowser.open(auth_url)
 
 # Step 3: Handle callback (in a real app, use a web framework like Flask)
 # Assume callback_url = "http://localhost:8080/callback?code=AUTH_CODE_HERE"
 callback_url = input("Paste the full callback URL here: ")
-parsed = urlparse(callback_url)
-code = parsed.query.split("=")[1]
 
 # Step 4: Exchange code for tokens
-tokens = auth.fetch_token(authorization_code=code)
+tokens = auth.fetch_token(authorization_response=callback_url)
 access_token = tokens["access_token"]
 refresh_token = tokens["refresh_token"]  # Store for renewal
 
 # Step 5: Create client
-client = Client(oauth2_access_token=access_token)
+# Option 1: Use bearer_token (OAuth2 access tokens work as bearer tokens)
+client = Client(bearer_token=access_token)
+
+# Option 2: Pass the full token dict for automatic refresh support
+# client = Client(token=tokens)
 ```
 
 **Token Refresh** (automatic in SDK for long-lived sessions):
 
 ```python
 # If access token expires, refresh using stored refresh_token
-tokens = auth.refresh_token(refresh_token=refresh_token)
-client = Client(oauth2_access_token=tokens["access_token"])
+# The refresh_token method uses the stored token from the OAuth2PKCEAuth instance
+tokens = auth.refresh_token()
+# Use the refreshed token
+client = Client(bearer_token=tokens["access_token"])
+# Or pass the full token dict: client = Client(token=tokens)
 ```
 
 ### 3. OAuth 1.0a User Context
