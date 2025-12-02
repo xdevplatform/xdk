@@ -6,4 +6,4 @@
 python = "0.3.0"
 
 # TypeScript SDK version
-typescript = "0.2.5-beta"
+typescript = "0.3.0"
