@@ -64,7 +64,11 @@ export class OAuth2 {
       state: state || ''
     });
 
-    // PKCE parameters are handled separately - not generated automatically
+    // Add PKCE parameters if they've been set
+    if (this.codeChallenge) {
+      params.append('code_challenge', this.codeChallenge);
+      params.append('code_challenge_method', 'S256');
+    }
 
     return `https://x.com/i/oauth2/authorize?${params.toString()}`;
   }
