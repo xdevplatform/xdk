@@ -98,9 +98,7 @@ class Test{{ tag.class_name }}Contracts:
                     # iter_content with decode_unicode=True returns strings, not bytes
                     test_data = '{"data": "test"}\n'
                     # iter_content is called as a method, so we need to make it return an iterator
-                    def iter_content_side_effect(*args, **kwargs):
-                        return iter([test_data])
-                    mock_streaming_response.iter_content = Mock(side_effect=iter_content_side_effect)
+                    mock_streaming_response.iter_content = Mock(side_effect=lambda *args, **kwargs: iter([test_data]))
                     # Make session.get return the context manager
                     mock_session.{{ contract_test.method|lower }}.return_value = mock_streaming_response
                 
