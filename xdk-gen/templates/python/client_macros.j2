@@ -21,9 +21,14 @@ timeout: Optional[float] = None, chunk_size: int = 1024
 {%- endif -%}
 {%- endmacro %}
 
+{# Macro to check if operation is paginated #}
+{% macro is_paginated(operation) -%}
+{% if operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) %}true{% else %}false{% endif %}
+{%- endmacro %}
+
 {# Macro for method return type #}
 {% macro return_type(operation) -%}
-{% if operation.is_streaming %}Generator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}, None, None]{% else %}{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}{% endif %}
+{% if operation.is_streaming %}Generator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}, None, None]{% elif is_paginated(operation) %}Iterator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}]{% else %}{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}{% endif %}
 {%- endmacro %}
 
 {# Macro for method docstring #}
@@ -71,6 +76,14 @@ timeout: Optional[float] = None, chunk_size: int = 1024
         Raises:
             requests.exceptions.RequestException: If the streaming connection fails
             json.JSONDecodeError: If the streamed data is not valid JSON
+        {% elif is_paginated(operation) -%}
+        
+        Yields:
+            {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}: One page of results at a time. Automatically handles pagination using next_token.
+        
+        Note:
+            This method automatically paginates through all results. To get just the first page,
+            you can call it once and break, or use the pagination_token parameter to start at a specific page.
         {% else -%}
         
         Returns:
@@ -325,4 +338,160 @@ headers = {% if operation.is_streaming %}{
         {% else %}
         return response_data
         {% endif %}
+{%- endmacro %}
+
+{# Macro for paginated request logic #}
+{% macro paginated_request(operation) -%}
+{% set ns = namespace(has_bearer_token = false, has_oauth2_token = false) %}
+{% if operation.security %}
+{% for security_requirement in operation.security %}
+{% for scheme_name in security_requirement %}
+{% if scheme_name == "BearerToken" %}
+{% set ns.has_bearer_token = true %}
+{% endif %}
+{% if scheme_name == "OAuth2UserToken" %}
+{% set ns.has_oauth2_token = true %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
+        # Determine pagination parameter name
+        {% if operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 %}
+        pagination_param_name = "pagination_token"
+        {% elif operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0 %}
+        pagination_param_name = "next_token"
+        {% else %}
+        pagination_param_name = "pagination_token"  # Default fallback
+        {% endif %}
+        
+        # Start with provided pagination_token, or None for first page
+        # Check if pagination_token parameter exists in the method signature
+        {% if operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 %}
+        {% set pagination_param = operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | first %}
+        current_pagination_token = {{ pagination_param.variable_name }}
+        {% elif operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0 %}
+        {% set pagination_param = operation.parameters | selectattr('original_name', 'equalto', 'next_token') | first %}
+        current_pagination_token = {{ pagination_param.variable_name }}
+        {% else %}
+        current_pagination_token = None
+        {% endif %}
+        
+        while True:
+            # Build query parameters for this page
+            page_params = {}
+            {% for param in operation.parameters -%}
+            {% if param.location == "query" -%}
+            {% if param.original_name != "pagination_token" and param.original_name != "next_token" -%}
+            if {{ param.variable_name }} is not None:
+                {% if param.param_type == "array" -%}
+                page_params["{{ param.original_name }}"] = ",".join(str(item) for item in {{ param.variable_name }})
+                {% else -%}
+                page_params["{{ param.original_name }}"] = {{ param.variable_name }}
+                {% endif %}
+            {% endif -%}
+            {% endif -%}
+            {% endfor -%}
+            
+            # Add pagination token for this page
+            if current_pagination_token:
+                page_params[pagination_param_name] = current_pagination_token
+            
+            # Make the request
+            {% if operation.security %}
+            {% if ns.has_bearer_token %}
+            response = self.client.session.{{ operation.method }}(
+                url,
+                params=page_params,
+                headers=headers,
+                {% if operation.request_body %}
+                json=json_data,
+                {% endif %}
+            )
+            {% elif ns.has_oauth2_token %}
+            # OAuth2UserToken: Use access_token as bearer token (matches TypeScript behavior)
+            response = self.client.session.{{ operation.method }}(
+                url,
+                params=page_params,
+                headers=headers,
+                {% if operation.request_body %}
+                json=json_data,
+                {% endif %}
+            )
+            {% else %}
+            response = self.client.session.{{ operation.method }}(
+                url,
+                params=page_params,
+                headers=headers,
+                {% if operation.request_body %}
+                json=json_data,
+                {% endif %}
+            )
+            {% endif %}
+            {% else %}
+            response = self.client.session.{{ operation.method }}(
+                url,
+                params=page_params,
+                headers=headers,
+                {% if operation.request_body %}
+                json=json_data,
+                {% endif %}
+            )
+            {% endif %}
+
+            # Check for errors
+            response.raise_for_status()
+
+            # Parse the response data
+            response_data = response.json()
+
+            # Convert to Pydantic model if applicable
+            {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
+            page_response = {{ operation.class_name }}Response.model_validate(response_data)
+            {% else %}
+            page_response = response_data
+            {% endif %}
+            
+            # Yield this page
+            yield page_response
+            
+            # Extract next_token from response
+            next_token = None
+            try:
+                # Try response.meta.next_token (most common pattern)
+                if hasattr(page_response, 'meta') and page_response.meta is not None:
+                    meta = page_response.meta
+                    # If meta is a Pydantic model, try to dump it
+                    if hasattr(meta, 'model_dump'):
+                        try:
+                            meta_dict = meta.model_dump()
+                            next_token = meta_dict.get('next_token')
+                        except (AttributeError, TypeError):
+                            pass
+                    # Otherwise try attribute access
+                    if not next_token and hasattr(meta, 'next_token'):
+                        next_token = getattr(meta, 'next_token', None)
+                    # If meta is a dict, access it directly
+                    if not next_token and isinstance(meta, dict):
+                        next_token = meta.get('next_token')
+            except (AttributeError, TypeError):
+                pass
+            
+            # Try dict access if we have a dict
+            if not next_token and isinstance(response_data, dict):
+                try:
+                    meta = response_data.get('meta')
+                    if meta and isinstance(meta, dict):
+                        next_token = meta.get('next_token')
+                except (AttributeError, TypeError, KeyError):
+                    pass
+            
+            # If no next_token, we're done
+            if not next_token:
+                break
+            
+            # Update token for next iteration
+            current_pagination_token = next_token
+            
+            # Optional: Add rate limit backoff here if needed
+            # time.sleep(0.1)  # Small delay to avoid rate limits
 {%- endmacro %}
