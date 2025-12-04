@@ -28,17 +28,19 @@ class Client:
                  client_secret: str = None,
                  redirect_uri: str = None,
                  token: Dict[str, Any] = None,
-                 scope: str = None):
+                 scope: Union[str, List[str]] = None,
+                 authorization_base_url: str = "https://x.com/i"):
         """Initialize the X API client.
 
         Args:
-            base_url: The base URL for the X API.
+            base_url: The base URL for the X API (defaults to https://api.x.com).
             bearer_token: The bearer token for the X API.
             client_id: The client ID for the X API.
             client_secret: The client secret for the X API.
             redirect_uri: The redirect URI for OAuth2 authorization.
             token: An existing OAuth2 token dictionary (if available).
-            scope: Space-separated list of scopes for OAuth2 authorization.
+            scope: Space-separated string or list of strings for OAuth2 authorization scopes.
+            authorization_base_url: The base URL for OAuth2 authorization (defaults to https://x.com/i).
         """
         self.session = requests.Session()
         self.session.headers.update({
@@ -52,6 +54,7 @@ class Client:
         if client_id or token:
             self.oauth2_auth = OAuth2PKCEAuth(
                 base_url=base_url,
+                authorization_base_url=authorization_base_url,
                 client_id=client_id,
                 client_secret=client_secret,
                 redirect_uri=redirect_uri,

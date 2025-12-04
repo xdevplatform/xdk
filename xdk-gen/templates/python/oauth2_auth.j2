@@ -13,7 +13,7 @@ import base64
 import hashlib
 import time
 import urllib.parse
-from typing import Dict, Optional, Any, Tuple
+from typing import Dict, Optional, Any, Tuple, Union, List
 from requests_oauthlib import OAuth2Session
 
 
@@ -22,27 +22,34 @@ class OAuth2PKCEAuth:
 
     def __init__(self, 
                  base_url: str = "https://api.x.com",
+                 authorization_base_url: str = "https://x.com/i",
                  client_id: str = None,
                  client_secret: str = None,
                  redirect_uri: str = None,
                  token: Dict[str, Any] = None,
-                 scope: str = None):
+                 scope: Union[str, List[str]] = None):
         """Initialize the OAuth2 PKCE authentication.
 
         Args:
             base_url: The base URL for the X API token endpoint (defaults to https://api.x.com).
+            authorization_base_url: The base URL for OAuth2 authorization (defaults to https://x.com/i).
             client_id: The client ID for the X API.
             client_secret: The client secret for the X API.
             redirect_uri: The redirect URI for OAuth2 authorization.
             token: An existing OAuth2 token dictionary (if available).
-            scope: Space-separated list of scopes for OAuth2 authorization.
+            scope: Space-separated string or list of strings for OAuth2 authorization scopes.
         """
         self.base_url = base_url
+        self.authorization_base_url = authorization_base_url.rstrip('/')
         self.client_id = client_id
         self.client_secret = client_secret
         self.redirect_uri = redirect_uri
         self.token = token
-        self.scope = scope
+        # Format scope: convert list to space-separated string if needed
+        if isinstance(scope, list):
+            self.scope = " ".join(scope)
+        else:
+            self.scope = scope
         self.oauth2_session = None
         self.code_verifier = None
         self.code_challenge = None
@@ -100,10 +107,10 @@ class OAuth2PKCEAuth:
             scope=self.scope
         )
         
-        # Authorization URL is always https://x.com/i/oauth2/authorize
-        # (not using base_url since it's for API calls, not authorization)
+        # Use authorization_base_url for authorization endpoint
+        # base_url is used for API token endpoints
         auth_url, state = self.oauth2_session.authorization_url(
-            "https://x.com/i/oauth2/authorize",
+            f"{self.authorization_base_url}/oauth2/authorize",
             code_challenge=self.code_challenge,
             code_challenge_method="S256"
         )
