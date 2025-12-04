@@ -51,7 +51,7 @@ class OAuth2PKCEAuth:
         if isinstance(scope, list):
             self.scope = " ".join(scope)
         else:
-        self.scope = scope
+            self.scope = scope
         self.oauth2_session = None
         self.code_verifier = None
         self.code_challenge = None
