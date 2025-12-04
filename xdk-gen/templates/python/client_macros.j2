@@ -85,14 +85,27 @@ timeout: Optional[float] = None, chunk_size: int = 1024
         {% for security_requirement in operation.security -%}
         {% for scheme_name in security_requirement -%}
         {% if scheme_name == "BearerToken" -%}
+        # Priority: bearer_token > access_token (matches TypeScript behavior)
         if self.client.bearer_token:
             self.client.session.headers["Authorization"] = f"Bearer {self.client.bearer_token}"
         elif self.client.access_token:
             self.client.session.headers["Authorization"] = f"Bearer {self.client.access_token}"
         {% endif -%}
         {% if scheme_name == "OAuth2UserToken" -%}
-        # Ensure we have a valid access token
-        if self.client.oauth2_auth and self.client.token:
+        # OAuth2UserToken: Use access_token as bearer token (matches TypeScript behavior)
+        # Priority: access_token > oauth2_session (for token refresh support)
+        if self.client.access_token:
+            # Use access_token directly as bearer token (matches TypeScript)
+            self.client.session.headers["Authorization"] = f"Bearer {self.client.access_token}"
+            # If we have oauth2_auth, check if token needs refresh
+            if self.client.oauth2_auth and self.client.token:
+                if self.client.is_token_expired():
+                    self.client.refresh_token()
+                    # Update access_token after refresh
+                    if self.client.access_token:
+                        self.client.session.headers["Authorization"] = f"Bearer {self.client.access_token}"
+        elif self.client.oauth2_auth and self.client.token:
+            # Fallback: use oauth2_session if available (for backward compatibility)
             # Check if token needs refresh
             if self.client.is_token_expired():
                 self.client.refresh_token()
@@ -267,24 +280,17 @@ headers = {% if operation.is_streaming %}{
             {% endif %}
         )
         {% elif ns.has_oauth2_token %}
-        if self.client.oauth2_session:
-            response = self.client.oauth2_session.{{ operation.method }}(
-                url,
-                params=params,
-                headers=headers,
-                {% if operation.request_body %}
-                json=json_data,
-                {% endif %}
-            )
-        else:
-            response = self.client.session.{{ operation.method }}(
-                url,
-                params=params,
-                headers=headers,
-                {% if operation.request_body %}
-                json=json_data,
-                {% endif %}
-            )
+        # OAuth2UserToken: Use access_token as bearer token (matches TypeScript behavior)
+        # The setup_authentication macro already sets the Authorization header
+        # Use regular session since we're using bearer token authentication
+        response = self.client.session.{{ operation.method }}(
+            url,
+            params=params,
+            headers=headers,
+            {% if operation.request_body %}
+            json=json_data,
+            {% endif %}
+        )
         {% else %}
         response = self.client.session.{{ operation.method }}(
             url,
