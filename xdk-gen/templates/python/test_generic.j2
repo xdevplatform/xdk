@@ -70,17 +70,28 @@ class Test{{ tag.class_name }}Generic:
                 method = getattr(self.{{ tag.property_name }}_client, method_name)
                 
                 # Try calling the method and expect an exception
+                # For generator methods (paginated), we need to iterate to trigger the exception
+                import types
                 with pytest.raises(Exception):
                     try:
                         # Try with no args first
-                        method()
+                        result = method()
+                        # Check if it's a generator (paginated method)
+                        if isinstance(result, types.GeneratorType):
+                            # For generators, exception is raised when iterating
+                            next(result)
+                        # If not a generator, the exception should have been raised above
                     except TypeError:
                         # If it needs args, try with basic test args
                         try:
-                            method("test_id")
+                            result = method("test_id")
+                            if isinstance(result, types.GeneratorType):
+                                next(result)
                         except TypeError:
                             # If it needs more specific args, try with kwargs
-                            method(id="test_id", query="test")
+                            result = method(id="test_id", query="test")
+                            if isinstance(result, types.GeneratorType):
+                                next(result)
     
     def test_client_has_expected_base_functionality(self):
         """Test that the client has expected base functionality."""

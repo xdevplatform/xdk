@@ -10,6 +10,7 @@ Generated automatically - do not edit manually.
 
 from typing import Iterator, Any, Optional, Callable, TypeVar, Generic, overload, Protocol, runtime_checkable
 import inspect
+import types
 
 # Type variable for response type
 ResponseType = TypeVar('ResponseType')
@@ -171,6 +172,8 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
         self.count = 0
         self.exhausted = False
         self._next_token: Optional[str] = None
+        self._generator: Optional[Iterator[ResponseType]] = None
+        self._is_generator_method = False
         
     def __iter__(self) -> Iterator[ResponseType]:
         return self
@@ -178,7 +181,71 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
     def __next__(self) -> ResponseType:
         if self.exhausted or (self.limit is not None and self.count >= self.limit):
             raise StopIteration
+        
+        # Check if method returns a generator (first call only)
+        if self._generator is None:
+            # Prepare params for this request
+            params = self.cursor.params.copy()
+            # Don't pass pagination_token/next_token on first call for generator methods
+            # as they handle pagination internally
             
+            # Make the API call with both positional and keyword arguments
+            result = self.cursor.method(*self.cursor.args, **params)
+            
+            # Check if the method returned a generator/iterator
+            # Paginated methods now return generators that yield pages
+            # Primary check: isinstance with GeneratorType
+            is_generator = isinstance(result, types.GeneratorType)
+            
+            # Fallback: check if it's a generator-like object (has __iter__ and __next__)
+            # but exclude common iterables like str, list, dict, tuple
+            if not is_generator:
+                if (hasattr(result, '__iter__') and hasattr(result, '__next__') and 
+                    not isinstance(result, (str, bytes, list, dict, tuple, set))):
+                    try:
+                        # If iter() returns itself, it's an iterator
+                        iter_result = iter(result)
+                        if iter_result is result:
+                            is_generator = True
+                    except (TypeError, AttributeError):
+                        pass
+            
+            if is_generator:
+                self._is_generator_method = True
+                self._generator = iter(result)
+                # For generator methods, we just yield from the generator
+                try:
+                    response = next(self._generator)
+                    self.count += 1
+                    return response
+                except StopIteration:
+                    self.exhausted = True
+                    raise StopIteration
+            else:
+                # Old behavior: method returns a single response
+                self._is_generator_method = False
+                # Extract next token AFTER returning this response
+                extracted_token = self._extract_next_token(result)
+                self._next_token = extracted_token
+                
+                # Check if we're done - if no token was extracted, we've reached the end
+                if not extracted_token:
+                    self.exhausted = True
+                    
+                self.count += 1
+                return result
+        
+        # If we have a generator, continue yielding from it
+        if self._is_generator_method:
+            try:
+                response = next(self._generator)
+                self.count += 1
+                return response
+            except StopIteration:
+                self.exhausted = True
+                raise StopIteration
+        
+        # Old behavior: method returns single responses, need to call again
         # Prepare params for this request
         params = self.cursor.params.copy()
         if self._next_token:

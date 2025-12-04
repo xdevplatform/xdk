@@ -77,28 +77,31 @@ class Test{{ tag.class_name }}Contracts:
             # Call the method
             try:
                 method = getattr(self.{{ tag.property_name }}_client, "{{ contract_test.method_name }}")
-                result = method(**kwargs)
                 
-                # Check if this is a streaming operation (returns Generator)
+                # Check if this might be a streaming operation by inspecting return type
                 import types
-                is_streaming = isinstance(result, types.GeneratorType)
+                import inspect
+                sig = inspect.signature(method)
+                return_annotation = str(sig.return_annotation)
+                might_be_streaming = 'Generator' in return_annotation or 'Iterator' in return_annotation
                 
-                if is_streaming:
-                    # For streaming operations, we need to set up the mock to handle streaming
-                    # Mock the streaming response
+                # Set up streaming mock if it might be streaming (before calling method)
+                if might_be_streaming:
                     mock_streaming_response = Mock()
                     mock_streaming_response.status_code = {{ contract_test.response_schema.status_code }}
                     mock_streaming_response.raise_for_status.return_value = None
                     mock_streaming_response.__enter__ = Mock(return_value=mock_streaming_response)
                     mock_streaming_response.__exit__ = Mock(return_value=None)
-                    
-                    # Mock iter_content to yield some test data
                     test_data = '{"data": "test"}\n'
                     mock_streaming_response.iter_content.return_value = [test_data]
-                    
-                    # Update the session mock to return our streaming response
                     mock_session.{{ contract_test.method|lower }}.return_value = mock_streaming_response
-                    
+                
+                result = method(**kwargs)
+                
+                # Check if this is actually a streaming operation (returns Generator)
+                is_streaming = isinstance(result, types.GeneratorType)
+                
+                if is_streaming:
                     # Consume the generator to trigger the HTTP request
                     try:
                         next(result)
@@ -146,8 +149,14 @@ class Test{{ tag.class_name }}Contracts:
             mock_session.{{ contract_test.method|lower }}.return_value = mock_response
             
             # Call without required parameters should either raise locally or via server response
+            # For generator methods (paginated), we need to iterate to trigger the exception
+            import types
             with pytest.raises((TypeError, ValueError, Exception)):
-                method()
+                result = method()
+                # Check if it's a generator (paginated method)
+                if isinstance(result, types.GeneratorType):
+                    # For generators, exception is raised when iterating
+                    next(result)
         {% else %}
         # No required parameters, method should be callable without args
         with patch.object(self.client, 'session') as mock_session:
