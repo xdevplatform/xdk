@@ -88,14 +88,42 @@ class Client:
             return self.oauth2_auth.access_token
         return None
     
-    def get_authorization_url(self):
-        """Get the authorization URL for the OAuth2 PKCE flow."""
+    def get_authorization_url(self, state=None):
+        """Get the authorization URL for the OAuth2 PKCE flow.
+        
+        Args:
+            state: Optional state parameter for security.
+            
+        Returns:
+            str: The authorization URL.
+        """
         if not self.oauth2_auth:
             raise ValueError("OAuth2 credentials not configured")
-        return self.oauth2_auth.get_authorization_url()
+        return self.oauth2_auth.get_authorization_url(state)
+    
+    def exchange_code(self, code, code_verifier=None):
+        """Exchange authorization code for tokens (matches TypeScript API).
+        
+        Args:
+            code: The authorization code from the callback.
+            code_verifier: Optional code verifier (uses stored verifier if not provided).
+            
+        Returns:
+            Dict[str, Any]: The token dictionary
+        """
+        if not self.oauth2_auth:
+            raise ValueError("OAuth2 credentials not configured")
+        return self.oauth2_auth.exchange_code(code, code_verifier)
     
     def fetch_token(self, authorization_response):
-        """Fetch token using authorization response."""
+        """Fetch token using authorization response URL (legacy method).
+        
+        Args:
+            authorization_response: The full callback URL received after authorization.
+            
+        Returns:
+            Dict[str, Any]: The token dictionary
+        """
         if not self.oauth2_auth:
             raise ValueError("OAuth2 credentials not configured")
         return self.oauth2_auth.fetch_token(authorization_response)

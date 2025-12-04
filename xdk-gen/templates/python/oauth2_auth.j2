@@ -14,6 +14,8 @@ import hashlib
 import time
 import urllib.parse
 from typing import Dict, Optional, Any, Tuple, Union, List
+import requests
+from requests.auth import HTTPBasicAuth
 from requests_oauthlib import OAuth2Session
 
 
@@ -49,7 +51,7 @@ class OAuth2PKCEAuth:
         if isinstance(scope, list):
             self.scope = " ".join(scope)
         else:
-            self.scope = scope
+        self.scope = scope
         self.oauth2_session = None
         self.code_verifier = None
         self.code_challenge = None
@@ -92,33 +94,121 @@ class OAuth2PKCEAuth:
         code_challenge = base64.urlsafe_b64encode(code_challenge).decode().rstrip('=')
         return code_challenge
     
-    def get_authorization_url(self) -> Tuple[str, str]:
+    def set_pkce_parameters(self, code_verifier: str, code_challenge: Optional[str] = None):
+        """Manually set PKCE parameters.
+        
+        Args:
+            code_verifier: The code verifier to use.
+            code_challenge: Optional code challenge (will be generated if not provided).
+        """
+        self.code_verifier = code_verifier
+        if code_challenge:
+            self.code_challenge = code_challenge
+        else:
+            self.code_challenge = self._generate_code_challenge(code_verifier)
+    
+    def get_authorization_url(self, state: Optional[str] = None) -> str:
         """Get the authorization URL for the OAuth2 PKCE flow.
         
+        Args:
+            state: Optional state parameter for security.
+        
         Returns:
-            tuple: (authorization_url, state)
+            str: The authorization URL.
         """
-        self.code_verifier = self._generate_code_verifier()
-        self.code_challenge = self._generate_code_challenge(self.code_verifier)
+        # Auto-generate PKCE parameters if not already set
+        if not self.code_verifier or not self.code_challenge:
+            self.code_verifier = self._generate_code_verifier()
+            self.code_challenge = self._generate_code_challenge(self.code_verifier)
         
         self.oauth2_session = OAuth2Session(
             client_id=self.client_id,
             redirect_uri=self.redirect_uri,
-            scope=self.scope
+            scope=self.scope,
+            state=state
         )
         
         # Use authorization_base_url for authorization endpoint
         # base_url is used for API token endpoints
-        auth_url, state = self.oauth2_session.authorization_url(
+        auth_url, generated_state = self.oauth2_session.authorization_url(
             f"{self.authorization_base_url}/oauth2/authorize",
             code_challenge=self.code_challenge,
             code_challenge_method="S256"
         )
         
-        return auth_url, state
+        return auth_url
+    
+    def exchange_code(self, code: str, code_verifier: Optional[str] = None) -> Dict[str, Any]:
+        """Exchange authorization code for tokens (matches TypeScript API).
+        
+        Args:
+            code: The authorization code from the callback.
+            code_verifier: Optional code verifier (uses stored verifier if not provided).
+            
+        Returns:
+            Dict[str, Any]: The token dictionary
+        """
+        if not code_verifier:
+            code_verifier = self.code_verifier
+        
+        if not code_verifier:
+            raise ValueError("Code verifier is required. Call get_authorization_url() or set_pkce_parameters() first.")
+        
+        # Build the token exchange request manually to match TypeScript implementation
+        params = {
+            'grant_type': 'authorization_code',
+            'code': code,
+            'redirect_uri': self.redirect_uri,
+            'code_verifier': code_verifier
+        }
+        
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        
+        # Add Basic Auth header if client secret is provided (matches TypeScript)
+        auth = None
+        if self.client_secret:
+            auth = HTTPBasicAuth(self.client_id, self.client_secret)
+        else:
+            # Only add client_id to body if no client_secret (public client)
+            params['client_id'] = self.client_id
+        
+        response = requests.post(
+            f"{self.base_url}/2/oauth2/token",
+            data=params,
+            headers=headers,
+            auth=auth
+        )
+        
+        if not response.ok:
+            try:
+                error_data = response.json()
+            except:
+                error_data = response.text
+            raise ValueError(f"HTTP error! status: {response.status_code}, body: {error_data}")
+        
+        data = response.json()
+        self.token = {
+            'access_token': data.get('access_token'),
+            'token_type': data.get('token_type'),
+            'expires_in': data.get('expires_in'),
+            'refresh_token': data.get('refresh_token'),
+            'scope': data.get('scope')
+        }
+        
+        # Calculate expires_at if expires_in is provided
+        if 'expires_in' in data and data['expires_in']:
+            self.token['expires_at'] = time.time() + data['expires_in']
+        
+        # Set up OAuth2 session with the new token
+        if self.client_id:
+            self._setup_oauth_session()
+        
+        return self.token
     
     def fetch_token(self, authorization_response: str) -> Dict[str, Any]:
-        """Fetch token using authorization response and code verifier.
+        """Fetch token using authorization response URL (legacy method, uses exchange_code internally).
         
         Args:
             authorization_response: The full callback URL received after authorization
@@ -126,19 +216,15 @@ class OAuth2PKCEAuth:
         Returns:
             Dict[str, Any]: The token dictionary
         """
-        if not self.oauth2_session:
-            raise ValueError("OAuth2 session not initialized. Call get_authorization_url first.")
+        # Parse the authorization code from the callback URL
+        parsed = urllib.parse.urlparse(authorization_response)
+        query_params = urllib.parse.parse_qs(parsed.query)
         
-        self.token = self.oauth2_session.fetch_token(
-            f"{self.base_url}/2/oauth2/token",
-            authorization_response=authorization_response,
-            code_verifier=self.code_verifier,
-            client_id=self.client_id,
-            client_secret=self.client_secret,
-            include_client_id=True
-        )
+        if 'code' not in query_params:
+            raise ValueError("No authorization code found in callback URL")
         
-        return self.token
+        code = query_params['code'][0]
+        return self.exchange_code(code)
     
     def refresh_token(self) -> Dict[str, Any]:
         """Refresh the access token.
@@ -158,6 +244,22 @@ class OAuth2PKCEAuth:
         )
         
         return self.token
+    
+    def get_code_verifier(self) -> Optional[str]:
+        """Get the current code verifier (for PKCE).
+        
+        Returns:
+            Optional[str]: The current code verifier, or None if not set.
+        """
+        return self.code_verifier
+    
+    def get_code_challenge(self) -> Optional[str]:
+        """Get the current code challenge (for PKCE).
+        
+        Returns:
+            Optional[str]: The current code challenge, or None if not set.
+        """
+        return self.code_challenge
     
     @property
     def access_token(self) -> Optional[str]:
