@@ -23,12 +23,12 @@ timeout: Optional[float] = None, chunk_size: int = 1024
 
 {# Macro to check if operation is paginated #}
 {% macro is_paginated(operation) -%}
-{% if operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) %}true{% else %}false{% endif %}
+{%- if operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) -%}1{%- else -%}0{%- endif -%}
 {%- endmacro %}
 
 {# Macro for method return type #}
 {% macro return_type(operation) -%}
-{% if operation.is_streaming %}Generator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}, None, None]{% elif is_paginated(operation) %}Iterator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}]{% else %}{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}{% endif %}
+{% if operation.is_streaming %}Generator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}, None, None]{% elif operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) %}Iterator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}]{% else %}{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}{% endif %}
 {%- endmacro %}
 
 {# Macro for method docstring #}
@@ -76,7 +76,7 @@ timeout: Optional[float] = None, chunk_size: int = 1024
         Raises:
             requests.exceptions.RequestException: If the streaming connection fails
             json.JSONDecodeError: If the streamed data is not valid JSON
-        {% elif is_paginated(operation) -%}
+        {% elif operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) -%}
         
         Yields:
             {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}: One page of results at a time. Automatically handles pagination using next_token.

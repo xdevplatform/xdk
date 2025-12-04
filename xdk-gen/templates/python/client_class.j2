@@ -43,7 +43,7 @@ class {{ tag.class_name }}Client:
 
         {{ macros.setup_authentication(operation) }}
         
-        {% if not is_paginated(operation) %}
+        {% if not macros.is_paginated(operation) %}
         {{ macros.build_query_params(operation) }}
         {% endif %}
         
@@ -53,7 +53,7 @@ class {{ tag.class_name }}Client:
         
         {% if operation.is_streaming %}
         {{ macros.streaming_request(operation) }}
-        {% elif is_paginated(operation) %}
+        {% elif macros.is_paginated(operation) %}
         {{ macros.paginated_request(operation) }}
         {% else %}
         {{ macros.regular_request(operation) }}
