@@ -43,7 +43,7 @@ class {{ tag.class_name }}Client:
 
         {{ macros.setup_authentication(operation) }}
         
-        {% if not macros.is_paginated(operation) %}
+        {% if not (operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0)) %}
         {{ macros.build_query_params(operation) }}
         {% endif %}
         
@@ -53,7 +53,7 @@ class {{ tag.class_name }}Client:
         
         {% if operation.is_streaming %}
         {{ macros.streaming_request(operation) }}
-        {% elif macros.is_paginated(operation) %}
+        {% elif operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) %}
         {{ macros.paginated_request(operation) }}
         {% else %}
         {{ macros.regular_request(operation) }}

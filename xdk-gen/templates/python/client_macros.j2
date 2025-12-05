@@ -23,7 +23,7 @@ timeout: Optional[float] = None, chunk_size: int = 1024
 
 {# Macro to check if operation is paginated #}
 {% macro is_paginated(operation) -%}
-{%- if operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) -%}1{%- else -%}0{%- endif -%}
+{%- if operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) -%}True{%- else -%}False{%- endif -%}
 {%- endmacro %}
 
 {# Macro for method return type #}
