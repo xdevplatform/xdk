@@ -3,7 +3,8 @@
 Auto-generated {{ tag.display_name }} client for the X API.
 
 This module provides a client for interacting with the {{ tag.display_name }} endpoints of the X API.
-{% if operations | selectattr('is_streaming') | list %}Real-time streaming operations return generators that yield data as it arrives.{% endif %}
+{% if operations | selectattr('is_streaming') | list %}Real-time streaming operations return generators that yield data as it arrives.
+Streaming connections are automatically managed with exponential backoff retry logic for robust handling.{% endif %}
 All methods, parameters, and response models are generated from the OpenAPI specification.
 
 Generated automatically - do not edit manually.
@@ -13,7 +14,9 @@ from __future__ import annotations
 from typing import Dict, List, Optional, Any, Union, cast, TYPE_CHECKING, Iterator{% if operations | selectattr('is_streaming') | list %}, Generator{% endif %}{% if operations and (operations | selectattr('parameters') | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operations | selectattr('parameters') | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) %}  # Iterator for pagination{% endif %}
 import requests
 import time
-{% if operations | selectattr('is_streaming') | list %}import json{% endif %}
+{% if operations | selectattr('is_streaming') | list %}
+from ..streaming import StreamConfig, StreamError, stream_with_retry
+{% endif %}
 
 if TYPE_CHECKING:
     from ..client import Client
