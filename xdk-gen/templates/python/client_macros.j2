@@ -200,6 +200,11 @@ headers = {% if operation.is_streaming %}{
 
 {# Macro for streaming request logic #}
 {% macro streaming_request(operation) -%}
+        # Ensure params is defined (build_query_params should set it, but initialize if not)
+        try:
+            _ = params  # Check if params exists
+        except NameError:
+            params = {}  # Initialize if not defined
         try:
             # Make streaming request
             with self.client.session.{{ operation.method | lower }}(
