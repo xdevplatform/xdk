@@ -17,7 +17,7 @@ body: {{ operation.class_name }}Request{% if operation.parameters | rejectattr('
 body: Optional[{{ operation.class_name }}Request] = None{% if operation.is_streaming %}, {% endif %}
 {%- endif -%}
 {%- if operation.is_streaming -%}
-timeout: Optional[float] = None, chunk_size: int = 1024
+stream_config: Optional[StreamConfig] = None
 {%- endif -%}
 {%- endmacro %}
 
@@ -44,6 +44,9 @@ timeout: Optional[float] = None, chunk_size: int = 1024
         This is a streaming endpoint that yields data in real-time as it becomes available.
         Each yielded item represents a single data point from the stream.
         
+        The connection is automatically managed with exponential backoff retry logic.
+        If the stream disconnects, the SDK will automatically reconnect without client intervention.
+        
         {% endif -%}
         {% if operation.parameters -%}
         Args:
@@ -67,15 +70,15 @@ timeout: Optional[float] = None, chunk_size: int = 1024
         {% endif -%}
         {% endif -%}
         {% if operation.is_streaming -%}
-            timeout: Request timeout in seconds (default: None for no timeout)
-            chunk_size: Size of chunks to read from the stream (default: 1024 bytes)
+            stream_config: Optional StreamConfig for customizing retry behavior, timeouts, and callbacks.
+                Configure max_retries (-1 for infinite), initial_backoff, max_backoff, and lifecycle callbacks
+                (on_connect, on_disconnect, on_reconnect, on_error) for monitoring connection state.
         
         Yields:
             {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}: Individual streaming data items
         
         Raises:
-            requests.exceptions.RequestException: If the streaming connection fails
-            json.JSONDecodeError: If the streamed data is not valid JSON
+            StreamError: If a non-retryable error occurs (auth errors, client errors) or max retries exceeded.
         {% elif operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) -%}
         
         Yields:
@@ -205,70 +208,22 @@ headers = {% if operation.is_streaming %}{
             _ = params  # Check if params exists
         except NameError:
             params = {}  # Initialize if not defined
-        try:
-            # Make streaming request
-            with self.client.session.{{ operation.method | lower }}(
-                url,
-                params=params,
-                headers=headers,
-                {% if operation.request_body %}json=json_data,{% endif %}
-                stream=True,
-                timeout=timeout,
-            ) as response:
-                # Check for HTTP errors
-                response.raise_for_status()
-                
-                # Buffer for incomplete lines
-                buffer = ""
-                
-                # Stream data chunk by chunk
-                for chunk in response.iter_content(chunk_size=chunk_size, decode_unicode=True):
-                    if chunk:
-                        # Ensure chunk is always a string, not bytes
-                        if isinstance(chunk, bytes):
-                            chunk = chunk.decode('utf-8')
-                        buffer += chunk
-                        
-                        # Process complete lines
-                        while '\n' in buffer:
-                            line, buffer = buffer.split('\n', 1)
-                            line = line.strip()
-                            
-                            if line:
-                                try:
-                                    # Parse JSON line
-                                    data = json.loads(line)
-                                    
-                                    # Convert to response model if available
-                                    {% if operation.responses and "200" in operation.responses %}
-                                    yield {{ operation.class_name }}Response.model_validate(data)
-                                    {% else %}
-                                    yield data
-                                    {% endif %}
-                                    
-                                except json.JSONDecodeError:
-                                    # Skip invalid JSON lines
-                                    continue
-                                except Exception:
-                                    # Skip lines that cause processing errors
-                                    continue
-                
-                # Process any remaining data in buffer
-                if buffer.strip():
-                    try:
-                        data = json.loads(buffer.strip())
-                        {% if operation.responses and "200" in operation.responses %}
-                        yield {{ operation.class_name }}Response.model_validate(data)
-                        {% else %}
-                        yield data
-                        {% endif %}
-                    except json.JSONDecodeError:
-                        # Skip invalid JSON in final buffer
-                        pass
-        except requests.exceptions.RequestException:
-            raise
-        except Exception:
-            raise
+        
+        # Use robust streaming with automatic retry and exponential backoff
+        yield from stream_with_retry(
+            session=self.client.session,
+            method="{{ operation.method | lower }}",
+            url=url,
+            config=stream_config,
+            params=params,
+            headers=headers,
+            {% if operation.request_body %}json_data=json_data,{% endif %}
+            {% if operation.responses and "200" in operation.responses %}
+            response_model={{ operation.class_name }}Response,
+            {% else %}
+            response_model=None,
+            {% endif %}
+        )
 {%- endmacro %}
 
 {# Macro for regular request logic #}
