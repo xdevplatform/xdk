@@ -126,6 +126,11 @@ stream_config: Optional[StreamConfig] = None
             if self.client.is_token_expired():
                 self.client.refresh_token()
         {% endif -%}
+        {% if scheme_name == "UserToken" -%}
+        # UserToken: OAuth1.0a authentication - header will be built dynamically in request
+        # OAuth1 header must be built per-request with method, URL, and body
+        # This is handled in the request logic below
+        {% endif -%}
         {% endfor -%}
         {% endfor -%}
         {% endif -%}
@@ -133,7 +138,7 @@ stream_config: Optional[StreamConfig] = None
 
 {# Macro to get authentication type flags #}
 {% macro get_auth_flags(operation) -%}
-{% set ns = namespace(has_bearer_token = false, has_oauth2_token = false) %}
+{% set ns = namespace(has_bearer_token = false, has_oauth2_token = false, has_oauth1 = false) %}
 {% if operation.security %}
 {% for security_requirement in operation.security %}
 {% for scheme_name in security_requirement %}
@@ -142,6 +147,9 @@ stream_config: Optional[StreamConfig] = None
 {% endif %}
 {% if scheme_name == "OAuth2UserToken" %}
 {% set ns.has_oauth2_token = true %}
+{% endif %}
+{% if scheme_name == "UserToken" %}
+{% set ns.has_oauth1 = true %}
 {% endif %}
 {% endfor %}
 {% endfor %}
@@ -228,7 +236,7 @@ headers = {% if operation.is_streaming %}{
 
 {# Macro for regular request logic #}
 {% macro regular_request(operation) -%}
-{% set ns = namespace(has_bearer_token = false, has_oauth2_token = false) %}
+{% set ns = namespace(has_bearer_token = false, has_oauth2_token = false, has_oauth1 = false) %}
 {% if operation.security %}
 {% for security_requirement in operation.security %}
 {% for scheme_name in security_requirement %}
@@ -238,44 +246,135 @@ headers = {% if operation.is_streaming %}{
 {% if scheme_name == "OAuth2UserToken" %}
 {% set ns.has_oauth2_token = true %}
 {% endif %}
+{% if scheme_name == "UserToken" %}
+{% set ns.has_oauth1 = true %}
+{% endif %}
 {% endfor %}
 {% endfor %}
 {% endif %}
+        # Select authentication method based on endpoint requirements and available credentials
+        # Priority strategy (matches TypeScript):
+        # 1. If endpoint only accepts one method, use that (if available)
+        # 2. If endpoint accepts multiple methods:
+        #    - For write operations (POST/PUT/DELETE/PATCH): Prefer OAuth1 > OAuth2 User Token > Bearer Token
+        #    - For read operations (GET): Prefer Bearer Token > OAuth2 User Token > OAuth1
+        # 3. If no security requirements: Bearer Token > OAuth2 User Token > OAuth1
+        selected_auth = None
+        # Check what auth methods we have available
+        available_bearer = bool(self.client.bearer_token)
+        available_oauth2 = bool(self.client.access_token)
+        available_oauth1 = bool(self.client.auth and self.client.auth.access_token)
+        
+        {% if operation.security %}
+        # Count acceptable schemes
+        acceptable_schemes = []
+        {% if ns.has_bearer_token %}
+        acceptable_schemes.append('BearerToken')
+        {% endif %}
+        {% if ns.has_oauth2_token %}
+        acceptable_schemes.append('OAuth2UserToken')
+        {% endif %}
+        {% if ns.has_oauth1 %}
+        acceptable_schemes.append('UserToken')
+        {% endif %}
+        
+        # If only one scheme is acceptable, use it if available
+        if len(acceptable_schemes) == 1:
+            scheme = acceptable_schemes[0]
+            if scheme == 'BearerToken' and available_bearer:
+                selected_auth = 'bearer_token'
+            elif scheme == 'OAuth2UserToken' and available_oauth2:
+                selected_auth = 'oauth2_user_context'
+            elif scheme == 'UserToken' and available_oauth1:
+                selected_auth = 'oauth1'
+        # Multiple schemes acceptable - use priority based on operation type
+        elif len(acceptable_schemes) > 1:
+            is_write_operation = "{{ operation.method }}" in ['POST', 'PUT', 'DELETE', 'PATCH']
+            if is_write_operation:
+                # Priority for write operations: OAuth1 > OAuth2 User Token > Bearer Token
+                if 'UserToken' in acceptable_schemes and available_oauth1:
+                    selected_auth = 'oauth1'
+                elif 'OAuth2UserToken' in acceptable_schemes and available_oauth2:
+                    selected_auth = 'oauth2_user_context'
+                elif 'BearerToken' in acceptable_schemes and available_bearer:
+                    selected_auth = 'bearer_token'
+            else:
+                # Priority for read operations: Bearer Token > OAuth2 User Token > OAuth1
+                if 'BearerToken' in acceptable_schemes and available_bearer:
+                    selected_auth = 'bearer_token'
+                elif 'OAuth2UserToken' in acceptable_schemes and available_oauth2:
+                    selected_auth = 'oauth2_user_context'
+                elif 'UserToken' in acceptable_schemes and available_oauth1:
+                    selected_auth = 'oauth1'
+        {% else %}
+        # No security requirements - use default priority
+        if available_bearer:
+            selected_auth = 'bearer_token'
+        elif available_oauth2:
+            selected_auth = 'oauth2_user_context'
+        elif available_oauth1:
+            selected_auth = 'oauth1'
+        {% endif %}
+        
+        # Apply selected authentication
+        if selected_auth == 'oauth1':
+            # OAuth1 authentication - build proper OAuth1 header dynamically
+            # Build OAuth1 header with method, URL, and body
+            # For OAuth1, we need to include query params in the URL for signature
+            full_url = url
+            if params:
+                query_string = urllib.parse.urlencode(params)
+                full_url = f"{url}?{query_string}" if query_string else url
+            
+            # Prepare body for OAuth1 signature (form-encoded, not JSON)
+            body_string = ''
+            {% if operation.request_body %}
+            if json_data:
+                # OAuth1 spec: JSON bodies are NOT included in signature
+                # But we still need to pass the body for the request
+                body_string = ''
+            {% endif %}
+            
+            # Build OAuth1 authorization header
+            oauth_header = self.client.auth.build_request_header(
+                method="{{ operation.method }}",
+                url=full_url,
+                body=body_string
+            )
+            headers["Authorization"] = oauth_header
+        elif selected_auth == 'bearer_token':
+            # Bearer token authentication
+            if self.client.bearer_token:
+                headers["Authorization"] = f"Bearer {self.client.bearer_token}"
+            elif self.client.access_token:
+                headers["Authorization"] = f"Bearer {self.client.access_token}"
+        elif selected_auth == 'oauth2_user_context':
+            # OAuth2 User Token authentication
+            if self.client.access_token:
+                headers["Authorization"] = f"Bearer {self.client.access_token}"
+                # Check if token needs refresh
+                if self.client.oauth2_auth and self.client.token:
+                    if self.client.is_token_expired():
+                        self.client.refresh_token()
+                        if self.client.access_token:
+                            headers["Authorization"] = f"Bearer {self.client.access_token}"
+        
         # Make the request
         {% if operation.security %}
-        {% if ns.has_bearer_token %}
-        response = self.client.session.{{ operation.method }}(
-            url,
-            params=params,
-            headers=headers,
-            {% if operation.request_body %}
-            json=json_data,
-            {% endif %}
-        )
-        {% elif ns.has_oauth2_token %}
-        # OAuth2UserToken: Use access_token as bearer token (matches TypeScript behavior)
-        # The setup_authentication macro already sets the Authorization header
-        # Use regular session since we're using bearer token authentication
-        response = self.client.session.{{ operation.method }}(
-            url,
-            params=params,
-            headers=headers,
-            {% if operation.request_body %}
-            json=json_data,
-            {% endif %}
-        )
-        {% else %}
-        response = self.client.session.{{ operation.method }}(
-            url,
-            params=params,
-            headers=headers,
-            {% if operation.request_body %}
-            json=json_data,
-            {% endif %}
-        )
+        if not selected_auth:
+            # No suitable auth method found - validate authentication
+            required_schemes = acceptable_schemes if 'acceptable_schemes' in locals() else []
+            if required_schemes:
+                available = []
+                if available_bearer and 'BearerToken' in required_schemes:
+                    available.append('BearerToken')
+                if available_oauth2 and 'OAuth2UserToken' in required_schemes:
+                    available.append('OAuth2UserToken')
+                if available_oauth1 and 'UserToken' in required_schemes:
+                    available.append('UserToken')
+                if not available:
+                    raise ValueError(f"Authentication required for this endpoint. Required schemes: {required_schemes}. Available: {[s for s in required_schemes if (s == 'BearerToken' and available_bearer) or (s == 'OAuth2UserToken' and available_oauth2) or (s == 'UserToken' and available_oauth1)]}")
         {% endif %}
-        {% else %}
-        # This should only happen for the /2/openapi.json route
         response = self.client.session.{{ operation.method }}(
             url,
             params=params,
@@ -284,7 +383,6 @@ headers = {% if operation.is_streaming %}{
             json=json_data,
             {% endif %}
         )
-        {% endif %}
 
         # Check for errors
         response.raise_for_status()
@@ -302,7 +400,7 @@ headers = {% if operation.is_streaming %}{
 
 {# Macro for paginated request logic #}
 {% macro paginated_request(operation) -%}
-{% set ns = namespace(has_bearer_token = false, has_oauth2_token = false) %}
+{% set ns = namespace(has_bearer_token = false, has_oauth2_token = false, has_oauth1 = false) %}
 {% if operation.security %}
 {% for security_requirement in operation.security %}
 {% for scheme_name in security_requirement %}
@@ -311,6 +409,9 @@ headers = {% if operation.is_streaming %}{
 {% endif %}
 {% if scheme_name == "OAuth2UserToken" %}
 {% set ns.has_oauth2_token = true %}
+{% endif %}
+{% if scheme_name == "UserToken" %}
+{% set ns.has_oauth1 = true %}
 {% endif %}
 {% endfor %}
 {% endfor %}
@@ -356,47 +457,138 @@ headers = {% if operation.is_streaming %}{
             if current_pagination_token:
                 page_params[pagination_param_name] = current_pagination_token
             
+            # Select authentication method (same logic as regular_request)
+            # Priority strategy (matches TypeScript):
+            # 1. If endpoint only accepts one method, use that (if available)
+            # 2. If endpoint accepts multiple methods:
+            #    - For write operations (POST/PUT/DELETE/PATCH): Prefer OAuth1 > OAuth2 User Token > Bearer Token
+            #    - For read operations (GET): Prefer Bearer Token > OAuth2 User Token > OAuth1
+            # 3. If no security requirements: Bearer Token > OAuth2 User Token > OAuth1
+            page_selected_auth = None
+            # Check what auth methods we have available
+            page_available_bearer = bool(self.client.bearer_token)
+            page_available_oauth2 = bool(self.client.access_token)
+            page_available_oauth1 = bool(self.client.auth and self.client.auth.access_token)
+            
+            {% if operation.security %}
+            # Count acceptable schemes
+            page_acceptable_schemes = []
+            {% if ns.has_bearer_token %}
+            page_acceptable_schemes.append('BearerToken')
+            {% endif %}
+            {% if ns.has_oauth2_token %}
+            page_acceptable_schemes.append('OAuth2UserToken')
+            {% endif %}
+            {% if ns.has_oauth1 %}
+            page_acceptable_schemes.append('UserToken')
+            {% endif %}
+            
+            # If only one scheme is acceptable, use it if available
+            if len(page_acceptable_schemes) == 1:
+                scheme = page_acceptable_schemes[0]
+                if scheme == 'BearerToken' and page_available_bearer:
+                    page_selected_auth = 'bearer_token'
+                elif scheme == 'OAuth2UserToken' and page_available_oauth2:
+                    page_selected_auth = 'oauth2_user_context'
+                elif scheme == 'UserToken' and page_available_oauth1:
+                    page_selected_auth = 'oauth1'
+            # Multiple schemes acceptable - use priority based on operation type
+            elif len(page_acceptable_schemes) > 1:
+                is_write_operation = "{{ operation.method }}" in ['POST', 'PUT', 'DELETE', 'PATCH']
+                if is_write_operation:
+                    # Priority for write operations: OAuth1 > OAuth2 User Token > Bearer Token
+                    if 'UserToken' in page_acceptable_schemes and page_available_oauth1:
+                        page_selected_auth = 'oauth1'
+                    elif 'OAuth2UserToken' in page_acceptable_schemes and page_available_oauth2:
+                        page_selected_auth = 'oauth2_user_context'
+                    elif 'BearerToken' in page_acceptable_schemes and page_available_bearer:
+                        page_selected_auth = 'bearer_token'
+                else:
+                    # Priority for read operations: Bearer Token > OAuth2 User Token > OAuth1
+                    if 'BearerToken' in page_acceptable_schemes and page_available_bearer:
+                        page_selected_auth = 'bearer_token'
+                    elif 'OAuth2UserToken' in page_acceptable_schemes and page_available_oauth2:
+                        page_selected_auth = 'oauth2_user_context'
+                    elif 'UserToken' in page_acceptable_schemes and page_available_oauth1:
+                        page_selected_auth = 'oauth1'
+            {% else %}
+            # No security requirements - use default priority
+            if page_available_bearer:
+                page_selected_auth = 'bearer_token'
+            elif page_available_oauth2:
+                page_selected_auth = 'oauth2_user_context'
+            elif page_available_oauth1:
+                page_selected_auth = 'oauth1'
+            {% endif %}
+            
+            # Apply selected authentication for this page
+            page_headers = headers.copy()
+            if page_selected_auth == 'oauth1':
+                # OAuth1 authentication - build proper OAuth1 header dynamically
+                # Build OAuth1 header with method, URL, and body
+                # For OAuth1, we need to include query params in the URL for signature
+                full_url = url
+                if page_params:
+                    query_string = urllib.parse.urlencode(page_params)
+                    full_url = f"{url}?{query_string}" if query_string else url
+                
+                # Prepare body for OAuth1 signature (form-encoded, not JSON)
+                body_string = ''
+                {% if operation.request_body %}
+                if json_data:
+                    # OAuth1 spec: JSON bodies are NOT included in signature
+                    # But we still need to pass the body for the request
+                    body_string = ''
+                {% endif %}
+                
+                # Build OAuth1 authorization header
+                oauth_header = self.client.auth.build_request_header(
+                    method="{{ operation.method }}",
+                    url=full_url,
+                    body=body_string
+                )
+                page_headers["Authorization"] = oauth_header
+            elif page_selected_auth == 'bearer_token':
+                # Bearer token authentication
+                if self.client.bearer_token:
+                    page_headers["Authorization"] = f"Bearer {self.client.bearer_token}"
+                elif self.client.access_token:
+                    page_headers["Authorization"] = f"Bearer {self.client.access_token}"
+            elif page_selected_auth == 'oauth2_user_context':
+                # OAuth2 User Token authentication
+                if self.client.access_token:
+                    page_headers["Authorization"] = f"Bearer {self.client.access_token}"
+                    # Check if token needs refresh
+                    if self.client.oauth2_auth and self.client.token:
+                        if self.client.is_token_expired():
+                            self.client.refresh_token()
+                            if self.client.access_token:
+                                page_headers["Authorization"] = f"Bearer {self.client.access_token}"
+            
             # Make the request
             {% if operation.security %}
-            {% if ns.has_bearer_token %}
-            response = self.client.session.{{ operation.method }}(
-                url,
-                params=page_params,
-                headers=headers,
-                {% if operation.request_body %}
-                json=json_data,
-                {% endif %}
-            )
-            {% elif ns.has_oauth2_token %}
-            # OAuth2UserToken: Use access_token as bearer token (matches TypeScript behavior)
-            response = self.client.session.{{ operation.method }}(
-                url,
-                params=page_params,
-                headers=headers,
-                {% if operation.request_body %}
-                json=json_data,
-                {% endif %}
-            )
-            {% else %}
-            response = self.client.session.{{ operation.method }}(
-                url,
-                params=page_params,
-                headers=headers,
-                {% if operation.request_body %}
-                json=json_data,
-                {% endif %}
-            )
+            if not page_selected_auth:
+                # No suitable auth method found - validate authentication
+                required_schemes = page_acceptable_schemes if 'page_acceptable_schemes' in locals() else []
+                if required_schemes:
+                    available = []
+                    if page_available_bearer and 'BearerToken' in required_schemes:
+                        available.append('BearerToken')
+                    if page_available_oauth2 and 'OAuth2UserToken' in required_schemes:
+                        available.append('OAuth2UserToken')
+                    if page_available_oauth1 and 'UserToken' in required_schemes:
+                        available.append('UserToken')
+                    if not available:
+                        raise ValueError(f"Authentication required for this endpoint. Required schemes: {required_schemes}. Available: {[s for s in required_schemes if (s == 'BearerToken' and page_available_bearer) or (s == 'OAuth2UserToken' and page_available_oauth2) or (s == 'UserToken' and page_available_oauth1)]}")
             {% endif %}
-            {% else %}
             response = self.client.session.{{ operation.method }}(
                 url,
                 params=page_params,
-                headers=headers,
+                headers=page_headers,
                 {% if operation.request_body %}
                 json=json_data,
                 {% endif %}
             )
-            {% endif %}
 
             # Check for errors
             response.raise_for_status()

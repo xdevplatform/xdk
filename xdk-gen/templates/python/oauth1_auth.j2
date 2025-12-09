@@ -1,0 +1,402 @@
+"""
+Auto-generated OAuth1 authentication for the X API.
+
+This module provides OAuth1.0a authentication functionality for secure
+authorization flows. Includes request token generation, authorization URL
+generation, access token exchange, and OAuth1 signature generation.
+
+Generated automatically - do not edit manually.
+"""
+
+import hmac
+import hashlib
+import base64
+import secrets
+import time
+import urllib.parse
+import json
+from typing import Dict, Optional, Any, Tuple
+import requests
+
+
+class OAuth1RequestToken:
+    """OAuth1 request token response."""
+    
+    def __init__(self, oauth_token: str, oauth_token_secret: str):
+        """Initialize OAuth1 request token.
+        
+        Args:
+            oauth_token: The OAuth token.
+            oauth_token_secret: The OAuth token secret.
+        """
+        self.oauth_token = oauth_token
+        self.oauth_token_secret = oauth_token_secret
+
+
+class OAuth1AccessToken:
+    """OAuth1 access token response."""
+    
+    def __init__(self, access_token: str, access_token_secret: str):
+        """Initialize OAuth1 access token.
+        
+        Args:
+            access_token: The access token.
+            access_token_secret: The access token secret.
+        """
+        self.access_token = access_token
+        self.access_token_secret = access_token_secret
+
+
+class OAuth1:
+    """OAuth1 authentication handler for the X API."""
+
+    def __init__(self,
+                 api_key: str,
+                 api_secret: str,
+                 callback: str,
+                 access_token: Optional[str] = None,
+                 access_token_secret: Optional[str] = None):
+        """Initialize OAuth1 authentication.
+        
+        Args:
+            api_key: API Key (Consumer Key).
+            api_secret: API Secret (Consumer Secret).
+            callback: Callback URL for OAuth flow.
+            access_token: Access Token (if already obtained).
+            access_token_secret: Access Token Secret (if already obtained).
+        """
+        self.api_key = api_key
+        self.api_secret = api_secret
+        self.callback = callback
+        self.request_token: Optional[OAuth1RequestToken] = None
+        
+        # If access token is provided, set it
+        if access_token and access_token_secret:
+            self.access_token = OAuth1AccessToken(access_token, access_token_secret)
+        else:
+            self.access_token: Optional[OAuth1AccessToken] = None
+
+    def get_authorization_url(self, login_with_x: bool = False) -> str:
+        """Get the authorization URL for OAuth1 flow.
+        
+        Args:
+            login_with_x: Whether to use "Log in with X" flow.
+            
+        Returns:
+            str: Authorization URL.
+            
+        Raises:
+            ValueError: If request token not obtained.
+        """
+        if not self.request_token:
+            raise ValueError('Request token not obtained. Call get_request_token() first.')
+
+        base_url = 'https://x.com/i/oauth/authenticate' if login_with_x else 'https://x.com/oauth/authorize'
+        
+        params = {
+            'oauth_token': self.request_token.oauth_token
+        }
+        
+        return f"{base_url}?{urllib.parse.urlencode(params)}"
+
+    def get_request_token(self) -> OAuth1RequestToken:
+        """Get request token to start OAuth1 flow.
+        
+        Returns:
+            OAuth1RequestToken: Request token with oauth_token and oauth_token_secret.
+            
+        Raises:
+            ValueError: If request token retrieval fails.
+        """
+        url = 'https://api.x.com/oauth/request_token'
+        
+        params = {
+            'oauth_callback': self.callback
+        }
+        
+        # Build OAuth header for request token
+        oauth_header = self._build_oauth_header('POST', url, urllib.parse.urlencode(params))
+        
+        response = requests.post(
+            f"{url}?{urllib.parse.urlencode(params)}",
+            headers={
+                'Authorization': oauth_header
+            }
+        )
+        
+        if not response.ok:
+            raise ValueError(f"Failed to get request token: {response.status_code} {response.reason}")
+        
+        # Parse response (form-encoded)
+        response_params = urllib.parse.parse_qs(response.text)
+        
+        oauth_token = response_params.get('oauth_token', [None])[0]
+        oauth_token_secret = response_params.get('oauth_token_secret', [None])[0]
+        
+        if not oauth_token or not oauth_token_secret:
+            raise ValueError("Invalid response from request token endpoint")
+        
+        self.request_token = OAuth1RequestToken(oauth_token, oauth_token_secret)
+        
+        return self.request_token
+
+    def get_access_token(self, verifier: str) -> OAuth1AccessToken:
+        """Exchange verifier for access token.
+        
+        Args:
+            verifier: OAuth verifier from callback or PIN.
+            
+        Returns:
+            OAuth1AccessToken: Access token with access_token and access_token_secret.
+            
+        Raises:
+            ValueError: If request token not obtained or access token exchange fails.
+        """
+        if not self.request_token:
+            raise ValueError('Request token not obtained. Call get_request_token() first.')
+
+        url = 'https://api.x.com/oauth/access_token'
+        
+        params = {
+            'oauth_token': self.request_token.oauth_token,
+            'oauth_verifier': verifier
+        }
+        
+        # Build OAuth header for access token
+        oauth_header = self._build_oauth_header('POST', url, urllib.parse.urlencode(params))
+        
+        response = requests.post(
+            f"{url}?{urllib.parse.urlencode(params)}",
+            headers={
+                'Authorization': oauth_header
+            }
+        )
+        
+        if not response.ok:
+            raise ValueError(f"Failed to get access token: {response.status_code} {response.reason}")
+        
+        # Parse response (form-encoded)
+        response_params = urllib.parse.parse_qs(response.text)
+        
+        access_token = response_params.get('oauth_token', [None])[0]
+        access_token_secret = response_params.get('oauth_token_secret', [None])[0]
+        
+        if not access_token or not access_token_secret:
+            raise ValueError("Invalid response from access token endpoint")
+        
+        self.access_token = OAuth1AccessToken(access_token, access_token_secret)
+        
+        return self.access_token
+
+    def start_oauth_flow(self, login_with_x: bool = False) -> str:
+        """Convenience method to start the OAuth1 flow.
+        
+        Args:
+            login_with_x: Whether to use "Log in with X" flow.
+            
+        Returns:
+            str: Authorization URL.
+        """
+        self.get_request_token()
+        return self.get_authorization_url(login_with_x)
+
+    def build_request_header(self, method: str, url: str, body: str = '') -> str:
+        """Build OAuth1 authorization header for API requests.
+        
+        Args:
+            method: HTTP method (GET, POST, etc.).
+            url: Request URL (may include query parameters).
+            body: Request body (form-encoded string or empty).
+            
+        Returns:
+            str: OAuth1 authorization header string.
+            
+        Raises:
+            ValueError: If access token not available.
+        """
+        if not self.access_token:
+            raise ValueError('Access token not available. Complete OAuth1 flow first.')
+
+        # Extract query parameters from URL if present
+        url_without_query = url
+        query_params = ''
+        
+        try:
+            parsed_url = urllib.parse.urlparse(url)
+            if parsed_url.query:
+                query_params = parsed_url.query
+                url_without_query = f"{parsed_url.scheme}://{parsed_url.netloc}{parsed_url.path}"
+        except Exception as e:
+            # If URL parsing fails, use the original URL
+            import warnings
+            warnings.warn(f'Failed to parse URL for OAuth1: {e}')
+
+        # Combine query parameters with body parameters
+        all_params = ''
+        if query_params and body:
+            all_params = f"{query_params}&{body}"
+        elif query_params:
+            all_params = query_params
+        elif body:
+            all_params = body
+
+        return self._build_oauth_header(method, url_without_query, all_params)
+
+    def _build_oauth_header(self, method: str, url: str, body: str) -> str:
+        """Build OAuth1 authorization header.
+        
+        Args:
+            method: HTTP method.
+            url: Request URL (without query parameters).
+            body: Request body or query parameters as form-encoded string.
+            
+        Returns:
+            str: OAuth1 authorization header string.
+        """
+        timestamp = self._generate_timestamp()
+        nonce = self._generate_nonce()
+        
+        oauth_params: Dict[str, str] = {
+            'oauth_consumer_key': self.api_key,
+            'oauth_nonce': nonce,
+            'oauth_signature_method': 'HMAC-SHA1',
+            'oauth_timestamp': timestamp,
+            'oauth_version': '1.0'
+        }
+
+        # Add request token if available
+        if self.request_token:
+            oauth_params['oauth_token'] = self.request_token.oauth_token
+
+        # Add access token if available (takes precedence over request token)
+        if self.access_token:
+            oauth_params['oauth_token'] = self.access_token.access_token
+
+        # Build signature base string
+        param_string = self._build_param_string(oauth_params, body)
+        signature_base = f"{method.upper()}&{self._encode(url)}&{self._encode(param_string)}"
+        
+        # Generate signature
+        token_secret = (
+            self.request_token.oauth_token_secret if self.request_token else 
+            (self.access_token.access_token_secret if self.access_token else '')
+        )
+        signing_key = f"{self._encode(self.api_secret)}&{self._encode(token_secret)}"
+        
+        signature = self._hmac_sha1(signing_key, signature_base)
+        oauth_params['oauth_signature'] = signature
+
+        # Build authorization header
+        header_params = ', '.join(
+            f'{key}="{self._encode(value)}"'
+            for key, value in sorted(oauth_params.items())
+        )
+
+        return f"OAuth {header_params}"
+
+    def _build_param_string(self, oauth_params: Dict[str, str], body: str) -> str:
+        """Build parameter string for OAuth signature.
+        
+        Args:
+            oauth_params: OAuth parameters.
+            body: Request body (form-encoded string or empty).
+            
+        Returns:
+            str: Sorted, encoded parameter string.
+        """
+        all_params = dict(oauth_params)
+        
+        # Parse body parameters if present and it's form-encoded (not JSON)
+        # According to OAuth1 spec, JSON bodies should NOT be included in the signature
+        if body:
+            # Check if body is JSON by attempting to parse it
+            is_json = False
+            try:
+                json.loads(body)
+                is_json = True
+            except (json.JSONDecodeError, ValueError):
+                # Not valid JSON, treat as form-encoded
+                is_json = False
+            
+            if not is_json:
+                # Only parse form-encoded bodies
+                try:
+                    body_params = urllib.parse.parse_qs(body, keep_blank_values=True)
+                    # parse_qs returns lists, we need to flatten them
+                    for key, value_list in body_params.items():
+                        # Use first value if multiple values exist (OAuth1 spec)
+                        all_params[key] = value_list[0] if value_list else ''
+                except Exception:
+                    # If body parsing fails, ignore it
+                    import warnings
+                    warnings.warn('Failed to parse body parameters for OAuth1 signature')
+            # If body is JSON, we don't include it in the signature (per OAuth1 spec)
+
+        # Sort parameters alphabetically
+        sorted_params = sorted(all_params.items())
+        
+        return '&'.join(
+            f"{self._encode(key)}={self._encode(value)}"
+            for key, value in sorted_params
+        )
+
+    def _encode(self, s: str) -> str:
+        """URL encode string according to OAuth1 specification.
+        
+        OAuth1 uses RFC 3986 encoding with some specific replacements.
+        
+        Args:
+            s: String to encode.
+            
+        Returns:
+            str: Encoded string.
+        """
+        # Use urllib.parse.quote with safe='' to encode everything
+        # Then apply OAuth1-specific replacements
+        encoded = urllib.parse.quote(s, safe='')
+        # OAuth1 spec requires specific encoding for certain characters
+        encoded = encoded.replace('!', '%21')
+        encoded = encoded.replace('*', '%2A')
+        encoded = encoded.replace("'", '%27')
+        encoded = encoded.replace('(', '%28')
+        encoded = encoded.replace(')', '%29')
+        encoded = encoded.replace('%7E', '~')  # Keep ~ as-is
+        return encoded
+
+    def _hmac_sha1(self, key: str, message: str) -> str:
+        """Generate HMAC-SHA1 signature.
+        
+        Args:
+            key: Signing key.
+            message: Message to sign.
+            
+        Returns:
+            str: Base64-encoded signature.
+        """
+        signature = hmac.new(
+            key.encode('utf-8'),
+            message.encode('utf-8'),
+            hashlib.sha1
+        ).digest()
+        return base64.b64encode(signature).decode('utf-8')
+
+    def _generate_nonce(self, length: int = 32) -> str:
+        """Generate a random nonce for OAuth.
+        
+        Args:
+            length: Length of the nonce in characters.
+            
+        Returns:
+            str: Random nonce string.
+        """
+        # Generate random bytes and convert to hex
+        return secrets.token_hex(length // 2 + 1)[:length]
+
+    def _generate_timestamp(self) -> str:
+        """Generate timestamp for OAuth.
+        
+        Returns:
+            str: Unix timestamp as string.
+        """
+        return str(int(time.time()))
+

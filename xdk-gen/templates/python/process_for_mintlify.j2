@@ -1228,7 +1228,7 @@ Latest Post: Exciting updates on XDK Python SDK!
 ```
 **Troubleshooting**: If you get a 401 error, double-check your Bearer Token. For rate limits (429), wait and retry.
 ## Next Steps
-- Explore [Authentication](/xdks/python/authentication) to understand how to use Bearer Token (app-only) auth and OAuth 2.0 with PKCE (user context).
+- Explore [Authentication](/xdks/python/authentication) to understand how to use Bearer Token (app-only) auth, OAuth 2.0 with PKCE (user context), and OAuth 1.0a (legacy user context).
 - Learn about [Pagination](/xdks/python/pagination) for use-cases where you want large number of results returned without worrying about making multiple API calls.
 - Dive into [Streaming](/xdks/python/streaming) to learn how to work with real-time data.
 
@@ -1242,11 +1242,13 @@ For detailed code examples using the Python XDK, check out our [code samples Git
 title: Authentication
 sidebarTitle: Authentication
 ---
-The X API requires authentication for all endpoints. The XDK supports two authentication methods:
+The X API requires authentication for all endpoints. The XDK supports three authentication methods:
 1. Bearer Token (app-only)
 2. OAuth 2.0 with PKCE
+3. OAuth 1.0a (User Context)
 - **Bearer Token**: Use this for read-only access for endpoints that support app-auth (e.g., searching Post's, streaming endpoints).
 - **OAuth 2.0 PKCE**: Secure authentication for scope-based, user-authorized access (e.g. getting authenticated user's Post non_public metrics)
+- **OAuth 1.0a**: Legacy authentication for user-specific operations (e.g., posting on behalf of a user, managing lists)
 Obtain credentials from the [X Developer Portal](https://developer.x.com/en/portal/dashboard). You'll need an approved developer account and an app with appropriate permissions (e.g., Read + Write).
 ## Creating a Client
 All authentication flows create a `Client` instance:
@@ -1314,6 +1316,58 @@ tokens = auth.refresh_token()
 # Use the refreshed token
 client = Client(bearer_token=tokens["access_token"])
 # Or pass the full token dict: client = Client(token=tokens)
+```
+### 3. OAuth 1.0a (User Context)
+For legacy applications or specific use cases that require OAuth 1.0a authentication:
+**Steps**:
+1. In the Developer Portal, get your API Key and API Secret.
+2. If you already have access tokens, use them directly. Otherwise, complete the OAuth 1.0a flow to obtain them.
+3. Create an OAuth1 instance and pass it to the Client.
+**Example** (with existing access tokens):
+```python
+from xdk import Client
+from xdk.oauth1_auth import OAuth1
+# Step 1: Create OAuth1 instance with credentials
+oauth1 = OAuth1(
+    api_key="YOUR_API_KEY",
+    api_secret="YOUR_API_SECRET",
+    callback="http://localhost:8080/callback",
+    access_token="YOUR_ACCESS_TOKEN",
+    access_token_secret="YOUR_ACCESS_TOKEN_SECRET"
+)
+# Step 2: Create client with OAuth1
+client = Client(auth=oauth1)
+# Step 3: Use the client
+response = client.users.get_me()
+me = response.data
+print(me)
+```
+**Example** (complete OAuth 1.0a flow):
+```python
+from xdk import Client
+from xdk.oauth1_auth import OAuth1
+import webbrowser
+# Step 1: Create OAuth1 instance
+oauth1 = OAuth1(
+    api_key="YOUR_API_KEY",
+    api_secret="YOUR_API_SECRET",
+    callback="http://localhost:8080/callback"
+)
+# Step 2: Get request token
+request_token = oauth1.get_request_token()
+# Step 3: Get authorization URL
+auth_url = oauth1.get_authorization_url(login_with_x=False)
+print(f"Visit this URL to authorize: {auth_url}")
+webbrowser.open(auth_url)
+# Step 4: User authorizes and you receive oauth_verifier
+# In a real app, handle this via callback URL
+oauth_verifier = input("Enter the OAuth verifier from the callback: ")
+# Step 5: Exchange for access token
+access_token = oauth1.get_access_token(oauth_verifier)
+# Step 6: Create client
+client = Client(auth=oauth1)
+# Now you can use the client
+response = client.users.get_me()
 ```
 **Note**:
 - Never hardcode secrets in production; use environment variables or secret managers (e.g., `os.getenv("X_BEARER_TOKEN")`).

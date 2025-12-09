@@ -12,6 +12,7 @@ import requests
 from typing import Dict, List, Optional, Union, Any, Callable
 
 from .oauth2_auth import OAuth2PKCEAuth
+from .oauth1_auth import OAuth1
 from .paginator import Cursor, cursor, PaginationError
 {% for tag in tags %}
 from .{{ tag.import_name }}.client import {{ tag.class_name }}Client
@@ -30,7 +31,8 @@ class Client:
                  redirect_uri: str = None,
                  token: Dict[str, Any] = None,
                  scope: Union[str, List[str]] = None,
-                 authorization_base_url: str = "https://x.com/i"):
+                 authorization_base_url: str = "https://x.com/i",
+                 auth: OAuth1 = None):
         """Initialize the X API client.
 
         Args:
@@ -43,6 +45,7 @@ class Client:
             token: An existing OAuth2 token dictionary (if available). If provided, access_token will be extracted.
             scope: Space-separated string or list of strings for OAuth2 authorization scopes.
             authorization_base_url: The base URL for OAuth2 authorization (defaults to https://x.com/i).
+            auth: OAuth1 instance for OAuth1.0a authentication.
         """
         self.session = requests.Session()
         self.session.headers.update({
@@ -74,6 +77,9 @@ class Client:
             # If we have oauth2_auth with a token, ensure access_token is set
             if self.oauth2_auth and self.oauth2_auth.token and 'access_token' in self.oauth2_auth.token:
                 self._access_token = self.oauth2_auth.token['access_token']
+        
+        # Set up OAuth1 authentication if provided
+        self.auth = auth
         
         # Initialize clients for each tag
         {% for tag in tags %}
