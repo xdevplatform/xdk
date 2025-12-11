@@ -23,9 +23,18 @@ fn python_type(value: &str) -> String {
     python_type.to_string()
 }
 
-/// MiniJinja filter for getting the last part of a dot-separated path
+/// MiniJinja filter for getting the last part of a path (splits by both '/' and '.')
 fn last_part(value: &str) -> String {
-    value.split('.').next_back().unwrap_or(value).to_string()
+    // First try splitting by '/' (for $ref paths like "#/components/schemas/User")
+    // Then by '.' (for other dot-separated paths)
+    value
+        .split('/')
+        .next_back()
+        .unwrap_or(value)
+        .split('.')
+        .next_back()
+        .unwrap_or(value)
+        .to_string()
 }
 /*
     This is the main generator for the Python SDK

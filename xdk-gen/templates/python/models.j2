@@ -12,6 +12,42 @@ from typing import Dict, List, Optional, Any, Union, Literal
 from pydantic import BaseModel, Field, ConfigDict
 from datetime import datetime
 
+# Type aliases for referenced schemas (defined as Any for flexibility)
+# These allow models to reference types without requiring full schema definitions
+Expansions = Any
+Tweet = Any
+User = Any
+Space = Any
+Community = Any
+Media = Any
+Poll = Any
+Place = Any
+XList = Any  # Avoid conflict with typing.List
+DmEvent = Any
+News = Any
+Usage = Any
+ComplianceJob = Any
+ComplianceJobName = Any
+RulesCount = Any
+RulesResponseMetadata = Any
+Rule = Any
+MediaId = Any
+MediaCategory = Any
+MediaCategorySubtitles = Any
+TweetId = Any
+UserId = Any
+CommunityId = Any
+ListId = Any
+SpaceId = Any
+WebhookConfigId = Any
+PublicKey = Any
+FilteredStreamingTweetResponse = Any
+TweetText = Any
+TweetReplySettings = Any
+SubtitleLanguage = Any
+Subtitles = Any
+SubtitleLanguageCode = Any
+
 {# Helper macro to generate nested model classes recursively #}
 {% macro generate_nested_class(class_name, schema) -%}
 class {{ class_name }}(BaseModel):
@@ -42,9 +78,9 @@ class {{ class_name }}(BaseModel):
 
 {# Helper macro to generate field type with nested class support #}
 {% macro field_type(prop, parent_class_name, field_name) -%}
-{%- if prop.get("$ref") -%}
-{# Handle schema reference - extract type name from $ref path #}
-{%- set ref_name = prop["$ref"].split("/")[-1] -%}
+{%- if prop["$ref"] is defined -%}
+{# Handle schema reference - extract type name from $ref path using last_part filter #}
+{%- set ref_name = prop["$ref"] | last_part -%}
 {%- if prop.required %}"{{ ref_name }}"{%- else %}Optional["{{ ref_name }}"]{%- endif -%}
 {%- elif prop.type == 'object' and prop.properties -%}
 Optional["{{ parent_class_name }}{{ field_name | pascal_case }}"]
@@ -68,9 +104,19 @@ class {{ operation.class_name }}Request(BaseModel):
     {%- if schema %}
     {# Handle regular object schemas with properties #}
     {%- if schema.properties %}
+    {# First output required fields #}
     {%- for key in schema.properties %}
     {%- set prop = schema.properties[key] %}
-    {{ key }}: {{ field_type(prop, operation.class_name + "Request", key) }} = {%- if not prop.required %}None{%- else %}Field({%- if prop.description %}description="{{ prop.description }}", {%- endif %}{%- if prop.default %}default={{ prop.default }}{%- elif prop.type == 'array' %}default_factory=list{%- elif prop.type == 'object' %}default_factory=dict{%- else %}...{%- endif %}){%- endif %}
+    {%- if key in (schema.required or []) %}
+    {{ key }}: str = Field(...{%- if prop.description %}, description="{{ prop.description }}"{%- endif %})
+    {%- endif %}
+    {%- endfor %}
+    {# Then output optional fields #}
+    {%- for key in schema.properties %}
+    {%- set prop = schema.properties[key] %}
+    {%- if key not in (schema.required or []) %}
+    {{ key }}: {{ field_type(prop, operation.class_name + "Request", key) }} = None
+    {%- endif %}
     {%- endfor %}
     {# Handle anyOf composition schemas #}
     {%- elif schema.anyOf %}
