@@ -63,7 +63,8 @@ impl<T: Clone + Any> RefOrValue<T> {
     }
 }
 // Custom Serialize for RefOrValue
-// For references, we serialize both the $ref and resolved value so templates have both
+// For references, we serialize both the $ref path AND try to include resolved properties
+// so templates can access either the reference name or the actual schema fields
 impl<T: Clone + Serialize + Any> Serialize for RefOrValue<T> {
     fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
     where
@@ -71,12 +72,28 @@ impl<T: Clone + Serialize + Any> Serialize for RefOrValue<T> {
     {
         match self {
             RefOrValue::Reference { path, .. } => {
-                // Preserve the reference path so templates can extract type names
-                // Templates will use the schema name from the $ref path
-                use serde::ser::SerializeMap;
-                let mut map = serializer.serialize_map(Some(1))?;
-                map.serialize_entry("$ref", path)?;
-                map.end()
+                // Try to resolve the reference and serialize the resolved value
+                // This allows templates to access the actual schema properties
+                if let Ok(resolved) = self.try_resolve() {
+                    // Serialize the resolved value with $ref path included
+                    // First serialize the resolved value to a serde_json::Value
+                    let resolved_json = serde_json::to_value(resolved.as_ref())
+                        .map_err(serde::ser::Error::custom)?;
+                    
+                    if let serde_json::Value::Object(mut obj) = resolved_json {
+                        // Add the $ref path to the object so templates can still extract type names
+                        obj.insert("$ref".to_string(), serde_json::Value::String(path.clone()));
+                        return obj.serialize(serializer);
+                    }
+                    
+                    // If not an object, just serialize the resolved value
+                    resolved.serialize(serializer)
+                } else {
+                    // Fallback: just serialize the $ref path as an object
+                    let mut obj = serde_json::Map::new();
+                    obj.insert("$ref".to_string(), serde_json::Value::String(path.clone()));
+                    serde_json::Value::Object(obj).serialize(serializer)
+                }
             }
             RefOrValue::Value(value) => value.serialize(serializer),
         }
