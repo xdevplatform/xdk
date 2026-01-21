@@ -9,6 +9,7 @@ A comprehensive TypeScript SDK for the X API (formerly Twitter API) with advance
 - **📡 Streaming**: Event-driven streaming with automatic reconnection
 - **📚 Type Safety**: Complete TypeScript definitions for all endpoints and parameters
 - **🎯 Full X API Support**: Users, Posts, Lists, Bookmarks, Communities, and more
+- **📱 Multi-Platform**: Works in Node.js, browsers, and React Native
 
 ## Install
 
@@ -38,6 +39,22 @@ The SDK is written in TypeScript and includes full type definitions. No addition
 
 - Node.js 16+ 
 - TypeScript 4.5+ (if using TypeScript)
+
+### React Native Support
+
+The SDK fully supports React Native out of the box. No additional polyfills or packages are required - just install the SDK and start using it:
+
+```javascript
+import { Client } from '@xdevplatform/xdk';
+
+const client = new Client({ bearerToken: 'your-token' });
+```
+
+The SDK uses pure JavaScript crypto implementations that work in all environments, and React Native's built-in `fetch` for HTTP requests.
+
+### Browser Support
+
+The SDK works in modern browsers (Chrome, Firefox, Safari, Edge) out of the box using the Web Crypto API and native `fetch`.
 
 ## Quick Start
 
@@ -230,7 +247,7 @@ while (!followers.done) {
 
 const userCount: number = followers.users.length;  // all fetched users
 const firstUser: Schemas.User | undefined = followers.users[0];
-const nextToken: string | undefined = followers.meta?.next_token;
+const nextToken: string | undefined = followers.meta?.nextToken;
 ```
 
 ### Async iteration

@@ -1,10 +1,15 @@
 /**
  * Environment-agnostic cryptographic utilities for the X API SDK.
- * Provides HMAC-SHA1 implementation that works in both Node.js and browser environments.
+ * Provides HMAC-SHA1 implementation that works in Node.js, browser, and React Native environments.
  */
 
+// Environment detection
+const isReactNative = typeof navigator !== 'undefined' && navigator.product === 'ReactNative';
+const isNode = !isReactNative && typeof process !== 'undefined' && process.versions && process.versions.node;
+const isBrowser = !isReactNative && !isNode && typeof window !== 'undefined';
+
 /**
- * HMAC-SHA1 implementation that works in both Node.js and browser environments
+ * HMAC-SHA1 implementation that works in Node.js, browser, and React Native environments
  */
 export class CryptoUtils {
   /**
@@ -14,8 +19,23 @@ export class CryptoUtils {
    * @returns Base64 encoded signature
    */
   static async hmacSha1(key: string, message: string): Promise<string> {
+    // For React Native, prefer Web Crypto API (requires react-native-get-random-values polyfill)
+    // or fall back to polyfill
+    if (isReactNative) {
+      // Try Web Crypto API first (available if user installed crypto polyfills)
+      if (typeof crypto !== 'undefined' && crypto.subtle) {
+        try {
+          return await this._webCryptoHmacSha1(key, message);
+        } catch (error) {
+          // Fall back to polyfill
+        }
+      }
+      // Use polyfill for React Native
+      return this._polyfillHmacSha1(key, message);
+    }
+
     // Try to use native Node.js crypto first
-    if (typeof process !== 'undefined' && process.versions && process.versions.node) {
+    if (isNode) {
       try {
         return await this._nodeHmacSha1(key, message);
       } catch (error) {
@@ -24,7 +44,7 @@ export class CryptoUtils {
       }
     }
 
-    // Try Web Crypto API (modern browsers)
+    // Try Web Crypto API (modern browsers and some environments)
     if (typeof crypto !== 'undefined' && crypto.subtle) {
       try {
         return await this._webCryptoHmacSha1(key, message);
@@ -75,16 +95,151 @@ export class CryptoUtils {
 
   /**
    * Polyfill HMAC-SHA1 implementation using pure JavaScript
-   * This is a fallback that works everywhere but is slower
+   * This is a fallback that works everywhere including React Native
    */
   private static _polyfillHmacSha1(key: string, message: string): string {
-    // For now, throw an error to indicate that proper crypto is needed
-    // This will help identify when the fallback is being used
-    throw new Error('HMAC-SHA1 polyfill not implemented. Please ensure Node.js crypto or Web Crypto API is available.');
+    // Pure JavaScript HMAC-SHA1 implementation
+    const sha1 = this._sha1;
+    const blockSize = 64;
     
-    // In a real implementation, you would use a library like crypto-js:
-    // import CryptoJS from 'crypto-js';
-    // return CryptoJS.HmacSHA1(message, key).toString(CryptoJS.enc.Base64);
+    // Convert key to bytes
+    let keyBytes = this._stringToBytes(key);
+    
+    // If key is longer than block size, hash it
+    if (keyBytes.length > blockSize) {
+      keyBytes = sha1(keyBytes);
+    }
+    
+    // Pad key to block size
+    while (keyBytes.length < blockSize) {
+      keyBytes.push(0);
+    }
+    
+    // Create inner and outer padding
+    const innerPad: number[] = [];
+    const outerPad: number[] = [];
+    for (let i = 0; i < blockSize; i++) {
+      innerPad.push(keyBytes[i] ^ 0x36);
+      outerPad.push(keyBytes[i] ^ 0x5c);
+    }
+    
+    // Inner hash: SHA1(innerPad + message)
+    const messageBytes = this._stringToBytes(message);
+    const innerHash = sha1(innerPad.concat(messageBytes));
+    
+    // Outer hash: SHA1(outerPad + innerHash)
+    const hmacBytes = sha1(outerPad.concat(innerHash));
+    
+    // Convert to base64
+    let binary = '';
+    for (let i = 0; i < hmacBytes.length; i++) {
+      binary += String.fromCharCode(hmacBytes[i]);
+    }
+    return btoa(binary);
+  }
+
+  /**
+   * Pure JavaScript SHA-1 implementation
+   */
+  private static _sha1(message: number[]): number[] {
+    // Pre-processing
+    const msgLen = message.length;
+    const bitLen = msgLen * 8;
+    
+    // Append bit '1' to message
+    message.push(0x80);
+    
+    // Append zeros until message length ≡ 448 (mod 512)
+    while ((message.length % 64) !== 56) {
+      message.push(0);
+    }
+    
+    // Append original length in bits as 64-bit big-endian
+    for (let i = 56; i >= 0; i -= 8) {
+      message.push((bitLen >>> i) & 0xff);
+    }
+    
+    // Initialize hash values
+    let h0 = 0x67452301;
+    let h1 = 0xEFCDAB89;
+    let h2 = 0x98BADCFE;
+    let h3 = 0x10325476;
+    let h4 = 0xC3D2E1F0;
+    
+    // Process each 512-bit chunk
+    for (let i = 0; i < message.length; i += 64) {
+      const w: number[] = [];
+      
+      // Break chunk into sixteen 32-bit big-endian words
+      for (let j = 0; j < 16; j++) {
+        w[j] = (message[i + j * 4] << 24) |
+               (message[i + j * 4 + 1] << 16) |
+               (message[i + j * 4 + 2] << 8) |
+               (message[i + j * 4 + 3]);
+      }
+      
+      // Extend sixteen 32-bit words into eighty 32-bit words
+      for (let j = 16; j < 80; j++) {
+        const n = w[j - 3] ^ w[j - 8] ^ w[j - 14] ^ w[j - 16];
+        w[j] = (n << 1) | (n >>> 31);
+      }
+      
+      // Initialize working variables
+      let a = h0, b = h1, c = h2, d = h3, e = h4;
+      
+      // Main loop
+      for (let j = 0; j < 80; j++) {
+        let f: number, k: number;
+        if (j < 20) {
+          f = (b & c) | ((~b) & d);
+          k = 0x5A827999;
+        } else if (j < 40) {
+          f = b ^ c ^ d;
+          k = 0x6ED9EBA1;
+        } else if (j < 60) {
+          f = (b & c) | (b & d) | (c & d);
+          k = 0x8F1BBCDC;
+        } else {
+          f = b ^ c ^ d;
+          k = 0xCA62C1D6;
+        }
+        
+        const temp = (((a << 5) | (a >>> 27)) + f + e + k + w[j]) >>> 0;
+        e = d;
+        d = c;
+        c = ((b << 30) | (b >>> 2)) >>> 0;
+        b = a;
+        a = temp;
+      }
+      
+      // Add chunk's hash to result
+      h0 = (h0 + a) >>> 0;
+      h1 = (h1 + b) >>> 0;
+      h2 = (h2 + c) >>> 0;
+      h3 = (h3 + d) >>> 0;
+      h4 = (h4 + e) >>> 0;
+    }
+    
+    // Produce the final hash value (big-endian)
+    const hash: number[] = [];
+    for (const h of [h0, h1, h2, h3, h4]) {
+      hash.push((h >>> 24) & 0xff);
+      hash.push((h >>> 16) & 0xff);
+      hash.push((h >>> 8) & 0xff);
+      hash.push(h & 0xff);
+    }
+    return hash;
+  }
+
+  /**
+   * Convert string to byte array
+   */
+  private static _stringToBytes(str: string): number[] {
+    const bytes: number[] = [];
+    for (let i = 0; i < str.length; i++) {
+      bytes.push(str.charCodeAt(i) & 0xff);
+    }
+    return bytes;
   }
 
   /**
@@ -170,8 +325,20 @@ export class CryptoUtils {
    * @returns Base64url encoded SHA256 hash of the code verifier
    */
   static async generateCodeChallenge(codeVerifier: string): Promise<string> {
+    // For React Native, prefer Web Crypto API or fall back to polyfill
+    if (isReactNative) {
+      if (typeof crypto !== 'undefined' && crypto.subtle) {
+        try {
+          return await this._webCryptoSha256(codeVerifier);
+        } catch (error) {
+          // Fall back to polyfill
+        }
+      }
+      return this._polyfillSha256(codeVerifier);
+    }
+
     // Try to use native Node.js crypto first
-    if (typeof process !== 'undefined' && process.versions && process.versions.node) {
+    if (isNode) {
       try {
         return await this._nodeSha256(codeVerifier);
       } catch (error) {
@@ -214,15 +381,124 @@ export class CryptoUtils {
 
   /**
    * Polyfill SHA256 implementation for PKCE
-   * This is a fallback that works everywhere but is slower
+   * Pure JavaScript implementation that works in React Native and other environments
    */
   private static _polyfillSha256(message: string): string {
-    // For now, throw an error to indicate that proper crypto is needed
-    throw new Error('SHA256 polyfill not implemented. Please ensure Node.js crypto or Web Crypto API is available.');
+    // Pure JavaScript SHA-256 implementation
+    const msgBytes = this._stringToBytes(message);
+    const hashBytes = this._sha256(msgBytes);
+    return this._base64UrlEncode(new Uint8Array(hashBytes));
+  }
+
+  /**
+   * Pure JavaScript SHA-256 implementation
+   */
+  private static _sha256(message: number[]): number[] {
+    // SHA-256 constants
+    const K = [
+      0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5,
+      0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+      0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da,
+      0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+      0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
+      0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+      0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
+      0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+    ];
+
+    // Pre-processing
+    const msgLen = message.length;
+    const bitLen = msgLen * 8;
     
-    // In a real implementation, you would use a library like crypto-js:
-    // import CryptoJS from 'crypto-js';
-    // return CryptoJS.SHA256(message).toString(CryptoJS.enc.Base64url);
+    // Append bit '1' to message
+    message.push(0x80);
+    
+    // Append zeros until message length ≡ 448 (mod 512)
+    while ((message.length % 64) !== 56) {
+      message.push(0);
+    }
+    
+    // Append original length in bits as 64-bit big-endian
+    // Note: JavaScript bitwise operations work on 32 bits, so we handle this carefully
+    message.push(0, 0, 0, 0); // High 32 bits (assuming message < 2^32 bits)
+    message.push((bitLen >>> 24) & 0xff);
+    message.push((bitLen >>> 16) & 0xff);
+    message.push((bitLen >>> 8) & 0xff);
+    message.push(bitLen & 0xff);
+    
+    // Initialize hash values
+    let h0 = 0x6a09e667;
+    let h1 = 0xbb67ae85;
+    let h2 = 0x3c6ef372;
+    let h3 = 0xa54ff53a;
+    let h4 = 0x510e527f;
+    let h5 = 0x9b05688c;
+    let h6 = 0x1f83d9ab;
+    let h7 = 0x5be0cd19;
+    
+    // Helper functions
+    const rotr = (n: number, x: number) => ((x >>> n) | (x << (32 - n))) >>> 0;
+    const ch = (x: number, y: number, z: number) => ((x & y) ^ ((~x) & z)) >>> 0;
+    const maj = (x: number, y: number, z: number) => ((x & y) ^ (x & z) ^ (y & z)) >>> 0;
+    const sigma0 = (x: number) => (rotr(2, x) ^ rotr(13, x) ^ rotr(22, x)) >>> 0;
+    const sigma1 = (x: number) => (rotr(6, x) ^ rotr(11, x) ^ rotr(25, x)) >>> 0;
+    const gamma0 = (x: number) => (rotr(7, x) ^ rotr(18, x) ^ (x >>> 3)) >>> 0;
+    const gamma1 = (x: number) => (rotr(17, x) ^ rotr(19, x) ^ (x >>> 10)) >>> 0;
+    
+    // Process each 512-bit chunk
+    for (let i = 0; i < message.length; i += 64) {
+      const w: number[] = [];
+      
+      // Break chunk into sixteen 32-bit big-endian words
+      for (let j = 0; j < 16; j++) {
+        w[j] = ((message[i + j * 4] << 24) |
+                (message[i + j * 4 + 1] << 16) |
+                (message[i + j * 4 + 2] << 8) |
+                (message[i + j * 4 + 3])) >>> 0;
+      }
+      
+      // Extend sixteen 32-bit words into sixty-four 32-bit words
+      for (let j = 16; j < 64; j++) {
+        w[j] = (gamma1(w[j - 2]) + w[j - 7] + gamma0(w[j - 15]) + w[j - 16]) >>> 0;
+      }
+      
+      // Initialize working variables
+      let a = h0, b = h1, c = h2, d = h3, e = h4, f = h5, g = h6, h = h7;
+      
+      // Main loop
+      for (let j = 0; j < 64; j++) {
+        const t1 = (h + sigma1(e) + ch(e, f, g) + K[j] + w[j]) >>> 0;
+        const t2 = (sigma0(a) + maj(a, b, c)) >>> 0;
+        h = g;
+        g = f;
+        f = e;
+        e = (d + t1) >>> 0;
+        d = c;
+        c = b;
+        b = a;
+        a = (t1 + t2) >>> 0;
+      }
+      
+      // Add chunk's hash to result
+      h0 = (h0 + a) >>> 0;
+      h1 = (h1 + b) >>> 0;
+      h2 = (h2 + c) >>> 0;
+      h3 = (h3 + d) >>> 0;
+      h4 = (h4 + e) >>> 0;
+      h5 = (h5 + f) >>> 0;
+      h6 = (h6 + g) >>> 0;
+      h7 = (h7 + h) >>> 0;
+    }
+    
+    // Produce the final hash value (big-endian)
+    const hash: number[] = [];
+    for (const hVal of [h0, h1, h2, h3, h4, h5, h6, h7]) {
+      hash.push((hVal >>> 24) & 0xff);
+      hash.push((hVal >>> 16) & 0xff);
+      hash.push((hVal >>> 8) & 0xff);
+      hash.push(hVal & 0xff);
+    }
+    return hash;
   }
 
   /**

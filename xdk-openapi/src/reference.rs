@@ -79,13 +79,13 @@ impl<T: Clone + Serialize + Any> Serialize for RefOrValue<T> {
                     // First serialize the resolved value to a serde_json::Value
                     let resolved_json = serde_json::to_value(resolved.as_ref())
                         .map_err(serde::ser::Error::custom)?;
-                    
+
                     if let serde_json::Value::Object(mut obj) = resolved_json {
                         // Add the $ref path to the object so templates can still extract type names
                         obj.insert("$ref".to_string(), serde_json::Value::String(path.clone()));
                         return obj.serialize(serializer);
                     }
-                    
+
                     // If not an object, just serialize the resolved value
                     resolved.serialize(serializer)
                 } else {
