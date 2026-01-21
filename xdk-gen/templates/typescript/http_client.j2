@@ -1,13 +1,14 @@
 /**
  * Environment-aware HTTP client for the X API SDK.
  * 
- * This module provides a universal HTTP client that works in both Node.js and browser environments
- * without requiring manual polyfills.
+ * This module provides a universal HTTP client that works in Node.js, browser, 
+ * and React Native environments without requiring manual polyfills.
  */
 
 // Environment detection
-const isNode = typeof process !== 'undefined' && process.versions && process.versions.node;
-const isBrowser = typeof window !== 'undefined' && typeof window.fetch === 'function';
+const isReactNative = typeof navigator !== 'undefined' && navigator.product === 'ReactNative';
+const isNode = !isReactNative && typeof process !== 'undefined' && process.versions && process.versions.node;
+const isBrowser = !isReactNative && !isNode && typeof window !== 'undefined' && typeof window.fetch === 'function';
 
 // Type definitions
 export interface RequestOptions {
@@ -41,16 +42,24 @@ export class HttpClient {
   }
 
   private initializeEnvironment(): void {
-    if (isNode) {
+    if (isReactNative) {
+      // React Native environment - use native fetch API
+      // React Native has built-in fetch support
+      // Bind to globalThis to preserve context (required for Cloudflare Workers and similar environments)
+      this.fetch = globalThis.fetch.bind(globalThis);
+      this.HeadersClass = globalThis.Headers;
+    } else if (isNode) {
       // Node.js environment - set up polyfills synchronously
       this.initializeNodeEnvironment();
     } else if (isBrowser) {
       // Browser environment - use native APIs
-      this.fetch = globalThis.fetch;
+      // Bind to globalThis to preserve context (required for Cloudflare Workers and similar environments)
+      this.fetch = globalThis.fetch.bind(globalThis);
       this.HeadersClass = globalThis.Headers;
     } else {
-      // Fallback for other environments (Deno, etc.)
-      this.fetch = globalThis.fetch;
+      // Fallback for other environments (Deno, Cloudflare Workers, etc.)
+      // Bind to globalThis to preserve context (required for Cloudflare Workers and similar environments)
+      this.fetch = globalThis.fetch.bind(globalThis);
       this.HeadersClass = globalThis.Headers;
     }
   }
@@ -58,7 +67,8 @@ export class HttpClient {
   private initializeNodeEnvironment(): void {
     // Check if native fetch is available (Node.js 18+)
     if (typeof globalThis.fetch === 'function' && typeof globalThis.Headers === 'function') {
-      this.fetch = globalThis.fetch;
+      // Bind to globalThis to preserve context (required for Cloudflare Workers and similar environments)
+      this.fetch = globalThis.fetch.bind(globalThis);
       this.HeadersClass = globalThis.Headers;
       return;
     }
@@ -94,7 +104,8 @@ export class HttpClient {
     // Convert body to string if it's a Buffer or ArrayBuffer
     let body = options.body;
     if (body && typeof body !== 'string') {
-      if (Buffer.isBuffer(body)) {
+      // Check for Node.js Buffer (only in Node.js environment)
+      if (isNode && typeof Buffer !== 'undefined' && Buffer.isBuffer && Buffer.isBuffer(body)) {
         body = body.toString();
       } else if (body instanceof ArrayBuffer) {
         body = new TextDecoder().decode(body);

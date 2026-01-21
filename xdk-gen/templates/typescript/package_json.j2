@@ -53,7 +53,10 @@
     "bearer-token",
     "crypto",
     "hmac-sha1",
-    "pkce"
+    "pkce",
+    "react-native",
+    "browser",
+    "nodejs"
   ],
   "author": "X API SDK Team",
   "license": "MIT",
@@ -71,10 +74,15 @@
   "engines": {
     "node": ">=16.14"
   },
-  "dependencies": {
+  "peerDependencies": {
     "node-fetch": "^3.3.0"
   },
-    "devDependencies": {
+  "peerDependenciesMeta": {
+    "node-fetch": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
         "@types/node": "^20.0.0",
         "@types/jest": "^29.5.0",
         "typescript": "^5.0.0",

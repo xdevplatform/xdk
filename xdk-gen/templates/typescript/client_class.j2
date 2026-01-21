@@ -5,7 +5,7 @@
  * This module provides a client for interacting with the {{ tag.display_name }} endpoints of the X API.
  */
 
-import { Client, ApiResponse, RequestOptions } from '../client.js';
+import { Client, ApiResponse, RequestOptions, normalizeFields, transformKeysToSnake } from '../client.js';
 import { 
     Paginator, 
     PostPaginator, 
@@ -117,9 +117,49 @@ export class {{ tag.class_name }}Client {
 {% if operation.request_body and operation.request_body.required %}
    * @param body {% if operation.request_body.content and operation.request_body.content["application/json"] and operation.request_body.content["application/json"].schema and operation.request_body.content["application/json"].schema.description %}{{ operation.request_body.content["application/json"].schema.description }}{% else %}Request body{% endif %}
 {% endif %}
-   * @returns {Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>} Promise resolving to the API response
+   * @returns {Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>} Promise resolving to the API response, or raw Response if requestOptions.raw is true
    */
-    // Overload 1: Default behavior (unwrapped response)
+    // Overload 1: raw: true returns Response
+    {{ operation.method_name }}(
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}string{% endif %},
+        {% endif %}
+        {% endfor %}
+        {% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
+        {% endif %}
+        {% endfor %}
+        {% if operation.request_body and operation.request_body.required %}
+        body: {{ operation.class_name }}Request,
+        {% endif %}
+        {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        options: {{ operation.class_name }}Options & { requestOptions: { raw: true } }
+        {% else %}
+        options: { requestOptions: { raw: true } }
+        {% endif %}
+    ): Promise<Response>;
+    // Overload 2: Default behavior returns parsed response
+    {{ operation.method_name }}(
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}string{% endif %},
+        {% endif %}
+        {% endfor %}
+        {% for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        {{ param.variable_name }}: {% if param.schema and param.schema.type %}{{ param.schema.type | typescript_type }}{% else %}any{% endif %},
+        {% endif %}
+        {% endfor %}
+        {% if operation.request_body and operation.request_body.required %}
+        body: {{ operation.class_name }}Request,
+        {% endif %}
+        {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
+        options?: {{ operation.class_name }}Options
+        {% endif %}
+    ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>;
+    // Implementation
     async {{ operation.method_name }}(
         {# Path parameters are always required - use location field #}
         {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
@@ -141,7 +181,7 @@ export class {{ tag.class_name }}Client {
         {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
         options: {{ operation.class_name }}Options = {}
         {% endif %}
-    ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}> {
+    ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %} | Response> {
         // Normalize options to handle both camelCase and original API parameter names
         {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
         {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 %}
@@ -189,7 +229,11 @@ export class {{ tag.class_name }}Client {
         {% if param.required %}
         if ({{ var_name }} !== undefined{% if param.schema and param.schema.type == 'array' %} && {{ var_name }}.length > 0{% endif %}) {
             {% if param.schema and param.schema.type == 'array' %}
+            {% if '.fields' in param.original_name or '_fields' in param.original_name %}
+            params.append('{{ param.original_name }}', normalizeFields({{ var_name }}).join(','));
+            {% else %}
             params.append('{{ param.original_name }}', {{ var_name }}.join(','));
+            {% endif %}
             {% else %}
             params.append('{{ param.original_name }}', String({{ var_name }}));
             {% endif %}
@@ -197,7 +241,11 @@ export class {{ tag.class_name }}Client {
         {% else %}
         if ({{ var_name }} !== undefined{% if param.schema and param.schema.type == 'array' %} && {{ var_name }}.length > 0{% endif %}) {
             {% if param.schema and param.schema.type == 'array' %}
+            {% if '.fields' in param.original_name or '_fields' in param.original_name %}
+            params.append('{{ param.original_name }}', normalizeFields({{ var_name }}).join(','));
+            {% else %}
             params.append('{{ param.original_name }}', {{ var_name }}.join(','));
+            {% endif %}
             {% else %}
             params.append('{{ param.original_name }}', String({{ var_name }}));
             {% endif %}
@@ -209,9 +257,9 @@ export class {{ tag.class_name }}Client {
         // Prepare request options
         const finalRequestOptions: RequestOptions = {
             {% if operation.request_body and operation.request_body.required %}
-            body: JSON.stringify(body || {}),
+            body: JSON.stringify(transformKeysToSnake(body || {})),
             {% elif operation.request_body and not operation.request_body.required %}
-            body: body ? JSON.stringify(body) : undefined,
+            body: body ? JSON.stringify(transformKeysToSnake(body)) : undefined,
             {% endif %}
             {% if operation.security %}
             // Pass security requirements for smart auth selection
@@ -327,7 +375,11 @@ export class {{ tag.class_name }}Client {
       {% if param.required %}
       if ({{ var_name }} !== undefined{% if param.schema and param.schema.type == 'array' %} && {{ var_name }}.length > 0{% endif %}) {
           {% if param.schema and param.schema.type == 'array' %}
+          {% if '.fields' in param.original_name or '_fields' in param.original_name %}
+          params.append('{{ param.original_name }}', normalizeFields({{ var_name }}).join(','));
+          {% else %}
           params.append('{{ param.original_name }}', {{ var_name }}.join(','));
+          {% endif %}
           {% else %}
           params.append('{{ param.original_name }}', String({{ var_name }}));
           {% endif %}
@@ -335,7 +387,11 @@ export class {{ tag.class_name }}Client {
       {% else %}
       if ({{ var_name }} !== undefined{% if param.schema and param.schema.type == 'array' %} && {{ var_name }}.length > 0{% endif %}) {
           {% if param.schema and param.schema.type == 'array' %}
+          {% if '.fields' in param.original_name or '_fields' in param.original_name %}
+          params.append('{{ param.original_name }}', normalizeFields({{ var_name }}).join(','));
+          {% else %}
           params.append('{{ param.original_name }}', {{ var_name }}.join(','));
+          {% endif %}
           {% else %}
           params.append('{{ param.original_name }}', String({{ var_name }}));
           {% endif %}

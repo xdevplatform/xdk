@@ -2,7 +2,7 @@
   "openapi" : "3.0.0",
   "info" : {
     "description" : "X API v2 available endpoints",
-    "version" : "2.152",
+    "version" : "2.157",
     "title" : "X API v2",
     "termsOfService" : "https://developer.x.com/en/developer-terms/agreement-and-policy.html",
     "contact" : {
@@ -1055,6 +1055,124 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/Get2ComplianceJobsIdResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/connections" : {
+      "get" : {
+        "security" : [
+          {
+            "BearerToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Connections"
+        ],
+        "summary" : "Get Connection History",
+        "description" : "Returns active and historical streaming connections with disconnect reasons for the authenticated application.",
+        "operationId" : "getConnectionHistory",
+        "parameters" : [
+          {
+            "name" : "status",
+            "in" : "query",
+            "description" : "Filter by connection status. Use 'active' for current connections, 'inactive' for historical/disconnected connections, or 'all' for both.",
+            "required" : false,
+            "schema" : {
+              "type" : "string",
+              "enum" : [
+                "active",
+                "inactive",
+                "all"
+              ],
+              "default" : "active"
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "endpoints",
+            "in" : "query",
+            "description" : "Filter by streaming endpoint. Specify one or more endpoint names to filter results.",
+            "required" : false,
+            "schema" : {
+              "type" : "array",
+              "uniqueItems" : true,
+              "items" : {
+                "type" : "string",
+                "enum" : [
+                  "filter_stream",
+                  "sample_stream",
+                  "sample10_stream",
+                  "firehose_stream",
+                  "tweets_compliance_stream",
+                  "users_compliance_stream",
+                  "tweet_label_stream",
+                  "firehose_stream_lang_en",
+                  "firehose_stream_lang_ja",
+                  "firehose_stream_lang_ko",
+                  "firehose_stream_lang_pt",
+                  "likes_firehose_stream",
+                  "likes_sample10_stream",
+                  "likes_compliance_stream"
+                ]
+              }
+            },
+            "explode" : false,
+            "style" : "form"
+          },
+          {
+            "name" : "max_results",
+            "in" : "query",
+            "description" : "The maximum number of results to return per page.",
+            "required" : false,
+            "schema" : {
+              "type" : "integer",
+              "minimum" : 1,
+              "maximum" : 100,
+              "format" : "int32",
+              "default" : 10
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "pagination_token",
+            "in" : "query",
+            "description" : "Token for paginating through results. Use the value from 'next_token' in the previous response.",
+            "required" : false,
+            "schema" : {
+              "type" : "string"
+            },
+            "style" : "form"
+          },
+          {
+            "$ref" : "#/components/parameters/ConnectionFieldsParameter"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Get2ConnectionsResponse"
                 }
               }
             }
@@ -3980,6 +4098,174 @@
         }
       }
     },
+    "/2/news/search" : {
+      "get" : {
+        "security" : [
+          {
+            "BearerToken" : [ ]
+          },
+          {
+            "OAuth2UserToken" : [
+              "tweet.read",
+              "users.read"
+            ]
+          }
+        ],
+        "tags" : [
+          "News"
+        ],
+        "summary" : "Search News",
+        "description" : "Retrieves a list of News stories matching the specified search query.",
+        "externalDocs" : {
+          "url" : "https://docs.x.com/x-api/news/introduction"
+        },
+        "operationId" : "searchNews",
+        "parameters" : [
+          {
+            "name" : "query",
+            "in" : "query",
+            "description" : "The search query.",
+            "required" : true,
+            "example" : "crypto",
+            "schema" : {
+              "type" : "string",
+              "minLength" : 1,
+              "maxLength" : 2048,
+              "example" : "crypto"
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "max_results",
+            "in" : "query",
+            "description" : "The number of results to return.",
+            "required" : false,
+            "schema" : {
+              "type" : "integer",
+              "minimum" : 1,
+              "maximum" : 100,
+              "format" : "int32",
+              "default" : 10
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "max_age_hours",
+            "in" : "query",
+            "description" : "The maximum age of the News story to search for.",
+            "required" : false,
+            "schema" : {
+              "type" : "integer",
+              "minimum" : 1,
+              "maximum" : 720,
+              "format" : "int32",
+              "default" : 168
+            },
+            "style" : "form"
+          },
+          {
+            "$ref" : "#/components/parameters/NewsFieldsParameter"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Get2NewsSearchResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/news/{id}" : {
+      "get" : {
+        "security" : [
+          {
+            "BearerToken" : [ ]
+          },
+          {
+            "OAuth2UserToken" : [
+              "tweet.read",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "News"
+        ],
+        "summary" : "Get news stories by ID",
+        "description" : "Retrieves news story by its ID.",
+        "externalDocs" : {
+          "url" : "https://docs.x.com/x-api/news/introduction"
+        },
+        "operationId" : "getNews",
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "description" : "The ID of the news story.",
+            "required" : true,
+            "example" : "119929381293",
+            "schema" : {
+              "$ref" : "#/components/schemas/NewsId"
+            },
+            "style" : "simple"
+          },
+          {
+            "$ref" : "#/components/parameters/NewsFieldsParameter"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Get2NewsIdResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/2/notes" : {
       "post" : {
         "security" : [
@@ -4182,6 +4468,16 @@
               "maximum" : 100,
               "format" : "int32",
               "default" : 10
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "post_selection",
+            "in" : "query",
+            "description" : "The selection of posts to return. Valid values are 'feed_size: small' and 'feed_size: large'. Default is 'feed_size: small', only top AI writers have access to large size feed.",
+            "required" : false,
+            "schema" : {
+              "type" : "string"
             },
             "style" : "form"
           },
@@ -5340,7 +5636,7 @@
           {
             "name" : "start_time",
             "in" : "query",
-            "description" : "YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp (from most recent 7 days) from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute).",
+            "description" : "YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute).",
             "required" : false,
             "schema" : {
               "type" : "string",
@@ -11671,6 +11967,61 @@
         }
       }
     },
+    "/2/webhooks/replay" : {
+      "post" : {
+        "security" : [
+          {
+            "BearerToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Webhooks"
+        ],
+        "summary" : "Create replay job for webhook",
+        "description" : "Creates a replay job to retrieve events from up to the past 24 hours for all events delivered or attempted to be delivered to the webhook.",
+        "externalDocs" : {
+          "url" : "https://docs.x.com/x-api/webhooks/introduction"
+        },
+        "operationId" : "createWebhookReplayJob",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/WebhookReplayCreateRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReplayJobCreateResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/2/webhooks/{webhook_id}" : {
       "delete" : {
         "security" : [
@@ -11870,6 +12221,14 @@
       }
     },
     {
+      "name" : "News",
+      "description" : "Endpoint for retrieving news stories",
+      "externalDocs" : {
+        "description" : "Find out more",
+        "url" : "https://developer.twitter.com/en/docs/twitter-api/news"
+      }
+    },
+    {
       "name" : "Spaces",
       "description" : "Endpoints related to retrieving, managing Spaces",
       "externalDocs" : {
@@ -11946,6 +12305,12 @@
       }
     },
     "schemas" : {
+      "ActivityEventId" : {
+        "type" : "string",
+        "description" : "The unique identifier of an Activity event.",
+        "pattern" : "^[0-9]{1,19}$",
+        "example" : "1146654567674912769"
+      },
       "ActivityStreamingResponse" : {
         "type" : "object",
         "description" : "An activity event or error that can be returned by the x activity streaming API.",
@@ -11956,19 +12321,14 @@
               "event_type" : {
                 "type" : "string"
               },
+              "event_uuid" : {
+                "$ref" : "#/components/schemas/ActivityEventId"
+              },
               "filter" : {
                 "$ref" : "#/components/schemas/ActivitySubscriptionFilter"
               },
               "payload" : {
-                "type" : "object",
-                "properties" : {
-                  "after" : {
-                    "type" : "string"
-                  },
-                  "before" : {
-                    "type" : "string"
-                  }
-                }
+                "$ref" : "#/components/schemas/ActivityStreamingResponsePayload"
               },
               "tag" : {
                 "type" : "string"
@@ -11981,6 +12341,34 @@
             "items" : {
               "$ref" : "#/components/schemas/Problem"
             }
+          }
+        }
+      },
+      "ActivityStreamingResponsePayload" : {
+        "oneOf" : [
+          {
+            "$ref" : "#/components/schemas/ProfileUpdateActivityResponsePayload"
+          },
+          {
+            "$ref" : "#/components/schemas/NewsActivityResponsePayload"
+          },
+          {
+            "$ref" : "#/components/schemas/FollowActivityResponsePayload"
+          }
+        ],
+        "discriminator" : {
+          "propertyName" : "../event_type",
+          "mapping" : {
+            "follow.follow" : "#/components/schemas/FollowActivityResponsePayload",
+            "follow.unfollow" : "#/components/schemas/FollowActivityResponsePayload",
+            "news.new" : "#/components/schemas/NewsActivityResponsePayload",
+            "profile.update.banner_picture" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.bio" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.geo" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.profile_picture" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.screenname" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.url" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.verified_badge" : "#/components/schemas/ProfileUpdateActivityResponsePayload"
           }
         }
       },
@@ -12030,6 +12418,16 @@
           "event_type" : {
             "type" : "string",
             "enum" : [
+              "profile.update.bio",
+              "profile.update.profile_picture",
+              "profile.update.banner_picture",
+              "profile.update.screenname",
+              "profile.update.geo",
+              "profile.update.url",
+              "profile.update.verified_badge",
+              "news.new",
+              "follow.follow",
+              "follow.unfollow",
               "ProfileBioUpdate",
               "ProfilePictureUpdate",
               "ProfileBannerPictureUpdate",
@@ -12037,7 +12435,9 @@
               "ProfileGeoUpdate",
               "ProfileUrlUpdate",
               "ProfileVerifiedBadgeUpdate",
-              "ProfileHandleUpdate"
+              "NewsNew",
+              "FollowFollow",
+              "FollowUnfollow"
             ]
           },
           "filter" : {
@@ -12121,6 +12521,9 @@
         "type" : "object",
         "description" : "An XAA subscription.",
         "properties" : {
+          "keyword" : {
+            "$ref" : "#/components/schemas/Keyword"
+          },
           "user_id" : {
             "$ref" : "#/components/schemas/UserId"
           }
@@ -12654,6 +13057,39 @@
             "$ref" : "#/components/schemas/Problem"
           }
         ]
+      },
+      "Connection" : {
+        "type" : "object",
+        "required" : [
+          "connected_at",
+          "endpoint_name"
+        ],
+        "properties" : {
+          "client_ip" : {
+            "type" : "string",
+            "description" : "The IP address of the connected client."
+          },
+          "connected_at" : {
+            "type" : "string",
+            "description" : "The timestamp when the connection was established.",
+            "format" : "date-time"
+          },
+          "disconnect_reason" : {
+            "type" : "string",
+            "description" : "The reason for disconnection, if the connection is inactive.",
+            "example" : "operator_disconnect"
+          },
+          "disconnected_at" : {
+            "type" : "string",
+            "description" : "The timestamp when the connection was disconnected, if applicable.",
+            "format" : "date-time"
+          },
+          "endpoint_name" : {
+            "type" : "string",
+            "description" : "The name of the streaming endpoint.",
+            "example" : "sample_stream"
+          }
+        }
       },
       "ConnectionExceptionProblem" : {
         "description" : "A problem that indicates something is wrong with the connection.",
@@ -13565,6 +14001,18 @@
           }
         }
       },
+      "FollowActivityResponsePayload" : {
+        "type" : "object",
+        "properties" : {
+          "source" : {
+            "$ref" : "#/components/schemas/User"
+          },
+          "target" : {
+            "$ref" : "#/components/schemas/User"
+          }
+        },
+        "additionalProperties" : false
+      },
       "FoundMediaOrigin" : {
         "type" : "object",
         "required" : [
@@ -13844,6 +14292,36 @@
           "meta" : {
             "type" : "object",
             "properties" : {
+              "result_count" : {
+                "$ref" : "#/components/schemas/ResultCount"
+              }
+            }
+          }
+        }
+      },
+      "Get2ConnectionsResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Connection"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          },
+          "meta" : {
+            "type" : "object",
+            "properties" : {
+              "next_token" : {
+                "$ref" : "#/components/schemas/NextToken"
+              },
               "result_count" : {
                 "$ref" : "#/components/schemas/ResultCount"
               }
@@ -14305,6 +14783,48 @@
             "minItems" : 1,
             "items" : {
               "$ref" : "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Get2NewsIdResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "$ref" : "#/components/schemas/News"
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Get2NewsSearchResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/News"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          },
+          "meta" : {
+            "type" : "object",
+            "properties" : {
+              "result_count" : {
+                "$ref" : "#/components/schemas/ResultCount"
+              }
             }
           }
         }
@@ -15854,6 +16374,13 @@
         "pattern" : "^[0-9]{1,19}$",
         "example" : "1372966999991541762"
       },
+      "Keyword" : {
+        "type" : "string",
+        "description" : "A keyword to filter on.",
+        "minLength" : 1,
+        "maxLength" : 150,
+        "example" : "The President"
+      },
       "KillAllConnectionsResponse" : {
         "type" : "object",
         "properties" : {
@@ -16928,6 +17455,151 @@
         "type" : "string",
         "description" : "The newest id in this response."
       },
+      "News" : {
+        "type" : "object",
+        "description" : "An AI generated news story.",
+        "required" : [
+          "rest_id"
+        ],
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The news category."
+          },
+          "cluster_posts_results" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : {
+                "post_id" : {
+                  "$ref" : "#/components/schemas/TweetId"
+                }
+              }
+            }
+          },
+          "contexts" : {
+            "type" : "object",
+            "properties" : {
+              "entities" : {
+                "type" : "object",
+                "properties" : {
+                  "events" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  },
+                  "organizations" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  },
+                  "people" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  },
+                  "places" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  },
+                  "products" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "finance" : {
+                "type" : "object",
+                "properties" : {
+                  "tickers" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "sports" : {
+                "type" : "object",
+                "properties" : {
+                  "teams" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "topics" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "disclaimer" : {
+            "type" : "string"
+          },
+          "hook" : {
+            "type" : "string",
+            "description" : "The news hook."
+          },
+          "keywords" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "last_updated_at_ms" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : "2025-7-14T04:35:55Z"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The headline."
+          },
+          "rest_id" : {
+            "$ref" : "#/components/schemas/NewsId"
+          },
+          "summary" : {
+            "type" : "string",
+            "description" : "The news summary."
+          }
+        }
+      },
+      "NewsActivityResponsePayload" : {
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string"
+          },
+          "headline" : {
+            "type" : "string"
+          },
+          "hook" : {
+            "type" : "string"
+          },
+          "summary" : {
+            "type" : "string"
+          }
+        },
+        "additionalProperties" : false
+      },
+      "NewsId" : {
+        "type" : "string",
+        "description" : "Unique identifier of news story.",
+        "pattern" : "^[0-9]{1,19}$",
+        "example" : "2244994945"
+      },
       "NextToken" : {
         "type" : "string",
         "description" : "The next token.",
@@ -17678,6 +18350,18 @@
             ]
           }
         }
+      },
+      "ProfileUpdateActivityResponsePayload" : {
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string"
+          },
+          "before" : {
+            "type" : "string"
+          }
+        },
+        "additionalProperties" : false
       },
       "ReplayJobCreateResponse" : {
         "type" : "object",
@@ -18980,6 +19664,19 @@
               "$ref" : "#/components/schemas/UrlEntity"
             }
           },
+          "suggested_source_links_with_counts" : {
+            "type" : "object",
+            "description" : "Suggested source links and the number of requests that included each link.",
+            "properties" : {
+              "count" : {
+                "type" : "integer",
+                "description" : "Number of note requests that included the source link."
+              },
+              "url" : {
+                "$ref" : "#/components/schemas/UrlEntity"
+              }
+            }
+          },
           "text" : {
             "$ref" : "#/components/schemas/TweetText"
           },
@@ -19211,6 +19908,10 @@
               "in_reply_to_tweet_id"
             ],
             "properties" : {
+              "auto_populate_reply_metadata" : {
+                "type" : "boolean",
+                "description" : "If set to true, reply metadata will be automatically populated."
+              },
               "exclude_reply_user_ids" : {
                 "type" : "array",
                 "description" : "A list of User Ids to be excluded from the reply Tweet.",
@@ -20998,6 +21699,31 @@
             }
           }
         }
+      },
+      "WebhookReplayCreateRequest" : {
+        "type" : "object",
+        "required" : [
+          "webhook_id",
+          "from_date",
+          "to_date"
+        ],
+        "properties" : {
+          "from_date" : {
+            "type" : "string",
+            "description" : "The oldest (starting) UTC timestamp (inclusive) from which events will be provided, in yyyymmddhhmm format.",
+            "pattern" : "^[0-9]{12}$",
+            "example" : "202504242000"
+          },
+          "to_date" : {
+            "type" : "string",
+            "description" : "The oldest (starting) UTC timestamp (inclusive) from which events will be provided, in yyyymmddhhmm format.",
+            "pattern" : "^[0-9]{12}$",
+            "example" : "202504242000"
+          },
+          "webhook_id" : {
+            "$ref" : "#/components/schemas/WebhookConfigId"
+          }
+        }
       }
     },
     "parameters" : {
@@ -21033,6 +21759,7 @@
               "shares",
               "timestamp",
               "unfollows",
+              "unlikes",
               "url_clicks",
               "user_profile_clicks"
             ]
@@ -21057,6 +21784,7 @@
             "shares",
             "timestamp",
             "unfollows",
+            "unlikes",
             "url_clicks",
             "user_profile_clicks"
           ]
@@ -21135,6 +21863,39 @@
             "type",
             "upload_expires_at",
             "upload_url"
+          ]
+        },
+        "explode" : false,
+        "style" : "form"
+      },
+      "ConnectionFieldsParameter" : {
+        "name" : "connection.fields",
+        "in" : "query",
+        "description" : "A comma separated list of Connection fields to display.",
+        "required" : false,
+        "schema" : {
+          "type" : "array",
+          "description" : "The fields available for a Connection object.",
+          "minItems" : 1,
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string",
+            "enum" : [
+              "client_ip",
+              "connected_at",
+              "disconnect_reason",
+              "disconnected_at",
+              "endpoint_name",
+              "id"
+            ]
+          },
+          "example" : [
+            "client_ip",
+            "connected_at",
+            "disconnect_reason",
+            "disconnected_at",
+            "endpoint_name",
+            "id"
           ]
         },
         "explode" : false,
@@ -21509,6 +22270,47 @@
             "url",
             "variants",
             "width"
+          ]
+        },
+        "explode" : false,
+        "style" : "form"
+      },
+      "NewsFieldsParameter" : {
+        "name" : "news.fields",
+        "in" : "query",
+        "description" : "A comma separated list of News fields to display.",
+        "required" : false,
+        "schema" : {
+          "type" : "array",
+          "description" : "The fields available for a News object.",
+          "minItems" : 1,
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string",
+            "enum" : [
+              "category",
+              "cluster_posts_results",
+              "contexts",
+              "disclaimer",
+              "hook",
+              "id",
+              "keywords",
+              "name",
+              "summary",
+              "updated_at"
+            ]
+          },
+          "example" : [
+            "category",
+            "cluster_posts_results",
+            "contexts",
+            "disclaimer",
+            "hook",
+            "id",
+            "keywords",
+            "name",
+            "summary",
+            "updated_at"
           ]
         },
         "explode" : false,
@@ -22085,6 +22887,7 @@
               "scopes",
               "source",
               "suggested_source_links",
+              "suggested_source_links_with_counts",
               "text",
               "withheld"
             ]
@@ -22118,6 +22921,7 @@
             "scopes",
             "source",
             "suggested_source_links",
+            "suggested_source_links_with_counts",
             "text",
             "withheld"
           ]
