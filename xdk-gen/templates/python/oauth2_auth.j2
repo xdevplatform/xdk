@@ -237,10 +237,14 @@ class OAuth2PKCEAuth:
         
         refresh_url = f"{self.base_url}/2/oauth2/token"
         
+        if self.client_secret:
+            auth = HTTPBasicAuth(self.client_id, self.client_secret)
+        else:
+            raise ValueError("No client secret")
+        
         self.token = self.oauth2_session.refresh_token(
             refresh_url,
-            client_id=self.client_id,
-            client_secret=self.client_secret
+            auth=auth
         )
         
         return self.token
