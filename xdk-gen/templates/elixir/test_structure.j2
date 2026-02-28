@@ -1,0 +1,79 @@
+defmodule Xdk.{{ tag.class_name }}Test do
+  use ExUnit.Case, async: true
+  import Xdk.TestHelper
+
+  describe "module structure" do
+    test "module exists" do
+      assert Code.ensure_loaded?(Xdk.{{ tag.class_name }})
+    end
+{% for structural_test in test_spec.structural_tests %}
+{% for method in structural_test.methods %}
+{% set path_param_count = method.required_params | selectattr('location', 'equalto', 'path') | list | length %}
+{% set has_query_params = method.required_params | selectattr('location', 'equalto', 'query') | list | length > 0 or method.optional_params | default(value=[]) | length > 0 %}
+{% set body_param_count = 1 if method.has_request_body else 0 %}
+
+    test "{{ method.method_name }} function exists" do
+      Code.ensure_loaded!(Xdk.{{ tag.class_name }})
+      assert function_exported?(Xdk.{{ tag.class_name }}, :{{ method.method_name }}, {{ path_param_count + body_param_count + 1 }}){% if has_query_params %} or function_exported?(Xdk.{{ tag.class_name }}, :{{ method.method_name }}, {{ path_param_count + body_param_count + 2 }}){% endif %}
+
+    end
+{% endfor %}
+{% endfor %}
+  end
+{% for contract in test_spec.contract_tests %}
+{% if not contract.is_streaming %}
+{% set path_params = contract.required_params | selectattr('location', 'equalto', 'path') | list %}
+{% set query_params = contract.optional_params | default(value=[]) | list %}
+{% set has_body = contract.request_body_schema is defined and contract.request_body_schema %}
+
+  describe "{{ contract.method_name }}/{{ path_params | length + (1 if has_body else 0) + 1 }}{{ '+1' if query_params else '' }}" do
+    setup do
+      setup_client()
+    end
+
+    test "sends request with auth header", %{bypass: bypass, client: client} do
+      Bypass.expect_once(bypass, "{{ contract.method | upper }}", "{{ contract.test_path }}", fn conn ->
+        assert Plug.Conn.get_req_header(conn, "authorization") == ["Bearer test-token"]
+        conn
+        |> Plug.Conn.put_resp_content_type("application/json")
+        |> Plug.Conn.resp(200, ~s({"data":{}}))
+      end)
+
+      {% if has_body and path_params %}
+      Xdk.{{ tag.class_name }}.{{ contract.method_name }}(client{% for param in path_params %}, "test_{{ param.variable_name }}"{% endfor %}, %{})
+      {% elif has_body %}
+      Xdk.{{ tag.class_name }}.{{ contract.method_name }}(client, %{})
+      {% elif path_params %}
+      Xdk.{{ tag.class_name }}.{{ contract.method_name }}(client{% for param in path_params %}, "test_{{ param.variable_name }}"{% endfor %})
+      {% else %}
+      Xdk.{{ tag.class_name }}.{{ contract.method_name }}(client)
+      {% endif %}
+    end
+
+    test "returns error for non-2xx", %{bypass: bypass, client: client} do
+      Bypass.expect_once(bypass, "{{ contract.method | upper }}", "{{ contract.test_path }}", fn conn ->
+        conn
+        |> Plug.Conn.put_resp_content_type("application/json")
+{% raw %}
+        |> Plug.Conn.resp(404, ~s({"errors":[{"message":"Not Found"}]}))
+{% endraw %}
+      end)
+
+      {% if has_body and path_params %}
+      assert {:error, %Xdk.Errors.ApiError{status: 404}} =
+               Xdk.{{ tag.class_name }}.{{ contract.method_name }}(client{% for param in path_params %}, "test_{{ param.variable_name }}"{% endfor %}, %{})
+      {% elif has_body %}
+      assert {:error, %Xdk.Errors.ApiError{status: 404}} =
+               Xdk.{{ tag.class_name }}.{{ contract.method_name }}(client, %{})
+      {% elif path_params %}
+      assert {:error, %Xdk.Errors.ApiError{status: 404}} =
+               Xdk.{{ tag.class_name }}.{{ contract.method_name }}(client{% for param in path_params %}, "test_{{ param.variable_name }}"{% endfor %})
+      {% else %}
+      assert {:error, %Xdk.Errors.ApiError{status: 404}} =
+               Xdk.{{ tag.class_name }}.{{ contract.method_name }}(client)
+      {% endif %}
+    end
+  end
+{% endif %}
+{% endfor %}
+end

@@ -7,3 +7,6 @@ python = "0.8.1"
 
 # TypeScript SDK version
 typescript = "0.4.0"
+
+# Elixir SDK version
+elixir = "1.0.0"

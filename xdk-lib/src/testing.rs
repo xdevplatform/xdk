@@ -166,6 +166,8 @@ pub struct MethodSignature {
     pub return_type: String,
     /// Whether this method supports pagination
     pub supports_pagination: bool,
+    /// Whether this method has a request body
+    pub has_request_body: bool,
 }
 
 /// Parameter information for testing
@@ -196,6 +198,8 @@ pub struct ContractTest {
     pub method: String,
     /// URL path template
     pub path: String,
+    /// URL path with path params replaced by test values (e.g., "/2/tweets/test_id")
+    pub test_path: String,
     /// Required parameters for this operation
     pub required_params: Vec<TestParameter>,
     /// Optional parameters for this operation
@@ -206,6 +210,8 @@ pub struct ContractTest {
     pub response_schema: ResponseSchema,
     /// Security requirements
     pub security_requirements: Vec<String>,
+    /// Whether this operation uses streaming
+    pub is_streaming: bool,
 }
 
 /// Response schema information for contract testing
@@ -338,6 +344,7 @@ fn generate_method_signature(operation: &OperationInfo) -> MethodSignature {
         optional_params,
         return_type: format!("{}Response", operation.class_name),
         supports_pagination: detect_pagination_support(operation),
+        has_request_body: operation.request_body.is_some(),
     }
 }
 
@@ -375,16 +382,28 @@ fn extract_parameters(operation: &OperationInfo) -> (Vec<TestParameter>, Vec<Tes
 fn generate_contract_test(operation: &OperationInfo) -> ContractTest {
     let (required_params, optional_params) = extract_parameters(operation);
 
+    let mut test_path = operation.path.clone();
+    for param in &required_params {
+        if param.location == "path" {
+            test_path = test_path.replace(
+                &format!("{{{}}}", param.name),
+                &format!("test_{}", param.variable_name),
+            );
+        }
+    }
+
     ContractTest {
         method_name: operation.method_name.clone(),
         class_name: operation.class_name.clone(),
         method: operation.method.clone(),
         path: operation.path.clone(),
+        test_path,
         required_params,
         optional_params,
         request_body_schema: generate_request_body_schema(operation),
         response_schema: generate_response_schema(operation),
         security_requirements: extract_security_requirements(operation),
+        is_streaming: operation.is_streaming,
     }
 }
 

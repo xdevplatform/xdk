@@ -1,0 +1,29 @@
+# XDK Elixir
+
+Auto-generated Elixir SDK for the X API.
+
+## Installation
+
+Add `xdk` to your list of dependencies in `mix.exs`:
+
+```elixir
+def deps do
+  [
+    {:xdk, "~> {{ version }}"}
+  ]
+end
+```
+
+## Usage
+
+```elixir
+# Create a client with bearer token authentication
+client = Xdk.new(bearer: "YOUR_BEARER_TOKEN")
+
+# Make API calls
+{:ok, result} = Xdk.Tweets.get_tweets(client)
+```
+
+## Version
+
+{{ version }}

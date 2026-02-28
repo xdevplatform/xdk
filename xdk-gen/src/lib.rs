@@ -30,8 +30,10 @@
 /// # Example
 ///
 /// See the `python` module for a reference implementation of a language generator.
+pub use elixir::Elixir;
 pub use python::Python;
 pub use typescript::TypeScript;
 
+mod elixir;
 mod python;
 mod typescript;

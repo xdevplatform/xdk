@@ -221,6 +221,7 @@ fn test_method_signature_structure() {
         optional_params: vec![],
         return_type: "GetUserResponse".to_string(),
         supports_pagination: false,
+        has_request_body: false,
     };
 
     assert_eq!(method_sig.method_name, "get_user");
@@ -245,6 +246,8 @@ fn test_contract_test_structure() {
             expected_fields: vec![],
         },
         security_requirements: vec![],
+        is_streaming: false,
+        test_path: "/users/test_id".to_string(),
     };
 
     assert_eq!(contract_test.method_name, "get_user");

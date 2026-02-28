@@ -1,0 +1,83 @@
+defmodule Xdk.Errors do
+  @moduledoc "Structured error types for the XDK client."
+
+  use Splode,
+    error_classes: [
+      api: Xdk.Errors.Api,
+      transport: Xdk.Errors.Transport,
+      decode: Xdk.Errors.Decode
+    ],
+    unknown_error: Xdk.Errors.UnknownError
+
+  @typedoc """
+  Any error returned by the XDK client.
+
+  One of `Xdk.Errors.ApiError`, `Xdk.Errors.RateLimitError`,
+  `Xdk.Errors.TransportError`, or `Xdk.Errors.DecodeError`.
+  """
+  @type error :: Exception.t()
+end
+
+defmodule Xdk.Errors.Api do
+  @moduledoc false
+  use Splode.ErrorClass, class: :api
+end
+
+defmodule Xdk.Errors.Transport do
+  @moduledoc false
+  use Splode.ErrorClass, class: :transport
+end
+
+defmodule Xdk.Errors.Decode do
+  @moduledoc false
+  use Splode.ErrorClass, class: :decode
+end
+
+{% raw %}
+defmodule Xdk.Errors.ApiError do
+  @moduledoc "Raised when the X API returns a non-2xx HTTP status."
+  use Splode.Error, fields: [:status, :body, :headers], class: :api
+
+  def message(%{status: status, body: body}) do
+    "X API error (HTTP #{status}): #{inspect(body)}"
+  end
+end
+
+defmodule Xdk.Errors.RateLimitError do
+  @moduledoc "Raised when the X API returns HTTP 429 (rate limit exceeded)."
+  use Splode.Error,
+    fields: [:status, :body, :headers, :limit, :remaining, :reset, :retry_after_ms],
+    class: :api
+
+  def message(%{status: status, retry_after_ms: ms}) do
+    "X API rate limit exceeded (HTTP #{status}), retry after #{ms}ms"
+  end
+end
+
+defmodule Xdk.Errors.TransportError do
+  @moduledoc "Raised when the HTTP transport (Finch) fails."
+  use Splode.Error, fields: [:reason], class: :transport
+
+  def message(%{reason: reason}) do
+    "Transport error: #{inspect(reason)}"
+  end
+end
+
+defmodule Xdk.Errors.DecodeError do
+  @moduledoc "Raised when JSON decoding of an API response fails."
+  use Splode.Error, fields: [:error, :raw_body], class: :decode
+
+  def message(%{error: error}) do
+    "JSON decode error: #{inspect(error)}"
+  end
+end
+
+defmodule Xdk.Errors.UnknownError do
+  @moduledoc false
+  use Splode.Error, fields: [:error], class: :decode
+
+  def message(%{error: error}) do
+    if is_binary(error), do: error, else: inspect(error)
+  end
+end
+{% endraw %}

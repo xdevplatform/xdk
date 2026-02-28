@@ -1,0 +1,71 @@
+defmodule Xdk.{{ tag.class_name }} do
+  @moduledoc "Auto-generated client for {{ tag.display_name }} operations"
+{% for operation in operations %}
+  {% set path_params = operation.parameters | default(value=[]) | selectattr('location', 'equalto', 'path') | list %}
+  {% set query_params = operation.parameters | default(value=[]) | selectattr('location', 'equalto', 'query') | list %}
+  {% set has_body = operation.request_body is defined and operation.request_body %}
+
+  @doc """
+  {{ operation.summary | default(value="") }}
+
+  {{ operation.method | upper }} {{ operation.path }}
+  {% if operation.description %}
+  {{ operation.description }}
+  {% endif %}
+  """
+  @spec {{ operation.method_name }}(Xdk.t()
+    {%- for param in path_params %}, {{ param.variable_name }} :: {{ param.param_type | elixir_type }}{% endfor %}
+    {%- if has_body %}, body :: map(){% endif %}
+    {%- if query_params %}, opts :: keyword(){% endif %}
+  ) :: {% if operation.is_streaming %}Enumerable.t(){% else %}{:ok, map()} | {:error, Xdk.Errors.error()}{% endif %}
+
+  def {{ operation.method_name }}(client
+    {%- for param in path_params %}, {{ param.variable_name }}{% endfor %}
+    {%- if has_body %}, body{% endif %}
+    {%- if query_params %}, opts \\ []{% endif %}
+  ) do
+    {% if query_params %}
+    query =
+      [
+        {%- for param in query_params %}
+        {"{{ param.original_name }}", Keyword.get(opts, :{{ param.variable_name }})}{% if not loop.last %},{% endif %}
+        {%- endfor %}
+      ]
+      |> Xdk.Query.build()
+    {% endif %}
+
+    {% if operation.is_streaming %}
+    Xdk.Streaming.ndjson_stream(client, :{{ operation.method | lower }}, "{{ operation.path }}"
+    {%- if path_params or query_params %},
+      {% if path_params %}
+      params: %{
+        {%- for param in path_params %}
+        "{{ param.original_name }}" => {{ param.variable_name }}{% if not loop.last %},{% endif %}
+        {%- endfor %}
+      }{% if query_params %},{% endif %}
+      {% endif %}
+      {% if query_params %}
+      query: query
+      {% endif %}
+    {% endif %})
+    {% else %}
+    Xdk.request(client, :{{ operation.method | lower }}, "{{ operation.path }}"
+    {%- if path_params or query_params or has_body %},
+      {% if path_params %}
+      params: %{
+        {%- for param in path_params %}
+        "{{ param.original_name }}" => {{ param.variable_name }}{% if not loop.last %},{% endif %}
+        {%- endfor %}
+      }{% if query_params or has_body %},{% endif %}
+      {% endif %}
+      {% if query_params %}
+      query: query{% if has_body %},{% endif %}
+      {% endif %}
+      {% if has_body %}
+      json: body
+      {% endif %}
+    {% endif %})
+    {% endif %}
+  end
+{% endfor %}
+end
