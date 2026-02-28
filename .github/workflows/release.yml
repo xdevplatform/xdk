@@ -58,7 +58,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.XDK_PAT }}
       
       - name: Bump version
         if: ${{ !inputs.skip_publish }}
