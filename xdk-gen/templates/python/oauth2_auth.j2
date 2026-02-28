@@ -231,16 +231,26 @@ class OAuth2PKCEAuth:
         
         Returns:
             Dict[str, Any]: The refreshed token dictionary
+            
+        Raises:
+            ValueError: If no token is available or no client secret is configured.
         """
         if not self.oauth2_session or not self.token:
             raise ValueError("No token to refresh")
         
+        if not self.client_secret:
+            raise ValueError(
+                "client_secret is required for token refresh. "
+                "Confidential clients must provide a client secret."
+            )
+        
         refresh_url = f"{self.base_url}/2/oauth2/token"
         
-        if self.client_secret:
-            auth = HTTPBasicAuth(self.client_id, self.client_secret)
-        else:
-            raise ValueError("No client secret")
+        # Use HTTPBasicAuth to send credentials in the Authorization header,
+        # consistent with exchange_code(). Passing client_id/client_secret as
+        # keyword arguments does NOT set the Authorization header in oauthlib,
+        # which causes an unauthorized_client error.
+        auth = HTTPBasicAuth(self.client_id, self.client_secret)
         
         self.token = self.oauth2_session.refresh_token(
             refresh_url,
