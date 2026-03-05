@@ -1,0 +1,59 @@
+# frozen_string_literal: true
+
+# Auto-generated structure tests for {{ tag.display_name }}.
+#
+# This module contains tests that validate the structure and API surface
+# of the {{ tag.display_name }} client. These tests ensure that all expected
+# methods exist and are callable.
+#
+# Generated automatically - do not edit manually.
+
+require "spec_helper"
+
+RSpec.describe "{{ tag.display_name }} SDK structure" do
+  let(:client) { Xdk::Client.new(bearer_token: "test-token") }
+
+  describe Xdk::{{ tag.class_name }}Client do
+    it "is accessible from the main client via #{{ tag.property_name }}" do
+      expect(client.{{ tag.property_name }}).to be_a(Xdk::{{ tag.class_name }}Client)
+    end
+
+    it "returns the same instance on repeated access (memoized)" do
+      expect(client.{{ tag.property_name }}).to equal(client.{{ tag.property_name }})
+    end
+
+    {% for operation in operations %}
+    it "responds to #{{ operation.method_name }}" do
+      expect(client.{{ tag.property_name }}).to respond_to(:{{ operation.method_name }})
+    end
+    {% endfor %}
+
+    it "has at least one public API method" do
+      public_methods = Xdk::{{ tag.class_name }}Client.public_instance_methods(false) - [:initialize]
+      expect(public_methods).not_to be_empty
+    end
+
+    describe "method arity" do
+      {% for operation in operations %}
+      {% set required_count = operation.parameters | selectattr('required') | list | length %}
+      it "#{{ operation.method_name }} accepts keyword arguments" do
+        method_obj = client.{{ tag.property_name }}.method(:{{ operation.method_name }})
+        # Method should accept keyword arguments
+        params = method_obj.parameters
+        keyword_params = params.select { |type, _| [:key, :keyreq].include?(type) }
+        expect(keyword_params).not_to be_empty, "{{ operation.method_name }} should accept keyword arguments"
+      end
+      {% endfor %}
+    end
+  end
+
+  describe "Module structure" do
+    it "defines Xdk::{{ tag.class_name }}Client" do
+      expect(defined?(Xdk::{{ tag.class_name }}Client)).to eq("constant")
+    end
+
+    it "defines the {{ tag.class_name }} models module" do
+      expect(defined?(Xdk::{{ tag.class_name }})).to eq("constant")
+    end
+  end
+end

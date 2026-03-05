@@ -1,0 +1,99 @@
+# frozen_string_literal: true
+
+# Auto-generated {{ tag.display_name }} client for the X API.
+#
+# This module provides a client for interacting with the {{ tag.display_name }}
+# endpoints of the X API. All methods, parameters, and response handling are
+# generated from the OpenAPI specification.
+#
+# Generated automatically - do not edit manually.
+
+require "json"
+require "net/http"
+require "uri"
+require_relative "models"
+
+module Xdk
+  # Client for {{ tag.display_name }} operations
+  class {{ tag.class_name }}Client
+    # @param client [Xdk::Client] the main API client
+    def initialize(client)
+      @client = client
+    end
+
+    {% for operation in operations %}
+    # {{ operation.summary | default("") }}
+    {% if operation.description %}
+    # {{ operation.description }}
+    {% endif %}
+    #
+    {% for param in operation.parameters %}
+    {% if param.required %}
+    # @param {{ param.variable_name }} [{{ param.param_type | ruby_type }}] {{ param.description | default("") }} (required)
+    {% endif %}
+    {% endfor %}
+    {% for param in operation.parameters %}
+    {% if not param.required %}
+    # @param {{ param.variable_name }} [{{ param.param_type | ruby_type }}, nil] {{ param.description | default("") }}
+    {% endif %}
+    {% endfor %}
+    {% if operation.request_body %}
+    # @param body [Hash] Request body
+    {% endif %}
+    # @return [Hash] API response
+    def {{ operation.method_name }}(
+      {%- for param in operation.parameters | selectattr('required') -%}
+      {{ param.variable_name }}:{% if not loop.last or operation.parameters | rejectattr('required') | list or operation.request_body %},{% endif %}
+      {%- endfor -%}
+      {%- if operation.request_body and operation.request_body.required -%}
+      body:{% if operation.parameters | rejectattr('required') | list %},{% endif %}
+      {%- endif -%}
+      {%- for param in operation.parameters | rejectattr('required') -%}
+      {{ param.variable_name }}: nil{% if not loop.last or (operation.request_body and not operation.request_body.required) %},{% endif %}
+      {%- endfor -%}
+      {%- if operation.request_body and not operation.request_body.required -%}
+      body: nil
+      {%- endif -%}
+    )
+      # Build the request path
+      path = "{{ operation.path }}"
+      {% for param in operation.parameters %}
+      {% if param.location == "path" %}
+      path = path.gsub("{{ "{" }}{{ param.original_name }}{{ "}" }}", {{ param.variable_name }}.to_s)
+      {% endif %}
+      {% endfor %}
+
+      # Build query parameters
+      params = {}
+      {% for param in operation.parameters %}
+      {% if param.location == "query" %}
+      {% if param.param_type == "array" %}
+      params["{{ param.original_name }}"] = {{ param.variable_name }}.is_a?(Array) ? {{ param.variable_name }}.join(",") : {{ param.variable_name }} unless {{ param.variable_name }}.nil?
+      {% else %}
+      params["{{ param.original_name }}"] = {{ param.variable_name }} unless {{ param.variable_name }}.nil?
+      {% endif %}
+      {% endif %}
+      {% endfor %}
+
+      {% if operation.request_body %}
+      # Prepare request body
+      request_body = body.is_a?(Hash) ? body : (body.nil? ? nil : body)
+      {% endif %}
+
+      {% if operation.method == "GET" %}
+      @client.request(method: :get, path: path, params: params)
+      {% elif operation.method == "POST" %}
+      @client.request(method: :post, path: path, params: params{% if operation.request_body %}, body: request_body{% endif %})
+      {% elif operation.method == "PUT" %}
+      @client.request(method: :put, path: path, params: params{% if operation.request_body %}, body: request_body{% endif %})
+      {% elif operation.method == "DELETE" %}
+      @client.request(method: :delete, path: path, params: params{% if operation.request_body %}, body: request_body{% endif %})
+      {% elif operation.method == "PATCH" %}
+      @client.request(method: :patch, path: path, params: params{% if operation.request_body %}, body: request_body{% endif %})
+      {% else %}
+      @client.request(method: :{{ operation.method | lower }}, path: path, params: params)
+      {% endif %}
+    end
+    {% endfor %}
+  end
+end

@@ -1,0 +1,265 @@
+# frozen_string_literal: true
+
+# Auto-generated main client for the X API.
+#
+# This module provides the primary Client class for interacting with the X API.
+# It coordinates all sub-clients and handles authentication and HTTP requests.
+# All functionality is generated from the OpenAPI specification.
+#
+# Generated automatically - do not edit manually.
+
+require "net/http"
+require "uri"
+require "json"
+require "openssl"
+require "cgi"
+require "securerandom"
+require "base64"
+
+{% for tag in tags %}
+require_relative "{{ tag.import_name }}/client"
+{% endfor %}
+require_relative "version"
+
+module Xdk
+  # Error raised when an API request fails
+  class ApiError < StandardError
+    # @return [Integer] HTTP status code
+    attr_reader :status
+
+    # @return [Hash, String, nil] parsed response body
+    attr_reader :body
+
+    # @return [Hash] response headers
+    attr_reader :headers
+
+    def initialize(message, status:, body: nil, headers: {})
+      @status = status
+      @body = body
+      @headers = headers
+      super("#{message} (HTTP #{status})")
+    end
+  end
+
+  # Rate limit error with retry-after information
+  class RateLimitError < ApiError
+    # @return [Integer, nil] seconds until the rate limit resets
+    attr_reader :retry_after
+
+    def initialize(message, status:, body: nil, headers: {})
+      @retry_after = headers["x-rate-limit-reset"]&.to_i
+      super
+    end
+  end
+
+  # Main client for interacting with the X API.
+  #
+  # @example Using bearer token (app-only auth)
+  #   client = Xdk::Client.new(bearer_token: "YOUR_BEARER_TOKEN")
+  #   result = client.posts.search_posts_recent(query: "ruby lang")
+  #
+  # @example Using OAuth 1.0a (user-context auth)
+  #   client = Xdk::Client.new(
+  #     api_key: "YOUR_API_KEY",
+  #     api_secret: "YOUR_API_SECRET",
+  #     access_token: "YOUR_ACCESS_TOKEN",
+  #     access_token_secret: "YOUR_ACCESS_TOKEN_SECRET"
+  #   )
+  class Client
+    BASE_URL = "https://api.x.com"
+
+    # @return [String] the base URL for API requests
+    attr_reader :base_url
+
+    # Initialize the X API client.
+    #
+    # @param bearer_token [String, nil] Bearer token for app-only authentication
+    # @param api_key [String, nil] OAuth 1.0a consumer API key
+    # @param api_secret [String, nil] OAuth 1.0a consumer API secret
+    # @param access_token [String, nil] OAuth 1.0a access token
+    # @param access_token_secret [String, nil] OAuth 1.0a access token secret
+    # @param base_url [String] Base URL for the X API
+    def initialize(
+      bearer_token: nil,
+      api_key: nil,
+      api_secret: nil,
+      access_token: nil,
+      access_token_secret: nil,
+      base_url: BASE_URL
+    )
+      @bearer_token = bearer_token
+      @api_key = api_key
+      @api_secret = api_secret
+      @access_token = access_token
+      @access_token_secret = access_token_secret
+      @base_url = base_url
+    end
+
+    {% for tag in tags %}
+    # Access the {{ tag.display_name }} API
+    # @return [{{ tag.class_name }}Client]
+    def {{ tag.property_name }}
+      @{{ tag.property_name }} ||= {{ tag.class_name }}Client.new(self)
+    end
+    {% endfor %}
+
+    # Execute an API request.
+    #
+    # @param method [Symbol] HTTP method (:get, :post, :put, :delete, :patch)
+    # @param path [String] API path (e.g., "/2/tweets")
+    # @param params [Hash] query parameters
+    # @param body [Hash, nil] request body (will be JSON-encoded)
+    # @param headers [Hash] additional headers
+    # @return [Hash] parsed JSON response
+    # @raise [ApiError] if the response status is not 2xx
+    # @raise [RateLimitError] if rate limited (HTTP 429)
+    # @api private
+    def request(method:, path:, params: {}, body: nil, headers: {})
+      uri = URI.join(@base_url, path)
+
+      # Add query parameters
+      clean_params = params.compact
+      unless clean_params.empty?
+        uri.query = URI.encode_www_form(clean_params)
+      end
+
+      # Set up HTTPS connection
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.open_timeout = 30
+      http.read_timeout = 30
+
+      # Build request object
+      req = build_request(method, uri)
+
+      # Set default headers
+      req["User-Agent"] = "xdk-ruby/#{Xdk::VERSION}"
+      req["Content-Type"] = "application/json"
+      req["Accept"] = "application/json"
+
+      # Set authentication
+      set_authentication(req)
+
+      # Merge additional headers
+      headers.each { |k, v| req[k.to_s] = v.to_s }
+
+      # Set body for non-GET requests
+      if body && ![:get, :head].include?(method)
+        req.body = body.is_a?(String) ? body : body.to_json
+      end
+
+      # Execute request
+      response = http.request(req)
+
+      # Handle response
+      handle_response(response)
+    end
+
+    private
+
+    # Build the appropriate Net::HTTP request object
+    def build_request(method, uri)
+      case method.to_s.upcase
+      when "GET"    then Net::HTTP::Get.new(uri)
+      when "POST"   then Net::HTTP::Post.new(uri)
+      when "PUT"    then Net::HTTP::Put.new(uri)
+      when "DELETE" then Net::HTTP::Delete.new(uri)
+      when "PATCH"  then Net::HTTP::Patch.new(uri)
+      else raise ArgumentError, "Unsupported HTTP method: #{method}"
+      end
+    end
+
+    # Set authentication headers on the request
+    def set_authentication(req)
+      if @bearer_token
+        req["Authorization"] = "Bearer #{@bearer_token}"
+      elsif @api_key && @api_secret && @access_token && @access_token_secret
+        req["Authorization"] = build_oauth1_header(req)
+      end
+    end
+
+    # Build OAuth 1.0a Authorization header
+    def build_oauth1_header(req)
+      timestamp = Time.now.to_i.to_s
+      nonce = SecureRandom.hex(16)
+
+      oauth_params = {
+        "oauth_consumer_key" => @api_key,
+        "oauth_nonce" => nonce,
+        "oauth_signature_method" => "HMAC-SHA1",
+        "oauth_timestamp" => timestamp,
+        "oauth_token" => @access_token,
+        "oauth_version" => "1.0"
+      }
+
+      # Build signature base string
+      method = req.method.upcase
+      base_url = "#{req.uri.scheme}://#{req.uri.host}#{req.uri.path}"
+
+      # Combine OAuth params and query params
+      all_params = oauth_params.dup
+      if req.uri.query
+        URI.decode_www_form(req.uri.query).each { |k, v| all_params[k] = v }
+      end
+
+      param_string = all_params.sort.map { |k, v| "#{percent_encode(k)}=#{percent_encode(v)}" }.join("&")
+      base_string = "#{method}&#{percent_encode(base_url)}&#{percent_encode(param_string)}"
+
+      # Sign
+      signing_key = "#{percent_encode(@api_secret)}&#{percent_encode(@access_token_secret)}"
+      signature = Base64.strict_encode64(
+        OpenSSL::HMAC.digest("SHA1", signing_key, base_string)
+      )
+
+      oauth_params["oauth_signature"] = signature
+
+      # Build header
+      header_parts = oauth_params.sort.map { |k, v| "#{percent_encode(k)}=\"#{percent_encode(v)}\"" }
+      "OAuth #{header_parts.join(", ")}"
+    end
+
+    # RFC 3986 percent-encoding
+    def percent_encode(value)
+      CGI.escape(value.to_s).gsub("+", "%20")
+    end
+
+    # Handle the HTTP response, raising appropriate errors for non-2xx statuses
+    def handle_response(response)
+      body = parse_response_body(response)
+      response_headers = {}
+      response.each_header { |k, v| response_headers[k] = v }
+
+      case response.code.to_i
+      when 200..299
+        body
+      when 429
+        raise RateLimitError.new(
+          "Rate limit exceeded",
+          status: response.code.to_i,
+          body: body,
+          headers: response_headers
+        )
+      else
+        message = if body.is_a?(Hash)
+                    body.dig("detail") || body.dig("errors", 0, "message") || "API request failed"
+                  else
+                    "API request failed"
+                  end
+        raise ApiError.new(
+          message,
+          status: response.code.to_i,
+          body: body,
+          headers: response_headers
+        )
+      end
+    end
+
+    # Parse the response body as JSON, falling back to raw string
+    def parse_response_body(response)
+      return nil if response.body.nil? || response.body.empty?
+      JSON.parse(response.body)
+    rescue JSON::ParserError
+      response.body
+    end
+  end
+end

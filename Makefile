@@ -1,8 +1,8 @@
 # XDK SDK Generator
 
 .PHONY: all check build test clean help
-.PHONY: generate python typescript
-.PHONY: test-python test-typescript test-sdks
+.PHONY: generate python typescript ruby
+.PHONY: test-python test-typescript test-ruby test-sdks
 .PHONY: fmt clippy test-generator
 .PHONY: versions
 
@@ -16,13 +16,16 @@ all: check test-generator
 # SDK Generation (local dev)
 # =====================================
 
-generate: python typescript
+generate: python typescript ruby
 
 python:
 	cargo run -- python --latest true
 
 typescript:
 	cargo run -- typescript --latest true
+
+ruby:
+	cargo run -- ruby --latest true
 
 # =====================================
 # SDK Testing (local dev)
@@ -35,6 +38,9 @@ test-python: python
 
 test-typescript: typescript
 	cd xdk/typescript && npm ci && npm run build && npm run type-check && npm test
+
+test-ruby: ruby
+	cd xdk/ruby && bundle install && bundle exec rspec spec/ --format documentation
 
 # =====================================
 # Generator
@@ -61,14 +67,14 @@ test: test-generator test-sdks
 # =====================================
 
 versions:
-	@grep -E "^(python|typescript) = " xdk-config.toml
+	@grep -E "^(python|typescript|ruby) = " xdk-config.toml
 
 # =====================================
 # Cleanup
 # =====================================
 
 clean:
-	rm -rf xdk/python xdk/typescript
+	rm -rf xdk/python xdk/typescript xdk/ruby
 
 cargo-clean:
 	cargo clean
@@ -82,8 +88,10 @@ help:
 	@echo ""
 	@echo "Local Development:"
 	@echo "  make python          Generate Python SDK"
+	@echo "  make ruby            Generate Ruby SDK"
 	@echo "  make typescript      Generate TypeScript SDK"
 	@echo "  make test-python     Generate + test Python SDK"
+	@echo "  make test-ruby       Generate + test Ruby SDK"
 	@echo "  make test-typescript Generate + test TypeScript SDK"
 	@echo ""
 	@echo "Generator:"
