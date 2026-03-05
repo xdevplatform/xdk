@@ -1,0 +1,155 @@
+# frozen_string_literal: true
+
+# Auto-generated contract tests for {{ tag.display_name }}.
+#
+# This module contains tests that validate the request/response contracts
+# of the {{ tag.display_name }} client against the OpenAPI specification.
+#
+# Generated automatically - do not edit manually.
+
+require "spec_helper"
+
+RSpec.describe Xdk::{{ tag.class_name }}Client do
+  let(:client) { Xdk::Client.new(bearer_token: "test-bearer-token") }
+  let(:api) { client.{{ tag.property_name }} }
+
+  {% for operation in operations %}
+  describe "#{{ operation.method_name }}" do
+    it "makes a {{ operation.method }} request to the correct path" do
+      stub_request(:{{ operation.method | lower }}, /api\.x\.com/)
+        .to_return(
+          status: 200,
+          body: '{"data": {}, "meta": {}}',
+          headers: { "Content-Type" => "application/json" }
+        )
+
+      result = api.{{ operation.method_name }}(
+        {%- for param in operation.parameters | selectattr('required') -%}
+        {{ param.variable_name }}: "test_value"{% if not loop.last %}, {% endif %}
+        {%- endfor -%}
+        {%- if operation.request_body and operation.request_body.required -%}
+        {% if operation.parameters | selectattr('required') | list %}, {% endif %}body: { text: "test" }
+        {%- endif -%}
+      )
+
+      expect(result).to be_a(Hash)
+      expect(a_request(:{{ operation.method | lower }}, /api\.x\.com/)).to have_been_made.once
+    end
+
+    it "sends the correct Authorization header" do
+      stub = stub_request(:{{ operation.method | lower }}, /api\.x\.com/)
+        .with(headers: { "Authorization" => "Bearer test-bearer-token" })
+        .to_return(
+          status: 200,
+          body: '{"data": {}}',
+          headers: { "Content-Type" => "application/json" }
+        )
+
+      api.{{ operation.method_name }}(
+        {%- for param in operation.parameters | selectattr('required') -%}
+        {{ param.variable_name }}: "test_value"{% if not loop.last %}, {% endif %}
+        {%- endfor -%}
+        {%- if operation.request_body and operation.request_body.required -%}
+        {% if operation.parameters | selectattr('required') | list %}, {% endif %}body: { text: "test" }
+        {%- endif -%}
+      )
+
+      expect(stub).to have_been_requested.once
+    end
+
+    it "sends the correct User-Agent header" do
+      stub = stub_request(:{{ operation.method | lower }}, /api\.x\.com/)
+        .with(headers: { "User-Agent" => "xdk-ruby/#{Xdk::VERSION}" })
+        .to_return(
+          status: 200,
+          body: '{"data": {}}',
+          headers: { "Content-Type" => "application/json" }
+        )
+
+      api.{{ operation.method_name }}(
+        {%- for param in operation.parameters | selectattr('required') -%}
+        {{ param.variable_name }}: "test_value"{% if not loop.last %}, {% endif %}
+        {%- endfor -%}
+        {%- if operation.request_body and operation.request_body.required -%}
+        {% if operation.parameters | selectattr('required') | list %}, {% endif %}body: { text: "test" }
+        {%- endif -%}
+      )
+
+      expect(stub).to have_been_requested.once
+    end
+
+    it "raises ApiError on 4xx responses" do
+      stub_request(:{{ operation.method | lower }}, /api\.x\.com/)
+        .to_return(
+          status: 404,
+          body: '{"detail": "Not Found"}',
+          headers: { "Content-Type" => "application/json" }
+        )
+
+      expect {
+        api.{{ operation.method_name }}(
+          {%- for param in operation.parameters | selectattr('required') -%}
+          {{ param.variable_name }}: "test_value"{% if not loop.last %}, {% endif %}
+          {%- endfor -%}
+          {%- if operation.request_body and operation.request_body.required -%}
+          {% if operation.parameters | selectattr('required') | list %}, {% endif %}body: { text: "test" }
+          {%- endif -%}
+        )
+      }.to raise_error(Xdk::ApiError) { |error|
+        expect(error.status).to eq(404)
+      }
+    end
+
+    it "raises RateLimitError on 429 responses" do
+      stub_request(:{{ operation.method | lower }}, /api\.x\.com/)
+        .to_return(
+          status: 429,
+          body: '{"detail": "Too Many Requests"}',
+          headers: {
+            "Content-Type" => "application/json",
+            "x-rate-limit-reset" => "1234567890"
+          }
+        )
+
+      expect {
+        api.{{ operation.method_name }}(
+          {%- for param in operation.parameters | selectattr('required') -%}
+          {{ param.variable_name }}: "test_value"{% if not loop.last %}, {% endif %}
+          {%- endfor -%}
+          {%- if operation.request_body and operation.request_body.required -%}
+          {% if operation.parameters | selectattr('required') | list %}, {% endif %}body: { text: "test" }
+          {%- endif -%}
+        )
+      }.to raise_error(Xdk::RateLimitError) { |error|
+        expect(error.status).to eq(429)
+        expect(error.retry_after).to eq(1_234_567_890)
+      }
+    end
+    {% for param in operation.parameters | selectattr('required') %}
+    {% if param.location == "query" %}
+
+    it "passes {{ param.variable_name }} as a query parameter" do
+      stub = stub_request(:{{ operation.method | lower }}, /api\.x\.com/)
+        .with(query: hash_including("{{ param.original_name }}" => "my_test_val"))
+        .to_return(
+          status: 200,
+          body: '{"data": {}}',
+          headers: { "Content-Type" => "application/json" }
+        )
+
+      api.{{ operation.method_name }}(
+        {%- for p in operation.parameters | selectattr('required') -%}
+        {% if p.variable_name == param.variable_name %}{{ p.variable_name }}: "my_test_val"{% else %}{{ p.variable_name }}: "test_value"{% endif %}{% if not loop.last %}, {% endif %}
+        {%- endfor -%}
+        {%- if operation.request_body and operation.request_body.required -%}
+        {% if operation.parameters | selectattr('required') | list %}, {% endif %}body: { text: "test" }
+        {%- endif -%}
+      )
+
+      expect(stub).to have_been_requested.once
+    end
+    {% endif %}
+    {% endfor %}
+  end
+  {% endfor %}
+end

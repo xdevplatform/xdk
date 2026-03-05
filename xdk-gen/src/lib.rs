@@ -31,7 +31,9 @@
 ///
 /// See the `python` module for a reference implementation of a language generator.
 pub use python::Python;
+pub use ruby::Ruby;
 pub use typescript::TypeScript;
 
 mod python;
+mod ruby;
 mod typescript;

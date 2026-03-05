@@ -75,6 +75,8 @@ fn get_header_for_file(template_name: &str, output_path: Option<&str>) -> String
             "markdown"
         } else if path.ends_with(".toml") {
             "toml"
+        } else if path.ends_with(".rb") || path.ends_with(".gemspec") {
+            "ruby"
         } else if path.ends_with("ignore") || path.ends_with(".gitignore") {
             "ignore"
         } else {
@@ -87,7 +89,7 @@ fn get_header_for_file(template_name: &str, output_path: Option<&str>) -> String
 
     // Determine file type from template name if not determined from path
     let (comment_start, comment_line, comment_end) =
-        if file_type == "python" || file_type == "toml" || file_type == "ignore" {
+        if file_type == "python" || file_type == "toml" || file_type == "ignore" || file_type == "ruby" {
             ("", "#", "")
         } else if file_type == "typescript" {
             ("", "//", "")
@@ -130,6 +132,14 @@ fn get_header_for_file(template_name: &str, output_path: Option<&str>) -> String
             ("<!--", "", "-->")
         } else if template_name == "npmignore" || template_name.ends_with("ignore") {
             // Ignore files use # comments
+            ("", "#", "")
+        } else if template_name == "gemspec"
+            || template_name == "gemfile"
+            || template_name == "spec_helper"
+            || template_name.contains("_spec")
+            || template_name == "version"
+        {
+            // Ruby files use # comments
             ("", "#", "")
         } else {
             // Default: use // for unknown types
@@ -229,6 +239,20 @@ mod tests {
     #[test]
     fn test_python_file_detection() {
         let header = get_header_for_file("paginator", Some("xdk/paginator.py"));
+        assert!(header.contains("# AUTO-GENERATED FILE"));
+        assert!(!header.contains("// AUTO-GENERATED FILE"));
+    }
+
+    #[test]
+    fn test_ruby_header() {
+        let header = get_header_for_file("client_class", Some("lib/xdk/client.rb"));
+        assert!(header.contains("# AUTO-GENERATED FILE"));
+        assert!(!header.contains("// AUTO-GENERATED FILE"));
+    }
+
+    #[test]
+    fn test_gemspec_header() {
+        let header = get_header_for_file("gemspec", Some("xdk.gemspec"));
         assert!(header.contains("# AUTO-GENERATED FILE"));
         assert!(!header.contains("// AUTO-GENERATED FILE"));
     }
