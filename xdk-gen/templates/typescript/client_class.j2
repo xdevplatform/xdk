@@ -117,7 +117,13 @@ export class {{ tag.class_name }}Client {
 {% if operation.request_body and operation.request_body.required %}
    * @param body {% if operation.request_body.content and operation.request_body.content["application/json"] and operation.request_body.content["application/json"].schema and operation.request_body.content["application/json"].schema.description %}{{ operation.request_body.content["application/json"].schema.description }}{% else %}Request body{% endif %}
 {% endif %}
-   * @returns {Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>} Promise resolving to the API response, or raw Response if requestOptions.raw is true
+   * @returns {Promise<{% if operation.responses and (
+    ("200" in operation.responses and operation.responses["200"].content and "application/octet-stream" in operation.responses["200"].content) or
+    ("201" in operation.responses and operation.responses["201"].content and "application/octet-stream" in operation.responses["201"].content)
+) %}ArrayBuffer{% elif operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>} Promise resolving to the API response{% if operation.responses and (
+    ("200" in operation.responses and operation.responses["200"].content and "application/octet-stream" in operation.responses["200"].content) or
+    ("201" in operation.responses and operation.responses["201"].content and "application/octet-stream" in operation.responses["201"].content)
+) %} as binary ArrayBuffer{% endif %}, or raw Response if requestOptions.raw is true
    */
     // Overload 1: raw: true returns Response
     {{ operation.method_name }}(
@@ -158,7 +164,10 @@ export class {{ tag.class_name }}Client {
         {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
         options?: {{ operation.class_name }}Options
         {% endif %}
-    ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>;
+    ): Promise<{% if operation.responses and (
+    ("200" in operation.responses and operation.responses["200"].content and "application/octet-stream" in operation.responses["200"].content) or
+    ("201" in operation.responses and operation.responses["201"].content and "application/octet-stream" in operation.responses["201"].content)
+) %}ArrayBuffer{% elif operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>;
     // Implementation
     async {{ operation.method_name }}(
         {# Path parameters are always required - use location field #}
@@ -181,7 +190,10 @@ export class {{ tag.class_name }}Client {
         {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
         options: {{ operation.class_name }}Options = {}
         {% endif %}
-    ): Promise<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %} | Response> {
+    ): Promise<{% if operation.responses and (
+    ("200" in operation.responses and operation.responses["200"].content and "application/octet-stream" in operation.responses["200"].content) or
+    ("201" in operation.responses and operation.responses["201"].content and "application/octet-stream" in operation.responses["201"].content)
+) %}ArrayBuffer{% elif operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %} | Response> {
         // Normalize options to handle both camelCase and original API parameter names
         {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
         {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 %}
@@ -280,10 +292,16 @@ export class {{ tag.class_name }}Client {
             {% endif %}
         };
 
-        return this.client.request<{% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>(
+        return this.client.request<{% if operation.responses and (
+    ("200" in operation.responses and operation.responses["200"].content and "application/octet-stream" in operation.responses["200"].content) or
+    ("201" in operation.responses and operation.responses["201"].content and "application/octet-stream" in operation.responses["201"].content)
+) %}ArrayBuffer{% elif operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}{{ operation.class_name }}Response{% else %}any{% endif %}>(
             '{{ operation.method | upper }}',
             path + (params.toString() ? `?${params.toString()}` : ''),
-            finalRequestOptions
+            {% if operation.responses and (
+    ("200" in operation.responses and operation.responses["200"].content and "application/octet-stream" in operation.responses["200"].content) or
+    ("201" in operation.responses and operation.responses["201"].content and "application/octet-stream" in operation.responses["201"].content)
+) %}{ ...finalRequestOptions, binary: true }{% else %}finalRequestOptions{% endif %}
         );
     }
 

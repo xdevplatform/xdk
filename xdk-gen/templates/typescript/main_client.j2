@@ -77,6 +77,8 @@ export interface RequestOptions {
   raw?: boolean;
   /** Security requirements for the endpoint (from OpenAPI spec) - used for smart auth selection */
   security?: Array<Record<string, string[]>>;
+  /** Whether this endpoint returns binary data (ArrayBuffer) - determined from OpenAPI spec */
+  binary?: boolean;
 }
 
 /**
@@ -416,13 +418,14 @@ export class Client {
       }
 
       let data: T;
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        const rawData = await response.json();
-        // Transform snake_case keys to camelCase to match TypeScript conventions
-        data = transformKeys<T>(rawData);
+      // Check if binary response is expected (from OpenAPI spec)
+      if (options.binary) {
+        // Return ArrayBuffer for binary endpoints
+        data = await response.arrayBuffer() as T;
       } else {
-        data = await response.text() as T;
+        // Default: parse as JSON and transform keys
+        const rawData = await response.json();
+        data = transformKeys<T>(rawData);
       }
 
       // Return parsed body for non-streaming requests

@@ -62,6 +62,7 @@ class Test{{ tag.class_name }}Contracts:
                 {% endfor %}
             }
             mock_response.raise_for_status.return_value = None
+            mock_response.headers = {'content-type': 'application/json'}
             mock_session.{{ contract_test.method|lower }}.return_value = mock_response
             
             # Prepare test parameters
@@ -236,6 +237,7 @@ class Test{{ tag.class_name }}Contracts:
             mock_response.status_code = 200
             mock_response.json.return_value = {}
             mock_response.raise_for_status.return_value = None
+            mock_response.headers = {'content-type': 'application/json'}
             mock_session.{{ contract_test.method|lower }}.return_value = mock_response
             
             try:
@@ -277,6 +279,7 @@ class Test{{ tag.class_name }}Contracts:
             mock_response.status_code = {{ contract_test.response_schema.status_code }}
             mock_response.json.return_value = mock_response_data
             mock_response.raise_for_status.return_value = None
+            mock_response.headers = {'content-type': 'application/json'}
             mock_session.{{ contract_test.method|lower }}.return_value = mock_response
             
             # Prepare minimal valid parameters
