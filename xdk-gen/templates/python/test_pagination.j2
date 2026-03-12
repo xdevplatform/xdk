@@ -71,6 +71,7 @@ class Test{{ tag.class_name }}Pagination:
                 }
             }
             first_page_response.raise_for_status.return_value = None
+            first_page_response.headers = {'content-type': 'application/json'}
             
             # Mock second page response (no next token = end of pagination)
             second_page_response = Mock()
@@ -84,6 +85,7 @@ class Test{{ tag.class_name }}Pagination:
                 }
             }
             second_page_response.raise_for_status.return_value = None
+            second_page_response.headers = {'content-type': 'application/json'}
             
             # Return different responses for consecutive calls
             mock_session.get.side_effect = [first_page_response, second_page_response]
@@ -127,6 +129,7 @@ class Test{{ tag.class_name }}Pagination:
                 }
             }
             mock_response.raise_for_status.return_value = None
+            mock_response.headers = {'content-type': 'application/json'}
             mock_session.get.return_value = mock_response
             
             # Test item iteration
@@ -152,6 +155,7 @@ class Test{{ tag.class_name }}Pagination:
                 "meta": {"result_count": 0}
             }
             mock_response.raise_for_status.return_value = None
+            mock_response.headers = {'content-type': 'application/json'}
             mock_session.get.return_value = mock_response
             
             method = getattr(self.{{ tag.property_name }}_client, "{{ pagination_test.method_name }}")
@@ -191,6 +195,7 @@ class Test{{ tag.class_name }}Pagination:
                 }
             }
             mock_response_with_token.raise_for_status.return_value = None
+            mock_response_with_token.headers = {'content-type': 'application/json'}
             
             second_page_response = Mock()
             second_page_response.status_code = 200
@@ -199,6 +204,7 @@ class Test{{ tag.class_name }}Pagination:
                 "meta": {"result_count": 0}
             }
             second_page_response.raise_for_status.return_value = None
+            second_page_response.headers = {'content-type': 'application/json'}
             
             mock_session.get.side_effect = [mock_response_with_token, second_page_response]
             
@@ -229,6 +235,7 @@ class Test{{ tag.class_name }}Pagination:
             empty_response.status_code = 200
             empty_response.json.return_value = {"data": [], "meta": {"result_count": 0}}
             empty_response.raise_for_status.return_value = None
+            empty_response.headers = {'content-type': 'application/json'}
             mock_session.get.return_value = empty_response
             
             # Pick first paginatable method for testing
