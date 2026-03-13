@@ -25,10 +25,12 @@ from .models import (
     {% for operation in operations %}
     {% if operation.request_body %}
     {{ operation.class_name }}Request,
-    {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
-    {{ operation.class_name }}Response,
     {% endif %}
-    {% elif operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
+    {# Only import response types for operations that return JSON (not binary) #}
+    {% set response_200 = operation.responses["200"] if operation.responses and "200" in operation.responses else none %}
+    {% set response_201 = operation.responses["201"] if operation.responses and "201" in operation.responses else none %}
+    {% set has_json_response = (response_200 and response_200.content and "application/json" in response_200.content) or (response_201 and response_201.content and "application/json" in response_201.content) %}
+    {% if has_json_response %}
     {{ operation.class_name }}Response,
     {% endif %}
     {% endfor %}
