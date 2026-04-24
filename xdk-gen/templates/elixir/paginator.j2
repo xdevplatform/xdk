@@ -1,0 +1,63 @@
+{% raw %}
+defmodule Xdk.Paginator do
+  @moduledoc """
+  Cursor-based pagination helper.
+
+  Wraps any paginated endpoint function into a lazy `Stream` that
+  automatically follows `next_token` / `pagination_token`.
+
+  ## Example
+
+      fetch = fn token ->
+        opts = [query: "elixir", max_results: 100]
+        opts = if token, do: Keyword.put(opts, :pagination_token, token), else: opts
+        Xdk.Posts.search_recent(client, opts)
+      end
+
+      Xdk.Paginator.stream(fetch)
+      |> Stream.flat_map(fn {:ok, page} -> page["data"] || [] end)
+      |> Enum.take(500)
+  """
+
+  @type fetch_fun :: (String.t() | nil -> {:ok, map()} | {:error, term()})
+
+  @spec stream(fetch_fun(), keyword()) :: Enumerable.t()
+  def stream(fetch_fun, _opts \\ []) do
+    Stream.resource(
+      fn -> nil end,
+      fn
+        :halt ->
+          {:halt, :halt}
+
+        token ->
+          case fetch_fun.(token) do
+            {:ok, page} ->
+              next = extract_next_token(page)
+              next_state = if next, do: next, else: :halt
+              {[{:ok, page}], next_state}
+
+            {:error, _} = err ->
+              {[err], :halt}
+          end
+      end,
+      fn _ -> :ok end
+    )
+  end
+
+  @spec items(fetch_fun(), keyword()) :: Enumerable.t()
+  def items(fetch_fun, opts \\ []) do
+    data_key = Keyword.get(opts, :data_key, "data")
+
+    stream(fetch_fun, opts)
+    |> Stream.flat_map(fn
+      {:ok, page} -> page[data_key] || []
+      {:error, _} -> []
+    end)
+  end
+
+  defp extract_next_token(page) do
+    meta = page["meta"] || %{}
+    meta["next_token"] || meta["pagination_token"]
+  end
+end
+{% endraw %}

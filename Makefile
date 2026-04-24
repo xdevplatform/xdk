@@ -1,8 +1,8 @@
 # XDK SDK Generator
 
 .PHONY: all check build test clean help
-.PHONY: generate python typescript
-.PHONY: test-python test-typescript test-sdks
+.PHONY: generate python typescript elixir
+.PHONY: test-python test-typescript test-elixir test-sdks
 .PHONY: fmt clippy test-generator
 .PHONY: versions
 
@@ -16,7 +16,7 @@ all: check test-generator
 # SDK Generation (local dev)
 # =====================================
 
-generate: python typescript
+generate: python typescript elixir
 
 python:
 	cargo run -- python --latest true
@@ -24,17 +24,23 @@ python:
 typescript:
 	cargo run -- typescript --latest true
 
+elixir:
+	cargo run -- elixir --latest true
+
 # =====================================
 # SDK Testing (local dev)
 # =====================================
 
-test-sdks: test-python test-typescript
+test-sdks: test-python test-typescript test-elixir
 
 test-python: python
 	cd xdk/python && uv sync && uv run pytest tests/ -v
 
 test-typescript: typescript
 	cd xdk/typescript && npm ci && npm run build && npm run type-check && npm test
+
+test-elixir: elixir
+	cd xdk/elixir && mix deps.get && mix test
 
 # =====================================
 # Generator
@@ -61,14 +67,14 @@ test: test-generator test-sdks
 # =====================================
 
 versions:
-	@grep -E "^(python|typescript) = " xdk-config.toml
+	@grep -E "^(python|typescript|elixir) = " xdk-config.toml
 
 # =====================================
 # Cleanup
 # =====================================
 
 clean:
-	rm -rf xdk/python xdk/typescript
+	rm -rf xdk/python xdk/typescript xdk/elixir
 
 cargo-clean:
 	cargo clean
@@ -85,6 +91,8 @@ help:
 	@echo "  make typescript      Generate TypeScript SDK"
 	@echo "  make test-python     Generate + test Python SDK"
 	@echo "  make test-typescript Generate + test TypeScript SDK"
+	@echo "  make elixir          Generate Elixir SDK"
+	@echo "  make test-elixir     Generate + test Elixir SDK"
 	@echo ""
 	@echo "Generator:"
 	@echo "  make check           Run fmt + clippy"

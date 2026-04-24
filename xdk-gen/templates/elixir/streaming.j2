@@ -1,0 +1,95 @@
+{% raw %}
+defmodule Xdk.Streaming do
+  @moduledoc """
+  Low-level NDJSON streaming helper for the X API.
+
+  Used internally by `Xdk.Stream` to consume newline-delimited JSON
+  streams (filtered stream, sample stream, etc.).
+  """
+
+  @spec ndjson_stream(Xdk.t(), atom(), String.t(), keyword()) :: Enumerable.t()
+  def ndjson_stream(%Xdk{} = client, method, path, opts \\ []) do
+    finch = Xdk.require_finch!(client)
+    request = Xdk.build_finch_request(client, method, path, opts)
+    idle_timeout = Keyword.get(opts, :idle_timeout, 30_000)
+
+    parent = self()
+
+    Stream.resource(
+      fn ->
+        ref = make_ref()
+
+        pid =
+          spawn_link(fn ->
+            result =
+              Finch.stream(
+                request,
+                finch,
+                _buffer = "",
+                fn
+                  {:status, _status}, buf ->
+                    buf
+
+                  {:headers, _headers}, buf ->
+                    buf
+
+                  {:data, data}, buf ->
+                    buf = buf <> data
+                    {lines, rest} = split_lines(buf)
+
+                    for line <- lines do
+                      case parse_line(line) do
+                        :heartbeat -> :ok
+                        {:ok, event} -> send(parent, {ref, {:event, event}})
+                        {:error, err} -> send(parent, {ref, {:decode_error, err, line}})
+                      end
+                    end
+
+                    rest
+                end,
+                Keyword.get(opts, :request_opts, client.request_opts)
+              )
+
+            case result do
+              {:ok, _} -> send(parent, {ref, :done})
+              {:error, reason} -> send(parent, {ref, {:stream_error, reason}})
+            end
+          end)
+
+        %{ref: ref, pid: pid}
+      end,
+      fn %{ref: ref} = state ->
+        receive do
+          {^ref, {:event, event}} -> {[{:ok, event}], state}
+          {^ref, {:decode_error, err, line}} -> {[{:error, {:decode, err, line}}], state}
+          {^ref, {:stream_error, reason}} -> {[{:error, {:stream, reason}}], state}
+          {^ref, :done} -> {:halt, state}
+        after
+          idle_timeout -> {[{:error, :idle_timeout}], %{state | ref: ref}}
+        end
+      end,
+      fn %{pid: pid} ->
+        if Process.alive?(pid), do: Process.exit(pid, :shutdown)
+        :ok
+      end
+    )
+  end
+
+  defp split_lines(buf) do
+    case String.split(buf, "\n") do
+      [single] -> {[], single}
+      parts -> {Enum.slice(parts, 0..-2//1), List.last(parts)}
+    end
+  end
+
+  defp parse_line(line) do
+    line = String.trim(line)
+
+    if line == "" do
+      :heartbeat
+    else
+      Jason.decode(line)
+    end
+  end
+end
+{% endraw %}

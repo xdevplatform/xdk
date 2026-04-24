@@ -2,6 +2,7 @@
 #![allow(unused_imports)]
 
 // Declare modules
+mod elixir;
 mod error;
 mod python;
 mod typescript;
@@ -48,6 +49,19 @@ enum Commands {
 
         /// Output directory for the generated SDK
         #[arg(short, long, default_value = "xdk/typescript")]
+        output: PathBuf,
+    },
+    /// Generate an Elixir SDK from an OpenAPI specification
+    Elixir {
+        /// Path to the OpenAPI specification file
+        #[arg(short, long)]
+        spec: Option<PathBuf>,
+
+        #[arg(short, long)]
+        latest: Option<bool>,
+
+        /// Output directory for the generated SDK
+        #[arg(short, long, default_value = "xdk/elixir")]
         output: PathBuf,
     },
 }
@@ -163,6 +177,52 @@ async fn main() -> Result<()> {
 
             // Call the generate method - `?` handles the Result conversion
             typescript::generate(&openapi, &output)
+        }
+        Commands::Elixir {
+            spec,
+            output,
+            latest,
+        } => {
+            let openapi = if latest == Some(true) {
+                let client = reqwest::Client::new();
+                let response = client
+                    .get("https://api.x.com/2/openapi.json")
+                    .send()
+                    .await
+                    .map_err(|e| {
+                        BuildError::CommandFailed(format!("Failed to fetch OpenAPI spec: {}", e))
+                    })?;
+
+                let json_text = response.text().await.map_err(|e| {
+                    BuildError::CommandFailed(format!("Failed to read response: {}", e))
+                })?;
+
+                parse_json(&json_text).map_err(|e| SdkGeneratorError::from(e.to_string()))?
+            } else {
+                let extension = spec
+                    .as_ref()
+                    .unwrap()
+                    .extension()
+                    .and_then(|ext| ext.to_str())
+                    .ok_or_else(|| {
+                        BuildError::CommandFailed("Invalid file extension".to_string())
+                    })?;
+
+                match extension {
+                    "yaml" | "yml" => parse_yaml_file(spec.as_ref().unwrap().to_str().unwrap())
+                        .map_err(|e| SdkGeneratorError::from(e.to_string()))?,
+                    "json" => parse_json_file(spec.as_ref().unwrap().to_str().unwrap())
+                        .map_err(|e| SdkGeneratorError::from(e.to_string()))?,
+                    _ => {
+                        let err_msg = format!("Unsupported file extension: {}", extension);
+                        return Err(BuildError::CommandFailed(err_msg));
+                    }
+                }
+            };
+
+            log_info!("Specification parsed successfully.");
+
+            elixir::generate(&openapi, &output)
         }
     };
 

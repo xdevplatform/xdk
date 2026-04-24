@@ -1,0 +1,20 @@
+defmodule Xdk.Query do
+  @moduledoc false
+
+  @spec build(list({String.t(), term()})) :: list({String.t(), String.t()})
+  def build(pairs) do
+    pairs
+    |> Enum.reject(fn {_k, v} -> is_nil(v) end)
+    |> Enum.map(fn {k, v} -> {k, encode_value(v)} end)
+  end
+
+  @spec encode(list({String.t(), term()})) :: String.t()
+  def encode(pairs) do
+    build(pairs) |> URI.encode_query()
+  end
+
+  defp encode_value(v) when is_list(v), do: Enum.join(v, ",")
+  defp encode_value(true), do: "true"
+  defp encode_value(false), do: "false"
+  defp encode_value(v), do: to_string(v)
+end

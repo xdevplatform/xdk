@@ -1,0 +1,20 @@
+{% raw %}
+ExUnit.start(exclude: [:integration])
+
+defmodule Xdk.TestHelper do
+  def setup_client(_context \\ %{}) do
+    bypass = Bypass.open()
+    finch_name = :"Xdk.TestFinch.#{System.unique_integer([:positive])}"
+    {:ok, _pid} = Finch.start_link(name: finch_name)
+
+    client =
+      Xdk.new(
+        base_url: "http://localhost:#{bypass.port}",
+        finch: finch_name,
+        auth: {:bearer, "test-token"}
+      )
+
+    %{bypass: bypass, client: client}
+  end
+end
+{% endraw %}
