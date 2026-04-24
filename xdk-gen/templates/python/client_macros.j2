@@ -28,7 +28,10 @@ stream_config: Optional[StreamConfig] = None
 
 {# Macro for method return type #}
 {% macro return_type(operation) -%}
-{% if operation.is_streaming %}Generator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}, None, None]{% elif operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) %}Iterator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}]{% else %}{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}{% endif %}
+{% if operation.responses and (
+    ("200" in operation.responses and operation.responses["200"].content and "application/octet-stream" in operation.responses["200"].content) or
+    ("201" in operation.responses and operation.responses["201"].content and "application/octet-stream" in operation.responses["201"].content)
+) %}bytes{% elif operation.is_streaming %}Generator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}, None, None]{% elif operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) %}Iterator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}]{% else %}{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}{% endif %}
 {%- endmacro %}
 
 {# Macro for method docstring #}
@@ -388,7 +391,15 @@ headers = {% if operation.is_streaming %}{
         response.raise_for_status()
 
         # Parse the response data
+        {% if operation.responses and (
+    ("200" in operation.responses and operation.responses["200"].content and "application/octet-stream" in operation.responses["200"].content) or
+    ("201" in operation.responses and operation.responses["201"].content and "application/octet-stream" in operation.responses["201"].content)
+) %}
+        # Binary endpoint - return raw bytes
+        return response.content
+        {% else %}
         response_data = response.json()
+        {% endif %}
 
         # Convert to Pydantic model if applicable
         {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
@@ -594,7 +605,16 @@ headers = {% if operation.is_streaming %}{
             response.raise_for_status()
 
             # Parse the response data
+            {% if operation.responses and (
+    ("200" in operation.responses and operation.responses["200"].content and "application/octet-stream" in operation.responses["200"].content) or
+    ("201" in operation.responses and operation.responses["201"].content and "application/octet-stream" in operation.responses["201"].content)
+) %}
+            # Binary endpoint - return raw bytes (pagination not applicable for binary)
+            yield response.content
+            return
+            {% else %}
             response_data = response.json()
+            {% endif %}
 
             # Convert to Pydantic model if applicable
             {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
