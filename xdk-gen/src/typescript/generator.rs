@@ -10,18 +10,21 @@ fn snake_case(value: &str) -> String {
     Casing::Snake.convert_string(value)
 }
 
-/// MiniJinja filter for converting to TypeScript types
-fn typescript_type(value: &str) -> String {
-    let ts_type = match value {
-        "string" => "string",
-        "integer" => "number",
-        "number" => "number",
-        "boolean" => "boolean",
-        "array" => "Array<any>",
-        "object" => "Record<string, any>",
-        _ => "any",
-    };
-    ts_type.to_string()
+/// MiniJinja filter rendering a full serialized OpenAPI schema as a
+/// TypeScript type expression (enums as literal unions, arrays with item
+/// types, oneOf/anyOf as unions, allOf as intersections, `$ref`s as schema
+/// type names prefixed with `ns`).
+fn ts_type(
+    value: minijinja::Value,
+    ns: Option<String>,
+) -> std::result::Result<String, minijinja::Error> {
+    let json: serde_json::Value = serde_json::to_value(&value).map_err(|e| {
+        minijinja::Error::new(minijinja::ErrorKind::InvalidOperation, e.to_string())
+    })?;
+    Ok(xdk_lib::types::ts_type_of(
+        &json,
+        ns.as_deref().unwrap_or(""),
+    ))
 }
 
 /// MiniJinja filter for getting the last part of a dot-separated path
@@ -29,28 +32,11 @@ fn last_part(value: &str) -> String {
     value.split('.').next_back().unwrap_or(value).to_string()
 }
 
-/// MiniJinja filter for extracting schema name from a reference path
-/// e.g., "#/components/schemas/User" -> "User"
-fn schema_name_from_ref(path: &str) -> String {
-    if path.starts_with("#/components/schemas/") {
-        path.trim_start_matches("#/components/schemas/").to_string()
-    } else {
-        // Fallback: try to get last part after /
-        path.split('/').next_back().unwrap_or(path).to_string()
-    }
-}
-
-/// Context for rendering schemas template
+/// Context for rendering schemas template: declarations are fully rendered
+/// in Rust (see xdk_lib::types); the template only concatenates them.
 #[derive(Debug, Serialize)]
 struct SchemasContext {
-    schemas: Vec<SchemaInfo>,
-}
-
-/// Information about a schema for template rendering
-#[derive(Debug, Serialize)]
-struct SchemaInfo {
-    name: String,
-    schema: xdk_openapi::Schema,
+    schemas: Vec<xdk_lib::types::SchemaDecl>,
 }
 
 /*
@@ -59,7 +45,7 @@ struct SchemaInfo {
 */
 language! {
     name: TypeScriptBase,
-    filters: [camel_case, pascal_case, snake_case, typescript_type, last_part, schema_name_from_ref],
+    filters: [camel_case, pascal_case, snake_case, ts_type, last_part],
     class_casing: Casing::Pascal,
     operation_casing: Casing::Camel,
     import_casing: Casing::Snake,
@@ -125,15 +111,21 @@ impl xdk_lib::generator::LanguageGenerator for TypeScript {
         // First, generate all standard templates using the base generator
         TypeScriptBase.generate(env, operations, output_dir, version)?;
 
-        // Then generate schemas.ts from OpenAPI components
-        // Extract schemas with their definitions from the OpenAPI context
-        let schemas: Vec<SchemaInfo> = xdk_openapi::OpenApiContextGuard::with_context(|ctx| {
-            ctx.get_schemas()
-                .into_iter()
-                .map(|(name, schema)| SchemaInfo { name, schema })
-                .collect()
-        })
-        .unwrap_or_default();
+        // Then generate schemas.ts from OpenAPI components. Schemas are
+        // serialized while the OpenAPI context guard is alive so `$ref`s
+        // carry both the reference path and the resolved body, then rendered
+        // into full TypeScript declarations in Rust.
+        let raw_schemas: Vec<(String, serde_json::Value)> =
+            xdk_openapi::OpenApiContextGuard::with_context(|ctx| {
+                ctx.get_schemas()
+                    .into_iter()
+                    .filter_map(|(name, schema)| {
+                        serde_json::to_value(&schema).ok().map(|json| (name, json))
+                    })
+                    .collect()
+            })
+            .unwrap_or_default();
+        let schemas = xdk_lib::types::ts_schema_declarations(&raw_schemas);
 
         if !schemas.is_empty() {
             let context = SchemasContext { schemas };

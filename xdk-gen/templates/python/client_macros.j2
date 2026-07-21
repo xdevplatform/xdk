@@ -2,28 +2,23 @@
 {% macro method_parameters(operation) -%}
 {%- for param in operation.parameters | selectattr('required') -%}
 {%- if param.original_name -%}
-{{ param.variable_name }}: {% if param.param_type %}{{ param.param_type | python_type }}{% else %}Any{% endif %}{% if not loop.last or operation.request_body or operation.parameters | rejectattr('required') | list or operation.is_streaming %}, {% endif %}
+{{ param.variable_name }}: {% if param.schema %}{{ param.schema | py_type('schemas.') }}{% else %}Any{% endif %}{% if not loop.last or operation.request_body or operation.parameters | rejectattr('required') | list or operation.is_streaming %}, {% endif %}
 {%- endif -%}
 {%- endfor -%}
 {%- if operation.request_body and operation.request_body.required -%}
-body: {{ operation.class_name }}Request{% if operation.parameters | rejectattr('required') | list or operation.is_streaming %}, {% endif %}
+body: {% if operation.has_request_model %}{{ operation.class_name }}Request{% else %}Any{% endif %}{% if operation.parameters | rejectattr('required') | list or operation.is_streaming %}, {% endif %}
 {%- endif -%}
 {%- for param in operation.parameters | rejectattr('required') -%}
 {%- if param.original_name -%}
-{{ param.variable_name }}: {% if param.param_type %}{{ param.param_type | python_type }}{% else %}Any{% endif %} = None{% if not loop.last or (operation.request_body and not operation.request_body.required) or operation.is_streaming %}, {% endif %}
+{{ param.variable_name }}: {% if param.schema %}Optional[{{ param.schema | py_type('schemas.') }}]{% else %}Optional[Any]{% endif %} = None{% if not loop.last or (operation.request_body and not operation.request_body.required) or operation.is_streaming %}, {% endif %}
 {%- endif -%}
 {%- endfor -%}
 {%- if operation.request_body and not operation.request_body.required -%}
-body: Optional[{{ operation.class_name }}Request] = None{% if operation.is_streaming %}, {% endif %}
+body: Optional[{% if operation.has_request_model %}{{ operation.class_name }}Request{% else %}Any{% endif %}] = None{% if operation.is_streaming %}, {% endif %}
 {%- endif -%}
 {%- if operation.is_streaming -%}
 stream_config: Optional[StreamConfig] = None
 {%- endif -%}
-{%- endmacro %}
-
-{# Macro to check if operation is paginated #}
-{% macro is_paginated(operation) -%}
-{%- if operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) -%}True{%- else -%}False{%- endif -%}
 {%- endmacro %}
 
 {# Macro for method return type #}
@@ -31,7 +26,7 @@ stream_config: Optional[StreamConfig] = None
 {% if operation.responses and (
     ("200" in operation.responses and operation.responses["200"].content and "application/octet-stream" in operation.responses["200"].content) or
     ("201" in operation.responses and operation.responses["201"].content and "application/octet-stream" in operation.responses["201"].content)
-) %}bytes{% elif operation.is_streaming %}Generator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}, None, None]{% elif operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) %}Iterator[{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}]{% else %}{% if operation.responses and "200" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}{% endif %}
+) %}bytes{% elif operation.is_streaming %}Generator[{% if operation.has_json_response %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}, None, None]{% elif operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) %}Iterator[{% if operation.has_json_response %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}]{% else %}{% if operation.has_json_response %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}{% endif %}
 {%- endmacro %}
 
 {# Macro for method docstring #}
@@ -78,14 +73,14 @@ stream_config: Optional[StreamConfig] = None
                 (on_connect, on_disconnect, on_reconnect, on_error) for monitoring connection state.
         
         Yields:
-            {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}: Individual streaming data items
+            {% if operation.has_json_response %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}: Individual streaming data items
         
         Raises:
             StreamError: If a non-retryable error occurs (auth errors, client errors) or max retries exceeded.
         {% elif operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) -%}
         
         Yields:
-            {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}: One page of results at a time. Automatically handles pagination using next_token.
+            {% if operation.has_json_response %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}: One page of results at a time. Automatically handles pagination using next_token.
         
         Note:
             This method automatically paginates through all results. To get just the first page,
@@ -93,7 +88,7 @@ stream_config: Optional[StreamConfig] = None
         {% else -%}
         
         Returns:
-            {% if operation.responses and "200" in operation.responses or "201" in operation.responses %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}: Response data
+            {% if operation.has_json_response %}{{ operation.class_name }}Response{% else %}Dict[str, Any]{% endif %}: Response data
         {% endif -%}
         """
 {%- endmacro %}
@@ -137,27 +132,6 @@ stream_config: Optional[StreamConfig] = None
         {% endfor -%}
         {% endfor -%}
         {% endif -%}
-{%- endmacro %}
-
-{# Macro to get authentication type flags #}
-{% macro get_auth_flags(operation) -%}
-{% set ns = namespace(has_bearer_token = false, has_oauth2_token = false, has_oauth1 = false) %}
-{% if operation.security %}
-{% for security_requirement in operation.security %}
-{% for scheme_name in security_requirement %}
-{% if scheme_name == "BearerToken" %}
-{% set ns.has_bearer_token = true %}
-{% endif %}
-{% if scheme_name == "OAuth2UserToken" %}
-{% set ns.has_oauth2_token = true %}
-{% endif %}
-{% if scheme_name == "UserToken" %}
-{% set ns.has_oauth1 = true %}
-{% endif %}
-{% endfor %}
-{% endfor %}
-{% endif %}
-{{ ns }}
 {%- endmacro %}
 
 {# Macro for building query parameters #}
@@ -229,7 +203,7 @@ headers = {% if operation.is_streaming %}{
             params=params,
             headers=headers,
             {% if operation.request_body %}json_data=json_data,{% endif %}
-            {% if operation.responses and "200" in operation.responses %}
+            {% if operation.has_json_response %}
             response_model={{ operation.class_name }}Response,
             {% else %}
             response_model=None,
@@ -402,7 +376,7 @@ headers = {% if operation.is_streaming %}{
         {% endif %}
 
         # Convert to Pydantic model if applicable
-        {% if operation.responses and "200" in operation.responses or operation.responses and "201" in operation.responses %}
+        {% if operation.has_json_response %}
         return {{ operation.class_name }}Response.model_validate(response_data)
         {% else %}
         return response_data
