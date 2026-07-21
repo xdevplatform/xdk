@@ -8,6 +8,7 @@ proper handling of pagination tokens, page limits, and item iteration.
 Generated automatically - do not edit manually.
 """
 
+import json
 import pytest
 from unittest.mock import Mock, patch
 from xdk.{{ tag.import_name }}.client import {{ tag.class_name }}Client
@@ -59,16 +60,8 @@ class Test{{ tag.class_name }}Pagination:
             first_page_response = Mock()
             first_page_response.status_code = 200
             first_page_response.json.return_value = {
-                "{{ pagination_test.data_field }}": [
-                    {"id": "1", "name": "Item 1"},
-                    {"id": "2", "name": "Item 2"}
-                ],
-                "meta": {
-                    {% if pagination_test.next_token_field %}
-                    "{{ pagination_test.next_token_field|last_part }}": "next_page_token",
-                    {% endif %}
-                    "result_count": 2
-                }
+                "{{ pagination_test.data_field }}": json.loads(r'''[{{ pagination_test.mock_item_json }}, {{ pagination_test.mock_item_json }}]'''),
+                "meta": {**json.loads(r'''{{ pagination_test.mock_meta_json }}'''), {% if pagination_test.next_token_field %}"{{ pagination_test.next_token_field|last_part }}": "next_page_token", {% endif %}"result_count": 2}
             }
             first_page_response.raise_for_status.return_value = None
             first_page_response.headers = {'content-type': 'application/json'}
@@ -77,12 +70,8 @@ class Test{{ tag.class_name }}Pagination:
             second_page_response = Mock()
             second_page_response.status_code = 200
             second_page_response.json.return_value = {
-                "{{ pagination_test.data_field }}": [
-                    {"id": "3", "name": "Item 3"}
-                ],
-                "meta": {
-                    "result_count": 1
-                }
+                "{{ pagination_test.data_field }}": json.loads(r'''[{{ pagination_test.mock_item_json }}]'''),
+                "meta": {**json.loads(r'''{{ pagination_test.mock_meta_json }}'''), "result_count": 1}
             }
             second_page_response.raise_for_status.return_value = None
             second_page_response.headers = {'content-type': 'application/json'}
@@ -118,15 +107,9 @@ class Test{{ tag.class_name }}Pagination:
             mock_response = Mock()
             mock_response.status_code = 200
             mock_response.json.return_value = {
-                "{{ pagination_test.data_field }}": [
-                    {"id": "1", "name": "Item 1"},
-                    {"id": "2", "name": "Item 2"},
-                    {"id": "3", "name": "Item 3"}
-                ],
-                "meta": {
-                    "result_count": 3
-                    # No next_token = single page
-                }
+                "{{ pagination_test.data_field }}": json.loads(r'''[{{ pagination_test.mock_item_json }}, {{ pagination_test.mock_item_json }}, {{ pagination_test.mock_item_json }}]'''),
+                # No next_token = single page
+                "meta": {**json.loads(r'''{{ pagination_test.mock_meta_json }}'''), "result_count": 3}
             }
             mock_response.raise_for_status.return_value = None
             mock_response.headers = {'content-type': 'application/json'}
@@ -140,9 +123,14 @@ class Test{{ tag.class_name }}Pagination:
             
             assert len(items) == 3, f"Should get 3 items, got {len(items)}"
             
-            # Verify items have expected structure
+            # Verify items round-trip the spec-valid mock payload
+            _expected_item = json.loads(r'''{{ pagination_test.mock_item_json }}''')
             for item in items:
-                assert "id" in item or hasattr(item, "id"), "Items should have 'id' field"
+                if isinstance(_expected_item, dict):
+                    for _key in _expected_item:
+                        assert (isinstance(item, dict) and _key in item) or hasattr(
+                            item, _key
+                        ), f"Items should have '{_key}' field"
     
     def test_{{ pagination_test.method_name }}_pagination_parameters(self):
         """Test that pagination parameters are handled correctly for {{ pagination_test.method_name }}."""
@@ -152,7 +140,7 @@ class Test{{ tag.class_name }}Pagination:
             mock_response.status_code = 200
             mock_response.json.return_value = {
                 "{{ pagination_test.data_field }}": [],
-                "meta": {"result_count": 0}
+                "meta": {**json.loads(r'''{{ pagination_test.mock_meta_json }}'''), "result_count": 0}
             }
             mock_response.raise_for_status.return_value = None
             mock_response.headers = {'content-type': 'application/json'}
@@ -188,11 +176,8 @@ class Test{{ tag.class_name }}Pagination:
             mock_response_with_token = Mock()
             mock_response_with_token.status_code = 200
             mock_response_with_token.json.return_value = {
-                "{{ pagination_test.data_field }}": [{"id": "1"}],
-                "meta": {
-                    "{{ pagination_test.next_token_field|last_part if pagination_test.next_token_field else 'next_token' }}": "next_token_value",
-                    "result_count": 1
-                }
+                "{{ pagination_test.data_field }}": json.loads(r'''[{{ pagination_test.mock_item_json }}]'''),
+                "meta": {**json.loads(r'''{{ pagination_test.mock_meta_json }}'''), "{{ pagination_test.next_token_field|last_part if pagination_test.next_token_field else 'next_token' }}": "next_token_value", "result_count": 1}
             }
             mock_response_with_token.raise_for_status.return_value = None
             mock_response_with_token.headers = {'content-type': 'application/json'}
@@ -201,7 +186,7 @@ class Test{{ tag.class_name }}Pagination:
             second_page_response.status_code = 200
             second_page_response.json.return_value = {
                 "{{ pagination_test.data_field }}": [],
-                "meta": {"result_count": 0}
+                "meta": {**json.loads(r'''{{ pagination_test.mock_meta_json }}'''), "result_count": 0}
             }
             second_page_response.raise_for_status.return_value = None
             second_page_response.headers = {'content-type': 'application/json'}
@@ -233,7 +218,7 @@ class Test{{ tag.class_name }}Pagination:
             # Test empty response
             empty_response = Mock()
             empty_response.status_code = 200
-            empty_response.json.return_value = {"data": [], "meta": {"result_count": 0}}
+            empty_response.json.return_value = {"data": [], "meta": {**json.loads(r'''{{ test_spec.pagination_tests[0].mock_meta_json if test_spec.pagination_tests else "{}" }}'''), "result_count": 0}}
             empty_response.raise_for_status.return_value = None
             empty_response.headers = {'content-type': 'application/json'}
             mock_session.get.return_value = empty_response

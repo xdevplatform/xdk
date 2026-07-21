@@ -46,6 +46,15 @@ pub struct OperationInfo {
     pub responses: HashMap<StatusCode, Response>,
     /// Whether this operation supports streaming (from x-twitter-streaming extension)
     pub is_streaming: bool,
+    /// Whether a `{ClassName}Request` model is generated for this operation
+    /// (request body with JSON or multipart content). Every template that
+    /// imports or references the request model must use this flag so import
+    /// and definition conditions cannot drift.
+    pub has_request_model: bool,
+    /// Whether a `{ClassName}Response` model is generated for this operation
+    /// (200/201 response with application/json content). Same single-source
+    /// rule as `has_request_model`.
+    pub has_json_response: bool,
 }
 
 #[derive(Debug, Serialize, Clone)]
@@ -163,7 +172,7 @@ impl ParameterInfo {
         variable_casing: Casing,
     ) -> Option<Vec<Self>> {
         parameters.as_ref().map(|params| {
-            params
+            let infos: Vec<Self> = params
                 .iter()
                 .filter_map(|param_ref| {
                     // Handle both direct parameters and parameter references
@@ -195,108 +204,26 @@ impl ParameterInfo {
                         None
                     }
                 })
-                .collect()
-        })
-    }
-}
+                .collect();
 
-/// Information about a schema property with type information
-#[derive(Debug, Serialize, Clone)]
-pub struct PropertyInfo {
-    /// Property name (original)
-    pub name: String,
-    /// TypeScript type name (e.g., "string", "number", "User", "Array<User>")
-    pub ts_type: String,
-    /// Whether the property is required
-    pub required: bool,
-    /// Property description
-    pub description: Option<String>,
-}
-
-impl PropertyInfo {
-    /// Extract TypeScript type from a schema
-    pub fn extract_ts_type_from_schema(schema: &RefOrValue<Schema>) -> String {
-        match schema {
-            RefOrValue::Reference { path, .. } => {
-                // Extract schema name from reference path
-                // e.g., "#/components/schemas/User" -> "User"
-                if path.starts_with("#/components/schemas/") {
-                    path.trim_start_matches("#/components/schemas/").to_string()
+            // Some specs illegally declare the same parameter twice on one
+            // operation (e.g. once inline and once as a component `$ref`).
+            // Deduplicate by (name, location), keeping the *last* declaration
+            // — component refs carry the richer schema and are listed after
+            // the inline stubs in the specs we consume.
+            let mut deduped: Vec<Self> = Vec::with_capacity(infos.len());
+            for info in infos {
+                if let Some(existing) = deduped
+                    .iter_mut()
+                    .find(|p| p.original_name == info.original_name && p.location == info.location)
+                {
+                    *existing = info;
                 } else {
-                    "any".to_string()
+                    deduped.push(info);
                 }
             }
-            RefOrValue::Value(Schema::Typed(typed)) => {
-                match typed.as_ref() {
-                    openapi::TypedSchema::String(_) => "string".to_string(),
-                    openapi::TypedSchema::Integer(_) => "number".to_string(),
-                    openapi::TypedSchema::Number(_) => "number".to_string(),
-                    openapi::TypedSchema::Boolean(_) => "boolean".to_string(),
-                    openapi::TypedSchema::Array(arr) => {
-                        // Handle array with item type
-                        if let Some(items) = &arr.items {
-                            let item_type = Self::extract_ts_type_from_schema(items);
-                            format!("Array<{}>", item_type)
-                        } else {
-                            "Array<any>".to_string()
-                        }
-                    }
-                    openapi::TypedSchema::Object(_obj) => {
-                        // For object types, return a generic record for now
-                        // Inline object generation can be added here in the future
-                        "Record<string, any>".to_string()
-                    }
-                }
-            }
-            RefOrValue::Value(Schema::AnyOf(_))
-            | RefOrValue::Value(Schema::AllOf(_))
-            | RefOrValue::Value(Schema::OneOf(_))
-            | RefOrValue::Value(Schema::Not(_)) => {
-                // Complex schemas - for now, use any, but could be improved
-                "any".to_string()
-            }
-        }
-    }
-
-    /// Extract properties from an object schema with type information
-    pub fn from_object_schema(
-        schema: &RefOrValue<Schema>,
-        required: &Option<Vec<String>>,
-    ) -> Option<HashMap<String, Self>> {
-        let schema_ref = match schema {
-            RefOrValue::Reference { .. } => {
-                // For references, we can't extract properties without resolving
-                // This should be handled differently - references should be the type name
-                return None;
-            }
-            RefOrValue::Value(s) => s,
-        };
-
-        if let Schema::Typed(typed) = schema_ref
-            && let openapi::TypedSchema::Object(obj) = typed.as_ref()
-            && let Some(properties) = &obj.properties
-        {
-            let mut prop_info = HashMap::new();
-            for (name, prop_schema) in properties {
-                let ts_type = Self::extract_ts_type_from_schema(prop_schema);
-                let is_required = required
-                    .as_ref()
-                    .map(|req| req.contains(name))
-                    .unwrap_or(false);
-
-                prop_info.insert(
-                    name.clone(),
-                    Self {
-                        name: name.clone(),
-                        ts_type,
-                        required: is_required,
-                        description: None, // Could extract from schema base if needed
-                    },
-                );
-            }
-            return Some(prop_info);
-        }
-        None
+            deduped
+        })
     }
 }
 

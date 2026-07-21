@@ -46,21 +46,8 @@ class Test{{ tag.class_name }}Contracts:
         with patch.object(self.client, 'session') as mock_session:
             mock_response = Mock()
             mock_response.status_code = {{ contract_test.response_schema.status_code }}
-            mock_response.json.return_value = {
-                {% for field in contract_test.response_schema.expected_fields %}
-                {% if field.is_array %}
-                "{{ field.name }}": [],
-                {% elif field.field_type == "string" %}
-                "{{ field.name }}": "test_value",
-                {% elif field.field_type == "integer" %}
-                "{{ field.name }}": 42,
-                {% elif field.field_type == "boolean" %}
-                "{{ field.name }}": True,
-                {% elif field.field_type == "object" %}
-                "{{ field.name }}": {},
-                {% endif %}
-                {% endfor %}
-            }
+            # Minimal spec-valid payload generated from the OpenAPI response schema
+            mock_response.json.return_value = json.loads(r'''{{ contract_test.response_schema.mock_json }}''')
             mock_response.raise_for_status.return_value = None
             mock_response.headers = {'content-type': 'application/json'}
             mock_session.{{ contract_test.method|lower }}.return_value = mock_response
@@ -93,21 +80,36 @@ class Test{{ tag.class_name }}Contracts:
             except Exception:
                 pass  # Model may already be fully defined
             # Create instance with required fields (using dummy values for testing)
+            import typing
             required_kwargs = {}
-            for field_name, field_info in {{ contract_test.class_name }}Request.model_fields.items():
+            request_model = {{ contract_test.class_name }}Request
+            for field_name, field_info in getattr(request_model, "model_fields", {}).items():
                 if field_info.is_required():
-                    annotation = str(field_info.annotation) if field_info.annotation else "str"
-                    if "int" in annotation.lower():
+                    annotation = field_info.annotation
+                    annotation_str = str(annotation) if annotation else "str"
+                    literals = [
+                        arg
+                        for arg in typing.get_args(annotation)
+                        if isinstance(arg, (str, int, bool))
+                    ] if typing.get_origin(annotation) is typing.Literal else []
+                    if literals:
+                        required_kwargs[field_name] = literals[0]
+                    elif "int" in annotation_str.lower():
                         required_kwargs[field_name] = 42
-                    elif "bool" in annotation.lower():
+                    elif "bool" in annotation_str.lower():
                         required_kwargs[field_name] = True
-                    elif "list" in annotation.lower() or "List" in annotation:
+                    elif "list" in annotation_str.lower() or "List" in annotation_str:
                         required_kwargs[field_name] = []
-                    elif "dict" in annotation.lower() or "Dict" in annotation:
+                    elif "dict" in annotation_str.lower() or "Dict" in annotation_str:
                         required_kwargs[field_name] = {}
                     else:
                         required_kwargs[field_name] = "test_value"
-            kwargs["body"] = {{ contract_test.class_name }}Request(**required_kwargs)
+            try:
+                kwargs["body"] = request_model(**required_kwargs)
+            except Exception:
+                # Typed models may reject fabricated values; build without
+                # validation since this test only exercises request plumbing.
+                kwargs["body"] = request_model.model_construct(**required_kwargs)
             {% endif %}
             
             # Call the method
@@ -250,30 +252,8 @@ class Test{{ tag.class_name }}Contracts:
         """Test {{ contract_test.method_name }} response structure validation."""
         
         with patch.object(self.client, 'session') as mock_session:
-            # Create mock response with expected structure
-            mock_response_data = {
-                {% for field in contract_test.response_schema.expected_fields %}
-                {% if field.is_array %}
-                "{{ field.name }}": [
-                    {% if field.field_type == "string" %}
-                    "test_item_1", "test_item_2"
-                    {% elif field.field_type == "integer" %}
-                    1, 2, 3
-                    {% else %}
-                    {"id": "1"}, {"id": "2"}
-                    {% endif %}
-                ],
-                {% elif field.field_type == "string" %}
-                "{{ field.name }}": "test_{{ field.name }}",
-                {% elif field.field_type == "integer" %}
-                "{{ field.name }}": 42,
-                {% elif field.field_type == "boolean" %}
-                "{{ field.name }}": True,
-                {% elif field.field_type == "object" %}
-                "{{ field.name }}": {"nested": "value"},
-                {% endif %}
-                {% endfor %}
-            }
+            # Create mock response from the OpenAPI response schema (minimal valid payload)
+            mock_response_data = json.loads(r'''{{ contract_test.response_schema.mock_json }}''')
             
             mock_response = Mock()
             mock_response.status_code = {{ contract_test.response_schema.status_code }}
@@ -308,31 +288,65 @@ class Test{{ tag.class_name }}Contracts:
             except Exception:
                 pass  # Model may already be fully defined
             # Create instance with required fields (using dummy values for testing)
+            import typing
             required_kwargs = {}
-            for field_name, field_info in {{ contract_test.class_name }}Request.model_fields.items():
+            request_model = {{ contract_test.class_name }}Request
+            for field_name, field_info in getattr(request_model, "model_fields", {}).items():
                 if field_info.is_required():
-                    annotation = str(field_info.annotation) if field_info.annotation else "str"
-                    if "int" in annotation.lower():
+                    annotation = field_info.annotation
+                    annotation_str = str(annotation) if annotation else "str"
+                    literals = [
+                        arg
+                        for arg in typing.get_args(annotation)
+                        if isinstance(arg, (str, int, bool))
+                    ] if typing.get_origin(annotation) is typing.Literal else []
+                    if literals:
+                        required_kwargs[field_name] = literals[0]
+                    elif "int" in annotation_str.lower():
                         required_kwargs[field_name] = 42
-                    elif "bool" in annotation.lower():
+                    elif "bool" in annotation_str.lower():
                         required_kwargs[field_name] = True
-                    elif "list" in annotation.lower() or "List" in annotation:
+                    elif "list" in annotation_str.lower() or "List" in annotation_str:
                         required_kwargs[field_name] = []
-                    elif "dict" in annotation.lower() or "Dict" in annotation:
+                    elif "dict" in annotation_str.lower() or "Dict" in annotation_str:
                         required_kwargs[field_name] = {}
                     else:
                         required_kwargs[field_name] = "test_value"
-            kwargs["body"] = {{ contract_test.class_name }}Request(**required_kwargs)
+            try:
+                kwargs["body"] = request_model(**required_kwargs)
+            except Exception:
+                # Typed models may reject fabricated values; build without
+                # validation since this test only exercises request plumbing.
+                kwargs["body"] = request_model.model_construct(**required_kwargs)
             {% endif %}
             
             # Call method and verify response structure
             method = getattr(self.{{ tag.property_name }}_client, "{{ contract_test.method_name }}")
+            import inspect
+            if "stream_config" in inspect.signature(method).parameters:
+                # Streaming operations yield from a live connection; response
+                # structure is validated by the streaming tests instead.
+                return
             result = method(**kwargs)
             
-            # Verify response object has expected attributes
+            # Verify response round-trips the spec-valid payload: every key in
+            # the mocked response must surface on the model (RootModel
+            # wrappers expose the payload via .root instead).
+            import types as _types
+            if isinstance(result, _types.GeneratorType):
+                # Paginated methods return generators; validate the first page.
+                _pages = list(result)
+                target = _pages[0] if _pages else None
+            else:
+                target = result.root if hasattr(result, "root") else result
+            if target is not None and isinstance(mock_response_data, dict):
+                for _key in mock_response_data:
+                    if isinstance(target, dict):
+                        assert _key in target, f"Response should have '{_key}' key"
+                    else:
+                        assert hasattr(target, _key), f"Response should have '{_key}' field"
             {% for field in contract_test.response_schema.expected_fields %}
             {% if field.required %}
-            assert hasattr(result, "{{ field.name }}"), f"Response should have '{{ field.name }}' field"
             {% else %}
             # Optional field - just check it doesn't cause errors if accessed
             try:
