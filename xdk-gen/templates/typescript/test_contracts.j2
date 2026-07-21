@@ -61,7 +61,8 @@ describe('{{ tag.class_name }}Client Contracts', () => {
         {% endif %}
         {% endfor %}
       }),
-      text: async () => '{}'
+      text: async () => '{}',
+      arrayBuffer: async () => new ArrayBuffer(0)
     } as Response);
 
     try {
@@ -135,7 +136,8 @@ describe('{{ tag.class_name }}Client Contracts', () => {
       }),
       {% endif %}
       json: async () => ({}),
-      text: async () => '{}'
+      text: async () => '{}',
+      arrayBuffer: async () => new ArrayBuffer(0)
     } as Response);
 
     try {
@@ -212,7 +214,8 @@ describe('{{ tag.class_name }}Client Contracts', () => {
       }),
       {% endif %}
       json: async () => mockResponseData,
-      text: async () => JSON.stringify(mockResponseData)
+      text: async () => JSON.stringify(mockResponseData),
+      arrayBuffer: async () => new ArrayBuffer(0)
     } as Response);
 
     try {

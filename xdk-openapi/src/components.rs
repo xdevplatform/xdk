@@ -85,6 +85,8 @@ pub struct BaseSchema {
     pub default: Option<serde_json::Value>,
     /// Whether the schema is deprecated
     pub deprecated: Option<bool>,
+    /// Whether the schema allows null values (OpenAPI 3.0 `nullable`)
+    pub nullable: Option<bool>,
 }
 
 /// Object schema fields

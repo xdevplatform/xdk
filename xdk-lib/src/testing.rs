@@ -217,6 +217,9 @@ pub struct ResponseSchema {
     pub content_type: String,
     /// Fields that should be present in the response
     pub expected_fields: Vec<ResponseField>,
+    /// Minimal spec-valid JSON payload for mocking this response (compact
+    /// JSON text; empty object when the response has no JSON schema).
+    pub mock_json: String,
 }
 
 /// Field information in response schema
@@ -247,6 +250,12 @@ pub struct PaginationTest {
     pub next_token_field: Option<String>,
     /// Response field containing data array
     pub data_field: String,
+    /// Minimal spec-valid JSON for a single item of the data array (compact
+    /// JSON text; empty object when the item schema is unknown).
+    pub mock_item_json: String,
+    /// Minimal spec-valid JSON for the response `meta` object (compact JSON
+    /// text; empty object when the meta schema is unknown).
+    pub mock_meta_json: String,
 }
 
 /// Mock scenario for integration testing
@@ -396,6 +405,7 @@ fn generate_response_schema(operation: &OperationInfo) -> ResponseSchema {
             status_code: 200,
             content_type: "application/json".to_string(),
             expected_fields: extract_response_fields(response),
+            mock_json: response_mock_json(response),
         }
     } else {
         // Fallback to first available response
@@ -414,7 +424,62 @@ fn generate_response_schema(operation: &OperationInfo) -> ResponseSchema {
             status_code: status_code.parse().unwrap_or(200),
             content_type: "application/json".to_string(),
             expected_fields: extract_response_fields(response),
+            mock_json: response_mock_json(response),
         }
+    }
+}
+
+/// Minimal spec-valid JSON payload for a response, as compact JSON text.
+/// Falls back to an empty object when the response defines no JSON schema.
+fn response_mock_json(response: &openapi::Response) -> String {
+    let schema_json = response
+        .content
+        .as_ref()
+        .and_then(|content| content.get("application/json"))
+        .and_then(|media| serde_json::to_value(&media.schema).ok());
+    match schema_json {
+        Some(json) => crate::types::example_json(&json).to_string(),
+        None => "{}".to_string(),
+    }
+}
+
+/// Minimal spec-valid JSON for the paginated response's `meta` object.
+fn pagination_mock_meta_json(operation: &OperationInfo) -> String {
+    let meta = operation
+        .responses
+        .get("200")
+        .and_then(|r| r.content.as_ref())
+        .and_then(|content| content.get("application/json"))
+        .and_then(|media| serde_json::to_value(&media.schema).ok())
+        .and_then(|schema| {
+            let meta = schema.get("properties")?.get("meta")?;
+            Some(crate::types::example_json(meta))
+        });
+    match meta {
+        Some(json) if json.is_object() => json.to_string(),
+        _ => "{}".to_string(),
+    }
+}
+
+/// Minimal spec-valid JSON for one item of the paginated `data` array.
+fn pagination_mock_item_json(operation: &OperationInfo) -> String {
+    let item = operation
+        .responses
+        .get("200")
+        .and_then(|r| r.content.as_ref())
+        .and_then(|content| content.get("application/json"))
+        .and_then(|media| serde_json::to_value(&media.schema).ok())
+        .and_then(|schema| {
+            // Navigate to properties.data.items of the (inlined) schema.
+            let data = schema.get("properties")?.get("data")?;
+            let items = data.get("items")?;
+            Some(crate::types::example_json(items))
+        });
+    match item {
+        Some(json) if json.is_object() && !json.as_object().unwrap().is_empty() => json.to_string(),
+        // Keep the historical id/name placeholder when the schema is unknown
+        // or free-form; harmless under lenient models.
+        _ => "{\"id\": \"1\", \"name\": \"Item 1\"}".to_string(),
     }
 }
 
@@ -552,6 +617,8 @@ fn generate_pagination_test(operation: &OperationInfo) -> PaginationTest {
         max_results_param,
         next_token_field: Some("meta.next_token".to_string()),
         data_field: "data".to_string(),
+        mock_item_json: pagination_mock_item_json(operation),
+        mock_meta_json: pagination_mock_meta_json(operation),
     }
 }
 
