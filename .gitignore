@@ -33,3 +33,6 @@ test_output/
 # OS
 .DS_Store
 Thumbs.db
+
+# Environment-specific spec snapshots (never commit; the committed pin is specs/openapi.json)
+/specs/openapi-staging*.json

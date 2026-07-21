@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "description": "X API v2 core endpoints",
-    "version": "2.development",
+    "version": "2.167",
     "title": "X API v2",
     "termsOfService": "https://developer.x.com/en/developer-terms/agreement-and-policy.html",
     "contact": {
@@ -62,9 +62,9 @@
           {
             "OAuth2UserToken": [
               "tweet.read",
+              "users.read",
               "dm.write",
-              "dm.read",
-              "users.read"
+              "dm.read"
             ]
           },
           {
@@ -119,10 +119,10 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "users.read",
-              "dm.read",
-              "dm.write"
+              "dm.write",
+              "tweet.read",
+              "dm.read"
             ]
           },
           {
@@ -916,8 +916,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "broadcast.write",
-              "broadcast.read"
+              "broadcast.read",
+              "broadcast.write"
             ]
           },
           {
@@ -1098,8 +1098,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "broadcast.read",
-              "broadcast.write"
+              "broadcast.write",
+              "broadcast.read"
             ]
           },
           {
@@ -1168,8 +1168,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "broadcast.write",
-              "broadcast.read"
+              "broadcast.read",
+              "broadcast.write"
             ]
           },
           {
@@ -1298,8 +1298,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "dm.read"
+              "dm.read",
+              "users.read"
             ]
           },
           {
@@ -1382,8 +1382,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.write",
               "users.read",
+              "dm.write",
               "tweet.read"
             ]
           },
@@ -1566,9 +1566,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "users.read",
-              "dm.read"
+              "dm.read",
+              "tweet.read"
             ]
           },
           {
@@ -1655,9 +1655,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.write",
               "tweet.read",
-              "users.read"
+              "users.read",
+              "dm.write"
             ]
           },
           {
@@ -1729,8 +1729,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.write",
               "users.read",
+              "dm.write",
               "tweet.read"
             ]
           },
@@ -1804,8 +1804,8 @@
           {
             "OAuth2UserToken": [
               "dm.write",
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -1877,9 +1877,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "users.read",
               "dm.write",
-              "tweet.read",
-              "users.read"
+              "tweet.read"
             ]
           },
           {
@@ -2293,8 +2293,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -2427,78 +2427,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetCommunitiesByIdResponse"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "The request has failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              },
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/2/communities/{id}/{name}": {
-      "delete": {
-        "security": [
-          {
-            "OAuth2UserToken": [
-              "list.write",
-              "tweet.read",
-              "users.read"
-            ]
-          },
-          {
-            "UserToken": []
-          }
-        ],
-        "tags": [
-          "Communities"
-        ],
-        "summary": "Delete Community",
-        "description": "Delete a Community that you own.",
-        "externalDocs": {
-          "url": "https://developer.x.com/en/docs/x-api/communities/manage-communities/api-reference/delete-communities-id"
-        },
-        "operationId": "deleteCommunities",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/CommunityId"
-            },
-            "style": "simple"
-          },
-          {
-            "name": "name",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "style": "simple"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DeleteCommunitiesResponse"
                 }
               }
             }
@@ -3133,9 +3061,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "users.read",
               "dm.read",
-              "tweet.read",
-              "users.read"
+              "tweet.read"
             ]
           },
           {
@@ -3258,8 +3186,8 @@
           {
             "OAuth2UserToken": [
               "dm.write",
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -3328,9 +3256,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "users.read",
               "dm.write",
-              "tweet.read",
-              "users.read"
+              "tweet.read"
             ]
           },
           {
@@ -3398,8 +3326,8 @@
           {
             "OAuth2UserToken": [
               "tweet.read",
-              "users.read",
-              "dm.read"
+              "dm.read",
+              "users.read"
             ]
           },
           {
@@ -3521,9 +3449,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.read",
+              "tweet.read",
               "users.read",
-              "tweet.read"
+              "dm.read"
             ]
           },
           {
@@ -3635,8 +3563,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.write",
-              "dm.read"
+              "dm.read",
+              "dm.write"
             ]
           },
           {
@@ -3693,8 +3621,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.read",
               "users.read",
+              "dm.read",
               "tweet.read"
             ]
           },
@@ -4378,10 +4306,10 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "list.write",
+              "list.read",
               "users.read",
               "tweet.read",
-              "list.read"
+              "list.write"
             ]
           },
           {
@@ -4437,8 +4365,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "list.write",
               "tweet.read",
+              "list.write",
               "users.read"
             ]
           },
@@ -4498,9 +4426,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
+              "list.read",
               "tweet.read",
-              "list.read"
+              "users.read"
             ]
           },
           {
@@ -4567,9 +4495,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "list.write",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -4641,8 +4569,8 @@
           {
             "OAuth2UserToken": [
               "tweet.read",
-              "list.read",
-              "users.read"
+              "users.read",
+              "list.read"
             ]
           },
           {
@@ -4734,9 +4662,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "users.read",
-              "list.read"
+              "list.read",
+              "tweet.read"
             ]
           },
           {
@@ -4827,8 +4755,8 @@
           {
             "OAuth2UserToken": [
               "users.read",
-              "tweet.read",
-              "list.write"
+              "list.write",
+              "tweet.read"
             ]
           },
           {
@@ -4967,8 +4895,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "users.read",
+              "tweet.read",
               "list.read"
             ]
           },
@@ -5816,8 +5744,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -5908,8 +5836,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -6361,9 +6289,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "tweet.read",
               "space.read",
-              "users.read",
-              "tweet.read"
+              "users.read"
             ]
           },
           {
@@ -6440,8 +6368,8 @@
           {
             "OAuth2UserToken": [
               "tweet.read",
-              "users.read",
-              "space.read"
+              "space.read",
+              "users.read"
             ]
           },
           {
@@ -6517,9 +6445,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "space.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -6622,8 +6550,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "space.read",
               "users.read",
+              "space.read",
               "tweet.read"
             ]
           },
@@ -6694,9 +6622,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "space.read",
               "tweet.read",
-              "users.read"
+              "users.read",
+              "space.read"
             ]
           }
         ],
@@ -6788,8 +6716,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "users.read",
+              "tweet.read",
               "space.read"
             ]
           },
@@ -7049,8 +6977,8 @@
           {
             "OAuth2UserToken": [
               "tweet.write",
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -7106,8 +7034,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -9904,8 +9832,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -10792,8 +10720,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -10871,9 +10799,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "tweet.read",
               "like.read",
-              "users.read",
-              "tweet.read"
+              "users.read"
             ]
           },
           {
@@ -10963,8 +10891,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -11085,8 +11013,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -11283,8 +11211,8 @@
           {
             "OAuth2UserToken": [
               "users.read",
-              "tweet.read",
-              "tweet.moderate.write"
+              "tweet.moderate.write",
+              "tweet.read"
             ]
           },
           {
@@ -11414,8 +11342,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -11567,8 +11495,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -11731,8 +11659,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -11841,8 +11769,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "dm.read",
+              "tweet.read",
               "users.read"
             ]
           },
@@ -12165,8 +12093,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -12340,73 +12268,6 @@
             }
           }
         }
-      },
-      "post": {
-        "security": [
-          {
-            "OAuth2UserToken": [
-              "tweet.read",
-              "users.read",
-              "block.write"
-            ]
-          },
-          {
-            "UserToken": []
-          }
-        ],
-        "tags": [
-          "Users"
-        ],
-        "summary": "Users ID Block",
-        "operationId": "usersIdBlock",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/UserId"
-            },
-            "style": "simple"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UsersIdBlockRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UsersIdBlockResponse"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "The request has failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              },
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        }
       }
     },
     "/2/users/{id}/bookmarks": {
@@ -12414,9 +12275,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
+              "bookmark.read",
               "tweet.read",
-              "bookmark.read"
+              "users.read"
             ]
           },
           {
@@ -12512,9 +12373,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "bookmark.write",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           }
         ],
@@ -12657,8 +12518,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "bookmark.write"
+              "bookmark.write",
+              "users.read"
             ]
           }
         ],
@@ -12883,8 +12744,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "tweet.read",
+              "users.read",
               "dm.write"
             ]
           },
@@ -12942,9 +12803,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "dm.write",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -13162,9 +13023,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "list.write",
               "tweet.read",
-              "users.read"
+              "users.read",
+              "list.write"
             ]
           },
           {
@@ -13234,9 +13095,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
+              "follows.read",
               "tweet.read",
-              "follows.read"
+              "users.read"
             ]
           },
           {
@@ -13421,8 +13282,8 @@
           {
             "OAuth2UserToken": [
               "users.read",
-              "tweet.read",
-              "follows.write"
+              "follows.write",
+              "tweet.read"
             ]
           },
           {
@@ -13490,8 +13351,8 @@
           {
             "OAuth2UserToken": [
               "tweet.read",
-              "users.read",
-              "like.read"
+              "like.read",
+              "users.read"
             ]
           },
           {
@@ -13589,8 +13450,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "like.write",
+              "tweet.read",
               "users.read"
             ]
           },
@@ -13658,8 +13519,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "like.write",
               "tweet.read",
+              "like.write",
               "users.read"
             ]
           },
@@ -13727,8 +13588,8 @@
           {
             "OAuth2UserToken": [
               "tweet.read",
-              "list.read",
-              "users.read"
+              "users.read",
+              "list.read"
             ]
           },
           {
@@ -13819,8 +13680,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -13965,8 +13826,8 @@
           {
             "OAuth2UserToken": [
               "tweet.read",
-              "mute.read",
-              "users.read"
+              "users.read",
+              "mute.read"
             ]
           },
           {
@@ -14053,8 +13914,8 @@
           {
             "OAuth2UserToken": [
               "users.read",
-              "tweet.read",
-              "mute.write"
+              "mute.write",
+              "tweet.read"
             ]
           },
           {
@@ -14121,8 +13982,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "list.read",
+              "users.read",
               "tweet.read"
             ]
           },
@@ -14210,158 +14071,14 @@
         }
       }
     },
-    "/2/users/{id}/pinned_communities": {
-      "delete": {
-        "security": [
-          {
-            "OAuth2UserToken": [
-              "tweet.read",
-              "users.read",
-              "list.write"
-            ]
-          },
-          {
-            "UserToken": []
-          }
-        ],
-        "tags": [
-          "Communities"
-        ],
-        "summary": "Unpin a Community",
-        "description": "Causes a User to unpin a Community.",
-        "externalDocs": {
-          "url": "https://developer.x.com/en/docs/x-api/lists/pinned-communities/api-reference/delete-users-id-pinned-communities"
-        },
-        "operationId": "usersUnpinCommunity",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/UserId"
-            },
-            "style": "simple"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UsersUnpinCommunityRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UsersUnpinCommunityResponse"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "The request has failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              },
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "security": [
-          {
-            "OAuth2UserToken": [
-              "users.read",
-              "tweet.read",
-              "list.write"
-            ]
-          },
-          {
-            "UserToken": []
-          }
-        ],
-        "tags": [
-          "Communities"
-        ],
-        "summary": "Pin a Community",
-        "description": "Causes a User to pin a Community.",
-        "externalDocs": {
-          "url": "https://developer.x.com/en/docs/x-api/lists/pinned-communities/api-reference/post-users-id-pinned-communities"
-        },
-        "operationId": "usersPinCommunity",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/UserId"
-            },
-            "style": "simple"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UsersPinCommunityRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UsersPinCommunityResponse"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "The request has failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              },
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/2/users/{id}/pinned_lists": {
       "get": {
         "security": [
           {
             "OAuth2UserToken": [
               "tweet.read",
-              "list.read",
-              "users.read"
+              "users.read",
+              "list.read"
             ]
           },
           {
@@ -14425,9 +14142,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "tweet.read",
-              "list.write"
+              "list.write",
+              "users.read"
             ]
           },
           {
@@ -14498,8 +14215,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "tweet.read",
+              "users.read",
               "list.write"
             ]
           },
@@ -14570,8 +14287,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.read",
               "users.read",
+              "dm.read",
               "tweet.read"
             ]
           },
@@ -14634,9 +14351,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.write",
               "tweet.read",
-              "users.read"
+              "users.read",
+              "dm.write"
             ]
           },
           {
@@ -14707,8 +14424,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "tweet.write",
+              "tweet.read",
               "users.read"
             ]
           },
@@ -14780,9 +14497,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "users.read",
               "tweet.write",
-              "tweet.read",
-              "users.read"
+              "tweet.read"
             ]
           },
           {
@@ -14853,8 +14570,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -15172,86 +14889,14 @@
         }
       }
     },
-    "/2/users/{source_user_id}/blocking/{target_user_id}": {
-      "delete": {
-        "security": [
-          {
-            "OAuth2UserToken": [
-              "users.read",
-              "block.write",
-              "tweet.read"
-            ]
-          },
-          {
-            "UserToken": []
-          }
-        ],
-        "tags": [
-          "Users"
-        ],
-        "summary": "Unblock User",
-        "description": "Causes the source User to unblock the target User.",
-        "externalDocs": {
-          "url": "https://developer.twitter.com/en/docs/twitter-api/users/blocks/api-reference/delete-users-user_id-blocking"
-        },
-        "operationId": "usersIdUnblock",
-        "parameters": [
-          {
-            "name": "source_user_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/UserId"
-            },
-            "style": "simple"
-          },
-          {
-            "name": "target_user_id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "$ref": "#/components/schemas/UserId"
-            },
-            "style": "simple"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UsersIdUnblockResponse"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "The request has failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              },
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/2/users/{source_user_id}/following/{target_user_id}": {
       "delete": {
         "security": [
           {
             "OAuth2UserToken": [
+              "tweet.read",
               "users.read",
-              "follows.write",
-              "tweet.read"
+              "follows.write"
             ]
           },
           {
@@ -15321,9 +14966,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "users.read",
               "tweet.read",
-              "mute.write",
-              "users.read"
+              "mute.write"
             ]
           },
           {
@@ -19556,32 +19201,6 @@
           }
         },
         "additionalProperties": false
-      },
-      "DeleteCommunitiesResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/DeleteCommunitiesResponseData"
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Problem"
-            }
-          }
-        }
-      },
-      "DeleteCommunitiesResponseData": {
-        "type": "object",
-        "required": [
-          "attempted"
-        ],
-        "properties": {
-          "attempted": {
-            "type": "boolean",
-            "description": "Indicates whether the Community deletion was attempted."
-          }
-        }
       },
       "DeleteCommunityNotesResponse": {
         "type": "object",
@@ -28405,147 +28024,6 @@
         "properties": {
           "user_withheld": {
             "$ref": "#/components/schemas/UserTakedownComplianceSchema"
-          }
-        }
-      },
-      "UsersIdBlockRequest": {
-        "type": "object",
-        "required": [
-          "target_user_id"
-        ],
-        "properties": {
-          "target_user_id": {
-            "type": "string",
-            "pattern": "^[0-9]{1,19}$"
-          }
-        },
-        "additionalProperties": false
-      },
-      "UsersIdBlockResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/UsersIdBlockResponseData"
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Problem"
-            }
-          }
-        }
-      },
-      "UsersIdBlockResponseData": {
-        "type": "object",
-        "required": [
-          "blocking"
-        ],
-        "properties": {
-          "blocking": {
-            "type": "boolean",
-            "description": "Indicates whether the user is blocked by the source user."
-          }
-        }
-      },
-      "UsersIdUnblockResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/UsersIdUnblockResponseData"
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Problem"
-            }
-          }
-        }
-      },
-      "UsersIdUnblockResponseData": {
-        "type": "object",
-        "required": [
-          "blocking"
-        ],
-        "properties": {
-          "blocking": {
-            "type": "boolean",
-            "description": "Indicates whether the source User is blocking the target User."
-          }
-        }
-      },
-      "UsersPinCommunityRequest": {
-        "type": "object",
-        "required": [
-          "community_id"
-        ],
-        "properties": {
-          "community_id": {
-            "type": "string",
-            "description": "The ID of the Community to pin."
-          }
-        }
-      },
-      "UsersPinCommunityResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/UsersPinCommunityResponseData"
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Problem"
-            }
-          }
-        }
-      },
-      "UsersPinCommunityResponseData": {
-        "type": "object",
-        "required": [
-          "pinned"
-        ],
-        "properties": {
-          "pinned": {
-            "type": "boolean",
-            "description": "Indicates whether the Community is pinned by the User."
-          }
-        }
-      },
-      "UsersUnpinCommunityRequest": {
-        "type": "object",
-        "required": [
-          "community_id"
-        ],
-        "properties": {
-          "community_id": {
-            "type": "string",
-            "description": "The ID of the Community to unpin."
-          }
-        }
-      },
-      "UsersUnpinCommunityResponse": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "$ref": "#/components/schemas/UsersUnpinCommunityResponseData"
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Problem"
-            }
-          }
-        }
-      },
-      "UsersUnpinCommunityResponseData": {
-        "type": "object",
-        "required": [
-          "pinned"
-        ],
-        "properties": {
-          "pinned": {
-            "type": "boolean",
-            "description": "Indicates whether the Community is pinned by the User."
           }
         }
       },
