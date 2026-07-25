@@ -116,20 +116,28 @@ export class HttpClient {
 
     // Handle timeout
     let signal = options.signal;
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
+
     if (options.timeout && options.timeout > 0 && !signal) {
       const controller = new AbortController();
-      setTimeout(() => controller.abort(), options.timeout);
+      timeoutId = setTimeout(() => controller.abort(), options.timeout);
       signal = controller.signal;
     }
 
-    const response = await this.fetch(url, {
-      method: options.method || 'GET',
-      headers: options.headers as any,
-      body: body as any,
-      signal: signal,
-    });
+    try {
+      const response = await this.fetch(url, {
+        method: options.method || 'GET',
+        headers: options.headers as any,
+        body: body as any,
+        signal: signal,
+      });
 
-    return response as HttpResponse;
+      return response as HttpResponse;
+    } finally {
+      if (timeoutId !== undefined) {
+        clearTimeout(timeoutId);
+      }
+    }
   }
 
   /**
