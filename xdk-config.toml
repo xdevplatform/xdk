@@ -3,7 +3,7 @@
 
 [versions]
 # Python SDK version
-python = "0.10.0"
+python = "0.10.1"
 
 # TypeScript SDK version
-typescript = "0.6.0"
+typescript = "0.6.1"
