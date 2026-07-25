@@ -113,8 +113,11 @@ export class OAuth2 {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => response.text());
-      throw new Error(`HTTP error! status: ${response.status}, body: ${JSON.stringify(errorData)}`);
+      // Read the body exactly once: a fetch Response body is a one-shot
+      // stream, so json() followed by text() on the same response throws
+      // "Body is unusable" and masks the real error.
+      const errorText = await response.text().catch(() => '');
+      throw new Error(`HTTP error! status: ${response.status}, body: ${errorText}`);
     }
 
     const data = await response.json();
@@ -167,8 +170,11 @@ export class OAuth2 {
     });
 
     if (!response.ok) {
-      const errorData = await response.json().catch(() => response.text());
-      throw new Error(`Failed to refresh token: ${response.status}, body: ${JSON.stringify(errorData)}`);
+      // Read the body exactly once: a fetch Response body is a one-shot
+      // stream, so json() followed by text() on the same response throws
+      // "Body is unusable" and masks the real error.
+      const errorText = await response.text().catch(() => '');
+      throw new Error(`Failed to refresh token: ${response.status}, body: ${errorText}`);
     }
 
     const data = await response.json();

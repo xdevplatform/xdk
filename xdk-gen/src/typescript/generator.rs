@@ -85,6 +85,7 @@ language! {
             render "test_contracts" => "tests/{}/test_contracts.test.ts",
             render "test_pagination" => "tests/{}/test_pagination.test.ts"
         },
+        render "test_client_errors" => "tests/client_errors.test.ts",
         render "jest.config" => "jest.config.cjs"
     ]
 }

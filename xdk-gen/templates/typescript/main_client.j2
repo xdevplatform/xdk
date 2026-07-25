@@ -396,13 +396,23 @@ export class Client {
       });
 
       if (!response.ok) {
+        // Read the body exactly once: a fetch Response body is a one-shot
+        // stream, so a failed json() followed by text() would throw
+        // "Body is unusable" and mask the real error.
         let errorData: any;
         try {
-          errorData = await response.json();
+          const errorText = await response.text();
+          try {
+            errorData = JSON.parse(errorText);
+          } catch {
+            errorData = errorText;
+          }
         } catch {
-          errorData = await response.text();
+          // The body could not be read at all (e.g. an aborted stream);
+          // still surface the status line below.
+          errorData = undefined;
         }
-        
+
         throw new ApiError(
           errorData && errorData.message ? errorData.message : `HTTP ${response.status}: ${response.statusText}`,
           response.status,
