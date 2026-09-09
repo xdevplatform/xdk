@@ -30,6 +30,23 @@ pub fn extract_operations_by_tag(
 
             let normalized_operation_id: Vec<String> = normalize_operation_id(&op.operation_id);
 
+            // A request model is generated only for body content types the
+            // templates know how to type (JSON, or the JSON variant of a
+            // multipart upload). The parser requires a schema on every
+            // content entry, so key presence implies a schema exists.
+            let has_request_model = op.request_body.as_ref().is_some_and(|body| {
+                body.content.contains_key("application/json")
+                    || body.content.contains_key("multipart/form-data")
+            });
+            // A response model is generated only for JSON 200/201 responses
+            // (binary and schema-less responses have no model).
+            let has_json_response = ["200", "201"].iter().any(|status| {
+                op.responses
+                    .get(*status)
+                    .and_then(|r| r.content.as_ref())
+                    .is_some_and(|content| content.contains_key("application/json"))
+            });
+
             let operation_info = OperationInfo {
                 path: path.to_string(),
                 method: method.to_string(),
@@ -42,6 +59,8 @@ pub fn extract_operations_by_tag(
                 request_body: op.request_body.clone(),
                 responses: op.responses.clone(),
                 is_streaming: op.streaming.unwrap_or(false),
+                has_request_model,
+                has_json_response,
             };
             let operation_group = OperationGroup {
                 operation: operation_info,

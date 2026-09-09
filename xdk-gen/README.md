@@ -18,6 +18,7 @@ The XDK Generator is a powerful tool that automatically generates Software Devel
 
 Currently supports:
 - Python
+- TypeScript
 
 ## Usage
 

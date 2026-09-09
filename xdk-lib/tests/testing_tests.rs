@@ -24,6 +24,8 @@ fn create_test_operation(
         request_body: None,
         responses: HashMap::new(),
         is_streaming: false,
+        has_request_model: false,
+        has_json_response: false,
     }
 }
 
@@ -243,6 +245,7 @@ fn test_contract_test_structure() {
             status_code: 200,
             content_type: "application/json".to_string(),
             expected_fields: vec![],
+            mock_json: "{}".to_string(),
         },
         security_requirements: vec![],
     };
@@ -263,6 +266,8 @@ fn test_pagination_test_structure() {
         max_results_param: Some("max_results".to_string()),
         next_token_field: Some("next_token".to_string()),
         data_field: "data".to_string(),
+        mock_item_json: "{}".to_string(),
+        mock_meta_json: "{}".to_string(),
     };
 
     assert_eq!(pagination_test.method_name, "get_tweets");

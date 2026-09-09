@@ -12,6 +12,7 @@ import requests
 from typing import Dict, List, Optional, Union, Any, Callable
 
 from .oauth2_auth import OAuth2PKCEAuth
+from .oauth1_auth import OAuth1
 from .paginator import Cursor, cursor, PaginationError
 {% for tag in tags %}
 from .{{ tag.import_name }}.client import {{ tag.class_name }}Client
@@ -22,23 +23,29 @@ class Client:
     """Client for interacting with the X API."""
 
     def __init__(self, 
-                 base_url: str = "https://api.twitter.com", 
-                 bearer_token: str = None, 
+                 base_url: str = "https://api.x.com", 
+                 bearer_token: str = None,
+                 access_token: str = None,
                  client_id: str = None, 
                  client_secret: str = None,
                  redirect_uri: str = None,
                  token: Dict[str, Any] = None,
-                 scope: str = None):
+                 scope: Union[str, List[str]] = None,
+                 authorization_base_url: str = "https://x.com/i",
+                 auth: OAuth1 = None):
         """Initialize the X API client.
 
         Args:
-            base_url: The base URL for the X API.
-            bearer_token: The bearer token for the X API.
-            client_id: The client ID for the X API.
+            base_url: The base URL for the X API (defaults to https://api.x.com).
+            bearer_token: The bearer token for the X API (app-only authentication).
+            access_token: The OAuth2 access token for user context (can be used directly as bearer token).
+            client_id: The client ID for the X API (required for OAuth2 PKCE flow).
             client_secret: The client secret for the X API.
             redirect_uri: The redirect URI for OAuth2 authorization.
-            token: An existing OAuth2 token dictionary (if available).
-            scope: Space-separated list of scopes for OAuth2 authorization.
+            token: An existing OAuth2 token dictionary (if available). If provided, access_token will be extracted.
+            scope: Space-separated string or list of strings for OAuth2 authorization scopes.
+            authorization_base_url: The base URL for OAuth2 authorization (defaults to https://x.com/i).
+            auth: OAuth1 instance for OAuth1.0a authentication.
         """
         self.session = requests.Session()
         self.session.headers.update({
@@ -47,17 +54,32 @@ class Client:
         self.base_url = base_url
         self.bearer_token = bearer_token
         
+        # Extract access_token from token dict if provided, otherwise use direct access_token parameter
+        # This matches TypeScript's behavior where accessToken can be passed directly
+        if token and isinstance(token, dict) and 'access_token' in token:
+            self._access_token = token['access_token']
+        else:
+            self._access_token = access_token
+        
         # Set up OAuth2 PKCE authentication if credentials are provided
+        # This is only needed for OAuth2 flows (getting authorization URL, exchanging codes, refreshing tokens)
         self.oauth2_auth = None
         if client_id or token:
             self.oauth2_auth = OAuth2PKCEAuth(
                 base_url=base_url,
+                authorization_base_url=authorization_base_url,
                 client_id=client_id,
                 client_secret=client_secret,
                 redirect_uri=redirect_uri,
                 token=token,
                 scope=scope
             )
+            # If we have oauth2_auth with a token, ensure access_token is set
+            if self.oauth2_auth and self.oauth2_auth.token and 'access_token' in self.oauth2_auth.token:
+                self._access_token = self.oauth2_auth.token['access_token']
+        
+        # Set up OAuth1 authentication if provided
+        self.auth = auth
         
         # Initialize clients for each tag
         {% for tag in tags %}
@@ -81,27 +103,76 @@ class Client:
     @property
     def access_token(self):
         """Get the current access token if available."""
+        # First check if we have a direct access_token (matches TypeScript behavior)
+        if hasattr(self, '_access_token') and self._access_token:
+            return self._access_token
+        # Fall back to oauth2_auth if available
         if self.oauth2_auth:
             return self.oauth2_auth.access_token
         return None
     
-    def get_authorization_url(self):
-        """Get the authorization URL for the OAuth2 PKCE flow."""
+    @access_token.setter
+    def access_token(self, value):
+        """Set the access token."""
+        self._access_token = value
+    
+    def get_authorization_url(self, state=None):
+        """Get the authorization URL for the OAuth2 PKCE flow.
+        
+        Args:
+            state: Optional state parameter for security.
+            
+        Returns:
+            str: The authorization URL.
+        """
         if not self.oauth2_auth:
             raise ValueError("OAuth2 credentials not configured")
-        return self.oauth2_auth.get_authorization_url()
+        return self.oauth2_auth.get_authorization_url(state)
+    
+    def exchange_code(self, code, code_verifier=None):
+        """Exchange authorization code for tokens (matches TypeScript API).
+        
+        Args:
+            code: The authorization code from the callback.
+            code_verifier: Optional code verifier (uses stored verifier if not provided).
+            
+        Returns:
+            Dict[str, Any]: The token dictionary
+        """
+        if not self.oauth2_auth:
+            raise ValueError("OAuth2 credentials not configured")
+        token = self.oauth2_auth.exchange_code(code, code_verifier)
+        # Update access_token after exchange (matches TypeScript behavior)
+        if token and 'access_token' in token:
+            self._access_token = token['access_token']
+        return token
     
     def fetch_token(self, authorization_response):
-        """Fetch token using authorization response."""
+        """Fetch token using authorization response URL (legacy method).
+        
+        Args:
+            authorization_response: The full callback URL received after authorization.
+            
+        Returns:
+            Dict[str, Any]: The token dictionary
+        """
         if not self.oauth2_auth:
             raise ValueError("OAuth2 credentials not configured")
-        return self.oauth2_auth.fetch_token(authorization_response)
+        token = self.oauth2_auth.fetch_token(authorization_response)
+        # Update access_token after fetch (matches TypeScript behavior)
+        if token and 'access_token' in token:
+            self._access_token = token['access_token']
+        return token
     
     def refresh_token(self):
         """Refresh the OAuth2 token."""
         if not self.oauth2_auth:
             raise ValueError("OAuth2 credentials not configured")
-        return self.oauth2_auth.refresh_token()
+        token = self.oauth2_auth.refresh_token()
+        # Update access_token after refresh (matches TypeScript behavior)
+        if token and 'access_token' in token:
+            self._access_token = token['access_token']
+        return token
     
     def is_token_expired(self):
         """Check if the OAuth2 token is expired."""

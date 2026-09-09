@@ -138,6 +138,8 @@ fn test_end_to_end_operation_processing() {
         request_body: None,
         responses: HashMap::new(),
         is_streaming: false,
+        has_request_model: false,
+        has_json_response: false,
     };
 
     // Test that operation can be used for test generation
@@ -189,6 +191,8 @@ fn test_end_to_end_template_rendering() {
         request_body: None,
         responses: HashMap::new(),
         is_streaming: false,
+        has_request_model: false,
+        has_json_response: false,
     };
 
     let context = TestContext {
@@ -265,6 +269,8 @@ fn test_end_to_end_file_generation() {
         request_body: None,
         responses: HashMap::new(),
         is_streaming: false,
+        has_request_model: false,
+        has_json_response: false,
     };
 
     let context = TestContext {

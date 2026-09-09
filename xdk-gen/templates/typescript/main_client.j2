@@ -77,6 +77,8 @@ export interface RequestOptions {
   raw?: boolean;
   /** Security requirements for the endpoint (from OpenAPI spec) - used for smart auth selection */
   security?: Array<Record<string, string[]>>;
+  /** Whether this endpoint returns binary data (ArrayBuffer) - determined from OpenAPI spec */
+  binary?: boolean;
 }
 
 /**
@@ -100,15 +102,102 @@ export interface ApiResponse<T = any> {
  */
 export interface PaginationMeta {
   /** Next page token */
-  next_token?: string;
+  nextToken?: string;
   /** Previous page token */
-  previous_token?: string;
+  previousToken?: string;
   /** Total count */
-  total_count?: number;
+  totalCount?: number;
   /** Result count */
-  result_count?: number;
+  resultCount?: number;
 }
 
+/**
+ * Convert a snake_case string to camelCase
+ * @param str The snake_case string to convert
+ * @returns The camelCase string
+ */
+function snakeToCamel(str: string): string {
+  return str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+}
+
+/**
+ * Convert a camelCase string to snake_case
+ * @param str The camelCase string to convert
+ * @returns The snake_case string
+ */
+export function camelToSnake(str: string): string {
+  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+}
+
+/**
+ * Convert an array of field names from camelCase to snake_case
+ * Handles both camelCase and already snake_case values
+ * @param fields Array of field names
+ * @returns Array with snake_case field names
+ */
+export function normalizeFields(fields: string[]): string[] {
+  return fields.map(field => {
+    // If already snake_case (contains underscore), keep as-is
+    if (field.includes('_')) {
+      return field;
+    }
+    // Convert camelCase to snake_case
+    return camelToSnake(field);
+  });
+}
+
+/**
+ * Recursively transform all keys in an object from snake_case to camelCase
+ * @param obj The object to transform
+ * @returns A new object with camelCase keys
+ */
+function transformKeys<T>(obj: unknown): T {
+  if (obj === null || obj === undefined) {
+    return obj as T;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(item => transformKeys(item)) as T;
+  }
+
+  if (typeof obj === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+      const camelKey = snakeToCamel(key);
+      result[camelKey] = transformKeys(value);
+    }
+    return result as T;
+  }
+
+  return obj as T;
+}
+
+/**
+ * Recursively transform all keys in an object from camelCase to snake_case
+ * Used for request bodies to convert TypeScript conventions to API format
+ * @param obj The object to transform
+ * @returns A new object with snake_case keys
+ */
+export function transformKeysToSnake<T>(obj: unknown): T {
+  if (obj === null || obj === undefined) {
+    return obj as T;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(item => transformKeysToSnake(item)) as T;
+  }
+
+  if (typeof obj === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+      const snakeKey = camelToSnake(key);
+      result[snakeKey] = transformKeysToSnake(value);
+    }
+    return result as T;
+  }
+
+  return obj as T;
+}
 
 /**
  * Main client class for the X API
@@ -307,13 +396,23 @@ export class Client {
       });
 
       if (!response.ok) {
+        // Read the body exactly once: a fetch Response body is a one-shot
+        // stream, so a failed json() followed by text() would throw
+        // "Body is unusable" and mask the real error.
         let errorData: any;
         try {
-          errorData = await response.json();
+          const errorText = await response.text();
+          try {
+            errorData = JSON.parse(errorText);
+          } catch {
+            errorData = errorText;
+          }
         } catch {
-          errorData = await response.text();
+          // The body could not be read at all (e.g. an aborted stream);
+          // still surface the status line below.
+          errorData = undefined;
         }
-        
+
         throw new ApiError(
           errorData && errorData.message ? errorData.message : `HTTP ${response.status}: ${response.statusText}`,
           response.status,
@@ -329,11 +428,14 @@ export class Client {
       }
 
       let data: T;
-      const contentType = response.headers.get('content-type');
-      if (contentType && contentType.includes('application/json')) {
-        data = await response.json();
+      // Check if binary response is expected (from OpenAPI spec)
+      if (options.binary) {
+        // Return ArrayBuffer for binary endpoints
+        data = await response.arrayBuffer() as T;
       } else {
-        data = await response.text() as T;
+        // Default: parse as JSON and transform keys
+        const rawData = await response.json();
+        data = transformKeys<T>(rawData);
       }
 
       // Return parsed body for non-streaming requests

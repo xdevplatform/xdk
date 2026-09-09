@@ -128,6 +128,18 @@ The XDK architecture separates concerns into distinct, reusable layers:
 - Applies language-specific naming conventions consistently
 - Generates comprehensive metadata for template rendering
 
+#### **Type Rendering Engine** (`xdk-lib/src/types.rs`)
+- Converts OpenAPI schemas into language-native type expressions in Rust,
+  so templates never re-derive types
+- TypeScript: interfaces, literal-union enums, `oneOf`/`anyOf` unions,
+  `allOf` intersections, typed arrays and maps, `nullable` support
+- Python: a generated `schemas.py` of Pydantic models for all component
+  schemas (nested inline objects hoisted into named models, aliases
+  topologically sorted, forward refs resolved at import), `Literal` enums,
+  keyword-safe field names with `Field(alias=...)`
+- Spec-valid example payloads (`example_json`) used to mock responses in
+  generated tests
+
 #### **Template Rendering Engine**
 - MiniJinja-powered templating system
 - Language-specific filters and helpers

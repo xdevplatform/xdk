@@ -53,28 +53,36 @@
     "bearer-token",
     "crypto",
     "hmac-sha1",
-    "pkce"
+    "pkce",
+    "react-native",
+    "browser",
+    "nodejs"
   ],
   "author": "X API SDK Team",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/xdevplatform/xdk"
+    "url": "https://github.com/xdevplatform/xdk-typescript"
   },
   "bugs": {
-    "url": "https://github.com/xdevplatform/xdk/issues"
+    "url": "https://github.com/xdevplatform/xdk-typescript/issues"
   },
-  "homepage": "https://github.com/xdevplatform/xdk",
+  "homepage": "https://github.com/xdevplatform/xdk-typescript",
   "publishConfig": {
     "access": "public"
   },
   "engines": {
     "node": ">=16.14"
   },
-  "dependencies": {
+  "peerDependencies": {
     "node-fetch": "^3.3.0"
   },
-    "devDependencies": {
+  "peerDependenciesMeta": {
+    "node-fetch": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
         "@types/node": "^20.0.0",
         "@types/jest": "^29.5.0",
         "typescript": "^5.0.0",

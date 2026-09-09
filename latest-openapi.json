@@ -2,7 +2,7 @@
   "openapi" : "3.0.0",
   "info" : {
     "description" : "X API v2 available endpoints",
-    "version" : "2.152",
+    "version" : "2.159",
     "title" : "X API v2",
     "termsOfService" : "https://developer.x.com/en/developer-terms/agreement-and-policy.html",
     "contact" : {
@@ -505,7 +505,31 @@
           "url" : "https://docs.x.com/x-api/activity/get-x-activity-subscriptions"
         },
         "operationId" : "getActivitySubscriptions",
-        "parameters" : [ ],
+        "parameters" : [
+          {
+            "name" : "max_results",
+            "in" : "query",
+            "description" : "The maximum number of results to return per page.",
+            "required" : false,
+            "schema" : {
+              "type" : "integer",
+              "minimum" : 1,
+              "maximum" : 100,
+              "format" : "int32"
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "pagination_token",
+            "in" : "query",
+            "description" : "This parameter is used to get the next 'page' of results.",
+            "required" : false,
+            "schema" : {
+              "$ref" : "#/components/schemas/PaginationToken32"
+            },
+            "style" : "form"
+          }
+        ],
         "responses" : {
           "200" : {
             "description" : "The request has succeeded.",
@@ -538,6 +562,15 @@
         "security" : [
           {
             "BearerToken" : [ ]
+          },
+          {
+            "OAuth2UserToken" : [
+              "dm.read",
+              "tweet.read"
+            ]
+          },
+          {
+            "UserToken" : [ ]
           }
         ],
         "tags" : [
@@ -688,6 +721,677 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/ActivitySubscriptionUpdateResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/chat/conversations" : {
+      "get" : {
+        "security" : [
+          {
+            "OAuth2UserToken" : [
+              "dm.read",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Chat"
+        ],
+        "summary" : "Get Chat Conversations",
+        "description" : "Retrieves a list of Chat conversations for the authenticated user's inbox.",
+        "externalDocs" : {
+          "url" : "https://developer.x.com/"
+        },
+        "operationId" : "getChatConversations",
+        "parameters" : [
+          {
+            "name" : "max_results",
+            "in" : "query",
+            "description" : "Maximum number of conversations to return.",
+            "required" : false,
+            "schema" : {
+              "type" : "integer",
+              "minimum" : 1,
+              "maximum" : 100,
+              "format" : "int32",
+              "default" : 10
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "pagination_token",
+            "in" : "query",
+            "description" : "Token for pagination to retrieve the next page of results.",
+            "required" : false,
+            "schema" : {
+              "type" : "string"
+            },
+            "style" : "form"
+          },
+          {
+            "$ref" : "#/components/parameters/ChatConversationFieldsParameter"
+          },
+          {
+            "$ref" : "#/components/parameters/ChatConversationExpansionsParameter"
+          },
+          {
+            "$ref" : "#/components/parameters/UserFieldsParameter"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChatGetConversationsResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/chat/conversations/{conversation_id}" : {
+      "get" : {
+        "security" : [
+          {
+            "OAuth2UserToken" : [
+              "dm.read",
+              "tweet.read",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Chat"
+        ],
+        "summary" : "Get Chat Conversation",
+        "description" : "Retrieves messages and key change events for a specific Chat conversation with pagination support.",
+        "externalDocs" : {
+          "url" : "https://developer.x.com/"
+        },
+        "operationId" : "getChatConversation",
+        "parameters" : [
+          {
+            "name" : "conversation_id",
+            "in" : "path",
+            "description" : "The Chat conversation ID.",
+            "required" : true,
+            "schema" : {
+              "$ref" : "#/components/schemas/ChatConversationId"
+            },
+            "style" : "simple"
+          },
+          {
+            "name" : "max_results",
+            "in" : "query",
+            "description" : "Maximum number of message events to return.",
+            "required" : false,
+            "schema" : {
+              "type" : "integer",
+              "minimum" : 1,
+              "maximum" : 100,
+              "format" : "int32",
+              "default" : 10
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "pagination_token",
+            "in" : "query",
+            "description" : "Token for pagination to retrieve the next page of results.",
+            "required" : false,
+            "schema" : {
+              "type" : "string"
+            },
+            "style" : "form"
+          },
+          {
+            "$ref" : "#/components/parameters/ChatMessageEventFieldsParameter"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChatGetConversationResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/chat/conversations/{conversation_id}/messages" : {
+      "post" : {
+        "security" : [
+          {
+            "OAuth2UserToken" : [
+              "dm.write",
+              "tweet.read",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Chat"
+        ],
+        "summary" : "Send Chat Message",
+        "description" : "Sends an encrypted message to a specific Chat conversation.",
+        "externalDocs" : {
+          "url" : "https://developer.x.com/"
+        },
+        "operationId" : "sendChatMessage",
+        "parameters" : [
+          {
+            "name" : "conversation_id",
+            "in" : "path",
+            "description" : "The Chat conversation ID.",
+            "required" : true,
+            "schema" : {
+              "$ref" : "#/components/schemas/ChatConversationId"
+            },
+            "style" : "simple"
+          }
+        ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ChatSendMessageRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChatSendMessageResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/chat/conversations/{conversation_id}/read" : {
+      "post" : {
+        "security" : [
+          {
+            "OAuth2UserToken" : [
+              "dm.write",
+              "tweet.read",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Chat"
+        ],
+        "summary" : "Mark Conversation as Read",
+        "description" : "Marks a specific Chat conversation as read on behalf of the authenticated user.",
+        "externalDocs" : {
+          "url" : "https://developer.x.com/"
+        },
+        "operationId" : "markChatConversationRead",
+        "parameters" : [
+          {
+            "name" : "conversation_id",
+            "in" : "path",
+            "description" : "The Chat conversation ID.",
+            "required" : true,
+            "schema" : {
+              "$ref" : "#/components/schemas/ChatConversationId"
+            },
+            "style" : "simple"
+          }
+        ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ChatMarkConversationReadRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChatMarkConversationReadResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/chat/conversations/{conversation_id}/typing" : {
+      "post" : {
+        "security" : [
+          {
+            "OAuth2UserToken" : [
+              "dm.write",
+              "tweet.read",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Chat"
+        ],
+        "summary" : "Send Typing Indicator",
+        "description" : "Sends a typing indicator to a specific Chat conversation on behalf of the authenticated user.",
+        "externalDocs" : {
+          "url" : "https://developer.x.com/"
+        },
+        "operationId" : "sendChatTypingIndicator",
+        "parameters" : [
+          {
+            "name" : "conversation_id",
+            "in" : "path",
+            "description" : "The Chat conversation ID.",
+            "required" : true,
+            "schema" : {
+              "$ref" : "#/components/schemas/ChatConversationId"
+            },
+            "style" : "simple"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChatSendTypingIndicatorResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/chat/media/upload/initialize" : {
+      "post" : {
+        "security" : [
+          {
+            "OAuth2UserToken" : [
+              "media.write"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Chat"
+        ],
+        "summary" : "Initialize Chat Media Upload",
+        "description" : "Initializes an XChat media upload session.",
+        "externalDocs" : {
+          "url" : "https://docs.x.com/x-api/media/media-upload"
+        },
+        "operationId" : "chatMediaUploadInitialize",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ChatMediaUploadInitializeRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChatMediaUploadInitializeResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/chat/media/upload/{id}/append" : {
+      "post" : {
+        "security" : [
+          {
+            "OAuth2UserToken" : [
+              "media.write"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Chat"
+        ],
+        "summary" : "Append Chat Media Upload",
+        "description" : "Appends media data to an XChat upload session.",
+        "externalDocs" : {
+          "url" : "https://docs.x.com/x-api/media/media-upload"
+        },
+        "operationId" : "chatMediaUploadAppend",
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "description" : "The session/resume id from initialize.",
+            "required" : true,
+            "schema" : {
+              "type" : "string"
+            },
+            "style" : "simple"
+          }
+        ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ChatMediaUploadAppendRequest"
+              }
+            },
+            "multipart/form-data" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ChatMediaUploadAppendRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MediaUploadAppendResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/chat/media/upload/{id}/finalize" : {
+      "post" : {
+        "security" : [
+          {
+            "OAuth2UserToken" : [
+              "media.write"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Chat"
+        ],
+        "summary" : "Finalize Chat Media Upload",
+        "description" : "Finalizes an XChat media upload session.",
+        "externalDocs" : {
+          "url" : "https://docs.x.com/x-api/media/media-upload"
+        },
+        "operationId" : "chatMediaUploadFinalize",
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "description" : "The session/resume id from initialize.",
+            "required" : true,
+            "schema" : {
+              "type" : "string"
+            },
+            "style" : "simple"
+          }
+        ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ChatMediaUploadFinalizeRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChatMediaUploadFinalizeResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/chat/media/{conversation_id}/{media_hash_key}" : {
+      "get" : {
+        "security" : [
+          {
+            "OAuth2UserToken" : [
+              "media.write"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Chat"
+        ],
+        "summary" : "Download Chat Media",
+        "description" : "Downloads encrypted media bytes from an XChat conversation. The response body contains raw binary bytes with content type application/octet-stream, despite the application/json declaration here (a platform limitation).",
+        "externalDocs" : {
+          "url" : "https://developer.x.com/"
+        },
+        "operationId" : "chatMediaDownload",
+        "parameters" : [
+          {
+            "name" : "conversation_id",
+            "in" : "path",
+            "description" : "The Chat conversation ID.",
+            "required" : true,
+            "schema" : {
+              "$ref" : "#/components/schemas/ChatConversationId"
+            },
+            "style" : "simple"
+          },
+          {
+            "name" : "media_hash_key",
+            "in" : "path",
+            "description" : "The media hash key returned from the upload initialize step.",
+            "required" : true,
+            "schema" : {
+              "$ref" : "#/components/schemas/MediaHashKey"
+            },
+            "style" : "simple"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChatMediaDownloadResponse"
                 }
               }
             }
@@ -1077,6 +1781,175 @@
         }
       }
     },
+    "/2/connections" : {
+      "delete" : {
+        "security" : [
+          {
+            "BearerToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Connections"
+        ],
+        "summary" : "Terminate multiple connections",
+        "description" : "Terminates multiple streaming connections by their UUIDs for the authenticated application.",
+        "operationId" : "deleteConnectionsByUuids",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/KillConnectionsByUuidsRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/KillConnectionsByUuidsResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get" : {
+        "security" : [
+          {
+            "BearerToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Connections"
+        ],
+        "summary" : "Get Connection History",
+        "description" : "Returns active and historical streaming connections with disconnect reasons for the authenticated application.",
+        "operationId" : "getConnectionHistory",
+        "parameters" : [
+          {
+            "name" : "status",
+            "in" : "query",
+            "description" : "Filter by connection status. Use 'active' for current connections, 'inactive' for historical/disconnected connections, or 'all' for both.",
+            "required" : false,
+            "schema" : {
+              "type" : "string",
+              "enum" : [
+                "active",
+                "inactive",
+                "all"
+              ],
+              "default" : "active"
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "endpoints",
+            "in" : "query",
+            "description" : "Filter by streaming endpoint. Specify one or more endpoint names to filter results.",
+            "required" : false,
+            "schema" : {
+              "type" : "array",
+              "uniqueItems" : true,
+              "items" : {
+                "type" : "string",
+                "enum" : [
+                  "filtered_stream",
+                  "sample_stream",
+                  "sample10_stream",
+                  "firehose_stream",
+                  "tweets_compliance_stream",
+                  "users_compliance_stream",
+                  "tweet_label_stream",
+                  "firehose_stream_lang_en",
+                  "firehose_stream_lang_ja",
+                  "firehose_stream_lang_ko",
+                  "firehose_stream_lang_pt",
+                  "likes_firehose_stream",
+                  "likes_sample10_stream",
+                  "likes_compliance_stream"
+                ]
+              }
+            },
+            "explode" : false,
+            "style" : "form"
+          },
+          {
+            "name" : "max_results",
+            "in" : "query",
+            "description" : "The maximum number of results to return per page.",
+            "required" : false,
+            "schema" : {
+              "type" : "integer",
+              "minimum" : 1,
+              "maximum" : 100,
+              "format" : "int32",
+              "default" : 10
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "pagination_token",
+            "in" : "query",
+            "description" : "Token for paginating through results. Use the value from 'next_token' in the previous response.",
+            "required" : false,
+            "schema" : {
+              "type" : "string"
+            },
+            "style" : "form"
+          },
+          {
+            "$ref" : "#/components/parameters/ConnectionFieldsParameter"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Get2ConnectionsResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/2/connections/all" : {
       "delete" : {
         "security" : [
@@ -1101,6 +1974,76 @@
               "application/json" : {
                 "schema" : {
                   "$ref" : "#/components/schemas/KillAllConnectionsResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/connections/{endpoint_id}" : {
+      "delete" : {
+        "security" : [
+          {
+            "BearerToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Connections"
+        ],
+        "summary" : "Terminate connections by endpoint",
+        "description" : "Terminates all streaming connections for a specific endpoint ID for the authenticated application.",
+        "operationId" : "deleteConnectionsByEndpoint",
+        "parameters" : [
+          {
+            "name" : "endpoint_id",
+            "in" : "path",
+            "description" : "The endpoint ID to terminate connections for.",
+            "required" : true,
+            "schema" : {
+              "type" : "string",
+              "enum" : [
+                "filtered_stream",
+                "sample_stream",
+                "sample10_stream",
+                "firehose_stream",
+                "tweets_compliance_stream",
+                "users_compliance_stream",
+                "tweet_label_stream",
+                "firehose_stream_lang_en",
+                "firehose_stream_lang_ja",
+                "firehose_stream_lang_ko",
+                "firehose_stream_lang_pt",
+                "likes_firehose_stream",
+                "likes_sample10_stream",
+                "likes_compliance_stream"
+              ]
+            },
+            "style" : "simple"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/KillConnectionsByEndpointResponse"
                 }
               }
             }
@@ -3980,6 +4923,174 @@
         }
       }
     },
+    "/2/news/search" : {
+      "get" : {
+        "security" : [
+          {
+            "BearerToken" : [ ]
+          },
+          {
+            "OAuth2UserToken" : [
+              "tweet.read",
+              "users.read"
+            ]
+          }
+        ],
+        "tags" : [
+          "News"
+        ],
+        "summary" : "Search News",
+        "description" : "Retrieves a list of News stories matching the specified search query.",
+        "externalDocs" : {
+          "url" : "https://docs.x.com/x-api/news/introduction"
+        },
+        "operationId" : "searchNews",
+        "parameters" : [
+          {
+            "name" : "query",
+            "in" : "query",
+            "description" : "The search query.",
+            "required" : true,
+            "example" : "crypto",
+            "schema" : {
+              "type" : "string",
+              "minLength" : 1,
+              "maxLength" : 2048,
+              "example" : "crypto"
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "max_results",
+            "in" : "query",
+            "description" : "The number of results to return.",
+            "required" : false,
+            "schema" : {
+              "type" : "integer",
+              "minimum" : 1,
+              "maximum" : 100,
+              "format" : "int32",
+              "default" : 10
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "max_age_hours",
+            "in" : "query",
+            "description" : "The maximum age of the News story to search for.",
+            "required" : false,
+            "schema" : {
+              "type" : "integer",
+              "minimum" : 1,
+              "maximum" : 720,
+              "format" : "int32",
+              "default" : 168
+            },
+            "style" : "form"
+          },
+          {
+            "$ref" : "#/components/parameters/NewsFieldsParameter"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Get2NewsSearchResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/news/{id}" : {
+      "get" : {
+        "security" : [
+          {
+            "BearerToken" : [ ]
+          },
+          {
+            "OAuth2UserToken" : [
+              "tweet.read",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "News"
+        ],
+        "summary" : "Get news stories by ID",
+        "description" : "Retrieves news story by its ID.",
+        "externalDocs" : {
+          "url" : "https://docs.x.com/x-api/news/introduction"
+        },
+        "operationId" : "getNews",
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "description" : "The ID of the news story.",
+            "required" : true,
+            "example" : "119929381293",
+            "schema" : {
+              "$ref" : "#/components/schemas/NewsId"
+            },
+            "style" : "simple"
+          },
+          {
+            "$ref" : "#/components/parameters/NewsFieldsParameter"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Get2NewsIdResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/2/notes" : {
       "post" : {
         "security" : [
@@ -4182,6 +5293,16 @@
               "maximum" : 100,
               "format" : "int32",
               "default" : 10
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "post_selection",
+            "in" : "query",
+            "description" : "The selection of posts to return. Valid values are 'feed_size: [small|large|xl], feed_lang: [en|es|...|all]'. Default (if not specified) is 'feed_size: small, feed_lang: en'. Only top AI writers have access to large and xl size feeds.",
+            "required" : false,
+            "schema" : {
+              "type" : "string"
             },
             "style" : "form"
           },
@@ -5340,7 +6461,7 @@
           {
             "name" : "start_time",
             "in" : "query",
-            "description" : "YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp (from most recent 7 days) from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute).",
+            "description" : "YYYY-MM-DDTHH:mm:ssZ. The oldest UTC timestamp from which the Posts will be provided. Timestamp is in second granularity and is inclusive (i.e. 12:00:01 includes the first second of the minute).",
             "required" : false,
             "schema" : {
               "type" : "string",
@@ -8766,6 +9887,105 @@
         }
       }
     },
+    "/2/users/{id}/affiliates" : {
+      "get" : {
+        "security" : [
+          {
+            "BearerToken" : [ ]
+          },
+          {
+            "OAuth2UserToken" : [
+              "tweet.read",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Users"
+        ],
+        "summary" : "Get affiliates",
+        "description" : "Retrieves a list of Users who are affiliated with a specific organization User by their ID.",
+        "externalDocs" : {
+          "url" : "https://developer.twitter.com/en/docs/twitter-api/users/affiliates/api-reference/get-users-id-affiliates"
+        },
+        "operationId" : "getUsersAffiliates",
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "description" : "The ID of the User to lookup.",
+            "required" : true,
+            "example" : "2244994945",
+            "schema" : {
+              "$ref" : "#/components/schemas/UserId"
+            },
+            "style" : "simple"
+          },
+          {
+            "name" : "max_results",
+            "in" : "query",
+            "description" : "The maximum number of results.",
+            "required" : false,
+            "schema" : {
+              "type" : "integer",
+              "minimum" : 1,
+              "maximum" : 1000,
+              "format" : "int32"
+            },
+            "style" : "form"
+          },
+          {
+            "name" : "pagination_token",
+            "in" : "query",
+            "description" : "This parameter is used to get a specified 'page' of results.",
+            "required" : false,
+            "schema" : {
+              "$ref" : "#/components/schemas/PaginationTokenLong"
+            },
+            "style" : "form"
+          },
+          {
+            "$ref" : "#/components/parameters/UserFieldsParameter"
+          },
+          {
+            "$ref" : "#/components/parameters/UserExpansionsParameter"
+          },
+          {
+            "$ref" : "#/components/parameters/TweetFieldsParameter"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Get2UsersIdAffiliatesResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/2/users/{id}/blocking" : {
       "get" : {
         "security" : [
@@ -10915,6 +12135,146 @@
         }
       }
     },
+    "/2/users/{id}/public_keys" : {
+      "get" : {
+        "security" : [
+          {
+            "OAuth2UserToken" : [
+              "dm.read",
+              "tweet.read",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Chat"
+        ],
+        "summary" : "Get user public keys",
+        "description" : "Returns the public keys and Juicebox configuration for the specified user.",
+        "externalDocs" : {
+          "url" : "https://developer.x.com/"
+        },
+        "operationId" : "getUserPublicKeys",
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "description" : "The ID of the User to lookup.",
+            "required" : true,
+            "example" : "2244994945",
+            "schema" : {
+              "$ref" : "#/components/schemas/UserId"
+            },
+            "style" : "simple"
+          },
+          {
+            "$ref" : "#/components/parameters/PublicKeyFieldsParameter"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Get2UsersIdPublicKeysResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "security" : [
+          {
+            "OAuth2UserToken" : [
+              "dm.write",
+              "tweet.read",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Chat"
+        ],
+        "summary" : "Add public key",
+        "description" : "Registers a user's public key for X Chat encryption.",
+        "externalDocs" : {
+          "url" : "https://developer.x.com/"
+        },
+        "operationId" : "addUserPublicKey",
+        "parameters" : [
+          {
+            "name" : "id",
+            "in" : "path",
+            "description" : "The ID of the requesting user.",
+            "required" : true,
+            "schema" : {
+              "$ref" : "#/components/schemas/UserId"
+            },
+            "style" : "simple"
+          }
+        ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/ChatAddPublicKeyRequest"
+              }
+            }
+          },
+          "required" : true
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ChatAddPublicKeyResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/2/users/{id}/retweets" : {
       "post" : {
         "security" : [
@@ -11671,6 +13031,61 @@
         }
       }
     },
+    "/2/webhooks/replay" : {
+      "post" : {
+        "security" : [
+          {
+            "BearerToken" : [ ]
+          }
+        ],
+        "tags" : [
+          "Webhooks"
+        ],
+        "summary" : "Create replay job for webhook",
+        "description" : "Creates a replay job to retrieve events from up to the past 24 hours for all events delivered or attempted to be delivered to the webhook.",
+        "externalDocs" : {
+          "url" : "https://docs.x.com/x-api/webhooks/introduction"
+        },
+        "operationId" : "createWebhookReplayJob",
+        "parameters" : [ ],
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/WebhookReplayCreateRequest"
+              }
+            }
+          }
+        },
+        "responses" : {
+          "200" : {
+            "description" : "The request has succeeded.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ReplayJobCreateResponse"
+                }
+              }
+            }
+          },
+          "default" : {
+            "description" : "The request has failed.",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/2/webhooks/{webhook_id}" : {
       "delete" : {
         "security" : [
@@ -11854,6 +13269,14 @@
       }
     },
     {
+      "name" : "Marketplace",
+      "description" : "Endpoints related to marketplace handles",
+      "externalDocs" : {
+        "description" : "Handle marketplace availability",
+        "url" : "https://docs.x.com/x-api/marketplace/handles/availability"
+      }
+    },
+    {
       "name" : "Media",
       "description" : "Endpoints related to Media",
       "externalDocs" : {
@@ -11867,6 +13290,14 @@
       "externalDocs" : {
         "description" : "Find out more",
         "url" : "https://developer.x.com"
+      }
+    },
+    {
+      "name" : "News",
+      "description" : "Endpoint for retrieving news stories",
+      "externalDocs" : {
+        "description" : "Find out more",
+        "url" : "https://developer.twitter.com/en/docs/twitter-api/news"
       }
     },
     {
@@ -11946,6 +13377,12 @@
       }
     },
     "schemas" : {
+      "ActivityEventId" : {
+        "type" : "string",
+        "description" : "The unique identifier of an Activity event.",
+        "pattern" : "^[0-9]{1,19}$",
+        "example" : "1146654567674912769"
+      },
       "ActivityStreamingResponse" : {
         "type" : "object",
         "description" : "An activity event or error that can be returned by the x activity streaming API.",
@@ -11956,19 +13393,14 @@
               "event_type" : {
                 "type" : "string"
               },
+              "event_uuid" : {
+                "$ref" : "#/components/schemas/ActivityEventId"
+              },
               "filter" : {
                 "$ref" : "#/components/schemas/ActivitySubscriptionFilter"
               },
               "payload" : {
-                "type" : "object",
-                "properties" : {
-                  "after" : {
-                    "type" : "string"
-                  },
-                  "before" : {
-                    "type" : "string"
-                  }
-                }
+                "$ref" : "#/components/schemas/ActivityStreamingResponsePayload"
               },
               "tag" : {
                 "type" : "string"
@@ -11981,6 +13413,36 @@
             "items" : {
               "$ref" : "#/components/schemas/Problem"
             }
+          }
+        }
+      },
+      "ActivityStreamingResponsePayload" : {
+        "oneOf" : [
+          {
+            "$ref" : "#/components/schemas/ProfileUpdateActivityResponsePayload"
+          },
+          {
+            "$ref" : "#/components/schemas/NewsActivityResponsePayload"
+          },
+          {
+            "$ref" : "#/components/schemas/FollowActivityResponsePayload"
+          }
+        ],
+        "discriminator" : {
+          "propertyName" : "../event_type",
+          "mapping" : {
+            "follow.follow" : "#/components/schemas/FollowActivityResponsePayload",
+            "follow.unfollow" : "#/components/schemas/FollowActivityResponsePayload",
+            "news.new" : "#/components/schemas/NewsActivityResponsePayload",
+            "profile.update.affiliate_badge" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.banner_picture" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.bio" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.geo" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.handle" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.profile_picture" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.screenname" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.url" : "#/components/schemas/ProfileUpdateActivityResponsePayload",
+            "profile.update.verified_badge" : "#/components/schemas/ProfileUpdateActivityResponsePayload"
           }
         }
       },
@@ -12030,6 +13492,22 @@
           "event_type" : {
             "type" : "string",
             "enum" : [
+              "profile.update.bio",
+              "profile.update.profile_picture",
+              "profile.update.banner_picture",
+              "profile.update.screenname",
+              "profile.update.geo",
+              "profile.update.url",
+              "profile.update.verified_badge",
+              "profile.update.affiliate_badge",
+              "profile.update.handle",
+              "news.new",
+              "follow.follow",
+              "follow.unfollow",
+              "spaces.start",
+              "spaces.end",
+              "chat.received",
+              "chat.sent",
               "ProfileBioUpdate",
               "ProfilePictureUpdate",
               "ProfileBannerPictureUpdate",
@@ -12037,7 +13515,9 @@
               "ProfileGeoUpdate",
               "ProfileUrlUpdate",
               "ProfileVerifiedBadgeUpdate",
-              "ProfileHandleUpdate"
+              "NewsNew",
+              "FollowFollow",
+              "FollowUnfollow"
             ]
           },
           "filter" : {
@@ -12121,6 +13601,9 @@
         "type" : "object",
         "description" : "An XAA subscription.",
         "properties" : {
+          "keyword" : {
+            "$ref" : "#/components/schemas/Keyword"
+          },
           "user_id" : {
             "$ref" : "#/components/schemas/UserId"
           }
@@ -12146,9 +13629,13 @@
           "meta" : {
             "type" : "object",
             "properties" : {
-              "total_subscriptions" : {
+              "next_token" : {
+                "type" : "string",
+                "description" : "Token to retrieve the next page of results."
+              },
+              "result_count" : {
                 "type" : "integer",
-                "description" : "Number of active subscriptions.",
+                "description" : "Number of active subscriptions returned in response.",
                 "format" : "int32"
               }
             }
@@ -12491,6 +13978,661 @@
           }
         }
       },
+      "ChatAddPublicKeyRequest" : {
+        "type" : "object",
+        "required" : [
+          "public_key",
+          "version"
+        ],
+        "properties" : {
+          "generate_version" : {
+            "type" : "boolean",
+            "description" : "When true, the server generates a new version."
+          },
+          "public_key" : {
+            "type" : "object",
+            "description" : "Public key registration payload.",
+            "properties" : {
+              "identity_public_key_signature" : {
+                "type" : "string",
+                "description" : "Signature over the identity public key."
+              },
+              "public_key" : {
+                "type" : "string",
+                "description" : "Identity public key (base64 encoded)."
+              },
+              "public_key_fingerprint" : {
+                "type" : "string",
+                "description" : "Fingerprint of the identity public key."
+              },
+              "registration_method" : {
+                "type" : "string",
+                "description" : "Registration method for the public key."
+              },
+              "signing_public_key" : {
+                "type" : "string",
+                "description" : "Signing public key (base64 encoded)."
+              },
+              "signing_public_key_signature" : {
+                "type" : "string",
+                "description" : "Signature over the signing public key."
+              }
+            }
+          },
+          "version" : {
+            "type" : "string",
+            "description" : "Public key version."
+          }
+        }
+      },
+      "ChatAddPublicKeyResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "error_code" : {
+                "type" : "string",
+                "description" : "Error code when key registration fails."
+              },
+              "token_map" : {
+                "type" : "object",
+                "description" : "Key store token map for key recovery.",
+                "properties" : {
+                  "key_store_token_map_json" : {
+                    "type" : "string",
+                    "description" : "Raw JSON for key recovery configuration."
+                  },
+                  "max_guess_count" : {
+                    "type" : "integer",
+                    "description" : "Maximum guess count for key recovery."
+                  },
+                  "realm_state_string" : {
+                    "type" : "string",
+                    "description" : "Serialized realm state for key recovery."
+                  },
+                  "recover_threshold" : {
+                    "type" : "integer",
+                    "description" : "Threshold required to recover the key."
+                  },
+                  "register_threshold" : {
+                    "type" : "integer",
+                    "description" : "Threshold required to register the key."
+                  },
+                  "token_map" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "object",
+                      "properties" : {
+                        "key" : {
+                          "type" : "string",
+                          "description" : "Token map entry key."
+                        },
+                        "value" : {
+                          "type" : "object",
+                          "properties" : {
+                            "address" : {
+                              "type" : "string",
+                              "description" : "Key store realm address."
+                            },
+                            "public_key" : {
+                              "type" : "string",
+                              "description" : "Realm public key."
+                            },
+                            "token" : {
+                              "type" : "string",
+                              "description" : "JWT auth token for the realm."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "version" : {
+                "type" : "string",
+                "description" : "Public key version."
+              }
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "ChatConversation" : {
+        "type" : "object",
+        "description" : "A Chat conversation resource representing either a direct or group conversation.",
+        "required" : [
+          "id"
+        ],
+        "properties" : {
+          "admin_ids" : {
+            "type" : "array",
+            "description" : "User IDs of group admins. Only present for group conversations.",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "created_at" : {
+            "type" : "string",
+            "description" : "ISO 8601 timestamp when the group was created. Only present for group conversations."
+          },
+          "group_avatar_url" : {
+            "type" : "string",
+            "description" : "URL for the group avatar. Only present for group conversations."
+          },
+          "group_name" : {
+            "type" : "string",
+            "description" : "Encrypted group name. Only present for group conversations."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for this conversation."
+          },
+          "is_muted" : {
+            "type" : "boolean",
+            "description" : "Whether notifications are muted for this conversation."
+          },
+          "member_ids" : {
+            "type" : "array",
+            "description" : "User IDs of group members. Only present for group conversations.",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "message_ttl_msec" : {
+            "type" : "string",
+            "description" : "Message time-to-live in milliseconds."
+          },
+          "participant_ids" : {
+            "type" : "array",
+            "description" : "Array of user IDs who are participants in this conversation.",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "screen_capture_blocking_enabled" : {
+            "type" : "boolean",
+            "description" : "Whether screen capture blocking is enabled for this conversation."
+          },
+          "screen_capture_detection_enabled" : {
+            "type" : "boolean",
+            "description" : "Whether screen capture detection is enabled for this conversation."
+          },
+          "type" : {
+            "type" : "string",
+            "description" : "The type of conversation: 'direct' or 'group'.",
+            "enum" : [
+              "direct",
+              "group"
+            ]
+          },
+          "updated_at" : {
+            "type" : "string",
+            "description" : "ISO 8601 timestamp when the group was last updated. Only present for group conversations."
+          }
+        }
+      },
+      "ChatConversationId" : {
+        "type" : "string",
+        "description" : "Unique identifier of an Chat conversation. Format is either two user IDs separated by a hyphen (e.g., '1215441834412953600-1603419180975409153') for direct conversations, or 'g' followed by a numeric ID (e.g., 'g1234567890123456789') for group conversations.",
+        "pattern" : "^([0-9]{1,19}-[0-9]{1,19}|g[0-9]{1,19})$",
+        "example" : "1215441834412953600-1603419180975409153"
+      },
+      "ChatGetConversationResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "description" : "List of message events in the conversation.",
+            "items" : {
+              "$ref" : "#/components/schemas/ChatMessageEvent"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          },
+          "meta" : {
+            "type" : "object",
+            "properties" : {
+              "has_more" : {
+                "type" : "boolean",
+                "description" : "Whether there are more messages to fetch."
+              },
+              "missing_conversation_key_change_events" : {
+                "type" : "array",
+                "description" : "List of conversation key change events needed for decryption.",
+                "items" : {
+                  "type" : "string"
+                }
+              },
+              "next_token" : {
+                "type" : "string",
+                "description" : "Token to retrieve the next page of results."
+              },
+              "result_count" : {
+                "type" : "integer",
+                "description" : "The number of message events returned."
+              }
+            }
+          }
+        }
+      },
+      "ChatGetConversationsResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "description" : "List of conversations in the user's inbox.",
+            "items" : {
+              "$ref" : "#/components/schemas/ChatConversation"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          },
+          "includes" : {
+            "type" : "object",
+            "description" : "Expanded objects requested via expansions parameter.",
+            "properties" : {
+              "users" : {
+                "type" : "array",
+                "description" : "User objects for expanded user IDs.",
+                "items" : {
+                  "type" : "object"
+                }
+              }
+            }
+          },
+          "meta" : {
+            "type" : "object",
+            "properties" : {
+              "has_message_requests" : {
+                "type" : "boolean",
+                "description" : "Whether the user has pending message requests."
+              },
+              "next_token" : {
+                "type" : "string",
+                "description" : "Token to retrieve the next page of results."
+              },
+              "result_count" : {
+                "type" : "integer",
+                "description" : "The number of conversations returned."
+              }
+            }
+          }
+        }
+      },
+      "ChatMarkConversationReadRequest" : {
+        "type" : "object",
+        "required" : [
+          "seen_until_sequence_id"
+        ],
+        "properties" : {
+          "seen_until_sequence_id" : {
+            "type" : "string",
+            "description" : "The sequence ID of the last message to mark as read up to."
+          }
+        }
+      },
+      "ChatMarkConversationReadResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "success" : {
+                "type" : "boolean",
+                "description" : "Whether the conversation was marked as read successfully."
+              }
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "ChatMediaDownloadResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "string",
+            "description" : "Raw encrypted media bytes. The actual response has content type application/octet-stream, not JSON. This schema exists only to satisfy platform constraints."
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "ChatMediaUploadAppendRequest" : {
+        "anyOf" : [
+          {
+            "type" : "object",
+            "required" : [
+              "media",
+              "segment_index",
+              "conversation_id",
+              "media_hash_key"
+            ],
+            "properties" : {
+              "conversation_id" : {
+                "type" : "string",
+                "description" : "XChat conversation identifier for the upload."
+              },
+              "media" : {
+                "$ref" : "#/components/schemas/MediaPayloadBinary"
+              },
+              "media_hash_key" : {
+                "type" : "string",
+                "description" : "Media hash key returned from initialize."
+              },
+              "segment_index" : {
+                "$ref" : "#/components/schemas/MediaSegments"
+              }
+            }
+          },
+          {
+            "type" : "object",
+            "required" : [
+              "media",
+              "segment_index",
+              "conversation_id",
+              "media_hash_key"
+            ],
+            "properties" : {
+              "conversation_id" : {
+                "type" : "string",
+                "description" : "XChat conversation identifier for the upload."
+              },
+              "media" : {
+                "$ref" : "#/components/schemas/MediaPayloadByte"
+              },
+              "media_hash_key" : {
+                "type" : "string",
+                "description" : "Media hash key returned from initialize."
+              },
+              "segment_index" : {
+                "$ref" : "#/components/schemas/MediaSegments"
+              }
+            }
+          }
+        ]
+      },
+      "ChatMediaUploadFinalizeRequest" : {
+        "type" : "object",
+        "description" : "Request body for finalizing a Chat media upload.",
+        "properties" : {
+          "conversation_id" : {
+            "type" : "string",
+            "description" : "XChat conversation identifier for the upload."
+          },
+          "media_hash_key" : {
+            "type" : "string",
+            "description" : "Media hash key returned from initialize."
+          },
+          "message_id" : {
+            "type" : "string",
+            "description" : "Optional message identifier associated with the upload."
+          },
+          "num_parts" : {
+            "type" : "string",
+            "description" : "Total number of uploaded parts as a numeric string."
+          },
+          "ttl_msec" : {
+            "type" : "string",
+            "description" : "Optional TTL for the media in milliseconds."
+          }
+        }
+      },
+      "ChatMediaUploadFinalizeResponse" : {
+        "type" : "object",
+        "description" : "Response from finalizing a Chat media upload.",
+        "properties" : {
+          "data" : {
+            "type" : "object",
+            "required" : [
+              "success"
+            ],
+            "properties" : {
+              "success" : {
+                "type" : "boolean",
+                "description" : "Whether the finalize request succeeded."
+              }
+            }
+          }
+        }
+      },
+      "ChatMediaUploadInitializeRequest" : {
+        "type" : "object",
+        "description" : "Request body for initializing a Chat media upload.",
+        "properties" : {
+          "conversation_id" : {
+            "type" : "string",
+            "description" : "XChat conversation identifier for the upload.",
+            "example" : "1603419216513746946:1603419216513746946"
+          },
+          "total_bytes" : {
+            "type" : "integer",
+            "description" : "Total size of the media upload in bytes.",
+            "minimum" : 0
+          }
+        }
+      },
+      "ChatMediaUploadInitializeResponse" : {
+        "type" : "object",
+        "description" : "Response from initializing a Chat media upload.",
+        "properties" : {
+          "data" : {
+            "type" : "object",
+            "required" : [
+              "session_id",
+              "media_hash_key",
+              "conversation_id"
+            ],
+            "properties" : {
+              "conversation_id" : {
+                "type" : "string",
+                "description" : "Conversation id associated with the upload.",
+                "example" : "1603419216513746946:1603419216513746946"
+              },
+              "media_hash_key" : {
+                "type" : "string",
+                "description" : "Media hash key returned by XChat.",
+                "example" : "rByqeHiVlD"
+              },
+              "session_id" : {
+                "type" : "string",
+                "description" : "Resume/session id for the upload.",
+                "example" : "735401"
+              }
+            }
+          }
+        }
+      },
+      "ChatMessageEvent" : {
+        "type" : "object",
+        "description" : "An Chat message event with extracted envelope fields and the original encoded event.",
+        "required" : [
+          "encoded_event"
+        ],
+        "properties" : {
+          "conversation_id" : {
+            "type" : "string",
+            "description" : "The conversation ID this message belongs to."
+          },
+          "conversation_token" : {
+            "type" : "string",
+            "description" : "The conversation token for this message."
+          },
+          "created_at_msec" : {
+            "type" : "string",
+            "description" : "The creation timestamp in milliseconds."
+          },
+          "encoded_event" : {
+            "type" : "string",
+            "description" : "Base64-encoded MessageEvent for client decoding."
+          },
+          "id" : {
+            "type" : "string",
+            "description" : "The unique identifier for this message event (message_id)."
+          },
+          "is_trusted" : {
+            "type" : "boolean",
+            "description" : "Whether the message is from a trusted source."
+          },
+          "message_event_signature" : {
+            "$ref" : "#/components/schemas/ChatMessageEventSignature"
+          },
+          "previous_sequence_id" : {
+            "type" : "string",
+            "description" : "The sequence ID of the previous message."
+          },
+          "sender_id" : {
+            "type" : "string",
+            "description" : "The user ID of the message sender."
+          },
+          "sequence_id" : {
+            "type" : "string",
+            "description" : "The sequence identifier for ordering messages."
+          }
+        }
+      },
+      "ChatMessageEventSignature" : {
+        "type" : "object",
+        "description" : "Message event signature for verification.",
+        "properties" : {
+          "message_signing_key_info_list" : {
+            "type" : "array",
+            "description" : "List of signing key information for message verification.",
+            "items" : {
+              "$ref" : "#/components/schemas/ChatMessageSigningKeyInfo"
+            }
+          },
+          "public_key_version" : {
+            "type" : "string",
+            "description" : "The version of the public key used for signing."
+          },
+          "signature" : {
+            "type" : "string",
+            "description" : "The signature of the message event."
+          },
+          "signature_version" : {
+            "type" : "string",
+            "description" : "The version of the signature algorithm."
+          },
+          "signing_public_key" : {
+            "type" : "string",
+            "description" : "The public key used for signing."
+          }
+        }
+      },
+      "ChatMessageSigningKeyInfo" : {
+        "type" : "object",
+        "description" : "Signing key information for message verification.",
+        "properties" : {
+          "member_id" : {
+            "type" : "string",
+            "description" : "The member ID associated with this signing key."
+          },
+          "public_key_version" : {
+            "type" : "string",
+            "description" : "The version of the public key."
+          },
+          "signing_public_key" : {
+            "type" : "string",
+            "description" : "The signing public key."
+          }
+        }
+      },
+      "ChatSendMessageRequest" : {
+        "type" : "object",
+        "required" : [
+          "message_id",
+          "encoded_message_create_event"
+        ],
+        "properties" : {
+          "conversation_token" : {
+            "type" : "string",
+            "description" : "Optional conversation token."
+          },
+          "encoded_message_create_event" : {
+            "type" : "string",
+            "description" : "Base64-encoded Thrift MessageCreateEvent containing encrypted message contents."
+          },
+          "encoded_message_event_signature" : {
+            "type" : "string",
+            "description" : "Base64-encoded Thrift MessageEventSignature for message verification."
+          },
+          "message_id" : {
+            "type" : "string",
+            "description" : "Unique identifier for this message."
+          }
+        }
+      },
+      "ChatSendMessageResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "encoded_message_event" : {
+                "type" : "string",
+                "description" : "Base64-encoded response message event."
+              }
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "ChatSendTypingIndicatorResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "success" : {
+                "type" : "boolean",
+                "description" : "Whether the typing indicator was sent successfully."
+              }
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
       "ClientAppId" : {
         "type" : "string",
         "description" : "The ID of the client application",
@@ -12654,6 +14796,39 @@
             "$ref" : "#/components/schemas/Problem"
           }
         ]
+      },
+      "Connection" : {
+        "type" : "object",
+        "required" : [
+          "connected_at",
+          "endpoint_name"
+        ],
+        "properties" : {
+          "client_ip" : {
+            "type" : "string",
+            "description" : "The IP address of the connected client."
+          },
+          "connected_at" : {
+            "type" : "string",
+            "description" : "The timestamp when the connection was established.",
+            "format" : "date-time"
+          },
+          "disconnect_reason" : {
+            "type" : "string",
+            "description" : "The reason for disconnection, if the connection is inactive.",
+            "example" : "operator_disconnect"
+          },
+          "disconnected_at" : {
+            "type" : "string",
+            "description" : "The timestamp when the connection was disconnected, if applicable.",
+            "format" : "date-time"
+          },
+          "endpoint_name" : {
+            "type" : "string",
+            "description" : "The name of the streaming endpoint.",
+            "example" : "sample_stream"
+          }
+        }
       },
       "ConnectionExceptionProblem" : {
         "description" : "A problem that indicates something is wrong with the connection.",
@@ -13565,6 +15740,18 @@
           }
         }
       },
+      "FollowActivityResponsePayload" : {
+        "type" : "object",
+        "properties" : {
+          "source" : {
+            "$ref" : "#/components/schemas/User"
+          },
+          "target" : {
+            "$ref" : "#/components/schemas/User"
+          }
+        },
+        "additionalProperties" : false
+      },
       "FoundMediaOrigin" : {
         "type" : "object",
         "required" : [
@@ -13767,6 +15954,69 @@
           }
         ]
       },
+      "Get2ChatConversationsConversationIdResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/ChatMessageEvent"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          },
+          "meta" : {
+            "type" : "object",
+            "properties" : {
+              "next_token" : {
+                "$ref" : "#/components/schemas/NextToken"
+              },
+              "result_count" : {
+                "$ref" : "#/components/schemas/ResultCount"
+              }
+            }
+          }
+        }
+      },
+      "Get2ChatConversationsResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/ChatConversation"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          },
+          "includes" : {
+            "$ref" : "#/components/schemas/Expansions"
+          },
+          "meta" : {
+            "type" : "object",
+            "properties" : {
+              "next_token" : {
+                "$ref" : "#/components/schemas/NextToken"
+              },
+              "result_count" : {
+                "$ref" : "#/components/schemas/ResultCount"
+              }
+            }
+          }
+        }
+      },
       "Get2CommunitiesIdResponse" : {
         "type" : "object",
         "properties" : {
@@ -13844,6 +16094,36 @@
           "meta" : {
             "type" : "object",
             "properties" : {
+              "result_count" : {
+                "$ref" : "#/components/schemas/ResultCount"
+              }
+            }
+          }
+        }
+      },
+      "Get2ConnectionsResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Connection"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          },
+          "meta" : {
+            "type" : "object",
+            "properties" : {
+              "next_token" : {
+                "$ref" : "#/components/schemas/NextToken"
+              },
               "result_count" : {
                 "$ref" : "#/components/schemas/ResultCount"
               }
@@ -14260,6 +16540,21 @@
           }
         }
       },
+      "Get2MarketplaceHandlesHandleAvailabilityResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "$ref" : "#/components/schemas/MarketplaceHandleAvailability"
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
       "Get2MediaAnalyticsResponse" : {
         "type" : "object",
         "properties" : {
@@ -14305,6 +16600,48 @@
             "minItems" : 1,
             "items" : {
               "$ref" : "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Get2NewsIdResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "$ref" : "#/components/schemas/News"
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Get2NewsSearchResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/News"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          },
+          "meta" : {
+            "type" : "object",
+            "properties" : {
+              "result_count" : {
+                "$ref" : "#/components/schemas/ResultCount"
+              }
             }
           }
         }
@@ -15123,6 +17460,42 @@
           }
         }
       },
+      "Get2UsersIdAffiliatesResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/User"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          },
+          "includes" : {
+            "$ref" : "#/components/schemas/Expansions"
+          },
+          "meta" : {
+            "type" : "object",
+            "properties" : {
+              "next_token" : {
+                "$ref" : "#/components/schemas/NextToken"
+              },
+              "previous_token" : {
+                "$ref" : "#/components/schemas/PreviousToken"
+              },
+              "result_count" : {
+                "$ref" : "#/components/schemas/ResultCount"
+              }
+            }
+          }
+        }
+      },
       "Get2UsersIdBlockingResponse" : {
         "type" : "object",
         "properties" : {
@@ -15519,6 +17892,25 @@
           }
         }
       },
+      "Get2UsersIdPublicKeysResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/PublicKey"
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
       "Get2UsersIdResponse" : {
         "type" : "object",
         "properties" : {
@@ -15854,14 +18246,138 @@
         "pattern" : "^[0-9]{1,19}$",
         "example" : "1372966999991541762"
       },
+      "Keyword" : {
+        "type" : "string",
+        "description" : "A keyword to filter on.",
+        "minLength" : 1,
+        "maxLength" : 150,
+        "example" : "The President"
+      },
       "KillAllConnectionsResponse" : {
         "type" : "object",
         "properties" : {
           "data" : {
             "type" : "object",
             "properties" : {
-              "killed_connections" : {
-                "type" : "boolean"
+              "failed_kills" : {
+                "type" : "integer"
+              },
+              "results" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "object",
+                  "properties" : {
+                    "error_message" : {
+                      "type" : "string"
+                    },
+                    "success" : {
+                      "type" : "boolean"
+                    },
+                    "uuid" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "successful_kills" : {
+                "type" : "integer"
+              }
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "KillConnectionsByEndpointResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "failed_kills" : {
+                "type" : "integer"
+              },
+              "results" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "object",
+                  "properties" : {
+                    "error_message" : {
+                      "type" : "string"
+                    },
+                    "success" : {
+                      "type" : "boolean"
+                    },
+                    "uuid" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "successful_kills" : {
+                "type" : "integer"
+              }
+            }
+          },
+          "errors" : {
+            "type" : "array",
+            "minItems" : 1,
+            "items" : {
+              "$ref" : "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "KillConnectionsByUuidsRequest" : {
+        "type" : "object",
+        "required" : [
+          "uuids"
+        ],
+        "properties" : {
+          "uuids" : {
+            "type" : "array",
+            "description" : "Array of connection UUIDs to terminate",
+            "minItems" : 1,
+            "maxItems" : 100,
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      },
+      "KillConnectionsByUuidsResponse" : {
+        "type" : "object",
+        "properties" : {
+          "data" : {
+            "type" : "object",
+            "properties" : {
+              "failed_kills" : {
+                "type" : "integer"
+              },
+              "results" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "object",
+                  "properties" : {
+                    "error_message" : {
+                      "type" : "string"
+                    },
+                    "success" : {
+                      "type" : "boolean"
+                    },
+                    "uuid" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "successful_kills" : {
+                "type" : "integer"
               }
             }
           },
@@ -16226,6 +18742,24 @@
           }
         }
       },
+      "MarketplaceHandleAvailability" : {
+        "type" : "object",
+        "required" : [
+          "availability_state"
+        ],
+        "properties" : {
+          "availability_state" : {
+            "type" : "string",
+            "description" : "Availability state of the handle.",
+            "example" : "available"
+          },
+          "redirect_url" : {
+            "type" : "string",
+            "description" : "Redirect URL for marketplace handle search.",
+            "example" : "https://handles.x.com/search/jack"
+          }
+        }
+      },
       "Media" : {
         "type" : "object",
         "required" : [
@@ -16318,6 +18852,12 @@
           "TweetVideo"
         ],
         "example" : "TweetVideo"
+      },
+      "MediaHashKey" : {
+        "type" : "string",
+        "description" : "The media hash key returned from the upload initialize step. Alphanumeric characters only.",
+        "pattern" : "^[a-zA-Z0-9]{1,50}$",
+        "example" : "AGgkIbPRTG"
       },
       "MediaHeight" : {
         "type" : "integer",
@@ -16596,10 +19136,6 @@
         "properties" : {
           "data" : {
             "type" : "object",
-            "required" : [
-              "id",
-              "media_key"
-            ],
             "properties" : {
               "expires_after_secs" : {
                 "type" : "integer",
@@ -16927,6 +19463,151 @@
       "NewestId" : {
         "type" : "string",
         "description" : "The newest id in this response."
+      },
+      "News" : {
+        "type" : "object",
+        "description" : "An AI generated news story.",
+        "required" : [
+          "rest_id"
+        ],
+        "properties" : {
+          "category" : {
+            "type" : "string",
+            "description" : "The news category."
+          },
+          "cluster_posts_results" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "properties" : {
+                "post_id" : {
+                  "$ref" : "#/components/schemas/TweetId"
+                }
+              }
+            }
+          },
+          "contexts" : {
+            "type" : "object",
+            "properties" : {
+              "entities" : {
+                "type" : "object",
+                "properties" : {
+                  "events" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  },
+                  "organizations" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  },
+                  "people" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  },
+                  "places" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  },
+                  "products" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "finance" : {
+                "type" : "object",
+                "properties" : {
+                  "tickers" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "sports" : {
+                "type" : "object",
+                "properties" : {
+                  "teams" : {
+                    "type" : "array",
+                    "items" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "topics" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "string"
+                }
+              }
+            }
+          },
+          "disclaimer" : {
+            "type" : "string"
+          },
+          "hook" : {
+            "type" : "string",
+            "description" : "The news hook."
+          },
+          "keywords" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "last_updated_at_ms" : {
+            "type" : "string",
+            "format" : "date-time",
+            "example" : "2025-7-14T04:35:55Z"
+          },
+          "name" : {
+            "type" : "string",
+            "description" : "The headline."
+          },
+          "rest_id" : {
+            "$ref" : "#/components/schemas/NewsId"
+          },
+          "summary" : {
+            "type" : "string",
+            "description" : "The news summary."
+          }
+        }
+      },
+      "NewsActivityResponsePayload" : {
+        "type" : "object",
+        "properties" : {
+          "category" : {
+            "type" : "string"
+          },
+          "headline" : {
+            "type" : "string"
+          },
+          "hook" : {
+            "type" : "string"
+          },
+          "summary" : {
+            "type" : "string"
+          }
+        },
+        "additionalProperties" : false
+      },
+      "NewsId" : {
+        "type" : "string",
+        "description" : "Unique identifier of news story.",
+        "pattern" : "^[0-9]{1,19}$",
+        "example" : "2244994945"
       },
       "NextToken" : {
         "type" : "string",
@@ -17676,6 +20357,71 @@
               "pending",
               "failed"
             ]
+          }
+        }
+      },
+      "ProfileUpdateActivityResponsePayload" : {
+        "type" : "object",
+        "properties" : {
+          "after" : {
+            "type" : "string"
+          },
+          "before" : {
+            "type" : "string"
+          }
+        },
+        "additionalProperties" : false
+      },
+      "PublicKey" : {
+        "type" : "object",
+        "description" : "Public key information for Chat encryption",
+        "properties" : {
+          "public_key" : {
+            "type" : "string",
+            "description" : "Identity public key (base64 encoded)."
+          },
+          "signing_public_key" : {
+            "type" : "string",
+            "description" : "Signing public key (base64 encoded)."
+          },
+          "token_map" : {
+            "type" : "object",
+            "description" : "Juicebox configuration.",
+            "properties" : {
+              "key_store_token_map_json" : {
+                "type" : "string",
+                "description" : "Raw JSON for Juicebox SDK."
+              },
+              "max_guess_count" : {
+                "type" : "integer",
+                "description" : "Maximum guess count for Juicebox."
+              },
+              "realms" : {
+                "type" : "array",
+                "description" : "List of Juicebox realms.",
+                "items" : {
+                  "type" : "object",
+                  "properties" : {
+                    "address" : {
+                      "type" : "string",
+                      "description" : "Realm URL."
+                    },
+                    "realm_id" : {
+                      "type" : "string",
+                      "description" : "Realm identifier."
+                    },
+                    "token" : {
+                      "type" : "string",
+                      "description" : "JWT auth token for realm."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "version" : {
+            "type" : "string",
+            "description" : "Public key version."
           }
         }
       },
@@ -18980,6 +21726,19 @@
               "$ref" : "#/components/schemas/UrlEntity"
             }
           },
+          "suggested_source_links_with_counts" : {
+            "type" : "object",
+            "description" : "Suggested source links and the number of requests that included each link.",
+            "properties" : {
+              "count" : {
+                "type" : "integer",
+                "description" : "Number of note requests that included the source link."
+              },
+              "url" : {
+                "$ref" : "#/components/schemas/UrlEntity"
+              }
+            }
+          },
           "text" : {
             "$ref" : "#/components/schemas/TweetText"
           },
@@ -19211,6 +21970,10 @@
               "in_reply_to_tweet_id"
             ],
             "properties" : {
+              "auto_populate_reply_metadata" : {
+                "type" : "boolean",
+                "description" : "If set to true, reply metadata will be automatically populated."
+              },
               "exclude_reply_user_ids" : {
                 "type" : "array",
                 "description" : "A list of User Ids to be excluded from the reply Tweet.",
@@ -20998,6 +23761,31 @@
             }
           }
         }
+      },
+      "WebhookReplayCreateRequest" : {
+        "type" : "object",
+        "required" : [
+          "webhook_id",
+          "from_date",
+          "to_date"
+        ],
+        "properties" : {
+          "from_date" : {
+            "type" : "string",
+            "description" : "The oldest (starting) UTC timestamp (inclusive) from which events will be provided, in yyyymmddhhmm format.",
+            "pattern" : "^[0-9]{12}$",
+            "example" : "202504242000"
+          },
+          "to_date" : {
+            "type" : "string",
+            "description" : "The oldest (starting) UTC timestamp (inclusive) from which events will be provided, in yyyymmddhhmm format.",
+            "pattern" : "^[0-9]{12}$",
+            "example" : "202504242000"
+          },
+          "webhook_id" : {
+            "$ref" : "#/components/schemas/WebhookConfigId"
+          }
+        }
       }
     },
     "parameters" : {
@@ -21033,6 +23821,7 @@
               "shares",
               "timestamp",
               "unfollows",
+              "unlikes",
               "url_clicks",
               "user_profile_clicks"
             ]
@@ -21057,8 +23846,121 @@
             "shares",
             "timestamp",
             "unfollows",
+            "unlikes",
             "url_clicks",
             "user_profile_clicks"
+          ]
+        },
+        "explode" : false,
+        "style" : "form"
+      },
+      "ChatConversationExpansionsParameter" : {
+        "name" : "expansions",
+        "in" : "query",
+        "description" : "A comma separated list of fields to expand.",
+        "schema" : {
+          "type" : "array",
+          "description" : "The list of fields you can expand for a [ChatConversation](#ChatConversation) object. If the field has an ID, it can be expanded into a full object.",
+          "minItems" : 1,
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string",
+            "enum" : [
+              "admin_ids",
+              "member_ids",
+              "participant_ids"
+            ]
+          },
+          "example" : [
+            "admin_ids",
+            "member_ids",
+            "participant_ids"
+          ]
+        },
+        "explode" : false,
+        "style" : "form"
+      },
+      "ChatConversationFieldsParameter" : {
+        "name" : "chat_conversation.fields",
+        "in" : "query",
+        "description" : "A comma separated list of ChatConversation fields to display.",
+        "required" : false,
+        "schema" : {
+          "type" : "array",
+          "description" : "The fields available for a ChatConversation object.",
+          "minItems" : 1,
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string",
+            "enum" : [
+              "admin_ids",
+              "created_at",
+              "group_avatar_url",
+              "group_name",
+              "id",
+              "is_muted",
+              "member_ids",
+              "message_ttl_msec",
+              "participant_ids",
+              "screen_capture_blocking_enabled",
+              "screen_capture_detection_enabled",
+              "type",
+              "updated_at"
+            ]
+          },
+          "example" : [
+            "admin_ids",
+            "created_at",
+            "group_avatar_url",
+            "group_name",
+            "id",
+            "is_muted",
+            "member_ids",
+            "message_ttl_msec",
+            "participant_ids",
+            "screen_capture_blocking_enabled",
+            "screen_capture_detection_enabled",
+            "type",
+            "updated_at"
+          ]
+        },
+        "explode" : false,
+        "style" : "form"
+      },
+      "ChatMessageEventFieldsParameter" : {
+        "name" : "chat_message_event.fields",
+        "in" : "query",
+        "description" : "A comma separated list of ChatMessageEvent fields to display.",
+        "required" : false,
+        "schema" : {
+          "type" : "array",
+          "description" : "The fields available for a ChatMessageEvent object.",
+          "minItems" : 1,
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string",
+            "enum" : [
+              "conversation_id",
+              "conversation_token",
+              "created_at_msec",
+              "encoded_event",
+              "id",
+              "is_trusted",
+              "message_event_signature",
+              "previous_id",
+              "sender_id"
+            ]
+          },
+          "example" : [
+            "conversation_id",
+            "conversation_token",
+            "created_at_msec",
+            "encoded_event",
+            "id",
+            "is_trusted",
+            "message_event_signature",
+            "previous_id",
+            "sender_id"
           ]
         },
         "explode" : false,
@@ -21135,6 +24037,39 @@
             "type",
             "upload_expires_at",
             "upload_url"
+          ]
+        },
+        "explode" : false,
+        "style" : "form"
+      },
+      "ConnectionFieldsParameter" : {
+        "name" : "connection.fields",
+        "in" : "query",
+        "description" : "A comma separated list of Connection fields to display.",
+        "required" : false,
+        "schema" : {
+          "type" : "array",
+          "description" : "The fields available for a Connection object.",
+          "minItems" : 1,
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string",
+            "enum" : [
+              "client_ip",
+              "connected_at",
+              "disconnect_reason",
+              "disconnected_at",
+              "endpoint_name",
+              "id"
+            ]
+          },
+          "example" : [
+            "client_ip",
+            "connected_at",
+            "disconnect_reason",
+            "disconnected_at",
+            "endpoint_name",
+            "id"
           ]
         },
         "explode" : false,
@@ -21422,6 +24357,31 @@
         "explode" : false,
         "style" : "form"
       },
+      "MarketplaceHandleAvailabilityFieldsParameter" : {
+        "name" : "marketplace_handle_availability.fields",
+        "in" : "query",
+        "description" : "A comma separated list of MarketplaceHandleAvailability fields to display.",
+        "required" : false,
+        "schema" : {
+          "type" : "array",
+          "description" : "The fields available for a MarketplaceHandleAvailability object.",
+          "minItems" : 1,
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string",
+            "enum" : [
+              "availability_state",
+              "redirect_url"
+            ]
+          },
+          "example" : [
+            "availability_state",
+            "redirect_url"
+          ]
+        },
+        "explode" : false,
+        "style" : "form"
+      },
       "MediaAnalyticsFieldsParameter" : {
         "name" : "media_analytics.fields",
         "in" : "query",
@@ -21509,6 +24469,47 @@
             "url",
             "variants",
             "width"
+          ]
+        },
+        "explode" : false,
+        "style" : "form"
+      },
+      "NewsFieldsParameter" : {
+        "name" : "news.fields",
+        "in" : "query",
+        "description" : "A comma separated list of News fields to display.",
+        "required" : false,
+        "schema" : {
+          "type" : "array",
+          "description" : "The fields available for a News object.",
+          "minItems" : 1,
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string",
+            "enum" : [
+              "category",
+              "cluster_posts_results",
+              "contexts",
+              "disclaimer",
+              "hook",
+              "id",
+              "keywords",
+              "name",
+              "summary",
+              "updated_at"
+            ]
+          },
+          "example" : [
+            "category",
+            "cluster_posts_results",
+            "contexts",
+            "disclaimer",
+            "hook",
+            "id",
+            "keywords",
+            "name",
+            "summary",
+            "updated_at"
           ]
         },
         "explode" : false,
@@ -21801,6 +24802,35 @@
         "explode" : false,
         "style" : "form"
       },
+      "PublicKeyFieldsParameter" : {
+        "name" : "public_key.fields",
+        "in" : "query",
+        "description" : "A comma separated list of PublicKey fields to display.",
+        "required" : false,
+        "schema" : {
+          "type" : "array",
+          "description" : "The fields available for a PublicKey object.",
+          "minItems" : 1,
+          "uniqueItems" : true,
+          "items" : {
+            "type" : "string",
+            "enum" : [
+              "juicebox_config",
+              "public_key",
+              "signing_public_key",
+              "version"
+            ]
+          },
+          "example" : [
+            "juicebox_config",
+            "public_key",
+            "signing_public_key",
+            "version"
+          ]
+        },
+        "explode" : false,
+        "style" : "form"
+      },
       "RulesCountFieldsParameter" : {
         "name" : "rules_count.fields",
         "in" : "query",
@@ -22085,6 +25115,7 @@
               "scopes",
               "source",
               "suggested_source_links",
+              "suggested_source_links_with_counts",
               "text",
               "withheld"
             ]
@@ -22118,6 +25149,7 @@
             "scopes",
             "source",
             "suggested_source_links",
+            "suggested_source_links_with_counts",
             "text",
             "withheld"
           ]

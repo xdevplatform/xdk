@@ -7,6 +7,7 @@ use xdk_openapi::OpenApi;
 /// Generate TypeScript SDK from OpenAPI spec
 pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     log_info!("Generating TypeScript SDK...");
+    clean_generated_dirs(output_dir)?;
     std::fs::create_dir_all(output_dir).map_err(BuildError::IoError)?;
 
     // Load configuration to get version
@@ -41,6 +42,19 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     log_info!("  cd {}", output_dir.display());
     log_info!("  npm install");
     log_info!("  npm run build");
+    Ok(())
+}
+
+/// Remove previously generated source and test trees so modules for tags
+/// that no longer exist in the spec don't linger and break the build.
+/// Build artifacts (node_modules, dist) are left in place.
+fn clean_generated_dirs(output_dir: &Path) -> Result<()> {
+    for dir in ["src", "tests", "scripts"] {
+        let path = output_dir.join(dir);
+        if path.exists() {
+            std::fs::remove_dir_all(&path).map_err(BuildError::IoError)?;
+        }
+    }
     Ok(())
 }
 

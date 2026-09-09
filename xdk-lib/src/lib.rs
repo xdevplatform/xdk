@@ -24,6 +24,7 @@ pub mod models;
 pub mod openapi;
 pub mod templates;
 pub mod testing;
+pub mod types;
 
 pub use casing::*;
 pub use config::*;

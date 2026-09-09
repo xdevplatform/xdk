@@ -6,7 +6,7 @@ use std::path::Path;
 use std::process::Command;
 use xdk_gen::Python;
 use xdk_lib::{XdkConfig, log_error, log_info, log_success};
-use xdk_openapi::OpenApi; // Add fs for directory removal
+use xdk_openapi::OpenApi;
 
 /// Generates the Python SDK.
 pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
@@ -19,6 +19,19 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
             "Python version not found in config".to_string(),
         ))
     })?;
+
+    // Remove previously generated source and test trees so modules for tags
+    // that no longer exist in the spec don't linger. The venv is removed too
+    // because `uv venv` refuses to overwrite an existing one.
+    for dir in ["xdk", "tests", "scripts", ".venv"] {
+        let path = output_dir.join(dir);
+        if path.exists()
+            && let Err(e) = fs::remove_dir_all(&path)
+        {
+            log_error!("Failed to clean '{}': {}", path.display(), e);
+            return Err(BuildError::IoError(e));
+        }
+    }
 
     // Create output directory if it doesn't exist
     if let Err(e) = std::fs::create_dir_all(output_dir) {

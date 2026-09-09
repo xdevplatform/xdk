@@ -1,6 +1,0 @@
-/target
-.venv/
-test_output/
-__pycache__/
-node_modules/
-*.log
