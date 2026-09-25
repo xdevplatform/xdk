@@ -141,11 +141,22 @@ impl xdk_lib::generator::LanguageGenerator for Python {
             })
             .unwrap_or_default();
 
+        // Enums in schemas reachable from a response accept values the spec
+        // does not list yet, so one new server value cannot fail every
+        // response that contains it. Request-only schemas and parameters
+        // stay strict.
+        let responses: Vec<serde_json::Value> = operations
+            .values()
+            .flatten()
+            .filter_map(|group| serde_json::to_value(&group.operation.responses).ok())
+            .collect();
+        let open_enum_schemas = xdk_lib::types::referenced_schema_names(&responses);
+
         // Always write schemas.py: the generated package imports it
         // unconditionally, so a spec without component schemas must still
         // produce an (empty) module.
         let context = PySchemasContext {
-            body: xdk_lib::types::py_schema_module(&raw_schemas),
+            body: xdk_lib::types::py_schema_module(&raw_schemas, &open_enum_schemas),
         };
         let schemas_path = output_dir.join("xdk/schemas.py");
         let content = xdk_lib::templates::render_template_with_path(
