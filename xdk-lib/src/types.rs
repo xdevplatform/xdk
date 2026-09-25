@@ -9,6 +9,7 @@
 //! recursion.
 
 use serde_json::Value as Json;
+use std::borrow::Cow;
 use std::collections::{BTreeMap, HashMap, HashSet};
 
 /// Maximum nesting depth for inline schema rendering. Deeper structures fall
@@ -208,6 +209,77 @@ fn enum_literals(schema: &Json) -> Option<Vec<String>> {
     Some(out)
 }
 
+/// Marker set (by `mark_open_enums`) on enum schemas that must also accept
+/// values the spec does not list.
+const OPEN_ENUM_KEY: &str = "x-xdk-open-enum";
+
+fn is_open_enum(schema: &Json) -> bool {
+    get(schema, OPEN_ENUM_KEY)
+        .and_then(|v| v.as_bool())
+        .unwrap_or(false)
+}
+
+/// Mark every enum inside a schema as open. Referenced schemas are left
+/// alone: they render by name and are marked (or not) as their own
+/// component. Single-value enums stay strict: they are constants (OpenAPI
+/// 3.0 has no `const`) that often discriminate unions, e.g. `Problem.type`,
+/// and opening them would break narrowing and union matching.
+fn mark_open_enums(schema: &mut Json) {
+    match schema {
+        Json::Object(obj) => {
+            if obj.contains_key("$ref") {
+                return;
+            }
+            if obj
+                .get("enum")
+                .and_then(|v| v.as_array())
+                .is_some_and(|values| values.len() > 1)
+            {
+                obj.insert(OPEN_ENUM_KEY.to_string(), Json::Bool(true));
+            }
+            obj.values_mut().for_each(mark_open_enums);
+        }
+        Json::Array(items) => items.iter_mut().for_each(mark_open_enums),
+        _ => {}
+    }
+}
+
+/// A copy of `schema` with its enums marked open, or the schema itself.
+fn with_open_enums(schema: &Json, open: bool) -> Cow<'_, Json> {
+    if !open {
+        return Cow::Borrowed(schema);
+    }
+    let mut schema = schema.clone();
+    mark_open_enums(&mut schema);
+    Cow::Owned(schema)
+}
+
+/// Names of the component schemas transitively referenced from `roots`
+/// (serialized OpenAPI values, e.g. operation responses). Serialized `$ref`s
+/// carry the resolved body inline, so the walk follows them directly.
+pub fn referenced_schema_names<'a>(roots: impl IntoIterator<Item = &'a Json>) -> HashSet<String> {
+    fn walk(value: &Json, names: &mut HashSet<String>) {
+        match value {
+            Json::Object(obj) => {
+                if let Some(name) = get_str(value, "$ref")
+                    .and_then(|path| path.strip_prefix("#/components/schemas/"))
+                    && !names.insert(name.to_string())
+                {
+                    return; // already walked
+                }
+                obj.values().for_each(|v| walk(v, names));
+            }
+            Json::Array(items) => items.iter().for_each(|v| walk(v, names)),
+            _ => {}
+        }
+    }
+    let mut names = HashSet::new();
+    for root in roots {
+        walk(root, &mut names);
+    }
+    names
+}
+
 /// Union member lists for oneOf/anyOf, deduplicated while preserving order.
 fn dedupe(members: Vec<String>) -> Vec<String> {
     let mut seen = HashSet::new();
@@ -281,12 +353,17 @@ fn ts_type_core(schema: &Json, ns: &str, depth: usize) -> String {
         return parts.join(" & ");
     }
 
+    // Open enums keep the known literals (autocomplete) and also
+    // accept any other value of the base type.
+    let open = is_open_enum(schema);
     match get_str(schema, "type") {
         Some("string") => match enum_literals(schema) {
+            Some(lits) if open => format!("{} | (string & {{}})", lits.join(" | ")),
             Some(lits) => lits.join(" | "),
             None => "string".to_string(),
         },
         Some("integer") | Some("number") => match enum_literals(schema) {
+            Some(lits) if open => format!("{} | (number & {{}})", lits.join(" | ")),
             Some(lits) => lits.join(" | "),
             None => "number".to_string(),
         },
@@ -364,14 +441,19 @@ pub struct SchemaDecl {
 }
 
 /// Build full TypeScript declarations for all component schemas
-/// (the body of schemas.ts).
-pub fn ts_schema_declarations(schemas: &[(String, Json)]) -> Vec<SchemaDecl> {
+/// (the body of schemas.ts). Enums in `open_enum_schemas` (response schemas)
+/// also accept values the spec does not list.
+pub fn ts_schema_declarations(
+    schemas: &[(String, Json)],
+    open_enum_schemas: &HashSet<String>,
+) -> Vec<SchemaDecl> {
     let mut sorted: Vec<&(String, Json)> = schemas.iter().collect();
     sorted.sort_by(|a, b| a.0.cmp(&b.0));
 
     sorted
         .iter()
         .map(|(name, schema)| {
+            let schema = &*with_open_enums(schema, open_enum_schemas.contains(name));
             let ident = sanitize_identifier(name);
             let description = get_str(schema, "description")
                 .map(escape_doc)
@@ -606,12 +688,17 @@ fn py_type_core(schema: &Json, ns: &str, quote_refs: bool, depth: usize) -> Stri
         return "Dict[str, Any]".to_string();
     }
 
+    // Open enums keep the known literals visible to type checkers; Pydantic
+    // matches known values against the Literal arm and still accepts others.
+    let open = is_open_enum(schema);
     match get_str(schema, "type") {
         Some("string") => match enum_literals(schema) {
+            Some(lits) if open => format!("Union[Literal[{}], str]", lits.join(", ")),
             Some(lits) => format!("Literal[{}]", lits.join(", ")),
             None => "str".to_string(),
         },
         Some("integer") => match enum_literals(schema) {
+            Some(lits) if open => format!("Union[Literal[{}], int]", lits.join(", ")),
             Some(lits) => format!("Literal[{}]", lits.join(", ")),
             None => "int".to_string(),
         },
@@ -713,8 +800,10 @@ enum PyDeclKind {
 }
 
 /// Build the full body of schemas.py: Pydantic models for object schemas,
-/// type aliases for everything else, in dependency-safe order.
-pub fn py_schema_module(schemas: &[(String, Json)]) -> String {
+/// type aliases for everything else, in dependency-safe order. Enums in
+/// `open_enum_schemas` (response schemas) also accept values the spec does
+/// not list.
+pub fn py_schema_module(schemas: &[(String, Json)], open_enum_schemas: &HashSet<String>) -> String {
     let mut sorted: Vec<&(String, Json)> = schemas.iter().collect();
     sorted.sort_by(|a, b| a.0.cmp(&b.0));
 
@@ -729,7 +818,8 @@ pub fn py_schema_module(schemas: &[(String, Json)]) -> String {
         if !emitted.insert(ident.clone()) {
             continue;
         }
-        match py_declaration(&ident, name, schema) {
+        let schema = with_open_enums(schema, open_enum_schemas.contains(name));
+        match py_declaration(&ident, name, &schema) {
             PyDeclKind::Class(code) => classes.push((ident, code)),
             PyDeclKind::Alias(code) => {
                 let deps = alias_deps(&code, &all_names, &ident);
@@ -1105,7 +1195,7 @@ mod tests {
             ),
             ("UserId".to_string(), json!({"type": "string"})),
         ];
-        let module = py_schema_module(&schemas);
+        let module = py_schema_module(&schemas, &HashSet::new());
         let userid_pos = module.find("UserId = str").unwrap();
         let foo_pos = module.find("Foo = Union[").unwrap();
         assert!(
@@ -1168,12 +1258,86 @@ mod tests {
                 json!({"type": "array", "items": {"$ref": "#/components/schemas/UserId"}}),
             ),
         ];
-        let module = py_schema_module(&schemas);
+        let module = py_schema_module(&schemas, &HashSet::new());
         assert!(module.contains("class User(BaseModel):"));
         assert!(module.contains("id: \"UserId\""));
         assert!(module.contains("UserId = str"));
         assert!(module.contains("UserIds = List[UserId]"));
         // Alias ordering: UserId must be defined before UserIds uses it.
         assert!(module.find("UserId = str").unwrap() < module.find("UserIds = List").unwrap());
+    }
+
+    #[test]
+    fn open_enums_accept_unknown_values() {
+        let item = json!({"type": "object", "required": ["type"], "properties": {
+            "type": {"oneOf": [{"type": "string", "enum": ["retweeted", "quoted"]}]}
+        }});
+        let schemas = vec![("Refs".to_string(), json!({"type": "array", "items": item}))];
+        let open = HashSet::from(["Refs".to_string()]);
+
+        let module = py_schema_module(&schemas, &open);
+        assert!(
+            module.contains("type: Union[Literal[\"retweeted\", \"quoted\"], str]"),
+            "{module}"
+        );
+        let decls = ts_schema_declarations(&schemas, &open);
+        assert!(
+            decls[0]
+                .code
+                .contains("type: (\"retweeted\" | \"quoted\" | (string & {}))"),
+            "{}",
+            decls[0].code
+        );
+    }
+
+    #[test]
+    fn enums_outside_open_schemas_stay_strict() {
+        let schemas = vec![(
+            "Order".to_string(),
+            json!({"type": "string", "enum": ["asc", "desc"]}),
+        )];
+        let module = py_schema_module(&schemas, &HashSet::new());
+        assert!(
+            module.contains("Order = Literal[\"asc\", \"desc\"]"),
+            "{module}"
+        );
+        let decls = ts_schema_declarations(&schemas, &HashSet::new());
+        assert!(decls[0].code.contains("= \"asc\" | \"desc\";"));
+        // Parameters render through py_type_of/ts_type_of, which never open.
+        let s = json!({"type": "string", "enum": ["asc", "desc"]});
+        assert_eq!(py_type_of(&s, "schemas."), "Literal[\"asc\", \"desc\"]");
+        assert_eq!(ts_type_of(&s, ""), "\"asc\" | \"desc\"");
+    }
+
+    #[test]
+    fn single_value_enums_stay_strict_in_open_schemas() {
+        // Discriminator constants (e.g. Problem.type) must keep narrowing.
+        let schemas = vec![(
+            "NotFoundProblem".to_string(),
+            json!({"type": "object", "required": ["type"], "properties": {
+                "type": {"type": "string", "enum": ["https://example.com/not-found"]}
+            }}),
+        )];
+        let open = HashSet::from(["NotFoundProblem".to_string()]);
+        let module = py_schema_module(&schemas, &open);
+        assert!(
+            module.contains("type: Literal[\"https://example.com/not-found\"]"),
+            "{module}"
+        );
+    }
+
+    #[test]
+    fn referenced_schema_names_follows_inlined_refs() {
+        // Serialized `$ref`s carry the resolved body inline.
+        let response = json!({"200": {"content": {"application/json": {"schema": {
+            "$ref": "#/components/schemas/Page",
+            "properties": {"data": {"type": "array", "items": {
+                "$ref": "#/components/schemas/Post",
+                "properties": {"refs": {"$ref": "#/components/schemas/Refs"}}
+            }}}
+        }}}}});
+        let names = referenced_schema_names([&response]);
+        let expected: HashSet<String> = ["Page", "Post", "Refs"].map(String::from).into();
+        assert_eq!(names, expected);
     }
 }
