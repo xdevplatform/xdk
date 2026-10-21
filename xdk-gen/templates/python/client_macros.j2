@@ -142,6 +142,8 @@ params = {}
         if {{ param.variable_name }} is not None:
             {% if param.param_type == "array" -%}
             params["{{ param.original_name }}"] = ",".join(str(item) for item in {{ param.variable_name }})
+            {% elif param.param_type == "boolean" -%}
+            params["{{ param.original_name }}"] = str({{ param.variable_name }}).lower()
             {% else -%}
             params["{{ param.original_name }}"] = {{ param.variable_name }}
             {% endif %}
@@ -431,6 +433,8 @@ headers = {% if operation.is_streaming %}{
             if {{ param.variable_name }} is not None:
                 {% if param.param_type == "array" -%}
                 page_params["{{ param.original_name }}"] = ",".join(str(item) for item in {{ param.variable_name }})
+                {% elif param.param_type == "boolean" -%}
+                page_params["{{ param.original_name }}"] = str({{ param.variable_name }}).lower()
                 {% else -%}
                 page_params["{{ param.original_name }}"] = {{ param.variable_name }}
                 {% endif %}

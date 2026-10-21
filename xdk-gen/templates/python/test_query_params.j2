@@ -1,0 +1,57 @@
+"""
+Auto-generated tests for query parameter serialization.
+
+The X API only accepts the lowercase strings "true" and "false" for boolean
+query parameters, but `requests` serializes a Python bool with str(), which
+yields "True" / "False" (HTTP 400). These tests check that boolean query
+parameters reach `requests` as lowercase strings.
+
+Generated automatically - do not edit manually.
+"""
+
+from unittest import mock
+
+import pytest
+import requests
+
+from xdk import Client
+
+
+def _json_response(payload: bytes) -> requests.Response:
+    response = requests.Response()
+    response.status_code = 200
+    response._content = payload
+    response.headers["content-type"] = "application/json"
+    return response
+
+
+class TestBooleanQueryParams:
+    """Boolean query parameters must be sent as "true" / "false"."""
+
+    def setup_method(self):
+        self.client = Client(bearer_token="test_bearer_token")
+
+    @pytest.mark.parametrize(
+        "value, expected",
+        [(True, "true"), (False, "false")],
+    )
+    def test_update_rules_serializes_booleans_lowercase(self, value, expected):
+        with mock.patch.object(
+            self.client.session,
+            "post",
+            return_value=_json_response(b'{"data": []}'),
+        ) as post:
+            self.client.stream.update_rules(
+                body={"add": [{"value": "from:XDevelopers"}]},
+                dry_run=value,
+                delete_all=value,
+            )
+
+        params = post.call_args.kwargs["params"]
+        assert params == {"dry_run": expected, "delete_all": expected}
+
+        url = requests.Request(
+            "POST", "https://api.x.com/x", params=params
+        ).prepare().url
+        assert f"dry_run={expected}" in url
+        assert f"delete_all={expected}" in url

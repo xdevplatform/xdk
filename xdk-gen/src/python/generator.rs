@@ -101,6 +101,7 @@ language! {
             render "test_structure" => "tests/{}/test_structure.py",
             render "test_pagination" => "tests/{}/test_pagination.py"
         },
+        render "test_query_params" => "tests/test_query_params.py",
         render "conftest" => "tests/conftest.py"
     ]
 }
