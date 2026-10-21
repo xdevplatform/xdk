@@ -316,7 +316,9 @@ export class EventDrivenStream {
     this.on(StreamEvent.Close, closeListener);
 
     try {
-      while (!isComplete && !hasError) {
+      // Keep draining until the stream has ended AND the queue is empty, so
+      // events that arrived just before a close/error are not dropped.
+      while (dataQueue.length > 0 || (!isComplete && !hasError)) {
         if (dataQueue.length > 0) {
           yield dataQueue.shift()!;
         } else {

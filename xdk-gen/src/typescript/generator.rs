@@ -86,6 +86,7 @@ language! {
             render "test_pagination" => "tests/{}/test_pagination.test.ts"
         },
         render "test_client_errors" => "tests/client_errors.test.ts",
+        render "test_event_driven_stream" => "tests/event_driven_stream.test.ts",
         render "jest.config" => "jest.config.cjs"
     ]
 }
