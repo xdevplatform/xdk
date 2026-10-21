@@ -86,7 +86,8 @@ language! {
             render "test_pagination" => "tests/{}/test_pagination.test.ts"
         },
         render "test_client_errors" => "tests/client_errors.test.ts",
-        render "jest.config" => "jest.config.cjs"
+        render "jest.config" => "jest.config.cjs",
+        render "test_oauth2_token_expiry" => "tests/oauth2_token_expiry.test.ts"
     ]
 }
 

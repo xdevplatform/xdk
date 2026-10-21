@@ -128,6 +128,10 @@ export class OAuth2 {
       refresh_token: data.refresh_token,
       scope: data.scope
     };
+    // Track when the token expires
+    if (data.expires_in) {
+      this.tokenExpiresAt = Date.now() + (data.expires_in * 1000);
+    }
 
     return this.token;
   }
