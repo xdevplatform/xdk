@@ -1,0 +1,524 @@
+package com.xdevplatform.xdk.canary;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpServer;
+import com.xdevplatform.xdk.Paginator;
+import com.xdevplatform.xdk.XApiException;
+import com.xdevplatform.xdk.XClient;
+import com.xdevplatform.xdk.auth.OAuth1;
+import com.xdevplatform.xdk.auth.OAuth2Pkce;
+import com.xdevplatform.xdk.auth.OAuth2Token;
+import com.xdevplatform.xdk.clients.StreamClient;
+import com.xdevplatform.xdk.examples.UseCaseExamples;
+import com.xdevplatform.xdk.models.Schemas;
+import com.xdevplatform.xdk.streaming.EventStream;
+import com.xdevplatform.xdk.streaming.StreamConfig;
+import com.xdevplatform.xdk.testing.MockXApiServer;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+
+/**
+ * Continuous Always-On Canary Runner for {@code xdk-java}.
+ *
+ * <p>Continuously exercises the compiled Java SDK across:
+ * <ul>
+ *   <li><b>Synthetic E2E Simulator Probes</b>: All 24 API tags (via {@link UseCaseExamples}),
+ *       OAuth 2.0 PKCE + auto-refresh, OAuth 1.0a RFC 5849 verification, multi-page pagination,
+ *       chunked NDJSON streaming + reconnect, 429 Retry-After recovery, and 404 error parsing.</li>
+ *   <li><b>Live X API Probes</b> (enabled automatically when {@code X_BEARER_TOKEN} /
+ *       {@code X_ACCESS_TOKEN} or {@code --live} is provided): Public OpenAPI spec check,
+ *       {@code @XDevelopers} user lookup, recent post counts, API usage, and authenticated user check.</li>
+ *   <li><b>HTTP Observability</b> (when {@code --port <N>} is set): Serves {@code /health},
+ *       {@code /status} (JSON), and {@code /metrics} (Prometheus text format).</li>
+ * </ul>
+ */
+public final class XdkCanaryApp implements AutoCloseable {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    public static final class ProbeResult {
+        public final String name;
+        public final String mode;
+        public final boolean passed;
+        public final long durationMs;
+        public final String error;
+
+        public ProbeResult(String name, String mode, boolean passed, long durationMs, String error) {
+            this.name = name;
+            this.mode = mode;
+            this.passed = passed;
+            this.durationMs = durationMs;
+            this.error = error;
+        }
+    }
+
+    public static final class CanarySnapshot {
+        public final String sdk = "java";
+        public final String version = "{{ version }}";
+        public final String timestamp;
+        public final long cycle;
+        public final boolean healthy;
+        public final int probesPassed;
+        public final int probesFailed;
+        public final long durationMs;
+        public final List<ProbeResult> probes;
+
+        public CanarySnapshot(
+                String timestamp,
+                long cycle,
+                boolean healthy,
+                int probesPassed,
+                int probesFailed,
+                long durationMs,
+                List<ProbeResult> probes) {
+            this.timestamp = timestamp;
+            this.cycle = cycle;
+            this.healthy = healthy;
+            this.probesPassed = probesPassed;
+            this.probesFailed = probesFailed;
+            this.durationMs = durationMs;
+            this.probes = probes;
+        }
+    }
+
+    private final AtomicLong totalCycles = new AtomicLong();
+    private final AtomicLong totalProbeFailures = new AtomicLong();
+    private final AtomicReference<CanarySnapshot> latestSnapshot = new AtomicReference<>();
+    private final Instant startedAt = Instant.now();
+    private final boolean enableLiveProbes;
+    private HttpServer statusServer;
+
+    public XdkCanaryApp(boolean enableLiveProbes) {
+        this.enableLiveProbes = enableLiveProbes;
+    }
+
+    public void startStatusServer(int port) throws IOException {
+        this.statusServer = HttpServer.create(new InetSocketAddress("127.0.0.1", port), 32);
+        this.statusServer.createContext("/health", this::handleHealth);
+        this.statusServer.createContext("/status", this::handleStatus);
+        this.statusServer.createContext("/metrics", this::handleMetrics);
+        this.statusServer.start();
+    }
+
+    public int getStatusPort() {
+        return statusServer != null ? statusServer.getAddress().getPort() : -1;
+    }
+
+    public CanarySnapshot getLatestSnapshot() {
+        return latestSnapshot.get();
+    }
+
+    public CanarySnapshot runCycle() {
+        long cycleNum = totalCycles.incrementAndGet();
+        long cycleStart = System.nanoTime();
+        List<ProbeResult> results = new ArrayList<>();
+
+        // 1. Synthetic Full-SDK Simulator Probes
+        try (MockXApiServer simulator = new MockXApiServer()) {
+            XClient simClient =
+                    XClient.builder()
+                            .baseUrl(simulator.getBaseUrl())
+                            .bearerToken("canary-bearer")
+                            .accessToken("canary-oauth2")
+                            .oauth1(new OAuth1("ck", "cs", "oob", "at", "ats"))
+                            .build();
+
+            long ucStart = System.nanoTime();
+            try {
+                Map<String, Long> suiteTimings =
+                        UseCaseExamples.runAll(simulator.getBaseUrl(), simClient);
+                for (Map.Entry<String, Long> e : suiteTimings.entrySet()) {
+                    results.add(new ProbeResult("usecase_" + e.getKey(), "synthetic", true, e.getValue(), null));
+                }
+            } catch (Throwable t) {
+                results.add(
+                        new ProbeResult(
+                                "usecases_all_24_tags",
+                                "synthetic",
+                                false,
+                                (System.nanoTime() - ucStart) / 1_000_000L,
+                                t.toString()));
+            }
+
+            results.add(runProbe("auth_oauth2_pkce_and_refresh", "synthetic", () -> verifyOAuth2Probe(simulator)));
+            results.add(runProbe("auth_oauth1_rfc5849_signature", "synthetic", () -> verifyOAuth1Probe(simulator)));
+            results.add(runProbe("pagination_cursor_traversal", "synthetic", () -> verifyPaginationProbe(simulator)));
+            results.add(runProbe("streaming_ndjson_reconnect", "synthetic", () -> verifyStreamingReconnectProbe(simulator)));
+            results.add(runProbe("resilience_429_retry_and_404_error", "synthetic", () -> verifyResilienceProbe(simulator)));
+        }
+
+        // 2. Optional Live X API Probes
+        String liveBearer = System.getenv("X_BEARER_TOKEN");
+        String liveAccess = System.getenv("X_ACCESS_TOKEN");
+        String liveBase = System.getenv("X_API_BASE_URL");
+        if (liveBase == null || liveBase.isEmpty()) {
+            liveBase = "https://api.x.com";
+        }
+        final String effectiveLiveBase = liveBase;
+
+        if (enableLiveProbes
+                || (liveBearer != null && !liveBearer.isEmpty())
+                || (liveAccess != null && !liveAccess.isEmpty())) {
+            results.add(
+                    runProbe(
+                            "live_openapi_spec",
+                            "live",
+                            () -> {
+                                XClient anon = XClient.builder().baseUrl(effectiveLiveBase).build();
+                                com.fasterxml.jackson.databind.JsonNode spec = anon.general().getOpenApiSpec();
+                                if (spec == null || !spec.has("openapi")) {
+                                    throw new IllegalStateException("Unexpected OpenAPI spec payload");
+                                }
+                            }));
+
+            if (liveBearer != null && !liveBearer.isEmpty()) {
+                XClient bearerClient =
+                        XClient.builder()
+                                .baseUrl(effectiveLiveBase)
+                                .bearerToken(liveBearer)
+                                .build();
+                results.add(
+                        runProbe(
+                                "live_users_lookup_xdevelopers",
+                                "live",
+                                () -> {
+                                    Schemas.GetUsersByUsernameResponse u =
+                                            bearerClient.users().getByUsername("XDevelopers");
+                                    if (u.getData() == null || u.getData().getId() == null) {
+                                        throw new IllegalStateException("Missing @XDevelopers user data");
+                                    }
+                                }));
+                results.add(
+                        runProbe(
+                                "live_posts_counts_recent",
+                                "live",
+                                () -> {
+                                    Schemas.GetPostsCountsRecentResponse c =
+                                            bearerClient.posts().getCountsRecent("xdk");
+                                    if (c == null) {
+                                        throw new IllegalStateException("Null counts response");
+                                    }
+                                }));
+            }
+
+            if (liveAccess != null && !liveAccess.isEmpty()) {
+                XClient userClient =
+                        XClient.builder()
+                                .baseUrl(effectiveLiveBase)
+                                .accessToken(liveAccess)
+                                .build();
+                results.add(
+                        runProbe(
+                                "live_users_me",
+                                "live",
+                                () -> {
+                                    Schemas.GetUsersMeResponse me = userClient.users().getMe();
+                                    if (me.getData() == null || me.getData().getId() == null) {
+                                        throw new IllegalStateException("Missing authenticated user id");
+                                    }
+                                }));
+            }
+        }
+
+        int passed = 0;
+        int failed = 0;
+        for (ProbeResult r : results) {
+            if (r.passed) {
+                passed++;
+            } else {
+                failed++;
+                totalProbeFailures.incrementAndGet();
+            }
+        }
+        long totalMs = (System.nanoTime() - cycleStart) / 1_000_000L;
+        CanarySnapshot snapshot =
+                new CanarySnapshot(
+                        Instant.now().toString(),
+                        cycleNum,
+                        failed == 0,
+                        passed,
+                        failed,
+                        totalMs,
+                        Collections.unmodifiableList(results));
+        latestSnapshot.set(snapshot);
+        return snapshot;
+    }
+
+    private static ProbeResult runProbe(String name, String mode, Runnable fn) {
+        long start = System.nanoTime();
+        try {
+            fn.run();
+            return new ProbeResult(name, mode, true, (System.nanoTime() - start) / 1_000_000L, null);
+        } catch (Throwable t) {
+            return new ProbeResult(
+                    name, mode, false, (System.nanoTime() - start) / 1_000_000L, t.toString());
+        }
+    }
+
+    private static void verifyOAuth2Probe(MockXApiServer server) {
+        server.reset();
+        OAuth2Pkce oauth2 =
+                new OAuth2Pkce(
+                        "canary-cid",
+                        "canary-secret",
+                        "https://example.org/cb",
+                        Arrays.asList("tweet.read", "users.read", "offline.access"),
+                        server.getBaseUrl(),
+                        "https://x.com/i",
+                        null);
+        XClient client = XClient.builder().baseUrl(server.getBaseUrl()).oauth2(oauth2).build();
+        oauth2.getAuthorizationUrl("st");
+        server.registerExpectedPkceChallenge("c1", oauth2.getCodeChallenge());
+        OAuth2Token tok = oauth2.exchangeCode("c1");
+        client.users().getMe();
+        oauth2.setToken(tok, Instant.now().minusSeconds(5));
+        client.users().getMe();
+        if (!"Bearer sim_refreshed_access_from_sim_oauth2_refresh_1"
+                .equals(server.lastRequest().firstHeader("authorization"))) {
+            throw new IllegalStateException("Auto-refresh header mismatch");
+        }
+    }
+
+    private static void verifyOAuth1Probe(MockXApiServer server) {
+        server.reset();
+        XClient client =
+                XClient.builder()
+                        .baseUrl(server.getBaseUrl())
+                        .oauth1(new OAuth1("ck", "cs_secret", "oob", "at", "ats_secret"))
+                        .build();
+        client.posts().create(new Schemas.CreatePostsRequest().text("Canary OAuth1"));
+        if (!MockXApiServer.verifyOAuth1Signature(
+                server.lastRequest(), "cs_secret", "ats_secret")) {
+            throw new IllegalStateException("OAuth1 HMAC-SHA1 verification failed");
+        }
+    }
+
+    private static void verifyPaginationProbe(MockXApiServer server) {
+        server.reset();
+        XClient client =
+                XClient.builder().baseUrl(server.getBaseUrl()).bearerToken("tok").build();
+        Paginator<Schemas.GetUsersFollowersResponse> pages =
+                client.users().getFollowersPages("2244994945");
+        int count = 0;
+        for (Schemas.GetUsersFollowersResponse p : pages) {
+            if (p != null) count++;
+        }
+        if (count != 2) {
+            throw new IllegalStateException("Expected 2 paginated pages, got " + count);
+        }
+    }
+
+    private static void verifyStreamingReconnectProbe(MockXApiServer server) {
+        server.reset();
+        AtomicInteger conns = new AtomicInteger();
+        server.setResponder(
+                req -> {
+                    if (conns.incrementAndGet() == 1) {
+                        return MockXApiServer.MockResponse.chunkedStream(
+                                Collections.singletonList(
+                                        "{\"data\":{\"id\":\"1\",\"text\":\"first\"}}\n"
+                                                .getBytes(StandardCharsets.UTF_8)),
+                                true);
+                    }
+                    return MockXApiServer.MockResponse.chunkedStream(
+                            Collections.singletonList(
+                                    "{\"data\":{\"id\":\"2\",\"text\":\"second\"}}\n"
+                                            .getBytes(StandardCharsets.UTF_8)),
+                            false);
+                });
+        XClient client =
+                XClient.builder().baseUrl(server.getBaseUrl()).bearerToken("tok").build();
+        int items = 0;
+        try (EventStream<Schemas.StreamPostsResponse> stream =
+                client.stream()
+                        .posts(
+                                StreamClient.PostsOptions.builder()
+                                        .streamConfig(
+                                                StreamConfig.builder()
+                                                        .maxRetries(2)
+                                                        .initialBackoff(java.time.Duration.ofMillis(10))
+                                                        .maxBackoff(java.time.Duration.ofMillis(20))
+                                                        .build()))) {
+            for (Schemas.StreamPostsResponse ev : stream) {
+                if (ev.getData() != null) items++;
+                if (items == 2) break;
+            }
+        }
+        server.reset();
+        if (items != 2) {
+            throw new IllegalStateException("Expected 2 stream items across reconnect, got " + items);
+        }
+    }
+
+    private static void verifyResilienceProbe(MockXApiServer server) {
+        server.reset();
+        AtomicInteger hits = new AtomicInteger();
+        server.setResponder(
+                req -> {
+                    if (req.getPath().contains("missing_user")) {
+                        return MockXApiServer.MockResponse.json(
+                                404, "{\"errors\":[{\"message\":\"User not found\"}]}");
+                    }
+                    if (hits.incrementAndGet() == 1) {
+                        return MockXApiServer.MockResponse.jsonWithHeaders(
+                                429,
+                                "{\"detail\":\"Too Many Requests\"}",
+                                Collections.singletonMap("Retry-After", "0"));
+                    }
+                    return MockXApiServer.MockResponse.json(
+                            200, "{\"data\":{\"id\":\"1\",\"username\":\"XDevelopers\"}}");
+                });
+        XClient client =
+                XClient.builder()
+                        .baseUrl(server.getBaseUrl())
+                        .bearerToken("tok")
+                        .retry(true)
+                        .maxRetries(2)
+                        .build();
+        client.users().getByUsername("XDevelopers");
+        try {
+            client.users().getByUsername("missing_user");
+            throw new IllegalStateException("Expected XApiException on 404");
+        } catch (XApiException expected) {
+            if (expected.getStatusCode() != 404) {
+                throw new IllegalStateException("Unexpected status: " + expected.getStatusCode());
+            }
+        } finally {
+            server.reset();
+        }
+    }
+
+    private void handleHealth(HttpExchange ex) throws IOException {
+        CanarySnapshot snap = latestSnapshot.get();
+        boolean ok = snap != null && snap.healthy;
+        String body =
+                "{\"sdk\":\"java\",\"healthy\":"
+                        + ok
+                        + ",\"cycles\":"
+                        + totalCycles.get()
+                        + ",\"uptimeSeconds\":"
+                        + (Instant.now().getEpochSecond() - startedAt.getEpochSecond())
+                        + "}";
+        writeResponse(ex, ok ? 200 : 503, "application/json", body);
+    }
+
+    private void handleStatus(HttpExchange ex) throws IOException {
+        CanarySnapshot snap = latestSnapshot.get();
+        Map<String, Object> doc = new LinkedHashMap<>();
+        doc.put("sdk", "java");
+        doc.put("version", "{{ version }}");
+        doc.put("startedAt", startedAt.toString());
+        doc.put("totalCycles", totalCycles.get());
+        doc.put("totalProbeFailures", totalProbeFailures.get());
+        doc.put("latest", snap);
+        writeResponse(ex, (snap != null && snap.healthy) ? 200 : 503, "application/json", MAPPER.writeValueAsString(doc));
+    }
+
+    private void handleMetrics(HttpExchange ex) throws IOException {
+        CanarySnapshot snap = latestSnapshot.get();
+        StringBuilder sb = new StringBuilder();
+        sb.append("# TYPE xdk_canary_cycles_total counter\n");
+        sb.append("xdk_canary_cycles_total{sdk=\"java\"} ").append(totalCycles.get()).append("\n");
+        sb.append("# TYPE xdk_canary_probe_failures_total counter\n");
+        sb.append("xdk_canary_probe_failures_total{sdk=\"java\"} ")
+                .append(totalProbeFailures.get())
+                .append("\n");
+        sb.append("# TYPE xdk_canary_healthy gauge\n");
+        sb.append("xdk_canary_healthy{sdk=\"java\"} ")
+                .append(snap != null && snap.healthy ? 1 : 0)
+                .append("\n");
+        if (snap != null) {
+            sb.append("# TYPE xdk_canary_probe_duration_ms gauge\n");
+            for (ProbeResult p : snap.probes) {
+                sb.append("xdk_canary_probe_duration_ms{sdk=\"java\",probe=\"")
+                        .append(p.name)
+                        .append("\",mode=\"")
+                        .append(p.mode)
+                        .append("\"} ")
+                        .append(p.durationMs)
+                        .append("\n");
+            }
+        }
+        writeResponse(ex, 200, "text/plain; version=0.0.4; charset=utf-8", sb.toString());
+    }
+
+    private static void writeResponse(HttpExchange ex, int status, String contentType, String body)
+            throws IOException {
+        byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+        ex.getResponseHeaders().set("Content-Type", contentType);
+        ex.sendResponseHeaders(status, bytes.length);
+        try (OutputStream os = ex.getResponseBody()) {
+            os.write(bytes);
+        }
+    }
+
+    @Override
+    public void close() {
+        if (statusServer != null) {
+            statusServer.stop(0);
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        boolean daemon = false;
+        boolean live = false;
+        long intervalSeconds = 30L;
+        int port = -1;
+
+        for (int i = 0; i < args.length; i++) {
+            switch (args[i]) {
+                case "--daemon":
+                    daemon = true;
+                    break;
+                case "--once":
+                    daemon = false;
+                    break;
+                case "--live":
+                    live = true;
+                    break;
+                case "--interval-seconds":
+                    if (i + 1 < args.length) intervalSeconds = Long.parseLong(args[++i]);
+                    break;
+                case "--port":
+                    if (i + 1 < args.length) port = Integer.parseInt(args[++i]);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        try (XdkCanaryApp canary = new XdkCanaryApp(live)) {
+            if (port >= 0) {
+                canary.startStatusServer(port);
+                System.out.println(
+                        "{\"event\":\"canary_server_started\",\"sdk\":\"java\",\"url\":\"http://127.0.0.1:"
+                                + canary.getStatusPort()
+                                + "\"}");
+            }
+
+            do {
+                CanarySnapshot snap = canary.runCycle();
+                System.out.println(MAPPER.writeValueAsString(snap));
+                if (!daemon) {
+                    if (!snap.healthy) {
+                        System.exit(1);
+                    }
+                    return;
+                }
+                Thread.sleep(Math.max(1L, intervalSeconds) * 1000L);
+            } while (!Thread.currentThread().isInterrupted());
+        }
+    }
+}

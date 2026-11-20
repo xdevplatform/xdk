@@ -2,50 +2,115 @@ package com.xdevplatform.xdk;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.xdevplatform.xdk.auth.OAuth1;
-import com.xdevplatform.xdk.http.HttpTransport;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import com.xdevplatform.xdk.clients.{{ tag.class_name }}Client;
+import com.xdevplatform.xdk.models.Schemas;
+import com.xdevplatform.xdk.streaming.StreamConfig;
+import com.xdevplatform.xdk.testing.MockXApiServer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.List;
+import java.util.Map;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+/**
+ * Full-coverage TCP loopback contract &amp; schema round-trip tests for {@link {{ tag.class_name }}Client}.
+ *
+ * <p>Exercises the real {@code JdkHttpTransport} over a local TCP {@link MockXApiServer} for every
+ * operation in this tag, verifying typed request serialization, optional query/header builders,
+ * authentication headers, HTTP status codes, and populated response model deserialization +
+ * re-serialization round-trips.
+ */
 public class {{ tag.class_name }}ContractsTest {
+    private static MockXApiServer server;
+    private static XClient client;
+
+    @BeforeAll
+    static void startLoopbackServer() {
+        server = new MockXApiServer();
+        client =
+                XClient.builder()
+                        .baseUrl(server.getBaseUrl())
+                        .bearerToken("test-bearer-token")
+                        .accessToken("test-oauth2-token")
+                        .oauth1(new OAuth1("ck", "cs", "oob", "at", "ats"))
+                        .retry(false)
+                        .build();
+    }
+
+    @AfterAll
+    static void stopLoopbackServer() {
+        if (server != null) {
+            server.close();
+        }
+    }
+
+    @BeforeEach
+    void resetServer() {
+        server.reset();
+    }
+
     {% for contract_test in test_spec.contract_tests %}
     @Test
-    void contract_{{ contract_test.method_name | java_ident }}() {
-        AtomicReference<HttpTransport.TransportRequest> captured = new AtomicReference<>();
-        String mockJson = {{ contract_test.response_schema.mock_json | java_string_literal }};
-        HttpTransport mockTransport =
-                new HttpTransport() {
-                    @Override
-                    public TransportResponse send(TransportRequest request) {
-                        captured.set(request);
-                        return new TransportResponse(
+    void contract_{{ contract_test.method_name | java_ident }}() throws Exception {
+        String mockJson = {{ contract_test.full_response_mock_json | java_string_literal }};
+        {% if contract_test.is_streaming %}
+        server.setResponder(
+                req ->
+                        MockXApiServer.MockResponse.chunkedStream(
+                                Arrays.asList(
+                                        "{}\r\n".getBytes(StandardCharsets.UTF_8),
+                                        (mockJson + "\n").getBytes(StandardCharsets.UTF_8)),
+                                false));
+        {% elif contract_test.is_binary_response %}
+        byte[] expectedBinary = new byte[] {0x00, 0x01, 0x58, 0x44, 0x4B, (byte) 0xFF};
+        server.setResponder(
+                req ->
+                        MockXApiServer.MockResponse.bytes(
                                 {{ contract_test.response_schema.status_code }},
-                                Collections.singletonMap(
-                                        "content-type", Collections.singletonList("application/json")),
-                                mockJson.getBytes(StandardCharsets.UTF_8));
-                    }
+                                "application/octet-stream",
+                                expectedBinary));
+        {% else %}
+        server.setResponder(
+                req ->
+                        MockXApiServer.MockResponse.json(
+                                {{ contract_test.response_schema.status_code }}, mockJson));
+        {% endif %}
 
-                    @Override
-                    public InputStream sendStream(TransportRequest request) {
-                        captured.set(request);
-                        byte[] ndjson = (mockJson + "\n").getBytes(StandardCharsets.UTF_8);
-                        return new ByteArrayInputStream(ndjson);
-                    }
-                };
+        {% if contract_test.required_body %}
+        {% if contract_test.has_request_model and contract_test.request_mock_json %}
+        String reqMockJson = {{ contract_test.request_mock_json | java_string_literal }};
+        {{ contract_test.request_java_type }} reqBody =
+                client.getObjectMapper()
+                        .readValue(
+                                reqMockJson,
+                                new TypeReference<{{ contract_test.request_java_type }}>() {});
+        {% elif contract_test.is_binary_request %}
+        byte[] reqBody = "binary_submission_payload".getBytes(StandardCharsets.UTF_8);
+        {% else %}
+        Object reqBody = Collections.singletonMap("key", "value");
+        {% endif %}
+        {% endif %}
 
-        XClient client =
-                XClient.builder()
-                        .baseUrl("https://api.example.com")
-                        .bearerToken("test-bearer")
-                        .accessToken("test-access")
-                        .oauth1(new OAuth1("ck", "cs", "oob", "at", "ats"))
-                        .transport(mockTransport)
-                        .build();
+        {% if contract_test.has_options %}
+        {{ tag.class_name }}Client.{{ contract_test.class_name }}Options options =
+                {{ tag.class_name }}Client.{{ contract_test.class_name }}Options.builder()
+                        .header("X-Contract-Operation", "{{ contract_test.method_name }}");
+        {% for opt in contract_test.optional_params %}
+        {% if loop.index <= 2 %}
+        {% set opt_val %}{% if opt.param_type == "integer" %}10{% elif opt.param_type == "number" %}1.5{% elif opt.param_type == "boolean" %}true{% elif opt.param_type == "array" %}Arrays.asList("id", "created_at"){% else %}"opt_{{ opt.variable_name }}"{% endif %}{% endset %}
+        options.{{ opt.variable_name | java_ident }}({{ opt_val }});
+        {% endif %}
+        {% endfor %}
+        {% if contract_test.is_streaming %}
+        options.streamConfig(StreamConfig.builder().maxRetries(0).build());
+        {% endif %}
+        {% endif %}
 
         {% set call_args = namespace(first=true, code="") %}
         {% for param in contract_test.required_params %}
@@ -54,11 +119,15 @@ public class {{ tag.class_name }}ContractsTest {
         {% set call_args.first = false %}
         {% set call_args.code = call_args.code ~ arg_expr %}
         {% endfor %}
-        {% if contract_test.request_body_schema and contract_test.request_body_schema.required %}
-        {% set body_expr %}{% if contract_test.has_request_model %}null{% else %}"payload".getBytes(StandardCharsets.UTF_8){% endif %}{% endset %}
+        {% if contract_test.required_body %}
         {% if not call_args.first %}{% set call_args.code = call_args.code ~ ", " %}{% endif %}
         {% set call_args.first = false %}
-        {% set call_args.code = call_args.code ~ body_expr %}
+        {% set call_args.code = call_args.code ~ "reqBody" %}
+        {% endif %}
+        {% if contract_test.has_options %}
+        {% if not call_args.first %}{% set call_args.code = call_args.code ~ ", " %}{% endif %}
+        {% set call_args.first = false %}
+        {% set call_args.code = call_args.code ~ "options" %}
         {% endif %}
 
         Object result =
@@ -67,20 +136,41 @@ public class {{ tag.class_name }}ContractsTest {
         assertNotNull(result);
 
         {% if contract_test.is_streaming %}
-        if (result instanceof Iterable<?>) {
+        try (AutoCloseable closeable = (AutoCloseable) result) {
             var it = ((Iterable<?>) result).iterator();
-            if (it.hasNext()) {
-                assertNotNull(it.next());
-            }
+            assertTrue(it.hasNext(), "Expected streaming iterator to yield item");
+            Object streamedItem = it.next();
+            assertNotNull(streamedItem);
+            String roundTrip = client.getObjectMapper().writeValueAsString(streamedItem);
+            assertNotNull(roundTrip);
         }
+        {% elif contract_test.is_binary_response %}
+        assertArrayEquals(expectedBinary, (byte[]) result);
+        {% else %}
+        String roundTripJson = client.getObjectMapper().writeValueAsString(result);
+        assertNotNull(roundTripJson);
+        assertFalse(roundTripJson.isEmpty());
         {% endif %}
 
-        assertNotNull(captured.get(), "HTTP transport should receive request");
-        assertEquals("{{ contract_test.method | upper }}", captured.get().getMethod());
+        MockXApiServer.RecordedRequest captured = server.lastRequest();
+        assertNotNull(captured, "Loopback HTTP server should receive request");
+        assertEquals("{{ contract_test.method | upper }}", captured.getMethod());
         String baseSegment = "{{ contract_test.path | path_prefix }}";
         assertTrue(
-                captured.get().getUrl().contains(baseSegment),
-                "Expected URL to contain " + baseSegment + " but got " + captured.get().getUrl());
+                captured.getPath().contains(baseSegment),
+                "Expected path to contain " + baseSegment + " but got " + captured.getPath());
+        {% if contract_test.has_options %}
+        assertEquals("{{ contract_test.method_name }}", captured.firstHeader("x-contract-operation"));
+        {% endif %}
+        {% if contract_test.security_requirements | length > 0 %}
+        assertNotNull(captured.firstHeader("authorization"), "Expected Authorization header");
+        {% endif %}
+        {% if contract_test.required_body %}
+        assertTrue(captured.getBodyBytes().length > 0, "Expected non-empty request body");
+        {% if contract_test.has_request_model %}
+        assertNotNull(client.getObjectMapper().readTree(captured.getBodyBytes()));
+        {% endif %}
+        {% endif %}
     }
     {% endfor %}
 }

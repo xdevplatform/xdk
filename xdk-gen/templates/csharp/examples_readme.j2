@@ -1,0 +1,42 @@
+# XDK C# / .NET Examples & Continuous Canary
+
+This directory contains runnable, self-verifying C# / .NET 8 examples (`Xdk.Examples`) for every X API v2 use-case across all 24 endpoint groups, plus the built-in continuous canary service (`XdkCanaryRunner`) and zero-dependency TCP X API simulator (`MockXApiServer`).
+
+Every example in `examples/Xdk.Examples` is compiled and executed automatically during `dotnet test` so examples never drift out of sync with the SDK.
+
+## Use-Case Cookbook (`Xdk.Examples/UseCaseExamples.cs`)
+
+Covers all 24 X API v2 client groups:
+
+1. **Authentication Flows** (`RunAuthenticationExamplesAsync`) — App-Only Bearer, OAuth 2.0 PKCE (`S256`) + Token Refresh, OAuth 1.0a (`HMAC-SHA1`).
+2. **Posts, Search & Counts** (`RunPostsAndSearchExamplesAsync`) — Create/reply/delete posts, field expansions, `await foreach` paginated recent & full-archive search, post counts, analytics, likes/reposts/quotes.
+3. **Users, Social Graph & Bookmarks** (`RunUsersAndBookmarksExamplesAsync`) — User lookup & search, timelines & mentions pagination, follow/unfollow, like/repost, block/mute, bookmarks & folders.
+4. **Real-Time Streaming** (`RunStreamingExamplesAsync`) — Filtered stream rules CRUD + `await foreach` `EventStream` NDJSON consumption with `StreamOptions` auto-reconnect, 1% sample stream.
+5. **Media Upload & Metadata** (`RunMediaUploadExamplesAsync`) — Single-shot upload, chunked >2 GiB video upload (`InitializeUploadAsync` -> `AppendUploadAsync` -> `FinalizeUploadAsync` -> `GetUploadStatusAsync`), alt-text metadata, subtitles, media analytics.
+6. **Direct Messages & XChat** (`RunDirectMessagesAndChatExamplesAsync`) — 1:1 & group DMs, encrypted XChat messages, media upload/download, user public keys.
+7. **Lists, Communities, Spaces, Broadcasts & Calls** (`RunCommunitiesSpacesListsExamplesAsync`) — Lists CRUD & paginated timelines, Communities, live Spaces, Broadcasts, and Audio/Video Calls.
+8. **Trends, News, Articles & Community Notes** (`RunDiscoveryAndNotesExamplesAsync`) — WOEID & personalized trends, News stories, Articles drafts/publishing, Community Notes evaluation & creation.
+9. **Webhooks, Activity, Bots, Connections & Account** (`RunWebhooksAndAutomationExamplesAsync`) — Webhooks & replay jobs, Account Activity & X Activity subscriptions, Bots token rotation, Connections, Developer Account.
+10. **Batch Compliance, Usage & OpenAPI** (`RunComplianceAndUsageExamplesAsync`) — Compliance jobs + binary `byte[]` upload/download, API usage & credits, `/2/openapi.json` introspection.
+
+### Run Examples Standalone
+
+```bash
+# Run all 10 suites against the built-in local X API simulator:
+dotnet run --project examples/Xdk.Examples -- --examples
+
+# Or run against the live X API:
+X_BEARER_TOKEN="your_token" dotnet run --project examples/Xdk.Examples -- --examples
+```
+
+## Continuous Always-On Canary (`Xdk.Examples/XdkCanaryRunner.cs`)
+
+```bash
+# Single verification pass (exits 0 if healthy, 1 on any failure):
+dotnet run --project examples/Xdk.Examples -- --canary --once
+
+# Continuous always-on daemon with /health, /status, and Prometheus /metrics on port 8791:
+dotnet run --project examples/Xdk.Examples -- --canary --daemon --interval-seconds 30 --port 8791
+```
+
+Set `X_BEARER_TOKEN` (and optionally `X_ACCESS_TOKEN` / `X_API_BASE_URL`) to enable live X API probes alongside the synthetic full-SDK probes.

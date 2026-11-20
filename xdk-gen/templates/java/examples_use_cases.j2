@@ -1,0 +1,594 @@
+package com.xdevplatform.xdk.examples;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.xdevplatform.xdk.Paginator;
+import com.xdevplatform.xdk.XClient;
+import com.xdevplatform.xdk.auth.OAuth1;
+import com.xdevplatform.xdk.auth.OAuth2Pkce;
+import com.xdevplatform.xdk.auth.OAuth2Token;
+import com.xdevplatform.xdk.clients.ComplianceClient;
+import com.xdevplatform.xdk.clients.DirectMessagesClient;
+import com.xdevplatform.xdk.clients.ListsClient;
+import com.xdevplatform.xdk.clients.MediaClient;
+import com.xdevplatform.xdk.clients.NewsClient;
+import com.xdevplatform.xdk.clients.PostsClient;
+import com.xdevplatform.xdk.clients.SpacesClient;
+import com.xdevplatform.xdk.clients.StreamClient;
+import com.xdevplatform.xdk.clients.TrendsClient;
+import com.xdevplatform.xdk.clients.UsageClient;
+import com.xdevplatform.xdk.clients.UsersClient;
+import com.xdevplatform.xdk.models.Schemas;
+import com.xdevplatform.xdk.streaming.EventStream;
+import com.xdevplatform.xdk.streaming.StreamConfig;
+import com.xdevplatform.xdk.testing.MockXApiServer;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Comprehensive, runnable X API v2 Java SDK Cookbook covering every major developer use-case and
+ * all 24 API endpoint groups.
+ *
+ * <p>Run standalone against the built-in local X API simulator (or against the live X API when
+ * {@code X_BEARER_TOKEN} / OAuth credentials are set):
+ *
+ * <pre>{@code
+ * mvn test-compile exec:java -Dexec.classpathScope=test \
+ *     -Dexec.mainClass=com.xdevplatform.xdk.examples.UseCaseExamples
+ * }</pre>
+ */
+public final class UseCaseExamples {
+
+    private UseCaseExamples() {}
+
+    /**
+     * 1. Authentication Flows: Bearer Token, OAuth 2.0 PKCE + Refresh, and OAuth 1.0a User Context.
+     */
+    public static void runAuthenticationExamples(String baseUrl) {
+        // 1a. App-Only Bearer Token
+        XClient bearerClient =
+                XClient.builder()
+                        .baseUrl(baseUrl)
+                        .bearerToken("app_only_bearer_token")
+                        .build();
+        Schemas.GetUsersByUsernameResponse appLookup =
+                bearerClient.users().getByUsername("XDevelopers");
+        require(appLookup != null && appLookup.getData() != null, "Bearer lookup should return data");
+
+        // 1b. OAuth 2.0 Authorization Code with PKCE + Token Refresh
+        OAuth2Pkce oauth2 =
+                new OAuth2Pkce(
+                        "demo_client_id",
+                        "demo_client_secret",
+                        "https://example.org/oauth/callback",
+                        Arrays.asList("tweet.read", "tweet.write", "users.read", "offline.access"),
+                        baseUrl,
+                        "https://x.com/i",
+                        null);
+        XClient oauth2Client = XClient.builder().baseUrl(baseUrl).oauth2(oauth2).build();
+        String authorizationUrl = oauth2.getAuthorizationUrl("state_token_abc");
+        require(authorizationUrl.contains("code_challenge_method=S256"), "PKCE S256 URL expected");
+        OAuth2Token token = oauth2.exchangeCode("sample_auth_code");
+        require(token.getAccessToken() != null, "Exchanged access token expected");
+        Schemas.GetUsersMeResponse me = oauth2Client.users().getMe();
+        require(me != null && me.getData() != null, "OAuth2 getMe should succeed");
+        oauth2Client.refreshToken();
+
+        // 1c. OAuth 1.0a User Context (HMAC-SHA1)
+        OAuth1 oauth1 =
+                new OAuth1(
+                        "consumer_key",
+                        "consumer_secret",
+                        "oob",
+                        "user_access_token",
+                        "user_access_secret");
+        XClient oauth1Client = XClient.builder().baseUrl(baseUrl).oauth1(oauth1).build();
+        Schemas.CreatePostsResponse created =
+                oauth1Client
+                        .posts()
+                        .create(new Schemas.CreatePostsRequest().text("Posting with OAuth 1.0a!"));
+        require(created != null, "OAuth1 post creation should succeed");
+    }
+
+    /**
+     * 2. Posts, Search, Post Counts &amp; Analytics ({@code PostsClient}).
+     */
+    public static void runPostsAndSearchExamples(XClient client) {
+        // Create a post, reply, and quote
+        Schemas.CreatePostsResponse created =
+                client.posts()
+                        .create(
+                                new Schemas.CreatePostsRequest()
+                                        .text("Shipping Java & C# SDKs on X API v2!")
+                                        .replySettings("everyone"));
+        require(created != null, "create post");
+
+        // Single & batch post lookup with fields and expansions
+        PostsClient.GetByIdOptions lookupOpts =
+                PostsClient.GetByIdOptions.builder()
+                        .postFields(Arrays.asList("created_at", "public_metrics", "author_id"))
+                        .expansions(Collections.singletonList("author_id"))
+                        .userFields(Arrays.asList("username", "verified"));
+        Schemas.GetPostsByIdResponse post = client.posts().getById("1234567890", lookupOpts);
+        require(post != null, "getById");
+        client.posts().getByIds(Arrays.asList("1234567890", "1234567891"));
+
+        // Paginated recent search & full-archive search
+        Paginator<Schemas.SearchPostsRecentResponse> pages =
+                client.posts()
+                        .searchRecentPages(
+                                "from:XDevelopers -is:retweet",
+                                PostsClient.SearchRecentOptions.builder().maxResults(10));
+        int pageCount = 0;
+        for (Schemas.SearchPostsRecentResponse page : pages) {
+            require(page != null, "search page");
+            if (++pageCount >= 2) break;
+        }
+        client.posts().searchAll("xdk sdk", PostsClient.SearchAllOptions.builder().maxResults(10));
+
+        // Post counts, analytics & engagement lookups
+        client.posts()
+                .getCountsRecent(
+                        "xdk",
+                        PostsClient.GetCountsRecentOptions.builder().granularity("day"));
+        client.posts().getCountsAll("xdk");
+        client.posts()
+                .getAnalytics(
+                        Collections.singletonList("1234567890"),
+                        "2025-01-01T00:00:00Z",
+                        "2025-01-07T00:00:00Z");
+        client.posts().getLikingUsers("1234567890");
+        client.posts().getRepostedBy("1234567890");
+        client.posts().getQuoted("1234567890");
+        client.posts().hideReply("1234567890", new Schemas.HidePostsReplyRequest().hidden(true));
+        client.posts().delete("1234567890");
+    }
+
+    /**
+     * 3. Users, Timelines, Social Graph &amp; Bookmarks ({@code UsersClient}).
+     */
+    public static void runUsersAndBookmarksExamples(XClient client) {
+        // Profile lookups & user search
+        Schemas.GetUsersMeResponse me =
+                client.users()
+                        .getMe(
+                                UsersClient.GetMeOptions.builder()
+                                        .userFields(Arrays.asList("created_at", "description")));
+        String myId = me.getData() != null && me.getData().getId() != null ? me.getData().getId() : "2244994945";
+        client.users().getByUsername("XDevelopers");
+        client.users().getByUsernames(Arrays.asList("XDevelopers", "X"));
+        client.users().getById(myId);
+        client.users().getByIds(Arrays.asList(myId, "783214"));
+        client.users().search("developer platform");
+
+        // Timelines & mentions with cursor pagination
+        int timelinePages = 0;
+        for (Schemas.GetUsersPostsResponse page :
+                client.users()
+                        .getPostsPages(myId, UsersClient.GetPostsOptions.builder().maxResults(10))) {
+            require(page != null, "user posts page");
+            if (++timelinePages >= 2) break;
+        }
+        client.users().getMentions(myId);
+        client.users().getTimeline(myId);
+
+        // Social graph: follow, followers, likes, reposts, blocks, mutes
+        client.users().followUser(myId, new Schemas.FollowUserRequest().targetUserId("783214"));
+        for (Schemas.GetUsersFollowersResponse followersPage :
+                client.users().getFollowersPages(myId)) {
+            require(followersPage != null, "followers page");
+            break;
+        }
+        client.users().getFollowing(myId);
+        client.users().likePost(myId, new Schemas.LikePostRequest().tweetId("1234567890"));
+        client.users().unlikePost(myId, "1234567890");
+        client.users().repostPost(myId, new Schemas.RepostPostRequest().tweetId("1234567890"));
+        client.users().unrepostPost(myId, "1234567890");
+        client.users().idBlock(myId, new Schemas.UsersIdBlockRequest().targetUserId("99999"));
+        client.users().idUnblock(myId, "99999");
+        client.users().muteUser(myId, new Schemas.MuteUserRequest().targetUserId("99999"));
+        client.users().unmuteUser(myId, "99999");
+        client.users().unfollowUser(myId, "783214");
+
+        // Bookmarks & bookmark folders
+        JsonNode bookmarked =
+                client.users()
+                        .createBookmark(
+                                myId,
+                                new Schemas.CreateUsersBookmarkRequest().tweetId("1234567890"));
+        require(bookmarked != null, "createBookmark");
+        for (Schemas.GetUsersBookmarksResponse bmPage : client.users().getBookmarksPages(myId)) {
+            require(bmPage != null, "bookmarks page");
+            break;
+        }
+        client.users()
+                .createBookmarkFolder(
+                        myId, new Schemas.CreateUsersBookmarkFolderRequest().name("SDK Docs"));
+        client.users().getBookmarkFolders(myId);
+        client.users().deleteBookmark(myId, "1234567890");
+    }
+
+    /**
+     * 4. Real-Time Filtered &amp; Sample Streaming ({@code StreamClient}).
+     */
+    public static void runStreamingExamples(XClient client) {
+        // Configure filtered stream rules
+        Schemas.UpdateRulesAdd rule =
+                new Schemas.UpdateRulesAdd().value("xdk (java OR csharp) -is:retweet").tag("xdk-mentions");
+        client.stream()
+                .updateRules(new Schemas.UpdateRulesRequest().add(Collections.singletonList(rule)));
+        client.stream().getRules();
+        client.stream().getRuleCounts();
+
+        // Consume real-time filtered stream with resilient StreamConfig
+        StreamConfig streamCfg =
+                StreamConfig.builder()
+                        .maxRetries(2)
+                        .initialBackoff(java.time.Duration.ofMillis(25))
+                        .maxBackoff(java.time.Duration.ofMillis(100))
+                        .build();
+        List<Schemas.StreamPostsResponse> events = new ArrayList<>();
+        try (EventStream<Schemas.StreamPostsResponse> stream =
+                client.stream()
+                        .posts(
+                                StreamClient.PostsOptions.builder()
+                                        .tweetFields(Arrays.asList("created_at", "author_id"))
+                                        .streamConfig(streamCfg))) {
+            for (Schemas.StreamPostsResponse ev : stream) {
+                events.add(ev);
+                if (events.size() >= 2) break;
+            }
+        }
+        require(!events.isEmpty(), "Filtered stream should emit events");
+
+        // Consume 1% sample stream
+        try (EventStream<Schemas.StreamPostsSampleResponse> sample =
+                client.stream()
+                        .postsSample(
+                                StreamClient.PostsSampleOptions.builder().streamConfig(streamCfg))) {
+            var it = sample.iterator();
+            require(it.hasNext() && it.next() != null, "Sample stream should emit event");
+        }
+    }
+
+    /**
+     * 5. Media Upload, Chunked Large Video &amp; Metadata ({@code MediaClient}).
+     */
+    public static void runMediaUploadExamples(XClient client) {
+        String base64Chunk =
+                Base64.getEncoder()
+                        .encodeToString("fake_mp4_segment_bytes".getBytes(StandardCharsets.UTF_8));
+
+        // Single-shot upload
+        client.media()
+                .upload(
+                        new Schemas.MediaUploadRequest()
+                                .media(base64Chunk)
+                                .mediaCategory("tweet_image"));
+
+        // Chunked video upload lifecycle (supports >2 GiB 64-bit totalBytes!)
+        Schemas.InitializeMediaUploadResponse init =
+                client.media()
+                        .initializeUpload(
+                                new Schemas.InitializeMediaUploadRequest()
+                                        .totalBytes(3_221_225_472L) // 3 GiB
+                                        .mediaType("video/mp4")
+                                        .mediaCategory("tweet_video"));
+        String mediaId =
+                init.getData() != null && init.getData().getId() != null
+                        ? init.getData().getId()
+                        : "1889990001";
+        client.media()
+                .appendUpload(
+                        mediaId,
+                        new Schemas.AppendMediaUploadRequest().segmentIndex(0).media(base64Chunk));
+        client.media().finalizeUpload(mediaId);
+        client.media()
+                .getUploadStatus(
+                        mediaId, MediaClient.GetUploadStatusOptions.builder().command("STATUS"));
+
+        // Accessibility alt-text metadata, subtitles, lookup & analytics
+        client.media().createMetadata(new Schemas.CreateMediaMetadataRequest().id(mediaId));
+        client.media()
+                .createSubtitles(
+                        new Schemas.CreateMediaSubtitlesRequest()
+                                .id(mediaId)
+                                .mediaCategory("tweet_video"));
+        client.media().getByKeys(Collections.singletonList("3_" + mediaId));
+        client.media()
+                .getAnalytics(
+                        Collections.singletonList("3_" + mediaId),
+                        "2025-01-01T00:00:00Z",
+                        "2025-01-07T00:00:00Z");
+        client.media().getLibraryCategories();
+    }
+
+    /**
+     * 6. Direct Messages &amp; Encrypted XChat ({@code DirectMessagesClient}, {@code ChatClient}).
+     */
+    public static void runDirectMessagesAndChatExamples(XClient client) {
+        // Direct Messages v2
+        client.directMessages()
+                .createByParticipantId(
+                        "783214",
+                        new Schemas.CreateDirectMessagesByParticipantIdRequest()
+                                .text("Hey from XDK Java!"));
+        client.directMessages()
+                .createConversation(
+                        new Schemas.CreateDirectMessagesConversationRequest()
+                                .conversationType("Group")
+                                .participantIds(Arrays.asList("783214", "2244994945")));
+        client.directMessages()
+                .createByConversationId(
+                        "conv_1",
+                        new Schemas.CreateDirectMessagesByConversationIdRequest()
+                                .text("Welcome to the group DM!"));
+        for (Schemas.GetDirectMessagesEventsResponse dmPage :
+                client.directMessages()
+                        .getEventsPages(
+                                DirectMessagesClient.GetEventsOptions.builder().maxResults(10))) {
+            require(dmPage != null, "DM events page");
+            break;
+        }
+        byte[] dmMedia = client.directMessages().dmConversationsMediaDownload("dm_1", "m_1", "r_1");
+        require(dmMedia.length > 0, "DM media binary download");
+        client.directMessages().deleteEvents("ev_1");
+
+        // Encrypted XChat & public keys
+        client.users().getPublicKeys(Collections.singletonList("2244994945"));
+        client.chat().getSettings();
+        client.chat()
+                .sendMessage(
+                        "chat_conv_1",
+                        new Schemas.SendChatMessageRequest()
+                                .encodedMessageCreateEvent("base64_encrypted_event")
+                                .messageId("msg_001"));
+        client.chat().getConversationEvents("chat_conv_1");
+        client.chat()
+                .mediaUploadInitialize(
+                        new Schemas.ChatMediaUploadInitializeRequest()
+                                .conversationId("chat_conv_1")
+                                .totalBytes(1048576L));
+        client.chat()
+                .mediaUploadAppend(
+                        "upload_1",
+                        new Schemas.ChatMediaUploadAppendRequest()
+                                .conversationId("chat_conv_1")
+                                .mediaHashKey("hash_1")
+                                .segmentIndex(0)
+                                .media("Y2hhdF9tZWRpYQ=="));
+        byte[] chatBytes = client.chat().mediaDownload("chat_conv_1", "hash_1");
+        require(chatBytes.length > 0, "XChat media download");
+    }
+
+    /**
+     * 7. Lists, Communities, Spaces, Broadcasts &amp; Calls.
+     */
+    public static void runCommunitiesSpacesListsExamples(XClient client) {
+        // Lists
+        Schemas.CreateListsResponse list =
+                client.lists()
+                        .create(
+                                new Schemas.CreateListsRequest()
+                                        .name("XDK Contributors")
+                                        .description("Core SDK builders")
+                                        .privateValue(false));
+        require(list != null, "create list");
+        client.lists().getById("list_1");
+        client.lists().addMember("list_1", new Schemas.AddListsMemberRequest().userId("783214"));
+        client.lists().getMembers("list_1");
+        for (Schemas.GetListsPostsResponse lp :
+                client.lists()
+                        .getPostsPages("list_1", ListsClient.GetPostsOptions.builder().maxResults(10))) {
+            require(lp != null, "list posts page");
+            break;
+        }
+        client.lists().update("list_1", new Schemas.UpdateListsRequest().description("Updated"));
+        client.lists().removeMemberByUserId("list_1", "783214");
+        client.lists().delete("list_1");
+
+        // Communities & Spaces
+        client.communities().search("X Developers");
+        client.communities().getById("comm_1");
+        client.spaces().search("AI Engineering", SpacesClient.SearchOptions.builder().state("live"));
+        client.spaces().getById("1YqKDqWLPPlKV");
+        client.spaces().getByCreatorIds(Collections.singletonList("2244994945"));
+        client.spaces().getPosts("1YqKDqWLPPlKV");
+
+        // Broadcasts & Calls
+        client.broadcasts().getRegion();
+        client.broadcasts().list();
+        client.broadcasts().listSources();
+        client.calls()
+                .createCall(
+                        new Schemas.CreateCallRequest()
+                                .conversationId("chat_conv_1")
+                                .audioOnly(true)
+                                .title("SDK Standup"));
+        client.calls().getCall("call_1");
+        client.calls().listScheduled();
+        client.calls().leaveCall("call_1");
+    }
+
+    /**
+     * 8. Trends, News, Articles &amp; Community Notes.
+     */
+    public static void runDiscoveryAndNotesExamples(XClient client) {
+        // Trends (Worldwide WOEID = 1 & personalized)
+        client.trends().getByWoeid(1, TrendsClient.GetByWoeidOptions.builder().maxTrends(20));
+        client.trends().getPersonalized();
+
+        // News & Articles
+        client.news().search("technology", NewsClient.SearchOptions.builder().maxResults(10));
+        client.news().get("news_1");
+        client.articles()
+                .articleCreateDraft(
+                        new Schemas.ArticleCreateDraftRequest().title("Building with XDK Java"));
+        client.articles().articlePublish("article_1");
+
+        // Community Notes
+        client.communityNotes().searchEligiblePosts(true);
+        client.communityNotes().searchWritten(true);
+        client.communityNotes()
+                .evaluate(
+                        new Schemas.EvaluateCommunityNotesRequest()
+                                .postId("1234567890")
+                                .noteText("Helpful context with citation https://developer.x.com"));
+        client.communityNotes()
+                .create(
+                        new Schemas.CreateCommunityNotesRequest()
+                                .postId("1234567890")
+                                .testMode(true));
+        client.communityNotes().delete("note_1");
+    }
+
+    /**
+     * 9. Webhooks, Account Activity, Activity Subscriptions, Bots, Connections &amp; Account.
+     */
+    public static void runWebhooksAndAutomationExamples(XClient client) {
+        // Webhooks
+        client.webhooks()
+                .create(
+                        new Schemas.CreateWebhooksRequest()
+                                .url("https://webhooks.example.org/x/events"));
+        client.webhooks().get();
+        client.webhooks().validate("wh_1");
+        client.webhooks().createStreamLink("wh_1");
+        client.webhooks().getStreamLinks();
+        client.webhooks()
+                .createWebhookReplayJob(
+                        new Schemas.CreateWebhookReplayJobRequest()
+                                .webhookId("wh_1")
+                                .fromDate("202501150000")
+                                .toDate("202501150100"));
+
+        // Account Activity & X Activity Subscriptions
+        client.accountActivity()
+                .createSubscription("wh_1", new Schemas.CreateAccountActivitySubscriptionRequest());
+        client.accountActivity().getSubscriptions("wh_1");
+        client.accountActivity().getSubscriptionCount();
+        client.accountActivity().validateSubscription("wh_1");
+        client.accountActivity().deleteSubscription("wh_1", "2244994945");
+
+        client.activity()
+                .createSubscription(
+                        new Schemas.CreateActivitySubscriptionRequest()
+                                .eventType("post.create")
+                                .webhookId("wh_1")
+                                .tag("acct-sub"));
+        client.activity().getSubscriptions();
+        client.activity()
+                .updateSubscription(
+                        "sub_1", new Schemas.UpdateActivitySubscriptionRequest().tag("updated-tag"));
+        client.activity().deleteSubscription("sub_1");
+        client.webhooks().delete("wh_1");
+
+        // Bots, Connections & Developer Account
+        client.bots()
+                .createBot(
+                        new Schemas.CreateBotRequest()
+                                .displayName("XDK Helper Bot")
+                                .handle("xdk_helper_bot"));
+        client.bots().get();
+        client.bots().rotateBotToken("bot_1", new Schemas.RotateBotTokenRequest());
+        client.bots().revokeBotToken("bot_1");
+        client.bots().deleteBot("bot_1");
+
+        client.connections().getConnectionHistory();
+        client.connections().deleteByEndpoint("posts-stream");
+        client.account().getDeveloper();
+        client.account().ensure(new Schemas.EnsureAccountRequest().metadata("{}"));
+    }
+
+    /**
+     * 10. Batch Compliance, API Usage &amp; OpenAPI Spec Introspection.
+     */
+    public static void runComplianceAndUsageExamples(XClient client) {
+        // Batch Compliance job + binary upload & download
+        client.compliance()
+                .createJobs(
+                        new Schemas.CreateComplianceJobsRequest()
+                                .type("tweets")
+                                .name("nightly-compliance-sync")
+                                .resumable(true));
+        client.compliance().getJobs("tweets", ComplianceClient.GetJobsOptions.builder().status("in_progress"));
+        byte[] idsPayload = "1234567890\n1234567891\n".getBytes(StandardCharsets.UTF_8);
+        client.compliance().uploadJobSubmission("job_1", "upload_tok", idsPayload);
+        client.compliance().getJobsById("job_1");
+        byte[] results = client.compliance().downloadJobResults("job_1", "download_tok");
+        require(results != null && results.length > 0, "Compliance binary download");
+        client.compliance().deleteJobsById("job_1");
+
+        // API Usage & Credits
+        client.usage().get(UsageClient.GetOptions.builder().days(7));
+        client.usage().getCredits();
+
+        // Live OpenAPI Spec Introspection
+        JsonNode spec = client.general().getOpenApiSpec();
+        require(spec != null && spec.size() > 0, "OpenAPI spec node");
+    }
+
+    /**
+     * Runs all 10 X API v2 workflow suites (covering all 24 endpoint groups) and returns per-suite
+     * execution durations in milliseconds.
+     */
+    public static Map<String, Long> runAll(String baseUrl, XClient client) {
+        Map<String, Runnable> suites = new LinkedHashMap<>();
+        suites.put("01_authentication_flows", () -> runAuthenticationExamples(baseUrl));
+        suites.put("02_posts_and_search", () -> runPostsAndSearchExamples(client));
+        suites.put("03_users_social_and_bookmarks", () -> runUsersAndBookmarksExamples(client));
+        suites.put("04_realtime_streaming", () -> runStreamingExamples(client));
+        suites.put("05_media_upload_and_metadata", () -> runMediaUploadExamples(client));
+        suites.put("06_direct_messages_and_xchat", () -> runDirectMessagesAndChatExamples(client));
+        suites.put("07_lists_communities_spaces_calls", () -> runCommunitiesSpacesListsExamples(client));
+        suites.put("08_trends_news_articles_notes", () -> runDiscoveryAndNotesExamples(client));
+        suites.put("09_webhooks_activity_bots_account", () -> runWebhooksAndAutomationExamples(client));
+        suites.put("10_compliance_usage_and_openapi", () -> runComplianceAndUsageExamples(client));
+
+        Map<String, Long> timings = new LinkedHashMap<>();
+        for (Map.Entry<String, Runnable> entry : suites.entrySet()) {
+            long start = System.nanoTime();
+            entry.getValue().run();
+            timings.put(entry.getKey(), (System.nanoTime() - start) / 1_000_000L);
+        }
+        return timings;
+    }
+
+    public static void main(String[] args) {
+        String envBase = System.getenv("X_API_BASE_URL");
+        String envBearer = System.getenv("X_BEARER_TOKEN");
+        if (envBearer != null && !envBearer.isEmpty()) {
+            String liveBase = (envBase != null && !envBase.isEmpty()) ? envBase : "https://api.x.com";
+            XClient liveClient =
+                    XClient.builder().baseUrl(liveBase).bearerToken(envBearer).build();
+            Schemas.GetUsersByUsernameResponse user =
+                    liveClient.users().getByUsername("XDevelopers");
+            System.out.println("Live lookup @XDevelopers -> " + user.getData());
+            return;
+        }
+
+        try (MockXApiServer simulator = new MockXApiServer()) {
+            XClient client =
+                    XClient.builder()
+                            .baseUrl(simulator.getBaseUrl())
+                            .bearerToken("sim-bearer")
+                            .accessToken("sim-oauth2")
+                            .oauth1(new OAuth1("ck", "cs", "oob", "at", "ats"))
+                            .build();
+            Map<String, Long> results = runAll(simulator.getBaseUrl(), client);
+            System.out.println("=== XDK Java Use-Case Examples Completed (" + results.size() + " suites) ===");
+            results.forEach((name, ms) -> System.out.println("  [PASS] " + name + " (" + ms + " ms)"));
+        }
+    }
+
+    private static void require(boolean condition, String message) {
+        if (!condition) {
+            throw new IllegalStateException("Example assertion failed: " + message);
+        }
+    }
+}

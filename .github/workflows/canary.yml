@@ -1,0 +1,95 @@
+name: Continuous SDK Canary & Full-Coverage Verification
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      live_probes:
+        description: "Also run live api.x.com probes (uses X_BEARER_TOKEN secret if configured)"
+        required: false
+        type: boolean
+        default: true
+  push:
+    branches: [main]
+    paths:
+      - "specs/**"
+      - "xdk-lib/**"
+      - "xdk-gen/**"
+      - "xdk-build/**"
+      - "canary/**"
+      - ".github/workflows/canary.yml"
+  pull_request:
+    paths:
+      - "specs/**"
+      - "xdk-lib/**"
+      - "xdk-gen/**"
+      - "xdk-build/**"
+      - "canary/**"
+      - ".github/workflows/canary.yml"
+
+jobs:
+  java-and-csharp-canary:
+    name: Java & C# Full-Coverage E2E + Examples + Canary
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout xdk generator
+        uses: actions/checkout@v4
+        with:
+          path: xdk
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: xdk
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Generate Java and C# SDKs
+        working-directory: xdk
+        run: |
+          cargo build --release -p xdk-build
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            ./target/release/xdk-build java --latest true --output ../xdk-java
+            ./target/release/xdk-build csharp --latest true --output ../xdk-csharp
+          else
+            ./target/release/xdk-build java --spec specs/openapi.json --output ../xdk-java
+            ./target/release/xdk-build csharp --spec specs/openapi.json --output ../xdk-csharp
+          fi
+
+      - name: Run Java Full-Coverage Loopback Contracts, Examples & Release Packaging
+        working-directory: xdk-java
+        run: mvn -B package -Prelease -Dgpg.skip=true
+
+      - name: Run C# Full-Coverage Loopback Contracts, Examples & Release Packaging
+        working-directory: xdk-csharp
+        run: |
+          dotnet build Xdk.sln -c Release -warnaserror
+          dotnet test Xdk.sln -c Release --no-build --verbosity normal
+          dotnet pack src/Xdk/Xdk.csproj -c Release --no-build -o artifacts
+
+      - name: Run Unified Multi-SDK Canary Supervisor
+        working-directory: xdk
+        env:
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+        run: |
+          EXTRA_ARGS=""
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.live_probes }}" = "true" ]; then
+            EXTRA_ARGS="--live"
+          fi
+          python3 canary/supervisor.py \
+            --java-dir ../xdk-java \
+            --csharp-dir ../xdk-csharp \
+            --once ${EXTRA_ARGS}

@@ -1,0 +1,93 @@
+package com.xdevplatform.xdk;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xdevplatform.xdk.auth.OAuth1;
+import com.xdevplatform.xdk.canary.XdkCanaryApp;
+import com.xdevplatform.xdk.examples.UseCaseExamples;
+import com.xdevplatform.xdk.testing.MockXApiServer;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.Map;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Compiles and executes every X API v2 use-case example in {@code examples/} AND verifies the
+ * {@link XdkCanaryApp} continuous monitoring service + HTTP {@code /health}, {@code /status}, and
+ * {@code /metrics} endpoints end-to-end.
+ */
+public class UseCaseExamplesAndCanaryTest {
+
+    @Test
+    void allTenUseCaseSuitesExecuteCleanlyAcrossAll24Tags() {
+        try (MockXApiServer simulator = new MockXApiServer()) {
+            XClient client =
+                    XClient.builder()
+                            .baseUrl(simulator.getBaseUrl())
+                            .bearerToken("test-bearer")
+                            .accessToken("test-oauth2")
+                            .oauth1(new OAuth1("ck", "cs", "oob", "at", "ats"))
+                            .build();
+
+            Map<String, Long> timings = UseCaseExamples.runAll(simulator.getBaseUrl(), client);
+            assertEquals(10, timings.size(), "Expected all 10 use-case workflow suites to run");
+            assertTrue(
+                    simulator.getRequests().size() >= 80,
+                    "Expected >=80 real HTTP operations across all 24 tags, got "
+                            + simulator.getRequests().size());
+        }
+    }
+
+    @Test
+    void canaryRunnerExecutesCycleAndServesHealthStatusAndPrometheusMetrics() throws Exception {
+        try (XdkCanaryApp canary = new XdkCanaryApp(false)) {
+            canary.startStatusServer(0);
+            int port = canary.getStatusPort();
+            assertTrue(port > 0);
+
+            XdkCanaryApp.CanarySnapshot snap = canary.runCycle();
+            assertTrue(snap.healthy, "Canary cycle should be 100% healthy: " + snap.probesFailed);
+            assertEquals(0, snap.probesFailed);
+            assertTrue(snap.probesPassed >= 15);
+
+            HttpClient http = HttpClient.newHttpClient();
+            ObjectMapper mapper = new ObjectMapper();
+
+            HttpResponse<String> health =
+                    http.send(
+                            HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/health"))
+                                    .GET()
+                                    .build(),
+                            HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, health.statusCode());
+            JsonNode healthJson = mapper.readTree(health.body());
+            assertTrue(healthJson.get("healthy").asBoolean());
+
+            HttpResponse<String> status =
+                    http.send(
+                            HttpRequest.newBuilder(URI.create("http://127.0.0.1:" + port + "/status"))
+                                    .GET()
+                                    .build(),
+                            HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, status.statusCode());
+            JsonNode statusJson = mapper.readTree(status.body());
+            assertEquals("java", statusJson.get("sdk").asText());
+            assertEquals(1, statusJson.get("totalCycles").asInt());
+
+            HttpResponse<String> metrics =
+                    http.send(
+                            HttpRequest.newBuilder(
+                                            URI.create("http://127.0.0.1:" + port + "/metrics"))
+                                    .GET()
+                                    .build(),
+                            HttpResponse.BodyHandlers.ofString());
+            assertEquals(200, metrics.statusCode());
+            assertTrue(metrics.body().contains("xdk_canary_healthy{sdk=\"java\"} 1"));
+            assertTrue(metrics.body().contains("xdk_canary_probe_duration_ms{sdk=\"java\""));
+        }
+    }
+}

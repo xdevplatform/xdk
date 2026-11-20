@@ -1446,16 +1446,43 @@ fn java_type_inner(
         }
         for key in ["oneOf", "anyOf"] {
             if let Some(members) = get(obj, key).and_then(|v| v.as_array())
-                && members.len() == 1
+                && !members.is_empty()
             {
-                return java_type_inner(
-                    &members[0],
-                    ns,
-                    depth + 1,
-                    hoist_prefix,
-                    hoisted,
-                    allow_hoist,
-                );
+                if members.len() == 1 {
+                    return java_type_inner(
+                        &members[0],
+                        ns,
+                        depth + 1,
+                        hoist_prefix,
+                        hoisted,
+                        allow_hoist,
+                    );
+                }
+                let mut resolved = Vec::with_capacity(members.len());
+                for m in members {
+                    let mut scratch = Vec::new();
+                    resolved.push(java_type_inner(
+                        m,
+                        ns,
+                        depth + 1,
+                        hoist_prefix,
+                        &mut scratch,
+                        false,
+                    ));
+                }
+                if resolved[0] != "JsonNode"
+                    && !resolved[0].starts_with("Map<")
+                    && resolved.iter().all(|t| t == &resolved[0])
+                {
+                    return java_type_inner(
+                        &members[0],
+                        ns,
+                        depth + 1,
+                        hoist_prefix,
+                        hoisted,
+                        allow_hoist,
+                    );
+                }
             }
         }
         return "JsonNode".to_string();
@@ -1463,10 +1490,13 @@ fn java_type_inner(
 
     match get_str(obj, "type") {
         Some("string") => "String".to_string(),
-        Some("integer") => match get_str(obj, "format") {
-            Some("int64") => "Long".to_string(),
-            _ => "Integer".to_string(),
-        },
+        Some("integer") => {
+            if is_64bit_integer(obj) {
+                "Long".to_string()
+            } else {
+                "Integer".to_string()
+            }
+        }
         Some("number") => match get_str(obj, "format") {
             Some("float") => "Float".to_string(),
             _ => "Double".to_string(),
@@ -1729,16 +1759,43 @@ fn csharp_type_inner(
         }
         for key in ["oneOf", "anyOf"] {
             if let Some(members) = get(obj, key).and_then(|v| v.as_array())
-                && members.len() == 1
+                && !members.is_empty()
             {
-                return csharp_type_inner(
-                    &members[0],
-                    ns,
-                    depth + 1,
-                    hoist_prefix,
-                    hoisted,
-                    allow_hoist,
-                );
+                if members.len() == 1 {
+                    return csharp_type_inner(
+                        &members[0],
+                        ns,
+                        depth + 1,
+                        hoist_prefix,
+                        hoisted,
+                        allow_hoist,
+                    );
+                }
+                let mut resolved = Vec::with_capacity(members.len());
+                for m in members {
+                    let mut scratch = Vec::new();
+                    resolved.push(csharp_type_inner(
+                        m,
+                        ns,
+                        depth + 1,
+                        hoist_prefix,
+                        &mut scratch,
+                        false,
+                    ));
+                }
+                if resolved[0] != "JsonElement"
+                    && !resolved[0].starts_with("Dictionary<")
+                    && resolved.iter().all(|t| t == &resolved[0])
+                {
+                    return csharp_type_inner(
+                        &members[0],
+                        ns,
+                        depth + 1,
+                        hoist_prefix,
+                        hoisted,
+                        allow_hoist,
+                    );
+                }
             }
         }
         return "JsonElement".to_string();
@@ -1746,10 +1803,13 @@ fn csharp_type_inner(
 
     match get_str(obj, "type") {
         Some("string") => "string".to_string(),
-        Some("integer") => match get_str(obj, "format") {
-            Some("int64") => "long".to_string(),
-            _ => "int".to_string(),
-        },
+        Some("integer") => {
+            if is_64bit_integer(obj) {
+                "long".to_string()
+            } else {
+                "int".to_string()
+            }
+        }
         Some("number") => match get_str(obj, "format") {
             Some("float") => "float".to_string(),
             _ => "double".to_string(),
@@ -1895,6 +1955,25 @@ pub fn example_json(schema: &Json) -> Json {
     example_inner(schema, 0)
 }
 
+/// Build a rich, populated JSON instance of a schema for full-coverage
+/// serialization/deserialization round-trip testing and realistic mock servers.
+/// Populates optional properties at shallow depths (`depth <= 2`) and switches
+/// to required-only deeper to stay compact and cycle-safe.
+pub fn full_example_json(schema: &Json) -> Json {
+    full_example_inner(schema, 0, "")
+}
+
+fn is_64bit_integer(obj: &Json) -> bool {
+    match get_str(obj, "format") {
+        Some("int64") => true,
+        Some("int32") => false,
+        _ => !matches!(
+            get(obj, "maximum").and_then(|v| v.as_i64()),
+            Some(max) if max <= i32::MAX as i64
+        ),
+    }
+}
+
 fn has_non_constraint_composition(schema: &Json) -> bool {
     ["oneOf", "anyOf", "allOf"].iter().any(|k| {
         get(schema, k)
@@ -1974,6 +2053,127 @@ fn example_inner(schema: &Json, depth: usize) -> Json {
                 for name in names {
                     if let Some(prop) = props.get(name) {
                         obj.insert(name.to_string(), example_inner(prop, depth + 1));
+                    }
+                }
+            }
+            Json::Object(obj)
+        }
+        Some(_) => Json::Object(serde_json::Map::new()),
+    }
+}
+
+fn full_example_inner(schema: &Json, depth: usize, prop_name: &str) -> Json {
+    if !schema.is_object() {
+        return Json::Object(serde_json::Map::new());
+    }
+    if depth > 6 {
+        return example_inner(schema, depth);
+    }
+
+    if has_non_constraint_composition(schema) {
+        for key in ["oneOf", "anyOf"] {
+            if let Some(members) = get(schema, key).and_then(|v| v.as_array())
+                && let Some(first) = members.first()
+            {
+                return full_example_inner(first, depth + 1, prop_name);
+            }
+        }
+        if let Some(members) = get(schema, "allOf").and_then(|v| v.as_array()) {
+            let mut merged = serde_json::Map::new();
+            for member in members {
+                if let Json::Object(obj) = full_example_inner(member, depth + 1, prop_name) {
+                    merged.extend(obj);
+                }
+            }
+            return Json::Object(merged);
+        }
+    }
+
+    if let Some(values) = get(schema, "enum").and_then(|v| v.as_array())
+        && let Some(first) = values.first()
+    {
+        return first.clone();
+    }
+
+    match get_str(schema, "type") {
+        Some("string") => match get_str(schema, "format") {
+            Some("date-time") => Json::String("2025-01-15T12:00:00.000Z".to_string()),
+            Some("date") => Json::String("2025-01-15".to_string()),
+            Some("byte") => Json::String("dGVzdF9tZWRpYV9ieXRlcw==".to_string()),
+            _ => match prop_name {
+                "id" | "tweet_id" | "user_id" | "media_id" | "list_id" | "space_id" => {
+                    Json::String("1234567890".to_string())
+                }
+                "username" => Json::String("XDevelopers".to_string()),
+                "text" => Json::String("Hello from XDK!".to_string()),
+                "next_token" | "pagination_token" => Json::Null,
+                _ => Json::String("test_value".to_string()),
+            },
+        },
+        Some("integer") => {
+            let min = get(schema, "minimum").and_then(|v| v.as_i64()).unwrap_or(1);
+            let max = get(schema, "maximum").and_then(|v| v.as_i64());
+            let default_val = if is_64bit_integer(schema)
+                && (prop_name.ends_with("_ms") || prop_name == "total_bytes")
+            {
+                5_000_000_000_i64
+            } else {
+                min.max(1)
+            };
+            let clamped = match max {
+                Some(mx) => default_val.max(min).min(mx),
+                None => default_val.max(min),
+            };
+            Json::Number(serde_json::Number::from(clamped))
+        }
+        Some("number") => Json::Number(serde_json::Number::from_f64(1.5).unwrap()),
+        Some("boolean") => Json::Bool(true),
+        Some("array") => {
+            if depth > 4 {
+                return Json::Array(Vec::new());
+            }
+            let item = get(schema, "items")
+                .map(|i| full_example_inner(i, depth + 1, prop_name))
+                .unwrap_or_else(|| Json::Object(serde_json::Map::new()));
+            Json::Array(vec![item])
+        }
+        Some("object") | None => {
+            let mut obj = serde_json::Map::new();
+            if let Some(props) = get(schema, "properties").and_then(|p| p.as_object()) {
+                let required_set: HashSet<&str> = get(schema, "required")
+                    .and_then(|r| r.as_array())
+                    .map(|arr| arr.iter().filter_map(|v| v.as_str()).collect())
+                    .unwrap_or_default();
+
+                let mut names: Vec<&String> = props.keys().collect();
+                names.sort_unstable();
+                let has_data = props.contains_key("data");
+
+                for name in names {
+                    // Omit top-level `errors` when `data` is present so 200/201 mocks represent clean successes
+                    if depth == 0
+                        && name == "errors"
+                        && has_data
+                        && !required_set.contains("errors")
+                    {
+                        continue;
+                    }
+                    // Omit pagination cursor tokens on single-call contract mocks unless required
+                    if (name == "next_token"
+                        || name == "pagination_token"
+                        || name == "previous_token")
+                        && !required_set.contains(name.as_str())
+                    {
+                        continue;
+                    }
+                    let include = depth <= 2
+                        || required_set.contains(name.as_str())
+                        || matches!(name.as_str(), "id" | "text" | "name" | "username");
+                    if include && let Some(prop) = props.get(name) {
+                        let val = full_example_inner(prop, depth + 1, name);
+                        if !val.is_null() {
+                            obj.insert(name.clone(), val);
+                        }
                     }
                 }
             }
@@ -2223,5 +2423,63 @@ mod tests {
         let names = referenced_schema_names([&response]);
         let expected: HashSet<String> = ["Page", "Post", "Refs"].map(String::from).into();
         assert_eq!(names, expected);
+    }
+
+    #[test]
+    fn java_and_csharp_collapse_homogeneous_string_anyof() {
+        let media = json!({
+            "anyOf": [
+                {"type": "string", "format": "binary"},
+                {"type": "string", "format": "byte"}
+            ]
+        });
+        assert_eq!(java_type_of(&media, "Schemas."), "String");
+        assert_eq!(csharp_type_of(&media, "", false), "string");
+    }
+
+    #[test]
+    fn java_and_csharp_integer_width_safety() {
+        let int32_param = json!({"type": "integer", "format": "int32"});
+        let small_bounded = json!({"type": "integer", "minimum": 0, "maximum": 9999});
+        let big_upload = json!({"type": "integer", "minimum": 0, "maximum": 17179869184_i64});
+        let unbounded_ms = json!({"type": "integer"});
+
+        assert_eq!(java_type_of(&int32_param, ""), "Integer");
+        assert_eq!(java_type_of(&small_bounded, ""), "Integer");
+        assert_eq!(java_type_of(&big_upload, ""), "Long");
+        assert_eq!(java_type_of(&unbounded_ms, ""), "Long");
+
+        assert_eq!(csharp_type_of(&int32_param, "", false), "int");
+        assert_eq!(csharp_type_of(&small_bounded, "", false), "int");
+        assert_eq!(csharp_type_of(&big_upload, "", false), "long");
+        assert_eq!(csharp_type_of(&unbounded_ms, "", false), "long");
+    }
+
+    #[test]
+    fn full_example_json_populates_optional_shallow_fields_and_skips_errors_when_data_present() {
+        let resp_schema = json!({
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "id": {"type": "string"},
+                        "timestamp_ms": {"type": "integer"}
+                    }
+                },
+                "errors": {
+                    "type": "array",
+                    "items": {"type": "object", "properties": {"message": {"type": "string"}}}
+                }
+            }
+        });
+        let ex = full_example_json(&resp_schema);
+        assert!(ex.get("data").is_some(), "data should be populated: {ex}");
+        assert!(
+            ex.get("errors").is_none(),
+            "errors should be omitted on success mock: {ex}"
+        );
+        assert_eq!(ex["data"]["id"], "1234567890");
+        assert_eq!(ex["data"]["timestamp_ms"], 5_000_000_000_i64);
     }
 }

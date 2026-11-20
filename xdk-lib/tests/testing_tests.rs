@@ -251,6 +251,14 @@ fn test_contract_test_structure() {
         },
         security_requirements: vec![],
         is_streaming: false,
+        required_body: false,
+        has_options: false,
+        is_binary_request: false,
+        is_binary_response: false,
+        request_java_type: "Object".to_string(),
+        request_csharp_type: "object".to_string(),
+        request_mock_json: None,
+        full_response_mock_json: "{}".to_string(),
     };
 
     assert_eq!(contract_test.method_name, "get_user");

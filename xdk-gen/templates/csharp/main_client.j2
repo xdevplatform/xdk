@@ -54,7 +54,7 @@ public sealed class XClient : IDisposable
             : opts.BaseUrl.TrimEnd('/');
         BearerToken = opts.BearerToken;
         OAuth2 = opts.OAuth2;
-        _accessToken = opts.AccessToken ?? opts.OAuth2?.Token?.AccessToken;
+        _accessToken = opts.AccessToken;
         OAuth1 = opts.OAuth1;
         Timeout = opts.Timeout;
         Retry = opts.Retry;
@@ -85,6 +85,7 @@ public sealed class XClient : IDisposable
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
             PropertyNameCaseInsensitive = false,
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
         };
 
 {% for tag in tags %}
@@ -94,7 +95,7 @@ public sealed class XClient : IDisposable
 
     public string? AccessToken
     {
-        get => _accessToken;
+        get => !string.IsNullOrEmpty(_accessToken) ? _accessToken : OAuth2?.Token?.AccessToken;
         set => _accessToken = value;
     }
 
@@ -106,7 +107,7 @@ public sealed class XClient : IDisposable
         {
             var refreshed = await OAuth2.RefreshTokenAsync(cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
-            if (!string.IsNullOrEmpty(refreshed.AccessToken))
+            if (!string.IsNullOrEmpty(_accessToken) && !string.IsNullOrEmpty(refreshed.AccessToken))
             {
                 _accessToken = refreshed.AccessToken;
             }
@@ -344,6 +345,33 @@ public sealed class XClient : IDisposable
                             {
                                 message = detailProp.GetString()!;
                             }
+                            else if (doc.RootElement.TryGetProperty("errors", out var errsProp)
+                                && errsProp.ValueKind == JsonValueKind.Array
+                                && errsProp.GetArrayLength() > 0)
+                            {
+                                var firstErr = errsProp[0];
+                                if (firstErr.ValueKind == JsonValueKind.Object)
+                                {
+                                    if (firstErr.TryGetProperty("message", out var em)
+                                        && em.ValueKind == JsonValueKind.String
+                                        && !string.IsNullOrEmpty(em.GetString()))
+                                    {
+                                        message = em.GetString()!;
+                                    }
+                                    else if (firstErr.TryGetProperty("detail", out var ed)
+                                        && ed.ValueKind == JsonValueKind.String
+                                        && !string.IsNullOrEmpty(ed.GetString()))
+                                    {
+                                        message = ed.GetString()!;
+                                    }
+                                }
+                            }
+                            else if (doc.RootElement.TryGetProperty("title", out var titleProp)
+                                && titleProp.ValueKind == JsonValueKind.String
+                                && !string.IsNullOrEmpty(titleProp.GetString()))
+                            {
+                                message = titleProp.GetString()!;
+                            }
                         }
                     }
                     catch
@@ -456,9 +484,10 @@ public sealed class XClient : IDisposable
             {
                 await RefreshTokenAsync(cancellationToken).ConfigureAwait(false);
             }
-            if (!string.IsNullOrEmpty(_accessToken))
+            var effectiveAccess = AccessToken;
+            if (!string.IsNullOrEmpty(effectiveAccess))
             {
-                req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+                req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", effectiveAccess);
             }
         }
         else if (selected == "oauth1" && OAuth1 is { HasAccessToken: true })
@@ -477,8 +506,7 @@ public sealed class XClient : IDisposable
     private string? SelectAuthMethod(string method, IReadOnlyList<string>? schemes)
     {
         var hasBearer = !string.IsNullOrEmpty(BearerToken);
-        var hasOAuth2 = !string.IsNullOrEmpty(_accessToken)
-            || !string.IsNullOrEmpty(OAuth2?.Token?.AccessToken);
+        var hasOAuth2 = !string.IsNullOrEmpty(AccessToken);
         var hasOAuth1 = OAuth1 is { HasAccessToken: true };
 
         if (schemes is null || schemes.Count == 0)
