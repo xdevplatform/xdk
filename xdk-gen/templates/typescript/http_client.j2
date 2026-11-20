@@ -101,26 +101,29 @@ export class HttpClient {
    * Make an HTTP request
    */
   async request(url: string, options: RequestOptions = {}): Promise<HttpResponse> {
-    // Convert body to string if it's a Buffer or ArrayBuffer
-    let body = options.body;
-    if (body && typeof body !== 'string') {
-      // Check for Node.js Buffer (only in Node.js environment)
-      if (isNode && typeof Buffer !== 'undefined' && Buffer.isBuffer && Buffer.isBuffer(body)) {
-        body = body.toString();
-      } else if (body instanceof ArrayBuffer) {
-        body = new TextDecoder().decode(body);
-      } else if (ArrayBuffer.isView(body)) {
-        body = new TextDecoder().decode(body);
-      }
-    }
+    // Pass binary bodies (Buffer, ArrayBuffer, Uint8Array, etc.) straight through
+    // to fetch so binary uploads are not corrupted by UTF-8 decoding.
+    const body = options.body;
 
-    // Handle timeout
+    // Handle timeout (combine with caller signal if both are provided)
     let signal = options.signal;
     let timeoutId: ReturnType<typeof setTimeout> | undefined;
+    let onCallerAbort: (() => void) | undefined;
 
-    if (options.timeout && options.timeout > 0 && !signal) {
+    if (options.timeout !== undefined && options.timeout > 0) {
       const controller = new AbortController();
+      if (options.signal) {
+        if (options.signal.aborted) {
+          controller.abort();
+        } else {
+          onCallerAbort = () => controller.abort();
+          options.signal.addEventListener('abort', onCallerAbort, { once: true });
+        }
+      }
       timeoutId = setTimeout(() => controller.abort(), options.timeout);
+      if (typeof (timeoutId as any)?.unref === 'function') {
+        (timeoutId as any).unref();
+      }
       signal = controller.signal;
     }
 
@@ -136,6 +139,9 @@ export class HttpClient {
     } finally {
       if (timeoutId !== undefined) {
         clearTimeout(timeoutId);
+      }
+      if (onCallerAbort && options.signal) {
+        options.signal.removeEventListener('abort', onCallerAbort);
       }
     }
   }

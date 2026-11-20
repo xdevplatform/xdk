@@ -86,6 +86,10 @@ language! {
             render "test_pagination" => "tests/{}/test_pagination.test.ts"
         },
         render "test_client_errors" => "tests/client_errors.test.ts",
+        render "test_pkce" => "tests/pkce.test.ts",
+        render "test_oauth2_token_expiry" => "tests/oauth2_token_expiry.test.ts",
+        render "test_oauth1_signature" => "tests/oauth1_signature.test.ts",
+        render "test_event_driven_stream" => "tests/event_driven_stream.test.ts",
         render "jest.config" => "jest.config.cjs"
     ]
 }
@@ -126,19 +130,27 @@ impl xdk_lib::generator::LanguageGenerator for TypeScript {
                     .collect()
             })
             .unwrap_or_default();
-        let schemas = xdk_lib::types::ts_schema_declarations(&raw_schemas);
+        // Enums in schemas reachable from a response accept values the spec
+        // does not list yet, so one new server value cannot fail every
+        // response that contains it. Request-only schemas and parameters
+        // stay strict.
+        let responses: Vec<serde_json::Value> = operations
+            .values()
+            .flatten()
+            .filter_map(|group| serde_json::to_value(&group.operation.responses).ok())
+            .collect();
+        let open_enum_schemas = xdk_lib::types::referenced_schema_names(&responses);
+        let schemas = xdk_lib::types::ts_schema_declarations(&raw_schemas, &open_enum_schemas);
 
-        if !schemas.is_empty() {
-            let context = SchemasContext { schemas };
-            let schemas_path = output_dir.join("src/schemas.ts");
-            let content = xdk_lib::templates::render_template_with_path(
-                env,
-                "schemas",
-                &context,
-                schemas_path.to_str().unwrap_or("src/schemas.ts"),
-            )?;
-            std::fs::write(&schemas_path, content)?;
-        }
+        let context = SchemasContext { schemas };
+        let schemas_path = output_dir.join("src/schemas.ts");
+        let content = xdk_lib::templates::render_template_with_path(
+            env,
+            "schemas",
+            &context,
+            schemas_path.to_str().unwrap_or("src/schemas.ts"),
+        )?;
+        std::fs::write(&schemas_path, content)?;
 
         Ok(())
     }

@@ -1,0 +1,53 @@
+package com.xdevplatform.xdk;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Exception thrown when the X API returns an HTTP error or a request fails.
+ */
+public class XApiException extends RuntimeException {
+    private final int statusCode;
+    private final Map<String, List<String>> headers;
+    private final String rawBody;
+    private final JsonNode errorData;
+
+    public XApiException(
+            String message,
+            int statusCode,
+            Map<String, List<String>> headers,
+            String rawBody,
+            JsonNode errorData) {
+        super(message);
+        this.statusCode = statusCode;
+        this.headers = headers != null ? headers : Collections.emptyMap();
+        this.rawBody = rawBody;
+        this.errorData = errorData;
+    }
+
+    public XApiException(String message, Throwable cause) {
+        super(message, cause);
+        this.statusCode = 0;
+        this.headers = Collections.emptyMap();
+        this.rawBody = null;
+        this.errorData = null;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public Map<String, List<String>> getHeaders() {
+        return headers;
+    }
+
+    public String getRawBody() {
+        return rawBody;
+    }
+
+    public JsonNode getErrorData() {
+        return errorData;
+    }
+}

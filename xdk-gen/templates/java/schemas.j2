@@ -1,0 +1,23 @@
+package com.xdevplatform.xdk.models;
+
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Generated OpenAPI component schema models for the X API.
+ */
+public final class Schemas {
+    private Schemas() {}
+
+{% for schema in schemas %}
+{{ schema.code }}
+
+{% endfor %}
+}

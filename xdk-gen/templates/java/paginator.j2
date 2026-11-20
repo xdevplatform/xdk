@@ -1,0 +1,100 @@
+package com.xdevplatform.xdk;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.function.Function;
+
+/**
+ * Lazy page-by-page cursor paginator over paginated X API endpoints.
+ */
+public final class Paginator<T> implements Iterable<T> {
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private final Function<String, T> pageFetcher;
+    private final String initialToken;
+
+    public Paginator(Function<String, T> pageFetcher) {
+        this(pageFetcher, null);
+    }
+
+    public Paginator(Function<String, T> pageFetcher, String initialToken) {
+        this.pageFetcher = pageFetcher;
+        this.initialToken = initialToken;
+    }
+
+    public T firstPage() {
+        return pageFetcher.apply(initialToken);
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private String nextToken = initialToken;
+            private boolean started = false;
+            private boolean exhausted = false;
+            private T buffered;
+
+            @Override
+            public boolean hasNext() {
+                if (buffered != null) {
+                    return true;
+                }
+                if (exhausted) {
+                    return false;
+                }
+                buffered = pageFetcher.apply(started ? nextToken : initialToken);
+                started = true;
+                if (buffered == null) {
+                    exhausted = true;
+                    return false;
+                }
+                nextToken = extractNextToken(buffered);
+                if (nextToken == null || nextToken.isEmpty()) {
+                    exhausted = true;
+                }
+                return true;
+            }
+
+            @Override
+            public T next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException("No more pages available");
+                }
+                T current = buffered;
+                buffered = null;
+                return current;
+            }
+        };
+    }
+
+    public static String extractNextToken(Object page) {
+        if (page == null) {
+            return null;
+        }
+        try {
+            JsonNode tree = page instanceof JsonNode ? (JsonNode) page : MAPPER.valueToTree(page);
+            JsonNode meta = tree.get("meta");
+            if (meta != null && meta.isObject()) {
+                JsonNode nt = meta.get("next_token");
+                if (nt != null && nt.isTextual() && !nt.asText().isEmpty()) {
+                    return nt.asText();
+                }
+                JsonNode pt = meta.get("pagination_token");
+                if (pt != null && pt.isTextual() && !pt.asText().isEmpty()) {
+                    return pt.asText();
+                }
+            }
+            JsonNode rootNt = tree.get("next_token");
+            if (rootNt != null && rootNt.isTextual() && !rootNt.asText().isEmpty()) {
+                return rootNt.asText();
+            }
+            JsonNode rootPt = tree.get("pagination_token");
+            if (rootPt != null && rootPt.isTextual() && !rootPt.asText().isEmpty()) {
+                return rootPt.asText();
+            }
+        } catch (Exception ignored) {
+        }
+        return null;
+    }
+}

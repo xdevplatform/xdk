@@ -7,3 +7,10 @@ python = "0.10.6"
 
 # TypeScript SDK version
 typescript = "0.6.6"
+
+# Java SDK version
+java = "0.1.0"
+
+# C# SDK version
+csharp = "0.1.0"
+

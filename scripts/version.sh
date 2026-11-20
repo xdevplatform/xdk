@@ -14,7 +14,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
 CONFIG_FILE="$ROOT_DIR/xdk-config.toml"
 
-VALID_SDKS=("python" "typescript")
+VALID_SDKS=("python" "typescript" "java" "csharp")
 VALID_BUMPS=("patch" "minor" "major" "beta")
 
 # Colors for output
@@ -30,6 +30,8 @@ print_usage() {
     echo "SDKs:"
     echo "  python       Python SDK"
     echo "  typescript   TypeScript SDK"
+    echo "  java         Java SDK"
+    echo "  csharp       C# SDK"
     echo "  all          All SDKs"
     echo ""
     echo "Bump types:"

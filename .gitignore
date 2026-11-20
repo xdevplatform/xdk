@@ -4,6 +4,8 @@
 # Generated SDKs (pushed to separate repos)
 /xdk/python/
 /xdk/typescript/
+/xdk/java/
+/xdk/csharp/
 
 # Deploy keys (never commit)
 /.keys/

@@ -281,7 +281,11 @@ macro_rules! language {
 
                         $(
                             let tag_path = tag.join("_").to_lowercase();
-                            let output_path = PathBuf::from(format!($path, tag_path));
+                            let output_path = PathBuf::from(
+                                $path
+                                    .replace("{class_name}", &context.tag.class_name)
+                                    .replace("{}", &tag_path),
+                            );
 
                             let template_name = $template;
 
@@ -370,18 +374,24 @@ macro_rules! language {
                                     };
 
                                     if should_generate {
-                                        let output_path = PathBuf::from(format!($test_path, tag_path));
+                                        let output_path = PathBuf::from(
+                                            $test_path
+                                                .replace("{class_name}", &tag_info.class_name)
+                                                .replace("{}", &tag_path),
+                                        );
                                         let content = render_template_with_path(env, $test_template, &test_context, output_path.to_str().unwrap_or(""))?;
                                         let full_path = output_dir.join(&output_path);
                                         std::fs::create_dir_all(full_path.parent().unwrap_or(output_dir))?;
                                         std::fs::write(&full_path, content)?;
 
-                                        // Generate __init__.py for each tag test folder if it's in a subdirectory
-                                        if let Some(parent) = full_path.parent() {
-                                            if parent != output_dir {
-                                                let init_path = parent.join("__init__.py");
-                                                if !init_path.exists() {
-                                                    std::fs::write(&init_path, "")?;
+                                        // Generate __init__.py for each tag test folder if generating Python tests
+                                        if output_path.extension().is_some_and(|ext| ext == "py") {
+                                            if let Some(parent) = full_path.parent() {
+                                                if parent != output_dir {
+                                                    let init_path = parent.join("__init__.py");
+                                                    if !init_path.exists() {
+                                                        std::fs::write(&init_path, "")?;
+                                                    }
                                                 }
                                             }
                                         }

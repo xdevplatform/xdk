@@ -1,0 +1,32 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Xdk.Tests;
+
+public sealed class MockHttpMessageHandler : HttpMessageHandler
+{
+    private readonly Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> _responder;
+    public List<HttpRequestMessage> Requests { get; } = new();
+
+    public MockHttpMessageHandler(
+        Func<HttpRequestMessage, CancellationToken, Task<HttpResponseMessage>> responder)
+    {
+        _responder = responder;
+    }
+
+    public MockHttpMessageHandler(Func<HttpRequestMessage, HttpResponseMessage> responder)
+    {
+        _responder = (req, _) => Task.FromResult(responder(req));
+    }
+
+    protected override Task<HttpResponseMessage> SendAsync(
+        HttpRequestMessage request,
+        CancellationToken cancellationToken)
+    {
+        Requests.Add(request);
+        return _responder(request, cancellationToken);
+    }
+}

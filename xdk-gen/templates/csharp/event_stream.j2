@@ -1,0 +1,147 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Xdk.Streaming;
+
+/// <summary>
+/// Async NDJSON event stream with incremental UTF-8 decoding and exponential backoff reconnection.
+/// </summary>
+public sealed class EventStream<T> : IAsyncEnumerable<T>, IAsyncDisposable, IDisposable
+{
+    private readonly Func<CancellationToken, Task<Stream>> _streamFactory;
+    private readonly JsonSerializerOptions _jsonOptions;
+    private readonly StreamOptions _options;
+    private readonly CancellationTokenSource _disposeCts = new();
+    private Stream? _activeStream;
+
+    public EventStream(
+        Func<CancellationToken, Task<Stream>> streamFactory,
+        JsonSerializerOptions jsonOptions,
+        StreamOptions? options = null)
+    {
+        _streamFactory = streamFactory;
+        _jsonOptions = jsonOptions;
+        _options = options ?? new StreamOptions();
+    }
+
+    public async IAsyncEnumerator<T> GetAsyncEnumerator(
+        CancellationToken cancellationToken = default)
+    {
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(
+            cancellationToken, _disposeCts.Token);
+        var ct = linked.Token;
+        var retries = 0;
+
+        while (!ct.IsCancellationRequested)
+        {
+            StreamReader? reader = null;
+            var shouldReconnect = false;
+            Exception? lastException = null;
+
+            try
+            {
+                var stream = await _streamFactory(ct).ConfigureAwait(false);
+                _activeStream = stream;
+                // StreamReader decodes UTF-8 incrementally across arbitrary chunk boundaries
+                reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: 4096, leaveOpen: false);
+            }
+            catch (XApiException)
+            {
+                throw;
+            }
+            catch (OperationCanceledException) when (ct.IsCancellationRequested)
+            {
+                yield break;
+            }
+            catch (Exception ex)
+            {
+                lastException = ex;
+                shouldReconnect = true;
+            }
+
+            if (reader != null)
+            {
+                using (reader)
+                {
+                    while (!ct.IsCancellationRequested)
+                    {
+                        string? line;
+                        try
+                        {
+                            line = await reader.ReadLineAsync(ct).ConfigureAwait(false);
+                        }
+                        catch (OperationCanceledException) when (ct.IsCancellationRequested)
+                        {
+                            yield break;
+                        }
+                        catch (Exception ex)
+                        {
+                            lastException = ex;
+                            shouldReconnect = true;
+                            break;
+                        }
+
+                        if (line is null)
+                        {
+                            // Clean EOF
+                            yield break;
+                        }
+
+                        var trimmed = line.Trim();
+                        if (trimmed.Length == 0 || trimmed == "{}")
+                        {
+                            continue;
+                        }
+
+                        var item = JsonSerializer.Deserialize<T>(trimmed, _jsonOptions);
+                        if (item is not null)
+                        {
+                            retries = 0;
+                            yield return item;
+                        }
+                    }
+                }
+            }
+
+            if (!shouldReconnect)
+            {
+                yield break;
+            }
+
+            if (_options.MaxRetries == 0 || (_options.MaxRetries > 0 && retries >= _options.MaxRetries))
+            {
+                throw new XApiException(
+                    $"Stream failed: {lastException?.Message}",
+                    0,
+                    innerException: lastException);
+            }
+
+            var delayMs = Math.Min(
+                _options.MaxBackoff.TotalMilliseconds,
+                _options.InitialBackoff.TotalMilliseconds * Math.Pow(2, retries));
+            retries++;
+            if (delayMs > 0)
+            {
+                await Task.Delay(TimeSpan.FromMilliseconds(delayMs), ct).ConfigureAwait(false);
+            }
+        }
+    }
+
+    public void Dispose()
+    {
+        _disposeCts.Cancel();
+        _activeStream?.Dispose();
+        _disposeCts.Dispose();
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+        return ValueTask.CompletedTask;
+    }
+}

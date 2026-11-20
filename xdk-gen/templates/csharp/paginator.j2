@@ -1,0 +1,100 @@
+using System;
+using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Xdk;
+
+/// <summary>
+/// Lazy async cursor paginator implementing <see cref="IAsyncEnumerable{T}"/>.
+/// </summary>
+public sealed class Paginator<T> : IAsyncEnumerable<T>
+{
+    private readonly Func<string?, CancellationToken, Task<T>> _fetchPage;
+    private readonly string? _initialToken;
+
+    public Paginator(Func<string?, CancellationToken, Task<T>> fetchPage, string? initialToken = null)
+    {
+        _fetchPage = fetchPage;
+        _initialToken = initialToken;
+    }
+
+    public Task<T> FirstPageAsync(CancellationToken cancellationToken = default) =>
+        _fetchPage(_initialToken, cancellationToken);
+
+    public async IAsyncEnumerator<T> GetAsyncEnumerator(
+        CancellationToken cancellationToken = default)
+    {
+        var token = _initialToken;
+        var first = true;
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            var page = await _fetchPage(first ? _initialToken : token, cancellationToken)
+                .ConfigureAwait(false);
+            first = false;
+            if (page is null)
+            {
+                yield break;
+            }
+            yield return page;
+
+            token = ExtractNextToken(page);
+            if (string.IsNullOrEmpty(token))
+            {
+                yield break;
+            }
+        }
+    }
+
+    public static string? ExtractNextToken(object? page)
+    {
+        if (page is null)
+        {
+            return null;
+        }
+        try
+        {
+            var element = page is JsonElement je
+                ? je
+                : JsonSerializer.SerializeToElement(page);
+            if (element.ValueKind == JsonValueKind.Object)
+            {
+                if (element.TryGetProperty("meta", out var meta)
+                    && meta.ValueKind == JsonValueKind.Object)
+                {
+                    if (meta.TryGetProperty("next_token", out var nt)
+                        && nt.ValueKind == JsonValueKind.String
+                        && !string.IsNullOrEmpty(nt.GetString()))
+                    {
+                        return nt.GetString();
+                    }
+                    if (meta.TryGetProperty("pagination_token", out var pt)
+                        && pt.ValueKind == JsonValueKind.String
+                        && !string.IsNullOrEmpty(pt.GetString()))
+                    {
+                        return pt.GetString();
+                    }
+                }
+                if (element.TryGetProperty("next_token", out var rnt)
+                    && rnt.ValueKind == JsonValueKind.String
+                    && !string.IsNullOrEmpty(rnt.GetString()))
+                {
+                    return rnt.GetString();
+                }
+                if (element.TryGetProperty("pagination_token", out var rpt)
+                    && rpt.ValueKind == JsonValueKind.String
+                    && !string.IsNullOrEmpty(rpt.GetString()))
+                {
+                    return rpt.GetString();
+                }
+            }
+        }
+        catch
+        {
+            // Ignore reflection/serialization errors on unknown page shapes
+        }
+        return null;
+    }
+}

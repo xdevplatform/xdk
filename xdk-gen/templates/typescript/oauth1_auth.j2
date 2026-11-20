@@ -194,8 +194,10 @@ export class OAuth1 {
     const signature = await CryptoUtils.hmacSha1(signingKey, signatureBase);
     oauthParams['oauth_signature'] = signature;
 
-    // Build authorization header
+    // Build authorization header (sorted by parameter name)
+    const compareBytes = (x: string, y: string): number => (x < y ? -1 : x > y ? 1 : 0);
     const headerParams = Object.entries(oauthParams)
+      .sort(([a], [b]) => compareBytes(a, b))
       .map(([key, value]) => `${key}="${this._encode(value)}"`)
       .join(', ');
 
@@ -239,8 +241,14 @@ export class OAuth1 {
       // If body is JSON, we don't include it in the signature (per OAuth1 spec)
     }
 
-    // Sort parameters alphabetically
-    const sortedParams = Object.entries(allParams).sort(([a], [b]) => a.localeCompare(b));
+    // Sort by percent-encoded name, then value, in byte order (RFC 5849 section 3.4.1.3.2).
+    // localeCompare is locale-aware and orders punctuation differently (e.g. '.' vs '_').
+    const compareBytes = (x: string, y: string): number => (x < y ? -1 : x > y ? 1 : 0);
+    const sortedParams = Object.entries(allParams).sort(
+      ([aKey, aValue], [bKey, bValue]) =>
+        compareBytes(this._encode(aKey), this._encode(bKey)) ||
+        compareBytes(this._encode(aValue), this._encode(bValue))
+    );
     
     return sortedParams
       .map(([key, value]) => `${this._encode(key)}=${this._encode(value)}`)

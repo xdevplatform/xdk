@@ -1,0 +1,307 @@
+package com.xdevplatform.xdk.clients;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.xdevplatform.xdk.Paginator;
+import com.xdevplatform.xdk.XClient;
+import com.xdevplatform.xdk.models.Schemas;
+import com.xdevplatform.xdk.streaming.EventStream;
+import com.xdevplatform.xdk.streaming.StreamConfig;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Client for {{ tag.display_name }} endpoints of the X API.
+ */
+public final class {{ tag.class_name }}Client {
+    private final XClient client;
+
+    public {{ tag.class_name }}Client(XClient client) {
+        this.client = client;
+    }
+
+{# Helper macro to compute request body Java type #}
+{% macro req_body_type(operation) -%}
+{%- if operation.request_body and operation.request_body.content -%}
+{%- set json_or_mp = operation.request_body.content["application/json"] or operation.request_body.content["multipart/form-data"] -%}
+{%- if json_or_mp and json_or_mp.schema -%}
+{{ json_or_mp.schema | java_type('Schemas.') }}
+{%- elif "application/octet-stream" in operation.request_body.content -%}
+byte[]
+{%- else -%}
+Object
+{%- endif -%}
+{%- else -%}
+Object
+{%- endif -%}
+{%- endmacro %}
+
+{# Helper macro to compute response Java type (and Class literal compatible type) #}
+{% macro res_body_type(operation) -%}
+{%- if operation.responses and (
+    ("200" in operation.responses and operation.responses["200"].content and "application/octet-stream" in operation.responses["200"].content) or
+    ("201" in operation.responses and operation.responses["201"].content and "application/octet-stream" in operation.responses["201"].content)
+) -%}
+byte[]
+{%- elif operation.has_json_response and ("200" in operation.responses or "201" in operation.responses) -%}
+{%- set response = operation.responses["200"] if "200" in operation.responses else operation.responses["201"] -%}
+{%- if response and response.content and "application/json" in response.content and response.content["application/json"].schema -%}
+{%- set rendered = response.content["application/json"].schema | java_type('Schemas.') -%}
+{%- if '<' in rendered -%}JsonNode{%- else -%}{{ rendered }}{%- endif -%}
+{%- else -%}
+JsonNode
+{%- endif -%}
+{%- else -%}
+JsonNode
+{%- endif -%}
+{%- endmacro %}
+
+{# Helper macro for required parameter signature list #}
+{% macro required_sig_params(operation) -%}
+{%- set ns = namespace(first=true) -%}
+{%- for param in operation.parameters | selectattr('location', 'equalto', 'path') -%}
+{%- if param.variable_name -%}
+{%- if not ns.first %}, {% endif -%}{% set ns.first = false -%}
+{%- if param.schema %}{{ param.schema | java_type('Schemas.') }}{% else %}String{% endif %} {{ param.variable_name | java_ident }}
+{%- endif -%}
+{%- endfor -%}
+{%- for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') -%}
+{%- if param.variable_name -%}
+{%- if not ns.first %}, {% endif -%}{% set ns.first = false -%}
+{%- if param.schema %}{{ param.schema | java_type('Schemas.') }}{% else %}Object{% endif %} {{ param.variable_name | java_ident }}
+{%- endif -%}
+{%- endfor -%}
+{%- if operation.request_body and operation.request_body.required -%}
+{%- if not ns.first %}, {% endif -%}{% set ns.first = false -%}
+{{ req_body_type(operation) }} body
+{%- endif -%}
+{%- endmacro %}
+
+{# Helper macro for forwarding required args #}
+{% macro required_call_args(operation) -%}
+{%- set ns = namespace(first=true) -%}
+{%- for param in operation.parameters | selectattr('location', 'equalto', 'path') -%}
+{%- if param.variable_name -%}
+{%- if not ns.first %}, {% endif -%}{% set ns.first = false -%}{{ param.variable_name | java_ident }}
+{%- endif -%}
+{%- endfor -%}
+{%- for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') -%}
+{%- if param.variable_name -%}
+{%- if not ns.first %}, {% endif -%}{% set ns.first = false -%}{{ param.variable_name | java_ident }}
+{%- endif -%}
+{%- endfor -%}
+{%- if operation.request_body and operation.request_body.required -%}
+{%- if not ns.first %}, {% endif -%}{% set ns.first = false -%}body
+{%- endif -%}
+{%- endmacro %}
+
+{# Generate Options builder classes for operations with optional params, optional body, or streaming #}
+{% for operation in operations %}
+{% set opt_params = operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list %}
+{% set has_opt_body = operation.request_body and not operation.request_body.required %}
+{% if opt_params | length > 0 or has_opt_body or operation.is_streaming %}
+    /**
+     * Optional parameters for {@link #{{ operation.method_name | java_ident }}}.
+     */
+    public static final class {{ operation.class_name }}Options {
+        {% for param in opt_params %}
+        {% if param.variable_name %}
+        private {% if param.schema %}{{ param.schema | java_type('Schemas.') }}{% else %}Object{% endif %} {{ param.variable_name | java_ident }};
+        {% endif %}
+        {% endfor %}
+        {% if has_opt_body %}
+        private {{ req_body_type(operation) }} body;
+        {% endif %}
+        {% if operation.is_streaming %}
+        private StreamConfig streamConfig;
+        {% endif %}
+        private Map<String, String> headers = new LinkedHashMap<>();
+
+        public {{ operation.class_name }}Options() {}
+
+        public static {{ operation.class_name }}Options builder() {
+            return new {{ operation.class_name }}Options();
+        }
+
+        {% for param in opt_params %}
+        {% if param.variable_name %}
+        {% set p_ident = param.variable_name | java_ident %}
+        {% set p_type %}{% if param.schema %}{{ param.schema | java_type('Schemas.') }}{% else %}Object{% endif %}{% endset %}
+        public {{ operation.class_name }}Options {{ p_ident }}({{ p_type }} {{ p_ident }}) {
+            this.{{ p_ident }} = {{ p_ident }};
+            return this;
+        }
+
+        public {{ p_type }} get{{ p_ident | pascal_case }}() {
+            return this.{{ p_ident }};
+        }
+        {% endif %}
+        {% endfor %}
+        {% if has_opt_body %}
+        public {{ operation.class_name }}Options body({{ req_body_type(operation) }} body) {
+            this.body = body;
+            return this;
+        }
+
+        public {{ req_body_type(operation) }} getBody() {
+            return this.body;
+        }
+        {% endif %}
+        {% if operation.is_streaming %}
+        public {{ operation.class_name }}Options streamConfig(StreamConfig streamConfig) {
+            this.streamConfig = streamConfig;
+            return this;
+        }
+
+        public StreamConfig getStreamConfig() {
+            return this.streamConfig;
+        }
+        {% endif %}
+
+        public {{ operation.class_name }}Options header(String name, String value) {
+            this.headers.put(name, value);
+            return this;
+        }
+
+        public Map<String, String> getHeaders() {
+            return this.headers;
+        }
+
+        public {{ operation.class_name }}Options copy() {
+            {{ operation.class_name }}Options c = new {{ operation.class_name }}Options();
+            {% for param in opt_params %}
+            {% if param.variable_name %}
+            {% set p_ident = param.variable_name | java_ident %}
+            c.{{ p_ident }} = this.{{ p_ident }};
+            {% endif %}
+            {% endfor %}
+            {% if has_opt_body %}
+            c.body = this.body;
+            {% endif %}
+            {% if operation.is_streaming %}
+            c.streamConfig = this.streamConfig;
+            {% endif %}
+            c.headers.putAll(this.headers);
+            return c;
+        }
+    }
+
+{% endif %}
+{% endfor %}
+
+{# Generate operation methods #}
+{% for operation in operations %}
+{% set opt_params = operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list %}
+{% set has_opt_body = operation.request_body and not operation.request_body.required %}
+{% set has_options = opt_params | length > 0 or has_opt_body or operation.is_streaming %}
+{% set req_sig = required_sig_params(operation) %}
+{% set req_args = required_call_args(operation) %}
+{% set r_type = res_body_type(operation) %}
+{% set is_binary = (r_type == 'byte[]') %}
+
+    {% if has_options %}
+    public {% if operation.is_streaming %}EventStream<{{ r_type }}>{% else %}{{ r_type }}{% endif %} {{ operation.method_name | java_ident }}({{ req_sig }}) {
+        return {{ operation.method_name | java_ident }}({% if req_args %}{{ req_args }}, {% endif %}new {{ operation.class_name }}Options());
+    }
+    {% endif %}
+
+    public {% if operation.is_streaming %}EventStream<{{ r_type }}>{% else %}{{ r_type }}{% endif %} {{ operation.method_name | java_ident }}({{ req_sig }}{% if has_options %}{% if req_sig %}, {% endif %}{{ operation.class_name }}Options options{% endif %}) {
+        {% if has_options %}
+        {{ operation.class_name }}Options opts = options != null ? options : new {{ operation.class_name }}Options();
+        {% endif %}
+        String path = "{{ operation.path }}";
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        path = path.replace("{{ '{' + param.original_name + '}' }}", XClient.encodePathSegment({{ param.variable_name | java_ident }}));
+        {% endif %}
+        {% endfor %}
+
+        Map<String, String> queryParams = new LinkedHashMap<>();
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'query') %}
+        {% if param.variable_name %}
+        {% if param.required %}
+        XClient.addQueryParam(queryParams, "{{ param.original_name }}", {{ param.variable_name | java_ident }});
+        {% else %}
+        XClient.addQueryParam(queryParams, "{{ param.original_name }}", opts.get{{ param.variable_name | java_ident | pascal_case }}());
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+        Map<String, String> extraHeaders = {% if has_options %}new LinkedHashMap<>(opts.getHeaders()){% else %}new LinkedHashMap<>(){% endif %};
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'header') %}
+        {% if param.variable_name %}
+        {% if param.required %}
+        if ({{ param.variable_name | java_ident }} != null) {
+            extraHeaders.put("{{ param.original_name }}", String.valueOf({{ param.variable_name | java_ident }}));
+        }
+        {% else %}
+        if (opts.get{{ param.variable_name | java_ident | pascal_case }}() != null) {
+            extraHeaders.put("{{ param.original_name }}", String.valueOf(opts.get{{ param.variable_name | java_ident | pascal_case }}()));
+        }
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+        List<String> securitySchemes = {% if operation.security %}Arrays.asList({% set sns = namespace(first=true) %}{% for sec in operation.security %}{% for scheme in sec %}{% if not sns.first %}, {% endif %}{% set sns.first = false %}"{{ scheme }}"{% endfor %}{% endfor %}){% else %}Collections.emptyList(){% endif %};
+
+        Object requestBody = {% if operation.request_body and operation.request_body.required %}body{% elif has_opt_body %}opts.getBody(){% else %}null{% endif %};
+        String contentType = {% if operation.request_body and operation.request_body.content and "application/octet-stream" in operation.request_body.content and "application/json" not in operation.request_body.content %}"application/octet-stream"{% else %}"application/json"{% endif %};
+
+        {% if operation.is_streaming %}
+        return client.openStream(
+                "{{ operation.method | upper }}",
+                path,
+                queryParams,
+                extraHeaders,
+                requestBody,
+                securitySchemes,
+                {{ r_type }}.class,
+                opts.getStreamConfig());
+        {% elif is_binary %}
+        return client.sendBytes(
+                "{{ operation.method | upper }}",
+                path,
+                queryParams,
+                extraHeaders,
+                requestBody,
+                contentType,
+                securitySchemes);
+        {% else %}
+        return client.sendJson(
+                "{{ operation.method | upper }}",
+                path,
+                queryParams,
+                extraHeaders,
+                requestBody,
+                contentType,
+                securitySchemes,
+                {{ r_type }}.class);
+        {% endif %}
+    }
+
+    {# Generate Paginator helper for paginated operations #}
+    {% if not operation.is_streaming and operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) %}
+    {% set has_pt = operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 %}
+    {% set token_param = (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | first) if has_pt else (operation.parameters | selectattr('original_name', 'equalto', 'next_token') | first) %}
+    {% set token_ident = token_param.variable_name | java_ident %}
+
+    public Paginator<{{ r_type }}> {{ operation.method_name | java_ident }}Pages({{ req_sig }}) {
+        return {{ operation.method_name | java_ident }}Pages({% if req_args %}{{ req_args }}, {% endif %}new {{ operation.class_name }}Options());
+    }
+
+    public Paginator<{{ r_type }}> {{ operation.method_name | java_ident }}Pages({{ req_sig }}{% if req_sig %}, {% endif %}{{ operation.class_name }}Options options) {
+        {{ operation.class_name }}Options baseOpts = options != null ? options.copy() : new {{ operation.class_name }}Options();
+        String initialToken = baseOpts.get{{ token_ident | pascal_case }}();
+        return new Paginator<>(
+                token -> {
+                    {{ operation.class_name }}Options pageOpts = baseOpts.copy();
+                    pageOpts.{{ token_ident }}(token);
+                    return {{ operation.method_name | java_ident }}({% if req_args %}{{ req_args }}, {% endif %}pageOpts);
+                },
+                initialToken);
+    }
+    {% endif %}
+{% endfor %}
+}

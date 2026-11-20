@@ -1,0 +1,169 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+
+namespace Xdk.Auth;
+
+/// <summary>
+/// OAuth 1.0a request signer compliant with RFC 5849 (percent-encoding and byte-order parameter sorting).
+/// </summary>
+public sealed class OAuth1
+{
+    public string ApiKey { get; }
+    public string ApiSecret { get; }
+    public string Callback { get; }
+    public string? AccessToken { get; private set; }
+    public string? AccessTokenSecret { get; private set; }
+
+    public OAuth1(
+        string apiKey,
+        string apiSecret,
+        string callback = "oob",
+        string? accessToken = null,
+        string? accessTokenSecret = null)
+    {
+        ApiKey = apiKey;
+        ApiSecret = apiSecret;
+        Callback = callback;
+        AccessToken = accessToken;
+        AccessTokenSecret = accessTokenSecret;
+    }
+
+    public bool HasAccessToken =>
+        !string.IsNullOrEmpty(AccessToken) && !string.IsNullOrEmpty(AccessTokenSecret);
+
+    public void SetAccessToken(string accessToken, string accessTokenSecret)
+    {
+        AccessToken = accessToken;
+        AccessTokenSecret = accessTokenSecret;
+    }
+
+    public string BuildRequestHeader(
+        string method,
+        string url,
+        string formBody = "",
+        string? nonce = null,
+        string? timestamp = null)
+    {
+        if (!HasAccessToken)
+        {
+            throw new InvalidOperationException("OAuth1 access token and secret are required.");
+        }
+
+        var effectiveNonce = nonce ?? GenerateNonce(32);
+        var effectiveTimestamp = timestamp ?? DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
+
+        var uri = new Uri(url);
+        var scheme = uri.Scheme.ToLowerInvariant();
+        var host = uri.Host.ToLowerInvariant();
+        var includePort = !uri.IsDefaultPort;
+        var baseUrl = $"{scheme}://{host}{(includePort ? $":{uri.Port}" : "")}{uri.AbsolutePath}";
+
+        var oauthParams = new SortedDictionary<string, string>(StringComparer.Ordinal)
+        {
+            ["oauth_consumer_key"] = ApiKey,
+            ["oauth_nonce"] = effectiveNonce,
+            ["oauth_signature_method"] = "HMAC-SHA1",
+            ["oauth_timestamp"] = effectiveTimestamp,
+            ["oauth_token"] = AccessToken!,
+            ["oauth_version"] = "1.0",
+        };
+
+        var allParams = new List<(string Key, string Value)>();
+        foreach (var kv in oauthParams)
+        {
+            allParams.Add((PercentEncode(kv.Key), PercentEncode(kv.Value)));
+        }
+
+        if (!string.IsNullOrEmpty(uri.Query))
+        {
+            ParseEncodedPairs(uri.Query.TrimStart('?'), allParams);
+        }
+
+        if (!string.IsNullOrEmpty(formBody) && !LooksLikeJson(formBody))
+        {
+            ParseEncodedPairs(formBody, allParams);
+        }
+
+        allParams.Sort((a, b) =>
+        {
+            var cmp = string.CompareOrdinal(a.Key, b.Key);
+            return cmp != 0 ? cmp : string.CompareOrdinal(a.Value, b.Value);
+        });
+
+        var paramString = string.Join("&", allParams.Select(p => $"{p.Key}={p.Value}"));
+        var signatureBase =
+            $"{method.ToUpperInvariant()}&{PercentEncode(baseUrl)}&{PercentEncode(paramString)}";
+        var signingKey = $"{PercentEncode(ApiSecret)}&{PercentEncode(AccessTokenSecret!)}";
+        var signature = HmacSha1Base64(signingKey, signatureBase);
+
+        oauthParams["oauth_signature"] = signature;
+        var headerParts = oauthParams.Select(kv => $"{kv.Key}=\"{PercentEncode(kv.Value)}\"");
+        return "OAuth " + string.Join(", ", headerParts);
+    }
+
+    private static void ParseEncodedPairs(string raw, List<(string Key, string Value)> target)
+    {
+        foreach (var part in raw.Split('&', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var eq = part.IndexOf('=');
+            var rawKey = eq >= 0 ? part[..eq] : part;
+            var rawVal = eq >= 0 ? part[(eq + 1)..] : string.Empty;
+            var decodedKey = Uri.UnescapeDataString(rawKey.Replace('+', ' '));
+            var decodedVal = Uri.UnescapeDataString(rawVal.Replace('+', ' '));
+            target.Add((PercentEncode(decodedKey), PercentEncode(decodedVal)));
+        }
+    }
+
+    private static bool LooksLikeJson(string body)
+    {
+        var trimmed = body.Trim();
+        return (trimmed.StartsWith('{') && trimmed.EndsWith('}'))
+            || (trimmed.StartsWith('[') && trimmed.EndsWith(']'));
+    }
+
+    public static string PercentEncode(string? input)
+    {
+        if (string.IsNullOrEmpty(input))
+        {
+            return string.Empty;
+        }
+        var bytes = Encoding.UTF8.GetBytes(input);
+        var sb = new StringBuilder(bytes.Length * 2);
+        foreach (var b in bytes)
+        {
+            var isUnreserved =
+                (b >= 'A' && b <= 'Z')
+                || (b >= 'a' && b <= 'z')
+                || (b >= '0' && b <= '9')
+                || b == '-'
+                || b == '.'
+                || b == '_'
+                || b == '~';
+            if (isUnreserved)
+            {
+                sb.Append((char)b);
+            }
+            else
+            {
+                sb.Append('%').Append(b.ToString("X2"));
+            }
+        }
+        return sb.ToString();
+    }
+
+    public static string HmacSha1Base64(string key, string message)
+    {
+        using var hmac = new HMACSHA1(Encoding.UTF8.GetBytes(key));
+        var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(message));
+        return Convert.ToBase64String(hash);
+    }
+
+    public static string GenerateNonce(int byteLength = 32)
+    {
+        var bytes = RandomNumberGenerator.GetBytes(byteLength);
+        return Convert.ToHexString(bytes).ToLowerInvariant();
+    }
+}

@@ -1,0 +1,203 @@
+package com.xdevplatform.xdk.auth;
+
+import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+/**
+ * OAuth 1.0a request signer compliant with RFC 5849 (percent-encoding and byte-order parameter sorting).
+ */
+public final class OAuth1 {
+    private static final SecureRandom RANDOM = new SecureRandom();
+
+    private final String apiKey;
+    private final String apiSecret;
+    private final String callback;
+    private String accessToken;
+    private String accessTokenSecret;
+
+    public OAuth1(
+            String apiKey,
+            String apiSecret,
+            String callback,
+            String accessToken,
+            String accessTokenSecret) {
+        this.apiKey = apiKey;
+        this.apiSecret = apiSecret;
+        this.callback = callback;
+        this.accessToken = accessToken;
+        this.accessTokenSecret = accessTokenSecret;
+    }
+
+    public OAuth1(String apiKey, String apiSecret, String accessToken, String accessTokenSecret) {
+        this(apiKey, apiSecret, "oob", accessToken, accessTokenSecret);
+    }
+
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public String getCallback() {
+        return callback;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken, String accessTokenSecret) {
+        this.accessToken = accessToken;
+        this.accessTokenSecret = accessTokenSecret;
+    }
+
+    public boolean hasAccessToken() {
+        return accessToken != null && !accessToken.isEmpty() && accessTokenSecret != null && !accessTokenSecret.isEmpty();
+    }
+
+    public String buildRequestHeader(String method, String url, String formBody) {
+        return buildRequestHeader(
+                method,
+                url,
+                formBody,
+                generateNonce(32),
+                String.valueOf(Instant.now().getEpochSecond()));
+    }
+
+    public String buildRequestHeader(
+            String method, String url, String formBody, String nonce, String timestamp) {
+        if (!hasAccessToken()) {
+            throw new IllegalStateException("OAuth1 access token and secret are required.");
+        }
+
+        URI parsed = URI.create(url);
+        String scheme = parsed.getScheme() != null ? parsed.getScheme().toLowerCase() : "https";
+        String host = parsed.getHost() != null ? parsed.getHost().toLowerCase() : "";
+        int port = parsed.getPort();
+        boolean includePort =
+                port > 0
+                        && !(("http".equals(scheme) && port == 80)
+                                || ("https".equals(scheme) && port == 443));
+        String path = parsed.getRawPath() != null && !parsed.getRawPath().isEmpty() ? parsed.getRawPath() : "/";
+        String baseUrl = scheme + "://" + host + (includePort ? ":" + port : "") + path;
+
+        Map<String, String> oauthParams = new TreeMap<>();
+        oauthParams.put("oauth_consumer_key", apiKey);
+        oauthParams.put("oauth_nonce", nonce);
+        oauthParams.put("oauth_signature_method", "HMAC-SHA1");
+        oauthParams.put("oauth_timestamp", timestamp);
+        oauthParams.put("oauth_token", accessToken);
+        oauthParams.put("oauth_version", "1.0");
+
+        List<String[]> allParams = new ArrayList<>();
+        for (Map.Entry<String, String> entry : oauthParams.entrySet()) {
+            allParams.add(new String[] {percentEncode(entry.getKey()), percentEncode(entry.getValue())});
+        }
+
+        if (parsed.getRawQuery() != null && !parsed.getRawQuery().isEmpty()) {
+            parseEncodedPairs(parsed.getRawQuery(), allParams);
+        }
+
+        if (formBody != null && !formBody.isEmpty() && !looksLikeJson(formBody)) {
+            parseEncodedPairs(formBody, allParams);
+        }
+
+        allParams.sort(
+                Comparator.<String[], String>comparing(pair -> pair[0])
+                        .thenComparing(pair -> pair[1]));
+
+        StringBuilder paramBuilder = new StringBuilder();
+        for (int i = 0; i < allParams.size(); i++) {
+            if (i > 0) {
+                paramBuilder.append('&');
+            }
+            paramBuilder.append(allParams.get(i)[0]).append('=').append(allParams.get(i)[1]);
+        }
+
+        String signatureBase =
+                method.toUpperCase()
+                        + "&"
+                        + percentEncode(baseUrl)
+                        + "&"
+                        + percentEncode(paramBuilder.toString());
+
+        String signingKey = percentEncode(apiSecret) + "&" + percentEncode(accessTokenSecret);
+        String signature = hmacSha1Base64(signingKey, signatureBase);
+        oauthParams.put("oauth_signature", signature);
+
+        StringBuilder header = new StringBuilder("OAuth ");
+        boolean first = true;
+        for (Map.Entry<String, String> entry : oauthParams.entrySet()) {
+            if (!first) {
+                header.append(", ");
+            }
+            first = false;
+            header.append(entry.getKey())
+                    .append("=\"")
+                    .append(percentEncode(entry.getValue()))
+                    .append('"');
+        }
+        return header.toString();
+    }
+
+    private static void parseEncodedPairs(String query, List<String[]> target) {
+        for (String part : query.split("&")) {
+            if (part.isEmpty()) {
+                continue;
+            }
+            int eq = part.indexOf('=');
+            String rawKey = eq >= 0 ? part.substring(0, eq) : part;
+            String rawVal = eq >= 0 ? part.substring(eq + 1) : "";
+            String decodedKey = URLDecoder.decode(rawKey, StandardCharsets.UTF_8);
+            String decodedVal = URLDecoder.decode(rawVal, StandardCharsets.UTF_8);
+            target.add(new String[] {percentEncode(decodedKey), percentEncode(decodedVal)});
+        }
+    }
+
+    private static boolean looksLikeJson(String body) {
+        String trimmed = body.trim();
+        return (trimmed.startsWith("{") && trimmed.endsWith("}"))
+                || (trimmed.startsWith("[") && trimmed.endsWith("]"));
+    }
+
+    public static String percentEncode(String value) {
+        if (value == null) {
+            return "";
+        }
+        return URLEncoder.encode(value, StandardCharsets.UTF_8)
+                .replace("+", "%20")
+                .replace("*", "%2A")
+                .replace("%7E", "~");
+    }
+
+    public static String hmacSha1Base64(String key, String message) {
+        try {
+            Mac mac = Mac.getInstance("HmacSHA1");
+            mac.init(new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "HmacSHA1"));
+            byte[] raw = mac.doFinal(message.getBytes(StandardCharsets.UTF_8));
+            return Base64.getEncoder().encodeToString(raw);
+        } catch (Exception e) {
+            throw new IllegalStateException("Failed to compute HMAC-SHA1 signature", e);
+        }
+    }
+
+    public static String generateNonce(int byteLength) {
+        byte[] bytes = new byte[byteLength];
+        RANDOM.nextBytes(bytes);
+        StringBuilder sb = new StringBuilder(byteLength * 2);
+        for (byte b : bytes) {
+            sb.append(String.format("%02x", b));
+        }
+        return sb.toString();
+    }
+}

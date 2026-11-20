@@ -1,0 +1,87 @@
+package com.xdevplatform.xdk;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import com.xdevplatform.xdk.auth.OAuth1;
+import com.xdevplatform.xdk.http.HttpTransport;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import org.junit.jupiter.api.Test;
+
+public class {{ tag.class_name }}PaginationTest {
+    {% for pagination_test in test_spec.pagination_tests %}
+    @Test
+    void paginate_{{ pagination_test.method_name | java_ident }}() {
+        List<HttpTransport.TransportRequest> requests = new ArrayList<>();
+        String itemJson = {{ pagination_test.mock_item_json | java_string_literal }};
+        String page1 =
+                "{\"{{ pagination_test.data_field }}\":["
+                        + itemJson
+                        + ","
+                        + itemJson
+                        + "],\"meta\":{\"next_token\":\"tok_2\",\"result_count\":2}}";
+        String page2 =
+                "{\"{{ pagination_test.data_field }}\":["
+                        + itemJson
+                        + "],\"meta\":{\"result_count\":1}}";
+
+        HttpTransport mockTransport =
+                new HttpTransport() {
+                    @Override
+                    public TransportResponse send(TransportRequest request) {
+                        requests.add(request);
+                        String body = requests.size() == 1 ? page1 : page2;
+                        return new TransportResponse(
+                                200,
+                                Collections.singletonMap(
+                                        "content-type", Collections.singletonList("application/json")),
+                                body.getBytes(StandardCharsets.UTF_8));
+                    }
+
+                    @Override
+                    public InputStream sendStream(TransportRequest request) {
+                        return new ByteArrayInputStream(new byte[0]);
+                    }
+                };
+
+        XClient client =
+                XClient.builder()
+                        .baseUrl("https://api.example.com")
+                        .bearerToken("test-bearer")
+                        .accessToken("test-access")
+                        .oauth1(new OAuth1("ck", "cs", "oob", "at", "ats"))
+                        .transport(mockTransport)
+                        .build();
+
+        {% set call_args = namespace(first=true, code="") %}
+        {% for param in pagination_test.required_params %}
+        {% set arg_expr %}{% if param.param_type == "integer" %}1{% elif param.param_type == "boolean" %}true{% elif param.param_type == "array" %}Arrays.asList("item1"){% else %}"test_{{ param.variable_name }}"{% endif %}{% endset %}
+        {% if not call_args.first %}{% set call_args.code = call_args.code ~ ", " %}{% endif %}
+        {% set call_args.first = false %}
+        {% set call_args.code = call_args.code ~ arg_expr %}
+        {% endfor %}
+
+        Paginator<?> paginator =
+                client.{{ tag.property_name | java_ident }}()
+                        .{{ pagination_test.method_name | java_ident }}Pages({{ call_args.code }});
+        int pageCount = 0;
+        for (Object page : paginator) {
+            assertNotNull(page);
+            pageCount++;
+            if (pageCount > 5) break;
+        }
+        assertEquals(2, pageCount);
+        assertEquals(2, requests.size());
+        {% if pagination_test.token_param %}
+        assertTrue(
+                requests.get(1).getUrl().contains("{{ pagination_test.token_param }}=tok_2"),
+                "Second page URL should contain token param: " + requests.get(1).getUrl());
+        {% endif %}
+    }
+    {% endfor %}
+}

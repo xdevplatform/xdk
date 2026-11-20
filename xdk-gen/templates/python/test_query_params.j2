@@ -1,0 +1,67 @@
+"""
+Auto-generated tests for query parameter serialization, path encoding, and streaming UTF-8 decoding.
+
+Generated automatically - do not edit manually.
+"""
+
+from unittest import mock
+
+import pytest
+import requests
+
+from xdk import Client
+from xdk.streaming import StreamConfig, StreamState, _process_stream
+
+
+def _json_response(payload: bytes) -> requests.Response:
+    response = requests.Response()
+    response.status_code = 200
+    response._content = payload
+    response.headers["content-type"] = "application/json"
+    return response
+
+
+class TestQueryAndPathParams:
+    """Boolean query parameters must be sent as lowercase 'true'/'false' and path parameters must be URL-encoded."""
+
+    def setup_method(self):
+        self.client = Client(bearer_token="test_bearer_token")
+
+    @pytest.mark.parametrize(
+        "value, expected",
+        [(True, "true"), (False, "false")],
+    )
+    def test_update_rules_serializes_booleans_lowercase(self, value, expected):
+        with mock.patch.object(
+            self.client.session,
+            "post",
+            return_value=_json_response(b'{"data": []}'),
+        ) as post:
+            self.client.stream.update_rules(
+                body={"add": [{"value": "from:XDevelopers"}]},
+                dry_run=value,
+                delete_all=value,
+            )
+
+        params = post.call_args.kwargs["params"]
+        assert params == {"dry_run": expected, "delete_all": expected}
+
+        url = requests.Request(
+            "POST", "https://api.x.com/x", params=params
+        ).prepare().url
+        assert f"dry_run={expected}" in url
+        assert f"delete_all={expected}" in url
+
+    def test_streaming_incremental_utf8_across_chunk_boundaries(self):
+        # 4-byte emoji (U+1F680) + accented French text split right inside multi-byte sequences
+        raw_line = '{"data": {"id": "1", "text": "Bonjour 🚀 café"}}\n'.encode("utf-8")
+        # Split in the middle of the 4-byte emoji
+        emoji_idx = raw_line.index(b"\xf0\x9f\x9a\x80")
+        chunks = [raw_line[: emoji_idx + 2], raw_line[emoji_idx + 2 :]]
+
+        mock_resp = mock.Mock(spec=requests.Response)
+        mock_resp.iter_content.return_value = iter(chunks)
+
+        items = list(_process_stream(mock_resp, StreamConfig(), StreamState(), None))
+        assert len(items) == 1
+        assert items[0]["data"]["text"] == "Bonjour 🚀 café"

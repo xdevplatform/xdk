@@ -1,0 +1,244 @@
+package com.xdevplatform.xdk.auth;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xdevplatform.xdk.XApiException;
+import com.xdevplatform.xdk.http.HttpTransport;
+import com.xdevplatform.xdk.http.JdkHttpTransport;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.SecureRandom;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * OAuth 2.0 PKCE authentication helper compliant with RFC 7636.
+ */
+public final class OAuth2Pkce {
+    private static final SecureRandom RANDOM = new SecureRandom();
+    private static final ObjectMapper MAPPER = new ObjectMapper();
+
+    private final String clientId;
+    private final String clientSecret;
+    private final String redirectUri;
+    private final List<String> scopes;
+    private final String apiBaseUrl;
+    private final String authBaseUrl;
+    private final HttpTransport transport;
+
+    private String codeVerifier;
+    private String codeChallenge;
+    private OAuth2Token token;
+    private Instant tokenExpiresAt;
+
+    public OAuth2Pkce(
+            String clientId,
+            String clientSecret,
+            String redirectUri,
+            List<String> scopes) {
+        this(
+                clientId,
+                clientSecret,
+                redirectUri,
+                scopes,
+                "https://api.x.com",
+                "https://x.com/i",
+                new JdkHttpTransport());
+    }
+
+    public OAuth2Pkce(
+            String clientId,
+            String clientSecret,
+            String redirectUri,
+            List<String> scopes,
+            String apiBaseUrl,
+            String authBaseUrl,
+            HttpTransport transport) {
+        this.clientId = clientId;
+        this.clientSecret = clientSecret;
+        this.redirectUri = redirectUri;
+        this.scopes = scopes != null ? scopes : Arrays.asList("tweet.read", "users.read");
+        this.apiBaseUrl = apiBaseUrl.endsWith("/") ? apiBaseUrl.substring(0, apiBaseUrl.length() - 1) : apiBaseUrl;
+        this.authBaseUrl = authBaseUrl.endsWith("/") ? authBaseUrl.substring(0, authBaseUrl.length() - 1) : authBaseUrl;
+        this.transport = transport != null ? transport : new JdkHttpTransport();
+    }
+
+    public static String generateCodeVerifier(int length) {
+        if (length < 43 || length > 128) {
+            throw new IllegalArgumentException("RFC 7636 requires code verifier length between 43 and 128");
+        }
+        int byteLen = (int) Math.ceil((length * 3.0) / 4.0);
+        byte[] bytes = new byte[byteLen];
+        RANDOM.nextBytes(bytes);
+        String encoded = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes);
+        return encoded.substring(0, length);
+    }
+
+    public static String generateCodeChallenge(String verifier) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(verifier.getBytes(StandardCharsets.US_ASCII));
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
+        } catch (Exception e) {
+            throw new IllegalStateException("SHA-256 unavailable", e);
+        }
+    }
+
+    public void setPkceParameters(String codeVerifier, String codeChallenge) {
+        this.codeVerifier = codeVerifier;
+        this.codeChallenge =
+                codeChallenge != null ? codeChallenge : generateCodeChallenge(codeVerifier);
+    }
+
+    public String getCodeVerifier() {
+        return codeVerifier;
+    }
+
+    public String getCodeChallenge() {
+        return codeChallenge;
+    }
+
+    public String getAuthorizationUrl(String state) {
+        if (this.codeChallenge == null || this.codeVerifier == null) {
+            setPkceParameters(generateCodeVerifier(128), null);
+        }
+        Map<String, String> params = new LinkedHashMap<>();
+        params.put("response_type", "code");
+        params.put("client_id", clientId);
+        params.put("redirect_uri", redirectUri);
+        params.put("scope", String.join(" ", scopes));
+        params.put("state", state != null ? state : "");
+        params.put("code_challenge", codeChallenge);
+        params.put("code_challenge_method", "S256");
+        return authBaseUrl + "/oauth2/authorize?" + formEncode(params);
+    }
+
+    public OAuth2Token exchangeCode(String code) {
+        return exchangeCode(code, this.codeVerifier);
+    }
+
+    public OAuth2Token exchangeCode(String code, String verifier) {
+        String effectiveVerifier = verifier != null ? verifier : this.codeVerifier;
+        Map<String, String> form = new LinkedHashMap<>();
+        form.put("grant_type", "authorization_code");
+        form.put("code", code);
+        form.put("redirect_uri", redirectUri);
+        if (effectiveVerifier != null) {
+            form.put("code_verifier", effectiveVerifier);
+        }
+
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put("Content-Type", "application/x-www-form-urlencoded");
+        if (clientSecret != null && !clientSecret.isEmpty()) {
+            String basic =
+                    Base64.getEncoder()
+                            .encodeToString((clientId + ":" + clientSecret).getBytes(StandardCharsets.UTF_8));
+            headers.put("Authorization", "Basic " + basic);
+        } else {
+            form.put("client_id", clientId);
+        }
+
+        return executeTokenRequest(headers, form);
+    }
+
+    public OAuth2Token refreshToken() {
+        return refreshToken(this.token != null ? this.token.getRefreshToken() : null);
+    }
+
+    public OAuth2Token refreshToken(String refreshTokenValue) {
+        if (refreshTokenValue == null || refreshTokenValue.isEmpty()) {
+            throw new IllegalStateException("No refresh token available.");
+        }
+        Map<String, String> form = new LinkedHashMap<>();
+        form.put("grant_type", "refresh_token");
+        form.put("refresh_token", refreshTokenValue);
+
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put("Content-Type", "application/x-www-form-urlencoded");
+        if (clientSecret != null && !clientSecret.isEmpty()) {
+            String basic =
+                    Base64.getEncoder()
+                            .encodeToString((clientId + ":" + clientSecret).getBytes(StandardCharsets.UTF_8));
+            headers.put("Authorization", "Basic " + basic);
+        } else {
+            form.put("client_id", clientId);
+        }
+
+        return executeTokenRequest(headers, form);
+    }
+
+    public OAuth2Token getToken() {
+        return token;
+    }
+
+    public void setToken(OAuth2Token token, Instant expiresAt) {
+        this.token = token;
+        if (expiresAt != null) {
+            this.tokenExpiresAt = expiresAt;
+        } else if (token != null && token.getExpiresIn() != null) {
+            this.tokenExpiresAt = Instant.now().plusSeconds(token.getExpiresIn());
+        }
+    }
+
+    public boolean isTokenExpired(long bufferSeconds) {
+        if (token == null) {
+            return true;
+        }
+        if (tokenExpiresAt == null) {
+            return false;
+        }
+        return !Instant.now().isBefore(tokenExpiresAt.minusSeconds(bufferSeconds));
+    }
+
+    public boolean isTokenExpired() {
+        return isTokenExpired(60);
+    }
+
+    private OAuth2Token executeTokenRequest(Map<String, String> headers, Map<String, String> form) {
+        byte[] body = formEncode(form).getBytes(StandardCharsets.UTF_8);
+        HttpTransport.TransportRequest req =
+                new HttpTransport.TransportRequest(
+                        "POST", apiBaseUrl + "/2/oauth2/token", headers, body, Duration.ofSeconds(30));
+        try {
+            HttpTransport.TransportResponse res = transport.send(req);
+            String text = new String(res.getBody(), StandardCharsets.UTF_8);
+            if (res.getStatusCode() < 200 || res.getStatusCode() >= 300) {
+                throw new XApiException(
+                        "OAuth2 token request failed with status " + res.getStatusCode() + ": " + text,
+                        res.getStatusCode(),
+                        res.getHeaders(),
+                        text,
+                        null);
+            }
+            OAuth2Token parsed = MAPPER.readValue(text, OAuth2Token.class);
+            setToken(parsed, null);
+            return parsed;
+        } catch (IOException | InterruptedException e) {
+            if (e instanceof InterruptedException) {
+                Thread.currentThread().interrupt();
+            }
+            throw new XApiException("OAuth2 token request failed", e);
+        }
+    }
+
+    private static String formEncode(Map<String, String> params) {
+        StringBuilder sb = new StringBuilder();
+        boolean first = true;
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            if (!first) {
+                sb.append('&');
+            }
+            first = false;
+            sb.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8))
+                    .append('=')
+                    .append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
+        }
+        return sb.toString();
+    }
+}

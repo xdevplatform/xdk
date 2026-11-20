@@ -30,8 +30,12 @@
 /// # Example
 ///
 /// See the `python` module for a reference implementation of a language generator.
+pub use csharp::CSharp;
+pub use java::Java;
 pub use python::Python;
 pub use typescript::TypeScript;
 
+mod csharp;
+mod java;
 mod python;
 mod typescript;

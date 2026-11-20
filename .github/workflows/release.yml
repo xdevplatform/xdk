@@ -5,6 +5,8 @@
 # Required Secrets:
 #   - SDK_DEPLOY_KEY_PYTHON: SSH deploy key for xdk-python repo
 #   - SDK_DEPLOY_KEY_TYPESCRIPT: SSH deploy key for xdk-typescript repo
+#   - SDK_DEPLOY_KEY_JAVA: SSH deploy key for xdk-java repo (when created)
+#   - SDK_DEPLOY_KEY_CSHARP: SSH deploy key for xdk-csharp repo (when created)
 
 name: Release SDK
 
@@ -18,6 +20,8 @@ on:
         options:
           - python
           - typescript
+          - java
+          - csharp
           - all
       bump:
         description: 'Version bump type'
@@ -53,60 +57,72 @@ jobs:
     outputs:
       python_version: ${{ steps.versions.outputs.python }}
       typescript_version: ${{ steps.versions.outputs.typescript }}
+      java_version: ${{ steps.versions.outputs.java }}
+      csharp_version: ${{ steps.versions.outputs.csharp }}
       release_python: ${{ steps.matrix.outputs.python }}
       release_typescript: ${{ steps.matrix.outputs.typescript }}
+      release_java: ${{ steps.matrix.outputs.java }}
+      release_csharp: ${{ steps.matrix.outputs.csharp }}
     steps:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.XDK_PAT }}
-      
+
       - name: Bump version
         if: ${{ !inputs.skip_publish }}
         run: |
           chmod +x ./scripts/version.sh
           ./scripts/version.sh ${{ inputs.sdk }} ${{ inputs.bump }}
-      
+
       - name: Read versions
         id: versions
         run: |
           echo "python=$(grep '^python = ' xdk-config.toml | sed 's/.*= "\(.*\)"/\1/')" >> $GITHUB_OUTPUT
           echo "typescript=$(grep '^typescript = ' xdk-config.toml | sed 's/.*= "\(.*\)"/\1/')" >> $GITHUB_OUTPUT
-      
+          echo "java=$(grep '^java = ' xdk-config.toml | sed 's/.*= "\(.*\)"/\1/')" >> $GITHUB_OUTPUT
+          echo "csharp=$(grep '^csharp = ' xdk-config.toml | sed 's/.*= "\(.*\)"/\1/')" >> $GITHUB_OUTPUT
+
+      - name: Upload bumped config for downstream jobs
+        uses: actions/upload-artifact@v4
+        with:
+          name: xdk-config
+          path: xdk-config.toml
+
       - name: Determine which SDKs to release
         id: matrix
         run: |
-          if [ "${{ inputs.sdk }}" = "all" ] || [ "${{ inputs.sdk }}" = "python" ]; then
-            echo "python=true" >> $GITHUB_OUTPUT
-          else
-            echo "python=false" >> $GITHUB_OUTPUT
-          fi
-          
-          if [ "${{ inputs.sdk }}" = "all" ] || [ "${{ inputs.sdk }}" = "typescript" ]; then
-            echo "typescript=true" >> $GITHUB_OUTPUT
-          else
-            echo "typescript=false" >> $GITHUB_OUTPUT
-          fi
-      
+          for target in python typescript java csharp; do
+            if [ "${{ inputs.sdk }}" = "all" ] || [ "${{ inputs.sdk }}" = "$target" ]; then
+              echo "$target=true" >> $GITHUB_OUTPUT
+            else
+              echo "$target=false" >> $GITHUB_OUTPUT
+            fi
+          done
+
       - name: Commit version bump
         if: ${{ !inputs.dry_run && !inputs.skip_publish }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add xdk-config.toml
-          
+
           if [ "${{ inputs.sdk }}" = "all" ]; then
-            git commit -m "chore: bump SDK versions - Python v${{ steps.versions.outputs.python }}, TypeScript v${{ steps.versions.outputs.typescript }}"
+            git commit -m "chore: bump SDK versions - Python v${{ steps.versions.outputs.python }}, TypeScript v${{ steps.versions.outputs.typescript }}, Java v${{ steps.versions.outputs.java }}, C# v${{ steps.versions.outputs.csharp }}"
           elif [ "${{ inputs.sdk }}" = "python" ]; then
             git commit -m "chore: bump Python SDK to v${{ steps.versions.outputs.python }}"
-          else
+          elif [ "${{ inputs.sdk }}" = "typescript" ]; then
             git commit -m "chore: bump TypeScript SDK to v${{ steps.versions.outputs.typescript }}"
+          elif [ "${{ inputs.sdk }}" = "java" ]; then
+            git commit -m "chore: bump Java SDK to v${{ steps.versions.outputs.java }}"
+          elif [ "${{ inputs.sdk }}" = "csharp" ]; then
+            git commit -m "chore: bump C# SDK to v${{ steps.versions.outputs.csharp }}"
           fi
-          
+
           git push
-      
+
       - name: Release Summary
         run: |
-          echo "## 📦 Release Summary" >> $GITHUB_STEP_SUMMARY
+          echo "## Release Summary" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Setting | Value |" >> $GITHUB_STEP_SUMMARY
           echo "|---------|-------|" >> $GITHUB_STEP_SUMMARY
@@ -118,6 +134,8 @@ jobs:
           echo "### Versions" >> $GITHUB_STEP_SUMMARY
           echo "- Python: \`${{ steps.versions.outputs.python }}\`" >> $GITHUB_STEP_SUMMARY
           echo "- TypeScript: \`${{ steps.versions.outputs.typescript }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- Java: \`${{ steps.versions.outputs.java }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- C#: \`${{ steps.versions.outputs.csharp }}\`" >> $GITHUB_STEP_SUMMARY
 
   # ============================================
   # Release Python SDK
@@ -131,73 +149,59 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.dry_run && github.ref || 'main' }}
-      
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: xdk-config
+          path: .
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
-      
+
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
-      
+
       - name: Install uv
         uses: astral-sh/setup-uv@v3
-      
+
       - name: Generate Python SDK
         run: cargo run -- python --latest true
-      
+
       - name: Run tests
         run: |
           cd xdk/python
           uv sync
           uv run pytest tests/ -v
-      
+
       - name: Prepare SDK for push
         run: |
           cd xdk/python
           rm -rf .venv __pycache__ .pytest_cache *.egg-info dist/
           find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
           find . -type f -name "*.pyc" -delete 2>/dev/null || true
-      
+
       - name: Push to SDK repository
         if: ${{ !inputs.dry_run }}
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SDK_DEPLOY_KEY_PYTHON }}
         run: |
-          # Setup SSH
           mkdir -p ~/.ssh
           echo "$SSH_DEPLOY_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          
-          # Clone SDK repo
+
           GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key" git clone git@github.com:xdevplatform/xdk-python.git /tmp/sdk-repo
-          
-          # Preserve .github folder
           cp -r /tmp/sdk-repo/.github xdk/python/.github 2>/dev/null || true
-          
-          # Copy generated files to SDK repo (preserve .git)
           rm -rf /tmp/sdk-repo/*
           cp -r xdk/python/* /tmp/sdk-repo/
           cp -r xdk/python/.* /tmp/sdk-repo/ 2>/dev/null || true
-          
-          # Commit and push
+
           cd /tmp/sdk-repo
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "chore: update SDK to v${{ needs.prepare.outputs.python_version }}" || echo "No changes"
           GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key" git push
-      
-      - name: Summary
-        run: |
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
-            echo "## 🧪 Python SDK Dry Run" >> $GITHUB_STEP_SUMMARY
-            echo "Would push v${{ needs.prepare.outputs.python_version }} to xdk-python" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "## ✅ Python SDK Released" >> $GITHUB_STEP_SUMMARY
-            echo "Pushed v${{ needs.prepare.outputs.python_version }} to [xdk-python](https://github.com/xdevplatform/xdk-python)" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "SDK repo will auto-publish to PyPI" >> $GITHUB_STEP_SUMMARY
-          fi
 
   # ============================================
   # Release TypeScript SDK
@@ -211,76 +215,197 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.dry_run && github.ref || 'main' }}
-      
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: xdk-config
+          path: .
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
-      
+
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
+
       - name: Generate TypeScript SDK
         run: cargo run -- typescript --latest true
-      
+
       - name: Install dependencies
         run: cd xdk/typescript && npm ci
-      
+
       - name: Build
         run: cd xdk/typescript && npm run build
-      
+
       - name: Type check
         run: cd xdk/typescript && npm run type-check
-      
+
       - name: Run tests
         run: cd xdk/typescript && npm test
-      
+
       - name: Prepare SDK for push
         run: |
           cd xdk/typescript
           rm -rf node_modules
-      
+
       - name: Push to SDK repository
         if: ${{ !inputs.dry_run }}
         env:
           SSH_DEPLOY_KEY: ${{ secrets.SDK_DEPLOY_KEY_TYPESCRIPT }}
         run: |
-          # Setup SSH
           mkdir -p ~/.ssh
           echo "$SSH_DEPLOY_KEY" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan github.com >> ~/.ssh/known_hosts
-          
-          # Clone SDK repo
+
           GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key" git clone git@github.com:xdevplatform/xdk-typescript.git /tmp/sdk-repo
-          
-          # Preserve .github folder
           cp -r /tmp/sdk-repo/.github xdk/typescript/.github 2>/dev/null || true
-          
-          # Copy generated files to SDK repo (preserve .git)
           rm -rf /tmp/sdk-repo/*
           cp -r xdk/typescript/* /tmp/sdk-repo/
           cp -r xdk/typescript/.* /tmp/sdk-repo/ 2>/dev/null || true
-          
-          # Commit and push
+
           cd /tmp/sdk-repo
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           git commit -m "chore: update SDK to v${{ needs.prepare.outputs.typescript_version }}" || echo "No changes"
           GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key" git push
-      
-      - name: Summary
+
+  # ============================================
+  # Release Java SDK
+  # ============================================
+  release-java:
+    name: Release Java SDK
+    needs: prepare
+    if: needs.prepare.outputs.release_java == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.dry_run && github.ref || 'main' }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: xdk-config
+          path: .
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Generate Java SDK
+        run: cargo run -- java --latest true
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+          cache-dependency-path: xdk/java/pom.xml
+
+      - name: Build and Test
+        run: cd xdk/java && mvn test -B
+
+      - name: Prepare SDK for push
+        run: rm -rf xdk/java/target
+
+      - name: Push to SDK repository
+        if: ${{ !inputs.dry_run }}
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SDK_DEPLOY_KEY_JAVA }}
         run: |
-          if [ "${{ inputs.dry_run }}" = "true" ]; then
-            echo "## 🧪 TypeScript SDK Dry Run" >> $GITHUB_STEP_SUMMARY
-            echo "Would push v${{ needs.prepare.outputs.typescript_version }} to xdk-typescript" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "## ✅ TypeScript SDK Released" >> $GITHUB_STEP_SUMMARY
-            echo "Pushed v${{ needs.prepare.outputs.typescript_version }} to [xdk-typescript](https://github.com/xdevplatform/xdk-typescript)" >> $GITHUB_STEP_SUMMARY
-            echo "" >> $GITHUB_STEP_SUMMARY
-            echo "SDK repo will auto-publish to npm" >> $GITHUB_STEP_SUMMARY
+          if [ -z "$SSH_DEPLOY_KEY" ]; then
+            echo "SDK_DEPLOY_KEY_JAVA is not configured yet; skipping push to xdk-java."
+            exit 0
           fi
+          mkdir -p ~/.ssh
+          echo "$SSH_DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key" git clone git@github.com:xdevplatform/xdk-java.git /tmp/sdk-repo
+          cp -r /tmp/sdk-repo/.github xdk/java/.github 2>/dev/null || true
+          rm -rf /tmp/sdk-repo/*
+          cp -r xdk/java/* /tmp/sdk-repo/
+          cp -r xdk/java/.* /tmp/sdk-repo/ 2>/dev/null || true
+
+          cd /tmp/sdk-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: update SDK to v${{ needs.prepare.outputs.java_version }}" || echo "No changes"
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key" git push
+
+  # ============================================
+  # Release C# SDK
+  # ============================================
+  release-csharp:
+    name: Release C# SDK
+    needs: prepare
+    if: needs.prepare.outputs.release_csharp == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.dry_run && github.ref || 'main' }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: xdk-config
+          path: .
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Generate C# SDK
+        run: cargo run -- csharp --latest true
+
+      - name: Build and Test
+        run: cd xdk/csharp && dotnet build --nologo -warnaserror && dotnet test --no-build --nologo
+
+      - name: Prepare SDK for push
+        run: |
+          rm -rf xdk/csharp/src/Xdk/bin xdk/csharp/src/Xdk/obj
+          rm -rf xdk/csharp/tests/Xdk.Tests/bin xdk/csharp/tests/Xdk.Tests/obj
+
+      - name: Push to SDK repository
+        if: ${{ !inputs.dry_run }}
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SDK_DEPLOY_KEY_CSHARP }}
+        run: |
+          if [ -z "$SSH_DEPLOY_KEY" ]; then
+            echo "SDK_DEPLOY_KEY_CSHARP is not configured yet; skipping push to xdk-csharp."
+            exit 0
+          fi
+          mkdir -p ~/.ssh
+          echo "$SSH_DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key" git clone git@github.com:xdevplatform/xdk-csharp.git /tmp/sdk-repo
+          cp -r /tmp/sdk-repo/.github xdk/csharp/.github 2>/dev/null || true
+          rm -rf /tmp/sdk-repo/*
+          cp -r xdk/csharp/* /tmp/sdk-repo/
+          cp -r xdk/csharp/.* /tmp/sdk-repo/ 2>/dev/null || true
+
+          cd /tmp/sdk-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "chore: update SDK to v${{ needs.prepare.outputs.csharp_version }}" || echo "No changes"
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key" git push

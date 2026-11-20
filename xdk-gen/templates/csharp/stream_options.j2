@@ -1,0 +1,14 @@
+using System;
+
+namespace Xdk.Streaming;
+
+/// <summary>
+/// Options controlling reconnection and timeouts on streaming endpoints.
+/// </summary>
+public sealed class StreamOptions
+{
+    public int MaxRetries { get; set; } = 3;
+    public TimeSpan InitialBackoff { get; set; } = TimeSpan.FromSeconds(1);
+    public TimeSpan MaxBackoff { get; set; } = TimeSpan.FromSeconds(64);
+    public TimeSpan? Timeout { get; set; }
+}

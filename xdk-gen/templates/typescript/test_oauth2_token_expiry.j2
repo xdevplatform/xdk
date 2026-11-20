@@ -1,0 +1,134 @@
+/**
+ * Auto-generated tests for OAuth2 token expiry tracking and PKCE auto-generation.
+ *
+ * Generated automatically - do not edit manually.
+ */
+
+import { describe, it, expect, afterEach, jest } from '@jest/globals';
+import { OAuth2 } from '../src/oauth2_auth.js';
+import { Client } from '../src/client.js';
+
+const NOW = 1_700_000_000_000;
+
+const tokenResponse = () =>
+  new Response(
+    JSON.stringify({
+      access_token: 'access-token',
+      token_type: 'bearer',
+      expires_in: 7200,
+      refresh_token: 'refresh-token',
+      scope: 'tweet.read',
+    }),
+    { status: 200, headers: { 'content-type': 'application/json' } }
+  );
+
+const newOAuth2 = () =>
+  new OAuth2({
+    clientId: 'test-client-id',
+    redirectUri: 'https://example.com/callback',
+  });
+
+describe('OAuth2 token expiry tracking', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  const mockFetch = () => {
+    jest.spyOn(globalThis, 'fetch').mockImplementation(async () => tokenResponse() as any);
+  };
+
+  const expectTracksExpiry = (oauth2: OAuth2, nowSpy: ReturnType<typeof jest.spyOn>) => {
+    expect(oauth2.isTokenExpired(0)).toBe(false);
+    expect(oauth2.isTokenExpired(10800)).toBe(true);
+
+    nowSpy.mockReturnValue(NOW + 7200 * 1000 + 1);
+    expect(oauth2.isTokenExpired()).toBe(true);
+  };
+
+  it('auto-generates PKCE code_challenge on getAuthorizationUrl', async () => {
+    const oauth2 = newOAuth2();
+    const authUrl = await oauth2.getAuthorizationUrl('state-1');
+    expect(authUrl).toContain('code_challenge=');
+    expect(authUrl).toContain('code_challenge_method=S256');
+    expect(oauth2.getCodeVerifier()).toBeDefined();
+  });
+
+  it('tracks expiry after exchangeCode', async () => {
+    mockFetch();
+    const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(NOW);
+    const oauth2 = newOAuth2();
+
+    await oauth2.exchangeCode('test-code', 'test-verifier');
+
+    expectTracksExpiry(oauth2, nowSpy);
+  });
+
+  it('tracks expiry after refreshToken', async () => {
+    mockFetch();
+    const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(NOW);
+    const oauth2 = newOAuth2();
+    await oauth2.exchangeCode('test-code', 'test-verifier');
+
+    nowSpy.mockReturnValue(NOW);
+    await oauth2.refreshToken();
+
+    expectTracksExpiry(oauth2, nowSpy);
+  });
+
+  it('tracks expiry after setToken', () => {
+    const nowSpy = jest.spyOn(Date, 'now').mockReturnValue(NOW);
+    const oauth2 = newOAuth2();
+
+    oauth2.setToken({
+      access_token: 'access-token',
+      token_type: 'bearer',
+      expires_in: 7200,
+    });
+
+    expectTracksExpiry(oauth2, nowSpy);
+  });
+});
+
+describe('Client timeout, retry, and maxRetries configuration', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('preserves timeout: 0 and maxRetries: 0 instead of coercing falsy values', () => {
+    const client = new Client({
+      bearerToken: 'test-token',
+      timeout: 0,
+      maxRetries: 0,
+    });
+    expect(client.timeout).toBe(0);
+    expect(client.maxRetries).toBe(0);
+  });
+
+  it('retries transient 503 responses when retry is enabled', async () => {
+    const client = new Client({
+      baseUrl: 'https://api.example.com',
+      bearerToken: 'test-token',
+      retry: true,
+      maxRetries: 2,
+    });
+
+    let hits = 0;
+    jest.spyOn(client.httpClient, 'request').mockImplementation(async () => {
+      hits++;
+      if (hits === 1) {
+        return new Response(JSON.stringify({ title: 'Service Unavailable' }), {
+          status: 503,
+          statusText: 'Service Unavailable',
+        }) as any;
+      }
+      return new Response(JSON.stringify({ data: { id: '1', name: 'User' } }), {
+        status: 200,
+        statusText: 'OK',
+      }) as any;
+    });
+
+    const res = await client.request('GET', '/2/users/1');
+    expect(hits).toBe(2);
+    expect(res).toEqual({ data: { id: '1', name: 'User' } });
+  });
+});

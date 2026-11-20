@@ -303,11 +303,13 @@ export class CryptoUtils {
    */
   static generateCodeVerifier(length: number = 128): string {
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-      // Use crypto.getRandomValues if available
-      const array = new Uint8Array(length);
+      // Use crypto.getRandomValues if available. base64url turns every 3 bytes
+      // into 4 characters, so draw ceil(length * 3 / 4) bytes and trim to the
+      // requested number of characters (RFC 7636 allows 43-128).
+      const array = new Uint8Array(Math.ceil((length * 3) / 4));
       crypto.getRandomValues(array);
       // Convert to base64url encoding (RFC 7636)
-      return this._base64UrlEncode(array);
+      return this._base64UrlEncode(array).slice(0, length);
     } else {
       // Fallback to Math.random (less secure but functional)
       const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';

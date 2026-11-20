@@ -241,6 +241,8 @@ fn test_contract_test_structure() {
         required_params: vec![],
         optional_params: vec![],
         request_body_schema: None,
+        has_request_model: false,
+        has_json_response: false,
         response_schema: xdk_lib::testing::ResponseSchema {
             status_code: 200,
             content_type: "application/json".to_string(),
@@ -248,6 +250,7 @@ fn test_contract_test_structure() {
             mock_json: "{}".to_string(),
         },
         security_requirements: vec![],
+        is_streaming: false,
     };
 
     assert_eq!(contract_test.method_name, "get_user");

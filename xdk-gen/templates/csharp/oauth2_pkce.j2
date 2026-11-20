@@ -1,0 +1,189 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Xdk.Auth;
+
+/// <summary>
+/// OAuth 2.0 PKCE authentication helper compliant with RFC 7636.
+/// </summary>
+public sealed class OAuth2Pkce
+{
+    private readonly string _clientId;
+    private readonly string? _clientSecret;
+    private readonly string _redirectUri;
+    private readonly IReadOnlyList<string> _scopes;
+    private readonly string _apiBaseUrl;
+    private readonly string _authBaseUrl;
+    private readonly HttpClient _httpClient;
+
+    public string? CodeVerifier { get; private set; }
+    public string? CodeChallenge { get; private set; }
+    public OAuth2Token? Token { get; private set; }
+    public DateTimeOffset? TokenExpiresAt { get; private set; }
+
+    public OAuth2Pkce(
+        string clientId,
+        string redirectUri,
+        string? clientSecret = null,
+        IEnumerable<string>? scopes = null,
+        string apiBaseUrl = "https://api.x.com",
+        string authBaseUrl = "https://x.com/i",
+        HttpClient? httpClient = null)
+    {
+        _clientId = clientId;
+        _clientSecret = clientSecret;
+        _redirectUri = redirectUri;
+        _scopes = scopes != null ? new List<string>(scopes) : new[] { "tweet.read", "users.read" };
+        _apiBaseUrl = apiBaseUrl.TrimEnd('/');
+        _authBaseUrl = authBaseUrl.TrimEnd('/');
+        _httpClient = httpClient ?? new HttpClient();
+    }
+
+    public static string GenerateCodeVerifier(int length = 128)
+    {
+        if (length is < 43 or > 128)
+        {
+            throw new ArgumentOutOfRangeException(nameof(length), "RFC 7636 requires verifier length 43..128.");
+        }
+        var byteLen = (int)Math.Ceiling((length * 3.0) / 4.0);
+        var bytes = RandomNumberGenerator.GetBytes(byteLen);
+        var base64Url = Base64UrlEncode(bytes);
+        return base64Url[..length];
+    }
+
+    public static string GenerateCodeChallenge(string verifier)
+    {
+        var hash = SHA256.HashData(Encoding.ASCII.GetBytes(verifier));
+        return Base64UrlEncode(hash);
+    }
+
+    public void SetPkceParameters(string codeVerifier, string? codeChallenge = null)
+    {
+        CodeVerifier = codeVerifier;
+        CodeChallenge = codeChallenge ?? GenerateCodeChallenge(codeVerifier);
+    }
+
+    public string GetAuthorizationUrl(string? state = null)
+    {
+        if (string.IsNullOrEmpty(CodeVerifier) || string.IsNullOrEmpty(CodeChallenge))
+        {
+            SetPkceParameters(GenerateCodeVerifier());
+        }
+
+        var query = new List<string>
+        {
+            "response_type=code",
+            $"client_id={Uri.EscapeDataString(_clientId)}",
+            $"redirect_uri={Uri.EscapeDataString(_redirectUri)}",
+            $"scope={Uri.EscapeDataString(string.Join(" ", _scopes))}",
+            $"state={Uri.EscapeDataString(state ?? string.Empty)}",
+            $"code_challenge={Uri.EscapeDataString(CodeChallenge!)}",
+            "code_challenge_method=S256",
+        };
+        return $"{_authBaseUrl}/oauth2/authorize?{string.Join("&", query)}";
+    }
+
+    public async Task<OAuth2Token> ExchangeCodeAsync(
+        string code,
+        string? codeVerifier = null,
+        CancellationToken cancellationToken = default)
+    {
+        var verifier = codeVerifier ?? CodeVerifier;
+        var form = new Dictionary<string, string>
+        {
+            ["grant_type"] = "authorization_code",
+            ["code"] = code,
+            ["redirect_uri"] = _redirectUri,
+        };
+        if (!string.IsNullOrEmpty(verifier))
+        {
+            form["code_verifier"] = verifier;
+        }
+        return await SendTokenRequestAsync(form, cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<OAuth2Token> RefreshTokenAsync(
+        string? refreshToken = null,
+        CancellationToken cancellationToken = default)
+    {
+        var tokenToUse = refreshToken ?? Token?.RefreshToken;
+        if (string.IsNullOrEmpty(tokenToUse))
+        {
+            throw new InvalidOperationException("No refresh token available.");
+        }
+        var form = new Dictionary<string, string>
+        {
+            ["grant_type"] = "refresh_token",
+            ["refresh_token"] = tokenToUse,
+        };
+        return await SendTokenRequestAsync(form, cancellationToken).ConfigureAwait(false);
+    }
+
+    public void SetToken(OAuth2Token token, DateTimeOffset? expiresAt = null)
+    {
+        Token = token;
+        if (expiresAt.HasValue)
+        {
+            TokenExpiresAt = expiresAt;
+        }
+        else if (token.ExpiresIn.HasValue)
+        {
+            TokenExpiresAt = DateTimeOffset.UtcNow.AddSeconds(token.ExpiresIn.Value);
+        }
+    }
+
+    public bool IsTokenExpired(int bufferSeconds = 60)
+    {
+        if (Token == null)
+        {
+            return true;
+        }
+        if (!TokenExpiresAt.HasValue)
+        {
+            return false;
+        }
+        return DateTimeOffset.UtcNow >= TokenExpiresAt.Value.AddSeconds(-bufferSeconds);
+    }
+
+    private async Task<OAuth2Token> SendTokenRequestAsync(
+        Dictionary<string, string> form,
+        CancellationToken cancellationToken)
+    {
+        using var req = new HttpRequestMessage(HttpMethod.Post, $"{_apiBaseUrl}/2/oauth2/token");
+        if (!string.IsNullOrEmpty(_clientSecret))
+        {
+            var basic = Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_clientId}:{_clientSecret}"));
+            req.Headers.Authorization = new AuthenticationHeaderValue("Basic", basic);
+        }
+        else
+        {
+            form["client_id"] = _clientId;
+        }
+        req.Content = new FormUrlEncodedContent(form);
+
+        using var res = await _httpClient.SendAsync(req, cancellationToken).ConfigureAwait(false);
+        var text = await res.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        if (!res.IsSuccessStatusCode)
+        {
+            throw new XApiException(
+                $"OAuth2 token request failed with status {(int)res.StatusCode}: {text}",
+                res.StatusCode,
+                rawBody: text);
+        }
+
+        var parsed = JsonSerializer.Deserialize<OAuth2Token>(text)
+            ?? throw new XApiException("Empty OAuth2 token response", res.StatusCode, rawBody: text);
+        SetToken(parsed);
+        return parsed;
+    }
+
+    private static string Base64UrlEncode(byte[] bytes) =>
+        Convert.ToBase64String(bytes).TrimEnd('=').Replace('+', '-').Replace('/', '_');
+}
