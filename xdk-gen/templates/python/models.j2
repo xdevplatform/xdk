@@ -29,7 +29,23 @@ from .. import schemas
 class {{ name }}(RootModel[schemas.{{ ref_name }}]):
     """{{ doc }}"""
 
-    pass
+    def __init__(self, root: Any = None, **kwargs: Any) -> None:
+        if root is None:
+            super().__init__(kwargs)
+        else:
+            super().__init__(root)
+
+    def __getattr__(self, name: str) -> Any:
+        if name.startswith("_"):
+            raise AttributeError(name)
+        root = object.__getattribute__(self, "root")
+        if isinstance(root, dict) and name in root:
+            return root[name]
+        if hasattr(root, name):
+            return getattr(root, name)
+        if name in ("data", "errors", "includes", "meta"):
+            return None
+        raise AttributeError(f"{type(self).__name__!r} object has no attribute {name!r}")
 {%- endif -%}
 {%- elif schema is mapping and schema.properties is defined and schema.properties -%}
 {{ schema | py_inline_model(name, doc) }}

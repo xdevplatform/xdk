@@ -21,10 +21,16 @@ export interface PaginatedResponse<T> {
     meta?: {
         /** Number of results in the current page */
         resultCount?: number;
+        result_count?: number;
         /** Token for fetching the next page */
         nextToken?: string;
+        next_token?: string;
+        paginationToken?: string;
+        pagination_token?: string;
         /** Token for fetching the previous page */
         previousToken?: string;
+        previous_token?: string;
+        [key: string]: any;
     };
     /** Additional included objects (users, tweets, etc.) */
     includes?: Record<string, any>;
@@ -165,9 +171,13 @@ export class Paginator<T> implements AsyncIterable<T> {
         try {
             const response = await this.fetchPage(this.currentToken);
             
-            // Update tokens
+            // Update tokens (support both camelCase and snake_case metadata keys)
             this.previousToken = this.currentToken;
-            this.currentToken = response.meta?.nextToken;
+            this.currentToken =
+                response.meta?.nextToken ??
+                response.meta?.next_token ??
+                response.meta?.paginationToken ??
+                response.meta?.pagination_token;
             
             // Update state
             this.hasMore = !!this.currentToken;
@@ -236,7 +246,9 @@ export class Paginator<T> implements AsyncIterable<T> {
             
             // Update tokens
             this.currentToken = this.previousToken;
-            this.previousToken = response.meta?.previousToken;
+            this.previousToken =
+                response.meta?.previousToken ??
+                response.meta?.previous_token;
             
             // Update state
             this.hasMore = !!this.currentToken;

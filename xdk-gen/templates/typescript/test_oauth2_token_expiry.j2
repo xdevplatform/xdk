@@ -7,6 +7,7 @@
 import { describe, it, expect, afterEach, jest } from '@jest/globals';
 import { OAuth2 } from '../src/oauth2_auth.js';
 import { Client } from '../src/client.js';
+import { UserPaginator, Paginator } from '../src/paginator.js';
 
 const NOW = 1_700_000_000_000;
 
@@ -131,4 +132,114 @@ describe('Client timeout, retry, and maxRetries configuration', () => {
     expect(hits).toBe(2);
     expect(res).toEqual({ data: { id: '1', name: 'User' } });
   });
+
+  it('picks up OAuth2 token acquired after Client construction', async () => {
+    const oauth2 = newOAuth2();
+    const client = new Client({ baseUrl: 'https://api.example.com', oauth2 });
+    expect(client.isAuthenticated()).toBe(false);
+
+    oauth2.setToken({
+      access_token: 'late-bound-access-token',
+      token_type: 'bearer',
+      expires_in: 7200,
+    });
+    expect(client.isAuthenticated()).toBe(true);
+    expect(() => client.validateAuthentication(['OAuth2UserToken'], 'getMe')).not.toThrow();
+
+    let authHeader: string | null = null;
+    jest.spyOn(client.httpClient, 'request').mockImplementation(async (_url, opts: any) => {
+      const h = opts?.headers as Headers;
+      authHeader = h?.get?.('Authorization') ?? null;
+      return new Response(JSON.stringify({ data: { id: '42', username: 'dev' } }), {
+        status: 200,
+        statusText: 'OK',
+      }) as any;
+    });
+
+    const me = await client.users.getMe();
+    expect(authHeader).toBe('Bearer late-bound-access-token');
+    expect(me.data?.username).toBe('dev');
+  });
+
+  it('preserves caller verifier when setPkceParameters(verifier) was not awaited', async () => {
+    const oauth2 = newOAuth2();
+    const customVerifier = 'a'.repeat(64);
+    // Intentionally omit `await` (common developer mistake)
+    void oauth2.setPkceParameters(customVerifier);
+    const url = await oauth2.getAuthorizationUrl('state-xyz');
+    expect(oauth2.getCodeVerifier()).toBe(customVerifier);
+    expect(url).toContain('code_challenge=');
+  });
+
+  it('supports Paginator & UserPaginator with both camelCase and snake_case tokens', async () => {
+    const client = new Client({
+      baseUrl: 'https://api.example.com',
+      bearerToken: 'test-token',
+    });
+
+    let page = 0;
+    jest.spyOn(client.httpClient, 'request').mockImplementation(async () => {
+      page++;
+      if (page === 1) {
+        return new Response(
+          JSON.stringify({
+            data: [{ id: '1', name: 'Alice', username: 'alice' }],
+            meta: { next_token: 'tok_2', result_count: 1 },
+          }),
+          { status: 200, statusText: 'OK' }
+        ) as any;
+      }
+      return new Response(
+        JSON.stringify({
+          data: [{ id: '2', name: 'Bob', username: 'bob' }],
+          meta: { result_count: 1 },
+        }),
+        { status: 200, statusText: 'OK' }
+      ) as any;
+    });
+
+    // Direct call returns plain typed response (backward-compatible with v0.6.x)
+    const direct = await client.users.getFollowers('783214', { maxResults: 1 });
+    expect(direct.data).toHaveLength(1);
+    expect(direct.meta?.nextToken).toBe('tok_2');
+
+    // Reset mock page counter and test README UserPaginator wrapper
+    page = 0;
+    const followers = new UserPaginator(async (token?: string) => {
+      const res = await client.users.getFollowers('783214', {
+        maxResults: 1,
+        paginationToken: token,
+      });
+      return {
+        data: res.data ?? [],
+        meta: res.meta,
+        includes: res.includes,
+        errors: res.errors,
+      };
+    });
+
+    const collected: string[] = [];
+    for await (const u of followers) {
+      collected.push(u.username);
+    }
+    expect(collected).toEqual(['alice', 'bob']);
+    expect(followers.data).toHaveLength(2);
+
+    // Also verify raw snake_case meta works directly with Paginator
+    let rawCalls = 0;
+    const snakePaginator = new Paginator<{ id: string }>(async (token) => {
+      rawCalls++;
+      if (!token) {
+        return { data: [{ id: 'a' }], meta: { pagination_token: 'p2' } };
+      }
+      return { data: [{ id: 'b' }], meta: {} };
+    });
+    const ids: string[] = [];
+    for await (const item of snakePaginator) {
+      ids.push(item.id);
+    }
+    expect(rawCalls).toBe(2);
+    expect(ids).toEqual(['a', 'b']);
+  });
 });
+
