@@ -103,7 +103,7 @@ export class {{ tag.class_name }}Client {
     }
 
 {% for operation in operations %}
-{% if not (operation.parameters and (operation.parameters | selectattr('name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('name', 'equalto', 'next_token') | list | length > 0)) %}
+{% if not (operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0)) %}
   /**
    * {{ operation.summary | default("") }}{% if operation.description %}
    * {{ operation.description }}{% endif %}
@@ -271,7 +271,10 @@ export class {{ tag.class_name }}Client {
 
         // Prepare request options
         const finalRequestOptions: RequestOptions = {
-            {% if operation.request_body and operation.request_body.required %}
+            {% if operation.request_body and operation.request_body.content and "application/octet-stream" in operation.request_body.content and "application/json" not in operation.request_body.content %}
+            headers: { 'Content-Type': 'application/octet-stream' },
+            body: body as any,
+            {% elif operation.request_body and operation.request_body.required %}
             body: JSON.stringify(transformKeysToSnake(body || {})),
             {% elif operation.request_body and not operation.request_body.required %}
             body: body ? JSON.stringify(transformKeysToSnake(body)) : undefined,
@@ -312,7 +315,7 @@ export class {{ tag.class_name }}Client {
 {% endfor %}
 
 {% for operation in operations %}
-{% if operation.parameters and (operation.parameters | selectattr('name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('name', 'equalto', 'next_token') | list | length > 0) %}
+{% if operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) %}
   /**
    * {{ operation.summary | default("") }}{% if operation.description %}
    * {{ operation.description }}{% endif %}
@@ -343,8 +346,12 @@ export class {{ tag.class_name }}Client {
     {{ param.variable_name }}: {% if param.schema %}{{ param.schema | ts_type('Schemas.') }}{% else %}any{% endif %},
     {% endif %}
     {% endfor %}
+    {# Required request body #}
+    {% if operation.request_body and operation.request_body.required %}
+    body: {% if operation.has_request_model %}{{ operation.class_name }}Request{% else %}any{% endif %},
+    {% endif %}
     {# Options object for all optional parameters #}
-    {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 %}
+    {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
     options: {{ operation.class_name }}Options = {}
     {% else %}
     options: { requestOptions?: RequestOptions } = {}
@@ -365,13 +372,16 @@ export class {{ tag.class_name }}Client {
     {% endif %}
     
     // Destructure options (exclude path parameters)
-    {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 %}
+    {% if operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
     const {
         {% for param in operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') %}
         {% if param.variable_name %}
         {{ param.variable_name }} = {% if param.schema and param.schema.type == 'array' %}[]{% else %}undefined{% endif %},
         {% endif %}
         {% endfor %}
+        {% if operation.request_body and not operation.request_body.required %}
+        body,
+        {% endif %}
         requestOptions: requestOptions = {}
     } = normalizedOptions;
     {% else %}
@@ -423,9 +433,9 @@ export class {{ tag.class_name }}Client {
 
       // Add pagination token if provided
       if (paginationToken) {
-        {% if operation.parameters | selectattr('name', 'equalto', 'pagination_token') | list | length > 0 %}
+        {% if operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 %}
         params.set('pagination_token', paginationToken);
-        {% elif operation.parameters | selectattr('name', 'equalto', 'next_token') | list | length > 0 %}
+        {% elif operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0 %}
         params.set('next_token', paginationToken);
         {% endif %}
       }
@@ -433,9 +443,9 @@ export class {{ tag.class_name }}Client {
       // Prepare request options
       const finalRequestOptions: RequestOptions = {
           {% if operation.request_body and operation.request_body.required %}
-          body: JSON.stringify(body || {}),
+          body: JSON.stringify(transformKeysToSnake(body || {})),
           {% elif operation.request_body and not operation.request_body.required %}
-          body: body ? JSON.stringify(body) : undefined,
+          body: body ? JSON.stringify(transformKeysToSnake(body)) : undefined,
           {% endif %}
           {% if operation.security %}
           // Pass security requirements for smart auth selection

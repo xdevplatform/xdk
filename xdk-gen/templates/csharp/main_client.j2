@@ -1,0 +1,526 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
+using Xdk.Auth;
+using Xdk.Clients;
+using Xdk.Streaming;
+
+namespace Xdk;
+
+/// <summary>
+/// Primary C# / .NET client for interacting with the X API v2.
+/// </summary>
+public sealed class XClient : IDisposable
+{
+    public const string Version = "{{ version }}";
+    public const string UserAgent = "xdk-csharp/{{ version }}";
+
+    private static readonly HashSet<int> RetryableStatusCodes = new() { 429, 500, 502, 503, 504 };
+
+    private readonly HttpClient _httpClient;
+    private readonly bool _disposeHttpClient;
+    private readonly Dictionary<string, string> _defaultHeaders;
+    private string? _accessToken;
+
+    public string BaseUrl { get; }
+    public string? BearerToken { get; }
+    public OAuth2Pkce? OAuth2 { get; }
+    public OAuth1? OAuth1 { get; }
+    public TimeSpan Timeout { get; }
+    public bool Retry { get; }
+    public int MaxRetries { get; }
+    public JsonSerializerOptions JsonOptions { get; }
+
+{% for tag in tags %}
+    public {{ tag.class_name }}Client {{ tag.class_name }} { get; }
+{% endfor %}
+
+    public XClient(XClientOptions? options = null)
+    {
+        var opts = options ?? new XClientOptions();
+        BaseUrl = string.IsNullOrWhiteSpace(opts.BaseUrl)
+            ? "https://api.x.com"
+            : opts.BaseUrl.TrimEnd('/');
+        BearerToken = opts.BearerToken;
+        OAuth2 = opts.OAuth2;
+        _accessToken = opts.AccessToken ?? opts.OAuth2?.Token?.AccessToken;
+        OAuth1 = opts.OAuth1;
+        Timeout = opts.Timeout;
+        Retry = opts.Retry;
+        MaxRetries = Math.Max(0, opts.MaxRetries);
+
+        _defaultHeaders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            ["User-Agent"] = UserAgent,
+            ["Accept"] = "application/json",
+        };
+        foreach (var kv in opts.Headers)
+        {
+            _defaultHeaders[kv.Key] = kv.Value;
+        }
+
+        if (opts.HttpClient != null)
+        {
+            _httpClient = opts.HttpClient;
+            _disposeHttpClient = false;
+        }
+        else
+        {
+            _httpClient = new HttpClient { Timeout = System.Threading.Timeout.InfiniteTimeSpan };
+            _disposeHttpClient = true;
+        }
+
+        JsonOptions = new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            PropertyNameCaseInsensitive = false,
+        };
+
+{% for tag in tags %}
+        {{ tag.class_name }} = new {{ tag.class_name }}Client(this);
+{% endfor %}
+    }
+
+    public string? AccessToken
+    {
+        get => _accessToken;
+        set => _accessToken = value;
+    }
+
+    public bool IsTokenExpired() => OAuth2 != null && OAuth2.IsTokenExpired();
+
+    public async Task RefreshTokenAsync(CancellationToken cancellationToken = default)
+    {
+        if (OAuth2 != null)
+        {
+            var refreshed = await OAuth2.RefreshTokenAsync(cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+            if (!string.IsNullOrEmpty(refreshed.AccessToken))
+            {
+                _accessToken = refreshed.AccessToken;
+            }
+        }
+    }
+
+    public static string EncodePathSegment(object? value) =>
+        value is null ? string.Empty : Uri.EscapeDataString(Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty);
+
+    public static void AddQueryParam(Dictionary<string, string> query, string name, object? value)
+    {
+        if (value is null)
+        {
+            return;
+        }
+        if (value is bool b)
+        {
+            query[name] = b ? "true" : "false";
+            return;
+        }
+        if (value is not string && value is IEnumerable enumerable)
+        {
+            var parts = new List<string>();
+            foreach (var item in enumerable)
+            {
+                if (item is not null)
+                {
+                    parts.Add(Convert.ToString(item, CultureInfo.InvariantCulture) ?? string.Empty);
+                }
+            }
+            if (parts.Count > 0)
+            {
+                query[name] = string.Join(",", parts);
+            }
+            return;
+        }
+        query[name] = Convert.ToString(value, CultureInfo.InvariantCulture) ?? string.Empty;
+    }
+
+    public string BuildUrl(string path, IReadOnlyDictionary<string, string>? queryParams)
+    {
+        var sb = new StringBuilder(BaseUrl).Append(path);
+        if (queryParams is { Count: > 0 })
+        {
+            var first = true;
+            foreach (var kv in queryParams)
+            {
+                if (kv.Value is null)
+                {
+                    continue;
+                }
+                sb.Append(first ? '?' : '&');
+                first = false;
+                sb.Append(Uri.EscapeDataString(kv.Key))
+                  .Append('=')
+                  .Append(Uri.EscapeDataString(kv.Value));
+            }
+        }
+        return sb.ToString();
+    }
+
+    public async Task<T> SendJsonAsync<T>(
+        HttpMethod method,
+        string path,
+        IReadOnlyDictionary<string, string>? queryParams,
+        IReadOnlyDictionary<string, string>? extraHeaders,
+        object? body,
+        string contentType,
+        IReadOnlyList<string>? securitySchemes,
+        CancellationToken cancellationToken = default)
+    {
+        using var response = await ExecuteWithRetryAsync(
+            method,
+            path,
+            queryParams,
+            extraHeaders,
+            body,
+            contentType,
+            securitySchemes,
+            HttpCompletionOption.ResponseContentRead,
+            Timeout,
+            cancellationToken).ConfigureAwait(false);
+
+        var bytes = await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
+        if (bytes.Length == 0)
+        {
+            return JsonSerializer.Deserialize<T>("{}", JsonOptions)!;
+        }
+        return JsonSerializer.Deserialize<T>(bytes, JsonOptions)!;
+    }
+
+    public async Task<byte[]> SendBytesAsync(
+        HttpMethod method,
+        string path,
+        IReadOnlyDictionary<string, string>? queryParams,
+        IReadOnlyDictionary<string, string>? extraHeaders,
+        object? body,
+        string contentType,
+        IReadOnlyList<string>? securitySchemes,
+        CancellationToken cancellationToken = default)
+    {
+        using var response = await ExecuteWithRetryAsync(
+            method,
+            path,
+            queryParams,
+            extraHeaders,
+            body,
+            contentType,
+            securitySchemes,
+            HttpCompletionOption.ResponseContentRead,
+            Timeout,
+            cancellationToken).ConfigureAwait(false);
+
+        return await response.Content.ReadAsByteArrayAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public EventStream<T> OpenStream<T>(
+        HttpMethod method,
+        string path,
+        IReadOnlyDictionary<string, string>? queryParams,
+        IReadOnlyDictionary<string, string>? extraHeaders,
+        object? body,
+        IReadOnlyList<string>? securitySchemes,
+        StreamOptions? streamOptions = null)
+    {
+        var opts = streamOptions ?? new StreamOptions();
+        return new EventStream<T>(
+            async ct =>
+            {
+                var response = await ExecuteWithRetryAsync(
+                    method,
+                    path,
+                    queryParams,
+                    extraHeaders,
+                    body,
+                    "application/json",
+                    securitySchemes,
+                    HttpCompletionOption.ResponseHeadersRead,
+                    opts.Timeout ?? System.Threading.Timeout.InfiniteTimeSpan,
+                    ct,
+                    allowRetry: false).ConfigureAwait(false);
+                return await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
+            },
+            JsonOptions,
+            opts);
+    }
+
+    private async Task<HttpResponseMessage> ExecuteWithRetryAsync(
+        HttpMethod method,
+        string path,
+        IReadOnlyDictionary<string, string>? queryParams,
+        IReadOnlyDictionary<string, string>? extraHeaders,
+        object? body,
+        string contentType,
+        IReadOnlyList<string>? securitySchemes,
+        HttpCompletionOption completionOption,
+        TimeSpan requestTimeout,
+        CancellationToken cancellationToken,
+        bool allowRetry = true)
+    {
+        var maxAttempts = (allowRetry && Retry) ? (MaxRetries + 1) : 1;
+
+        for (var attempt = 0; attempt < maxAttempts; attempt++)
+        {
+            using var req = await CreateRequestMessageAsync(
+                method,
+                path,
+                queryParams,
+                extraHeaders,
+                body,
+                contentType,
+                securitySchemes,
+                cancellationToken).ConfigureAwait(false);
+
+            CancellationTokenSource? timeoutCts = null;
+            CancellationTokenSource? linkedCts = null;
+            var effectiveToken = cancellationToken;
+            if (requestTimeout > TimeSpan.Zero && requestTimeout != System.Threading.Timeout.InfiniteTimeSpan)
+            {
+                timeoutCts = new CancellationTokenSource(requestTimeout);
+                linkedCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, timeoutCts.Token);
+                effectiveToken = linkedCts.Token;
+            }
+
+            try
+            {
+                var response = await _httpClient.SendAsync(req, completionOption, effectiveToken)
+                    .ConfigureAwait(false);
+                if (response.IsSuccessStatusCode)
+                {
+                    return response;
+                }
+
+                var statusInt = (int)response.StatusCode;
+                if (attempt + 1 < maxAttempts && RetryableStatusCodes.Contains(statusInt))
+                {
+                    var retryAfter = response.Headers.RetryAfter?.Delta;
+                    response.Dispose();
+                    var delay = retryAfter.HasValue
+                        ? TimeSpan.FromMilliseconds(Math.Min(5000, Math.Max(0, retryAfter.Value.TotalMilliseconds)))
+                        : TimeSpan.FromMilliseconds(Math.Min(2000, 100 * Math.Pow(2, attempt)));
+                    if (delay > TimeSpan.Zero)
+                    {
+                        await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
+                    }
+                    continue;
+                }
+
+                var rawText = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+                var headersDict = response.Headers
+                    .Concat(response.Content.Headers)
+                    .ToDictionary(h => h.Key, h => h.Value, StringComparer.OrdinalIgnoreCase);
+                var statusCode = response.StatusCode;
+                response.Dispose();
+
+                JsonElement? errorData = null;
+                var message = $"HTTP {statusInt}: {statusCode}";
+                if (!string.IsNullOrEmpty(rawText))
+                {
+                    try
+                    {
+                        using var doc = JsonDocument.Parse(rawText);
+                        errorData = doc.RootElement.Clone();
+                        if (doc.RootElement.ValueKind == JsonValueKind.Object)
+                        {
+                            if (doc.RootElement.TryGetProperty("message", out var msgProp)
+                                && msgProp.ValueKind == JsonValueKind.String
+                                && !string.IsNullOrEmpty(msgProp.GetString()))
+                            {
+                                message = msgProp.GetString()!;
+                            }
+                            else if (doc.RootElement.TryGetProperty("detail", out var detailProp)
+                                && detailProp.ValueKind == JsonValueKind.String
+                                && !string.IsNullOrEmpty(detailProp.GetString()))
+                            {
+                                message = detailProp.GetString()!;
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Non-JSON error body
+                    }
+                }
+
+                throw new XApiException(message, statusCode, headersDict, rawText, errorData);
+            }
+            catch (XApiException)
+            {
+                throw;
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                if (attempt + 1 < maxAttempts)
+                {
+                    var delay = TimeSpan.FromMilliseconds(Math.Min(2000, 100 * Math.Pow(2, attempt)));
+                    await Task.Delay(delay, cancellationToken).ConfigureAwait(false);
+                    continue;
+                }
+                throw new XApiException($"Request failed: {ex.Message}", 0, innerException: ex);
+            }
+            finally
+            {
+                linkedCts?.Dispose();
+                timeoutCts?.Dispose();
+            }
+        }
+
+        throw new XApiException("Request failed", 0);
+    }
+
+    private async Task<HttpRequestMessage> CreateRequestMessageAsync(
+        HttpMethod method,
+        string path,
+        IReadOnlyDictionary<string, string>? queryParams,
+        IReadOnlyDictionary<string, string>? extraHeaders,
+        object? body,
+        string contentType,
+        IReadOnlyList<string>? securitySchemes,
+        CancellationToken cancellationToken)
+    {
+        var fullUrl = BuildUrl(path, queryParams);
+        var req = new HttpRequestMessage(method, fullUrl);
+
+        foreach (var kv in _defaultHeaders)
+        {
+            req.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
+        }
+        if (extraHeaders != null)
+        {
+            foreach (var kv in extraHeaders)
+            {
+                req.Headers.Remove(kv.Key);
+                req.Headers.TryAddWithoutValidation(kv.Key, kv.Value);
+            }
+        }
+
+        await ApplyAuthenticationAsync(method.Method, fullUrl, req, securitySchemes, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (body is not null)
+        {
+            if (body is byte[] rawBytes)
+            {
+                req.Content = new ByteArrayContent(rawBytes);
+                req.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+            }
+            else if (string.Equals(contentType, "application/octet-stream", StringComparison.OrdinalIgnoreCase)
+                && body is string strBody)
+            {
+                req.Content = new ByteArrayContent(Encoding.UTF8.GetBytes(strBody));
+                req.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+            }
+            else
+            {
+                var jsonBytes = JsonSerializer.SerializeToUtf8Bytes(body, body.GetType(), JsonOptions);
+                req.Content = new ByteArrayContent(jsonBytes);
+                req.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json")
+                {
+                    CharSet = "utf-8",
+                };
+            }
+        }
+
+        return req;
+    }
+
+    private async Task ApplyAuthenticationAsync(
+        string method,
+        string fullUrl,
+        HttpRequestMessage req,
+        IReadOnlyList<string>? securitySchemes,
+        CancellationToken cancellationToken)
+    {
+        var selected = SelectAuthMethod(method, securitySchemes);
+        if (selected == "bearer_token" && !string.IsNullOrEmpty(BearerToken))
+        {
+            req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", BearerToken);
+        }
+        else if (selected == "oauth2_user_context")
+        {
+            if (OAuth2 != null && IsTokenExpired())
+            {
+                await RefreshTokenAsync(cancellationToken).ConfigureAwait(false);
+            }
+            if (!string.IsNullOrEmpty(_accessToken))
+            {
+                req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
+            }
+        }
+        else if (selected == "oauth1" && OAuth1 is { HasAccessToken: true })
+        {
+            var header = OAuth1.BuildRequestHeader(method, fullUrl, string.Empty);
+            req.Headers.Remove("Authorization");
+            req.Headers.TryAddWithoutValidation("Authorization", header);
+        }
+        else if (selected is null && securitySchemes is { Count: > 0 })
+        {
+            throw new InvalidOperationException(
+                $"Authentication required for endpoint. Accepted schemes: [{string.Join(", ", securitySchemes)}].");
+        }
+    }
+
+    private string? SelectAuthMethod(string method, IReadOnlyList<string>? schemes)
+    {
+        var hasBearer = !string.IsNullOrEmpty(BearerToken);
+        var hasOAuth2 = !string.IsNullOrEmpty(_accessToken)
+            || !string.IsNullOrEmpty(OAuth2?.Token?.AccessToken);
+        var hasOAuth1 = OAuth1 is { HasAccessToken: true };
+
+        if (schemes is null || schemes.Count == 0)
+        {
+            if (hasBearer) return "bearer_token";
+            if (hasOAuth2) return "oauth2_user_context";
+            if (hasOAuth1) return "oauth1";
+            return null;
+        }
+
+        if (schemes.Count == 1)
+        {
+            return schemes[0] switch
+            {
+                "BearerToken" when hasBearer => "bearer_token",
+                "OAuth2UserToken" when hasOAuth2 => "oauth2_user_context",
+                "UserToken" when hasOAuth1 => "oauth1",
+                _ => null,
+            };
+        }
+
+        var isWrite = method is "POST" or "PUT" or "DELETE" or "PATCH";
+        if (isWrite)
+        {
+            if (schemes.Contains("UserToken") && hasOAuth1) return "oauth1";
+            if (schemes.Contains("OAuth2UserToken") && hasOAuth2) return "oauth2_user_context";
+            if (schemes.Contains("BearerToken") && hasBearer) return "bearer_token";
+        }
+        else
+        {
+            if (schemes.Contains("BearerToken") && hasBearer) return "bearer_token";
+            if (schemes.Contains("OAuth2UserToken") && hasOAuth2) return "oauth2_user_context";
+            if (schemes.Contains("UserToken") && hasOAuth1) return "oauth1";
+        }
+        return null;
+    }
+
+    public void Dispose()
+    {
+        if (_disposeHttpClient)
+        {
+            _httpClient.Dispose();
+        }
+    }
+}

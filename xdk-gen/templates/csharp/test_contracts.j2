@@ -1,0 +1,71 @@
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Xdk;
+using Xdk.Auth;
+using Xunit;
+
+namespace Xdk.Tests;
+
+public class {{ tag.class_name }}ContractsTests
+{
+    {% for contract_test in test_spec.contract_tests %}
+    [Fact]
+    public async Task Contract_{{ contract_test.method_name }}()
+    {
+        var mockJson = {{ contract_test.response_schema.mock_json | cs_string_literal }};
+        var handler = new MockHttpMessageHandler(_ =>
+        {
+            var payload = {% if contract_test.is_streaming %}mockJson + "\n"{% else %}mockJson{% endif %};
+            return new HttpResponseMessage((HttpStatusCode){{ contract_test.response_schema.status_code }})
+            {
+                Content = new StringContent(payload, Encoding.UTF8, "application/json"),
+            };
+        });
+
+        using var httpClient = new HttpClient(handler);
+        using var client = new XClient(new XClientOptions
+        {
+            BaseUrl = "https://api.example.com",
+            BearerToken = "test-bearer",
+            AccessToken = "test-access",
+            OAuth1 = new OAuth1("ck", "cs", "oob", "at", "ats"),
+            HttpClient = httpClient,
+        });
+
+        {% set call_args = namespace(first=true, code="") %}
+        {% for param in contract_test.required_params %}
+        {% set arg_expr %}{% if param.param_type == "integer" %}1{% elif param.param_type == "number" %}1.0{% elif param.param_type == "boolean" %}true{% elif param.param_type == "array" %}new List<string> { "item1" }{% else %}"test_{{ param.variable_name }}"{% endif %}{% endset %}
+        {% if not call_args.first %}{% set call_args.code = call_args.code ~ ", " %}{% endif %}
+        {% set call_args.first = false %}
+        {% set call_args.code = call_args.code ~ arg_expr %}
+        {% endfor %}
+        {% if contract_test.request_body_schema and contract_test.request_body_schema.required %}
+        {% set body_expr %}{% if contract_test.has_request_model %}null!{% else %}Encoding.UTF8.GetBytes("payload"){% endif %}{% endset %}
+        {% if not call_args.first %}{% set call_args.code = call_args.code ~ ", " %}{% endif %}
+        {% set call_args.first = false %}
+        {% set call_args.code = call_args.code ~ body_expr %}
+        {% endif %}
+
+        {% if contract_test.is_streaming %}
+        await using var stream = client.{{ tag.class_name }}.{{ contract_test.method_name }}Stream({{ call_args.code }});
+        await foreach (var item in stream)
+        {
+            object? boxed = item;
+            Assert.NotNull(boxed);
+            break;
+        }
+        {% else %}
+        var result = await client.{{ tag.class_name }}.{{ contract_test.method_name }}Async({{ call_args.code }});
+        object? boxed = result;
+        Assert.NotNull(boxed);
+        {% endif %}
+
+        Assert.NotEmpty(handler.Requests);
+        Assert.Equal("{{ contract_test.method | upper }}", handler.Requests[0].Method.Method);
+        Assert.Contains("{{ contract_test.path | path_prefix }}", handler.Requests[0].RequestUri!.ToString());
+    }
+    {% endfor %}
+}

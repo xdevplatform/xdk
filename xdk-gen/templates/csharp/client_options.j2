@@ -1,0 +1,23 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using Xdk.Auth;
+
+namespace Xdk;
+
+/// <summary>
+/// Configuration options for <see cref="XClient"/>.
+/// </summary>
+public sealed class XClientOptions
+{
+    public string BaseUrl { get; set; } = "https://api.x.com";
+    public string? BearerToken { get; set; }
+    public string? AccessToken { get; set; }
+    public OAuth2Pkce? OAuth2 { get; set; }
+    public OAuth1? OAuth1 { get; set; }
+    public Dictionary<string, string> Headers { get; set; } = new();
+    public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
+    public bool Retry { get; set; } = false;
+    public int MaxRetries { get; set; } = 3;
+    public HttpClient? HttpClient { get; set; }
+}

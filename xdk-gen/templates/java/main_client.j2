@@ -1,0 +1,510 @@
+package com.xdevplatform.xdk;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.xdevplatform.xdk.auth.OAuth1;
+import com.xdevplatform.xdk.auth.OAuth2Pkce;
+import com.xdevplatform.xdk.auth.OAuth2Token;
+{% for tag in tags %}
+import com.xdevplatform.xdk.clients.{{ tag.class_name }}Client;
+{% endfor %}
+import com.xdevplatform.xdk.http.HttpTransport;
+import com.xdevplatform.xdk.http.JdkHttpTransport;
+import com.xdevplatform.xdk.streaming.EventStream;
+import com.xdevplatform.xdk.streaming.StreamConfig;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+/**
+ * Primary client for interacting with the X API v2.
+ */
+public final class XClient {
+    public static final String VERSION = "{{ version }}";
+    public static final String USER_AGENT = "xdk-java/{{ version }}";
+    private static final Set<Integer> RETRYABLE_STATUSES = Set.of(429, 500, 502, 503, 504);
+
+    private final String baseUrl;
+    private final String bearerToken;
+    private volatile String accessToken;
+    private final OAuth2Pkce oauth2;
+    private final OAuth1 oauth1;
+    private final Map<String, String> defaultHeaders;
+    private final Duration timeout;
+    private final boolean retry;
+    private final int maxRetries;
+    private final HttpTransport transport;
+    private final ObjectMapper objectMapper;
+
+{% for tag in tags %}
+    private final {{ tag.class_name }}Client {{ tag.property_name | java_ident }};
+{% endfor %}
+
+    public XClient(XClientConfig config) {
+        XClientConfig cfg = config != null ? config : XClientConfig.builder().build();
+        String rawBase = cfg.getBaseUrl() != null ? cfg.getBaseUrl() : "https://api.x.com";
+        this.baseUrl =
+                rawBase.endsWith("/") ? rawBase.substring(0, rawBase.length() - 1) : rawBase;
+        this.bearerToken = cfg.getBearerToken();
+        this.oauth2 = cfg.getOauth2();
+        this.accessToken =
+                cfg.getAccessToken() != null
+                        ? cfg.getAccessToken()
+                        : (oauth2 != null && oauth2.getToken() != null
+                                ? oauth2.getToken().getAccessToken()
+                                : null);
+        this.oauth1 = cfg.getOauth1();
+        this.defaultHeaders = new LinkedHashMap<>();
+        this.defaultHeaders.put("User-Agent", USER_AGENT);
+        this.defaultHeaders.put("Accept", "application/json");
+        this.defaultHeaders.putAll(cfg.getHeaders());
+        this.timeout = cfg.getTimeout();
+        this.retry = cfg.isRetry();
+        this.maxRetries = Math.max(0, cfg.getMaxRetries());
+        this.transport =
+                cfg.getTransport() != null ? cfg.getTransport() : new JdkHttpTransport();
+        this.objectMapper =
+                new ObjectMapper()
+                        .registerModule(new JavaTimeModule())
+                        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+{% for tag in tags %}
+        this.{{ tag.property_name | java_ident }} = new {{ tag.class_name }}Client(this);
+{% endfor %}
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private final XClientConfig.Builder configBuilder = XClientConfig.builder();
+
+        public Builder baseUrl(String baseUrl) {
+            configBuilder.baseUrl(baseUrl);
+            return this;
+        }
+
+        public Builder bearerToken(String bearerToken) {
+            configBuilder.bearerToken(bearerToken);
+            return this;
+        }
+
+        public Builder accessToken(String accessToken) {
+            configBuilder.accessToken(accessToken);
+            return this;
+        }
+
+        public Builder oauth2(OAuth2Pkce oauth2) {
+            configBuilder.oauth2(oauth2);
+            return this;
+        }
+
+        public Builder oauth1(OAuth1 oauth1) {
+            configBuilder.oauth1(oauth1);
+            return this;
+        }
+
+        public Builder header(String name, String value) {
+            configBuilder.header(name, value);
+            return this;
+        }
+
+        public Builder headers(Map<String, String> headers) {
+            configBuilder.headers(headers);
+            return this;
+        }
+
+        public Builder timeout(Duration timeout) {
+            configBuilder.timeout(timeout);
+            return this;
+        }
+
+        public Builder retry(boolean retry) {
+            configBuilder.retry(retry);
+            return this;
+        }
+
+        public Builder maxRetries(int maxRetries) {
+            configBuilder.maxRetries(maxRetries);
+            return this;
+        }
+
+        public Builder transport(HttpTransport transport) {
+            configBuilder.transport(transport);
+            return this;
+        }
+
+        public XClient build() {
+            return new XClient(configBuilder.build());
+        }
+    }
+
+{% for tag in tags %}
+    public {{ tag.class_name }}Client {{ tag.property_name | java_ident }}() {
+        return this.{{ tag.property_name | java_ident }};
+    }
+
+    public {{ tag.class_name }}Client get{{ tag.class_name }}() {
+        return this.{{ tag.property_name | java_ident }};
+    }
+{% endfor %}
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public Duration getTimeout() {
+        return timeout;
+    }
+
+    public boolean isRetry() {
+        return retry;
+    }
+
+    public int getMaxRetries() {
+        return maxRetries;
+    }
+
+    public HttpTransport getTransport() {
+        return transport;
+    }
+
+    public ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
+    public boolean isTokenExpired() {
+        return oauth2 != null && oauth2.isTokenExpired();
+    }
+
+    public synchronized void refreshToken() {
+        if (oauth2 != null) {
+            OAuth2Token refreshed = oauth2.refreshToken();
+            if (refreshed != null && refreshed.getAccessToken() != null) {
+                this.accessToken = refreshed.getAccessToken();
+            }
+        }
+    }
+
+    public static String encodePathSegment(Object value) {
+        if (value == null) {
+            return "";
+        }
+        return URLEncoder.encode(String.valueOf(value), StandardCharsets.UTF_8)
+                .replace("+", "%20");
+    }
+
+    public static void addQueryParam(Map<String, String> query, String name, Object value) {
+        if (value == null) {
+            return;
+        }
+        if (value instanceof Boolean) {
+            query.put(name, ((Boolean) value) ? "true" : "false");
+        } else if (value instanceof Collection<?>) {
+            Collection<?> col = (Collection<?>) value;
+            if (col.isEmpty()) {
+                return;
+            }
+            StringBuilder sb = new StringBuilder();
+            boolean first = true;
+            for (Object item : col) {
+                if (item == null) {
+                    continue;
+                }
+                if (!first) {
+                    sb.append(',');
+                }
+                first = false;
+                sb.append(item);
+            }
+            if (sb.length() > 0) {
+                query.put(name, sb.toString());
+            }
+        } else {
+            query.put(name, String.valueOf(value));
+        }
+    }
+
+    public String buildUrl(String path, Map<String, String> queryParams) {
+        StringBuilder sb = new StringBuilder(baseUrl).append(path);
+        if (queryParams != null && !queryParams.isEmpty()) {
+            boolean first = true;
+            for (Map.Entry<String, String> entry : queryParams.entrySet()) {
+                if (entry.getValue() == null) {
+                    continue;
+                }
+                sb.append(first ? '?' : '&');
+                first = false;
+                sb.append(
+                                URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8)
+                                        .replace("+", "%20"))
+                        .append('=')
+                        .append(
+                                URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8)
+                                        .replace("+", "%20"));
+            }
+        }
+        return sb.toString();
+    }
+
+    public <T> T sendJson(
+            String method,
+            String path,
+            Map<String, String> queryParams,
+            Map<String, String> extraHeaders,
+            Object body,
+            String contentType,
+            List<String> securitySchemes,
+            Class<T> responseType) {
+        HttpTransport.TransportResponse response =
+                executeRequest(method, path, queryParams, extraHeaders, body, contentType, securitySchemes);
+        byte[] bytes = response.getBody();
+        if (responseType == Void.class) {
+            return null;
+        }
+        try {
+            if (bytes == null || bytes.length == 0) {
+                return objectMapper.readValue("{}", responseType);
+            }
+            return objectMapper.readValue(bytes, responseType);
+        } catch (IOException e) {
+            throw new XApiException("Failed to deserialize JSON response into " + responseType.getSimpleName(), e);
+        }
+    }
+
+    public byte[] sendBytes(
+            String method,
+            String path,
+            Map<String, String> queryParams,
+            Map<String, String> extraHeaders,
+            Object body,
+            String contentType,
+            List<String> securitySchemes) {
+        HttpTransport.TransportResponse response =
+                executeRequest(method, path, queryParams, extraHeaders, body, contentType, securitySchemes);
+        return response.getBody();
+    }
+
+    public <T> EventStream<T> openStream(
+            String method,
+            String path,
+            Map<String, String> queryParams,
+            Map<String, String> extraHeaders,
+            Object body,
+            List<String> securitySchemes,
+            Class<T> itemType,
+            StreamConfig streamConfig) {
+        StreamConfig cfg = streamConfig != null ? streamConfig : new StreamConfig();
+        return new EventStream<>(
+                () -> {
+                    HttpTransport.TransportRequest req =
+                            prepareRequest(
+                                    method,
+                                    path,
+                                    queryParams,
+                                    extraHeaders,
+                                    body,
+                                    "application/json",
+                                    securitySchemes,
+                                    cfg.getTimeout());
+                    return transport.sendStream(req);
+                },
+                objectMapper,
+                itemType,
+                cfg);
+    }
+
+    private HttpTransport.TransportResponse executeRequest(
+            String method,
+            String path,
+            Map<String, String> queryParams,
+            Map<String, String> extraHeaders,
+            Object body,
+            String contentType,
+            List<String> securitySchemes) {
+        int maxAttempts = retry ? (maxRetries + 1) : 1;
+
+        for (int attempt = 0; attempt < maxAttempts; attempt++) {
+            HttpTransport.TransportRequest req =
+                    prepareRequest(
+                            method,
+                            path,
+                            queryParams,
+                            extraHeaders,
+                            body,
+                            contentType,
+                            securitySchemes,
+                            timeout);
+            try {
+                HttpTransport.TransportResponse res = transport.send(req);
+                int status = res.getStatusCode();
+                if (status >= 200 && status < 300) {
+                    return res;
+                }
+                if (attempt + 1 < maxAttempts && RETRYABLE_STATUSES.contains(status)) {
+                    sleepForRetry(attempt, res.firstHeader("retry-after"));
+                    continue;
+                }
+                String rawText = new String(res.getBody(), StandardCharsets.UTF_8);
+                JsonNode errorNode = null;
+                String message = "HTTP " + status;
+                if (!rawText.isEmpty()) {
+                    try {
+                        errorNode = objectMapper.readTree(rawText);
+                        if (errorNode != null && errorNode.hasNonNull("message")) {
+                            message = errorNode.get("message").asText();
+                        } else if (errorNode != null && errorNode.hasNonNull("detail")) {
+                            message = errorNode.get("detail").asText();
+                        }
+                    } catch (Exception ignored) {
+                    }
+                }
+                throw new XApiException(message, status, res.getHeaders(), rawText, errorNode);
+            } catch (XApiException e) {
+                throw e;
+            } catch (IOException | InterruptedException e) {
+                if (e instanceof InterruptedException) {
+                    Thread.currentThread().interrupt();
+                    throw new XApiException("Request interrupted", e);
+                }
+                if (attempt + 1 < maxAttempts) {
+                    sleepForRetry(attempt, null);
+                    continue;
+                }
+                throw new XApiException("Network error while calling X API: " + e.getMessage(), e);
+            }
+        }
+        throw new XApiException("Request failed", null);
+    }
+
+    private void sleepForRetry(int attempt, String retryAfterHeader) {
+        long delayMs = Math.min(2000L, (long) (100L * Math.pow(2, attempt)));
+        if (retryAfterHeader != null) {
+            try {
+                long seconds = Long.parseLong(retryAfterHeader.trim());
+                if (seconds >= 0) {
+                    delayMs = Math.min(5000L, seconds * 1000L);
+                }
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        if (delayMs > 0) {
+            try {
+                Thread.sleep(delayMs);
+            } catch (InterruptedException ie) {
+                Thread.currentThread().interrupt();
+            }
+        }
+    }
+
+    private HttpTransport.TransportRequest prepareRequest(
+            String method,
+            String path,
+            Map<String, String> queryParams,
+            Map<String, String> extraHeaders,
+            Object body,
+            String contentType,
+            List<String> securitySchemes,
+            Duration requestTimeout) {
+        String url = buildUrl(path, queryParams);
+        Map<String, String> headers = new LinkedHashMap<>(defaultHeaders);
+        if (extraHeaders != null) {
+            headers.putAll(extraHeaders);
+        }
+
+        byte[] serializedBody = null;
+        if (body != null) {
+            String effectiveCt = contentType != null ? contentType : "application/json";
+            headers.putIfAbsent("Content-Type", effectiveCt);
+            if (body instanceof byte[]) {
+                serializedBody = (byte[]) body;
+            } else if ("application/octet-stream".equalsIgnoreCase(effectiveCt) && body instanceof String) {
+                serializedBody = ((String) body).getBytes(StandardCharsets.UTF_8);
+            } else {
+                try {
+                    serializedBody = objectMapper.writeValueAsBytes(body);
+                } catch (IOException e) {
+                    throw new XApiException("Failed to serialize request body", e);
+                }
+            }
+        }
+
+        applyAuthentication(method.toUpperCase(), url, headers, securitySchemes);
+        return new HttpTransport.TransportRequest(
+                method.toUpperCase(), url, headers, serializedBody, requestTimeout);
+    }
+
+    private void applyAuthentication(
+            String method,
+            String fullUrl,
+            Map<String, String> headers,
+            List<String> securitySchemes) {
+        String selected = selectAuthMethod(method, securitySchemes);
+        if ("bearer_token".equals(selected) && bearerToken != null && !bearerToken.isEmpty()) {
+            headers.put("Authorization", "Bearer " + bearerToken);
+        } else if ("oauth2_user_context".equals(selected)) {
+            if (oauth2 != null && isTokenExpired()) {
+                refreshToken();
+            }
+            if (accessToken != null && !accessToken.isEmpty()) {
+                headers.put("Authorization", "Bearer " + accessToken);
+            }
+        } else if ("oauth1".equals(selected) && oauth1 != null && oauth1.hasAccessToken()) {
+            headers.put("Authorization", oauth1.buildRequestHeader(method, fullUrl, ""));
+        } else if (selected == null && securitySchemes != null && !securitySchemes.isEmpty()) {
+            throw new IllegalStateException(
+                    "Authentication required for endpoint. Accepted schemes: "
+                            + securitySchemes
+                            + ". Configure bearerToken, accessToken/oauth2, or oauth1 on XClient.");
+        }
+    }
+
+    private String selectAuthMethod(String method, List<String> schemes) {
+        boolean hasBearer = bearerToken != null && !bearerToken.isEmpty();
+        boolean hasOAuth2 =
+                (accessToken != null && !accessToken.isEmpty())
+                        || (oauth2 != null && oauth2.getToken() != null && oauth2.getToken().getAccessToken() != null);
+        boolean hasOAuth1 = oauth1 != null && oauth1.hasAccessToken();
+
+        if (schemes == null || schemes.isEmpty()) {
+            if (hasBearer) return "bearer_token";
+            if (hasOAuth2) return "oauth2_user_context";
+            if (hasOAuth1) return "oauth1";
+            return null;
+        }
+
+        if (schemes.size() == 1) {
+            String only = schemes.get(0);
+            if ("BearerToken".equals(only) && hasBearer) return "bearer_token";
+            if ("OAuth2UserToken".equals(only) && hasOAuth2) return "oauth2_user_context";
+            if ("UserToken".equals(only) && hasOAuth1) return "oauth1";
+            return null;
+        }
+
+        boolean isWrite =
+                "POST".equals(method)
+                        || "PUT".equals(method)
+                        || "DELETE".equals(method)
+                        || "PATCH".equals(method);
+        if (isWrite) {
+            if (schemes.contains("UserToken") && hasOAuth1) return "oauth1";
+            if (schemes.contains("OAuth2UserToken") && hasOAuth2) return "oauth2_user_context";
+            if (schemes.contains("BearerToken") && hasBearer) return "bearer_token";
+        } else {
+            if (schemes.contains("BearerToken") && hasBearer) return "bearer_token";
+            if (schemes.contains("OAuth2UserToken") && hasOAuth2) return "oauth2_user_context";
+            if (schemes.contains("UserToken") && hasOAuth1) return "oauth1";
+        }
+        return null;
+    }
+}

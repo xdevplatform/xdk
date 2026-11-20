@@ -8,6 +8,8 @@ A Rust-based SDK generator that creates language-specific SDKs for the X API fro
 |----------|---------|------|
 | Python | `pip install xdk` | [xdk-python](https://github.com/xdevplatform/xdk-python) |
 | TypeScript | `npm install @xdevplatform/xdk` | [xdk-typescript](https://github.com/xdevplatform/xdk-typescript) |
+| Java | `com.xdevplatform:xdk` | [xdk-java](https://github.com/xdevplatform/xdk-java) |
+| C# | `dotnet add package Xdk` | [xdk-csharp](https://github.com/xdevplatform/xdk-csharp) |
 
 ## Architecture
 
@@ -19,7 +21,9 @@ xdk/
 ├── xdk-build/      # CLI tool
 └── xdk-gen/templates/
     ├── python/     # Jinja2 templates for Python
-    └── typescript/ # Jinja2 templates for TypeScript
+    ├── typescript/ # Jinja2 templates for TypeScript
+    ├── java/       # Jinja2 templates for Java
+    └── csharp/     # Jinja2 templates for C#
 ```
 
 ## Development
@@ -29,12 +33,16 @@ xdk/
 - Rust toolchain ([rustup](https://rustup.rs/))
 - Python 3.8+ with [uv](https://github.com/astral-sh/uv)
 - Node.js 18+
+- Java 17+ & Maven 3.5+
+- .NET 8 SDK
 
 ### Generate SDKs Locally
 
 ```bash
 make python       # Generate Python SDK to xdk/python/
 make typescript   # Generate TypeScript SDK to xdk/typescript/
+make java         # Generate Java SDK to xdk/java/
+make csharp       # Generate C# SDK to xdk/csharp/
 ```
 
 ### Run Tests
@@ -44,6 +52,8 @@ make check           # Rust fmt + clippy
 make test-generator  # Rust unit tests
 make test-python     # Generate + test Python SDK
 make test-typescript # Generate + test TypeScript SDK
+make test-java       # Generate + test Java SDK
+make test-csharp     # Generate + test C# SDK
 ```
 
 ## Publishing

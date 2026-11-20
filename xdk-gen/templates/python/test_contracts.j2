@@ -58,20 +58,21 @@ class Test{{ tag.class_name }}Contracts:
             # Add required parameters
             {% for param in contract_test.required_params %}
             {% if param.param_type == "string" %}
-            kwargs["{{ param.name }}"] = "test_{{ param.name }}"
+            kwargs["{{ param.variable_name }}"] = "test_{{ param.variable_name }}"
             {% elif param.param_type == "integer" %}
-            kwargs["{{ param.name }}"] = 42
+            kwargs["{{ param.variable_name }}"] = 42
             {% elif param.param_type == "boolean" %}
-            kwargs["{{ param.name }}"] = True
+            kwargs["{{ param.variable_name }}"] = True
             {% elif param.param_type == "array" %}
-            kwargs["{{ param.name }}"] = ["test_item"]
+            kwargs["{{ param.variable_name }}"] = ["test_item"]
             {% else %}
-            kwargs["{{ param.name }}"] = "test_value"
+            kwargs["{{ param.variable_name }}"] = "test_value"
             {% endif %}
             {% endfor %}
             
             # Add request body if required
             {% if contract_test.request_body_schema %}
+            {% if contract_test.has_request_model %}
             # Import and create proper request model instance
             from xdk.{{ tag.property_name }}.models import {{ contract_test.class_name }}Request
             # Rebuild model to resolve forward references before instantiation
@@ -110,6 +111,9 @@ class Test{{ tag.class_name }}Contracts:
                 # Typed models may reject fabricated values; build without
                 # validation since this test only exercises request plumbing.
                 kwargs["body"] = request_model.model_construct(**required_kwargs)
+            {% else %}
+            kwargs["body"] = b"test_payload"
+            {% endif %}
             {% endif %}
             
             # Call the method
@@ -236,8 +240,9 @@ class Test{{ tag.class_name }}Contracts:
         # No required parameters, method should be callable without args
         with patch.object(self.client, 'session') as mock_session:
             mock_response = Mock()
-            mock_response.status_code = 200
-            mock_response.json.return_value = {}
+            mock_response.status_code = {{ contract_test.response_schema.status_code }}
+            mock_response.json.return_value = json.loads(r'''{{ contract_test.response_schema.mock_json }}''')
+            mock_response.content = b""
             mock_response.raise_for_status.return_value = None
             mock_response.headers = {'content-type': 'application/json'}
             mock_session.{{ contract_test.method|lower }}.return_value = mock_response
@@ -258,6 +263,7 @@ class Test{{ tag.class_name }}Contracts:
             mock_response = Mock()
             mock_response.status_code = {{ contract_test.response_schema.status_code }}
             mock_response.json.return_value = mock_response_data
+            mock_response.content = b"binary_data"
             mock_response.raise_for_status.return_value = None
             mock_response.headers = {'content-type': 'application/json'}
             mock_session.{{ contract_test.method|lower }}.return_value = mock_response
@@ -266,20 +272,21 @@ class Test{{ tag.class_name }}Contracts:
             kwargs = {}
             {% for param in contract_test.required_params %}
             {% if param.param_type == "string" %}
-            kwargs["{{ param.name }}"] = "test_value"
+            kwargs["{{ param.variable_name }}"] = "test_value"
             {% elif param.param_type == "integer" %}
-            kwargs["{{ param.name }}"] = 1
+            kwargs["{{ param.variable_name }}"] = 1
             {% elif param.param_type == "boolean" %}
-            kwargs["{{ param.name }}"] = True
+            kwargs["{{ param.variable_name }}"] = True
             {% elif param.param_type == "array" %}
-            kwargs["{{ param.name }}"] = ["test"]
+            kwargs["{{ param.variable_name }}"] = ["test"]
             {% else %}
-            kwargs["{{ param.name }}"] = "test"
+            kwargs["{{ param.variable_name }}"] = "test"
             {% endif %}
             {% endfor %}
             
             # Add request body if required
             {% if contract_test.request_body_schema %}
+            {% if contract_test.has_request_model %}
             # Import and create proper request model instance
             from xdk.{{ tag.property_name }}.models import {{ contract_test.class_name }}Request
             # Rebuild model to resolve forward references before instantiation
@@ -318,6 +325,9 @@ class Test{{ tag.class_name }}Contracts:
                 # Typed models may reject fabricated values; build without
                 # validation since this test only exercises request plumbing.
                 kwargs["body"] = request_model.model_construct(**required_kwargs)
+            {% else %}
+            kwargs["body"] = b"test_payload"
+            {% endif %}
             {% endif %}
             
             # Call method and verify response structure

@@ -20,21 +20,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      
+
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
-      
+
       - name: Check formatting
         run: cargo fmt --all -- --check
-      
+
       - name: Run Clippy
         run: cargo clippy --all --all-targets --all-features -- -D warnings
-      
+
       - name: Run tests
         run: cargo test --verbose
 
@@ -47,22 +47,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
-      
+
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
-      
+
       - name: Install uv
         uses: astral-sh/setup-uv@v3
-      
+
       - name: Generate Python SDK
         run: cargo run -- python --latest true
-      
+
       - name: Install dependencies
         run: cd xdk/python && uv sync
-      
+
       - name: Run tests
         run: cd xdk/python && uv run pytest tests/ -v
 
@@ -75,30 +75,85 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@stable
-      
+
       - name: Cache Rust dependencies
         uses: Swatinem/rust-cache@v2
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-      
+
       - name: Generate TypeScript SDK
         run: cargo run -- typescript --latest true
-      
+
       - name: Install dependencies
         run: cd xdk/typescript && npm ci
-      
+
       - name: Build
         run: cd xdk/typescript && npm run build
-      
+
       - name: Type check
         run: cd xdk/typescript && npm run type-check
-      
+
       - name: Run tests
         run: cd xdk/typescript && npm test
 
+  # ============================================
+  # Generate and Test Java SDK
+  # ============================================
+  java-sdk:
+    name: Java SDK
+    needs: generator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Generate Java SDK
+        run: cargo run -- java --latest true
+
+      - name: Build and Test
+        run: cd xdk/java && mvn test -B
+
+  # ============================================
+  # Generate and Test C# SDK
+  # ============================================
+  csharp-sdk:
+    name: C# SDK
+    needs: generator
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Generate C# SDK
+        run: cargo run -- csharp --latest true
+
+      - name: Build and Test
+        run: cd xdk/csharp && dotnet build --nologo -warnaserror && dotnet test --no-build --nologo

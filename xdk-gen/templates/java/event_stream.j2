@@ -1,0 +1,144 @@
+package com.xdevplatform.xdk.streaming;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xdevplatform.xdk.XApiException;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.concurrent.Callable;
+
+/**
+ * Incremental UTF-8 NDJSON event stream with optional reconnection support.
+ */
+public final class EventStream<T> implements Iterable<T>, AutoCloseable {
+    private final Callable<InputStream> streamSupplier;
+    private final ObjectMapper mapper;
+    private final Class<T> itemType;
+    private final StreamConfig config;
+    private volatile boolean closed = false;
+    private volatile InputStream activeStream;
+
+    public EventStream(
+            Callable<InputStream> streamSupplier,
+            ObjectMapper mapper,
+            Class<T> itemType,
+            StreamConfig config) {
+        this.streamSupplier = streamSupplier;
+        this.mapper = mapper;
+        this.itemType = itemType;
+        this.config = config != null ? config : new StreamConfig();
+    }
+
+    @Override
+    public void close() {
+        closed = true;
+        InputStream current = activeStream;
+        if (current != null) {
+            try {
+                current.close();
+            } catch (IOException ignored) {
+            }
+        }
+    }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+            private BufferedReader reader;
+            private T nextItem;
+            private boolean finished = false;
+            private int retries = 0;
+
+            @Override
+            public boolean hasNext() {
+                if (nextItem != null) {
+                    return true;
+                }
+                if (finished || closed) {
+                    return false;
+                }
+                while (!closed) {
+                    try {
+                        if (reader == null) {
+                            InputStream is = streamSupplier.call();
+                            if (is == null) {
+                                finished = true;
+                                return false;
+                            }
+                            activeStream = is;
+                            // InputStreamReader uses Java's incremental StreamDecoder for UTF-8
+                            reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
+                        }
+                        String line = reader.readLine();
+                        if (line == null) {
+                            closeReader();
+                            finished = true;
+                            return false;
+                        }
+                        String trimmed = line.trim();
+                        if (trimmed.isEmpty() || "{}".equals(trimmed)) {
+                            // Keep-alive heartbeat
+                            continue;
+                        }
+                        nextItem = mapper.readValue(trimmed, itemType);
+                        retries = 0;
+                        return true;
+                    } catch (XApiException e) {
+                        closeReader();
+                        throw e;
+                    } catch (Exception e) {
+                        closeReader();
+                        if (closed) {
+                            finished = true;
+                            return false;
+                        }
+                        int maxRetries = config.getMaxRetries();
+                        if (maxRetries == 0 || (maxRetries > 0 && retries >= maxRetries)) {
+                            finished = true;
+                            throw new XApiException("Stream failed: " + e.getMessage(), e);
+                        }
+                        long backoffMillis =
+                                Math.min(
+                                        config.getMaxBackoff().toMillis(),
+                                        (long)
+                                                (config.getInitialBackoff().toMillis()
+                                                        * Math.pow(2, retries)));
+                        retries++;
+                        try {
+                            Thread.sleep(Math.max(0L, backoffMillis));
+                        } catch (InterruptedException ie) {
+                            Thread.currentThread().interrupt();
+                            finished = true;
+                            throw new XApiException("Stream interrupted", ie);
+                        }
+                    }
+                }
+                return false;
+            }
+
+            @Override
+            public T next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException("Stream ended");
+                }
+                T item = nextItem;
+                nextItem = null;
+                return item;
+            }
+
+            private void closeReader() {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException ignored) {
+                    }
+                    reader = null;
+                }
+            }
+        };
+    }
+}

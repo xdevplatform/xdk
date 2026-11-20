@@ -1,0 +1,95 @@
+package com.xdevplatform.xdk.http;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ * Pluggable HTTP transport abstraction used by {@link com.xdevplatform.xdk.XClient}.
+ */
+public interface HttpTransport {
+    TransportResponse send(TransportRequest request) throws IOException, InterruptedException;
+
+    InputStream sendStream(TransportRequest request) throws IOException, InterruptedException;
+
+    final class TransportRequest {
+        private final String method;
+        private final String url;
+        private final Map<String, String> headers;
+        private final byte[] body;
+        private final Duration timeout;
+
+        public TransportRequest(
+                String method,
+                String url,
+                Map<String, String> headers,
+                byte[] body,
+                Duration timeout) {
+            this.method = method;
+            this.url = url;
+            this.headers = headers != null ? new LinkedHashMap<>(headers) : new LinkedHashMap<>();
+            this.body = body;
+            this.timeout = timeout;
+        }
+
+        public String getMethod() {
+            return method;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+
+        public Map<String, String> getHeaders() {
+            return Collections.unmodifiableMap(headers);
+        }
+
+        public byte[] getBody() {
+            return body;
+        }
+
+        public Duration getTimeout() {
+            return timeout;
+        }
+    }
+
+    final class TransportResponse {
+        private final int statusCode;
+        private final Map<String, List<String>> headers;
+        private final byte[] body;
+
+        public TransportResponse(int statusCode, Map<String, List<String>> headers, byte[] body) {
+            this.statusCode = statusCode;
+            this.headers = headers != null ? headers : Collections.emptyMap();
+            this.body = body != null ? body : new byte[0];
+        }
+
+        public int getStatusCode() {
+            return statusCode;
+        }
+
+        public Map<String, List<String>> getHeaders() {
+            return headers;
+        }
+
+        public byte[] getBody() {
+            return body;
+        }
+
+        public String firstHeader(String name) {
+            for (Map.Entry<String, List<String>> entry : headers.entrySet()) {
+                if (entry.getKey() != null && entry.getKey().equalsIgnoreCase(name)) {
+                    List<String> values = entry.getValue();
+                    if (values != null && !values.isEmpty()) {
+                        return values.get(0);
+                    }
+                }
+            }
+            return null;
+        }
+    }
+}

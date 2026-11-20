@@ -96,6 +96,13 @@ export class Paginator<T> implements AsyncIterable<T> {
     }
 
     /**
+     * Alias for items (matches raw API response shape `{ data, meta, includes, errors }`)
+     */
+    get data(): T[] {
+        return this.items;
+    }
+
+    /**
      * Get current pagination metadata
      */
     get meta(): any {

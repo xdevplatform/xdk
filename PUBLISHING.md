@@ -4,7 +4,7 @@
 
 1. Go to **[Actions → Release SDK](https://github.com/xdevplatform/xdk/actions/workflows/release.yml)**
 2. Click **Run workflow**
-3. Select SDK (`python`, `typescript`, or `all`)
+3. Select SDK (`python`, `typescript`, `java`, `csharp`, or `all`)
 4. Select bump type (`patch`, `minor`, `major`, `beta`)
 5. Click **Run workflow**
 
@@ -38,3 +38,21 @@ make versions
 |-----|------|---------|
 | Python | [xdk-python](https://github.com/xdevplatform/xdk-python) | [PyPI](https://pypi.org/project/xdk/) |
 | TypeScript | [xdk-typescript](https://github.com/xdevplatform/xdk-typescript) | [npm](https://www.npmjs.com/package/@xdevplatform/xdk) |
+| Java | [xdk-java](https://github.com/xdevplatform/xdk-java) | Maven Central (`com.xdevplatform:xdk`) |
+| C# | [xdk-csharp](https://github.com/xdevplatform/xdk-csharp) | NuGet (`Xdk`) |
+
+## Required Secrets
+
+### Generator Repo (`xdevplatform/xdk`)
+- `XDK_PAT` — Personal access token or GitHub App token to push version bumps to `main`
+- `SDK_DEPLOY_KEY_PYTHON` — SSH write deploy key for `xdevplatform/xdk-python`
+- `SDK_DEPLOY_KEY_TYPESCRIPT` — SSH write deploy key for `xdevplatform/xdk-typescript`
+- `SDK_DEPLOY_KEY_JAVA` — SSH write deploy key for `xdevplatform/xdk-java`
+- `SDK_DEPLOY_KEY_CSHARP` — SSH write deploy key for `xdevplatform/xdk-csharp`
+
+### Java SDK Repo (`xdevplatform/xdk-java`)
+- `MAVEN_CENTRAL_USERNAME` / `MAVEN_CENTRAL_TOKEN` — Sonatype Central Portal user token credentials for `com.xdevplatform`
+- `MAVEN_GPG_PRIVATE_KEY` / `MAVEN_GPG_PASSPHRASE` — Armored GPG signing key and passphrase
+
+### C# SDK Repo (`xdevplatform/xdk-csharp`)
+- `NUGET_API_KEY` — NuGet.org API key with push permissions for `Xdk`

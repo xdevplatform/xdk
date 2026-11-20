@@ -1,0 +1,39 @@
+package com.xdevplatform.xdk;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import com.xdevplatform.xdk.clients.{{ tag.class_name }}Client;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
+import org.junit.jupiter.api.Test;
+
+public class {{ tag.class_name }}StructureTest {
+    @Test
+    void clientIsAccessibleFromMainClient() {
+        XClient client = XClient.builder().bearerToken("test-token").build();
+        assertNotNull(client.{{ tag.property_name | java_ident }}());
+        assertSame(client.{{ tag.property_name | java_ident }}(), client.get{{ tag.class_name }}());
+    }
+
+    {% for structural_test in test_spec.structural_tests %}
+    @Test
+    void allExpectedMethodsExist() {
+        Set<String> declared =
+                Arrays.stream({{ tag.class_name }}Client.class.getDeclaredMethods())
+                        .map(Method::getName)
+                        .collect(Collectors.toSet());
+        {% for method in structural_test.methods %}
+        assertTrue(
+                declared.contains("{{ method.method_name | java_ident }}"),
+                "Expected method {{ method.method_name | java_ident }} on {{ tag.class_name }}Client");
+        {% if method.supports_pagination %}
+        assertTrue(
+                declared.contains("{{ method.method_name | java_ident }}Pages"),
+                "Expected pagination helper {{ method.method_name | java_ident }}Pages on {{ tag.class_name }}Client");
+        {% endif %}
+        {% endfor %}
+    }
+    {% endfor %}
+}

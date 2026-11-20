@@ -1,0 +1,76 @@
+package com.xdevplatform.xdk.streaming;
+
+import java.time.Duration;
+
+/**
+ * Configuration for streaming endpoints, including timeouts and reconnection backoff.
+ */
+public final class StreamConfig {
+    private final int maxRetries;
+    private final Duration initialBackoff;
+    private final Duration maxBackoff;
+    private final Duration timeout;
+
+    public StreamConfig() {
+        this(3, Duration.ofSeconds(1), Duration.ofSeconds(64), null);
+    }
+
+    public StreamConfig(
+            int maxRetries, Duration initialBackoff, Duration maxBackoff, Duration timeout) {
+        this.maxRetries = maxRetries;
+        this.initialBackoff = initialBackoff != null ? initialBackoff : Duration.ofSeconds(1);
+        this.maxBackoff = maxBackoff != null ? maxBackoff : Duration.ofSeconds(64);
+        this.timeout = timeout;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public int getMaxRetries() {
+        return maxRetries;
+    }
+
+    public Duration getInitialBackoff() {
+        return initialBackoff;
+    }
+
+    public Duration getMaxBackoff() {
+        return maxBackoff;
+    }
+
+    public Duration getTimeout() {
+        return timeout;
+    }
+
+    public static final class Builder {
+        private int maxRetries = 3;
+        private Duration initialBackoff = Duration.ofSeconds(1);
+        private Duration maxBackoff = Duration.ofSeconds(64);
+        private Duration timeout = null;
+
+        public Builder maxRetries(int maxRetries) {
+            this.maxRetries = maxRetries;
+            return this;
+        }
+
+        public Builder initialBackoff(Duration initialBackoff) {
+            this.initialBackoff = initialBackoff;
+            return this;
+        }
+
+        public Builder maxBackoff(Duration maxBackoff) {
+            this.maxBackoff = maxBackoff;
+            return this;
+        }
+
+        public Builder timeout(Duration timeout) {
+            this.timeout = timeout;
+            return this;
+        }
+
+        public StreamConfig build() {
+            return new StreamConfig(maxRetries, initialBackoff, maxBackoff, timeout);
+        }
+    }
+}

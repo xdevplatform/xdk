@@ -4,7 +4,7 @@
  * This module provides a client for interacting with the streaming endpoints of the X API.
  */
 
-import { Client, ApiResponse, RequestOptions } from '../client.js';
+import { Client, ApiResponse, RequestOptions, normalizeFields, transformKeysToSnake } from '../client.js';
 import type * as Schemas from '../schemas.js';
 import { EventDrivenStream, StreamEvent } from './event_driven_stream.js';
 import {
@@ -79,7 +79,7 @@ export class {{ tag.class_name }}Client {
     }
 
 {% for operation in operations %}
-{% if operation["x-twitter-streaming"] or ('/stream' in operation.path and '/rules' not in operation.path) %}
+{% if operation.is_streaming or operation["x-twitter-streaming"] or ('/stream' in operation.path and '/rules' not in operation.path) %}
     /**
      * {{ operation.summary | default("") }}{% if operation.description %}
      * {{ operation.description }}{% endif %}
@@ -218,7 +218,7 @@ export class {{ tag.class_name }}Client {
                     ...headers,
                 },
                 {% if operation.request_body %}
-                body: JSON.stringify({% if operation.request_body.required %}body{% else %}body{% endif %}),
+                body: {% if operation.request_body.required %}JSON.stringify(transformKeysToSnake(body || {})){% else %}body ? JSON.stringify(transformKeysToSnake(body)) : undefined{% endif %},
                 {% endif %}
                 {% if operation.security %}
                 // Pass security requirements for smart auth selection
@@ -233,9 +233,9 @@ export class {{ tag.class_name }}Client {
                 ],
                 {% endif %}
                 signal: signal,
-                raw: true, // Get raw Response object for streaming
-                timeout: 0, // Disable timeout for streaming requests
                 ...requestOptions,
+                raw: true, // Get raw Response object for streaming
+                timeout: requestOptions?.timeout !== undefined ? requestOptions.timeout : 0, // Disable timeout for streaming requests unless explicitly overridden
             }
         ) as Response;
 
@@ -262,7 +262,7 @@ export class {{ tag.class_name }}Client {
 {% endfor %}
 
 {% for operation in operations %}
-{% if not operation["x-twitter-streaming"] and not ('/stream' in operation.path and '/rules' not in operation.path) %}
+{% if not operation.is_streaming and not operation["x-twitter-streaming"] and not ('/stream' in operation.path and '/rules' not in operation.path) %}
     /**
      * {{ operation.summary | default("") }}{% if operation.description %}
      * {{ operation.description }}{% endif %}
@@ -378,7 +378,7 @@ export class {{ tag.class_name }}Client {
             },
             signal: signal,
             {% if operation.request_body %}
-            body: JSON.stringify({% if operation.request_body.required %}body{% else %}body{% endif %}),
+            body: {% if operation.request_body.required %}JSON.stringify(transformKeysToSnake(body || {})){% else %}body ? JSON.stringify(transformKeysToSnake(body)) : undefined{% endif %},
             {% endif %}
             ...requestOptions,
         };

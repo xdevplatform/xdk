@@ -1,0 +1,284 @@
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using Xdk.Models;
+using Xdk.Streaming;
+
+namespace Xdk.Clients;
+
+/// <summary>
+/// Client for {{ tag.display_name }} endpoints of the X API.
+/// </summary>
+public sealed class {{ tag.class_name }}Client
+{
+    private readonly XClient _client;
+
+    public {{ tag.class_name }}Client(XClient client)
+    {
+        _client = client;
+    }
+
+{# Request body C# type #}
+{% macro req_body_type(operation) -%}
+{%- if operation.request_body and operation.request_body.content -%}
+{%- set json_or_mp = operation.request_body.content["application/json"] or operation.request_body.content["multipart/form-data"] -%}
+{%- if json_or_mp and json_or_mp.schema -%}
+{{ json_or_mp.schema | cs_type }}
+{%- elif "application/octet-stream" in operation.request_body.content -%}
+byte[]
+{%- else -%}
+object
+{%- endif -%}
+{%- else -%}
+object
+{%- endif -%}
+{%- endmacro %}
+
+{# Response body C# type #}
+{% macro res_body_type(operation) -%}
+{%- if operation.responses and (
+    ("200" in operation.responses and operation.responses["200"].content and "application/octet-stream" in operation.responses["200"].content) or
+    ("201" in operation.responses and operation.responses["201"].content and "application/octet-stream" in operation.responses["201"].content)
+) -%}
+byte[]
+{%- elif operation.has_json_response and ("200" in operation.responses or "201" in operation.responses) -%}
+{%- set response = operation.responses["200"] if "200" in operation.responses else operation.responses["201"] -%}
+{%- if response and response.content and "application/json" in response.content and response.content["application/json"].schema -%}
+{{ response.content["application/json"].schema | cs_type }}
+{%- else -%}
+JsonElement
+{%- endif -%}
+{%- else -%}
+JsonElement
+{%- endif -%}
+{%- endmacro %}
+
+{# Required parameter signature #}
+{% macro required_sig_params(operation) -%}
+{%- set ns = namespace(first=true) -%}
+{%- for param in operation.parameters | selectattr('location', 'equalto', 'path') -%}
+{%- if param.variable_name -%}
+{%- if not ns.first %}, {% endif -%}{% set ns.first = false -%}
+{%- if param.schema %}{{ param.schema | cs_type }}{% else %}string{% endif %} {{ param.variable_name | cs_var_ident }}
+{%- endif -%}
+{%- endfor -%}
+{%- for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') -%}
+{%- if param.variable_name -%}
+{%- if not ns.first %}, {% endif -%}{% set ns.first = false -%}
+{%- if param.schema %}{{ param.schema | cs_type }}{% else %}object{% endif %} {{ param.variable_name | cs_var_ident }}
+{%- endif -%}
+{%- endfor -%}
+{%- if operation.request_body and operation.request_body.required -%}
+{%- if not ns.first %}, {% endif -%}{% set ns.first = false -%}
+{{ req_body_type(operation) }} body
+{%- endif -%}
+{%- endmacro %}
+
+{# Required parameter call args #}
+{% macro required_call_args(operation) -%}
+{%- set ns = namespace(first=true) -%}
+{%- for param in operation.parameters | selectattr('location', 'equalto', 'path') -%}
+{%- if param.variable_name -%}
+{%- if not ns.first %}, {% endif -%}{% set ns.first = false -%}{{ param.variable_name | cs_var_ident }}
+{%- endif -%}
+{%- endfor -%}
+{%- for param in operation.parameters | selectattr('required') | rejectattr('location', 'equalto', 'path') -%}
+{%- if param.variable_name -%}
+{%- if not ns.first %}, {% endif -%}{% set ns.first = false -%}{{ param.variable_name | cs_var_ident }}
+{%- endif -%}
+{%- endfor -%}
+{%- if operation.request_body and operation.request_body.required -%}
+{%- if not ns.first %}, {% endif -%}{% set ns.first = false -%}body
+{%- endif -%}
+{%- endmacro %}
+
+{# Per-operation Options classes #}
+{% for operation in operations %}
+{% set opt_params = operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list %}
+{% set has_opt_body = operation.request_body and not operation.request_body.required %}
+{% if opt_params | length > 0 or has_opt_body or operation.is_streaming %}
+{% set opts_class = operation.class_name ~ "Options" %}
+    public sealed class {{ opts_class }}
+    {
+        {% for param in opt_params %}
+        {% if param.variable_name %}
+        public {% if param.schema %}{{ param.schema | cs_type(true) }}{% else %}object?{% endif %} {{ param.variable_name | cs_prop_ident(opts_class) }} { get; set; }
+        {% endif %}
+        {% endfor %}
+        {% if has_opt_body %}
+        public {{ req_body_type(operation) }}? Body { get; set; }
+        {% endif %}
+        {% if operation.is_streaming %}
+        public StreamOptions? StreamOptions { get; set; }
+        {% endif %}
+        public Dictionary<string, string> Headers { get; set; } = new();
+
+        public {{ opts_class }} Clone()
+        {
+            var copy = ({{ opts_class }})MemberwiseClone();
+            copy.Headers = new Dictionary<string, string>(Headers);
+            return copy;
+        }
+    }
+
+{% endif %}
+{% endfor %}
+
+{# Operation methods #}
+{% for operation in operations %}
+{% set opt_params = operation.parameters | rejectattr('required') | rejectattr('location', 'equalto', 'path') | list %}
+{% set has_opt_body = operation.request_body and not operation.request_body.required %}
+{% set has_options = opt_params | length > 0 or has_opt_body or operation.is_streaming %}
+{% set opts_class = operation.class_name ~ "Options" %}
+{% set req_sig = required_sig_params(operation) %}
+{% set req_args = required_call_args(operation) %}
+{% set r_type = res_body_type(operation) %}
+{% set is_binary = (r_type == 'byte[]') %}
+
+    {% if operation.is_streaming %}
+    public EventStream<{{ r_type }}> {{ operation.method_name }}Stream({{ req_sig }}{% if has_options %}{% if req_sig %}, {% endif %}{{ opts_class }}? options = null{% endif %})
+    {
+        {% if has_options %}
+        var opts = options ?? new {{ opts_class }}();
+        {% endif %}
+        var path = "{{ operation.path }}";
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        path = path.Replace("{{ '{' + param.original_name + '}' }}", XClient.EncodePathSegment({{ param.variable_name | cs_var_ident }}));
+        {% endif %}
+        {% endfor %}
+
+        var queryParams = new Dictionary<string, string>();
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'query') %}
+        {% if param.variable_name %}
+        {% if param.required %}
+        XClient.AddQueryParam(queryParams, "{{ param.original_name }}", {{ param.variable_name | cs_var_ident }});
+        {% else %}
+        XClient.AddQueryParam(queryParams, "{{ param.original_name }}", opts.{{ param.variable_name | cs_prop_ident(opts_class) }});
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+        var extraHeaders = {% if has_options %}new Dictionary<string, string>(opts.Headers){% else %}new Dictionary<string, string>(){% endif %};
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'header') %}
+        {% if param.variable_name %}
+        {% if param.required %}
+        if ({{ param.variable_name | cs_var_ident }} is not null)
+        {
+            extraHeaders["{{ param.original_name }}"] = {{ param.variable_name | cs_var_ident }}.ToString()!;
+        }
+        {% else %}
+        if (opts.{{ param.variable_name | cs_prop_ident(opts_class) }} is not null)
+        {
+            extraHeaders["{{ param.original_name }}"] = opts.{{ param.variable_name | cs_prop_ident(opts_class) }}!.ToString()!;
+        }
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+        IReadOnlyList<string> securitySchemes = {% if operation.security %}new[] { {% set sns = namespace(first=true) %}{% for sec in operation.security %}{% for scheme in sec %}{% if not sns.first %}, {% endif %}{% set sns.first = false %}"{{ scheme }}"{% endfor %}{% endfor %} }{% else %}Array.Empty<string>(){% endif %};
+        object? requestBody = {% if operation.request_body and operation.request_body.required %}body{% elif has_opt_body %}opts.Body{% else %}null{% endif %};
+
+        return _client.OpenStream<{{ r_type }}>(
+            new HttpMethod("{{ operation.method | upper }}"),
+            path,
+            queryParams,
+            extraHeaders,
+            requestBody,
+            securitySchemes,
+            opts.StreamOptions);
+    }
+    {% else %}
+    public Task<{{ r_type }}> {{ operation.method_name }}Async({{ req_sig }}{% if has_options %}{% if req_sig %}, {% endif %}{{ opts_class }}? options = null{% endif %}{% if req_sig or has_options %}, {% endif %}CancellationToken cancellationToken = default)
+    {
+        {% if has_options %}
+        var opts = options ?? new {{ opts_class }}();
+        {% endif %}
+        var path = "{{ operation.path }}";
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'path') %}
+        {% if param.variable_name %}
+        path = path.Replace("{{ '{' + param.original_name + '}' }}", XClient.EncodePathSegment({{ param.variable_name | cs_var_ident }}));
+        {% endif %}
+        {% endfor %}
+
+        var queryParams = new Dictionary<string, string>();
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'query') %}
+        {% if param.variable_name %}
+        {% if param.required %}
+        XClient.AddQueryParam(queryParams, "{{ param.original_name }}", {{ param.variable_name | cs_var_ident }});
+        {% else %}
+        XClient.AddQueryParam(queryParams, "{{ param.original_name }}", opts.{{ param.variable_name | cs_prop_ident(opts_class) }});
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+        var extraHeaders = {% if has_options %}new Dictionary<string, string>(opts.Headers){% else %}new Dictionary<string, string>(){% endif %};
+        {% for param in operation.parameters | selectattr('location', 'equalto', 'header') %}
+        {% if param.variable_name %}
+        {% if param.required %}
+        if ({{ param.variable_name | cs_var_ident }} is not null)
+        {
+            extraHeaders["{{ param.original_name }}"] = {{ param.variable_name | cs_var_ident }}.ToString()!;
+        }
+        {% else %}
+        if (opts.{{ param.variable_name | cs_prop_ident(opts_class) }} is not null)
+        {
+            extraHeaders["{{ param.original_name }}"] = opts.{{ param.variable_name | cs_prop_ident(opts_class) }}!.ToString()!;
+        }
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+
+        IReadOnlyList<string> securitySchemes = {% if operation.security %}new[] { {% set sns = namespace(first=true) %}{% for sec in operation.security %}{% for scheme in sec %}{% if not sns.first %}, {% endif %}{% set sns.first = false %}"{{ scheme }}"{% endfor %}{% endfor %} }{% else %}Array.Empty<string>(){% endif %};
+        object? requestBody = {% if operation.request_body and operation.request_body.required %}body{% elif has_opt_body %}opts.Body{% else %}null{% endif %};
+        var contentType = {% if operation.request_body and operation.request_body.content and "application/octet-stream" in operation.request_body.content and "application/json" not in operation.request_body.content %}"application/octet-stream"{% else %}"application/json"{% endif %};
+
+        {% if is_binary %}
+        return _client.SendBytesAsync(
+            new HttpMethod("{{ operation.method | upper }}"),
+            path,
+            queryParams,
+            extraHeaders,
+            requestBody,
+            contentType,
+            securitySchemes,
+            cancellationToken);
+        {% else %}
+        return _client.SendJsonAsync<{{ r_type }}>(
+            new HttpMethod("{{ operation.method | upper }}"),
+            path,
+            queryParams,
+            extraHeaders,
+            requestBody,
+            contentType,
+            securitySchemes,
+            cancellationToken);
+        {% endif %}
+    }
+    {% endif %}
+
+    {# Paginator helper for paginated operations #}
+    {% if not operation.is_streaming and operation.parameters and (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 or operation.parameters | selectattr('original_name', 'equalto', 'next_token') | list | length > 0) %}
+    {% set has_pt = operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | list | length > 0 %}
+    {% set token_param = (operation.parameters | selectattr('original_name', 'equalto', 'pagination_token') | first) if has_pt else (operation.parameters | selectattr('original_name', 'equalto', 'next_token') | first) %}
+    {% set token_prop = token_param.variable_name | cs_prop_ident(opts_class) %}
+
+    public Paginator<{{ r_type }}> {{ operation.method_name }}Pages({{ req_sig }}{% if req_sig %}, {% endif %}{{ opts_class }}? options = null)
+    {
+        var baseOpts = options?.Clone() ?? new {{ opts_class }}();
+        var initialToken = baseOpts.{{ token_prop }};
+        return new Paginator<{{ r_type }}>(
+            (token, ct) =>
+            {
+                var pageOpts = baseOpts.Clone();
+                pageOpts.{{ token_prop }} = token;
+                return {{ operation.method_name }}Async({% if req_args %}{{ req_args }}, {% endif %}pageOpts, ct);
+            },
+            initialToken);
+    }
+    {% endif %}
+{% endfor %}
+}

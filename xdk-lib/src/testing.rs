@@ -202,10 +202,16 @@ pub struct ContractTest {
     pub optional_params: Vec<TestParameter>,
     /// Request body schema
     pub request_body_schema: Option<RequestBody>,
+    /// Whether a typed `{ClassName}Request` model is generated for this operation
+    pub has_request_model: bool,
+    /// Whether a typed `{ClassName}Response` model is generated for this operation
+    pub has_json_response: bool,
     /// Expected response schema information
     pub response_schema: ResponseSchema,
     /// Security requirements
     pub security_requirements: Vec<String>,
+    /// Whether this is a streaming operation
+    pub is_streaming: bool,
 }
 
 /// Response schema information for contract testing
@@ -392,8 +398,11 @@ fn generate_contract_test(operation: &OperationInfo) -> ContractTest {
         required_params,
         optional_params,
         request_body_schema: generate_request_body_schema(operation),
+        has_request_model: operation.has_request_model,
+        has_json_response: operation.has_json_response,
         response_schema: generate_response_schema(operation),
         security_requirements: extract_security_requirements(operation),
+        is_streaming: operation.is_streaming,
     }
 }
 

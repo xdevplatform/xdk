@@ -1,0 +1,33 @@
+using System;
+using System.Collections.Generic;
+using System.Net;
+using System.Text.Json;
+
+namespace Xdk;
+
+/// <summary>
+/// Exception thrown when an X API request returns a non-success HTTP status or fails.
+/// </summary>
+public sealed class XApiException : Exception
+{
+    public HttpStatusCode StatusCode { get; }
+    public int Status => (int)StatusCode;
+    public IReadOnlyDictionary<string, IEnumerable<string>> Headers { get; }
+    public string? RawBody { get; }
+    public JsonElement? ErrorData { get; }
+
+    public XApiException(
+        string message,
+        HttpStatusCode statusCode,
+        IReadOnlyDictionary<string, IEnumerable<string>>? headers = null,
+        string? rawBody = null,
+        JsonElement? errorData = null,
+        Exception? innerException = null)
+        : base(message, innerException)
+    {
+        StatusCode = statusCode;
+        Headers = headers ?? new Dictionary<string, IEnumerable<string>>();
+        RawBody = rawBody;
+        ErrorData = errorData;
+    }
+}

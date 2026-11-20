@@ -1,0 +1,73 @@
+package com.xdevplatform.xdk.http;
+
+import com.xdevplatform.xdk.XApiException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.util.Map;
+
+/**
+ * Default {@link HttpTransport} backed by {@link java.net.http.HttpClient}.
+ */
+public final class JdkHttpTransport implements HttpTransport {
+    private final HttpClient httpClient;
+
+    public JdkHttpTransport() {
+        this(HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(30)).build());
+    }
+
+    public JdkHttpTransport(HttpClient httpClient) {
+        this.httpClient = httpClient;
+    }
+
+    @Override
+    public TransportResponse send(TransportRequest request) throws IOException, InterruptedException {
+        HttpRequest jdkRequest = toJdkRequest(request);
+        HttpResponse<byte[]> response =
+                httpClient.send(jdkRequest, HttpResponse.BodyHandlers.ofByteArray());
+        return new TransportResponse(
+                response.statusCode(), response.headers().map(), response.body());
+    }
+
+    @Override
+    public InputStream sendStream(TransportRequest request) throws IOException, InterruptedException {
+        HttpRequest jdkRequest = toJdkRequest(request);
+        HttpResponse<InputStream> response =
+                httpClient.send(jdkRequest, HttpResponse.BodyHandlers.ofInputStream());
+        if (response.statusCode() < 200 || response.statusCode() >= 300) {
+            byte[] errBytes;
+            try (InputStream is = response.body()) {
+                errBytes = is != null ? is.readAllBytes() : new byte[0];
+            }
+            String errText = new String(errBytes, StandardCharsets.UTF_8);
+            throw new XApiException(
+                    "HTTP " + response.statusCode() + ": " + errText,
+                    response.statusCode(),
+                    response.headers().map(),
+                    errText,
+                    null);
+        }
+        return response.body();
+    }
+
+    private static HttpRequest toJdkRequest(TransportRequest request) {
+        HttpRequest.Builder builder = HttpRequest.newBuilder().uri(URI.create(request.getUrl()));
+        if (request.getTimeout() != null && !request.getTimeout().isZero() && !request.getTimeout().isNegative()) {
+            builder.timeout(request.getTimeout());
+        }
+        for (Map.Entry<String, String> header : request.getHeaders().entrySet()) {
+            builder.header(header.getKey(), header.getValue());
+        }
+        HttpRequest.BodyPublisher publisher =
+                request.getBody() != null
+                        ? HttpRequest.BodyPublishers.ofByteArray(request.getBody())
+                        : HttpRequest.BodyPublishers.noBody();
+        builder.method(request.getMethod(), publisher);
+        return builder.build();
+    }
+}

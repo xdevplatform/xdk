@@ -1,0 +1,171 @@
+package com.xdevplatform.xdk;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.xdevplatform.xdk.auth.OAuth1;
+import com.xdevplatform.xdk.auth.OAuth2Pkce;
+import com.xdevplatform.xdk.http.HttpTransport;
+import com.xdevplatform.xdk.streaming.EventStream;
+import com.xdevplatform.xdk.streaming.StreamConfig;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import org.junit.jupiter.api.Test;
+
+public class XClientCoreTest {
+    @Test
+    void queryParamBooleanAndArraySerialization() {
+        Map<String, String> params = new LinkedHashMap<>();
+        XClient.addQueryParam(params, "dry_run", true);
+        XClient.addQueryParam(params, "delete_all", false);
+        XClient.addQueryParam(params, "tweet.fields", Arrays.asList("id", "text", "created_at"));
+        assertEquals("true", params.get("dry_run"));
+        assertEquals("false", params.get("delete_all"));
+        assertEquals("id,text,created_at", params.get("tweet.fields"));
+    }
+
+    @Test
+    void oauth1SignsByteOrderedParametersPerRfc5849() {
+        OAuth1 oauth1 = new OAuth1("ck", "cs", "oob", "at", "ats");
+        String header =
+                oauth1.buildRequestHeader(
+                        "GET",
+                        "https://api.x.com/2/media?media_keys=3_1&media.fields=url",
+                        "",
+                        "fixednonce",
+                        "1700000000");
+
+        String baseString =
+                "GET&https%3A%2F%2Fapi.x.com%2F2%2Fmedia&"
+                        + "media.fields%3Durl%26media_keys%3D3_1"
+                        + "%26oauth_consumer_key%3Dck"
+                        + "%26oauth_nonce%3Dfixednonce"
+                        + "%26oauth_signature_method%3DHMAC-SHA1"
+                        + "%26oauth_timestamp%3D1700000000"
+                        + "%26oauth_token%3Dat"
+                        + "%26oauth_version%3D1.0";
+        String expectedSig =
+                OAuth1.percentEncode(OAuth1.hmacSha1Base64("cs&ats", baseString));
+        assertTrue(
+                header.contains("oauth_signature=\"" + expectedSig + "\""),
+                "Header did not contain expected signature: " + header);
+    }
+
+    @Test
+    void pkceCodeVerifierRespectsRfc7636Bounds() {
+        for (int len : new int[] {43, 64, 96, 128}) {
+            String verifier = OAuth2Pkce.generateCodeVerifier(len);
+            assertEquals(len, verifier.length());
+            assertTrue(verifier.matches("^[A-Za-z0-9\\-._~]+$"));
+        }
+        OAuth2Pkce pkce =
+                new OAuth2Pkce(
+                        "client-id",
+                        null,
+                        "https://example.com/cb",
+                        Arrays.asList("tweet.read", "users.read"));
+        String authUrl = pkce.getAuthorizationUrl("st1");
+        assertTrue(authUrl.contains("code_challenge="));
+        assertTrue(authUrl.contains("code_challenge_method=S256"));
+        assertNotNull(pkce.getCodeVerifier());
+    }
+
+    @Test
+    void retriesTransient503WhenEnabled() {
+        AtomicInteger hits = new AtomicInteger(0);
+        HttpTransport transport =
+                new HttpTransport() {
+                    @Override
+                    public TransportResponse send(TransportRequest request) {
+                        int n = hits.incrementAndGet();
+                        if (n == 1) {
+                            return new TransportResponse(
+                                    503,
+                                    Collections.emptyMap(),
+                                    "{\"title\":\"Service Unavailable\"}".getBytes(StandardCharsets.UTF_8));
+                        }
+                        return new TransportResponse(
+                                200,
+                                Collections.emptyMap(),
+                                "{\"ok\":true}".getBytes(StandardCharsets.UTF_8));
+                    }
+
+                    @Override
+                    public InputStream sendStream(TransportRequest request) {
+                        return new ByteArrayInputStream(new byte[0]);
+                    }
+                };
+
+        XClient client =
+                XClient.builder()
+                        .baseUrl("https://api.example.com")
+                        .bearerToken("token")
+                        .retry(true)
+                        .maxRetries(2)
+                        .transport(transport)
+                        .build();
+
+        JsonNode res =
+                client.sendJson(
+                        "GET",
+                        "/2/test",
+                        Collections.emptyMap(),
+                        Collections.emptyMap(),
+                        null,
+                        "application/json",
+                        Collections.singletonList("BearerToken"),
+                        JsonNode.class);
+        assertEquals(2, hits.get());
+        assertTrue(res.get("ok").asBoolean());
+    }
+
+    @Test
+    void eventStreamHandlesSplitMultiByteUtf8AndKeepAlive() {
+        byte[] full =
+                ("\n{}\n{\"data\":{\"id\":\"1\",\"text\":\"Bonjour 🚀 café\"}}\n")
+                        .getBytes(StandardCharsets.UTF_8);
+        // Stream delivering 3 bytes at a time splits 4-byte emoji across chunks
+        InputStream chunked =
+                new InputStream() {
+                    private int pos = 0;
+
+                    @Override
+                    public int read() {
+                        return pos < full.length ? (full[pos++] & 0xFF) : -1;
+                    }
+
+                    @Override
+                    public int read(byte[] b, int off, int len) throws IOException {
+                        if (pos >= full.length) return -1;
+                        int toCopy = Math.min(3, Math.min(len, full.length - pos));
+                        System.arraycopy(full, pos, b, off, toCopy);
+                        pos += toCopy;
+                        return toCopy;
+                    }
+                };
+
+        XClient client = XClient.builder().bearerToken("token").build();
+        List<JsonNode> items = new ArrayList<>();
+        try (EventStream<JsonNode> stream =
+                new EventStream<>(
+                        () -> chunked,
+                        client.getObjectMapper(),
+                        JsonNode.class,
+                        StreamConfig.builder().maxRetries(0).build())) {
+            for (JsonNode item : stream) {
+                items.add(item);
+            }
+        }
+        assertEquals(1, items.size());
+        assertEquals("Bonjour 🚀 café", items.get(0).get("data").get("text").asText());
+    }
+}

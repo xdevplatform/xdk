@@ -1,0 +1,163 @@
+package com.xdevplatform.xdk;
+
+import com.xdevplatform.xdk.auth.OAuth1;
+import com.xdevplatform.xdk.auth.OAuth2Pkce;
+import com.xdevplatform.xdk.http.HttpTransport;
+import java.time.Duration;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+/**
+ * Configuration options for {@link XClient}.
+ */
+public final class XClientConfig {
+    private final String baseUrl;
+    private final String bearerToken;
+    private final String accessToken;
+    private final OAuth2Pkce oauth2;
+    private final OAuth1 oauth1;
+    private final Map<String, String> headers;
+    private final Duration timeout;
+    private final boolean retry;
+    private final int maxRetries;
+    private final HttpTransport transport;
+
+    private XClientConfig(Builder builder) {
+        this.baseUrl = builder.baseUrl != null ? builder.baseUrl : "https://api.x.com";
+        this.bearerToken = builder.bearerToken;
+        this.accessToken = builder.accessToken;
+        this.oauth2 = builder.oauth2;
+        this.oauth1 = builder.oauth1;
+        this.headers =
+                builder.headers != null
+                        ? Collections.unmodifiableMap(new LinkedHashMap<>(builder.headers))
+                        : Collections.emptyMap();
+        this.timeout = builder.timeout;
+        this.retry = builder.retry;
+        this.maxRetries = builder.maxRetries;
+        this.transport = builder.transport;
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public String getBearerToken() {
+        return bearerToken;
+    }
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public OAuth2Pkce getOauth2() {
+        return oauth2;
+    }
+
+    public OAuth1 getOauth1() {
+        return oauth1;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public Duration getTimeout() {
+        return timeout;
+    }
+
+    public boolean isRetry() {
+        return retry;
+    }
+
+    public int getMaxRetries() {
+        return maxRetries;
+    }
+
+    public HttpTransport getTransport() {
+        return transport;
+    }
+
+    public static final class Builder {
+        private String baseUrl = "https://api.x.com";
+        private String bearerToken;
+        private String accessToken;
+        private OAuth2Pkce oauth2;
+        private OAuth1 oauth1;
+        private Map<String, String> headers = new LinkedHashMap<>();
+        private Duration timeout = Duration.ofSeconds(30);
+        private boolean retry = false;
+        private int maxRetries = 3;
+        private HttpTransport transport;
+
+        public Builder baseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+            return this;
+        }
+
+        public Builder bearerToken(String bearerToken) {
+            this.bearerToken = bearerToken;
+            return this;
+        }
+
+        public Builder accessToken(String accessToken) {
+            this.accessToken = accessToken;
+            return this;
+        }
+
+        public Builder oauth2(OAuth2Pkce oauth2) {
+            this.oauth2 = oauth2;
+            return this;
+        }
+
+        public Builder oauth1(OAuth1 oauth1) {
+            this.oauth1 = oauth1;
+            return this;
+        }
+
+        public Builder header(String name, String value) {
+            this.headers.put(name, value);
+            return this;
+        }
+
+        public Builder headers(Map<String, String> headers) {
+            if (headers != null) {
+                this.headers.putAll(headers);
+            }
+            return this;
+        }
+
+        public Builder timeout(Duration timeout) {
+            this.timeout = timeout;
+            return this;
+        }
+
+        public Builder retry(boolean retry) {
+            this.retry = retry;
+            return this;
+        }
+
+        public Builder maxRetries(int maxRetries) {
+            this.maxRetries = maxRetries;
+            return this;
+        }
+
+        public Builder transport(HttpTransport transport) {
+            this.transport = transport;
+            return this;
+        }
+
+        public XClientConfig build() {
+            return new XClientConfig(this);
+        }
+
+        public XClient buildClient() {
+            return new XClient(build());
+        }
+    }
+}

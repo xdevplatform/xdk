@@ -298,17 +298,17 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
                 if extra and isinstance(extra, dict):
                     meta = extra.get('meta')
                     if meta and isinstance(meta, dict):
-                        token = meta.get('next_token')
+                        token = meta.get('next_token') or meta.get('pagination_token')
                         if token:
                             return str(token)
-                    # Also check for next_token at root level in extra
-                    token = extra.get('next_token')
+                    # Also check for next_token/pagination_token at root level in extra
+                    token = extra.get('next_token') or extra.get('pagination_token')
                     if token:
                         return str(token)
             except (AttributeError, TypeError, KeyError):
                 pass
         
-        # Pattern 1: response.meta.next_token (most common)
+        # Pattern 1: response.meta.next_token or response.meta.pagination_token
         try:
             # Try Pydantic model attributes first
             if hasattr(response, 'meta') and response.meta is not None:
@@ -317,19 +317,20 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
                 if hasattr(meta, 'model_dump'):
                     try:
                         meta_dict = meta.model_dump()
-                        token = meta_dict.get('next_token')
+                        token = meta_dict.get('next_token') or meta_dict.get('pagination_token')
                         if token:
                             return str(token)
                     except (AttributeError, TypeError):
                         pass
                 # Otherwise try attribute access
-                if hasattr(meta, 'next_token'):
-                    token = getattr(meta, 'next_token', None)
-                    if token:
-                        return str(token)
+                for attr_name in ('next_token', 'pagination_token'):
+                    if hasattr(meta, attr_name):
+                        token = getattr(meta, attr_name, None)
+                        if token:
+                            return str(token)
                 # If meta is a dict, access it directly
                 if isinstance(meta, dict):
-                    token = meta.get('next_token')
+                    token = meta.get('next_token') or meta.get('pagination_token')
                     if token:
                         return str(token)
         except (AttributeError, TypeError):
@@ -340,25 +341,26 @@ class _PageIterator(Generic[ResponseType], Iterator[ResponseType]):
             try:
                 meta = response_dict.get('meta')
                 if meta and isinstance(meta, dict):
-                    token = meta.get('next_token')
+                    token = meta.get('next_token') or meta.get('pagination_token')
                     if token:
                         return str(token)
             except (AttributeError, TypeError, KeyError):
                 pass
         
-        # Pattern 2: response.next_token (some APIs)
+        # Pattern 2: response.next_token / response.pagination_token at root level
         try:
-            if hasattr(response, 'next_token'):
-                token = getattr(response, 'next_token', None)
-                if token:
-                    return str(token)
+            for attr_name in ('next_token', 'pagination_token'):
+                if hasattr(response, attr_name):
+                    token = getattr(response, attr_name, None)
+                    if token:
+                        return str(token)
         except (AttributeError, TypeError):
             pass
         
-        # Try dict access for next_token at root level
+        # Try dict access for next_token / pagination_token at root level
         if response_dict:
             try:
-                token = response_dict.get('next_token')
+                token = response_dict.get('next_token') or response_dict.get('pagination_token')
                 if token:
                     return str(token)
             except (AttributeError, TypeError, KeyError):

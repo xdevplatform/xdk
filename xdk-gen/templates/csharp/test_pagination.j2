@@ -1,0 +1,68 @@
+using System.Collections.Generic;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using Xdk;
+using Xdk.Auth;
+using Xunit;
+
+namespace Xdk.Tests;
+
+public class {{ tag.class_name }}PaginationTests
+{
+    {% for pagination_test in test_spec.pagination_tests %}
+    [Fact]
+    public async Task Paginate_{{ pagination_test.method_name }}()
+    {
+        var itemJson = {{ pagination_test.mock_item_json | cs_string_literal }};
+        var page1 = "{\"{{ pagination_test.data_field }}\":[" + itemJson + "," + itemJson + "],\"meta\":{\"next_token\":\"tok_2\",\"result_count\":2}}";
+        var page2 = "{\"{{ pagination_test.data_field }}\":[" + itemJson + "],\"meta\":{\"result_count\":1}}";
+        var callIndex = 0;
+
+        var handler = new MockHttpMessageHandler(_ =>
+        {
+            callIndex++;
+            var body = callIndex == 1 ? page1 : page2;
+            return new HttpResponseMessage(HttpStatusCode.OK)
+            {
+                Content = new StringContent(body, Encoding.UTF8, "application/json"),
+            };
+        });
+
+        using var httpClient = new HttpClient(handler);
+        using var client = new XClient(new XClientOptions
+        {
+            BaseUrl = "https://api.example.com",
+            BearerToken = "test-bearer",
+            AccessToken = "test-access",
+            OAuth1 = new OAuth1("ck", "cs", "oob", "at", "ats"),
+            HttpClient = httpClient,
+        });
+
+        {% set call_args = namespace(first=true, code="") %}
+        {% for param in pagination_test.required_params %}
+        {% set arg_expr %}{% if param.param_type == "integer" %}1{% elif param.param_type == "boolean" %}true{% elif param.param_type == "array" %}new List<string> { "item1" }{% else %}"test_{{ param.variable_name }}"{% endif %}{% endset %}
+        {% if not call_args.first %}{% set call_args.code = call_args.code ~ ", " %}{% endif %}
+        {% set call_args.first = false %}
+        {% set call_args.code = call_args.code ~ arg_expr %}
+        {% endfor %}
+
+        var paginator = client.{{ tag.class_name }}.{{ pagination_test.method_name }}Pages({{ call_args.code }});
+        var pages = 0;
+        await foreach (var page in paginator)
+        {
+            object? boxed = page;
+            Assert.NotNull(boxed);
+            pages++;
+            if (pages > 5) break;
+        }
+
+        Assert.Equal(2, pages);
+        Assert.Equal(2, handler.Requests.Count);
+        {% if pagination_test.token_param %}
+        Assert.Contains("{{ pagination_test.token_param }}=tok_2", handler.Requests[1].RequestUri!.ToString());
+        {% endif %}
+    }
+    {% endfor %}
+}

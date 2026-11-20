@@ -1,0 +1,37 @@
+using System.Linq;
+using System.Reflection;
+using Xdk;
+using Xdk.Clients;
+using Xunit;
+
+namespace Xdk.Tests;
+
+public class {{ tag.class_name }}StructureTests
+{
+    [Fact]
+    public void ClientPropertyExistsOnMainClient()
+    {
+        using var client = new XClient(new XClientOptions { BearerToken = "test-token" });
+        Assert.NotNull(client.{{ tag.class_name }});
+    }
+
+    {% for structural_test in test_spec.structural_tests %}
+    [Fact]
+    public void AllExpectedMethodsExist()
+    {
+        var methodNames = typeof({{ tag.class_name }}Client)
+            .GetMethods(BindingFlags.Public | BindingFlags.Instance)
+            .Select(m => m.Name)
+            .ToHashSet();
+
+        {% for method in structural_test.methods %}
+        Assert.True(
+            methodNames.Contains("{{ method.method_name }}Async") || methodNames.Contains("{{ method.method_name }}Stream"),
+            "Expected {{ method.method_name }}Async or {{ method.method_name }}Stream on {{ tag.class_name }}Client");
+        {% if method.supports_pagination %}
+        Assert.Contains("{{ method.method_name }}Pages", methodNames);
+        {% endif %}
+        {% endfor %}
+    }
+    {% endfor %}
+}
