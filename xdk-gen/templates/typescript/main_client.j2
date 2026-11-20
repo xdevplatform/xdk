@@ -360,11 +360,14 @@ export class Client {
     // Add authentication headers based on selected method
     if (selectedAuth === 'bearer_token' && this.bearerToken) {
       headers.set('Authorization', `Bearer ${this.bearerToken}`);
-    } else if (selectedAuth === 'oauth2_user_context' && this.accessToken) {
+    } else if (selectedAuth === 'oauth2_user_context' && this.getEffectiveAccessToken()) {
       if (this.oauth2 && this.isTokenExpired()) {
         await this.refreshToken();
       }
-      headers.set('Authorization', `Bearer ${this.accessToken}`);
+      const effectiveToken = this.getEffectiveAccessToken();
+      if (effectiveToken) {
+        headers.set('Authorization', `Bearer ${effectiveToken}`);
+      }
     } else if (selectedAuth === 'oauth1' && this.oauth1 && this.oauth1.accessToken) {
       // OAuth1 authentication - build proper OAuth1 header
       try {
@@ -520,11 +523,15 @@ export class Client {
     }
   }
 
+  private getEffectiveAccessToken(): string | undefined {
+    return this.oauth2?.getToken?.()?.access_token || this.accessToken;
+  }
+
   /**
    * Get the current authentication status
    */
   isAuthenticated(): boolean {
-    return !!(this.bearerToken || this.accessToken || (this.oauth1 && this.oauth1.accessToken));
+    return !!(this.bearerToken || this.getEffectiveAccessToken() || (this.oauth1 && this.oauth1.accessToken));
   }
 
   /**
@@ -565,9 +572,10 @@ export class Client {
    */
   private selectAuthMethod(method: string, securityRequirements?: Array<Record<string, string[]>>): 'bearer_token' | 'oauth2_user_context' | 'oauth1' | null {
     // If no security requirements, use default priority
+    const oauth2AccessToken = this.getEffectiveAccessToken();
     if (!securityRequirements || securityRequirements.length === 0) {
       if (this.bearerToken) return 'bearer_token';
-      if (this.accessToken) return 'oauth2_user_context';
+      if (oauth2AccessToken) return 'oauth2_user_context';
       if (this.oauth1 && this.oauth1.accessToken) return 'oauth1';
       return null;
     }
@@ -584,7 +592,7 @@ export class Client {
     // Check what auth methods we have available
     const availableAuth: Record<string, boolean> = {
       'BearerToken': !!this.bearerToken,
-      'OAuth2UserToken': !!this.accessToken,
+      'OAuth2UserToken': !!oauth2AccessToken,
       'UserToken': !!(this.oauth1 && this.oauth1.accessToken),
     };
 
@@ -644,7 +652,7 @@ export class Client {
     if (this.bearerToken) {
       availableAuthTypes.push('bearer_token');
     }
-    if (this.accessToken) {
+    if (this.getEffectiveAccessToken()) {
       availableAuthTypes.push('oauth2_user_context');
     }
     if (this.oauth1 && this.oauth1.accessToken) {

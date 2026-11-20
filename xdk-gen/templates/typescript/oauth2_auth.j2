@@ -58,7 +58,7 @@ export class OAuth2 {
    */
   async getAuthorizationUrl(state?: string): Promise<string> {
     if (!this.codeChallenge) {
-      const verifier = generateCodeVerifier();
+      const verifier = this.codeVerifier || generateCodeVerifier();
       await this.setPkceParameters(verifier);
     }
 

@@ -65,3 +65,51 @@ class TestQueryAndPathParams:
         items = list(_process_stream(mock_resp, StreamConfig(), StreamState(), None))
         assert len(items) == 1
         assert items[0]["data"]["text"] == "Bonjour 🚀 café"
+
+    def test_path_params_are_url_encoded(self):
+        with mock.patch.object(
+            self.client.session,
+            "get",
+            return_value=_json_response(b'{"data": {"id": "1", "text": "hi"}}'),
+        ) as get_mock:
+            self.client.posts.get_by_id("123/456?x=1#frag")
+
+        called_url = get_mock.call_args.args[0]
+        assert "123%2F456%3Fx%3D1%23frag" in called_url
+
+    def test_open_response_enums_accept_new_api_values(self):
+        from xdk.schemas import Media
+
+        # Unknown future media type from API should deserialize cleanly without ValidationError
+        media = Media.model_validate({"media_key": "3_123", "type": "future_immersive_3d"})
+        assert media.type == "future_immersive_3d"
+
+    def test_root_model_wrappers_preserve_attribute_access_and_empty_init(self):
+        from xdk.account_activity.models import CreateSubscriptionRequest
+        from xdk.stream.models import UsersComplianceResponse
+        from xdk.users.models import CreateBookmarkRequest, CreateBookmarkResponse
+
+        resp = CreateBookmarkResponse.model_validate({"data": {"bookmarked": True}})
+        assert resp.data is not None
+        assert resp.data.bookmarked is True
+        assert resp.errors is None
+
+        compliance = UsersComplianceResponse.model_validate(
+            {
+                "data": {
+                    "user_delete": {
+                        "event_at": "2026-01-01T00:00:00Z",
+                        "user": {"id": "2244994945"},
+                    }
+                }
+            }
+        )
+        assert compliance.data is not None
+        assert compliance.data.user_delete.user.id == "2244994945"
+
+        req_single = CreateBookmarkRequest(tweet_id="12345")
+        assert req_single.model_dump(exclude_none=True) == {"tweet_id": "12345"}
+
+        empty_sub = CreateSubscriptionRequest()
+        assert empty_sub.model_dump() == {}
+
