@@ -68,6 +68,7 @@ jobs:
       - name: Generate Python, TypeScript, Java, and C# SDKs
         working-directory: xdk
         run: |
+          npm install -g prettier --no-audit --no-fund
           cargo build --release -p xdk-build
           if [ "${{ github.event_name }}" = "schedule" ]; then
             ./target/release/xdk-build python --latest true --output ../xdk-python

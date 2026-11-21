@@ -88,44 +88,20 @@ class Test{{ tag.class_name }}Contracts:
             # Add request body if required
             {% if contract_test.request_body_schema %}
             {% if contract_test.has_request_model %}
-            # Import and create proper request model instance
             from xdk.{{ tag.property_name }}.models import {{ contract_test.class_name }}Request
-            # Rebuild model to resolve forward references before instantiation
             try:
                 {{ contract_test.class_name }}Request.model_rebuild()
             except Exception:
-                pass  # Model may already be fully defined
-            # Create instance with required fields (using dummy values for testing)
-            import typing
-            required_kwargs = {}
-            request_model = {{ contract_test.class_name }}Request
-            for field_name, field_info in getattr(request_model, "model_fields", {}).items():
-                if field_info.is_required():
-                    annotation = field_info.annotation
-                    annotation_str = str(annotation) if annotation else "str"
-                    literals = [
-                        arg
-                        for arg in typing.get_args(annotation)
-                        if isinstance(arg, (str, int, bool))
-                    ] if typing.get_origin(annotation) is typing.Literal else []
-                    if literals:
-                        required_kwargs[field_name] = literals[0]
-                    elif "int" in annotation_str.lower():
-                        required_kwargs[field_name] = 42
-                    elif "bool" in annotation_str.lower():
-                        required_kwargs[field_name] = True
-                    elif "list" in annotation_str.lower() or "List" in annotation_str:
-                        required_kwargs[field_name] = []
-                    elif "dict" in annotation_str.lower() or "Dict" in annotation_str:
-                        required_kwargs[field_name] = {}
-                    else:
-                        required_kwargs[field_name] = "test_value"
+                pass
+            {% if contract_test.request_mock_json %}
+            req_json_str = {{ contract_test.request_mock_json | json_string_literal }}
             try:
-                kwargs["body"] = request_model(**required_kwargs)
+                kwargs["body"] = {{ contract_test.class_name }}Request.model_validate_json(req_json_str)
             except Exception:
-                # Typed models may reject fabricated values; build without
-                # validation since this test only exercises request plumbing.
-                kwargs["body"] = request_model.model_construct(**required_kwargs)
+                kwargs["body"] = {{ contract_test.class_name }}Request.model_construct(**json.loads(req_json_str))
+            {% else %}
+            kwargs["body"] = {{ contract_test.class_name }}Request.model_construct()
+            {% endif %}
             {% else %}
             kwargs["body"] = b"test_payload"
             {% endif %}
@@ -302,44 +278,20 @@ class Test{{ tag.class_name }}Contracts:
             # Add request body if required
             {% if contract_test.request_body_schema %}
             {% if contract_test.has_request_model %}
-            # Import and create proper request model instance
             from xdk.{{ tag.property_name }}.models import {{ contract_test.class_name }}Request
-            # Rebuild model to resolve forward references before instantiation
             try:
                 {{ contract_test.class_name }}Request.model_rebuild()
             except Exception:
-                pass  # Model may already be fully defined
-            # Create instance with required fields (using dummy values for testing)
-            import typing
-            required_kwargs = {}
-            request_model = {{ contract_test.class_name }}Request
-            for field_name, field_info in getattr(request_model, "model_fields", {}).items():
-                if field_info.is_required():
-                    annotation = field_info.annotation
-                    annotation_str = str(annotation) if annotation else "str"
-                    literals = [
-                        arg
-                        for arg in typing.get_args(annotation)
-                        if isinstance(arg, (str, int, bool))
-                    ] if typing.get_origin(annotation) is typing.Literal else []
-                    if literals:
-                        required_kwargs[field_name] = literals[0]
-                    elif "int" in annotation_str.lower():
-                        required_kwargs[field_name] = 42
-                    elif "bool" in annotation_str.lower():
-                        required_kwargs[field_name] = True
-                    elif "list" in annotation_str.lower() or "List" in annotation_str:
-                        required_kwargs[field_name] = []
-                    elif "dict" in annotation_str.lower() or "Dict" in annotation_str:
-                        required_kwargs[field_name] = {}
-                    else:
-                        required_kwargs[field_name] = "test_value"
+                pass
+            {% if contract_test.request_mock_json %}
+            req_json_str = {{ contract_test.request_mock_json | json_string_literal }}
             try:
-                kwargs["body"] = request_model(**required_kwargs)
+                kwargs["body"] = {{ contract_test.class_name }}Request.model_validate_json(req_json_str)
             except Exception:
-                # Typed models may reject fabricated values; build without
-                # validation since this test only exercises request plumbing.
-                kwargs["body"] = request_model.model_construct(**required_kwargs)
+                kwargs["body"] = {{ contract_test.class_name }}Request.model_construct(**json.loads(req_json_str))
+            {% else %}
+            kwargs["body"] = {{ contract_test.class_name }}Request.model_construct()
+            {% endif %}
             {% else %}
             kwargs["body"] = b"test_payload"
             {% endif %}

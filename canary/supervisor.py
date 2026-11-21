@@ -51,6 +51,7 @@ def prepare_python_canary(python_dir: Path, uv_bin: str, env: Dict[str, str]) ->
             [uv_bin, "sync"],
             cwd=str(python_dir),
             env=env,
+            stdout=sys.stderr,
             check=True,
         )
     if not venv_python.is_file():
@@ -67,6 +68,7 @@ def prepare_typescript_canary(
             [npm_bin, "install", "--no-audit", "--no-fund"],
             cwd=str(typescript_dir),
             env=env,
+            stdout=sys.stderr,
             check=True,
         )
     subprocess.run(
@@ -83,6 +85,7 @@ def prepare_typescript_canary(
         ],
         cwd=str(typescript_dir),
         env=env,
+        stdout=sys.stderr,
         check=True,
     )
     bundle = typescript_dir / ".xdk-examples" / "canary.js"
@@ -104,6 +107,7 @@ def build_java_classpath(java_dir: Path, mvn_bin: str, env: Dict[str, str]) -> s
         ],
         cwd=str(java_dir),
         env=env,
+        stdout=sys.stderr,
         check=True,
     )
     dep_cp = cp_file.read_text(encoding="utf-8").strip()
@@ -122,6 +126,7 @@ def build_csharp_examples(csharp_dir: Path, dotnet_bin: str, env: Dict[str, str]
         [dotnet_bin, "build", str(proj), "-c", "Release", "--nologo", "-v", "q"],
         cwd=str(csharp_dir),
         env=env,
+        stdout=sys.stderr,
         check=True,
     )
     dll = csharp_dir / "examples" / "Xdk.Examples" / "bin" / "Release" / "net8.0" / "Xdk.Examples.dll"
