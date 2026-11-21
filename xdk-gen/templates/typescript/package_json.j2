@@ -108,6 +108,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
+    "examples": "tsup examples/use_cases.ts --no-config --no-dts --format esm --out-dir .xdk-examples --clean --silent && node .xdk-examples/use_cases.js",
+    "canary": "tsup examples/canary.ts --no-config --no-dts --format esm --out-dir .xdk-examples --silent && node .xdk-examples/canary.js",
     "docs": "typedoc",
     "docs:build": "typedoc && echo \"Documentation generated in docs/\"",
     "docs:build-simple": "node scripts/generate-docs-simple.js",

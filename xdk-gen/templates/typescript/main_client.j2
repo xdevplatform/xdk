@@ -301,7 +301,9 @@ export class Client {
     }
     
     this.timeout = (config as ClientConfig)?.timeout ?? 30000;
-    this.retry = (config as ClientConfig)?.retry ?? false;
+    this.retry =
+      (config as ClientConfig)?.retry ??
+      (((config as ClientConfig)?.maxRetries ?? 0) > 0);
     this.maxRetries = (config as ClientConfig)?.maxRetries ?? 3;
     
     // Initialize headers
@@ -448,8 +450,17 @@ export class Client {
             errorData = undefined;
           }
 
+          const extractedMessage =
+            errorData && typeof errorData === 'object'
+              ? errorData.message ||
+                errorData.detail ||
+                errorData.errors?.[0]?.message ||
+                errorData.errors?.[0]?.detail ||
+                errorData.title
+              : undefined;
+
           throw new ApiError(
-            errorData && errorData.message ? errorData.message : `HTTP ${response.status}: ${response.statusText}`,
+            extractedMessage || `HTTP ${response.status}: ${response.statusText}`,
             response.status,
             response.statusText,
             response.headers,
@@ -489,8 +500,18 @@ export class Client {
           });
           continue;
         }
+        const errMsg =
+          error instanceof Error
+            ? error.message
+            : error && typeof (error as any).message === 'string'
+              ? (error as any).message
+              : 'Request failed';
+        const causeMsg =
+          error && typeof (error as any).cause?.message === 'string'
+            ? ` (${(error as any).cause.message})`
+            : '';
         throw new ApiError(
-          error instanceof Error ? error.message : 'Request failed',
+          `${errMsg}${causeMsg}`,
           0,
           'NETWORK_ERROR',
           new Headers(),
@@ -687,7 +708,7 @@ export class Client {
   getAvailableAuthTypes(): string[] {
     const authTypes: string[] = [];
     if (this.bearerToken) authTypes.push('bearer_token');
-    if (this.accessToken) authTypes.push('oauth2_user_context');
+    if (this.getEffectiveAccessToken()) authTypes.push('oauth2_user_context');
     if (this.oauth1 && this.oauth1.accessToken) authTypes.push('oauth1');
     return authTypes;
   }

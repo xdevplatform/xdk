@@ -1,0 +1,310 @@
+"""
+Deep end-to-end TCP loopback integration suite verifying real requests.Session socket
+behavior across authentication flows, pagination, chunked streaming + reconnection, binary
+uploads/downloads, 64-bit integer safety, retries, timeouts, and error handling.
+"""
+
+from __future__ import annotations
+
+import itertools
+import json
+import time
+from typing import List
+
+import pytest
+import requests
+
+from examples.mock_x_api_server import MockResponse, MockXApiServer, RecordedRequest
+from xdk import Client, Cursor, OAuth1, OAuth2PKCEAuth, StreamConfig
+from xdk.posts.models import CreateRequest
+
+
+class TestClientLoopbackE2E:
+    def test_oauth2_pkce_public_and_confidential_late_bound_refresh_over_tcp(self) -> None:
+        with MockXApiServer() as server:
+            # Test public PKCE client (no client_secret!) with late-bound token exchange + refresh
+            oauth2 = OAuth2PKCEAuth(
+                base_url=server.base_url,
+                authorization_base_url="https://x.com/i",
+                client_id="public-pkce-client-id",
+                client_secret=None,
+                redirect_uri="http://localhost:3000/callback",
+                scope=["tweet.read", "users.read", "offline.access"],
+            )
+
+            # Construct Client BEFORE exchanging the authorization code (late-bound regression test)
+            client = Client(base_url=server.base_url, oauth2_auth=oauth2)
+
+            auth_url = oauth2.get_authorization_url(state="csrf-123")
+            assert "code_challenge_method=S256" in auth_url
+            assert oauth2.code_challenge is not None
+            server.register_expected_pkce_challenge("code_abc", oauth2.code_challenge)
+
+            exchanged = oauth2.exchange_code("code_abc")
+            assert exchanged["access_token"] == "sim_oauth2_access_code_abc"
+            assert client.access_token == "sim_oauth2_access_code_abc"
+
+            # 1st API call uses the newly exchanged token without manual assignment
+            me = client.users.get_me()
+            assert me.data is not None
+            last_req = server.last_request()
+            assert last_req is not None
+            assert last_req.first_header("authorization") == "Bearer sim_oauth2_access_code_abc"
+
+            # Force token expiration so the next API call triggers public-client refresh_token()
+            expired = dict(exchanged)
+            expired["expires_at"] = time.time() - 30
+            oauth2.set_token(expired)
+
+            me_refreshed = client.users.get_me()
+            assert me_refreshed.data is not None
+            last_req = server.last_request()
+            assert last_req is not None
+            assert (
+                last_req.first_header("authorization")
+                == "Bearer sim_refreshed_access_from_sim_oauth2_refresh_1"
+            )
+
+    def test_oauth1_rfc5849_signature_verified_on_server_including_byte_order_params(self) -> None:
+        with MockXApiServer() as server:
+            oauth1 = OAuth1(
+                api_key="consumer-key-1",
+                api_secret="consumer-secret-1",
+                access_token="access-token-1",
+                access_token_secret="access-secret-1",
+                base_url=server.base_url,
+            )
+
+            # Also verify OAuth1 request_token + access_token handshake against base_url
+            req_tok = oauth1.get_request_token()
+            assert req_tok.oauth_token == "sim_req_tok"
+            acc_tok = oauth1.get_access_token("pin_12345")
+            assert acc_tok.access_token == "sim_acc_tok"
+
+            # Restore explicit test credentials for signature check
+            oauth1.access_token = OAuth1(
+                api_key="consumer-key-1",
+                api_secret="consumer-secret-1",
+                access_token="access-token-1",
+                access_token_secret="access-secret-1",
+                base_url=server.base_url,
+            ).access_token
+
+            client = Client(base_url=server.base_url, auth=oauth1)
+
+            created = client.posts.create(body=CreateRequest(text="Hello OAuth 1.0a & TCP!"))
+            assert created.data is not None
+            last_req = server.last_request()
+            assert last_req is not None
+            assert MockXApiServer.verify_oauth1_signature(
+                last_req, "consumer-secret-1", "access-secret-1"
+            ), "Server-side RFC 5849 HMAC-SHA1 verification failed on POST"
+
+            # Query with dot, underscore, space, exclamation, and parens (tests RFC 5849 byte-order sort!)
+            first_page = next(
+                client.posts.search_recent(
+                    query="(xdk OR python) -is:retweet !test_1",
+                    post_fields=["created_at", "author_id"],
+                    max_results=10,
+                )
+            )
+            assert first_page.data is not None
+            last_req = server.last_request()
+            assert last_req is not None
+            assert MockXApiServer.verify_oauth1_signature(
+                last_req, "consumer-secret-1", "access-secret-1"
+            ), "Server-side RFC 5849 HMAC-SHA1 verification failed on GET with punctuation query params"
+
+    def test_multi_page_generator_and_cursor_items_over_tcp(self) -> None:
+        with MockXApiServer() as server:
+            def responder(req: RecordedRequest) -> MockResponse | None:
+                if req.path == "/2/users/42/followers":
+                    q = req.raw_query
+                    if "pagination_token=tok_p2" in q:
+                        return MockResponse.json(
+                            200,
+                            {
+                                "data": [{"id": "u3", "name": "User 3", "username": "u3"}],
+                                "meta": {"result_count": 1, "next_token": "tok_p3"},
+                            },
+                        )
+                    if "pagination_token=tok_p3" in q:
+                        return MockResponse.json(
+                            200,
+                            {
+                                "data": [{"id": "u4", "name": "User 4", "username": "u4"}],
+                                "meta": {"result_count": 1},
+                            },
+                        )
+                    return MockResponse.json(
+                        200,
+                        {
+                            "data": [
+                                {"id": "u1", "name": "User 1", "username": "u1"},
+                                {"id": "u2", "name": "User 2", "username": "u2"},
+                            ],
+                            "meta": {"result_count": 2, "next_token": "tok_p2"},
+                        },
+                    )
+                return None
+
+            server.set_responder(responder)
+            client = Client(base_url=server.base_url, bearer_token="test-bearer")
+
+            items = list(Cursor(client.users.get_followers, "42", max_results=2).items())
+            ids = [u["id"] if isinstance(u, dict) else u.id for u in items]
+            assert ids == ["u1", "u2", "u3", "u4"]
+            assert len(server.requests) == 3
+
+    def test_chunked_ndjson_streaming_split_utf8_and_auto_reconnect_with_oauth1(self) -> None:
+        with MockXApiServer() as server:
+            attempts = 0
+            line1 = '{"data":{"id":"s1","text":"Rocket 🚀 stream"}}\n'.encode("utf-8")
+            rocket_idx = line1.index("🚀".encode("utf-8"))
+
+            def responder(req: RecordedRequest) -> MockResponse | None:
+                nonlocal attempts
+                if req.path == "/2/tweets/search/stream":
+                    assert (
+                        req.first_header("Authorization") == "Bearer stream-bearer-token"
+                    ), "Stream request must carry Bearer token on every reconnect attempt"
+                    attempts += 1
+                    if attempts == 1:
+                        # Split 4-byte 🚀 UTF-8 sequence across two chunks AND drop socket midway!
+                        part_a = line1[: rocket_idx + 2]
+                        part_b = line1[rocket_idx + 2 :]
+                        return MockResponse.chunked_stream([b"{}\r\n", part_a, part_b], drop_midway=True)
+                    line2 = '{"data":{"id":"s2","text":"Recovered after disconnect"}}\n'.encode("utf-8")
+                    line3 = '{"data":{"id":"s3","text":"Final event"}}\n'.encode("utf-8")
+                    return MockResponse.chunked_stream([line2, line3], drop_midway=False)
+                return None
+
+            server.set_responder(responder)
+
+            # Verify missing BearerToken on streaming endpoint raises clear ValueError
+            unauthed_client = Client(base_url=server.base_url)
+            with pytest.raises(ValueError, match="Authentication required"):
+                next(unauthed_client.stream.posts())
+
+            client = Client(base_url=server.base_url, bearer_token="stream-bearer-token")
+
+            reconnects: List[int] = []
+            cfg = StreamConfig(
+                max_retries=3,
+                initial_backoff=0.02,
+                max_backoff=0.05,
+                jitter=False,
+                chunk_size=16,
+                on_reconnect=lambda attempt, _delay: reconnects.append(attempt),
+            )
+
+            received = list(itertools.islice(client.stream.posts(stream_config=cfg), 3))
+            assert len(received) == 3
+            texts = [
+                item.data.text if hasattr(item.data, "text") else item.data["text"]
+                for item in received
+            ]
+            assert texts[0] == "Rocket 🚀 stream"
+            assert texts[1] == "Recovered after disconnect"
+            assert texts[2] == "Final event"
+            assert attempts == 2
+            assert reconnects == [1]
+
+    def test_binary_upload_download_and_64bit_integer_fidelity_over_tcp(self) -> None:
+        with MockXApiServer() as server:
+            raw_binary = bytes([0x89, 0x50, 0x4E, 0x47, 0x00, 0xFF, 0x10, 0x20])
+            large_size = 5_368_709_120  # 5 GiB (> 32-bit signed int max)
+
+            def responder(req: RecordedRequest) -> MockResponse | None:
+                if req.path == "/2/compliance/jobs/job_99/download":
+                    return MockResponse.raw_bytes(200, "application/octet-stream", raw_binary)
+                if req.path == "/2/media/upload":
+                    return MockResponse.json(
+                        200,
+                        {
+                            "data": {
+                                "id": "1889997777",
+                                "media_key": "7_1889997777",
+                                "size": large_size,
+                                "expires_after_secs": 86400,
+                            }
+                        },
+                    )
+                return None
+
+            server.set_responder(responder)
+            client = Client(
+                base_url=server.base_url,
+                bearer_token="test-bearer",
+                access_token="test-access",
+            )
+
+            downloaded = client.compliance.download_job_results("job_99", "dl_tok")
+            assert isinstance(downloaded, bytes)
+            assert downloaded == raw_binary
+
+            upload_status = client.media.get_upload_status(media_id="1889997777")
+            assert upload_status.data is not None
+            size_val = (
+                upload_status.data.size
+                if hasattr(upload_status.data, "size")
+                else upload_status.data["size"]
+            )
+            assert size_val == large_size
+
+    def test_rate_limit_429_retry_error_404_and_timeout_over_tcp(self) -> None:
+        with MockXApiServer() as server:
+            calls = 0
+
+            def responder(req: RecordedRequest) -> MockResponse | None:
+                nonlocal calls
+                if req.path == "/2/users/by/username/RateLimited":
+                    calls += 1
+                    if calls == 1:
+                        return MockResponse.json(
+                            429,
+                            {"title": "Too Many Requests", "detail": "Rate limit exceeded"},
+                            extra_headers={"Retry-After": "0.02"},
+                        )
+                    return MockResponse.json(
+                        200,
+                        {"data": {"id": "777", "name": "Recovered", "username": "RateLimited"}},
+                    )
+                if req.path == "/2/users/by/username/MissingUser":
+                    return MockResponse.json(
+                        404,
+                        {"title": "Not Found Error", "detail": "Could not find user MissingUser"},
+                    )
+                if req.path == "/2/users/by/username/SlowUser":
+                    return MockResponse.json(
+                        200,
+                        {"data": {"id": "999", "name": "Slow", "username": "SlowUser"}},
+                        delay_seconds=0.35,
+                    )
+                return None
+
+            server.set_responder(responder)
+            client = Client(
+                base_url=server.base_url,
+                bearer_token="test-bearer",
+                max_retries=2,
+                retry_backoff=0.02,
+            )
+
+            recovered = client.users.get_by_username("RateLimited")
+            assert recovered.data is not None
+            assert calls == 2
+
+            with pytest.raises(requests.HTTPError) as err_info:
+                client.users.get_by_username("MissingUser")
+            assert err_info.value.response is not None
+            assert err_info.value.response.status_code == 404
+
+            fast_timeout_client = Client(
+                base_url=server.base_url,
+                bearer_token="test-bearer",
+                timeout=0.08,
+                max_retries=0,
+            )
+            with pytest.raises(requests.Timeout):
+                fast_timeout_client.users.get_by_username("SlowUser")

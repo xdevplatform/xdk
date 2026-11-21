@@ -1,0 +1,343 @@
+/**
+ * Deep end-to-end TCP loopback integration suite verifying real Node fetch socket
+ * behavior across authentication flows, pagination, chunked streaming + reconnection, binary
+ * uploads/downloads, 64-bit integer safety, retries, timeouts, and structured ApiError handling.
+ */
+
+import { describe, it, expect, afterEach, jest } from '@jest/globals';
+import {
+  Client,
+  ApiError,
+  OAuth1,
+  OAuth2,
+  UserPaginator,
+  type PaginatedResponse,
+  type Schemas,
+} from '../src/index.js';
+import { MockXApiServer, MockResponse } from '../examples/mock_x_api_server.js';
+
+describe('Client Loopback TCP E2E', () => {
+  let server: MockXApiServer | null = null;
+
+  afterEach(async () => {
+    jest.restoreAllMocks();
+    if (server) {
+      await server.close();
+      server = null;
+    }
+  });
+
+  it('completes OAuth 2.0 PKCE S256 late-bound exchange and auto-refresh over TCP', async () => {
+    server = await MockXApiServer.start();
+
+    const oauth2 = new OAuth2({
+      clientId: 'ts-pkce-client-id',
+      redirectUri: 'http://localhost:3000/callback',
+      scope: ['tweet.read', 'users.read', 'offline.access'],
+      baseUrl: server.baseUrl,
+      authorizationBaseUrl: 'https://x.com/i',
+    });
+
+    // Construct Client BEFORE exchanging authorization code (tests getAvailableAuthTypes + getEffectiveAccessToken)
+    const client = new Client({
+      baseUrl: server.baseUrl,
+      oauth2,
+    });
+
+    const authUrl = await oauth2.getAuthorizationUrl('csrf-state-ts');
+    expect(authUrl).toContain('code_challenge_method=S256');
+    const challenge = oauth2.getCodeChallenge();
+    expect(challenge).toBeDefined();
+    server.registerExpectedPkceChallenge('ts_code_1', challenge!);
+
+    const exchanged = await oauth2.exchangeCode('ts_code_1');
+    expect(exchanged.access_token).toBe('sim_oauth2_access_ts_code_1');
+    expect(client.getAvailableAuthTypes()).toContain('oauth2_user_context');
+
+    const me = await client.users.getMe();
+    expect(me.data).toBeDefined();
+    expect(server.lastRequest()?.firstHeader('authorization')).toBe(
+      'Bearer sim_oauth2_access_ts_code_1'
+    );
+
+    // Force token expiry so next request automatically calls oauth2.refreshToken() over TCP
+    oauth2.setToken(exchanged, Date.now() - 10_000);
+    const meAfterRefresh = await client.users.getMe();
+    expect(meAfterRefresh.data).toBeDefined();
+    expect(server.lastRequest()?.firstHeader('authorization')).toBe(
+      'Bearer sim_refreshed_access_from_sim_oauth2_refresh_1'
+    );
+  });
+
+  it('verifies OAuth 1.0a RFC 5849 HMAC-SHA1 signatures on server including punctuation query params', async () => {
+    server = await MockXApiServer.start();
+
+    // Verify optional callback + custom baseUrl token handshake
+    const handshakeOAuth1 = new OAuth1({
+      apiKey: 'consumer-key-1',
+      apiSecret: 'consumer-secret-1',
+      baseUrl: server.baseUrl,
+    });
+    const reqTok = await handshakeOAuth1.getRequestToken();
+    expect(reqTok.oauthToken).toBe('sim_req_tok');
+    const accTok = await handshakeOAuth1.getAccessToken('verifier_999');
+    expect(accTok.accessToken).toBe('sim_acc_tok');
+
+    // Verify 3-legged instance signs subsequent API calls with accessTokenSecret (not requestTokenSecret)
+    const threeLeggedClient = new Client({
+      baseUrl: server.baseUrl,
+      oauth1: handshakeOAuth1,
+    });
+    await threeLeggedClient.posts.create({ text: 'Signed with 3-legged access token!' });
+    expect(
+      MockXApiServer.verifyOAuth1Signature(
+        server.lastRequest()!,
+        'consumer-secret-1',
+        'sim_acc_sec'
+      )
+    ).toBe(true);
+
+    const oauth1 = new OAuth1({
+      apiKey: 'consumer-key-1',
+      apiSecret: 'consumer-secret-1',
+      accessToken: 'access-token-1',
+      accessTokenSecret: 'access-secret-1',
+      baseUrl: server.baseUrl,
+    });
+
+    const client = new Client({
+      baseUrl: server.baseUrl,
+      oauth1,
+    });
+
+    const created = await client.posts.create({ text: 'Hello OAuth 1.0a from TypeScript!' });
+    expect(created.data).toBeDefined();
+    expect(
+      MockXApiServer.verifyOAuth1Signature(
+        server.lastRequest()!,
+        'consumer-secret-1',
+        'access-secret-1'
+      )
+    ).toBe(true);
+
+    const searchRes = await client.posts.searchRecent('(xdk OR typescript) -is:retweet !test_1', {
+      maxResults: 10,
+      tweetFields: ['created_at', 'author_id'],
+    });
+    expect(searchRes.data).toBeDefined();
+    expect(
+      MockXApiServer.verifyOAuth1Signature(
+        server.lastRequest()!,
+        'consumer-secret-1',
+        'access-secret-1'
+      )
+    ).toBe(true);
+  });
+
+  it('paginates across 3 pages over TCP via UserPaginator async iteration', async () => {
+    server = await MockXApiServer.start();
+    server.setResponder(req => {
+      if (req.path === '/2/users/42/followers') {
+        if (req.rawQuery.includes('pagination_token=tok_p2')) {
+          return MockResponse.json(200, {
+            data: [{ id: 'u3', name: 'User 3', username: 'u3' }],
+            meta: { result_count: 1, next_token: 'tok_p3' },
+          });
+        }
+        if (req.rawQuery.includes('pagination_token=tok_p3')) {
+          return MockResponse.json(200, {
+            data: [{ id: 'u4', name: 'User 4', username: 'u4' }],
+            meta: { result_count: 1 },
+          });
+        }
+        return MockResponse.json(200, {
+          data: [
+            { id: 'u1', name: 'User 1', username: 'u1' },
+            { id: 'u2', name: 'User 2', username: 'u2' },
+          ],
+          meta: { result_count: 2, next_token: 'tok_p2' },
+        });
+      }
+      return null;
+    });
+
+    const client = new Client({ baseUrl: server.baseUrl, bearerToken: 'test-bearer' });
+    const paginator = new UserPaginator(
+      async (token?: string): Promise<PaginatedResponse<Schemas.User>> => {
+        const res = await client.users.getFollowers('42', {
+          maxResults: 2,
+          paginationToken: token,
+        });
+        return {
+          data: res.data ?? [],
+          meta: res.meta,
+          includes: res.includes,
+          errors: res.errors,
+        };
+      }
+    );
+
+    const ids: string[] = [];
+    for await (const user of paginator) {
+      ids.push(user.id!);
+    }
+    expect(ids).toEqual(['u1', 'u2', 'u3', 'u4']);
+    expect(server.requests.length).toBe(3);
+  });
+
+  it('streams chunked NDJSON with split UTF-8 emoji and auto-reconnects on mid-stream socket drop', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    server = await MockXApiServer.start();
+
+    let attempts = 0;
+    const line1 = Buffer.from('{"data":{"id":"s1","text":"Rocket 🚀 stream"}}\n', 'utf8');
+    const rocketIdx = line1.indexOf(Buffer.from('🚀', 'utf8'));
+
+    server.setResponder(req => {
+      if (req.path === '/2/tweets/search/stream') {
+        attempts += 1;
+        if (attempts === 1) {
+          // Split 4-byte 🚀 UTF-8 sequence across chunk boundary AND destroy TCP socket midway
+          const partA = line1.subarray(0, rocketIdx + 2);
+          const partB = line1.subarray(rocketIdx + 2);
+          return MockResponse.chunkedStream([Buffer.from('{}\r\n'), partA, partB], true);
+        }
+        return MockResponse.chunkedStream(
+          [
+            '{"data":{"id":"s2","text":"Recovered after disconnect"}}\n',
+            '{"data":{"id":"s3","text":"Final event"}}\n',
+          ],
+          false
+        );
+      }
+      return null;
+    });
+
+    const client = new Client({ baseUrl: server.baseUrl, bearerToken: 'test-bearer' });
+    const reconnectAttempts: number[] = [];
+
+    const stream = await client.stream.posts({
+      autoReconnect: true,
+      maxReconnectAttempts: 3,
+      reconnectDelayMs: 25,
+    });
+    stream.on('reconnect', (evt: { attempt: number }) => {
+      reconnectAttempts.push(evt.attempt);
+    });
+
+    const texts: string[] = [];
+    for await (const event of stream) {
+      if (event.data?.text) {
+        texts.push(event.data.text);
+        if (texts.length === 3) {
+          stream.close();
+          break;
+        }
+      }
+    }
+
+    expect(texts).toEqual([
+      'Rocket 🚀 stream',
+      'Recovered after disconnect',
+      'Final event',
+    ]);
+    expect(attempts).toBe(2);
+    expect(reconnectAttempts).toEqual([1]);
+  });
+
+  it('handles binary ArrayBuffer downloads and >32-bit integer values over TCP', async () => {
+    server = await MockXApiServer.start();
+    const rawBinary = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x00, 0xff, 0x10, 0x20]);
+    const largeSize = 5_368_709_120; // 5 GiB
+
+    server.setResponder(req => {
+      if (req.path === '/2/compliance/jobs/job_99/download') {
+        return MockResponse.bytes(200, 'application/octet-stream', rawBinary);
+      }
+      if (req.path === '/2/media/upload') {
+        return MockResponse.json(200, {
+          data: {
+            id: '1889997777',
+            media_key: '7_1889997777',
+            size: largeSize,
+            expires_after_secs: 86400,
+          },
+        });
+      }
+      return null;
+    });
+
+    const client = new Client({
+      baseUrl: server.baseUrl,
+      bearerToken: 'test-bearer',
+      accessToken: 'test-access',
+    });
+    const downloaded = await client.compliance.downloadJobResults('job_99', 'dl_tok');
+    expect(downloaded).toBeInstanceOf(ArrayBuffer);
+    expect(Buffer.from(downloaded)).toEqual(rawBinary);
+
+    const status = await client.media.getUploadStatus('1889997777');
+    expect(status.data?.size).toBe(largeSize);
+  });
+
+  it('retries 429 Retry-After, extracts RFC 7807 ApiError details, and enforces request timeouts', async () => {
+    server = await MockXApiServer.start();
+    let calls = 0;
+
+    server.setResponder(req => {
+      if (req.path === '/2/users/by/username/RateLimited') {
+        calls += 1;
+        if (calls === 1) {
+          return MockResponse.json(
+            429,
+            { title: 'Too Many Requests', detail: 'Rate limit exceeded' },
+            { 'Retry-After': '0' }
+          );
+        }
+        return MockResponse.json(200, {
+          data: { id: '777', name: 'Recovered', username: 'RateLimited' },
+        });
+      }
+      if (req.path === '/2/users/by/username/MissingUser') {
+        return MockResponse.json(404, {
+          title: 'Not Found Error',
+          detail: 'Could not find user with username: [MissingUser].',
+        });
+      }
+      if (req.path === '/2/users/by/username/SlowUser') {
+        return MockResponse.json(
+          200,
+          { data: { id: '999', name: 'Slow', username: 'SlowUser' } },
+          undefined,
+          350
+        );
+      }
+      return null;
+    });
+
+    const client = new Client({
+      baseUrl: server.baseUrl,
+      bearerToken: 'test-bearer',
+      maxRetries: 2,
+    });
+
+    const recovered = await client.users.getByUsername('RateLimited');
+    expect(recovered.data?.id).toBe('777');
+    expect(calls).toBe(2);
+
+    await expect(client.users.getByUsername('MissingUser')).rejects.toMatchObject({
+      status: 404,
+      message: 'Could not find user with username: [MissingUser].',
+    });
+
+    const fastTimeoutClient = new Client({
+      baseUrl: server.baseUrl,
+      bearerToken: 'test-bearer',
+      timeout: 60,
+      maxRetries: 0,
+    });
+    await expect(fastTimeoutClient.users.getByUsername('SlowUser')).rejects.toBeInstanceOf(
+      ApiError
+    );
+  });
+});

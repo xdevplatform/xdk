@@ -9,7 +9,7 @@ for the generated Python SDK package.
 Generated automatically - do not edit manually.
 -->
 
-A Python SDK for the X API.
+The official Python SDK for the X API v2 (`v{{ version }}`).
 
 ## Installation
 
@@ -22,36 +22,98 @@ Or with pip:
 pip install xdk
 ```
 
-## Usage
+## Quick Start
+
+### Bearer Token (App-Only Authentication)
 
 ```python
 from xdk import Client
 
-# Initialize the client
+client = Client(bearer_token="YOUR_BEARER_TOKEN")
+
+# Look up posts by ID
+posts = client.posts.get_by_ids(ids=["1234567890"])
+print(posts.data)
+
+# Search recent posts (auto-paginating iterator of pages)
+for page in client.posts.search_recent(query="python lang:en", max_results=10):
+    print(page.data)
+    break
+```
+
+### OAuth 2.0 PKCE (User Context + Auto Refresh)
+
+```python
+from xdk import Client
+from xdk.posts.models import CreateRequest
+
 client = Client(
-    api_key="your_api_key",
-    api_secret="your_api_secret",
-    access_token="your_access_token",
-    access_token_secret="your_access_token_secret"
+    client_id="YOUR_CLIENT_ID",
+    redirect_uri="http://localhost:3000/callback",
+    scope=["tweet.read", "tweet.write", "users.read", "offline.access"],
 )
 
-# Use the client to interact with the X API
-# For example, to get posts:
-posts = client.posts.get(ids=["1234567890"])
+auth_url = client.get_authorization_url(state="csrf-state")
+# After user authorizes and redirects back with ?code=...
+token = client.exchange_code("AUTH_CODE_FROM_CALLBACK")
 
-# To search for posts:
-search_results = client.posts.recent_search(query="python")
+created = client.posts.create(body=CreateRequest(text="Hello from XDK Python!"))
+print(created.data)
+```
 
-# To post a post:
-post = client.posts.create(post_data={"text": "Hello, world!"})
+### OAuth 1.0a (User Context)
+
+```python
+from xdk import Client, OAuth1
+from xdk.posts.models import CreateRequest
+
+oauth1 = OAuth1(
+    api_key="YOUR_API_KEY",
+    api_secret="YOUR_API_SECRET",
+    access_token="YOUR_ACCESS_TOKEN",
+    access_token_secret="YOUR_ACCESS_TOKEN_SECRET",
+)
+
+client = Client(auth=oauth1)
+post = client.posts.create(body=CreateRequest(text="Signed with OAuth 1.0a!"))
+```
+
+### Pagination (`Cursor`) & Real-Time Streaming (`StreamConfig`)
+
+```python
+from xdk import Client, Cursor, StreamConfig
+
+client = Client(bearer_token="YOUR_BEARER_TOKEN")
+
+# Flatten items across pages with Cursor
+for post in Cursor(client.posts.search_recent, "xdk", max_results=10).items(limit=25):
+    print(post)
+
+# Resilient NDJSON streaming with exponential backoff reconnect
+stream_cfg = StreamConfig(max_retries=5, initial_backoff=1.0, timeout=90.0)
+for event in client.stream.posts(stream_config=stream_cfg):
+    print(event.data)
+```
+
+## Runnable Use-Case Examples & Continuous Canary
+
+See [`examples/README.md`](examples/README.md) for runnable end-to-end examples covering all 24 X API endpoint groups and the continuous canary monitor:
+
+```bash
+# Run all 10 end-to-end use-case suites (self-verifying against local loopback simulator)
+uv run python -m examples.use_cases
+
+# Run a one-shot canary health check (synthetic + optional live api.x.com probes)
+uv run python -m examples.canary --once --live
 ```
 
 ## Features
 
-- Full support for the X API v2
-- Simple and intuitive interface
-- Comprehensive documentation
-- Type hints for better IDE support
+- Full coverage of all X API v2 endpoint groups with Pydantic v2 models
+- Bearer Token, OAuth 2.0 PKCE (confidential & public clients with automatic token refresh), and OAuth 1.0a RFC 5849 signing
+- Automatic cursor pagination (`Iterator` pages + `Cursor(...).items()` / `.pages()`)
+- Resilient chunked NDJSON streaming with incremental UTF-8 decoding and exponential backoff reconnect
+- Optional default `timeout` and `429 Retry-After` / `5xx` transient retry support
 
 ## Documentation
 
@@ -59,4 +121,4 @@ For more information, see the [documentation](https://docs.x.com/xdks/python/ove
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This project is licensed under the MIT License - see the LICENSE file for details.

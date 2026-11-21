@@ -1,0 +1,36 @@
+# XDK Python — End-to-End Use-Case Examples & Continuous Canary
+
+This directory contains runnable, self-verifying Python examples covering **all 24 X API v2 endpoint groups**, a zero-dependency local TCP loopback X API simulator (`mock_x_api_server.py`), and a continuous canary monitor (`canary.py`).
+
+## 1. Run All 10 End-to-End Use-Case Suites
+
+`examples/use_cases.py` walks through 10 complete developer workflows (~95 real SDK HTTP calls across all 24 endpoint groups):
+
+1. **Authentication Flows** (`run_authentication_examples`) — Bearer Token, OAuth 2.0 PKCE (`S256`) + token refresh, OAuth 1.0a HMAC-SHA1 signing.
+2. **Posts, Search, Counts & Analytics** (`run_posts_and_search_examples`) — Create/delete posts, field & expansion lookups, paginated recent/all search, post counts, analytics, engagements.
+3. **Users, Timelines, Social Graph & Bookmarks** (`run_users_and_bookmarks_examples`) — Profile lookups, `Cursor` timeline iteration, follow/like/repost/block/mute, bookmarks & folders.
+4. **Real-Time Streaming** (`run_streaming_examples`) — Filtered stream rules CRUD + `StreamConfig` chunked NDJSON consumption and 1% sample stream.
+5. **Media Upload & Metadata** (`run_media_upload_examples`) — Single-shot upload, >2 GiB 64-bit chunked video upload (`INIT` -> `APPEND` -> `FINALIZE` -> `STATUS`), metadata, subtitles, analytics.
+6. **Direct Messages & Encrypted XChat** (`run_direct_messages_and_chat_examples`) — Participant & group DMs, binary media downloads, XChat conversations, keys, and encrypted messages.
+7. **Lists, Communities, Spaces, Broadcasts & Calls** (`run_communities_spaces_lists_examples`) — List management, Communities, live Spaces, Broadcasts, and audio/video Calls.
+8. **Trends, News, Articles & Community Notes** (`run_discovery_and_notes_examples`) — WOEID & personalized trends, News search, long-form Articles, Community Notes evaluation & creation.
+9. **Webhooks, Activity, Bots, Connections & Account** (`run_webhooks_and_automation_examples`) — Webhook registration & replay jobs, Account Activity & X Activity subscriptions, Bots lifecycle, Connection history, Developer Account.
+10. **Batch Compliance, Usage & OpenAPI Introspection** (`run_compliance_and_usage_examples`) — Compliance jobs + binary `bytes` upload/download, API Usage & Credits, `/2/openapi.json` introspection.
+
+```bash
+uv run python -m examples.use_cases
+```
+
+## 2. Continuous Canary Runner (`examples/canary.py`)
+
+Runs all 10 synthetic use-case suites plus dedicated OAuth 2.0 PKCE auto-refresh, OAuth 1.0a RFC 5849 signature, pagination, streaming mid-stream reconnect, and `429 Retry-After` resilience probes — plus optional live `https://api.x.com` probes!
+
+### One-Shot Check (CI / Cron)
+```bash
+uv run python -m examples.canary --once --live
+```
+
+### Continuous Daemon Mode (`/health`, `/status`, Prometheus `/metrics`)
+```bash
+uv run python -m examples.canary --daemon --live --interval-seconds 60 --port 8792
+```

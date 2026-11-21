@@ -29,8 +29,8 @@ on:
       - ".github/workflows/canary.yml"
 
 jobs:
-  java-and-csharp-canary:
-    name: Java & C# Full-Coverage E2E + Examples + Canary
+  all-sdks-canary:
+    name: 4-SDK Full-Coverage E2E + Examples + Canary (Python, TS, Java, C#)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout xdk generator
@@ -46,6 +46,14 @@ jobs:
         with:
           workspaces: xdk
 
+      - name: Install uv (Python)
+        uses: astral-sh/setup-uv@v3
+
+      - name: Setup Node.js 20 (TypeScript)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
       - name: Setup Java 21
         uses: actions/setup-java@v4
         with:
@@ -57,17 +65,37 @@ jobs:
         with:
           dotnet-version: "8.0.x"
 
-      - name: Generate Java and C# SDKs
+      - name: Generate Python, TypeScript, Java, and C# SDKs
         working-directory: xdk
         run: |
           cargo build --release -p xdk-build
           if [ "${{ github.event_name }}" = "schedule" ]; then
+            ./target/release/xdk-build python --latest true --output ../xdk-python
+            ./target/release/xdk-build typescript --latest true --output ../xdk-typescript
             ./target/release/xdk-build java --latest true --output ../xdk-java
             ./target/release/xdk-build csharp --latest true --output ../xdk-csharp
           else
+            ./target/release/xdk-build python --spec specs/openapi.json --output ../xdk-python
+            ./target/release/xdk-build typescript --spec specs/openapi.json --output ../xdk-typescript
             ./target/release/xdk-build java --spec specs/openapi.json --output ../xdk-java
             ./target/release/xdk-build csharp --spec specs/openapi.json --output ../xdk-csharp
           fi
+
+      - name: Run Python Full-Coverage Loopback Contracts, Examples & Wheel Build
+        working-directory: xdk-python
+        run: |
+          uv sync
+          uv run pytest tests/ -q
+          uv build
+
+      - name: Run TypeScript Full-Coverage Loopback Contracts, Examples & Package Build
+        working-directory: xdk-typescript
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+          npm run type-check
+          npm test
+          npm pack --dry-run
 
       - name: Run Java Full-Coverage Loopback Contracts, Examples & Release Packaging
         working-directory: xdk-java
@@ -80,7 +108,7 @@ jobs:
           dotnet test Xdk.sln -c Release --no-build --verbosity normal
           dotnet pack src/Xdk/Xdk.csproj -c Release --no-build -o artifacts
 
-      - name: Run Unified Multi-SDK Canary Supervisor
+      - name: Run Unified 4-SDK Canary Supervisor
         working-directory: xdk
         env:
           X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
@@ -90,6 +118,8 @@ jobs:
             EXTRA_ARGS="--live"
           fi
           python3 canary/supervisor.py \
+            --python-dir ../xdk-python \
+            --typescript-dir ../xdk-typescript \
             --java-dir ../xdk-java \
             --csharp-dir ../xdk-csharp \
             --once ${EXTRA_ARGS}

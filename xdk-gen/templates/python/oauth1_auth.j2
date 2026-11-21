@@ -53,21 +53,24 @@ class OAuth1:
     def __init__(self,
                  api_key: str,
                  api_secret: str,
-                 callback: str,
+                 callback: str = "oob",
                  access_token: Optional[str] = None,
-                 access_token_secret: Optional[str] = None):
+                 access_token_secret: Optional[str] = None,
+                 base_url: str = "https://api.x.com"):
         """Initialize OAuth1 authentication.
         
         Args:
             api_key: API Key (Consumer Key).
             api_secret: API Secret (Consumer Secret).
-            callback: Callback URL for OAuth flow.
+            callback: Callback URL for OAuth flow (defaults to "oob").
             access_token: Access Token (if already obtained).
             access_token_secret: Access Token Secret (if already obtained).
+            base_url: Base URL for OAuth1 token endpoints (defaults to https://api.x.com).
         """
         self.api_key = api_key
         self.api_secret = api_secret
         self.callback = callback
+        self.base_url = base_url.rstrip('/')
         self.request_token: Optional[OAuth1RequestToken] = None
         
         # If access token is provided, set it
@@ -108,12 +111,16 @@ class OAuth1:
         Raises:
             ValueError: If request token retrieval fails.
         """
-        url = 'https://api.x.com/oauth/request_token'
+        url = f"{self.base_url}/oauth/request_token"
         
         params = {
             'oauth_callback': self.callback
         }
-        
+
+        # Clear any prior tokens when starting a new request-token flow
+        self.request_token = None
+        self.access_token = None
+
         # Build OAuth header for request token
         oauth_header = self._build_oauth_header('POST', url, urllib.parse.urlencode(params))
         
@@ -155,7 +162,7 @@ class OAuth1:
         if not self.request_token:
             raise ValueError('Request token not obtained. Call get_request_token() first.')
 
-        url = 'https://api.x.com/oauth/access_token'
+        url = f"{self.base_url}/oauth/access_token"
         
         params = {
             'oauth_token': self.request_token.oauth_token,
@@ -231,14 +238,26 @@ class OAuth1:
             import warnings
             warnings.warn(f'Failed to parse URL for OAuth1: {e}')
 
-        # Combine query parameters with body parameters
+        # Only include form-encoded bodies (JSON bodies are excluded per RFC 5849)
+        form_body = ''
+        if body:
+            is_json = False
+            try:
+                json.loads(body)
+                is_json = True
+            except (json.JSONDecodeError, ValueError):
+                is_json = False
+            if not is_json:
+                form_body = body
+
+        # Combine query parameters with form-encoded body parameters
         all_params = ''
-        if query_params and body:
-            all_params = f"{query_params}&{body}"
+        if query_params and form_body:
+            all_params = f"{query_params}&{form_body}"
         elif query_params:
             all_params = query_params
-        elif body:
-            all_params = body
+        elif form_body:
+            all_params = form_body
 
         return self._build_oauth_header(method, url_without_query, all_params)
 
@@ -276,10 +295,10 @@ class OAuth1:
         param_string = self._build_param_string(oauth_params, body)
         signature_base = f"{method.upper()}&{self._encode(url)}&{self._encode(param_string)}"
         
-        # Generate signature
+        # Generate signature (access_token takes precedence over request_token, matching oauth_token above)
         token_secret = (
-            self.request_token.oauth_token_secret if self.request_token else 
-            (self.access_token.access_token_secret if self.access_token else '')
+            self.access_token.access_token_secret if self.access_token else
+            (self.request_token.oauth_token_secret if self.request_token else '')
         )
         signing_key = f"{self._encode(self.api_secret)}&{self._encode(token_secret)}"
         
@@ -304,40 +323,35 @@ class OAuth1:
         Returns:
             str: Sorted, encoded parameter string.
         """
-        all_params = dict(oauth_params)
-        
+        param_pairs = [(str(k), str(v)) for k, v in oauth_params.items()]
+
         # Parse body parameters if present and it's form-encoded (not JSON)
         # According to OAuth1 spec, JSON bodies should NOT be included in the signature
         if body:
-            # Check if body is JSON by attempting to parse it
             is_json = False
             try:
                 json.loads(body)
                 is_json = True
             except (json.JSONDecodeError, ValueError):
-                # Not valid JSON, treat as form-encoded
                 is_json = False
-            
+
             if not is_json:
-                # Only parse form-encoded bodies
                 try:
-                    body_params = urllib.parse.parse_qs(body, keep_blank_values=True)
-                    # parse_qs returns lists, we need to flatten them
-                    for key, value_list in body_params.items():
-                        # Use first value if multiple values exist (OAuth1 spec)
-                        all_params[key] = value_list[0] if value_list else ''
+                    for key, value in urllib.parse.parse_qsl(body, keep_blank_values=True):
+                        param_pairs.append((str(key), str(value)))
                 except Exception:
-                    # If body parsing fails, ignore it
                     import warnings
                     warnings.warn('Failed to parse body parameters for OAuth1 signature')
-            # If body is JSON, we don't include it in the signature (per OAuth1 spec)
 
-        # Sort parameters alphabetically
-        sorted_params = sorted(all_params.items())
-        
+        # RFC 5849 section 3.4.1.3.2: sort by percent-encoded name, then value, in byte order
+        encoded_pairs = sorted(
+            (self._encode(key), self._encode(value))
+            for key, value in param_pairs
+        )
+
         return '&'.join(
-            f"{self._encode(key)}={self._encode(value)}"
-            for key, value in sorted_params
+            f"{key}={value}"
+            for key, value in encoded_pairs
         )
 
     def _encode(self, s: str) -> str:

@@ -1,0 +1,584 @@
+/**
+ * Local TCP loopback X API v2 simulator & programmable test server built on node:http.
+ *
+ * Supports:
+ * - Real TCP HTTP/1.1 transport testing against globalThis.fetch
+ * - Programmable per-request responders (JSON, binary, chunked NDJSON streams, delays, mid-stream drops)
+ * - RFC 5849 OAuth 1.0a HMAC-SHA1 server-side signature verification
+ * - RFC 7636 OAuth 2.0 PKCE S256 /2/oauth2/token code exchange & refresh rotation
+ * - Smart X API v2 synthetic simulator fallback for examples and continuous canary runs
+ */
+
+import * as http from 'node:http';
+import * as crypto from 'node:crypto';
+import type { AddressInfo } from 'node:net';
+
+export interface RecordedRequest {
+  method: string;
+  path: string;
+  rawQuery: string;
+  fullUrl: string;
+  headers: Record<string, string>;
+  bodyBytes: Buffer;
+  bodyUtf8: string;
+  firstHeader(name: string): string | undefined;
+}
+
+export interface MockResponseSpec {
+  statusCode: number;
+  headers: Record<string, string>;
+  body?: Buffer;
+  streamChunks?: Buffer[];
+  dropStreamMidway?: boolean;
+  delayMs?: number;
+}
+
+export const MockResponse = {
+  json(
+    statusCode: number,
+    payload: unknown,
+    extraHeaders?: Record<string, string>,
+    delayMs: number = 0
+  ): MockResponseSpec {
+    const raw = typeof payload === 'string' ? payload : JSON.stringify(payload);
+    return {
+      statusCode,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(extraHeaders || {}),
+      },
+      body: Buffer.from(raw, 'utf8'),
+      delayMs,
+    };
+  },
+
+  bytes(statusCode: number, contentType: string, data: Uint8Array | Buffer): MockResponseSpec {
+    return {
+      statusCode,
+      headers: { 'Content-Type': contentType },
+      body: Buffer.from(data),
+    };
+  },
+
+  chunkedStream(chunks: Array<Uint8Array | Buffer | string>, dropMidway: boolean = false): MockResponseSpec {
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      streamChunks: chunks.map(c => (typeof c === 'string' ? Buffer.from(c, 'utf8') : Buffer.from(c))),
+      dropStreamMidway: dropMidway,
+    };
+  },
+};
+
+export type MockResponder = (req: RecordedRequest) => MockResponseSpec | null | undefined | Promise<MockResponseSpec | null | undefined>;
+
+export class MockXApiServer {
+  private server: http.Server;
+  private portNum: number = 0;
+  private recordedRequests: RecordedRequest[] = [];
+  private expectedPkceChallenges: Map<string, string> = new Map();
+  private customResponder: MockResponder | null = null;
+
+  private constructor(server: http.Server) {
+    this.server = server;
+  }
+
+  static async start(): Promise<MockXApiServer> {
+    let instance!: MockXApiServer;
+    const srv = http.createServer(async (req, res) => {
+      await instance.handleIncoming(req, res);
+    });
+    srv.keepAliveTimeout = 5000;
+    srv.headersTimeout = 10000;
+    instance = new MockXApiServer(srv);
+
+    await new Promise<void>((resolve, reject) => {
+      srv.once('error', reject);
+      srv.listen(0, '127.0.0.1', () => {
+        const addr = srv.address() as AddressInfo;
+        instance.portNum = addr.port;
+        resolve();
+      });
+    });
+
+    return instance;
+  }
+
+  get baseUrl(): string {
+    return `http://127.0.0.1:${this.portNum}`;
+  }
+
+  get port(): number {
+    return this.portNum;
+  }
+
+  get requests(): RecordedRequest[] {
+    return [...this.recordedRequests];
+  }
+
+  lastRequest(): RecordedRequest | undefined {
+    return this.recordedRequests.length > 0
+      ? this.recordedRequests[this.recordedRequests.length - 1]
+      : undefined;
+  }
+
+  reset(): void {
+    this.recordedRequests = [];
+    this.customResponder = null;
+    this.expectedPkceChallenges.clear();
+  }
+
+  setResponder(responder: MockResponder | null): void {
+    this.customResponder = responder;
+  }
+
+  registerExpectedPkceChallenge(authCode: string, codeChallenge: string): void {
+    this.expectedPkceChallenges.set(authCode, codeChallenge);
+  }
+
+  async close(): Promise<void> {
+    await new Promise<void>(resolve => {
+      this.server.close(() => resolve());
+      this.server.closeAllConnections?.();
+    });
+  }
+
+  private async handleIncoming(req: http.IncomingMessage, res: http.ServerResponse): Promise<void> {
+    try {
+      const bodyChunks: Buffer[] = [];
+      for await (const chunk of req) {
+        bodyChunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+      }
+      const bodyBytes = Buffer.concat(bodyChunks);
+
+      const rawUrl = req.url || '/';
+      const qIdx = rawUrl.indexOf('?');
+      const rawPath = qIdx >= 0 ? rawUrl.slice(0, qIdx) : rawUrl;
+      const rawQuery = qIdx >= 0 ? rawUrl.slice(qIdx + 1) : '';
+      const fullUrl = `${this.baseUrl}${rawPath}${rawQuery ? `?${rawQuery}` : ''}`;
+
+      const normHeaders: Record<string, string> = {};
+      for (const [k, v] of Object.entries(req.headers)) {
+        if (v !== undefined) {
+          normHeaders[k.toLowerCase()] = Array.isArray(v) ? v.join(', ') : v;
+        }
+      }
+
+      const recorded: RecordedRequest = {
+        method: (req.method || 'GET').toUpperCase(),
+        path: rawPath,
+        rawQuery,
+        fullUrl,
+        headers: normHeaders,
+        bodyBytes,
+        bodyUtf8: bodyBytes.toString('utf8'),
+        firstHeader(name: string): string | undefined {
+          return normHeaders[name.toLowerCase()];
+        },
+      };
+      this.recordedRequests.push(recorded);
+
+      let spec = this.customResponder ? await this.customResponder(recorded) : null;
+      if (!spec) {
+        spec = this.defaultSimulatorResponse(recorded);
+      }
+
+      if (spec.delayMs && spec.delayMs > 0) {
+        await new Promise<void>(resolve => {
+          const timer = setTimeout(resolve, spec!.delayMs);
+          timer.unref();
+        });
+      }
+
+      if (spec.streamChunks) {
+        if (spec.dropStreamMidway) {
+          // Promise a larger Content-Length and destroy the TCP socket midway so HTTP/1.1 fetch
+          // deterministically surfaces a premature-EOF stream error.
+          res.writeHead(spec.statusCode, {
+            ...spec.headers,
+            'Content-Length': '65536',
+            Connection: 'close',
+          });
+          res.flushHeaders();
+          for (const chunk of spec.streamChunks) {
+            res.write(chunk);
+            await new Promise<void>(resolve => {
+              const t = setTimeout(resolve, 4);
+              t.unref();
+            });
+          }
+          res.socket?.destroy();
+          return;
+        }
+
+        res.writeHead(spec.statusCode, {
+          ...spec.headers,
+          'Transfer-Encoding': 'chunked',
+          Connection: 'close',
+        });
+        res.flushHeaders();
+
+        for (const chunk of spec.streamChunks) {
+          res.write(chunk);
+          await new Promise<void>(resolve => {
+            const t = setTimeout(resolve, 4);
+            t.unref();
+          });
+        }
+
+        res.end();
+        return;
+      }
+
+      const payload = spec.body ?? Buffer.alloc(0);
+      res.writeHead(spec.statusCode, {
+        ...spec.headers,
+        'Content-Length': String(payload.length),
+      });
+      res.end(payload);
+    } catch (err) {
+      if (!res.headersSent) {
+        const msg = JSON.stringify({ detail: `Simulator error: ${(err as Error).message}` });
+        res.writeHead(500, { 'Content-Type': 'application/json' });
+        res.end(msg);
+      } else {
+        res.socket?.destroy();
+      }
+    }
+  }
+
+  private defaultSimulatorResponse(req: RecordedRequest): MockResponseSpec {
+    const { path, method } = req;
+
+    // 1. OAuth 1.0a token endpoints
+    if (path === '/oauth/request_token' && method === 'POST') {
+      return MockResponse.bytes(
+        200,
+        'application/x-www-form-urlencoded',
+        Buffer.from('oauth_token=sim_req_tok&oauth_token_secret=sim_req_sec&oauth_callback_confirmed=true', 'utf8')
+      );
+    }
+    if (path === '/oauth/access_token' && method === 'POST') {
+      return MockResponse.bytes(
+        200,
+        'application/x-www-form-urlencoded',
+        Buffer.from('oauth_token=sim_acc_tok&oauth_token_secret=sim_acc_sec&user_id=42&screen_name=XDevelopers', 'utf8')
+      );
+    }
+
+    // 2. OAuth 2.0 PKCE token endpoint
+    if (path === '/2/oauth2/token' && method === 'POST') {
+      const form = new URLSearchParams(req.bodyUtf8);
+      const grantType = form.get('grant_type');
+      if (grantType === 'authorization_code') {
+        const code = form.get('code') || '';
+        const verifier = form.get('code_verifier') || '';
+        const expectedChallenge = this.expectedPkceChallenges.get(code);
+        if (expectedChallenge) {
+          const computed = computeS256Challenge(verifier);
+          if (computed !== expectedChallenge) {
+            return MockResponse.json(400, { error: 'invalid_grant', detail: 'PKCE S256 mismatch' });
+          }
+        }
+        return MockResponse.json(200, {
+          access_token: `sim_oauth2_access_${code}`,
+          token_type: 'bearer',
+          expires_in: 7200,
+          refresh_token: 'sim_oauth2_refresh_1',
+          scope: 'tweet.read users.read offline.access',
+        });
+      }
+      if (grantType === 'refresh_token') {
+        const rt = form.get('refresh_token') || 'unknown';
+        return MockResponse.json(200, {
+          access_token: `sim_refreshed_access_from_${rt}`,
+          token_type: 'bearer',
+          expires_in: 7200,
+          refresh_token: 'sim_oauth2_refresh_2',
+          scope: 'tweet.read users.read offline.access',
+        });
+      }
+      return MockResponse.json(400, { error: 'unsupported_grant_type' });
+    }
+
+    // 3. OpenAPI spec introspection
+    if (path === '/2/openapi.json') {
+      return MockResponse.json(200, {
+        openapi: '3.0.3',
+        info: { title: 'X API v2', version: '2.175' },
+      });
+    }
+
+    // 4. Binary octet-stream downloads
+    if (
+      path.endsWith('/download') ||
+      (path.startsWith('/2/chat/media/') && method === 'GET') ||
+      (path.startsWith('/2/dm_conversations/media/') && method === 'GET')
+    ) {
+      return MockResponse.bytes(
+        200,
+        'application/octet-stream',
+        Buffer.from('{"id":"1234567890","status":"compliant"}\n', 'utf8')
+      );
+    }
+
+    // 5. Streaming NDJSON endpoints
+    if (
+      (path.includes('/stream') && !path.endsWith('/rules') && !path.includes('/rules/')) ||
+      path.includes('/sample') ||
+      path.includes('/firehose')
+    ) {
+      return MockResponse.chunkedStream([
+        '{}\r\n',
+        '{"data":{"id":"1880000001","text":"Live stream event 1 🚀","timestamp_ms":1735000000000}}\n',
+        '{"data":{"id":"1880000002","text":"Live stream event 2","timestamp_ms":1735000001000}}\n',
+      ]);
+    }
+
+    // 6. Media upload endpoints
+    if (path.startsWith('/2/media/upload')) {
+      if (path.endsWith('/append')) {
+        return MockResponse.json(200, { data: { expires_after_secs: 86400 } });
+      }
+      return MockResponse.json(200, {
+        data: {
+          id: '1889990001',
+          media_key: '3_1889990001',
+          size: 5242880,
+          expires_after_secs: 86400,
+          processing_info: { state: 'succeeded', progress_percent: 100 },
+        },
+      });
+    }
+
+    // 7. Paginated vs single-resource JSON synthesis
+    const query = req.rawQuery || '';
+    const hasCursor = query.includes('pagination_token=') || query.includes('next_token=');
+    const looksLikeCollection =
+      (method === 'POST' && path === '/2/tweets/search/stream/rules') ||
+      (method === 'GET' &&
+        path !== '/2/tweets/search/stream/rules/counts' &&
+        (path.includes('/search/') ||
+          path.endsWith('/search') ||
+          path.endsWith('/followers') ||
+          path.endsWith('/following') ||
+          path.endsWith('/bookmarks') ||
+          path.endsWith('/bookmarks/folders') ||
+          path.endsWith('/reverse_chronological') ||
+          (path.endsWith('/tweets') && !path.startsWith('/2/usage/')) ||
+          path.endsWith('/personalized_trends') ||
+          path.endsWith('/mentions') ||
+          path.endsWith('/liking_users') ||
+          path.endsWith('/retweeted_by') ||
+          path.endsWith('/quote_tweets') ||
+          path.endsWith('/members') ||
+          path.endsWith('/lists') ||
+          path.endsWith('/rules') ||
+          path.endsWith('/jobs') ||
+          path.endsWith('/webhooks') ||
+          (path.endsWith('/subscriptions') && !path.includes('/account_activity/')) ||
+          path.endsWith('/dm_events') ||
+          path.endsWith('/events') ||
+          path.endsWith('/analytics') ||
+          path.endsWith('/public_keys') ||
+          path.endsWith('/creator_ids') ||
+          path === '/2/broadcasts' ||
+          path === '/2/sources' ||
+          path === '/2/calls/scheduled' ||
+          path === '/2/bots' ||
+          path === '/2/connections' ||
+          path.includes('/counts/') ||
+          path.includes('/trends/') ||
+          query.startsWith('ids=') ||
+          query.includes('&ids=') ||
+          query.startsWith('usernames=') ||
+          query.includes('&usernames=') ||
+          query.startsWith('user_ids=') ||
+          query.includes('&user_ids=') ||
+          query.startsWith('media_keys=') ||
+          query.includes('&media_keys=')));
+
+    const status = method === 'POST' && (path === '/2/tweets' || path === '/2/lists') ? 201 : 200;
+
+    const makeListItem = (id: string, name: string, username: string, text: string) => ({
+      id,
+      post_id: id,
+      name,
+      username,
+      text,
+      start: '2025-01-01T00:00:00.000Z',
+      end: '2025-01-02T00:00:00.000Z',
+      added_at: '2025-01-01T00:00:00.000Z',
+      ...(path.includes('/counts/') ? { post_count: 42 } : {}),
+      state: 'active',
+      advertiser_ids: ['adv_1'],
+      publisher_ids: ['pub_1'],
+    });
+
+    if (looksLikeCollection) {
+      if (!hasCursor && (query.includes('max_results=') || path.endsWith('/followers') || path.includes('/search/'))) {
+        return MockResponse.json(status, {
+          data: [
+            makeListItem('1001', 'Item 1', 'XDevelopers', 'First item'),
+            makeListItem('1002', 'Item 2', 'XApi', 'Second item'),
+          ],
+          meta: { result_count: 2, next_token: 'sim_page_2' },
+        });
+      }
+      return MockResponse.json(status, {
+        data: [makeListItem('1003', 'Item 3', 'XEng', 'Final page item')],
+        meta: { result_count: 1 },
+      });
+    }
+
+    return MockResponse.json(status, {
+      region: 'us-east-1',
+      data: {
+        id: '1234567890',
+        rest_id: '1234567890',
+        post_id: '1234567890',
+        account_id: 'acct_1',
+        broadcast_id: 'bc_1',
+        conversation_id: 'chat_conv_1',
+        dm_conversation_id: 'dm_conv_1',
+        dm_event_id: 'dm_ev_1',
+        job_id: 'job_1',
+        media_hash_key: 'hash_1',
+        media_key: '3_1889990001',
+        session_id: 'sess_1',
+        stream_key: 'stream_key_1',
+        token: 'bot_tok_1',
+        name: 'X Developers',
+        username: 'XDevelopers',
+        title: 'Building with XDK',
+        text: 'Hello from XDK!',
+        url: 'https://webhooks.example.org/x/events',
+        share_url: 'https://x.com/i/broadcasts/bc_1',
+        state: 'live',
+        created_at: '2025-01-15T12:00:00.000Z',
+        timestamp: '2025-01-15T12:00:00.000Z',
+        encoded_message_event: 'YmFzZTY0X2V2ZW50',
+        cap_per_client_app: '25',
+        cap_per_project: '1000',
+        project_rules_count: '1',
+        client_app_rules_count: { client_app_id: '1', rule_count: 1 },
+        project_usage: '1024',
+        project_cap: '1000000',
+        free_balance: 100.0,
+        prepaid_balance: 500.0,
+        total_balance: 600.0,
+        free_grants: [],
+        successful_kills: 1,
+        failed_kills: 0,
+        blocking: method !== 'DELETE',
+        bookmarked: method !== 'DELETE',
+        created: true,
+        deleted: method === 'DELETE',
+        following: method !== 'DELETE',
+        pending_follow: false,
+        is_member: method !== 'DELETE',
+        liked: method !== 'DELETE',
+        muted: method !== 'DELETE',
+        muting: method !== 'DELETE',
+        pinned: method !== 'DELETE',
+        provisioned: true,
+        retweeted: method !== 'DELETE',
+        revoked: true,
+        subscribed: method !== 'DELETE',
+        success: true,
+        updated: true,
+        valid: true,
+        advertiser_categories: [],
+        video_categories: [],
+      },
+    });
+  }
+
+  /**
+   * Verifies an incoming Authorization: OAuth ... header per RFC 5849.
+   */
+  static verifyOAuth1Signature(
+    req: RecordedRequest,
+    consumerSecret: string,
+    tokenSecret: string
+  ): boolean {
+    const auth = req.firstHeader('authorization');
+    if (!auth || !auth.startsWith('OAuth ')) {
+      return false;
+    }
+
+    const oauthParams: Record<string, string> = {};
+    for (const part of auth.slice('OAuth '.length).split(',')) {
+      const trimmed = part.trim();
+      const eq = trimmed.indexOf('=');
+      if (eq > 0) {
+        const k = urlDecode(trimmed.slice(0, eq).trim());
+        let v = trimmed.slice(eq + 1).trim();
+        if (v.length >= 2 && v.startsWith('"') && v.endsWith('"')) {
+          v = v.slice(1, -1);
+        }
+        oauthParams[k] = urlDecode(v);
+      }
+    }
+
+    const receivedSig = oauthParams['oauth_signature'];
+    if (!receivedSig) {
+      return false;
+    }
+    delete oauthParams['oauth_signature'];
+
+    const encodedPairs: Array<[string, string]> = Object.entries(oauthParams).map(([k, v]) => [
+      percentEncode(k),
+      percentEncode(v),
+    ]);
+
+    if (req.rawQuery) {
+      const qp = new URLSearchParams(req.rawQuery);
+      qp.forEach((rv, rk) => {
+        encodedPairs.push([percentEncode(rk), percentEncode(rv)]);
+      });
+    }
+
+    const cmp = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
+    encodedPairs.sort((a, b) => cmp(a[0], b[0]) || cmp(a[1], b[1]));
+    const normalizedParams = encodedPairs.map(([k, v]) => `${k}=${v}`).join('&');
+
+    const host = req.firstHeader('host') || '127.0.0.1';
+    const baseUri = `http://${host}${req.path}`;
+    const baseString = `${req.method.toUpperCase()}&${percentEncode(baseUri)}&${percentEncode(normalizedParams)}`;
+    const signingKey = `${percentEncode(consumerSecret)}&${percentEncode(tokenSecret)}`;
+
+    const expectedSig = crypto
+      .createHmac('sha1', signingKey)
+      .update(baseString, 'utf8')
+      .digest('base64');
+
+    const expectedBuf = Buffer.from(expectedSig, 'utf8');
+    const receivedBuf = Buffer.from(receivedSig, 'utf8');
+    return expectedBuf.length === receivedBuf.length && crypto.timingSafeEqual(expectedBuf, receivedBuf);
+  }
+}
+
+function computeS256Challenge(verifier: string): string {
+  return crypto
+    .createHash('sha256')
+    .update(verifier, 'ascii')
+    .digest('base64')
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+}
+
+function urlDecode(str: string): string {
+  return decodeURIComponent(str.replace(/\+/g, '%2B'));
+}
+
+function percentEncode(str: string): string {
+  return encodeURIComponent(str)
+    .replace(/!/g, '%21')
+    .replace(/\*/g, '%2A')
+    .replace(/'/g, '%27')
+    .replace(/\(/g, '%28')
+    .replace(/\)/g, '%29')
+    .replace(/%7E/g, '~');
+}

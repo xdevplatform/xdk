@@ -243,6 +243,7 @@ def stream_with_retry(
     headers: Optional[Dict[str, str]] = None,
     json_data: Optional[Dict[str, Any]] = None,
     response_model: Optional[Type[T]] = None,
+    headers_factory: Optional[Callable[[], Dict[str, str]]] = None,
 ) -> Generator[Union[T, Dict[str, Any]], None, None]:
     """
     Stream data from an endpoint with automatic reconnection and exponential backoff.
@@ -276,15 +277,15 @@ def stream_with_retry(
     
     while True:
         try:
+            effective_headers = headers_factory() if headers_factory is not None else headers
             # Attempt to establish connection
             response = _make_stream_request(
-                session, method, url, config, params, headers, json_data
+                session, method, url, config, params, effective_headers, json_data
             )
             
             # Successfully connected
             state.is_connected = True
-            state.retry_count = 0
-            state.current_backoff = config.initial_backoff
+            items_before = state.total_items_received
             
             if config.on_connect:
                 try:
@@ -293,10 +294,14 @@ def stream_with_retry(
                     logger.warning(f"on_connect callback failed: {e}")
             
             # Stream data from the connection
-            yield from _process_stream(response, config, state, response_model)
+            try:
+                yield from _process_stream(response, config, state, response_model)
+            finally:
+                if state.total_items_received > items_before:
+                    state.retry_count = 0
+                    state.current_backoff = config.initial_backoff
             
-            # Stream ended normally (server closed connection)
-            logger.info("Stream ended normally, attempting to reconnect...")
+            # Stream ended normally (server closed connection cleanly)
             state.is_connected = False
             
             if config.on_disconnect:
@@ -304,6 +309,31 @@ def stream_with_retry(
                     config.on_disconnect(None)
                 except Exception as e:
                     logger.warning(f"on_disconnect callback failed: {e}")
+            
+            # When max_retries == 0, exit cleanly on normal stream completion
+            if config.max_retries == 0:
+                break
+            if config.max_retries > 0 and state.retry_count >= config.max_retries:
+                break
+            
+            backoff = _calculate_backoff(
+                state.retry_count,
+                config.initial_backoff,
+                config.max_backoff,
+                config.backoff_multiplier,
+                config.jitter,
+            )
+            state.retry_count += 1
+            logger.info(
+                f"Stream ended normally; reconnecting in {backoff:.2f}s (attempt {state.retry_count}"
+                f"{f'/{config.max_retries}' if config.max_retries >= 0 else ''})..."
+            )
+            if config.on_reconnect:
+                try:
+                    config.on_reconnect(state.retry_count, backoff)
+                except Exception as callback_error:
+                    logger.warning(f"on_reconnect callback failed: {callback_error}")
+            time.sleep(backoff)
             
         except StreamError as e:
             state.is_connected = False

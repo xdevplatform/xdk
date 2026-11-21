@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """
-Unified Multi-SDK Continuous Canary Supervisor for XDK.
+Unified 4-SDK Continuous Canary Supervisor for XDK.
 
-Runs and supervises the Java (`xdk-java`) and C# (`xdk-csharp`) continuous SDK canary environments
+Runs and supervises the Python (`xdk-python`), TypeScript (`xdk-typescript`),
+Java (`xdk-java`), and C# (`xdk-csharp`) continuous SDK canary environments
 either as a single verification pass (`--once`) or as an always-on background service (`--daemon`)
 exposing aggregated `/health`, `/status`, and Prometheus `/metrics` endpoints.
 
 Usage:
-  # Run one full multi-SDK canary verification pass:
-  python3 canary/supervisor.py --once
+  # Run one full 4-SDK canary verification pass:
+  python3 canary/supervisor.py --once --live
 
-  # Run continuously as an always-on fleet canary daemon on port 8780:
-  python3 canary/supervisor.py --daemon --interval-seconds 30 --port 8780
+  # Run continuously as an always-on 4-SDK fleet canary daemon on port 8780:
+  python3 canary/supervisor.py --daemon --live --interval-seconds 30 --port 8780
 """
 
 from __future__ import annotations
@@ -30,7 +31,7 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 
 def find_executable(name: str, fallbacks: List[str]) -> str:
@@ -38,9 +39,56 @@ def find_executable(name: str, fallbacks: List[str]) -> str:
     if found:
         return found
     for candidate in fallbacks:
-        if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
+        if candidate and os.path.isfile(candidate) and os.access(candidate, os.X_OK):
             return candidate
     raise FileNotFoundError(f"Could not find `{name}` on PATH or in {fallbacks}")
+
+
+def prepare_python_canary(python_dir: Path, uv_bin: str, env: Dict[str, str]) -> str:
+    venv_python = python_dir / ".venv" / "bin" / "python"
+    if not venv_python.is_file():
+        subprocess.run(
+            [uv_bin, "sync"],
+            cwd=str(python_dir),
+            env=env,
+            check=True,
+        )
+    if not venv_python.is_file():
+        raise FileNotFoundError(f"Expected Python virtualenv interpreter at {venv_python}")
+    return str(venv_python)
+
+
+def prepare_typescript_canary(
+    typescript_dir: Path, node_bin: str, npm_bin: str, env: Dict[str, str]
+) -> Path:
+    tsup_bin = typescript_dir / "node_modules" / ".bin" / "tsup"
+    if not tsup_bin.is_file():
+        subprocess.run(
+            [npm_bin, "install", "--no-audit", "--no-fund"],
+            cwd=str(typescript_dir),
+            env=env,
+            check=True,
+        )
+    subprocess.run(
+        [
+            str(tsup_bin),
+            "examples/canary.ts",
+            "--no-config",
+            "--no-dts",
+            "--format",
+            "esm",
+            "--out-dir",
+            ".xdk-examples",
+            "--silent",
+        ],
+        cwd=str(typescript_dir),
+        env=env,
+        check=True,
+    )
+    bundle = typescript_dir / ".xdk-examples" / "canary.js"
+    if not bundle.is_file():
+        raise FileNotFoundError(f"Expected bundled TypeScript canary at {bundle}")
+    return bundle
 
 
 def build_java_classpath(java_dir: Path, mvn_bin: str, env: Dict[str, str]) -> str:
@@ -95,43 +143,90 @@ def parse_last_json_line(stdout: str) -> Dict[str, Any]:
     raise RuntimeError(f"Did not find CanarySnapshot JSON in output:\n{stdout}")
 
 
+def build_sdk_commands(
+    sdks: List[str],
+    dirs: Dict[str, Path],
+    bins: Dict[str, str],
+    mode: str,
+    interval_seconds: int,
+    ports: Dict[str, int],
+    live: bool,
+    env: Dict[str, str],
+) -> Dict[str, Tuple[List[str], Path, int]]:
+    specs: Dict[str, Tuple[List[str], Path, int]] = {}
+
+    if "python" in sdks:
+        py_exe = prepare_python_canary(dirs["python"], bins["uv"], env)
+        cmd = [py_exe, "-m", "examples.canary"]
+        if mode == "once":
+            cmd.append("--once")
+        else:
+            cmd.extend(["--daemon", "--interval-seconds", str(interval_seconds), "--port", str(ports["python"])])
+        if live:
+            cmd.append("--live")
+        specs["python"] = (cmd, dirs["python"], ports["python"])
+
+    if "typescript" in sdks:
+        bundle = prepare_typescript_canary(dirs["typescript"], bins["node"], bins["npm"], env)
+        cmd = [bins["node"], str(bundle)]
+        if mode == "once":
+            cmd.append("--once")
+        else:
+            cmd.extend(["--daemon", "--interval-seconds", str(interval_seconds), "--port", str(ports["typescript"])])
+        if live:
+            cmd.append("--live")
+        specs["typescript"] = (cmd, dirs["typescript"], ports["typescript"])
+
+    if "java" in sdks:
+        cp = build_java_classpath(dirs["java"], bins["mvn"], env)
+        cmd = [bins["java"], "-cp", cp, "com.xdevplatform.xdk.canary.XdkCanaryApp"]
+        if mode == "once":
+            cmd.append("--once")
+        else:
+            cmd.extend(["--daemon", "--interval-seconds", str(interval_seconds), "--port", str(ports["java"])])
+        if live:
+            cmd.append("--live")
+        specs["java"] = (cmd, dirs["java"], ports["java"])
+
+    if "csharp" in sdks:
+        dll = build_csharp_examples(dirs["csharp"], bins["dotnet"], env)
+        cmd = [bins["dotnet"], str(dll), "--canary"]
+        if mode == "once":
+            cmd.append("--once")
+        else:
+            cmd.extend(["--daemon", "--interval-seconds", str(interval_seconds), "--port", str(ports["csharp"])])
+        if live:
+            cmd.append("--live")
+        specs["csharp"] = (cmd, dirs["csharp"], ports["csharp"])
+
+    return specs
+
+
 def run_once_mode(
     sdks: List[str],
-    java_dir: Path,
-    csharp_dir: Path,
-    java_bin: str,
-    mvn_bin: str,
-    dotnet_bin: str,
+    dirs: Dict[str, Path],
+    bins: Dict[str, str],
+    ports: Dict[str, int],
     live: bool,
     env: Dict[str, str],
 ) -> int:
-    tasks: Dict[str, List[str]] = {}
-    if "java" in sdks:
-        cp = build_java_classpath(java_dir, mvn_bin, env)
-        cmd = [java_bin, "-cp", cp, "com.xdevplatform.xdk.canary.XdkCanaryApp", "--once"]
-        if live:
-            cmd.append("--live")
-        tasks["java"] = cmd
-
-    if "csharp" in sdks:
-        dll = build_csharp_examples(csharp_dir, dotnet_bin, env)
-        cmd = [dotnet_bin, str(dll), "--canary", "--once"]
-        if live:
-            cmd.append("--live")
-        tasks["csharp"] = cmd
-
+    specs = build_sdk_commands(sdks, dirs, bins, "once", 60, ports, live, env)
     snapshots: Dict[str, Any] = {}
     overall_ok = True
 
-    def execute_sdk(sdk_name: str, cmd: List[str]) -> Dict[str, Any]:
-        cwd = str(java_dir if sdk_name == "java" else csharp_dir)
-        proc = subprocess.run(cmd, cwd=cwd, env=env, capture_output=True, text=True)
+    def execute_sdk(sdk_name: str, cmd: List[str], cwd: Path) -> Dict[str, Any]:
+        proc = subprocess.run(cmd, cwd=str(cwd), env=env, capture_output=True, text=True)
+        if proc.returncode != 0 and not proc.stdout.strip():
+            raise RuntimeError(f"{sdk_name} exited {proc.returncode}: {proc.stderr}")
         snap = parse_last_json_line(proc.stdout)
         snap["exitCode"] = proc.returncode
         return snap
 
-    with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, len(tasks))) as pool:
-        futs = {pool.submit(execute_sdk, name, cmd): name for name, cmd in tasks.items()}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=max(1, len(specs))) as pool:
+        futs = {
+            pool.submit(execute_sdk, name, cmd, cwd): name
+            for name, (cmd, cwd, _port) in specs.items()
+        }
         for fut in concurrent.futures.as_completed(futs):
             name = futs[fut]
             try:
@@ -143,10 +238,12 @@ def run_once_mode(
                 overall_ok = False
                 snapshots[name] = {"sdk": name, "healthy": False, "error": str(exc)}
 
+    ordered = {name: snapshots[name] for name in sdks if name in snapshots}
     summary = {
         "fleetHealthy": overall_ok,
+        "sdkCount": len(ordered),
         "timestamp": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
-        "sdks": snapshots,
+        "sdks": ordered,
     }
     print(json.dumps(summary, indent=2))
     return 0 if overall_ok else 1
@@ -176,10 +273,10 @@ class ManagedDaemon:
         )
         with self._lock:
             self.proc = proc
-        t = threading.Thread(target=self._PumpLogs, args=(proc,), daemon=True)
+        t = threading.Thread(target=self._pump_logs, args=(proc,), daemon=True)
         t.start()
 
-    def _PumpLogs(self, proc: subprocess.Popen[str]) -> None:
+    def _pump_logs(self, proc: subprocess.Popen[str]) -> None:
         assert proc.stdout is not None
         for line in proc.stdout:
             stripped = line.strip()
@@ -231,53 +328,20 @@ class ManagedDaemon:
 
 def run_daemon_mode(
     sdks: List[str],
-    java_dir: Path,
-    csharp_dir: Path,
-    java_bin: str,
-    mvn_bin: str,
-    dotnet_bin: str,
+    dirs: Dict[str, Path],
+    bins: Dict[str, str],
     interval_seconds: int,
     supervisor_port: int,
-    java_port: int,
-    csharp_port: int,
+    ports: Dict[str, int],
     live: bool,
     env: Dict[str, str],
 ) -> int:
-    daemons: List[ManagedDaemon] = []
+    specs = build_sdk_commands(sdks, dirs, bins, "daemon", interval_seconds, ports, live, env)
+    daemons: List[ManagedDaemon] = [
+        ManagedDaemon(name, cmd, cwd, port, env)
+        for name, (cmd, cwd, port) in specs.items()
+    ]
     started_at = time.time()
-
-    if "java" in sdks:
-        cp = build_java_classpath(java_dir, mvn_bin, env)
-        cmd = [
-            java_bin,
-            "-cp",
-            cp,
-            "com.xdevplatform.xdk.canary.XdkCanaryApp",
-            "--daemon",
-            "--interval-seconds",
-            str(interval_seconds),
-            "--port",
-            str(java_port),
-        ]
-        if live:
-            cmd.append("--live")
-        daemons.append(ManagedDaemon("java", cmd, java_dir, java_port, env))
-
-    if "csharp" in sdks:
-        dll = build_csharp_examples(csharp_dir, dotnet_bin, env)
-        cmd = [
-            dotnet_bin,
-            str(dll),
-            "--canary",
-            "--daemon",
-            "--interval-seconds",
-            str(interval_seconds),
-            "--port",
-            str(csharp_port),
-        ]
-        if live:
-            cmd.append("--live")
-        daemons.append(ManagedDaemon("csharp", cmd, csharp_dir, csharp_port, env))
 
     for d in daemons:
         d.start()
@@ -318,12 +382,17 @@ def run_daemon_mode(
                 rep["pid"] = d.proc.pid if d.proc else None
                 rep["restarts"] = d.restarts
                 sdk_reports[d.name] = rep
-                latest_ok = rep.get("healthy") if endpoint == "/health" else (rep.get("latest") or {}).get("healthy", False)
+                latest_ok = (
+                    rep.get("healthy")
+                    if endpoint == "/health"
+                    else (rep.get("latest") or {}).get("healthy", False)
+                )
                 if not latest_ok:
                     fleet_ok = False
 
             doc = {
                 "fleetHealthy": fleet_ok,
+                "sdkCount": len(daemons),
                 "uptimeSeconds": int(time.time() - started_at),
                 "sdks": sdk_reports,
             }
@@ -370,42 +439,107 @@ def main() -> int:
     repo_root = Path(__file__).resolve().parent.parent
     workspace_root = repo_root.parent
 
-    parser = argparse.ArgumentParser(description="XDK Multi-SDK Continuous Canary Supervisor")
-    parser.add_argument("--sdks", default="java,csharp", help="Comma-separated SDKs to run (default: java,csharp)")
+    parser = argparse.ArgumentParser(description="XDK 4-SDK Continuous Canary Supervisor")
+    parser.add_argument(
+        "--sdks",
+        default="python,typescript,java,csharp",
+        help="Comma-separated SDKs to run (default: python,typescript,java,csharp)",
+    )
+    parser.add_argument("--python-dir", default=str(workspace_root / "xdk-python"))
+    parser.add_argument("--typescript-dir", default=str(workspace_root / "xdk-typescript"))
     parser.add_argument("--java-dir", default=str(workspace_root / "xdk-java"))
     parser.add_argument("--csharp-dir", default=str(workspace_root / "xdk-csharp"))
-    parser.add_argument("--once", action="store_true", help="Run one verification pass across all selected SDKs and exit")
-    parser.add_argument("--daemon", action="store_true", help="Run continuously with aggregated HTTP /health, /status, /metrics")
+    parser.add_argument(
+        "--once",
+        action="store_true",
+        help="Run one verification pass across all selected SDKs and exit",
+    )
+    parser.add_argument(
+        "--daemon",
+        action="store_true",
+        help="Run continuously with aggregated HTTP /health, /status, /metrics",
+    )
     parser.add_argument("--interval-seconds", type=int, default=30)
-    parser.add_argument("--port", type=int, default=8780, help="Aggregated HTTP supervisor port in --daemon mode")
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=8780,
+        help="Aggregated HTTP supervisor port in --daemon mode",
+    )
     parser.add_argument("--java-port", type=int, default=8790)
     parser.add_argument("--csharp-port", type=int, default=8791)
-    parser.add_argument("--live", action="store_true", help="Enable live X API probes alongside synthetic simulator probes")
+    parser.add_argument("--python-port", type=int, default=8792)
+    parser.add_argument("--typescript-port", type=int, default=8793)
+    parser.add_argument(
+        "--live",
+        action="store_true",
+        help="Enable live X API probes alongside synthetic simulator probes",
+    )
     args = parser.parse_args()
 
     sdks = [s.strip().lower() for s in args.sdks.split(",") if s.strip()]
     env = os.environ.copy()
     home = Path.home()
 
-    java_home = env.get("JAVA_HOME", "")
-    java_fallbacks = [os.path.join(java_home, "bin", "java")] if java_home else []
-    java_fallbacks.extend(
-        [
-            "/opt/homebrew/opt/openjdk/bin/java",
-            "/usr/local/opt/openjdk/bin/java",
-            "/usr/bin/java",
-        ]
-    )
-    java_bin = env.get("JAVA_BIN") or find_executable("java", java_fallbacks)
-    mvn_bin = (
-        env.get("MVN_BIN")
-        or find_executable("mvn", ["/opt/homebrew/bin/mvn", "/usr/local/bin/mvn", "/usr/bin/mvn"])
-        if "java" in sdks
-        else ""
-    )
-    dotnet_bin = (
-        env.get("DOTNET_BIN")
-        or find_executable(
+    bins: Dict[str, str] = {}
+    if "python" in sdks:
+        venv_py = Path(args.python_dir) / ".venv" / "bin" / "python"
+        bins["uv"] = (
+            env.get("UV_BIN")
+            or (
+                ""
+                if venv_py.is_file()
+                else find_executable(
+                    "uv",
+                    [
+                        str(home / ".local" / "bin" / "uv"),
+                        str(home / ".cargo" / "bin" / "uv"),
+                        "/opt/homebrew/bin/uv",
+                        "/usr/local/bin/uv",
+                    ],
+                )
+            )
+        )
+
+    if "typescript" in sdks:
+        bins["node"] = env.get("NODE_BIN") or find_executable(
+            "node",
+            [
+                str(home / ".local" / "bin" / "node"),
+                "/opt/homebrew/bin/node",
+                "/usr/local/bin/node",
+                "/usr/bin/node",
+            ],
+        )
+        node_dir = str(Path(bins["node"]).parent)
+        env["PATH"] = f"{node_dir}{os.pathsep}{env.get('PATH', '')}"
+        bins["npm"] = env.get("NPM_BIN") or find_executable(
+            "npm",
+            [
+                str(Path(node_dir) / "npm"),
+                "/opt/homebrew/bin/npm",
+                "/usr/local/bin/npm",
+                "/usr/bin/npm",
+            ],
+        )
+
+    if "java" in sdks:
+        java_home = env.get("JAVA_HOME", "")
+        java_fallbacks = [os.path.join(java_home, "bin", "java")] if java_home else []
+        java_fallbacks.extend(
+            [
+                "/opt/homebrew/opt/openjdk/bin/java",
+                "/usr/local/opt/openjdk/bin/java",
+                "/usr/bin/java",
+            ]
+        )
+        bins["java"] = env.get("JAVA_BIN") or find_executable("java", java_fallbacks)
+        bins["mvn"] = env.get("MVN_BIN") or find_executable(
+            "mvn", ["/opt/homebrew/bin/mvn", "/usr/local/bin/mvn", "/usr/bin/mvn"]
+        )
+
+    if "csharp" in sdks:
+        bins["dotnet"] = env.get("DOTNET_BIN") or find_executable(
             "dotnet",
             [
                 str(home / ".dotnet" / "dotnet"),
@@ -414,33 +548,37 @@ def main() -> int:
                 "/usr/bin/dotnet",
             ],
         )
-        if "csharp" in sdks
-        else ""
-    )
+
+    dirs = {
+        "python": Path(args.python_dir),
+        "typescript": Path(args.typescript_dir),
+        "java": Path(args.java_dir),
+        "csharp": Path(args.csharp_dir),
+    }
+    ports = {
+        "java": args.java_port,
+        "csharp": args.csharp_port,
+        "python": args.python_port,
+        "typescript": args.typescript_port,
+    }
 
     if args.daemon and not args.once:
         return run_daemon_mode(
             sdks=sdks,
-            java_dir=Path(args.java_dir),
-            csharp_dir=Path(args.csharp_dir),
-            java_bin=java_bin,
-            mvn_bin=mvn_bin,
-            dotnet_bin=dotnet_bin,
+            dirs=dirs,
+            bins=bins,
             interval_seconds=args.interval_seconds,
             supervisor_port=args.port,
-            java_port=args.java_port,
-            csharp_port=args.csharp_port,
+            ports=ports,
             live=args.live,
             env=env,
         )
 
     return run_once_mode(
         sdks=sdks,
-        java_dir=Path(args.java_dir),
-        csharp_dir=Path(args.csharp_dir),
-        java_bin=java_bin,
-        mvn_bin=mvn_bin,
-        dotnet_bin=dotnet_bin,
+        dirs=dirs,
+        bins=bins,
+        ports=ports,
         live=args.live,
         env=env,
     )

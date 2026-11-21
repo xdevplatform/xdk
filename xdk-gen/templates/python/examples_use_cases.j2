@@ -1,0 +1,520 @@
+"""
+Comprehensive, runnable X API v2 Python SDK Cookbook covering every major developer use-case
+and all 24 API endpoint groups.
+
+Run standalone against the built-in local X API simulator (or against a custom base URL when
+X_API_BASE_URL and X_BEARER_TOKEN / X_ACCESS_TOKEN are set):
+
+    uv run python -m examples.use_cases
+"""
+
+from __future__ import annotations
+
+import base64
+import itertools
+import os
+import time
+import types
+from typing import Any, Callable, Dict, Tuple
+
+from examples.mock_x_api_server import MockXApiServer
+from xdk import Client, Cursor, OAuth1, OAuth2PKCEAuth, StreamConfig, schemas
+
+
+def _require(condition: bool, message: str) -> None:
+    if not condition:
+        raise AssertionError(message)
+
+
+def _first_if_generator(value: Any) -> Any:
+    """If a paginated SDK method returned a generator, consume the first page so the HTTP call executes."""
+    if isinstance(value, types.GeneratorType):
+        return next(value, None)
+    return value
+
+
+def run_authentication_examples(base_url: str) -> None:
+    """1. Authentication Flows: Bearer Token, OAuth 2.0 PKCE + Refresh, and OAuth 1.0a User Context."""
+    # 1a. App-Only Bearer Token
+    bearer_client = Client(base_url=base_url, bearer_token="app_only_bearer_token")
+    app_lookup = bearer_client.users.get_by_username("XDevelopers")
+    _require(app_lookup is not None and app_lookup.data is not None, "Bearer lookup should return data")
+
+    # 1b. OAuth 2.0 Authorization Code with PKCE + Token Refresh
+    oauth2 = OAuth2PKCEAuth(
+        base_url=base_url,
+        authorization_base_url="https://x.com/i",
+        client_id="demo_client_id",
+        client_secret="demo_client_secret",
+        redirect_uri="https://example.org/oauth/callback",
+        scope=["tweet.read", "tweet.write", "users.read", "offline.access"],
+    )
+    oauth2_client = Client(base_url=base_url, oauth2_auth=oauth2)
+    auth_url = oauth2.get_authorization_url(state="state_token_abc")
+    _require("code_challenge_method=S256" in auth_url, "PKCE S256 URL expected")
+    token = oauth2.exchange_code("sample_auth_code")
+    _require(bool(token.get("access_token")), "Exchanged access token expected")
+    me = oauth2_client.users.get_me()
+    _require(me is not None and me.data is not None, "OAuth2 get_me should succeed")
+    oauth2_client.refresh_token()
+
+    # 1c. OAuth 1.0a User Context (HMAC-SHA1)
+    oauth1 = OAuth1(
+        api_key="consumer_key",
+        api_secret="consumer_secret",
+        callback="oob",
+        access_token="user_access_token",
+        access_token_secret="user_access_secret",
+        base_url=base_url,
+    )
+    oauth1_client = Client(base_url=base_url, auth=oauth1)
+    created = oauth1_client.posts.create(
+        body=schemas.CreatePostsRequest(text="Posting with OAuth 1.0a!")
+    )
+    _require(created is not None, "OAuth1 post creation should succeed")
+
+
+def run_posts_and_search_examples(client: Client) -> None:
+    """2. Posts, Search, Post Counts & Analytics (PostsClient)."""
+    created = client.posts.create(
+        body=schemas.CreatePostsRequest(
+            text="Shipping Python & TypeScript SDKs on X API v2!",
+            reply_settings="following",
+        )
+    )
+    _require(created is not None, "create post")
+
+    post = client.posts.get_by_id(
+        "1234567890",
+        post_fields=["created_at", "public_metrics", "author_id"],
+        expansions=["author_id"],
+        user_fields=["username", "verified"],
+    )
+    _require(post is not None, "get_by_id")
+    client.posts.get_by_ids(ids=["1234567890", "1234567891"])
+
+    # Paginated recent search & full-archive search
+    pages = list(
+        itertools.islice(
+            client.posts.search_recent(
+                query="from:XDevelopers -is:retweet",
+                max_results=10,
+            ),
+            2,
+        )
+    )
+    _require(len(pages) >= 1, "search_recent pages")
+    _first_if_generator(client.posts.search_all(query="xdk sdk", max_results=10))
+
+    # Post counts, analytics & engagement lookups
+    _first_if_generator(client.posts.get_counts_recent(query="xdk", granularity="day"))
+    _first_if_generator(client.posts.get_counts_all(query="xdk"))
+    _first_if_generator(
+        client.posts.get_analytics(
+            ids=["1234567890"],
+            start_time="2025-01-01T00:00:00Z",
+            end_time="2025-01-07T00:00:00Z",
+        )
+    )
+    _first_if_generator(client.posts.get_liking_users("1234567890"))
+    _first_if_generator(client.posts.get_reposted_by("1234567890"))
+    _first_if_generator(client.posts.get_quoted("1234567890"))
+    client.posts.hide_reply("1234567890", body=schemas.HidePostsReplyRequest(hidden=True))
+    client.posts.delete("1234567890")
+
+
+def run_users_and_bookmarks_examples(client: Client) -> None:
+    """3. Users, Timelines, Social Graph & Bookmarks (UsersClient)."""
+    me = client.users.get_me(user_fields=["created_at", "description"])
+    my_id = "2244994945"
+    if me and me.data is not None:
+        my_id = getattr(me.data, "id", None) or (
+            me.data.get("id") if isinstance(me.data, dict) else "2244994945"
+        )
+
+    client.users.get_by_username("XDevelopers")
+    client.users.get_by_usernames(usernames=["XDevelopers", "X"])
+    client.users.get_by_id(my_id)
+    client.users.get_by_ids(ids=[my_id, "783214"])
+    _first_if_generator(client.users.search(query="developer platform"))
+
+    # Timelines & mentions with Cursor pagination
+    timeline_items = list(Cursor(client.users.get_posts, my_id, max_results=10).items(limit=3))
+    _require(len(timeline_items) >= 1, "user posts items")
+    _first_if_generator(client.users.get_mentions(my_id))
+    _first_if_generator(client.users.get_timeline(my_id))
+
+    # Social graph: follow, followers, likes, reposts, blocks, mutes
+    client.users.follow_user(my_id, body=schemas.FollowUserRequest(target_user_id="783214"))
+    _first_if_generator(client.users.get_followers(my_id))
+    _first_if_generator(client.users.get_following(my_id))
+    client.users.like_post(my_id, body=schemas.LikePostRequest(tweet_id="1234567890"))
+    client.users.unlike_post(my_id, "1234567890")
+    client.users.repost_post(my_id, body=schemas.RepostPostRequest(tweet_id="1234567890"))
+    client.users.unrepost_post(my_id, "1234567890")
+    client.users.id_block(my_id, body=schemas.UsersIdBlockRequest(target_user_id="99999"))
+    client.users.id_unblock(my_id, "99999")
+    client.users.mute_user(my_id, body=schemas.MuteUserRequest(target_user_id="99999"))
+    client.users.unmute_user(my_id, "99999")
+    client.users.unfollow_user(my_id, "783214")
+
+    # Bookmarks & bookmark folders
+    bm = client.users.create_bookmark(
+        my_id, body=schemas.CreateUsersBookmarkRequest(tweet_id="1234567890")
+    )
+    _require(bm is not None, "create_bookmark")
+    _first_if_generator(client.users.get_bookmarks(my_id))
+    client.users.create_bookmark_folder(
+        my_id, body=schemas.CreateUsersBookmarkFolderRequest(name="SDK Docs")
+    )
+    _first_if_generator(client.users.get_bookmark_folders(my_id))
+    client.users.delete_bookmark(my_id, "1234567890")
+
+
+def run_streaming_examples(client: Client) -> None:
+    """4. Real-Time Filtered & Sample Streaming (StreamClient)."""
+    rule = schemas.UpdateRulesAdd(
+        value="xdk (python OR typescript) -is:retweet", tag="xdk-mentions"
+    )
+    client.stream.update_rules(body=schemas.UpdateRulesRequest(add=[rule]))
+    _first_if_generator(client.stream.get_rules())
+    client.stream.get_rule_counts()
+
+    stream_cfg = StreamConfig(max_retries=0, initial_backoff=0.02, max_backoff=0.1)
+    events = list(
+        itertools.islice(
+            client.stream.posts(
+                tweet_fields=["created_at", "author_id"],
+                stream_config=stream_cfg,
+            ),
+            2,
+        )
+    )
+    _require(len(events) >= 1, "Filtered stream should emit events")
+
+    sample_events = list(
+        itertools.islice(client.stream.posts_sample(stream_config=stream_cfg), 1)
+    )
+    _require(len(sample_events) == 1, "Sample stream should emit event")
+
+
+def run_media_upload_examples(client: Client) -> None:
+    """5. Media Upload, Chunked Large Video & Metadata (MediaClient)."""
+    base64_chunk = base64.b64encode(b"fake_mp4_segment_bytes").decode("ascii")
+
+    client.media.upload(
+        body=schemas.MediaUploadRequest(media=base64_chunk, media_category="tweet_image")
+    )
+
+    # Chunked video upload lifecycle (supports >2 GiB 64-bit total_bytes)
+    init = client.media.initialize_upload(
+        body=schemas.InitializeMediaUploadRequest(
+            total_bytes=3_221_225_472,  # 3 GiB
+            media_type="video/mp4",
+            media_category="tweet_video",
+        )
+    )
+    media_id = "1889990001"
+    if init and init.data is not None:
+        media_id = getattr(init.data, "id", None) or "1889990001"
+
+    client.media.append_upload(
+        media_id,
+        body=schemas.AppendMediaUploadRequest(segment_index=0, media=base64_chunk),
+    )
+    client.media.finalize_upload(media_id)
+    client.media.get_upload_status(media_id=media_id, command="STATUS")
+
+    client.media.create_metadata(
+        body=schemas.CreateMediaMetadataRequest(
+            id=media_id,
+            metadata=schemas.CreateMediaMetadataMetadata(),
+        )
+    )
+    client.media.create_subtitles(
+        body=schemas.CreateMediaSubtitlesRequest(
+            id=media_id,
+            media_category="TweetVideo",
+            subtitles=schemas.CreateMediaSubtitlesSubtitles(),
+        )
+    )
+    client.media.get_by_keys(media_keys=[f"3_{media_id}"])
+    _first_if_generator(
+        client.media.get_analytics(
+            media_keys=[f"3_{media_id}"],
+            start_time="2025-01-01T00:00:00Z",
+            end_time="2025-01-07T00:00:00Z",
+        )
+    )
+    _first_if_generator(client.media.get_library_categories())
+
+
+def run_direct_messages_and_chat_examples(client: Client) -> None:
+    """6. Direct Messages & Encrypted XChat (DirectMessagesClient, ChatClient)."""
+    client.direct_messages.create_by_participant_id(
+        "783214",
+        body=schemas.CreateDirectMessagesByParticipantIdRequest(text="Hey from XDK Python!"),
+    )
+    client.direct_messages.create_conversation(
+        body=schemas.CreateDirectMessagesConversationRequest(
+            conversation_type="Group",
+            participant_ids=["783214", "2244994945"],
+            message=schemas.CreateDirectMessagesConversationMessage(text="Starting group chat!"),
+        )
+    )
+    client.direct_messages.create_by_conversation_id(
+        "conv_1",
+        body=schemas.CreateDirectMessagesByConversationIdRequest(text="Welcome to the group DM!"),
+    )
+    _first_if_generator(client.direct_messages.get_events(max_results=10))
+    dm_media = client.direct_messages.dm_conversations_media_download("dm_1", "m_1", "r_1")
+    _require(isinstance(dm_media, bytes) and len(dm_media) > 0, "DM media binary download")
+    client.direct_messages.delete_events("ev_1")
+
+    # Encrypted XChat & public keys
+    client.users.get_public_keys(ids=["2244994945"])
+    client.chat.get_settings()
+    client.chat.send_message(
+        "chat_conv_1",
+        body=schemas.SendChatMessageRequest(
+            encoded_message_create_event="base64_encrypted_event",
+            message_id="msg_001",
+        ),
+    )
+    _first_if_generator(client.chat.get_conversation_events("chat_conv_1"))
+    client.chat.media_upload_initialize(
+        body=schemas.ChatMediaUploadInitializeRequest(
+            conversation_id="chat_conv_1", total_bytes=1_048_576
+        )
+    )
+    client.chat.media_upload_append(
+        "upload_1",
+        body=schemas.ChatMediaUploadAppendRequest(
+            conversation_id="chat_conv_1",
+            media_hash_key="hash_1",
+            segment_index=0,
+            media="Y2hhdF9tZWRpYQ==",
+        ),
+    )
+    chat_bytes = client.chat.media_download("chat_conv_1", "hash_1")
+    _require(isinstance(chat_bytes, bytes) and len(chat_bytes) > 0, "XChat media download")
+
+
+def run_communities_spaces_lists_examples(client: Client) -> None:
+    """7. Lists, Communities, Spaces, Broadcasts & Calls."""
+    lst = client.lists.create(
+        body=schemas.CreateListsRequest(
+            name="XDK Contributors",
+            description="Core SDK builders",
+            private=False,
+        )
+    )
+    _require(lst is not None, "create list")
+    client.lists.get_by_id("list_1")
+    client.lists.add_member("list_1", body=schemas.AddListsMemberRequest(user_id="783214"))
+    _first_if_generator(client.lists.get_members("list_1"))
+    _first_if_generator(client.lists.get_posts("list_1", max_results=10))
+    client.lists.update("list_1", body=schemas.UpdateListsRequest(description="Updated"))
+    client.lists.remove_member_by_user_id("list_1", "783214")
+    client.lists.delete("list_1")
+
+    # Communities & Spaces
+    _first_if_generator(client.communities.search(query="X Developers"))
+    client.communities.get_by_id("comm_1")
+    client.spaces.search(query="AI Engineering", state="live")
+    client.spaces.get_by_id("1YqKDqWLPPlKV")
+    client.spaces.get_by_creator_ids(user_ids=["2244994945"])
+    client.spaces.get_posts("1YqKDqWLPPlKV")
+
+    # Broadcasts & Calls
+    client.broadcasts.get_region()
+    _first_if_generator(client.broadcasts.list())
+    _first_if_generator(client.broadcasts.list_sources())
+    client.calls.create_call(
+        body=schemas.CreateCallRequest(
+            conversation_id="chat_conv_1",
+            audio_only=True,
+            title="SDK Standup",
+        )
+    )
+    client.calls.get_call("call_1")
+    _first_if_generator(client.calls.list_scheduled())
+    client.calls.leave_call("call_1")
+
+
+def run_discovery_and_notes_examples(client: Client) -> None:
+    """8. Trends, News, Articles & Community Notes."""
+    client.trends.get_by_woeid(1, max_trends=20)
+    client.trends.get_personalized()
+
+    client.news.search(query="technology", max_results=10)
+    client.news.get("news_1")
+    client.articles.article_create_draft(
+        body=schemas.ArticleCreateDraftRequest(
+            title="Building with XDK Python",
+            content_state=schemas.ArticleCreateDraftContentState(blocks=[], entities=[]),
+        )
+    )
+    client.articles.article_publish("article_1")
+
+    _first_if_generator(client.community_notes.search_eligible_posts(test_mode=True))
+    _first_if_generator(client.community_notes.search_written(test_mode=True))
+    client.community_notes.evaluate(
+        body=schemas.EvaluateCommunityNotesRequest(
+            post_id="1234567890",
+            note_text="Helpful context with citation https://developer.x.com",
+        )
+    )
+    client.community_notes.create(
+        body=schemas.CreateCommunityNotesRequest(
+            post_id="1234567890",
+            test_mode=True,
+            info=schemas.CreateCommunityNotesInfo(
+                classification="not_misleading",
+                misleading_tags=[],
+                text="Helpful community context https://developer.x.com",
+                trustworthy_sources=True,
+            ),
+        )
+    )
+    client.community_notes.delete("note_1")
+
+
+def run_webhooks_and_automation_examples(client: Client) -> None:
+    """9. Webhooks, Account Activity, Activity Subscriptions, Bots, Connections & Account."""
+    client.webhooks.create(
+        body=schemas.CreateWebhooksRequest(url="https://webhooks.example.org/x/events")
+    )
+    client.webhooks.get()
+    client.webhooks.validate("wh_1")
+    client.webhooks.create_stream_link("wh_1")
+    client.webhooks.get_stream_links()
+    client.webhooks.create_webhook_replay_job(
+        body=schemas.CreateWebhookReplayJobRequest(
+            webhook_id="wh_1",
+            from_date="202501150000",
+            to_date="202501150100",
+        )
+    )
+
+    client.account_activity.create_subscription("wh_1", body={})
+    client.account_activity.get_subscriptions("wh_1")
+    client.account_activity.get_subscription_count()
+    client.account_activity.validate_subscription("wh_1")
+    client.account_activity.delete_subscription("wh_1", "2244994945")
+
+    client.activity.create_subscription(
+        body=schemas.CreateActivitySubscriptionRequest(
+            event_type="post.create",
+            filter=schemas.CreateActivitySubscriptionFilter(user_id="2244994945"),
+            webhook_id="wh_1",
+            tag="acct-sub",
+        )
+    )
+    _first_if_generator(client.activity.get_subscriptions())
+    client.activity.update_subscription(
+        "sub_1", body=schemas.UpdateActivitySubscriptionRequest(tag="updated-tag")
+    )
+    client.activity.delete_subscription("sub_1")
+    client.webhooks.delete("wh_1")
+
+    client.bots.create_bot(
+        body=schemas.CreateBotRequest(
+            display_name="XDK Helper Bot",
+            handle="xdk_helper_bot",
+        )
+    )
+    _first_if_generator(client.bots.get())
+    client.bots.rotate_bot_token("bot_1", body=schemas.RotateBotTokenRequest())
+    client.bots.revoke_bot_token("bot_1")
+    client.bots.delete_bot("bot_1")
+
+    _first_if_generator(client.connections.get_connection_history())
+    client.connections.delete_by_endpoint("posts-stream")
+    client.account.get_developer()
+    client.account.ensure(body=schemas.EnsureAccountRequest(metadata="{}"))
+
+
+def run_compliance_and_usage_examples(client: Client) -> None:
+    """10. Batch Compliance, API Usage & OpenAPI Spec Introspection."""
+    client.compliance.create_jobs(
+        body=schemas.CreateComplianceJobsRequest(
+            type="tweets",
+            name="nightly-compliance-sync",
+            resumable=True,
+        )
+    )
+    client.compliance.get_jobs(type="tweets", status="in_progress")
+    ids_payload = b"1234567890\n1234567891\n"
+    client.compliance.upload_job_submission("job_1", "upload_tok", body=ids_payload)
+    client.compliance.get_jobs_by_id("job_1")
+    results = client.compliance.download_job_results("job_1", "download_tok")
+    _require(isinstance(results, bytes) and len(results) > 0, "Compliance binary download")
+    client.compliance.delete_jobs_by_id("job_1")
+
+    client.usage.get(days=7)
+    client.usage.get_credits()
+
+    spec = client.general.get_open_api_spec()
+    _require(spec is not None, "OpenAPI spec response")
+
+
+def run_all(base_url: str, client: Client) -> Dict[str, int]:
+    """Run all 10 X API v2 workflow suites (covering all 24 endpoint groups) and return durations in ms."""
+    suites: Tuple[Tuple[str, Callable[[], None]], ...] = (
+        ("01_authentication_flows", lambda: run_authentication_examples(base_url)),
+        ("02_posts_and_search", lambda: run_posts_and_search_examples(client)),
+        ("03_users_social_and_bookmarks", lambda: run_users_and_bookmarks_examples(client)),
+        ("04_realtime_streaming", lambda: run_streaming_examples(client)),
+        ("05_media_upload_and_metadata", lambda: run_media_upload_examples(client)),
+        ("06_direct_messages_and_xchat", lambda: run_direct_messages_and_chat_examples(client)),
+        ("07_lists_communities_spaces_calls", lambda: run_communities_spaces_lists_examples(client)),
+        ("08_trends_news_articles_notes", lambda: run_discovery_and_notes_examples(client)),
+        ("09_webhooks_activity_bots_account", lambda: run_webhooks_and_automation_examples(client)),
+        ("10_compliance_usage_and_openapi", lambda: run_compliance_and_usage_examples(client)),
+    )
+
+    timings: Dict[str, int] = {}
+    for name, fn in suites:
+        started = time.perf_counter()
+        fn()
+        timings[name] = int((time.perf_counter() - started) * 1000)
+    return timings
+
+
+def main() -> None:
+    live_base_url = os.environ.get("X_API_BASE_URL", "").strip()
+    if live_base_url:
+        bearer = os.environ.get("X_BEARER_TOKEN", "demo_bearer")
+        access = os.environ.get("X_ACCESS_TOKEN", bearer)
+        client = Client(base_url=live_base_url, bearer_token=bearer, access_token=access)
+        results = run_all(live_base_url, client)
+        print(f"Completed {len(results)} XDK Python use-case suites against {live_base_url}: {results}")
+        return
+
+    with MockXApiServer() as server:
+        oauth1 = OAuth1(
+            api_key="demo_ck",
+            api_secret="demo_cs",
+            callback="oob",
+            access_token="demo_at",
+            access_token_secret="demo_ats",
+            base_url=server.base_url,
+        )
+        client = Client(
+            base_url=server.base_url,
+            bearer_token="demo_bearer_token",
+            access_token="demo_oauth2_user_token",
+            auth=oauth1,
+        )
+        results = run_all(server.base_url, client)
+        print(
+            f"Completed all {len(results)} XDK Python use-case suites "
+            f"({len(server.requests)} HTTP calls) against local X API simulator:"
+        )
+        for name, duration_ms in results.items():
+            print(f"  [PASS] {name} ({duration_ms} ms)")
+
+
+if __name__ == "__main__":
+    main()

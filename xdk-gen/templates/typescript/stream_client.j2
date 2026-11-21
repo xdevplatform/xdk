@@ -40,6 +40,14 @@ export interface {{ operation.class_name }}StreamingOptions {
     headers?: Record<string, string>;
     /** AbortSignal for cancelling the request */
     signal?: AbortSignal;
+    /** Automatically reconnect on mid-stream disconnects (defaults to false) */
+    autoReconnect?: boolean;
+    /** Automatically reconnect when server closes the stream cleanly (defaults to false) */
+    reconnectOnClose?: boolean;
+    /** Maximum automatic reconnect attempts (defaults to 5; set -1 for unlimited) */
+    maxReconnectAttempts?: number;
+    /** Initial backoff delay in milliseconds between reconnect attempts (defaults to 1000) */
+    reconnectDelayMs?: number;
     /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
     [key: string]: any;
 }
@@ -207,54 +215,57 @@ export class {{ tag.class_name }}Client {
         // We need raw: true to get the raw Response object for streaming
         const url = path + (params.toString() ? `?${params.toString()}` : '');
         
-        // For streaming requests, we don't want to timeout the initial connection
-        // Instead, we'll handle timeouts at the stream level
-        const response = await this.client.request(
-            '{{ operation.method | upper }}',
-            url,
-            {
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...headers,
-                },
-                {% if operation.request_body %}
-                body: {% if operation.request_body.required %}JSON.stringify(transformKeysToSnake(body || {})){% else %}body ? JSON.stringify(transformKeysToSnake(body)) : undefined{% endif %},
-                {% endif %}
-                {% if operation.security %}
-                // Pass security requirements for smart auth selection
-                security: [
-                    {% for security_req in operation.security %}
-                    {
-                        {% for scheme_name in security_req %}
-                        '{{ scheme_name }}': [{% for scope in security_req[scheme_name] %}'{{ scope }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+        const openReadableStream = async (): Promise<ReadableStream<Uint8Array>> => {
+            const response = await this.client.request(
+                '{{ operation.method | upper }}',
+                url,
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...headers,
+                    },
+                    {% if operation.request_body %}
+                    body: {% if operation.request_body.required %}JSON.stringify(transformKeysToSnake(body || {})){% else %}body ? JSON.stringify(transformKeysToSnake(body)) : undefined{% endif %},
+                    {% endif %}
+                    {% if operation.security %}
+                    // Pass security requirements for smart auth selection
+                    security: [
+                        {% for security_req in operation.security %}
+                        {
+                            {% for scheme_name in security_req %}
+                            '{{ scheme_name }}': [{% for scope in security_req[scheme_name] %}'{{ scope }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                            {% endfor %}
+                        }{% if not loop.last %},{% endif %}
                         {% endfor %}
-                    }{% if not loop.last %},{% endif %}
-                    {% endfor %}
-                ],
-                {% endif %}
-                signal: signal,
-                ...requestOptions,
-                raw: true, // Get raw Response object for streaming
-                timeout: requestOptions?.timeout !== undefined ? requestOptions.timeout : 0, // Disable timeout for streaming requests unless explicitly overridden
+                    ],
+                    {% endif %}
+                    signal: signal,
+                    ...requestOptions,
+                    raw: true, // Get raw Response object for streaming
+                    timeout: requestOptions?.timeout !== undefined ? requestOptions.timeout : 0,
+                }
+            ) as Response;
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
-        ) as Response;
+            if (!response.body) {
+                throw new Error('Response body is not available for streaming');
+            }
+            return response.body;
+        };
 
-        // Handle errors
-        if (!response.ok) {
-            throw new Error(
-                `HTTP ${response.status}: ${response.statusText}`
-            );
-        }
+        const initialBody = await openReadableStream();
 
-        // Return the readable stream
-        // The response.body is the actual ReadableStream for streaming
-        if (!response.body) {
-            throw new Error('Response body is not available for streaming');
-        }
-
-        // Wrap the ReadableStream in an event-driven interface
-        const eventStream = new EventDrivenStream();
-        await eventStream.connect(response.body);
+        // Wrap the ReadableStream in an event-driven interface with reconnect support
+        const eventStream = new EventDrivenStream({
+            autoReconnect: normalizedOptions.autoReconnect,
+            reconnectOnClose: normalizedOptions.reconnectOnClose,
+            maxReconnectAttempts: normalizedOptions.maxReconnectAttempts,
+            reconnectDelayMs: normalizedOptions.reconnectDelayMs,
+            reconnectFactory: openReadableStream,
+        });
+        await eventStream.connect(initialBody);
         return eventStream;
     }
 {% endif %}
@@ -379,6 +390,17 @@ export class {{ tag.class_name }}Client {
             signal: signal,
             {% if operation.request_body %}
             body: {% if operation.request_body.required %}JSON.stringify(transformKeysToSnake(body || {})){% else %}body ? JSON.stringify(transformKeysToSnake(body)) : undefined{% endif %},
+            {% endif %}
+            {% if operation.security %}
+            security: [
+                {% for security_req in operation.security %}
+                {
+                    {% for scheme_name in security_req %}
+                    '{{ scheme_name }}': [{% for scope in security_req[scheme_name] %}'{{ scope }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+                    {% endfor %}
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+            ],
             {% endif %}
             ...requestOptions,
         };
