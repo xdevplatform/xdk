@@ -1,0 +1,77 @@
+/**
+ * Integration tests verifying all 10 XDK TypeScript use-case suites across all 24 API tags
+ * and the continuous canary runner + HTTP observability endpoints (/health, /status, /metrics).
+ */
+
+import { describe, it, expect, afterEach, jest } from '@jest/globals';
+import { Client, OAuth1 } from '../src/index.js';
+import { MockXApiServer } from '../examples/mock_x_api_server.js';
+import { runAll } from '../examples/use_cases.js';
+import { XdkTypeScriptCanaryApp } from '../examples/canary.js';
+
+describe('UseCaseExamples & Continuous Canary', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('executes all 10 end-to-end use-case suites across all 24 tags over TCP loopback', async () => {
+    const server = await MockXApiServer.start();
+    try {
+      const client = new Client({
+        baseUrl: server.baseUrl,
+        bearerToken: 'test-bearer',
+        accessToken: 'test-access',
+        oauth1: new OAuth1({
+          apiKey: 'ck',
+          apiSecret: 'cs',
+          accessToken: 'at',
+          accessTokenSecret: 'ats',
+          baseUrl: server.baseUrl,
+        }),
+      });
+      const timings = await runAll(server.baseUrl, client);
+      expect(Object.keys(timings).length).toBe(10);
+      expect(server.requests.length).toBeGreaterThanOrEqual(85);
+    } finally {
+      await server.close();
+    }
+  });
+
+  it('runs a full canary cycle and serves /health, /status, and Prometheus /metrics', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    const canary = new XdkTypeScriptCanaryApp(false);
+    try {
+      await canary.startStatusServer(0);
+      const port = canary.statusPort;
+      expect(port).toBeGreaterThan(0);
+
+      const snapshot = await canary.runCycle();
+      expect(snapshot.healthy).toBe(true);
+      expect(snapshot.probesFailed).toBe(0);
+      expect(snapshot.probesPassed).toBeGreaterThanOrEqual(15);
+
+      const healthRes = await fetch(`http://127.0.0.1:${port}/health`);
+      expect(healthRes.status).toBe(200);
+      const health = (await healthRes.json()) as any;
+      expect(health.sdk).toBe('typescript');
+      expect(health.healthy).toBe(true);
+
+      const statusRes = await fetch(`http://127.0.0.1:${port}/status`);
+      expect(statusRes.status).toBe(200);
+      const statusDoc = (await statusRes.json()) as any;
+      expect(statusDoc.sdk).toBe('typescript');
+      expect(statusDoc.totalCycles).toBe(1);
+      expect(statusDoc.latest.healthy).toBe(true);
+
+      const metricsRes = await fetch(`http://127.0.0.1:${port}/metrics`);
+      expect(metricsRes.status).toBe(200);
+      const metrics = await metricsRes.text();
+      expect(metrics).toContain('xdk_canary_healthy{sdk="typescript"} 1');
+      expect(metrics).toContain(
+        'xdk_canary_probe_success{sdk="typescript",probe="streaming_ndjson_reconnect"'
+      );
+    } finally {
+      await canary.close();
+    }
+  });
+});

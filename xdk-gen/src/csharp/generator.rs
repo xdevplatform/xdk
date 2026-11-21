@@ -82,6 +82,12 @@ language! {
         render "stream_options" => "src/Xdk/Streaming/StreamOptions.cs",
         render "event_stream" => "src/Xdk/Streaming/EventStream.cs",
         render "sdk_csproj" => "src/Xdk/Xdk.csproj",
+        render "examples_csproj" => "examples/Xdk.Examples/Xdk.Examples.csproj",
+        render "mock_x_api_server" => "examples/Xdk.Examples/MockXApiServer.cs",
+        render "examples_use_cases" => "examples/Xdk.Examples/UseCaseExamples.cs",
+        render "canary_runner" => "examples/Xdk.Examples/XdkCanaryRunner.cs",
+        render "examples_program" => "examples/Xdk.Examples/Program.cs",
+        render "examples_readme" => "examples/README.md",
         render "solution_sln" => "Xdk.sln",
         render "readme" => "README.md",
         render "gitignore" => ".gitignore"
@@ -93,6 +99,8 @@ language! {
             render "test_pagination" => "tests/Xdk.Tests/{class_name}PaginationTests.cs"
         },
         render "test_core" => "tests/Xdk.Tests/XClientCoreTests.cs",
+        render "test_e2e_loopback" => "tests/Xdk.Tests/XClientLoopbackE2ETests.cs",
+        render "test_examples_and_canary" => "tests/Xdk.Tests/UseCaseExamplesAndCanaryTests.cs",
         render "test_helpers" => "tests/Xdk.Tests/MockHttpMessageHandler.cs",
         render "test_csproj" => "tests/Xdk.Tests/Xdk.Tests.csproj"
     ]

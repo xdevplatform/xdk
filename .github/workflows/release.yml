@@ -250,7 +250,7 @@ jobs:
       - name: Prepare SDK for push
         run: |
           cd xdk/typescript
-          rm -rf node_modules
+          rm -rf node_modules .xdk-examples
 
       - name: Push to SDK repository
         if: ${{ !inputs.dry_run }}
@@ -382,6 +382,7 @@ jobs:
         run: |
           rm -rf xdk/csharp/src/Xdk/bin xdk/csharp/src/Xdk/obj
           rm -rf xdk/csharp/tests/Xdk.Tests/bin xdk/csharp/tests/Xdk.Tests/obj
+          rm -rf xdk/csharp/examples/Xdk.Examples/bin xdk/csharp/examples/Xdk.Examples/obj
 
       - name: Push to SDK repository
         if: ${{ !inputs.dry_run }}

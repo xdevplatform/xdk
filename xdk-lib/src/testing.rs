@@ -212,6 +212,22 @@ pub struct ContractTest {
     pub security_requirements: Vec<String>,
     /// Whether this is a streaming operation
     pub is_streaming: bool,
+    /// Whether requestBody is marked required
+    pub required_body: bool,
+    /// Whether this operation generates an `*Options` class
+    pub has_options: bool,
+    /// Whether request body is binary (`application/octet-stream`)
+    pub is_binary_request: bool,
+    /// Whether 2xx response body is binary (`application/octet-stream`)
+    pub is_binary_response: bool,
+    /// Java type of request body (e.g. `Schemas.CreatePostsRequest`, `byte[]`, `Object`)
+    pub request_java_type: String,
+    /// C# type of request body (e.g. `CreatePostsRequest`, `byte[]`, `object`)
+    pub request_csharp_type: String,
+    /// Rich populated JSON payload for typed request bodies
+    pub request_mock_json: Option<String>,
+    /// Rich populated JSON payload for 2xx JSON responses
+    pub full_response_mock_json: String,
 }
 
 /// Response schema information for contract testing
@@ -389,6 +405,21 @@ fn extract_parameters(operation: &OperationInfo) -> (Vec<TestParameter>, Vec<Tes
 /// Generate contract test from operation
 fn generate_contract_test(operation: &OperationInfo) -> ContractTest {
     let (required_params, optional_params) = extract_parameters(operation);
+    let required_body = operation
+        .request_body
+        .as_ref()
+        .is_some_and(|rb| rb.required.unwrap_or(false));
+    let has_opt_body = operation
+        .request_body
+        .as_ref()
+        .is_some_and(|rb| !rb.required.unwrap_or(false));
+    let has_options = !optional_params.is_empty() || has_opt_body || operation.is_streaming;
+
+    let (is_binary_request, request_java_type, request_csharp_type, request_mock_json) =
+        extract_request_body_test_info(operation);
+    let response_schema = generate_response_schema(operation);
+    let is_binary_response = response_schema.content_type == "application/octet-stream";
+    let full_response_mock_json = generate_full_response_mock_json(operation);
 
     ContractTest {
         method_name: operation.method_name.clone(),
@@ -400,41 +431,96 @@ fn generate_contract_test(operation: &OperationInfo) -> ContractTest {
         request_body_schema: generate_request_body_schema(operation),
         has_request_model: operation.has_request_model,
         has_json_response: operation.has_json_response,
-        response_schema: generate_response_schema(operation),
+        response_schema,
         security_requirements: extract_security_requirements(operation),
         is_streaming: operation.is_streaming,
+        required_body,
+        has_options,
+        is_binary_request,
+        is_binary_response,
+        request_java_type,
+        request_csharp_type,
+        request_mock_json,
+        full_response_mock_json,
     }
+}
+
+fn extract_request_body_test_info(
+    operation: &OperationInfo,
+) -> (bool, String, String, Option<String>) {
+    if let Some(rb) = &operation.request_body {
+        if let Some(media) = rb
+            .content
+            .get("application/json")
+            .or_else(|| rb.content.get("multipart/form-data"))
+            && let Ok(schema_json) = serde_json::to_value(&media.schema)
+        {
+            let j_ty = crate::types::java_type_of(&schema_json, "Schemas.");
+            let cs_ty = crate::types::csharp_type_of(&schema_json, "", false);
+            let mock = crate::types::full_example_json(&schema_json).to_string();
+            return (false, j_ty, cs_ty, Some(mock));
+        }
+        if rb.content.contains_key("application/octet-stream") {
+            return (true, "byte[]".to_string(), "byte[]".to_string(), None);
+        }
+    }
+    (false, "Object".to_string(), "object".to_string(), None)
+}
+
+fn pick_2xx_response(operation: &OperationInfo) -> (u16, Option<&openapi::Response>) {
+    for code in ["200", "201", "202", "204"] {
+        if let Some(resp) = operation.responses.get(code) {
+            return (code.parse().unwrap_or(200), Some(resp));
+        }
+    }
+    let mut keys: Vec<&String> = operation.responses.keys().collect();
+    keys.sort_unstable();
+    if let Some(first_key) = keys.first()
+        && let Some(resp) = operation.responses.get(*first_key)
+    {
+        return (first_key.parse().unwrap_or(200), Some(resp));
+    }
+    (200, None)
 }
 
 /// Generate response schema information
 fn generate_response_schema(operation: &OperationInfo) -> ResponseSchema {
-    // Try to find 200 response
-    if let Some(response) = operation.responses.get("200") {
+    let (status_code, maybe_resp) = pick_2xx_response(operation);
+    if let Some(response) = maybe_resp {
+        let content_type = if response
+            .content
+            .as_ref()
+            .is_some_and(|c| c.contains_key("application/octet-stream"))
+        {
+            "application/octet-stream".to_string()
+        } else {
+            "application/json".to_string()
+        };
         ResponseSchema {
-            status_code: 200,
-            content_type: "application/json".to_string(),
+            status_code,
+            content_type,
             expected_fields: extract_response_fields(response),
             mock_json: response_mock_json(response),
         }
     } else {
-        // Fallback to first available response
-        let default_status = "200".to_string();
-        let default_response = openapi::Response {
-            description: None,
-            content: None,
-        };
-        let (status_code, response) = operation
-            .responses
-            .iter()
-            .next()
-            .unwrap_or((&default_status, &default_response));
-
         ResponseSchema {
-            status_code: status_code.parse().unwrap_or(200),
+            status_code: 200,
             content_type: "application/json".to_string(),
-            expected_fields: extract_response_fields(response),
-            mock_json: response_mock_json(response),
+            expected_fields: Vec::new(),
+            mock_json: "{}".to_string(),
         }
+    }
+}
+
+fn generate_full_response_mock_json(operation: &OperationInfo) -> String {
+    let (_, maybe_resp) = pick_2xx_response(operation);
+    let schema_json = maybe_resp
+        .and_then(|r| r.content.as_ref())
+        .and_then(|content| content.get("application/json"))
+        .and_then(|media| serde_json::to_value(&media.schema).ok());
+    match schema_json {
+        Some(json) => crate::types::full_example_json(&json).to_string(),
+        None => "{}".to_string(),
     }
 }
 

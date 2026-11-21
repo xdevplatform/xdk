@@ -1,0 +1,443 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net;
+using System.Net.Sockets;
+using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
+using Xdk;
+using Xdk.Auth;
+using Xdk.Clients;
+using Xdk.Models;
+using Xdk.Streaming;
+using Xdk.Testing;
+
+namespace Xdk.Canary;
+
+/// <summary>
+/// Continuous Always-On Canary Runner for <c>xdk-csharp</c> with built-in HTTP <c>/health</c>,
+/// <c>/status</c>, and Prometheus <c>/metrics</c> endpoints.
+/// </summary>
+public sealed class XdkCanaryRunner : IDisposable
+{
+    public sealed record ProbeResult(
+        [property: JsonPropertyName("name")] string Name,
+        [property: JsonPropertyName("mode")] string Mode,
+        [property: JsonPropertyName("passed")] bool Passed,
+        [property: JsonPropertyName("durationMs")] long DurationMs,
+        [property: JsonPropertyName("error")] string? Error);
+
+    public sealed record CanarySnapshot(
+        [property: JsonPropertyName("sdk")] string Sdk,
+        [property: JsonPropertyName("version")] string Version,
+        [property: JsonPropertyName("timestamp")] string Timestamp,
+        [property: JsonPropertyName("cycle")] long Cycle,
+        [property: JsonPropertyName("healthy")] bool Healthy,
+        [property: JsonPropertyName("probesPassed")] int ProbesPassed,
+        [property: JsonPropertyName("probesFailed")] int ProbesFailed,
+        [property: JsonPropertyName("durationMs")] long DurationMs,
+        [property: JsonPropertyName("probes")] IReadOnlyList<ProbeResult> Probes);
+
+    private readonly bool _enableLiveProbes;
+    private readonly DateTimeOffset _startedAt = DateTimeOffset.UtcNow;
+    private readonly CancellationTokenSource _statusCts = new();
+    private TcpListener? _statusListener;
+    private long _totalCycles;
+    private long _totalProbeFailures;
+    private volatile CanarySnapshot? _latestSnapshot;
+
+    public int StatusPort { get; private set; } = -1;
+    public CanarySnapshot? LatestSnapshot => _latestSnapshot;
+
+    public XdkCanaryRunner(bool enableLiveProbes = false)
+    {
+        _enableLiveProbes = enableLiveProbes;
+    }
+
+    public void StartStatusServer(int port = 0)
+    {
+        _statusListener = new TcpListener(IPAddress.Loopback, port);
+        _statusListener.Start();
+        StatusPort = ((IPEndPoint)_statusListener.LocalEndpoint).Port;
+        _ = Task.Run(() => StatusAcceptLoopAsync(_statusCts.Token));
+    }
+
+    public async Task<CanarySnapshot> RunCycleAsync(CancellationToken ct = default)
+    {
+        var cycle = Interlocked.Increment(ref _totalCycles);
+        var sw = Stopwatch.StartNew();
+        var results = new List<ProbeResult>();
+
+        // 1. Synthetic Full-SDK Simulator Probes
+        using (var simulator = new MockXApiServer())
+        {
+            using var simClient = new XClient(new XClientOptions
+            {
+                BaseUrl = simulator.BaseUrl,
+                BearerToken = "canary-bearer",
+                AccessToken = "canary-oauth2",
+                OAuth1 = new OAuth1("ck", "cs", "oob", "at", "ats"),
+            });
+
+            var ucSw = Stopwatch.StartNew();
+            try
+            {
+                var timings = await Examples.UseCaseExamples.RunAllAsync(simulator.BaseUrl, simClient, ct)
+                    .ConfigureAwait(false);
+                foreach (var kv in timings)
+                {
+                    results.Add(new ProbeResult("usecase_" + kv.Key, "synthetic", true, kv.Value, null));
+                }
+            }
+            catch (Exception ex)
+            {
+                results.Add(new ProbeResult("usecases_all_24_tags", "synthetic", false, ucSw.ElapsedMilliseconds, ex.ToString()));
+            }
+
+            results.Add(await RunProbeAsync("auth_oauth2_pkce_and_refresh", "synthetic", () => VerifyOAuth2ProbeAsync(simulator, ct)));
+            results.Add(await RunProbeAsync("auth_oauth1_rfc5849_signature", "synthetic", () => VerifyOAuth1ProbeAsync(simulator, ct)));
+            results.Add(await RunProbeAsync("pagination_cursor_traversal", "synthetic", () => VerifyPaginationProbeAsync(simulator, ct)));
+            results.Add(await RunProbeAsync("streaming_ndjson_reconnect", "synthetic", () => VerifyStreamingReconnectProbeAsync(simulator, ct)));
+            results.Add(await RunProbeAsync("resilience_429_retry_and_404_error", "synthetic", () => VerifyResilienceProbeAsync(simulator, ct)));
+        }
+
+        // 2. Optional Live X API Probes
+        var liveBearer = Environment.GetEnvironmentVariable("X_BEARER_TOKEN");
+        var liveAccess = Environment.GetEnvironmentVariable("X_ACCESS_TOKEN");
+        var liveBase = Environment.GetEnvironmentVariable("X_API_BASE_URL");
+        if (string.IsNullOrWhiteSpace(liveBase))
+        {
+            liveBase = "https://api.x.com";
+        }
+
+        if (_enableLiveProbes || !string.IsNullOrEmpty(liveBearer) || !string.IsNullOrEmpty(liveAccess))
+        {
+            results.Add(await RunProbeAsync("live_openapi_spec", "live", async () =>
+            {
+                using var anon = new XClient(new XClientOptions { BaseUrl = liveBase });
+                var spec = await anon.General.GetOpenApiSpecAsync(ct).ConfigureAwait(false);
+                if (!spec.ContainsKey("openapi"))
+                {
+                    throw new InvalidOperationException("Unexpected OpenAPI spec payload");
+                }
+            }));
+
+            if (!string.IsNullOrEmpty(liveBearer))
+            {
+                results.Add(await RunProbeAsync("live_users_lookup_xdevelopers", "live", async () =>
+                {
+                    using var bc = new XClient(new XClientOptions { BaseUrl = liveBase, BearerToken = liveBearer });
+                    var u = await bc.Users.GetByUsernameAsync("XDevelopers", cancellationToken: ct).ConfigureAwait(false);
+                    if (string.IsNullOrEmpty(u.Data?.Id))
+                    {
+                        throw new InvalidOperationException("Missing @XDevelopers user data");
+                    }
+                }));
+                results.Add(await RunProbeAsync("live_posts_counts_recent", "live", async () =>
+                {
+                    using var bc = new XClient(new XClientOptions { BaseUrl = liveBase, BearerToken = liveBearer });
+                    var c = await bc.Posts.GetCountsRecentAsync("xdk", cancellationToken: ct).ConfigureAwait(false);
+                    if (c == null)
+                    {
+                        throw new InvalidOperationException("Null counts response");
+                    }
+                }));
+            }
+
+            if (!string.IsNullOrEmpty(liveAccess))
+            {
+                results.Add(await RunProbeAsync("live_users_me", "live", async () =>
+                {
+                    using var uc = new XClient(new XClientOptions { BaseUrl = liveBase, AccessToken = liveAccess });
+                    var me = await uc.Users.GetMeAsync(cancellationToken: ct).ConfigureAwait(false);
+                    if (string.IsNullOrEmpty(me.Data?.Id))
+                    {
+                        throw new InvalidOperationException("Missing authenticated user id");
+                    }
+                }));
+            }
+        }
+
+        var passed = 0;
+        var failed = 0;
+        foreach (var r in results)
+        {
+            if (r.Passed) passed++;
+            else
+            {
+                failed++;
+                Interlocked.Increment(ref _totalProbeFailures);
+            }
+        }
+
+        sw.Stop();
+        var snap = new CanarySnapshot(
+            Sdk: "csharp",
+            Version: "{{ version }}",
+            Timestamp: DateTimeOffset.UtcNow.ToString("O"),
+            Cycle: cycle,
+            Healthy: failed == 0,
+            ProbesPassed: passed,
+            ProbesFailed: failed,
+            DurationMs: sw.ElapsedMilliseconds,
+            Probes: results);
+        _latestSnapshot = snap;
+        return snap;
+    }
+
+    private static async Task<ProbeResult> RunProbeAsync(string name, string mode, Func<Task> fn)
+    {
+        var sw = Stopwatch.StartNew();
+        try
+        {
+            await fn().ConfigureAwait(false);
+            return new ProbeResult(name, mode, true, sw.ElapsedMilliseconds, null);
+        }
+        catch (Exception ex)
+        {
+            return new ProbeResult(name, mode, false, sw.ElapsedMilliseconds, ex.ToString());
+        }
+    }
+
+    private static async Task VerifyOAuth2ProbeAsync(MockXApiServer server, CancellationToken ct)
+    {
+        server.Reset();
+        var oauth2 = new OAuth2Pkce(
+            clientId: "canary-cid",
+            redirectUri: "https://example.org/cb",
+            clientSecret: "canary-secret",
+            scopes: new[] { "tweet.read", "users.read", "offline.access" },
+            apiBaseUrl: server.BaseUrl);
+        using var client = new XClient(new XClientOptions { BaseUrl = server.BaseUrl, OAuth2 = oauth2 });
+        oauth2.GetAuthorizationUrl("st");
+        server.RegisterExpectedPkceChallenge("c1", oauth2.CodeChallenge!);
+        var tok = await oauth2.ExchangeCodeAsync("c1", cancellationToken: ct).ConfigureAwait(false);
+        await client.Users.GetMeAsync(cancellationToken: ct).ConfigureAwait(false);
+        oauth2.SetToken(tok, DateTimeOffset.UtcNow.AddSeconds(-5));
+        await client.Users.GetMeAsync(cancellationToken: ct).ConfigureAwait(false);
+        if (server.LastRequest?.FirstHeader("Authorization") != "Bearer sim_refreshed_access_from_sim_oauth2_refresh_1")
+        {
+            throw new InvalidOperationException("Auto-refresh header mismatch");
+        }
+    }
+
+    private static async Task VerifyOAuth1ProbeAsync(MockXApiServer server, CancellationToken ct)
+    {
+        server.Reset();
+        using var client = new XClient(new XClientOptions
+        {
+            BaseUrl = server.BaseUrl,
+            OAuth1 = new OAuth1("ck", "cs_secret", "oob", "at", "ats_secret"),
+        });
+        await client.Posts.CreateAsync(new CreatePostsRequest { Text = "Canary OAuth1" }, ct).ConfigureAwait(false);
+        if (!MockXApiServer.VerifyOAuth1Signature(server.LastRequest!, "cs_secret", "ats_secret"))
+        {
+            throw new InvalidOperationException("OAuth1 HMAC-SHA1 verification failed");
+        }
+    }
+
+    private static async Task VerifyPaginationProbeAsync(MockXApiServer server, CancellationToken ct)
+    {
+        server.Reset();
+        using var client = new XClient(new XClientOptions { BaseUrl = server.BaseUrl, BearerToken = "tok" });
+        var count = 0;
+        await foreach (var p in client.Users.GetFollowersPages("2244994945").WithCancellation(ct))
+        {
+            if (p != null) count++;
+        }
+        if (count != 2)
+        {
+            throw new InvalidOperationException($"Expected 2 paginated pages, got {count}");
+        }
+    }
+
+    private static async Task VerifyStreamingReconnectProbeAsync(MockXApiServer server, CancellationToken ct)
+    {
+        server.Reset();
+        var conns = 0;
+        server.SetResponder(_ =>
+        {
+            if (Interlocked.Increment(ref conns) == 1)
+            {
+                return MockXApiServer.MockResponse.ChunkedStream(
+                    new[] { Encoding.UTF8.GetBytes("{\"data\":{\"id\":\"1\",\"text\":\"first\"}}\n") },
+                    dropMidway: true);
+            }
+            return MockXApiServer.MockResponse.ChunkedStream(
+                new[] { Encoding.UTF8.GetBytes("{\"data\":{\"id\":\"2\",\"text\":\"second\"}}\n") },
+                dropMidway: false);
+        });
+
+        using var client = new XClient(new XClientOptions { BaseUrl = server.BaseUrl, BearerToken = "tok" });
+        var items = 0;
+        await using (var stream = client.Stream.PostsStream(new StreamClient.PostsOptions
+        {
+            StreamOptions = new StreamOptions
+            {
+                MaxRetries = 2,
+                InitialBackoff = TimeSpan.FromMilliseconds(10),
+                MaxBackoff = TimeSpan.FromMilliseconds(20),
+            },
+        }))
+        {
+            await foreach (var ev in stream.WithCancellation(ct))
+            {
+                if (ev.Data != null) items++;
+                if (items == 2) break;
+            }
+        }
+        server.Reset();
+        if (items != 2)
+        {
+            throw new InvalidOperationException($"Expected 2 stream items across reconnect, got {items}");
+        }
+    }
+
+    private static async Task VerifyResilienceProbeAsync(MockXApiServer server, CancellationToken ct)
+    {
+        server.Reset();
+        var hits = 0;
+        server.SetResponder(req =>
+        {
+            if (req.Path.Contains("missing_user", StringComparison.Ordinal))
+            {
+                return MockXApiServer.MockResponse.Json(404, "{\"errors\":[{\"message\":\"User not found\"}]}");
+            }
+            if (Interlocked.Increment(ref hits) == 1)
+            {
+                return MockXApiServer.MockResponse.Json(
+                    429,
+                    "{\"detail\":\"Too Many Requests\"}",
+                    new Dictionary<string, string> { ["Retry-After"] = "0" });
+            }
+            return MockXApiServer.MockResponse.Json(200, "{\"data\":{\"id\":\"1\",\"username\":\"XDevelopers\"}}");
+        });
+
+        using var client = new XClient(new XClientOptions
+        {
+            BaseUrl = server.BaseUrl,
+            BearerToken = "tok",
+            Retry = true,
+            MaxRetries = 2,
+        });
+        await client.Users.GetByUsernameAsync("XDevelopers", cancellationToken: ct).ConfigureAwait(false);
+        try
+        {
+            await client.Users.GetByUsernameAsync("missing_user", cancellationToken: ct).ConfigureAwait(false);
+            throw new InvalidOperationException("Expected XApiException on 404");
+        }
+        catch (XApiException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
+        {
+        }
+        finally
+        {
+            server.Reset();
+        }
+    }
+
+    private async Task StatusAcceptLoopAsync(CancellationToken ct)
+    {
+        while (!ct.IsCancellationRequested && _statusListener != null)
+        {
+            TcpClient tcp;
+            try
+            {
+                tcp = await _statusListener.AcceptTcpClientAsync(ct).ConfigureAwait(false);
+            }
+            catch
+            {
+                break;
+            }
+            _ = Task.Run(() => HandleStatusClientAsync(tcp, ct), ct);
+        }
+    }
+
+    private async Task HandleStatusClientAsync(TcpClient tcp, CancellationToken ct)
+    {
+        using (tcp)
+        await using (var stream = tcp.GetStream())
+        {
+            var buf = new byte[2048];
+            var n = await stream.ReadAsync(buf, ct).ConfigureAwait(false);
+            if (n <= 0) return;
+            var firstLine = Encoding.ASCII.GetString(buf, 0, n).Split("\r\n")[0];
+            var parts = firstLine.Split(' ');
+            var path = parts.Length > 1 ? parts[1] : "/health";
+
+            var snap = _latestSnapshot;
+            var ok = snap is { Healthy: true };
+            int status;
+            string contentType;
+            string body;
+
+            if (path.StartsWith("/metrics", StringComparison.Ordinal))
+            {
+                status = 200;
+                contentType = "text/plain; version=0.0.4; charset=utf-8";
+                var sb = new StringBuilder();
+                sb.Append("# TYPE xdk_canary_cycles_total counter\n");
+                sb.Append("xdk_canary_cycles_total{sdk=\"csharp\"} ").Append(Interlocked.Read(ref _totalCycles)).Append('\n');
+                sb.Append("# TYPE xdk_canary_probe_failures_total counter\n");
+                sb.Append("xdk_canary_probe_failures_total{sdk=\"csharp\"} ").Append(Interlocked.Read(ref _totalProbeFailures)).Append('\n');
+                sb.Append("# TYPE xdk_canary_healthy gauge\n");
+                sb.Append("xdk_canary_healthy{sdk=\"csharp\"} ").Append(ok ? 1 : 0).Append('\n');
+                if (snap != null)
+                {
+                    sb.Append("# TYPE xdk_canary_probe_duration_ms gauge\n");
+                    foreach (var p in snap.Probes)
+                    {
+                        sb.Append("xdk_canary_probe_duration_ms{sdk=\"csharp\",probe=\"")
+                          .Append(p.Name)
+                          .Append("\",mode=\"")
+                          .Append(p.Mode)
+                          .Append("\"} ")
+                          .Append(p.DurationMs)
+                          .Append('\n');
+                    }
+                }
+                body = sb.ToString();
+            }
+            else if (path.StartsWith("/status", StringComparison.Ordinal))
+            {
+                status = ok ? 200 : 503;
+                contentType = "application/json";
+                var doc = new
+                {
+                    sdk = "csharp",
+                    version = "{{ version }}",
+                    startedAt = _startedAt.ToString("O"),
+                    totalCycles = Interlocked.Read(ref _totalCycles),
+                    totalProbeFailures = Interlocked.Read(ref _totalProbeFailures),
+                    latest = snap,
+                };
+                body = JsonSerializer.Serialize(doc);
+            }
+            else
+            {
+                status = ok ? 200 : 503;
+                contentType = "application/json";
+                var uptime = (long)(DateTimeOffset.UtcNow - _startedAt).TotalSeconds;
+                body = "{\"sdk\":\"csharp\",\"healthy\":" + (ok ? "true" : "false")
+                    + ",\"cycles\":" + Interlocked.Read(ref _totalCycles)
+                    + ",\"uptimeSeconds\":" + uptime + "}";
+            }
+
+            var payload = Encoding.UTF8.GetBytes(body);
+            var reason = status == 200 ? "OK" : "Service Unavailable";
+            var header = Encoding.ASCII.GetBytes(
+                $"HTTP/1.1 {status} {reason}\r\nContent-Type: {contentType}\r\nContent-Length: {payload.Length}\r\nConnection: close\r\n\r\n");
+            await stream.WriteAsync(header, ct).ConfigureAwait(false);
+            await stream.WriteAsync(payload, ct).ConfigureAwait(false);
+            await stream.FlushAsync(ct).ConfigureAwait(false);
+        }
+    }
+
+    public void Dispose()
+    {
+        _statusCts.Cancel();
+        try { _statusListener?.Stop(); } catch { }
+    }
+}

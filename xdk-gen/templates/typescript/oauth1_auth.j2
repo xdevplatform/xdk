@@ -12,12 +12,14 @@ export interface OAuth1Config {
   apiKey: string;
   /** API Secret (Consumer Secret) */
   apiSecret: string;
-  /** Callback URL for OAuth flow */
-  callback: string;
+  /** Callback URL for OAuth flow (defaults to "oob") */
+  callback?: string;
   /** Access Token (if already obtained) */
   accessToken?: string;
   /** Access Token Secret (if already obtained) */
   accessTokenSecret?: string;
+  /** Base URL for OAuth1 token endpoints (defaults to https://api.x.com) */
+  baseUrl?: string;
 }
 
 /**
@@ -49,7 +51,11 @@ export class OAuth1 {
   public accessToken?: OAuth1AccessToken;
 
   constructor(config: OAuth1Config) {
-    this.config = config;
+    this.config = {
+      callback: 'oob',
+      baseUrl: 'https://api.x.com',
+      ...config
+    };
     
     // If access token is provided, set it
     if (config.accessToken && config.accessTokenSecret) {
@@ -86,11 +92,16 @@ export class OAuth1 {
    * @returns Promise with request token
    */
   async getRequestToken(): Promise<OAuth1RequestToken> {
-    const url = 'https://api.x.com/oauth/request_token';
+    const apiBase = (this.config.baseUrl || 'https://api.x.com').replace(/\/+$/, '');
+    const url = `${apiBase}/oauth/request_token`;
     
     const params = new URLSearchParams({
-      oauth_callback: this.config.callback
+      oauth_callback: this.config.callback || 'oob'
     });
+
+    // Clear any prior tokens when starting a new request-token flow
+    this.requestToken = undefined;
+    this.accessToken = undefined;
 
     const response = await fetch(`${url}?${params.toString()}`, {
       method: 'POST',
@@ -124,7 +135,8 @@ export class OAuth1 {
       throw new Error('Request token not obtained. Call getRequestToken() first.');
     }
 
-    const url = 'https://api.x.com/oauth/access_token';
+    const apiBase = (this.config.baseUrl || 'https://api.x.com').replace(/\/+$/, '');
+    const url = `${apiBase}/oauth/access_token`;
     
     const params = new URLSearchParams({
       oauth_token: this.requestToken.oauthToken,
@@ -186,9 +198,9 @@ export class OAuth1 {
     const paramString = this._buildParamString(oauthParams, body);
     const signatureBase = `${method.toUpperCase()}&${this._encode(url)}&${this._encode(paramString)}`;
     
-    // Generate signature
+    // Generate signature (accessToken takes precedence over requestToken, matching oauth_token above)
     const signingKey = `${this._encode(this.config.apiSecret)}&${this._encode(
-      this.requestToken?.oauthTokenSecret || this.accessToken?.accessTokenSecret || ''
+      this.accessToken?.accessTokenSecret || this.requestToken?.oauthTokenSecret || ''
     )}`;
     
     const signature = await CryptoUtils.hmacSha1(signingKey, signatureBase);
@@ -211,40 +223,35 @@ export class OAuth1 {
    * @returns Parameter string
    */
   private _buildParamString(oauthParams: Record<string, string>, body: string): string {
-    const allParams = { ...oauthParams };
+    const paramPairs: Array<[string, string]> = Object.entries(oauthParams);
     
     // Parse body parameters if present and it's form-encoded (not JSON)
     // According to OAuth1 spec, JSON bodies should NOT be included in the signature
     if (body) {
-      // Check if body is JSON by attempting to parse it
       let isJson = false;
       try {
         JSON.parse(body);
         isJson = true;
       } catch {
-        // Not valid JSON, treat as form-encoded
         isJson = false;
       }
       
       if (!isJson) {
-        // Only parse form-encoded bodies
         try {
           const bodyParams = new URLSearchParams(body);
           bodyParams.forEach((value, key) => {
-            allParams[key] = value;
+            paramPairs.push([key, value]);
           });
         } catch (error) {
-          // If body parsing fails, ignore it
           console.warn('Failed to parse body parameters:', error);
         }
       }
-      // If body is JSON, we don't include it in the signature (per OAuth1 spec)
     }
 
     // Sort by percent-encoded name, then value, in byte order (RFC 5849 section 3.4.1.3.2).
     // localeCompare is locale-aware and orders punctuation differently (e.g. '.' vs '_').
     const compareBytes = (x: string, y: string): number => (x < y ? -1 : x > y ? 1 : 0);
-    const sortedParams = Object.entries(allParams).sort(
+    const sortedParams = paramPairs.sort(
       ([aKey, aValue], [bKey, bValue]) =>
         compareBytes(this._encode(aKey), this._encode(bKey)) ||
         compareBytes(this._encode(aValue), this._encode(bValue))
@@ -307,14 +314,29 @@ export class OAuth1 {
       console.warn('Failed to parse URL for OAuth1:', error);
     }
 
-    // Combine query parameters with body parameters
+    // Only include form-encoded bodies (JSON bodies are excluded per RFC 5849)
+    let formBody = '';
+    if (body) {
+      let isJson = false;
+      try {
+        JSON.parse(body);
+        isJson = true;
+      } catch {
+        isJson = false;
+      }
+      if (!isJson) {
+        formBody = body;
+      }
+    }
+
+    // Combine query parameters with form-encoded body parameters
     let allParams = '';
-    if (queryParams && body) {
-      allParams = `${queryParams}&${body}`;
+    if (queryParams && formBody) {
+      allParams = `${queryParams}&${formBody}`;
     } else if (queryParams) {
       allParams = queryParams;
-    } else if (body) {
-      allParams = body;
+    } else if (formBody) {
+      allParams = formBody;
     }
 
     return this._buildOAuthHeader(method, urlWithoutQuery, allParams);

@@ -62,7 +62,7 @@ The SDK works in modern browsers (Chrome, Firefox, Safari, Edge) out of the box 
 import { 
   Client, 
   type ClientConfig,
-  type UsersGetByUsernameResponse
+  type Users
 } from '@xdevplatform/xdk';
 
 const config: ClientConfig = { bearerToken: 'your-bearer-token' };
@@ -70,7 +70,7 @@ const config: ClientConfig = { bearerToken: 'your-bearer-token' };
 const client: Client = new Client(config);
 
 async function main(): Promise<void> {
-  const userResponse: UsersGetByUsernameResponse = await client.users.getByUsername('XDevelopers');
+  const userResponse: Users.GetByUsernameResponse = await client.users.getByUsername('XDevelopers');
   const username: string = userResponse.data?.username!;
   console.log(username);
 }
@@ -362,4 +362,17 @@ stream.on('error', (event) => {
 stream.on('keepAlive', () => {
   // heartbeat event
 });
+```
+
+## Runnable Use-Case Examples & Continuous Canary
+
+See [`examples/README.md`](examples/README.md) for runnable end-to-end examples across all 24 X API endpoint groups and the continuous canary monitor:
+
+```bash
+# Build the SDK and run all 10 end-to-end use-case suites
+npm run build
+npm run examples
+
+# Run a one-shot canary health check (synthetic + optional live api.x.com probes)
+npm run canary -- --once --live
 ```

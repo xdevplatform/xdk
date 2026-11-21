@@ -68,6 +68,10 @@ language! {
         render "paginator" => "src/main/java/com/xdevplatform/xdk/Paginator.java",
         render "stream_config" => "src/main/java/com/xdevplatform/xdk/streaming/StreamConfig.java",
         render "event_stream" => "src/main/java/com/xdevplatform/xdk/streaming/EventStream.java",
+        render "mock_x_api_server" => "examples/com/xdevplatform/xdk/testing/MockXApiServer.java",
+        render "examples_use_cases" => "examples/com/xdevplatform/xdk/examples/UseCaseExamples.java",
+        render "canary_app" => "examples/com/xdevplatform/xdk/canary/XdkCanaryApp.java",
+        render "examples_readme" => "examples/README.md",
         render "pom_xml" => "pom.xml",
         render "readme" => "README.md",
         render "gitignore" => ".gitignore"
@@ -78,7 +82,9 @@ language! {
             render "test_contracts" => "src/test/java/com/xdevplatform/xdk/{class_name}ContractsTest.java",
             render "test_pagination" => "src/test/java/com/xdevplatform/xdk/{class_name}PaginationTest.java"
         },
-        render "test_core" => "src/test/java/com/xdevplatform/xdk/XClientCoreTest.java"
+        render "test_core" => "src/test/java/com/xdevplatform/xdk/XClientCoreTest.java",
+        render "test_e2e_loopback" => "src/test/java/com/xdevplatform/xdk/XClientLoopbackE2ETest.java",
+        render "test_examples_and_canary" => "src/test/java/com/xdevplatform/xdk/UseCaseExamplesAndCanaryTest.java"
     ]
 }
 

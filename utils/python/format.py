@@ -15,19 +15,24 @@ def get_definitions_to_format(code):
     """
     tree = ast.parse(code)
     defs = []
-    for node in ast.walk(tree): # Use ast.walk to find all function definitions
-        if isinstance(node, ast.FunctionDef):
-            start = node.lineno
-            # Ensure end_lineno is captured correctly, may need adjustment for decorators
-            # Finding the true end might require iterating through node attributes or using get_source_segment
-            # For now, rely on ast's end_lineno which is usually sufficient
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            start = (
+                min(d.lineno for d in node.decorator_list)
+                if getattr(node, 'decorator_list', None)
+                else node.lineno
+            )
             end = getattr(node, 'end_lineno', None)
             if end is not None:
                 defs.append((start, end))
-    
-    # Sort definitions by starting line number
-    defs.sort()
-    return defs
+
+    # Sort by start ascending, end descending, and drop nested inner functions
+    defs.sort(key=lambda pair: (pair[0], -pair[1]))
+    top_defs = []
+    for start, end in defs:
+        if not top_defs or start > top_defs[-1][1]:
+            top_defs.append((start, end))
+    return top_defs
 
 def reduce_blank_lines(lines):
     """

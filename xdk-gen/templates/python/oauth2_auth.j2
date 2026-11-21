@@ -41,7 +41,7 @@ class OAuth2PKCEAuth:
             token: An existing OAuth2 token dictionary (if available).
             scope: Space-separated string or list of strings for OAuth2 authorization scopes.
         """
-        self.base_url = base_url
+        self.base_url = base_url.rstrip('/')
         self.authorization_base_url = authorization_base_url.rstrip('/')
         self.client_id = client_id
         self.client_secret = client_secret
@@ -228,39 +228,81 @@ class OAuth2PKCEAuth:
         code = query_params['code'][0]
         return self.exchange_code(code)
     
-    def refresh_token(self) -> Dict[str, Any]:
-        """Refresh the access token.
-        
-        Returns:
-            Dict[str, Any]: The refreshed token dictionary
-            
-        Raises:
-            ValueError: If no token is available or no client secret is configured.
+    def set_token(self, token: Optional[Dict[str, Any]]) -> None:
+        """Set or replace the current OAuth2 token dictionary.
+
+        Args:
+            token: Token dictionary containing access_token, refresh_token, expires_in, etc.
         """
-        if not self.oauth2_session or not self.token:
+        self.token = dict(token) if isinstance(token, dict) else token
+        if self.token and isinstance(self.token, dict) and 'expires_in' in self.token and self.token['expires_in'] and 'expires_at' not in self.token:
+            self.token['expires_at'] = time.time() + self.token['expires_in']
+        if self.token and self.client_id:
+            self._setup_oauth_session()
+
+    def refresh_token(self, refresh_token: Optional[str] = None) -> Dict[str, Any]:
+        """Refresh the access token (supports both confidential and public PKCE clients).
+
+        Args:
+            refresh_token: Optional explicit refresh token (defaults to stored token['refresh_token']).
+
+        Returns:
+            Dict[str, Any]: The refreshed token dictionary.
+
+        Raises:
+            ValueError: If no refresh token or client_id is available, or if the token endpoint fails.
+        """
+        effective_refresh = refresh_token or (
+            self.token.get('refresh_token') if isinstance(self.token, dict) else None
+        )
+        if not effective_refresh:
             raise ValueError("No token to refresh")
-        
-        if not self.client_secret:
-            raise ValueError(
-                "client_secret is required for token refresh. "
-                "Confidential clients must provide a client secret."
-            )
-        
-        refresh_url = f"{self.base_url}/2/oauth2/token"
-        
-        # Use HTTPBasicAuth to send credentials in the Authorization header,
-        # consistent with exchange_code(). Passing client_id/client_secret as
-        # keyword arguments does NOT set the Authorization header in oauthlib,
-        # which causes an unauthorized_client error.
-        auth = HTTPBasicAuth(self.client_id, self.client_secret)
-        
-        self.token = self.oauth2_session.refresh_token(
-            refresh_url,
+        if not self.client_id and not self.client_secret:
+            raise ValueError("client_id is required for token refresh")
+
+        params: Dict[str, Any] = {
+            'grant_type': 'refresh_token',
+            'refresh_token': effective_refresh,
+        }
+        headers = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+
+        auth = None
+        if self.client_secret:
+            auth = HTTPBasicAuth(self.client_id or '', self.client_secret)
+        elif self.client_id:
+            params['client_id'] = self.client_id
+
+        response = requests.post(
+            f"{self.base_url}/2/oauth2/token",
+            data=params,
+            headers=headers,
             auth=auth
         )
-        if self.token and 'expires_in' in self.token and self.token['expires_in'] and 'expires_at' not in self.token:
-            self.token['expires_at'] = time.time() + self.token['expires_in']
-        
+
+        if not response.ok:
+            try:
+                error_data = response.json()
+            except Exception:
+                error_data = response.text
+            raise ValueError(f"HTTP error! status: {response.status_code}, body: {error_data}")
+
+        data = response.json()
+        previous_scope = self.token.get('scope') if isinstance(self.token, dict) else None
+        self.token = {
+            'access_token': data.get('access_token'),
+            'token_type': data.get('token_type'),
+            'expires_in': data.get('expires_in'),
+            'refresh_token': data.get('refresh_token', effective_refresh),
+            'scope': data.get('scope', previous_scope)
+        }
+        if 'expires_in' in data and data['expires_in']:
+            self.token['expires_at'] = time.time() + data['expires_in']
+
+        if self.client_id:
+            self._setup_oauth_session()
+
         return self.token
     
     def get_code_verifier(self) -> Optional[str]:

@@ -1,0 +1,315 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using Xdk;
+using Xdk.Auth;
+using Xdk.Clients;
+using Xdk.Models;
+using Xdk.Streaming;
+using Xdk.Testing;
+using Xunit;
+
+namespace Xdk.Tests;
+
+/// <summary>
+/// Deep end-to-end TCP loopback integration suite verifying real <see cref="HttpClient"/> socket
+/// behavior across authentication flows, pagination, chunked streaming + reconnection, binary
+/// uploads/downloads, 64-bit integer safety, retries, timeouts, and structured error handling.
+/// </summary>
+public class XClientLoopbackE2ETests
+{
+    [Fact]
+    public async Task OAuth2PkceLateBoundExchangeAndAutoRefreshOverTcp()
+    {
+        using var server = new MockXApiServer();
+        var oauth2 = new OAuth2Pkce(
+            clientId: "my-client-id",
+            redirectUri: "https://app.example.com/callback",
+            clientSecret: "my-client-secret",
+            scopes: new[] { "tweet.read", "users.read", "offline.access" },
+            apiBaseUrl: server.BaseUrl);
+
+        // Build XClient BEFORE exchanging code (late-bound token regression check)
+        using var client = new XClient(new XClientOptions
+        {
+            BaseUrl = server.BaseUrl,
+            OAuth2 = oauth2,
+            Retry = false,
+        });
+
+        var authUrl = oauth2.GetAuthorizationUrl("csrf-state-123");
+        Assert.Contains("code_challenge_method=S256", authUrl);
+        server.RegisterExpectedPkceChallenge("auth_code_xyz", oauth2.CodeChallenge!);
+
+        var exchanged = await oauth2.ExchangeCodeAsync("auth_code_xyz");
+        Assert.Equal("sim_oauth2_access_auth_code_xyz", exchanged.AccessToken);
+
+        // 1st API call uses the newly exchanged token automatically
+        var me = await client.Users.GetMeAsync();
+        Assert.NotNull(me.Data);
+        Assert.Equal("Bearer sim_oauth2_access_auth_code_xyz", server.LastRequest!.FirstHeader("Authorization"));
+
+        // Force expiration so next API call triggers RefreshTokenAsync automatically
+        oauth2.SetToken(exchanged, DateTimeOffset.UtcNow.AddSeconds(-10));
+        var meAfterRefresh = await client.Users.GetMeAsync();
+        Assert.NotNull(meAfterRefresh.Data);
+        Assert.Equal(
+            "Bearer sim_refreshed_access_from_sim_oauth2_refresh_1",
+            server.LastRequest!.FirstHeader("Authorization"));
+    }
+
+    [Fact]
+    public async Task OAuth1SignatureVerifiedOnServerWithQueryAndBodyOverTcp()
+    {
+        using var server = new MockXApiServer();
+        var oauth1 = new OAuth1("consumer-key-1", "consumer-secret-1", "oob", "access-token-1", "access-secret-1");
+
+        using var client = new XClient(new XClientOptions
+        {
+            BaseUrl = server.BaseUrl,
+            OAuth1 = oauth1,
+            Retry = false,
+        });
+
+        var created = await client.Posts.CreateAsync(new CreatePostsRequest
+        {
+            Text = "Hello OAuth 1.0a & C# TCP!",
+        });
+        Assert.NotNull(created.Data);
+        Assert.True(
+            MockXApiServer.VerifyOAuth1Signature(server.LastRequest!, "consumer-secret-1", "access-secret-1"),
+            "Server-side RFC 5849 HMAC-SHA1 verification failed on POST");
+
+        await client.Users.GetByUsernameAsync("XDevelopers", new UsersClient.GetByUsernameOptions
+        {
+            UserFields = new List<string> { "created_at", "public_metrics" },
+            Expansions = new List<string> { "pinned_tweet_id" },
+        });
+        Assert.True(
+            MockXApiServer.VerifyOAuth1Signature(server.LastRequest!, "consumer-secret-1", "access-secret-1"),
+            "Server-side RFC 5849 HMAC-SHA1 verification failed on GET with query parameters");
+    }
+
+    [Fact]
+    public async Task MultiPagePaginatorAsyncEnumerableOverTcp()
+    {
+        using var server = new MockXApiServer();
+        var pageHits = 0;
+        server.SetResponder(req =>
+        {
+            var n = Interlocked.Increment(ref pageHits);
+            if (n == 1)
+            {
+                return MockXApiServer.MockResponse.Json(
+                    200,
+                    "{\"data\":[{\"id\":\"p1\",\"text\":\"Post 1\"},{\"id\":\"p2\",\"text\":\"Post 2\"}],\"meta\":{\"result_count\":2,\"next_token\":\"cursor_2\"}}");
+            }
+            if (n == 2)
+            {
+                if (!req.RawQuery.Contains("next_token=cursor_2", StringComparison.Ordinal)
+                    && !req.RawQuery.Contains("pagination_token=cursor_2", StringComparison.Ordinal))
+                {
+                    return MockXApiServer.MockResponse.Json(400, "{\"detail\":\"Missing cursor_2\"}");
+                }
+                return MockXApiServer.MockResponse.Json(
+                    200,
+                    "{\"data\":[{\"id\":\"p3\",\"text\":\"Post 3\"}],\"meta\":{\"result_count\":1,\"next_token\":\"cursor_3\"}}");
+            }
+            if (!req.RawQuery.Contains("next_token=cursor_3", StringComparison.Ordinal)
+                && !req.RawQuery.Contains("pagination_token=cursor_3", StringComparison.Ordinal))
+            {
+                return MockXApiServer.MockResponse.Json(400, "{\"detail\":\"Missing cursor_3\"}");
+            }
+            return MockXApiServer.MockResponse.Json(
+                200,
+                "{\"data\":[{\"id\":\"p4\",\"text\":\"Post 4\"}],\"meta\":{\"result_count\":1}}");
+        });
+
+        using var client = new XClient(new XClientOptions
+        {
+            BaseUrl = server.BaseUrl,
+            BearerToken = "bearer-test",
+        });
+
+        var allIds = new List<string>();
+        await foreach (var page in client.Posts.SearchRecentPages(
+            "xdk lang:en",
+            new PostsClient.SearchRecentOptions { MaxResults = 10 }))
+        {
+            if (page.Data != null)
+            {
+                allIds.AddRange(page.Data.Select(p => p.Id!));
+            }
+        }
+
+        Assert.Equal(new[] { "p1", "p2", "p3", "p4" }, allIds);
+        Assert.Equal(3, pageHits);
+    }
+
+    [Fact]
+    public async Task ChunkedStreamingSplitUtf8KeepAliveAndReconnectOverTcp()
+    {
+        using var server = new MockXApiServer();
+        var connections = 0;
+        var fullEvent = Encoding.UTF8.GetBytes("{\"data\":{\"id\":\"9001\",\"text\":\" Café 🚀 Live \"}}\n");
+        var rocketPos = Array.FindIndex(fullEvent, b => b == 0xF0);
+        var splitIdx = rocketPos + 2; // right inside the 4-byte UTF-8 emoji!
+        var partA = fullEvent[..splitIdx];
+        var partB = fullEvent[splitIdx..];
+
+        server.SetResponder(_ =>
+        {
+            var conn = Interlocked.Increment(ref connections);
+            if (conn == 1)
+            {
+                return MockXApiServer.MockResponse.ChunkedStream(
+                    new[] { Encoding.UTF8.GetBytes("\r\n{}\r\n"), partA, partB },
+                    dropMidway: true);
+            }
+            return MockXApiServer.MockResponse.ChunkedStream(
+                new[] { Encoding.UTF8.GetBytes("{\"data\":{\"id\":\"9002\",\"text\":\"After reconnect\"}}\n") },
+                dropMidway: false);
+        });
+
+        using var client = new XClient(new XClientOptions
+        {
+            BaseUrl = server.BaseUrl,
+            BearerToken = "bearer-stream",
+        });
+
+        var texts = new List<string>();
+        await using var stream = client.Stream.PostsStream(new StreamClient.PostsOptions
+        {
+            StreamOptions = new StreamOptions
+            {
+                MaxRetries = 2,
+                InitialBackoff = TimeSpan.FromMilliseconds(10),
+                MaxBackoff = TimeSpan.FromMilliseconds(30),
+            },
+        });
+
+        await foreach (var item in stream)
+        {
+            texts.Add(item.Data!.Text!);
+            if (texts.Count == 2)
+            {
+                break;
+            }
+        }
+
+        Assert.Equal(new[] { " Café 🚀 Live ", "After reconnect" }, texts);
+        Assert.Equal(2, connections);
+    }
+
+    [Fact]
+    public async Task BinaryOctetStreamAndLarge64BitIntegersAndStringifiedNumbersOverTcp()
+    {
+        using var server = new MockXApiServer();
+        var rawBytes = new byte[] { 0x00, 0x89, 0x50, 0x4E, 0x47, 0xFE, 0xFF };
+        server.SetResponder(req =>
+        {
+            if (req.Path.EndsWith("/upload", StringComparison.Ordinal))
+            {
+                Assert.Equal(rawBytes, req.BodyBytes);
+                return MockXApiServer.MockResponse.Json(200, "{\"data\":{\"uploaded\":true}}");
+            }
+            if (req.Path.EndsWith("/download", StringComparison.Ordinal))
+            {
+                return MockXApiServer.MockResponse.Bytes(200, "application/octet-stream", rawBytes);
+            }
+            // Also verify stringified 64-bit integer ("8589934592") coerces cleanly via AllowReadingFromString!
+            return MockXApiServer.MockResponse.Json(
+                200,
+                "{\"data\":{\"id\":\"media_64\",\"size\":\"8589934592\",\"expires_after_secs\":86400}}");
+        });
+
+        using var client = new XClient(new XClientOptions
+        {
+            BaseUrl = server.BaseUrl,
+            BearerToken = "bearer-bin",
+            OAuth1 = new OAuth1("ck", "cs", "oob", "at", "ats"),
+        });
+
+        const long eightGiB = 8_589_934_592L;
+        var initRes = await client.Media.InitializeUploadAsync(new InitializeMediaUploadRequest
+        {
+            TotalBytes = eightGiB,
+            MediaType = "video/mp4",
+            MediaCategory = "tweet_video",
+        });
+        Assert.NotNull(initRes.Data);
+        Assert.Contains("8589934592", server.LastRequest!.BodyUtf8);
+
+        var finalRes = await client.Media.FinalizeUploadAsync("media_64");
+        Assert.Equal(eightGiB, finalRes.Data!.Size);
+
+        await client.Compliance.UploadJobSubmissionAsync("job_1", "tok_1", rawBytes);
+        var downloaded = await client.Compliance.DownloadJobResultsAsync("job_1", "tok_1");
+        Assert.Equal(rawBytes, downloaded);
+    }
+
+    [Fact]
+    public async Task RateLimitRetryAfterStructuredErrorsAndTimeoutsOverTcp()
+    {
+        using var server = new MockXApiServer();
+        var attempts = 0;
+        server.SetResponder(req =>
+        {
+            if (req.Path.Contains("/slow", StringComparison.Ordinal))
+            {
+                return MockXApiServer.MockResponse.DelayedJson(200, "{\"ok\":true}", 600);
+            }
+            if (req.Path.Contains("notfound", StringComparison.Ordinal))
+            {
+                return MockXApiServer.MockResponse.Json(
+                    404,
+                    "{\"errors\":[{\"message\":\"Could not find user with username: [notfound].\"}],\"title\":\"Not Found Error\"}");
+            }
+            var n = Interlocked.Increment(ref attempts);
+            if (n == 1)
+            {
+                return MockXApiServer.MockResponse.Json(
+                    429,
+                    "{\"title\":\"Too Many Requests\",\"detail\":\"Rate limit exceeded\"}",
+                    new Dictionary<string, string> { ["Retry-After"] = "0" });
+            }
+            return MockXApiServer.MockResponse.Json(
+                200,
+                "{\"data\":{\"id\":\"42\",\"username\":\"XDevelopers\"}}");
+        });
+
+        using var client = new XClient(new XClientOptions
+        {
+            BaseUrl = server.BaseUrl,
+            BearerToken = "bearer-resilience",
+            Retry = true,
+            MaxRetries = 2,
+            Timeout = TimeSpan.FromMilliseconds(150),
+        });
+
+        var ok = await client.Users.GetByUsernameAsync("XDevelopers");
+        Assert.Equal("42", ok.Data!.Id);
+        Assert.Equal(2, attempts);
+
+        var notFound = await Assert.ThrowsAsync<XApiException>(() => client.Users.GetByUsernameAsync("notfound"));
+        Assert.Equal(HttpStatusCode.NotFound, notFound.StatusCode);
+        Assert.Contains("Could not find user", notFound.Message);
+        Assert.NotNull(notFound.ErrorData);
+
+        await Assert.ThrowsAsync<XApiException>(() =>
+            client.SendJsonAsync<JsonElement>(
+                HttpMethod.Get,
+                "/2/slow",
+                null,
+                null,
+                null,
+                "application/json",
+                new[] { "BearerToken" }));
+    }
+}

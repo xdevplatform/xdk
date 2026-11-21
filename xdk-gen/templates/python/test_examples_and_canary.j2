@@ -1,0 +1,66 @@
+"""
+Integration tests verifying all 10 XDK Python use-case suites across all 24 API tags
+and the continuous canary runner + HTTP observability endpoints (/health, /status, /metrics).
+"""
+
+from __future__ import annotations
+
+import json
+import urllib.request
+
+from examples.canary import XdkPythonCanaryApp
+from examples.mock_x_api_server import MockXApiServer
+from examples.use_cases import run_all
+from xdk import Client, OAuth1
+
+
+class TestUseCaseExamplesAndCanary:
+    def test_all_10_use_case_suites_execute_over_loopback(self) -> None:
+        with MockXApiServer() as server:
+            oauth1 = OAuth1(
+                api_key="ck",
+                api_secret="cs",
+                callback="oob",
+                access_token="at",
+                access_token_secret="ats",
+                base_url=server.base_url,
+            )
+            client = Client(
+                base_url=server.base_url,
+                bearer_token="test-bearer",
+                access_token="test-access",
+                auth=oauth1,
+            )
+            timings = run_all(server.base_url, client)
+            assert len(timings) == 10
+            assert len(server.requests) >= 85
+
+    def test_canary_cycle_and_http_observability_endpoints(self) -> None:
+        with XdkPythonCanaryApp(enable_live_probes=False) as canary:
+            canary.start_status_server(0)
+            port = canary.status_port
+            assert port > 0
+
+            snapshot = canary.run_cycle()
+            assert snapshot.healthy is True
+            assert snapshot.probesFailed == 0
+            assert snapshot.probesPassed >= 15
+
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/health", timeout=3.0) as resp:
+                assert resp.status == 200
+                health = json.loads(resp.read().decode("utf-8"))
+                assert health["sdk"] == "python"
+                assert health["healthy"] is True
+
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/status", timeout=3.0) as resp:
+                assert resp.status == 200
+                status_doc = json.loads(resp.read().decode("utf-8"))
+                assert status_doc["sdk"] == "python"
+                assert status_doc["totalCycles"] == 1
+                assert status_doc["latest"]["healthy"] is True
+
+            with urllib.request.urlopen(f"http://127.0.0.1:{port}/metrics", timeout=3.0) as resp:
+                assert resp.status == 200
+                metrics = resp.read().decode("utf-8")
+                assert 'xdk_canary_healthy{sdk="python"} 1' in metrics
+                assert 'xdk_canary_probe_success{sdk="python",probe="streaming_ndjson_reconnect"' in metrics

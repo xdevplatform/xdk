@@ -8,6 +8,7 @@ and OAuth2 PKCE flows. All functionality is generated from the OpenAPI specifica
 Generated automatically - do not edit manually.
 """
 
+import time
 import requests
 from typing import Dict, List, Optional, Union, Any, Callable
 
@@ -32,7 +33,11 @@ class Client:
                  token: Dict[str, Any] = None,
                  scope: Union[str, List[str]] = None,
                  authorization_base_url: str = "https://x.com/i",
-                 auth: OAuth1 = None):
+                 auth: OAuth1 = None,
+                 oauth2_auth: Optional[OAuth2PKCEAuth] = None,
+                 timeout: Optional[float] = None,
+                 max_retries: int = 0,
+                 retry_backoff: float = 0.5):
         """Initialize the X API client.
 
         Args:
@@ -46,13 +51,20 @@ class Client:
             scope: Space-separated string or list of strings for OAuth2 authorization scopes.
             authorization_base_url: The base URL for OAuth2 authorization (defaults to https://x.com/i).
             auth: OAuth1 instance for OAuth1.0a authentication.
+            oauth2_auth: Optional pre-configured OAuth2PKCEAuth instance.
+            timeout: Optional default request timeout in seconds.
+            max_retries: Maximum retry attempts on transient 429/5xx responses (defaults to 0).
+            retry_backoff: Initial backoff delay in seconds for transient retries (defaults to 0.5).
         """
         self.session = requests.Session()
         self.session.headers.update({
             'User-Agent': 'xdk-python/{{ version }}'
         })
-        self.base_url = base_url
+        self.base_url = base_url.rstrip('/')
         self.bearer_token = bearer_token
+        self.timeout = timeout
+        self.max_retries = max_retries
+        self.retry_backoff = retry_backoff
         
         # Extract access_token from token dict if provided, otherwise use direct access_token parameter
         # This matches TypeScript's behavior where accessToken can be passed directly
@@ -61,10 +73,9 @@ class Client:
         else:
             self._access_token = access_token
         
-        # Set up OAuth2 PKCE authentication if credentials are provided
-        # This is only needed for OAuth2 flows (getting authorization URL, exchanging codes, refreshing tokens)
-        self.oauth2_auth = None
-        if client_id or token:
+        # Set up OAuth2 PKCE authentication if credentials or instance are provided
+        self.oauth2_auth = oauth2_auth
+        if self.oauth2_auth is None and (client_id or token):
             self.oauth2_auth = OAuth2PKCEAuth(
                 base_url=base_url,
                 authorization_base_url=authorization_base_url,
@@ -74,9 +85,8 @@ class Client:
                 token=token,
                 scope=scope
             )
-            # If we have oauth2_auth with a token, ensure access_token is set
-            if self.oauth2_auth and self.oauth2_auth.token and 'access_token' in self.oauth2_auth.token:
-                self._access_token = self.oauth2_auth.token['access_token']
+        if self.oauth2_auth and self.oauth2_auth.token and 'access_token' in self.oauth2_auth.token:
+            self._access_token = self.oauth2_auth.token['access_token']
         
         # Set up OAuth1 authentication if provided
         self.auth = auth
@@ -102,19 +112,49 @@ class Client:
     
     @property
     def access_token(self):
-        """Get the current access token if available."""
-        # First check if we have a direct access_token (matches TypeScript behavior)
+        """Get the current access token if available (syncs dynamically with oauth2_auth)."""
+        if self.oauth2_auth and self.oauth2_auth.access_token:
+            return self.oauth2_auth.access_token
         if hasattr(self, '_access_token') and self._access_token:
             return self._access_token
-        # Fall back to oauth2_auth if available
-        if self.oauth2_auth:
-            return self.oauth2_auth.access_token
         return None
     
     @access_token.setter
     def access_token(self, value):
         """Set the access token."""
         self._access_token = value
+        if self.oauth2_auth and isinstance(self.oauth2_auth.token, dict):
+            self.oauth2_auth.token['access_token'] = value
+
+    def _send_with_retry(self, method_name: str, url: str, **kwargs) -> requests.Response:
+        """Execute an HTTP request with optional timeout and Retry-After / exponential backoff."""
+        if self.timeout is not None and 'timeout' not in kwargs:
+            kwargs['timeout'] = self.timeout
+
+        request_fn = getattr(self.session, method_name)
+        attempt = 0
+        while True:
+            response = request_fn(url, **kwargs)
+            status_code = getattr(response, 'status_code', None)
+            if (
+                self.max_retries > 0
+                and attempt < self.max_retries
+                and isinstance(status_code, int)
+                and status_code in (429, 500, 502, 503, 504)
+            ):
+                delay = self.retry_backoff * (2 ** attempt)
+                resp_headers = getattr(response, 'headers', None)
+                if resp_headers and hasattr(resp_headers, 'get'):
+                    retry_after = resp_headers.get('Retry-After') or resp_headers.get('retry-after')
+                    if retry_after is not None:
+                        try:
+                            delay = min(float(retry_after), 5.0)
+                        except (TypeError, ValueError):
+                            pass
+                attempt += 1
+                time.sleep(max(0.0, delay))
+                continue
+            return response
     
     def get_authorization_url(self, state=None):
         """Get the authorization URL for the OAuth2 PKCE flow.

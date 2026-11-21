@@ -1,0 +1,111 @@
+using System;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+using Xdk;
+using Xdk.Auth;
+using Xdk.Canary;
+using Xdk.Examples;
+using Xdk.Testing;
+
+var canaryMode = false;
+var daemon = false;
+var live = false;
+var intervalSeconds = 30;
+var port = -1;
+
+for (var i = 0; i < args.Length; i++)
+{
+    switch (args[i])
+    {
+        case "--canary":
+            canaryMode = true;
+            break;
+        case "--examples":
+            canaryMode = false;
+            break;
+        case "--daemon":
+            canaryMode = true;
+            daemon = true;
+            break;
+        case "--once":
+            daemon = false;
+            break;
+        case "--live":
+            live = true;
+            break;
+        case "--interval-seconds" when i + 1 < args.Length:
+            intervalSeconds = int.Parse(args[++i]);
+            break;
+        case "--port" when i + 1 < args.Length:
+            port = int.Parse(args[++i]);
+            break;
+    }
+}
+
+using var cts = new CancellationTokenSource();
+Console.CancelKeyPress += (_, e) =>
+{
+    e.Cancel = true;
+    cts.Cancel();
+};
+
+if (canaryMode)
+{
+    using var canary = new XdkCanaryRunner(live);
+    if (port >= 0)
+    {
+        canary.StartStatusServer(port);
+        Console.WriteLine("{\"event\":\"canary_server_started\",\"sdk\":\"csharp\",\"url\":\"http://127.0.0.1:" + canary.StatusPort + "\"}");
+    }
+
+    while (!cts.IsCancellationRequested)
+    {
+        var snap = await canary.RunCycleAsync(cts.Token);
+        Console.WriteLine(JsonSerializer.Serialize(snap));
+        if (!daemon)
+        {
+            return snap.Healthy ? 0 : 1;
+        }
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(Math.Max(1, intervalSeconds)), cts.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            break;
+        }
+    }
+    return 0;
+}
+
+var envBearer = Environment.GetEnvironmentVariable("X_BEARER_TOKEN");
+var envBase = Environment.GetEnvironmentVariable("X_API_BASE_URL");
+if (!string.IsNullOrEmpty(envBearer))
+{
+    using var liveClient = new XClient(new XClientOptions
+    {
+        BaseUrl = string.IsNullOrEmpty(envBase) ? "https://api.x.com" : envBase,
+        BearerToken = envBearer,
+    });
+    var user = await liveClient.Users.GetByUsernameAsync("XDevelopers", cancellationToken: cts.Token);
+    Console.WriteLine($"Live lookup @XDevelopers -> id={user.Data?.Id}, name={user.Data?.Name}");
+    return 0;
+}
+
+using var simulator = new MockXApiServer();
+using var client = new XClient(new XClientOptions
+{
+    BaseUrl = simulator.BaseUrl,
+    BearerToken = "sim-bearer",
+    AccessToken = "sim-oauth2",
+    OAuth1 = new OAuth1("ck", "cs", "oob", "at", "ats"),
+});
+
+var results = await UseCaseExamples.RunAllAsync(simulator.BaseUrl, client, cts.Token);
+Console.WriteLine($"=== XDK C# Use-Case Examples Completed ({results.Count} suites) ===");
+foreach (var kv in results)
+{
+    Console.WriteLine($"  [PASS] {kv.Key} ({kv.Value} ms)");
+}
+return 0;

@@ -1,0 +1,37 @@
+# XDK TypeScript — End-to-End Use-Case Examples & Continuous Canary
+
+This directory contains runnable, self-verifying TypeScript examples covering **all 24 X API v2 endpoint groups**, a zero-dependency Node `node:http` TCP loopback X API simulator (`mock_x_api_server.ts`), and a continuous canary monitor (`canary.ts`).
+
+## 1. Run All 10 End-to-End Use-Case Suites
+
+`examples/use_cases.ts` walks through 10 complete developer workflows (~95 real SDK HTTP calls across all 24 endpoint groups):
+
+1. **Authentication Flows** (`runAuthenticationExamples`) — Bearer Token, OAuth 2.0 PKCE (`S256`) + token refresh, OAuth 1.0a HMAC-SHA1 signing.
+2. **Posts, Search, Counts & Analytics** (`runPostsAndSearchExamples`) — Create/delete posts, field & expansion lookups, `PostPaginator` search iteration, post counts, analytics, engagements.
+3. **Users, Timelines, Social Graph & Bookmarks** (`runUsersAndBookmarksExamples`) — Profile lookups, `UserPaginator` followers iteration, follow/like/repost/block/mute, bookmarks & folders.
+4. **Real-Time Streaming** (`runStreamingExamples`) — Filtered stream rules CRUD + `EventDrivenStream` NDJSON consumption with `autoReconnect` and 1% sample stream.
+5. **Media Upload & Metadata** (`runMediaUploadExamples`) — Single-shot upload, >2 GiB 64-bit chunked video upload (`INIT` -> `APPEND` -> `FINALIZE` -> `STATUS`), metadata, subtitles, analytics.
+6. **Direct Messages & Encrypted XChat** (`runDirectMessagesAndChatExamples`) — Participant & group DMs, binary `ArrayBuffer` media downloads, XChat conversations, keys, and encrypted messages.
+7. **Lists, Communities, Spaces, Broadcasts & Calls** (`runCommunitiesSpacesListsExamples`) — List management, Communities, live Spaces, Broadcasts, and audio/video Calls.
+8. **Trends, News, Articles & Community Notes** (`runDiscoveryAndNotesExamples`) — WOEID & personalized trends, News search, long-form Articles, Community Notes evaluation & creation.
+9. **Webhooks, Activity, Bots, Connections & Account** (`runWebhooksAndAutomationExamples`) — Webhook registration & replay jobs, Account Activity & X Activity subscriptions, Bots lifecycle, Connection history, Developer Account.
+10. **Batch Compliance, Usage & OpenAPI Introspection** (`runComplianceAndUsageExamples`) — Compliance jobs + binary `ArrayBuffer` upload/download, API Usage & Credits, `/2/openapi.json` introspection.
+
+```bash
+npm run build
+npm run examples
+```
+
+## 2. Continuous Canary Runner (`examples/canary.ts`)
+
+Runs all 10 synthetic use-case suites plus dedicated OAuth 2.0 PKCE auto-refresh, OAuth 1.0a RFC 5849 signature, pagination, streaming mid-stream reconnect, and `429 Retry-After` resilience probes — plus optional live `https://api.x.com` probes!
+
+### One-Shot Check (CI / Cron)
+```bash
+npm run canary -- --once --live
+```
+
+### Continuous Daemon Mode (`/health`, `/status`, Prometheus `/metrics`)
+```bash
+npm run canary -- --daemon --live --interval-seconds 60 --port 8793
+```
