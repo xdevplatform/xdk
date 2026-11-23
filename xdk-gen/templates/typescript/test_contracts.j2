@@ -368,6 +368,8 @@ describe('{{ tag.class_name }}Client Contracts', () => {
     expect(recorded!.method).toBe('{{ contract_test.method | upper }}');
     {% if contract_test.security_requirements %}
     expect(recorded!.firstHeader('authorization')).toBeTruthy();
+    {% else %}
+    expect(recorded!.firstHeader('authorization')).toBeUndefined();
     {% endif %}
   });
 

@@ -232,12 +232,8 @@ headers = {% if operation.is_streaming %}{
                     f"Authentication required for this streaming endpoint. Required schemes: {acceptable_schemes}."
                 )
             {% else %}
-            if available_bearer:
-                selected_auth = 'bearer_token'
-            elif available_oauth2:
-                selected_auth = 'oauth2_user_context'
-            elif available_oauth1:
-                selected_auth = 'oauth1'
+            # Unauthenticated endpoint (no security requirements in OpenAPI spec)
+            selected_auth = None
             {% endif %}
 
             if selected_auth == 'oauth1':
@@ -357,13 +353,8 @@ headers = {% if operation.is_streaming %}{
                 elif 'UserToken' in acceptable_schemes and available_oauth1:
                     selected_auth = 'oauth1'
         {% else %}
-        # No security requirements - use default priority
-        if available_bearer:
-            selected_auth = 'bearer_token'
-        elif available_oauth2:
-            selected_auth = 'oauth2_user_context'
-        elif available_oauth1:
-            selected_auth = 'oauth1'
+        # Unauthenticated endpoint (no security requirements in OpenAPI spec)
+        selected_auth = None
         {% endif %}
         
         # Apply selected authentication

@@ -124,3 +124,13 @@ jobs:
             --java-dir ../xdk-java \
             --csharp-dir ../xdk-csharp \
             --once ${EXTRA_ARGS}
+
+      - name: Verify Standalone Consumer Package Installs (Wheel, Tarball, Maven JAR, NuGet nupkg)
+        working-directory: xdk
+        run: |
+          chmod +x canary/verify_consumer_packages.sh
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.live_probes }}" = "true" ]; then
+            ./canary/verify_consumer_packages.sh --live
+          else
+            ./canary/verify_consumer_packages.sh
+          fi

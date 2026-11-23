@@ -151,6 +151,8 @@ public class {{ tag.class_name }}ContractsTests : IClassFixture<{{ tag.class_nam
         {% endif %}
         {% if contract_test.security_requirements | length > 0 %}
         Assert.NotNull(captured.FirstHeader("Authorization"));
+        {% else %}
+        Assert.Null(captured.FirstHeader("Authorization"));
         {% endif %}
         {% if contract_test.required_body %}
         Assert.NotEmpty(captured.BodyBytes);

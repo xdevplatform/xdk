@@ -23,7 +23,7 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
     // Remove previously generated source and test trees so modules for tags
     // that no longer exist in the spec don't linger. The venv is removed too
     // because `uv venv` refuses to overwrite an existing one.
-    for dir in ["xdk", "tests", "scripts", ".venv"] {
+    for dir in ["xdk", "tests", "examples", "scripts", ".venv"] {
         let path = output_dir.join(dir);
         if path.exists()
             && let Err(e) = fs::remove_dir_all(&path)

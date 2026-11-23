@@ -8,8 +8,8 @@ A Rust-based SDK generator that creates language-specific SDKs for the X API fro
 |----------|---------|------|
 | Python | `pip install xdk` | [xdk-python](https://github.com/xdevplatform/xdk-python) |
 | TypeScript | `npm install @xdevplatform/xdk` | [xdk-typescript](https://github.com/xdevplatform/xdk-typescript) |
-| Java | `com.xdevplatform:xdk` | [xdk-java](https://github.com/xdevplatform/xdk-java) |
-| C# | `dotnet add package Xdk` | [xdk-csharp](https://github.com/xdevplatform/xdk-csharp) |
+| Java | `com.x:xdk` | [xdk-java](https://github.com/xdevplatform/xdk-java) |
+| C# | `dotnet add package XDevPlatform.Xdk` | [xdk-csharp](https://github.com/xdevplatform/xdk-csharp) |
 
 ## Architecture
 

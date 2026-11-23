@@ -30,9 +30,11 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
 }
 
 fn clean_generated_dirs(output_dir: &Path) -> Result<()> {
-    let path = output_dir.join("src");
-    if path.exists() {
-        fs::remove_dir_all(&path).map_err(BuildError::IoError)?;
+    for dir in ["src", "examples"] {
+        let path = output_dir.join(dir);
+        if path.exists() {
+            fs::remove_dir_all(&path).map_err(BuildError::IoError)?;
+        }
     }
     Ok(())
 }

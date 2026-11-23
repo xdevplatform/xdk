@@ -184,7 +184,7 @@ def build_sdk_commands(
 
     if "java" in sdks:
         cp = build_java_classpath(dirs["java"], bins["mvn"], env)
-        cmd = [bins["java"], "-cp", cp, "com.xdevplatform.xdk.canary.XdkCanaryApp"]
+        cmd = [bins["java"], "-cp", cp, "com.x.xdk.canary.XdkCanaryApp"]
         if mode == "once":
             cmd.append("--once")
         else:

@@ -49,7 +49,7 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
 /// that no longer exist in the spec don't linger and break the build.
 /// Build artifacts (node_modules, dist) are left in place.
 fn clean_generated_dirs(output_dir: &Path) -> Result<()> {
-    for dir in ["src", "tests", "scripts"] {
+    for dir in ["src", "tests", "examples", "scripts"] {
         let path = output_dir.join(dir);
         if path.exists() {
             std::fs::remove_dir_all(&path).map_err(BuildError::IoError)?;

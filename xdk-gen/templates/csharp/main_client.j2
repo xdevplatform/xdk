@@ -509,11 +509,15 @@ public sealed class XClient : IDisposable
         var hasOAuth2 = !string.IsNullOrEmpty(AccessToken);
         var hasOAuth1 = OAuth1 is { HasAccessToken: true };
 
-        if (schemes is null || schemes.Count == 0)
+        if (schemes is null)
         {
             if (hasBearer) return "bearer_token";
             if (hasOAuth2) return "oauth2_user_context";
             if (hasOAuth1) return "oauth1";
+            return null;
+        }
+        if (schemes.Count == 0)
+        {
             return null;
         }
 

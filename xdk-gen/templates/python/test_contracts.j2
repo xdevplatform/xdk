@@ -430,5 +430,7 @@ class Test{{ tag.class_name }}Contracts:
         assert recorded.method == "{{ contract_test.method | upper }}"
         {% if contract_test.security_requirements %}
         assert recorded.first_header("authorization") is not None
+        {% else %}
+        assert recorded.first_header("authorization") is None
         {% endif %}
     {% endfor %}

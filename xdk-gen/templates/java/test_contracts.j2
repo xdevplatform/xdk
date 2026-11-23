@@ -1,13 +1,13 @@
-package com.xdevplatform.xdk;
+package com.x.xdk;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.xdevplatform.xdk.auth.OAuth1;
-import com.xdevplatform.xdk.clients.{{ tag.class_name }}Client;
-import com.xdevplatform.xdk.models.Schemas;
-import com.xdevplatform.xdk.streaming.StreamConfig;
-import com.xdevplatform.xdk.testing.MockXApiServer;
+import com.x.xdk.auth.OAuth1;
+import com.x.xdk.clients.{{ tag.class_name }}Client;
+import com.x.xdk.models.Schemas;
+import com.x.xdk.streaming.StreamConfig;
+import com.x.xdk.testing.MockXApiServer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collections;
@@ -164,6 +164,8 @@ public class {{ tag.class_name }}ContractsTest {
         {% endif %}
         {% if contract_test.security_requirements | length > 0 %}
         assertNotNull(captured.firstHeader("authorization"), "Expected Authorization header");
+        {% else %}
+        assertNull(captured.firstHeader("authorization"), "Public endpoint must not send Authorization header");
         {% endif %}
         {% if contract_test.required_body %}
         assertTrue(captured.getBodyBytes().length > 0, "Expected non-empty request body");
