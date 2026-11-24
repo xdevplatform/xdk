@@ -1,0 +1,512 @@
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using Xdk;
+using Xdk.Auth;
+using Xdk.Clients;
+using Xdk.Models;
+using Xdk.Streaming;
+
+namespace Xdk.Examples;
+
+/// <summary>
+/// Comprehensive, runnable X API v2 C# / .NET SDK Cookbook covering every major developer use-case
+/// and all 24 API endpoint groups.
+/// </summary>
+public static class UseCaseExamples
+{
+    /// <summary>
+    /// 1. Authentication Flows: Bearer Token, OAuth 2.0 PKCE + Refresh, and OAuth 1.0a User Context.
+    /// </summary>
+    public static async Task RunAuthenticationExamplesAsync(string baseUrl, CancellationToken ct = default)
+    {
+        // 1a. App-Only Bearer Token
+        using var bearerClient = new XClient(new XClientOptions
+        {
+            BaseUrl = baseUrl,
+            BearerToken = "app_only_bearer_token",
+        });
+        var appLookup = await bearerClient.Users.GetByUsernameAsync("XDevelopers", cancellationToken: ct);
+        Require(appLookup.Data != null, "Bearer lookup should return data");
+
+        // 1b. OAuth 2.0 Authorization Code with PKCE + Token Refresh
+        var oauth2 = new OAuth2Pkce(
+            clientId: "demo_client_id",
+            redirectUri: "https://example.org/oauth/callback",
+            clientSecret: "demo_client_secret",
+            scopes: new[] { "tweet.read", "tweet.write", "users.read", "offline.access" },
+            apiBaseUrl: baseUrl);
+        using var oauth2Client = new XClient(new XClientOptions
+        {
+            BaseUrl = baseUrl,
+            OAuth2 = oauth2,
+        });
+        var authUrl = oauth2.GetAuthorizationUrl("state_token_abc");
+        Require(authUrl.Contains("code_challenge_method=S256", StringComparison.Ordinal), "PKCE S256 URL expected");
+        var token = await oauth2.ExchangeCodeAsync("sample_auth_code", cancellationToken: ct);
+        Require(!string.IsNullOrEmpty(token.AccessToken), "Exchanged access token expected");
+        var me = await oauth2Client.Users.GetMeAsync(cancellationToken: ct);
+        Require(me.Data != null, "OAuth2 GetMeAsync should succeed");
+        await oauth2Client.RefreshTokenAsync(ct);
+
+        // 1c. OAuth 1.0a User Context (HMAC-SHA1)
+        var oauth1 = new OAuth1("consumer_key", "consumer_secret", "oob", "user_access_token", "user_access_secret");
+        using var oauth1Client = new XClient(new XClientOptions
+        {
+            BaseUrl = baseUrl,
+            OAuth1 = oauth1,
+        });
+        var created = await oauth1Client.Posts.CreateAsync(
+            new CreatePostsRequest { Text = "Posting with OAuth 1.0a from C#!" },
+            ct);
+        Require(created != null, "OAuth1 post creation should succeed");
+    }
+
+    /// <summary>
+    /// 2. Posts, Search, Post Counts &amp; Analytics (<see cref="PostsClient"/>).
+    /// </summary>
+    public static async Task RunPostsAndSearchExamplesAsync(XClient client, CancellationToken ct = default)
+    {
+        var created = await client.Posts.CreateAsync(new CreatePostsRequest
+        {
+            Text = "Shipping Java & C# SDKs on X API v2!",
+            ReplySettings = "everyone",
+        }, ct);
+        Require(created != null, "CreateAsync");
+
+        var lookupOpts = new PostsClient.GetByIdOptions
+        {
+            PostFields = new List<string> { "created_at", "public_metrics", "author_id" },
+            Expansions = new List<string> { "author_id" },
+            UserFields = new List<string> { "username", "verified" },
+        };
+        var post = await client.Posts.GetByIdAsync("1234567890", lookupOpts, ct);
+        Require(post != null, "GetByIdAsync");
+        await client.Posts.GetByIdsAsync(new List<string> { "1234567890", "1234567891" }, cancellationToken: ct);
+
+        var pageCount = 0;
+        await foreach (var page in client.Posts.SearchRecentPages(
+            "from:XDevelopers -is:retweet",
+            new PostsClient.SearchRecentOptions { MaxResults = 10 }).WithCancellation(ct))
+        {
+            Require(page != null, "SearchRecentPages");
+            if (++pageCount >= 2) break;
+        }
+        await client.Posts.SearchAllAsync("xdk sdk", new PostsClient.SearchAllOptions { MaxResults = 10 }, ct);
+
+        await client.Posts.GetCountsRecentAsync("xdk", new PostsClient.GetCountsRecentOptions { Granularity = "day" }, ct);
+        await client.Posts.GetCountsAllAsync("xdk", cancellationToken: ct);
+        await client.Posts.GetAnalyticsAsync(
+            new List<string> { "1234567890" },
+            "2025-01-01T00:00:00Z",
+            "2025-01-07T00:00:00Z",
+            cancellationToken: ct);
+        await client.Posts.GetLikingUsersAsync("1234567890", cancellationToken: ct);
+        await client.Posts.GetRepostedByAsync("1234567890", cancellationToken: ct);
+        await client.Posts.GetQuotedAsync("1234567890", cancellationToken: ct);
+        await client.Posts.HideReplyAsync("1234567890", new HidePostsReplyRequest { Hidden = true }, ct);
+        await client.Posts.DeleteAsync("1234567890", ct);
+    }
+
+    /// <summary>
+    /// 3. Users, Timelines, Social Graph &amp; Bookmarks (<see cref="UsersClient"/>).
+    /// </summary>
+    public static async Task RunUsersAndBookmarksExamplesAsync(XClient client, CancellationToken ct = default)
+    {
+        var me = await client.Users.GetMeAsync(new UsersClient.GetMeOptions
+        {
+            UserFields = new List<string> { "created_at", "description" },
+        }, ct);
+        var myId = me.Data?.Id ?? "2244994945";
+
+        await client.Users.GetByUsernameAsync("XDevelopers", cancellationToken: ct);
+        await client.Users.GetByUsernamesAsync(new List<string> { "XDevelopers", "X" }, cancellationToken: ct);
+        await client.Users.GetByIdAsync(myId, cancellationToken: ct);
+        await client.Users.GetByIdsAsync(new List<string> { myId, "783214" }, cancellationToken: ct);
+        await client.Users.SearchAsync("developer platform", cancellationToken: ct);
+
+        var timelinePages = 0;
+        await foreach (var page in client.Users.GetPostsPages(
+            myId,
+            new UsersClient.GetPostsOptions { MaxResults = 10 }).WithCancellation(ct))
+        {
+            Require(page != null, "GetPostsPages");
+            if (++timelinePages >= 2) break;
+        }
+        await client.Users.GetMentionsAsync(myId, cancellationToken: ct);
+        await client.Users.GetTimelineAsync(myId, cancellationToken: ct);
+
+        await client.Users.FollowUserAsync(myId, new FollowUserRequest { TargetUserId = "783214" }, ct);
+        await foreach (var fPage in client.Users.GetFollowersPages(myId).WithCancellation(ct))
+        {
+            Require(fPage != null, "GetFollowersPages");
+            break;
+        }
+        await client.Users.GetFollowingAsync(myId, cancellationToken: ct);
+        await client.Users.LikePostAsync(myId, new LikePostRequest { TweetId = "1234567890" }, ct);
+        await client.Users.UnlikePostAsync(myId, "1234567890", ct);
+        await client.Users.RepostPostAsync(myId, new RepostPostRequest { TweetId = "1234567890" }, ct);
+        await client.Users.UnrepostPostAsync(myId, "1234567890", ct);
+        await client.Users.IdBlockAsync(myId, new UsersIdBlockRequest { TargetUserId = "99999" }, ct);
+        await client.Users.IdUnblockAsync(myId, "99999", ct);
+        await client.Users.MuteUserAsync(myId, new MuteUserRequest { TargetUserId = "99999" }, ct);
+        await client.Users.UnmuteUserAsync(myId, "99999", ct);
+        await client.Users.UnfollowUserAsync(myId, "783214", ct);
+
+        await client.Users.CreateBookmarkAsync(myId, new CreateUsersBookmarkRequest { TweetId = "1234567890" }, ct);
+        await foreach (var bmPage in client.Users.GetBookmarksPages(myId).WithCancellation(ct))
+        {
+            Require(bmPage != null, "GetBookmarksPages");
+            break;
+        }
+        await client.Users.CreateBookmarkFolderAsync(myId, new CreateUsersBookmarkFolderRequest { Name = "SDK Docs" }, ct);
+        await client.Users.GetBookmarkFoldersAsync(myId, cancellationToken: ct);
+        await client.Users.DeleteBookmarkAsync(myId, "1234567890", ct);
+    }
+
+    /// <summary>
+    /// 4. Real-Time Filtered &amp; Sample Streaming (<see cref="StreamClient"/>).
+    /// </summary>
+    public static async Task RunStreamingExamplesAsync(XClient client, CancellationToken ct = default)
+    {
+        await client.Stream.UpdateRulesAsync(new UpdateRulesRequest
+        {
+            Add = new List<UpdateRulesAdd>
+            {
+                new() { Value = "xdk (java OR csharp) -is:retweet", Tag = "xdk-mentions" },
+            },
+        }, cancellationToken: ct);
+        await client.Stream.GetRulesAsync(cancellationToken: ct);
+        await client.Stream.GetRuleCountsAsync(cancellationToken: ct);
+
+        var streamOpts = new StreamOptions
+        {
+            MaxRetries = 2,
+            InitialBackoff = TimeSpan.FromMilliseconds(25),
+            MaxBackoff = TimeSpan.FromMilliseconds(100),
+        };
+
+        var received = 0;
+        await using (var stream = client.Stream.PostsStream(new StreamClient.PostsOptions
+        {
+            TweetFields = new List<string> { "created_at", "author_id" },
+            StreamOptions = streamOpts,
+        }))
+        {
+            await foreach (var item in stream.WithCancellation(ct))
+            {
+                Require(item != null, "Filtered stream item");
+                if (++received >= 2) break;
+            }
+        }
+        Require(received > 0, "Filtered stream should emit events");
+
+        await using (var sample = client.Stream.PostsSampleStream(new StreamClient.PostsSampleOptions
+        {
+            StreamOptions = streamOpts,
+        }))
+        {
+            var gotSample = false;
+            await foreach (var item in sample.WithCancellation(ct))
+            {
+                gotSample = item != null;
+                break;
+            }
+            Require(gotSample, "Sample stream should emit event");
+        }
+    }
+
+    /// <summary>
+    /// 5. Media Upload, Chunked Large Video &amp; Metadata (<see cref="MediaClient"/>).
+    /// </summary>
+    public static async Task RunMediaUploadExamplesAsync(XClient client, CancellationToken ct = default)
+    {
+        var base64Chunk = Convert.ToBase64String(Encoding.UTF8.GetBytes("fake_mp4_segment_bytes"));
+
+        await client.Media.UploadAsync(new MediaUploadRequest
+        {
+            Media = base64Chunk,
+            MediaCategory = "tweet_image",
+        }, ct);
+
+        // Chunked >2 GiB video upload lifecycle (64-bit TotalBytes!)
+        var init = await client.Media.InitializeUploadAsync(new InitializeMediaUploadRequest
+        {
+            TotalBytes = 3_221_225_472L, // 3 GiB
+            MediaType = "video/mp4",
+            MediaCategory = "tweet_video",
+        }, ct);
+        var mediaId = init.Data?.Id ?? "1889990001";
+
+        await client.Media.AppendUploadAsync(mediaId, new AppendMediaUploadRequest
+        {
+            SegmentIndex = 0,
+            Media = base64Chunk,
+        }, ct);
+        await client.Media.FinalizeUploadAsync(mediaId, ct);
+        await client.Media.GetUploadStatusAsync(mediaId, new MediaClient.GetUploadStatusOptions { Command = "STATUS" }, ct);
+
+        await client.Media.CreateMetadataAsync(new CreateMediaMetadataRequest { Id = mediaId }, ct);
+        await client.Media.CreateSubtitlesAsync(new CreateMediaSubtitlesRequest
+        {
+            Id = mediaId,
+            MediaCategory = "tweet_video",
+        }, ct);
+        await client.Media.GetByKeysAsync(new List<string> { "3_" + mediaId }, cancellationToken: ct);
+        await client.Media.GetAnalyticsAsync(
+            new List<string> { "3_" + mediaId },
+            "2025-01-01T00:00:00Z",
+            "2025-01-07T00:00:00Z",
+            cancellationToken: ct);
+        await client.Media.GetLibraryCategoriesAsync(cancellationToken: ct);
+    }
+
+    /// <summary>
+    /// 6. Direct Messages &amp; Encrypted XChat (<see cref="DirectMessagesClient"/>, <see cref="ChatClient"/>).
+    /// </summary>
+    public static async Task RunDirectMessagesAndChatExamplesAsync(XClient client, CancellationToken ct = default)
+    {
+        await client.DirectMessages.CreateByParticipantIdAsync(
+            "783214",
+            new CreateDirectMessagesByParticipantIdRequest { Text = "Hey from XDK C#!" },
+            ct);
+        await client.DirectMessages.CreateConversationAsync(new CreateDirectMessagesConversationRequest
+        {
+            ConversationType = "Group",
+            ParticipantIds = new List<string> { "783214", "2244994945" },
+        }, ct);
+        await client.DirectMessages.CreateByConversationIdAsync(
+            "conv_1",
+            new CreateDirectMessagesByConversationIdRequest { Text = "Welcome to the group DM!" },
+            ct);
+        await foreach (var dmPage in client.DirectMessages.GetEventsPages(
+            new DirectMessagesClient.GetEventsOptions { MaxResults = 10 }).WithCancellation(ct))
+        {
+            Require(dmPage != null, "DM events page");
+            break;
+        }
+        var dmMedia = await client.DirectMessages.DmConversationsMediaDownloadAsync("dm_1", "m_1", "r_1", ct);
+        Require(dmMedia.Length > 0, "DM media binary download");
+        await client.DirectMessages.DeleteEventsAsync("ev_1", ct);
+
+        // Encrypted XChat & public keys
+        await client.Users.GetPublicKeysAsync(new List<string> { "2244994945" }, cancellationToken: ct);
+        await client.Chat.GetSettingsAsync(cancellationToken: ct);
+        await client.Chat.SendMessageAsync("chat_conv_1", new SendChatMessageRequest
+        {
+            EncodedMessageCreateEvent = "base64_encrypted_event",
+            MessageId = "msg_001",
+        }, ct);
+        await client.Chat.GetConversationEventsAsync("chat_conv_1", cancellationToken: ct);
+        await client.Chat.MediaUploadInitializeAsync(new ChatMediaUploadInitializeRequest
+        {
+            ConversationId = "chat_conv_1",
+            TotalBytes = 1_048_576L,
+        }, ct);
+        await client.Chat.MediaUploadAppendAsync("upload_1", new ChatMediaUploadAppendRequest
+        {
+            ConversationId = "chat_conv_1",
+            MediaHashKey = "hash_1",
+            SegmentIndex = 0,
+            Media = "Y2hhdF9tZWRpYQ==",
+        }, ct);
+        var chatBytes = await client.Chat.MediaDownloadAsync("chat_conv_1", "hash_1", ct);
+        Require(chatBytes.Length > 0, "XChat media download");
+    }
+
+    /// <summary>
+    /// 7. Lists, Communities, Spaces, Broadcasts &amp; Calls.
+    /// </summary>
+    public static async Task RunCommunitiesSpacesListsExamplesAsync(XClient client, CancellationToken ct = default)
+    {
+        var list = await client.Lists.CreateAsync(new CreateListsRequest
+        {
+            Name = "XDK Contributors",
+            Description = "Core SDK builders",
+            Private = false,
+        }, ct);
+        Require(list != null, "Create list");
+        await client.Lists.GetByIdAsync("list_1", cancellationToken: ct);
+        await client.Lists.AddMemberAsync("list_1", new AddListsMemberRequest { UserId = "783214" }, ct);
+        await client.Lists.GetMembersAsync("list_1", cancellationToken: ct);
+        await foreach (var lp in client.Lists.GetPostsPages(
+            "list_1",
+            new ListsClient.GetPostsOptions { MaxResults = 10 }).WithCancellation(ct))
+        {
+            Require(lp != null, "List posts page");
+            break;
+        }
+        await client.Lists.UpdateAsync("list_1", new UpdateListsRequest { Description = "Updated" }, ct);
+        await client.Lists.RemoveMemberByUserIdAsync("list_1", "783214", ct);
+        await client.Lists.DeleteAsync("list_1", ct);
+
+        await client.Communities.SearchAsync("X Developers", cancellationToken: ct);
+        await client.Communities.GetByIdAsync("comm_1", cancellationToken: ct);
+        await client.Spaces.SearchAsync("AI Engineering", new SpacesClient.SearchOptions { State = "live" }, ct);
+        await client.Spaces.GetByIdAsync("1YqKDqWLPPlKV", cancellationToken: ct);
+        await client.Spaces.GetByCreatorIdsAsync(new List<string> { "2244994945" }, cancellationToken: ct);
+        await client.Spaces.GetPostsAsync("1YqKDqWLPPlKV", cancellationToken: ct);
+
+        await client.Broadcasts.GetRegionAsync(ct);
+        await client.Broadcasts.ListAsync(cancellationToken: ct);
+        await client.Broadcasts.ListSourcesAsync(ct);
+
+        await client.Calls.CreateCallAsync(new CreateCallRequest
+        {
+            ConversationId = "chat_conv_1",
+            AudioOnly = true,
+            Title = "SDK Standup",
+        }, ct);
+        await client.Calls.GetCallAsync("call_1", cancellationToken: ct);
+        await client.Calls.ListScheduledAsync(cancellationToken: ct);
+        await client.Calls.LeaveCallAsync("call_1", ct);
+    }
+
+    /// <summary>
+    /// 8. Trends, News, Articles &amp; Community Notes.
+    /// </summary>
+    public static async Task RunDiscoveryAndNotesExamplesAsync(XClient client, CancellationToken ct = default)
+    {
+        await client.Trends.GetByWoeidAsync(1, new TrendsClient.GetByWoeidOptions { MaxTrends = 20 }, ct);
+        await client.Trends.GetPersonalizedAsync(cancellationToken: ct);
+
+        await client.News.SearchAsync("technology", new NewsClient.SearchOptions { MaxResults = 10 }, ct);
+        await client.News.GetAsync("news_1", cancellationToken: ct);
+        await client.Articles.ArticleCreateDraftAsync(new ArticleCreateDraftRequest { Title = "Building with XDK C#" }, ct);
+        await client.Articles.ArticlePublishAsync("article_1", ct);
+
+        await client.CommunityNotes.SearchEligiblePostsAsync(true, cancellationToken: ct);
+        await client.CommunityNotes.SearchWrittenAsync(true, cancellationToken: ct);
+        await client.CommunityNotes.EvaluateAsync(new EvaluateCommunityNotesRequest
+        {
+            PostId = "1234567890",
+            NoteText = "Helpful context with citation https://developer.x.com",
+        }, ct);
+        await client.CommunityNotes.CreateAsync(new CreateCommunityNotesRequest
+        {
+            PostId = "1234567890",
+            TestMode = true,
+        }, ct);
+        await client.CommunityNotes.DeleteAsync("note_1", ct);
+    }
+
+    /// <summary>
+    /// 9. Webhooks, Account Activity, Activity Subscriptions, Bots, Connections &amp; Account.
+    /// </summary>
+    public static async Task RunWebhooksAndAutomationExamplesAsync(XClient client, CancellationToken ct = default)
+    {
+        await client.Webhooks.CreateAsync(new CreateWebhooksRequest { Url = "https://webhooks.example.org/x/events" }, ct);
+        await client.Webhooks.GetAsync(cancellationToken: ct);
+        await client.Webhooks.ValidateAsync("wh_1", ct);
+        await client.Webhooks.CreateStreamLinkAsync("wh_1", ct);
+        await client.Webhooks.GetStreamLinksAsync(ct);
+        await client.Webhooks.CreateWebhookReplayJobAsync(new CreateWebhookReplayJobRequest
+        {
+            WebhookId = "wh_1",
+            FromDate = "202501150000",
+            ToDate = "202501150100",
+        }, ct);
+
+        await client.AccountActivity.CreateSubscriptionAsync("wh_1", new CreateAccountActivitySubscriptionRequest(), ct);
+        await client.AccountActivity.GetSubscriptionsAsync("wh_1", ct);
+        await client.AccountActivity.GetSubscriptionCountAsync(ct);
+        await client.AccountActivity.ValidateSubscriptionAsync("wh_1", ct);
+        await client.AccountActivity.DeleteSubscriptionAsync("wh_1", "2244994945", ct);
+
+        await client.Activity.CreateSubscriptionAsync(new CreateActivitySubscriptionRequest
+        {
+            EventType = "post.create",
+            WebhookId = "wh_1",
+            Tag = "acct-sub",
+        }, ct);
+        await client.Activity.GetSubscriptionsAsync(cancellationToken: ct);
+        await client.Activity.UpdateSubscriptionAsync("sub_1", new UpdateActivitySubscriptionRequest { Tag = "updated-tag" }, ct);
+        await client.Activity.DeleteSubscriptionAsync("sub_1", ct);
+        await client.Webhooks.DeleteAsync("wh_1", ct);
+
+        await client.Bots.CreateBotAsync(new CreateBotRequest
+        {
+            DisplayName = "XDK Helper Bot",
+            Handle = "xdk_helper_bot",
+        }, ct);
+        await client.Bots.GetAsync(cancellationToken: ct);
+        await client.Bots.RotateBotTokenAsync("bot_1", new RotateBotTokenRequest(), ct);
+        await client.Bots.RevokeBotTokenAsync("bot_1", ct);
+        await client.Bots.DeleteBotAsync("bot_1", ct);
+
+        await client.Connections.GetConnectionHistoryAsync(cancellationToken: ct);
+        await client.Connections.DeleteByEndpointAsync("posts-stream", ct);
+        await client.Account.GetDeveloperAsync(ct);
+        await client.Account.EnsureAsync(new EnsureAccountRequest { Metadata = "{}" }, ct);
+    }
+
+    /// <summary>
+    /// 10. Batch Compliance, API Usage &amp; OpenAPI Spec Introspection.
+    /// </summary>
+    public static async Task RunComplianceAndUsageExamplesAsync(XClient client, CancellationToken ct = default)
+    {
+        await client.Compliance.CreateJobsAsync(new CreateComplianceJobsRequest
+        {
+            Type = "tweets",
+            Name = "nightly-compliance-sync",
+            Resumable = true,
+        }, cancellationToken: ct);
+        await client.Compliance.GetJobsAsync("tweets", new ComplianceClient.GetJobsOptions { Status = "in_progress" }, ct);
+        var idsPayload = Encoding.UTF8.GetBytes("1234567890\n1234567891\n");
+        await client.Compliance.UploadJobSubmissionAsync("job_1", "upload_tok", idsPayload, cancellationToken: ct);
+        await client.Compliance.GetJobsByIdAsync("job_1", cancellationToken: ct);
+        var results = await client.Compliance.DownloadJobResultsAsync("job_1", "download_tok", cancellationToken: ct);
+        Require(results.Length > 0, "Compliance binary download");
+        await client.Compliance.DeleteJobsByIdAsync("job_1", cancellationToken: ct);
+
+        await client.Usage.GetAsync(new UsageClient.GetOptions { Days = 7 }, ct);
+        await client.Usage.GetCreditsAsync(ct);
+
+        var spec = await client.General.GetOpenApiSpecAsync(ct);
+        Require(spec.Count > 0, "OpenAPI spec dictionary");
+    }
+
+    /// <summary>
+    /// Executes all 10 X API v2 workflow suites (covering all 24 endpoint groups) and returns per-suite timings in ms.
+    /// </summary>
+    public static async Task<IReadOnlyDictionary<string, long>> RunAllAsync(
+        string baseUrl,
+        XClient client,
+        CancellationToken ct = default)
+    {
+        var suites = new (string Name, Func<Task> Run)[]
+        {
+            ("01_authentication_flows", () => RunAuthenticationExamplesAsync(baseUrl, ct)),
+            ("02_posts_and_search", () => RunPostsAndSearchExamplesAsync(client, ct)),
+            ("03_users_social_and_bookmarks", () => RunUsersAndBookmarksExamplesAsync(client, ct)),
+            ("04_realtime_streaming", () => RunStreamingExamplesAsync(client, ct)),
+            ("05_media_upload_and_metadata", () => RunMediaUploadExamplesAsync(client, ct)),
+            ("06_direct_messages_and_xchat", () => RunDirectMessagesAndChatExamplesAsync(client, ct)),
+            ("07_lists_communities_spaces_calls", () => RunCommunitiesSpacesListsExamplesAsync(client, ct)),
+            ("08_trends_news_articles_notes", () => RunDiscoveryAndNotesExamplesAsync(client, ct)),
+            ("09_webhooks_activity_bots_account", () => RunWebhooksAndAutomationExamplesAsync(client, ct)),
+            ("10_compliance_usage_and_openapi", () => RunComplianceAndUsageExamplesAsync(client, ct)),
+        };
+
+        var timings = new Dictionary<string, long>();
+        foreach (var (name, run) in suites)
+        {
+            var sw = Stopwatch.StartNew();
+            await run().ConfigureAwait(false);
+            sw.Stop();
+            timings[name] = sw.ElapsedMilliseconds;
+        }
+        return timings;
+    }
+
+    private static void Require(bool condition, string message)
+    {
+        if (!condition)
+        {
+            throw new InvalidOperationException($"Example assertion failed: {message}");
+        }
+    }
+}

@@ -28,6 +28,7 @@ mod tests {
         assert!(result.is_ok(), "Failed to generate C# SDK: {:?}", result);
 
         let csproj = fs::read_to_string(output_dir.join("src/Xdk/Xdk.csproj")).unwrap();
+        assert!(csproj.contains("<PackageId>XDevPlatform.Xdk</PackageId>"));
         assert!(csproj.contains("<Version>0.1.0-test</Version>"));
 
         let client = fs::read_to_string(output_dir.join("src/Xdk/XClient.cs")).unwrap();

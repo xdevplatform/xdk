@@ -8,7 +8,7 @@ Official Java SDK for the X API v2 (Java 17+).
 
 ```xml
 <dependency>
-    <groupId>com.xdevplatform</groupId>
+    <groupId>com.x</groupId>
     <artifactId>xdk</artifactId>
     <version>{{ version }}</version>
 </dependency>
@@ -17,15 +17,15 @@ Official Java SDK for the X API v2 (Java 17+).
 ## Quick Start
 
 ```java
-import com.xdevplatform.xdk.XClient;
-import com.xdevplatform.xdk.XClientConfig;
-import com.xdevplatform.xdk.models.Schemas;
+import com.x.xdk.XClient;
+import com.x.xdk.XClientConfig;
+import com.x.xdk.models.Schemas;
 
 XClient client = XClient.builder()
     .bearerToken(System.getenv("X_BEARER_TOKEN"))
     .build();
 
-Schemas.Get2UsersByUsernameUsernameResponse user =
+Schemas.GetUsersByUsernameResponse user =
     client.users().getByUsername("XDevelopers");
 System.out.println(user.getData());
 ```
@@ -40,3 +40,8 @@ System.out.println(user.getData());
 
 - Paginated operations have `*Pages(...)` variants returning `Paginator<T>` (implementing `Iterable<T>`) for automatic cursor-based iteration.
 - Streaming operations return `EventStream<T>` (implementing `Iterable<T>` and `AutoCloseable`) with incremental UTF-8 line decoding and exponential backoff reconnection.
+
+## Examples & Continuous Canary
+
+- **Runnable Use-Case Examples**: See [`examples/`](examples/) for end-to-end runnable workflows covering Posts, Search, Users, Bookmarks, Filtered & Sample Streaming, Chunked Media Upload, Direct Messages & XChat, Lists, Spaces, Communities, Community Notes, Trends, News, Webhooks, Compliance, Usage, and OAuth 1.0a / 2.0 PKCE.
+- **Continuous Canary Runner**: Run `mvn test-compile exec:java -Dexec.classpathScope=test -Dexec.mainClass=com.x.xdk.canary.XdkCanaryApp -Dexec.args="--once"` (or `--daemon --port 8790` for an always-on health & `/metrics` probe server against the built-in X API simulator or live `X_BEARER_TOKEN`).

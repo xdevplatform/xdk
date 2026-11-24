@@ -284,7 +284,7 @@ export class Client {
    * });
    * ```
    */
-  constructor(config: ClientConfig | any) {
+  constructor(config: ClientConfig | any = {}) {
     // Handle OAuth1 instance passed directly
     if (config && typeof config === 'object' && config.accessToken && config.accessToken.accessToken && config.accessToken.accessTokenSecret) {
       // This is an OAuth1 instance
@@ -292,7 +292,7 @@ export class Client {
       this.baseUrl = "https://api.x.com";
     } else {
       // This is a regular config object
-      const clientConfig = config as ClientConfig;
+      const clientConfig = (config || {}) as ClientConfig;
       this.baseUrl = clientConfig.baseUrl || "https://api.x.com";
       this.bearerToken = clientConfig.bearerToken;
       this.accessToken = clientConfig.accessToken || clientConfig.oauth2?.getToken?.()?.access_token;
@@ -301,7 +301,9 @@ export class Client {
     }
     
     this.timeout = (config as ClientConfig)?.timeout ?? 30000;
-    this.retry = (config as ClientConfig)?.retry ?? false;
+    this.retry =
+      (config as ClientConfig)?.retry ??
+      (((config as ClientConfig)?.maxRetries ?? 0) > 0);
     this.maxRetries = (config as ClientConfig)?.maxRetries ?? 3;
     
     // Initialize headers
@@ -309,7 +311,7 @@ export class Client {
       'User-Agent': 'xdk-typescript/{{ version }}',
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      ...((config as ClientConfig).headers || {}),
+      ...((config as ClientConfig)?.headers || {}),
     };
     
     this.headers = httpClient.createHeaders(defaultHeaders);
@@ -448,8 +450,17 @@ export class Client {
             errorData = undefined;
           }
 
+          const extractedMessage =
+            errorData && typeof errorData === 'object'
+              ? errorData.message ||
+                errorData.detail ||
+                errorData.errors?.[0]?.message ||
+                errorData.errors?.[0]?.detail ||
+                errorData.title
+              : undefined;
+
           throw new ApiError(
-            errorData && errorData.message ? errorData.message : `HTTP ${response.status}: ${response.statusText}`,
+            extractedMessage || `HTTP ${response.status}: ${response.statusText}`,
             response.status,
             response.statusText,
             response.headers,
@@ -489,8 +500,18 @@ export class Client {
           });
           continue;
         }
+        const errMsg =
+          error instanceof Error
+            ? error.message
+            : error && typeof (error as any).message === 'string'
+              ? (error as any).message
+              : 'Request failed';
+        const causeMsg =
+          error && typeof (error as any).cause?.message === 'string'
+            ? ` (${(error as any).cause.message})`
+            : '';
         throw new ApiError(
-          error instanceof Error ? error.message : 'Request failed',
+          `${errMsg}${causeMsg}`,
           0,
           'NETWORK_ERROR',
           new Headers(),
@@ -571,9 +592,13 @@ export class Client {
    * @returns Selected auth method: 'bearer_token', 'oauth2_user_context', 'oauth1', or null if none available
    */
   private selectAuthMethod(method: string, securityRequirements?: Array<Record<string, string[]>>): 'bearer_token' | 'oauth2_user_context' | 'oauth1' | null {
-    // If no security requirements, use default priority
+    // Explicit empty security array (`security: []`) means an unauthenticated public endpoint
+    if (Array.isArray(securityRequirements) && securityRequirements.length === 0) {
+      return null;
+    }
+    // If securityRequirements was omitted (e.g. direct `client.request(...)` call), use default priority
     const oauth2AccessToken = this.getEffectiveAccessToken();
-    if (!securityRequirements || securityRequirements.length === 0) {
+    if (!securityRequirements) {
       if (this.bearerToken) return 'bearer_token';
       if (oauth2AccessToken) return 'oauth2_user_context';
       if (this.oauth1 && this.oauth1.accessToken) return 'oauth1';
@@ -687,7 +712,7 @@ export class Client {
   getAvailableAuthTypes(): string[] {
     const authTypes: string[] = [];
     if (this.bearerToken) authTypes.push('bearer_token');
-    if (this.accessToken) authTypes.push('oauth2_user_context');
+    if (this.getEffectiveAccessToken()) authTypes.push('oauth2_user_context');
     if (this.oauth1 && this.oauth1.accessToken) authTypes.push('oauth1');
     return authTypes;
   }

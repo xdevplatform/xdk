@@ -11,17 +11,43 @@
  * Generated automatically - do not edit manually.
  */
 
-import { describe, it, expect, beforeAll, jest } from '@jest/globals';
+import { describe, it, expect, beforeAll, afterAll, jest } from '@jest/globals';
 import { {{ tag.class_name }}Client } from '../../src/{{ tag.import_name }}/client.js';
 import { Client } from '../../src/client.js';
+import { OAuth1 } from '../../src/oauth1_auth.js';
+import { MockXApiServer, MockResponse } from '../../examples/mock_x_api_server.js';
 
 describe('{{ tag.class_name }}Client Contracts', () => {
   let client: Client;
   let {{ tag.property_name }}Client: {{ tag.class_name }}Client;
+  let loopbackServer: MockXApiServer;
+  let loopbackClient: Client;
+  let loopback{{ tag.class_name }}: {{ tag.class_name }}Client;
 
-  beforeAll(() => {
+  beforeAll(async () => {
     client = new Client({ baseUrl: 'https://api.example.com' });
     {{ tag.property_name }}Client = client.{{ tag.property_name }};
+    loopbackServer = await MockXApiServer.start();
+    loopbackClient = new Client({
+      baseUrl: loopbackServer.baseUrl,
+      bearerToken: 'test_bearer_token',
+      accessToken: 'test_access_token',
+      oauth1: new OAuth1({
+        apiKey: 'test_key',
+        apiSecret: 'test_secret',
+        accessToken: 'test_access',
+        accessTokenSecret: 'test_access_secret',
+        baseUrl: loopbackServer.baseUrl,
+      }),
+      maxRetries: 0,
+    });
+    loopback{{ tag.class_name }} = loopbackClient.{{ tag.property_name }};
+  });
+
+  afterAll(async () => {
+    if (loopbackServer) {
+      await loopbackServer.close();
+    }
   });
 
   {% for contract_test in test_spec.contract_tests %}
@@ -265,6 +291,86 @@ describe('{{ tag.class_name }}Client Contracts', () => {
       client.httpClient.request = originalRequest;
       client.validateAuthentication = originalValidateAuth;
     }
+  });
+
+  it('should execute real TCP loopback roundtrip for {{ contract_test.method_name }}', async () => {
+    loopbackServer.reset();
+    const fullMockJson = {{ contract_test.full_response_mock_json | json_string_literal }};
+    {% if contract_test.is_streaming %}
+    loopbackServer.setResponder(() =>
+      MockResponse.chunkedStream(['{}\r\n', `${fullMockJson}\n`], false)
+    );
+    {% elif contract_test.is_binary_response %}
+    const expectedBinary = Buffer.from([0x00, 0x01, 0x58, 0x44, 0x4b, 0xff]);
+    loopbackServer.setResponder(() =>
+      MockResponse.bytes({{ contract_test.response_schema.status_code }}, 'application/octet-stream', expectedBinary)
+    );
+    {% else %}
+    loopbackServer.setResponder(() =>
+      MockResponse.json({{ contract_test.response_schema.status_code }}, fullMockJson)
+    );
+    {% endif %}
+
+    const callArgs: any[] = [
+      {# 1. Path parameters #}
+      {% for param in contract_test.required_params | selectattr('location', 'equalto', 'path') %}
+      {% if param.param_type == "integer" %}
+      42,
+      {% else %}
+      'test_{{ param.variable_name }}',
+      {% endif %}
+      {% endfor %}
+      {# 2. Required non-path parameters #}
+      {% for param in contract_test.required_params | rejectattr('location', 'equalto', 'path') %}
+      {% if param.param_type == "array" %}
+      ['test_item'],
+      {% elif param.param_type == "string" %}
+      'test_{{ param.variable_name }}',
+      {% elif param.param_type == "integer" %}
+      42,
+      {% elif param.param_type == "boolean" %}
+      true,
+      {% else %}
+      'test_value',
+      {% endif %}
+      {% endfor %}
+      {# 3. Required request body #}
+      {% if contract_test.required_body %}
+      {% if contract_test.is_binary_request %}
+      new Uint8Array([0x42, 0x49, 0x4e]),
+      {% elif contract_test.request_mock_json %}
+      JSON.parse({{ contract_test.request_mock_json | json_string_literal }}),
+      {% else %}
+      {},
+      {% endif %}
+      {% endif %}
+      {# 4. Optional options object #}
+      {},
+    ];
+
+    const method = (loopback{{ tag.class_name }} as any)['{{ contract_test.method_name }}'];
+    const result = await method.apply(loopback{{ tag.class_name }}, callArgs);
+    expect(result).toBeDefined();
+
+    {% if contract_test.is_streaming %}
+    const events: any[] = [];
+    for await (const evt of result) {
+      events.push(evt);
+    }
+    expect(events.length).toBeGreaterThanOrEqual(1);
+    {% elif contract_test.is_binary_response %}
+    expect(result).toBeInstanceOf(ArrayBuffer);
+    expect(Buffer.from(result)).toEqual(expectedBinary);
+    {% endif %}
+
+    const recorded = loopbackServer.lastRequest();
+    expect(recorded).toBeDefined();
+    expect(recorded!.method).toBe('{{ contract_test.method | upper }}');
+    {% if contract_test.security_requirements %}
+    expect(recorded!.firstHeader('authorization')).toBeTruthy();
+    {% else %}
+    expect(recorded!.firstHeader('authorization')).toBeUndefined();
+    {% endif %}
   });
 
   {% endfor %}

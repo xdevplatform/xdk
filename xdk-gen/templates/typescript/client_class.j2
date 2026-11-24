@@ -283,6 +283,8 @@ export class {{ tag.class_name }}Client {
                 }{% if not loop.last %},{% endif %}
                 {% endfor %}
             ],
+            {% else %}
+            security: [],
             {% endif %}
             {% if operation.parameters | rejectattr('required') | list | length > 0 or (operation.request_body and not operation.request_body.required) %}
             ...requestOptions

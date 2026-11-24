@@ -10,6 +10,7 @@
 export const StreamEvent = {
   Data: 'data',        // When JSON data arrives
   KeepAlive: 'keepAlive', // 20-second heartbeat (newline character)
+  Reconnect: 'reconnect', // When auto-reconnect attempts to re-establish the stream
   Error: 'error',      // HTTP errors, ConnectionException, operational-disconnect
   Close: 'close'       // When stream ends
 };
@@ -28,11 +29,19 @@ export interface StreamErrorEvent {
   status?: number;
 }
 
+export interface EventDrivenStreamOptions {
+  autoReconnect?: boolean;
+  reconnectOnClose?: boolean;
+  maxReconnectAttempts?: number;
+  reconnectDelayMs?: number;
+  reconnectFactory?: () => Promise<ReadableStream<Uint8Array>>;
+}
+
 /**
  * Event-driven stream class for handling streaming data from the X API.
  * 
  * This class provides an event-driven interface for working with streaming endpoints,
- * allowing you to listen to 'data', 'keepAlive', 'error', and 'close' events.
+ * allowing you to listen to 'data', 'keepAlive', 'reconnect', 'error', and 'close' events.
  * 
  * @public
  */
@@ -42,26 +51,52 @@ export class EventDrivenStream {
   private decoder: TextDecoder;
   private isConnected: boolean = false;
   private isClosed: boolean = false;
+  private isReconnecting: boolean = false;
   private buffer: string = '';
   private eventListeners: Map<string, Function[]> = new Map();
   private autoReconnect: boolean = false;
+  private reconnectOnClose: boolean = false;
   private reconnectAttempts: number = 0;
   private maxReconnectAttempts: number = 5;
   private reconnectDelay: number = 1000;
+  private reconnectFactory?: () => Promise<ReadableStream<Uint8Array>>;
 
-  constructor() {
+  constructor(options: EventDrivenStreamOptions = {}) {
     this.decoder = new TextDecoder();
+    if (options.autoReconnect !== undefined) {
+      this.autoReconnect = options.autoReconnect;
+    }
+    if (options.reconnectOnClose !== undefined) {
+      this.reconnectOnClose = options.reconnectOnClose;
+    }
+    if (options.maxReconnectAttempts !== undefined) {
+      this.maxReconnectAttempts = options.maxReconnectAttempts;
+    }
+    if (options.reconnectDelayMs !== undefined) {
+      this.reconnectDelay = options.reconnectDelayMs;
+    }
+    if (options.reconnectFactory !== undefined) {
+      this.reconnectFactory = options.reconnectFactory;
+    }
     this.setupEventListeners();
   }
 
   /**
    * Initialize the stream with a Web ReadableStream
    */
-  async connect(webStream: ReadableStream<Uint8Array>): Promise<void> {
+  async connect(webStream: ReadableStream<Uint8Array>, options?: EventDrivenStreamOptions): Promise<void> {
     if (this.isConnected) {
       throw new Error('Stream is already connected');
     }
+    if (options) {
+      if (options.autoReconnect !== undefined) this.autoReconnect = options.autoReconnect;
+      if (options.reconnectOnClose !== undefined) this.reconnectOnClose = options.reconnectOnClose;
+      if (options.maxReconnectAttempts !== undefined) this.maxReconnectAttempts = options.maxReconnectAttempts;
+      if (options.reconnectDelayMs !== undefined) this.reconnectDelay = options.reconnectDelayMs;
+      if (options.reconnectFactory !== undefined) this.reconnectFactory = options.reconnectFactory;
+    }
 
+    this.decoder = new TextDecoder();
     this.webStream = webStream;
     this.isConnected = true;
     this.isClosed = false;
@@ -86,6 +121,12 @@ export class EventDrivenStream {
         const { done, value } = await this.reader.read();
         
         if (done) {
+          // Flush any trailing partial line decoded from final UTF-8 bytes
+          const tail = this.decoder.decode();
+          if (tail) {
+            this.buffer += tail;
+          }
+          await this.drainCompleteLines(true);
           this.handleConnectionClosed();
           break;
         }
@@ -107,30 +148,39 @@ export class EventDrivenStream {
   private async processChunk(value: Uint8Array): Promise<void> {
     const chunk = this.decoder.decode(value, { stream: true });
     this.buffer += chunk;
-    
-    // Process complete lines (ending with newline)
+    await this.drainCompleteLines(false);
+  }
+
+  private async drainCompleteLines(flushTrailing: boolean): Promise<void> {
     let boundary;
     while ((boundary = this.buffer.indexOf('\n')) !== -1) {
       const line = this.buffer.substring(0, boundary);
       this.buffer = this.buffer.substring(boundary + 1);
-      
-      if (line.trim()) {
-        try {
-          const data = JSON.parse(line);
-          
-          // Check if it's a keep-alive signal (20-second heartbeat)
-          if (this.isKeepAlive(data)) {
-            this.emit(StreamEvent.KeepAlive, { data });
-            continue;
-          }
+      this.parseAndEmitLine(line);
+    }
 
-          // Emit data event for actual content
-          this.emit(StreamEvent.Data, data);
-        } catch (parseError) {
-          // Skip invalid JSON lines - these are usually incomplete chunks
-          console.warn('Skipping invalid JSON:', line.substring(0, 100));
-        }
+    if (flushTrailing && this.buffer.trim()) {
+      const trailing = this.buffer;
+      this.buffer = '';
+      this.parseAndEmitLine(trailing);
+    }
+  }
+
+  private parseAndEmitLine(line: string): void {
+    if (!line.trim()) {
+      return;
+    }
+    try {
+      const data = JSON.parse(line);
+      if (this.isKeepAlive(data)) {
+        this.emit(StreamEvent.KeepAlive, { data });
+        return;
       }
+      // Healthy item received; reset reconnect counter
+      this.reconnectAttempts = 0;
+      this.emit(StreamEvent.Data, data);
+    } catch {
+      console.warn('Skipping invalid JSON:', line.substring(0, 100));
     }
   }
 
@@ -144,17 +194,36 @@ export class EventDrivenStream {
   }
 
   /**
+   * Check whether automatic reconnection can still proceed
+   */
+  private canReconnect(): boolean {
+    return (
+      !this.isClosed &&
+      this.autoReconnect &&
+      typeof this.reconnectFactory === 'function' &&
+      (this.maxReconnectAttempts < 0 || this.reconnectAttempts < this.maxReconnectAttempts)
+    );
+  }
+
+  /**
    * Handle connection errors
    */
   private handleConnectionError(error: Error): void {
     this.isConnected = false;
-    
-    // Emit the error as-is (API returns the actual error details)
-    this.emit(StreamEvent.Error, { error });
 
-    if (this.autoReconnect && this.reconnectAttempts < this.maxReconnectAttempts) {
-      this.attemptReconnect();
+    if (this.canReconnect()) {
+      this.isReconnecting = true;
+      this.emit(StreamEvent.Reconnect, {
+        attempt: this.reconnectAttempts + 1,
+        maxAttempts: this.maxReconnectAttempts,
+        error,
+      });
+      void this.attemptReconnect(error);
+      return;
     }
+
+    this.isReconnecting = false;
+    this.emit(StreamEvent.Error, { error });
   }
 
   /**
@@ -162,30 +231,65 @@ export class EventDrivenStream {
    */
   private handleConnectionClosed(): void {
     this.isConnected = false;
+    if (this.reconnectOnClose && this.canReconnect()) {
+      this.isReconnecting = true;
+      void this.attemptReconnect();
+      return;
+    }
+    this.isReconnecting = false;
     this.emit(StreamEvent.Close, { message: 'Connection closed' });
   }
 
   /**
-   * Attempt to reconnect
+   * Attempt to reconnect with exponential backoff
    */
-  private async attemptReconnect(): Promise<void> {
-    this.reconnectAttempts++;
-    this.emit(StreamEvent.Data, { 
-      message: `Reconnect attempt ${this.reconnectAttempts}/${this.maxReconnectAttempts}` 
-    });
+  private async attemptReconnect(lastError?: Error): Promise<void> {
+    while (!this.isClosed && this.canReconnect()) {
+      this.reconnectAttempts++;
+      const delayMs = Math.min(
+        this.reconnectDelay * Math.pow(2, Math.max(0, this.reconnectAttempts - 1)),
+        60000
+      );
 
-    // Wait before reconnecting
-    await new Promise(resolve => setTimeout(resolve, this.reconnectDelay * this.reconnectAttempts));
-
-    try {
-      // This would need to be implemented based on how you get a new stream
-      // For now, we'll just emit the events
-      this.emit(StreamEvent.Error, { 
-        error: new Error('Reconnect not implemented in this example') 
+      await new Promise<void>(resolve => {
+        const timer = setTimeout(resolve, delayMs);
+        if (typeof (timer as any)?.unref === 'function') {
+          (timer as any).unref();
+        }
       });
-    } catch (error) {
-      this.emit(StreamEvent.Error, { error: error as Error });
+
+      if (this.isClosed) {
+        this.isReconnecting = false;
+        return;
+      }
+
+      try {
+        const nextStream = await this.reconnectFactory!();
+        if (this.isClosed) {
+          this.isReconnecting = false;
+          return;
+        }
+        this.decoder = new TextDecoder();
+        this.buffer = '';
+        this.webStream = nextStream;
+        this.isConnected = true;
+        this.isReconnecting = false;
+        this.startReading();
+        return;
+      } catch (err) {
+        lastError = err as Error;
+        if (!this.canReconnect()) {
+          this.isReconnecting = false;
+          this.emit(StreamEvent.Error, { error: lastError });
+          return;
+        }
+      }
     }
+
+    this.isReconnecting = false;
+    this.emit(StreamEvent.Error, {
+      error: lastError || new Error(`Max reconnect attempts (${this.maxReconnectAttempts}) exceeded`),
+    });
   }
 
   /**
@@ -194,10 +298,8 @@ export class EventDrivenStream {
   private cleanup(): void {
     if (this.reader) {
       try {
-        // Try to release the lock - it will throw if already released
         this.reader.releaseLock();
       } catch (error) {
-        // Ignore errors when releasing the lock (already released)
         console.debug('Reader lock already released or error:', error);
       }
       this.reader = null;
@@ -211,6 +313,14 @@ export class EventDrivenStream {
   close(): void {
     this.isClosed = true;
     this.isConnected = false;
+    this.isReconnecting = false;
+    if (this.reader) {
+      try {
+        void this.reader.cancel();
+      } catch {
+        // Ignore cancellation errors on already-closed streams
+      }
+    }
     this.cleanup();
     this.emit(StreamEvent.Close, { message: 'Stream closed by user' });
   }
@@ -260,7 +370,6 @@ export class EventDrivenStream {
    * Setup default event listeners
    */
   private setupEventListeners(): void {
-    // Default error handling
     this.on(StreamEvent.Error, (eventData: StreamErrorEvent) => {
       console.error('Stream error:', eventData.error);
     });
@@ -289,26 +398,37 @@ export class EventDrivenStream {
   }
 
   /**
-   * Async iterator for tweets
+   * Async iterator for streaming events
    */
   async* [Symbol.asyncIterator](): AsyncGenerator<StreamDataEvent, void, unknown> {
     const dataQueue: StreamDataEvent[] = [];
     let isComplete = false;
     let hasError = false;
     let error: Error | null = null;
+    let notifyWaiter: (() => void) | null = null;
 
-    // Set up listeners
+    const wake = () => {
+      if (notifyWaiter) {
+        const fn = notifyWaiter;
+        notifyWaiter = null;
+        fn();
+      }
+    };
+
     const dataListener = (eventData: any) => {
       dataQueue.push(eventData);
+      wake();
     };
 
     const errorListener = (eventData: StreamErrorEvent) => {
       hasError = true;
       error = eventData.error;
+      wake();
     };
 
     const closeListener = () => {
       isComplete = true;
+      wake();
     };
 
     this.on(StreamEvent.Data, dataListener);
@@ -318,12 +438,17 @@ export class EventDrivenStream {
     try {
       // Keep draining until the stream has ended AND the queue is empty, so
       // events that arrived just before a close/error are not dropped.
-      while (dataQueue.length > 0 || (!isComplete && !hasError)) {
+      while (dataQueue.length > 0 || ((!isComplete || this.isReconnecting) && !hasError)) {
         if (dataQueue.length > 0) {
           yield dataQueue.shift()!;
         } else {
-          // Wait a bit for more data
-          await new Promise(resolve => setTimeout(resolve, 10));
+          await new Promise<void>(resolve => {
+            notifyWaiter = resolve;
+            const timer = setTimeout(resolve, 25);
+            if (typeof (timer as any)?.unref === 'function') {
+              (timer as any).unref();
+            }
+          });
         }
       }
 
@@ -331,7 +456,6 @@ export class EventDrivenStream {
         throw error;
       }
     } finally {
-      // Clean up listeners
       this.off(StreamEvent.Data, dataListener);
       this.off(StreamEvent.Error, errorListener);
       this.off(StreamEvent.Close, closeListener);

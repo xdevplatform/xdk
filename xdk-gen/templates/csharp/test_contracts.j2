@@ -1,39 +1,104 @@
+using System;
 using System.Collections.Generic;
-using System.Net;
-using System.Net.Http;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Xdk;
 using Xdk.Auth;
+using Xdk.Clients;
+using Xdk.Models;
+using Xdk.Streaming;
+using Xdk.Testing;
 using Xunit;
 
 namespace Xdk.Tests;
 
-public class {{ tag.class_name }}ContractsTests
+public sealed class {{ tag.class_name }}LoopbackFixture : IDisposable
 {
+    public MockXApiServer Server { get; }
+    public XClient Client { get; }
+
+    public {{ tag.class_name }}LoopbackFixture()
+    {
+        Server = new MockXApiServer();
+        Client = new XClient(new XClientOptions
+        {
+            BaseUrl = Server.BaseUrl,
+            BearerToken = "test-bearer-token",
+            AccessToken = "test-oauth2-token",
+            OAuth1 = new OAuth1("ck", "cs", "oob", "at", "ats"),
+            Retry = false,
+        });
+    }
+
+    public void Dispose()
+    {
+        Client.Dispose();
+        Server.Dispose();
+    }
+}
+
+public class {{ tag.class_name }}ContractsTests : IClassFixture<{{ tag.class_name }}LoopbackFixture>
+{
+    private readonly MockXApiServer _server;
+    private readonly XClient _client;
+
+    public {{ tag.class_name }}ContractsTests({{ tag.class_name }}LoopbackFixture fixture)
+    {
+        _server = fixture.Server;
+        _client = fixture.Client;
+        _server.Reset();
+    }
+
     {% for contract_test in test_spec.contract_tests %}
     [Fact]
     public async Task Contract_{{ contract_test.method_name }}()
     {
-        var mockJson = {{ contract_test.response_schema.mock_json | cs_string_literal }};
-        var handler = new MockHttpMessageHandler(_ =>
+        {% if contract_test.is_streaming %}
+        var mockJson = {{ contract_test.full_response_mock_json | cs_string_literal }};
+        _server.SetResponder(_ => MockXApiServer.MockResponse.ChunkedStream(new[]
         {
-            var payload = {% if contract_test.is_streaming %}mockJson + "\n"{% else %}mockJson{% endif %};
-            return new HttpResponseMessage((HttpStatusCode){{ contract_test.response_schema.status_code }})
-            {
-                Content = new StringContent(payload, Encoding.UTF8, "application/json"),
-            };
-        });
+            Encoding.UTF8.GetBytes("{}\r\n"),
+            Encoding.UTF8.GetBytes(mockJson + "\n"),
+        }));
+        {% elif contract_test.is_binary_response %}
+        var expectedBinary = new byte[] { 0x00, 0x01, 0x58, 0x44, 0x4B, 0xFF };
+        _server.SetResponder(_ => MockXApiServer.MockResponse.Bytes(
+            {{ contract_test.response_schema.status_code }},
+            "application/octet-stream",
+            expectedBinary));
+        {% else %}
+        var mockJson = {{ contract_test.full_response_mock_json | cs_string_literal }};
+        _server.SetResponder(_ => MockXApiServer.MockResponse.Json(
+            {{ contract_test.response_schema.status_code }},
+            mockJson));
+        {% endif %}
 
-        using var httpClient = new HttpClient(handler);
-        using var client = new XClient(new XClientOptions
-        {
-            BaseUrl = "https://api.example.com",
-            BearerToken = "test-bearer",
-            AccessToken = "test-access",
-            OAuth1 = new OAuth1("ck", "cs", "oob", "at", "ats"),
-            HttpClient = httpClient,
-        });
+        {% if contract_test.required_body %}
+        {% if contract_test.has_request_model and contract_test.request_mock_json %}
+        var reqMockJson = {{ contract_test.request_mock_json | cs_string_literal }};
+        var reqBody = JsonSerializer.Deserialize<{{ contract_test.request_csharp_type }}>(reqMockJson, _client.JsonOptions)!;
+        {% elif contract_test.is_binary_request %}
+        var reqBody = Encoding.UTF8.GetBytes("binary_submission_payload");
+        {% else %}
+        object reqBody = new Dictionary<string, string> { ["key"] = "value" };
+        {% endif %}
+        {% endif %}
+
+        {% if contract_test.has_options %}
+        {% set opts_class = contract_test.class_name ~ "Options" %}
+        var options = new {{ tag.class_name }}Client.{{ opts_class }}();
+        options.Headers["X-Contract-Operation"] = "{{ contract_test.method_name }}";
+        {% for opt in contract_test.optional_params %}
+        {% if loop.index <= 2 %}
+        {% set opt_val %}{% if opt.param_type == "integer" %}10{% elif opt.param_type == "number" %}1.5{% elif opt.param_type == "boolean" %}true{% elif opt.param_type == "array" %}new List<string> { "id", "created_at" }{% else %}"opt_{{ opt.variable_name }}"{% endif %}{% endset %}
+        options.{{ opt.variable_name | cs_prop_ident(opts_class) }} = {{ opt_val }};
+        {% endif %}
+        {% endfor %}
+        {% if contract_test.is_streaming %}
+        options.StreamOptions = new StreamOptions { MaxRetries = 0 };
+        {% endif %}
+        {% endif %}
 
         {% set call_args = namespace(first=true, code="") %}
         {% for param in contract_test.required_params %}
@@ -42,30 +107,60 @@ public class {{ tag.class_name }}ContractsTests
         {% set call_args.first = false %}
         {% set call_args.code = call_args.code ~ arg_expr %}
         {% endfor %}
-        {% if contract_test.request_body_schema and contract_test.request_body_schema.required %}
-        {% set body_expr %}{% if contract_test.has_request_model %}null!{% else %}Encoding.UTF8.GetBytes("payload"){% endif %}{% endset %}
+        {% if contract_test.required_body %}
         {% if not call_args.first %}{% set call_args.code = call_args.code ~ ", " %}{% endif %}
         {% set call_args.first = false %}
-        {% set call_args.code = call_args.code ~ body_expr %}
+        {% set call_args.code = call_args.code ~ "reqBody" %}
+        {% endif %}
+        {% if contract_test.has_options %}
+        {% if not call_args.first %}{% set call_args.code = call_args.code ~ ", " %}{% endif %}
+        {% set call_args.first = false %}
+        {% set call_args.code = call_args.code ~ "options" %}
         {% endif %}
 
         {% if contract_test.is_streaming %}
-        await using var stream = client.{{ tag.class_name }}.{{ contract_test.method_name }}Stream({{ call_args.code }});
+        await using var stream = _client.{{ tag.class_name }}.{{ contract_test.method_name }}Stream({{ call_args.code }});
+        var count = 0;
         await foreach (var item in stream)
         {
             object? boxed = item;
             Assert.NotNull(boxed);
+            var roundTrip = JsonSerializer.Serialize(item, _client.JsonOptions);
+            Assert.False(string.IsNullOrEmpty(roundTrip));
+            count++;
             break;
         }
+        Assert.Equal(1, count);
+        {% elif contract_test.is_binary_response %}
+        var result = await _client.{{ tag.class_name }}.{{ contract_test.method_name }}Async({{ call_args.code }});
+        Assert.Equal(expectedBinary, result);
         {% else %}
-        var result = await client.{{ tag.class_name }}.{{ contract_test.method_name }}Async({{ call_args.code }});
+        var result = await _client.{{ tag.class_name }}.{{ contract_test.method_name }}Async({{ call_args.code }});
         object? boxed = result;
         Assert.NotNull(boxed);
+        var roundTripJson = JsonSerializer.Serialize(result, _client.JsonOptions);
+        Assert.False(string.IsNullOrEmpty(roundTripJson));
         {% endif %}
 
-        Assert.NotEmpty(handler.Requests);
-        Assert.Equal("{{ contract_test.method | upper }}", handler.Requests[0].Method.Method);
-        Assert.Contains("{{ contract_test.path | path_prefix }}", handler.Requests[0].RequestUri!.ToString());
+        var captured = _server.LastRequest;
+        Assert.NotNull(captured);
+        Assert.Equal("{{ contract_test.method | upper }}", captured!.Method);
+        Assert.Contains("{{ contract_test.path | path_prefix }}", captured.Path);
+        {% if contract_test.has_options %}
+        Assert.Equal("{{ contract_test.method_name }}", captured.FirstHeader("X-Contract-Operation"));
+        {% endif %}
+        {% if contract_test.security_requirements | length > 0 %}
+        Assert.NotNull(captured.FirstHeader("Authorization"));
+        {% else %}
+        Assert.Null(captured.FirstHeader("Authorization"));
+        {% endif %}
+        {% if contract_test.required_body %}
+        Assert.NotEmpty(captured.BodyBytes);
+        {% if contract_test.has_request_model %}
+        using var parsedReq = JsonDocument.Parse(captured.BodyBytes);
+        Assert.NotEqual(JsonValueKind.Undefined, parsedReq.RootElement.ValueKind);
+        {% endif %}
+        {% endif %}
     }
     {% endfor %}
 }

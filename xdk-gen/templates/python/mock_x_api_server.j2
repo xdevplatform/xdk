@@ -1,0 +1,657 @@
+"""
+Local TCP loopback X API v2 simulator & programmable test server built on stdlib http.server.
+
+Supports:
+- Real TCP HTTP/1.1 transport testing against requests.Session
+- Programmable per-request responders (JSON, binary, chunked NDJSON streams, delays, drops)
+- RFC 5849 OAuth 1.0a HMAC-SHA1 server-side signature verification
+- RFC 7636 OAuth 2.0 PKCE S256 /2/oauth2/token code exchange & refresh rotation
+- Smart X API v2 synthetic simulator fallback for examples and continuous canary runs
+"""
+
+from __future__ import annotations
+
+import base64
+import hashlib
+import hmac
+import json
+import threading
+import time
+import urllib.parse
+from dataclasses import dataclass, field
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from typing import Callable, Dict, List, Optional, Tuple
+
+
+@dataclass
+class RecordedRequest:
+    method: str
+    path: str
+    raw_query: str
+    full_url: str
+    headers: Dict[str, str]
+    body_bytes: bytes
+
+    def first_header(self, name: str) -> Optional[str]:
+        return self.headers.get(name.lower())
+
+    @property
+    def body_utf8(self) -> str:
+        return self.body_bytes.decode("utf-8", errors="replace")
+
+
+@dataclass
+class MockResponse:
+    status_code: int = 200
+    headers: Dict[str, str] = field(default_factory=dict)
+    body: bytes = b""
+    stream_chunks: Optional[List[bytes]] = None
+    drop_stream_midway: bool = False
+    delay_seconds: float = 0.0
+
+    @classmethod
+    def json(
+        cls,
+        status_code: int,
+        payload: object,
+        extra_headers: Optional[Dict[str, str]] = None,
+        delay_seconds: float = 0.0,
+    ) -> "MockResponse":
+        raw = payload if isinstance(payload, str) else json.dumps(payload)
+        hdrs = {"Content-Type": "application/json"}
+        if extra_headers:
+            hdrs.update(extra_headers)
+        return cls(
+            status_code=status_code,
+            headers=hdrs,
+            body=raw.encode("utf-8"),
+            delay_seconds=delay_seconds,
+        )
+
+    @classmethod
+    def raw_bytes(
+        cls, status_code: int, content_type: str, data: bytes
+    ) -> "MockResponse":
+        return cls(
+            status_code=status_code,
+            headers={"Content-Type": content_type},
+            body=data,
+        )
+
+    @classmethod
+    def chunked_stream(
+        cls, chunks: List[bytes], drop_midway: bool = False
+    ) -> "MockResponse":
+        return cls(
+            status_code=200,
+            headers={"Content-Type": "application/json"},
+            stream_chunks=list(chunks),
+            drop_stream_midway=drop_midway,
+        )
+
+
+class _ThreadingLoopbackServer(ThreadingHTTPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+
+class MockXApiServer:
+    """Zero-dependency local TCP HTTP/1.1 simulator for the X API v2."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._requests: List[RecordedRequest] = []
+        self._expected_pkce_challenges: Dict[str, str] = {}
+        self._custom_responder: Optional[
+            Callable[[RecordedRequest], Optional[MockResponse]]
+        ] = None
+
+        outer = self
+
+        class Handler(BaseHTTPRequestHandler):
+            protocol_version = "HTTP/1.1"
+
+            def log_message(self, format: str, *args: object) -> None:
+                return
+
+            def _handle_any(self) -> None:
+                try:
+                    content_len = int(self.headers.get("Content-Length", "0") or "0")
+                    body_bytes = self.rfile.read(content_len) if content_len > 0 else b""
+                    parsed = urllib.parse.urlsplit(self.path)
+                    raw_path = parsed.path or "/"
+                    raw_query = parsed.query or ""
+                    full_url = outer.base_url + raw_path + (f"?{raw_query}" if raw_query else "")
+                    norm_headers = {k.lower(): v for k, v in self.headers.items()}
+                    recorded = RecordedRequest(
+                        method=self.command.upper(),
+                        path=raw_path,
+                        raw_query=raw_query,
+                        full_url=full_url,
+                        headers=norm_headers,
+                        body_bytes=body_bytes,
+                    )
+                    with outer._lock:
+                        outer._requests.append(recorded)
+                        responder = outer._custom_responder
+
+                    resp = responder(recorded) if responder is not None else None
+                    if resp is None:
+                        resp = outer._default_simulator_response(recorded)
+
+                    if resp.delay_seconds > 0:
+                        time.sleep(resp.delay_seconds)
+
+                    if resp.stream_chunks is not None:
+                        self.send_response(resp.status_code)
+                        for k, v in resp.headers.items():
+                            self.send_header(k, v)
+                        self.send_header("Transfer-Encoding", "chunked")
+                        self.send_header("Connection", "close")
+                        self.end_headers()
+
+                        for chunk in resp.stream_chunks:
+                            if not chunk:
+                                continue
+                            header_line = f"{len(chunk):x}\r\n".encode("ascii")
+                            self.wfile.write(header_line)
+                            self.wfile.write(chunk)
+                            self.wfile.write(b"\r\n")
+                            self.wfile.flush()
+                            time.sleep(0.004)
+
+                        if resp.drop_stream_midway:
+                            # Close connection without terminating 0-chunk so client sees ChunkedEncodingError
+                            self.close_connection = True
+                            return
+
+                        self.wfile.write(b"0\r\n\r\n")
+                        self.wfile.flush()
+                        self.close_connection = True
+                        return
+
+                    payload = resp.body or b""
+                    self.send_response(resp.status_code)
+                    for k, v in resp.headers.items():
+                        self.send_header(k, v)
+                    self.send_header("Content-Length", str(len(payload)))
+                    self.end_headers()
+                    if payload:
+                        self.wfile.write(payload)
+                        self.wfile.flush()
+                except (BrokenPipeError, ConnectionResetError, OSError):
+                    self.close_connection = True
+                except Exception as exc:
+                    err = json.dumps({"detail": f"Simulator error: {exc}"}).encode("utf-8")
+                    try:
+                        self.send_response(500)
+                        self.send_header("Content-Type", "application/json")
+                        self.send_header("Content-Length", str(len(err)))
+                        self.end_headers()
+                        self.wfile.write(err)
+                    except Exception:
+                        self.close_connection = True
+
+            def do_GET(self) -> None:
+                self._handle_any()
+
+            def do_POST(self) -> None:
+                self._handle_any()
+
+            def do_PUT(self) -> None:
+                self._handle_any()
+
+            def do_DELETE(self) -> None:
+                self._handle_any()
+
+            def do_PATCH(self) -> None:
+                self._handle_any()
+
+            def do_HEAD(self) -> None:
+                self._handle_any()
+
+            def do_OPTIONS(self) -> None:
+                self._handle_any()
+
+        self._server = _ThreadingLoopbackServer(("127.0.0.1", 0), Handler)
+        self._port = int(self._server.server_address[1])
+        self._base_url = f"http://127.0.0.1:{self._port}"
+        self._thread = threading.Thread(
+            target=self._server.serve_forever,
+            kwargs={"poll_interval": 0.02},
+            name="mock-x-api-server",
+            daemon=True,
+        )
+        self._thread.start()
+
+    @property
+    def base_url(self) -> str:
+        return self._base_url
+
+    @property
+    def port(self) -> int:
+        return self._port
+
+    @property
+    def requests(self) -> List[RecordedRequest]:
+        with self._lock:
+            return list(self._requests)
+
+    def last_request(self) -> Optional[RecordedRequest]:
+        with self._lock:
+            return self._requests[-1] if self._requests else None
+
+    def reset(self) -> None:
+        with self._lock:
+            self._requests.clear()
+            self._custom_responder = None
+            self._expected_pkce_challenges.clear()
+
+    def set_responder(
+        self, responder: Optional[Callable[[RecordedRequest], Optional[MockResponse]]]
+    ) -> None:
+        with self._lock:
+            self._custom_responder = responder
+
+    def register_expected_pkce_challenge(self, auth_code: str, code_challenge: str) -> None:
+        with self._lock:
+            self._expected_pkce_challenges[auth_code] = code_challenge
+
+    def close(self) -> None:
+        try:
+            self._server.shutdown()
+            self._server.server_close()
+        except Exception:
+            pass
+
+    def __enter__(self) -> "MockXApiServer":
+        return self
+
+    def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
+        self.close()
+
+    def _default_simulator_response(self, req: RecordedRequest) -> MockResponse:
+        path = req.path
+        method = req.method.upper()
+
+        # 1. OAuth 1.0a token endpoints
+        if path == "/oauth/request_token" and method == "POST":
+            return MockResponse(
+                status_code=200,
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                body=b"oauth_token=sim_req_tok&oauth_token_secret=sim_req_sec&oauth_callback_confirmed=true",
+            )
+        if path == "/oauth/access_token" and method == "POST":
+            return MockResponse(
+                status_code=200,
+                headers={"Content-Type": "application/x-www-form-urlencoded"},
+                body=b"oauth_token=sim_acc_tok&oauth_token_secret=sim_acc_sec&user_id=42&screen_name=XDevelopers",
+            )
+
+        # 2. OAuth 2.0 PKCE token endpoint
+        if path == "/2/oauth2/token" and method == "POST":
+            form = dict(urllib.parse.parse_qsl(req.body_utf8, keep_blank_values=True))
+            grant_type = form.get("grant_type")
+            if grant_type == "authorization_code":
+                code = form.get("code", "")
+                verifier = form.get("code_verifier", "")
+                with self._lock:
+                    expected_challenge = self._expected_pkce_challenges.get(code)
+                if expected_challenge is not None:
+                    computed = _compute_s256_challenge(verifier)
+                    if computed != expected_challenge:
+                        return MockResponse.json(
+                            400,
+                            {"error": "invalid_grant", "detail": "PKCE S256 mismatch"},
+                        )
+                return MockResponse.json(
+                    200,
+                    {
+                        "access_token": f"sim_oauth2_access_{code}",
+                        "token_type": "bearer",
+                        "expires_in": 7200,
+                        "refresh_token": "sim_oauth2_refresh_1",
+                        "scope": "tweet.read users.read offline.access",
+                    },
+                )
+            if grant_type == "refresh_token":
+                rt = form.get("refresh_token", "unknown")
+                return MockResponse.json(
+                    200,
+                    {
+                        "access_token": f"sim_refreshed_access_from_{rt}",
+                        "token_type": "bearer",
+                        "expires_in": 7200,
+                        "refresh_token": "sim_oauth2_refresh_2",
+                        "scope": "tweet.read users.read offline.access",
+                    },
+                )
+            return MockResponse.json(400, {"error": "unsupported_grant_type"})
+
+        # 3. OpenAPI spec introspection
+        if path == "/2/openapi.json":
+            return MockResponse.json(
+                200,
+                {"openapi": "3.0.3", "info": {"title": "X API v2", "version": "2.175"}},
+            )
+
+        # 4. Binary octet-stream downloads
+        if (
+            path.endswith("/download")
+            or (path.startswith("/2/chat/media/") and method == "GET")
+            or (path.startswith("/2/dm_conversations/media/") and method == "GET")
+        ):
+            return MockResponse.raw_bytes(
+                200,
+                "application/octet-stream",
+                b'{"id":"1234567890","status":"compliant"}\n',
+            )
+
+        # 5. Streaming NDJSON endpoints
+        if (
+            ("/stream" in path and not path.endswith("/rules") and "/rules/" not in path)
+            or "/sample" in path
+            or "/firehose" in path
+        ):
+            chunks = [
+                b"{}\r\n",
+                '{"data":{"id":"1880000001","text":"Live stream event 1 🚀","timestamp_ms":1735000000000}}\n'.encode(
+                    "utf-8"
+                ),
+                '{"data":{"id":"1880000002","text":"Live stream event 2","timestamp_ms":1735000001000}}\n'.encode(
+                    "utf-8"
+                ),
+            ]
+            return MockResponse.chunked_stream(chunks, drop_midway=False)
+
+        # 6. Media upload endpoints
+        if path.startswith("/2/media/upload"):
+            if path.endswith("/append"):
+                return MockResponse.json(200, {"data": {"expires_after_secs": 86400}})
+            return MockResponse.json(
+                200,
+                {
+                    "data": {
+                        "id": "1889990001",
+                        "media_key": "3_1889990001",
+                        "size": 5242880,
+                        "expires_after_secs": 86400,
+                        "processing_info": {"state": "succeeded", "progress_percent": 100},
+                    }
+                },
+            )
+
+        # 7. Paginated vs single-resource JSON synthesis (covers all 268 X API v2 Pydantic schemas)
+        query = req.raw_query or ""
+        has_cursor = "pagination_token=" in query or "next_token=" in query
+        looks_like_collection = (
+            (method == "POST" and path == "/2/tweets/search/stream/rules")
+            or (method == "DELETE" and path == "/2/activity/subscriptions")
+            or (
+                method == "GET"
+                and path != "/2/tweets/search/stream/rules/counts"
+                and not path.endswith("/library/categories")
+                and (
+                    "/search/" in path
+                    or path.endswith("/search")
+                    or path.endswith("/followers")
+                    or path.endswith("/following")
+                    or path.endswith("/bookmarks")
+                    or path.endswith("/bookmarks/folders")
+                    or (
+                        "/bookmarks/folders/" in path
+                        and not path.endswith("/folders")
+                    )
+                    or path.endswith("/reverse_chronological")
+                    or (path.endswith("/tweets") and not path.startswith("/2/usage/"))
+                    or path.endswith("/liked_tweets")
+                    or path.endswith("/retweets")
+                    or path.endswith("/reposts_of_me")
+                    or path.endswith("/personalized_trends")
+                    or path.endswith("/mentions")
+                    or path.endswith("/liking_users")
+                    or path.endswith("/retweeted_by")
+                    or path.endswith("/quote_tweets")
+                    or path.endswith("/members")
+                    or path.endswith("/lists")
+                    or path.endswith("/pinned_lists")
+                    or path.endswith("/owned_lists")
+                    or path.endswith("/followed_lists")
+                    or path.endswith("/list_memberships")
+                    or path.endswith("/blocking")
+                    or path.endswith("/muting")
+                    or path.endswith("/affiliates")
+                    or path.endswith("/buyers")
+                    or path.endswith("/rules")
+                    or path.endswith("/jobs")
+                    or path.endswith("/webhooks")
+                    or (path.endswith("/subscriptions") and "/account_activity/" not in path)
+                    or path.endswith("/dm_events")
+                    or path.endswith("/events")
+                    or path.endswith("/admin_requests")
+                    or path.endswith("/pinned_messages")
+                    or path.endswith("/message_requests")
+                    or path.endswith("/conversations")
+                    or path.endswith("/analytics")
+                    or path.endswith("/programs")
+                    or path.endswith("/posts")
+                    or path.endswith("/public_keys")
+                    or path.endswith("/creator_ids")
+                    or path.endswith("/mutes")
+                    or path.endswith("/moderators")
+                    or path.endswith("/categories")
+                    or path.endswith("/chat")
+                    or path
+                    in (
+                        "/2/broadcasts",
+                        "/2/broadcasts/scheduled",
+                        "/2/sources",
+                        "/2/calls/scheduled",
+                        "/2/bots",
+                        "/2/connections",
+                    )
+                    or "/counts/" in path
+                    or "/trends/" in path
+                    or query.startswith("ids=")
+                    or "&ids=" in query
+                    or query.startswith("usernames=")
+                    or "&usernames=" in query
+                    or query.startswith("user_ids=")
+                    or "&user_ids=" in query
+                    or query.startswith("media_keys=")
+                    or "&media_keys=" in query
+                )
+            )
+        )
+
+        status = 201 if method == "POST" and path in ("/2/tweets", "/2/lists") else 200
+
+        def _make_list_item(item_id: str, label: str, handle: str, text: str) -> Dict[str, Any]:
+            item: Dict[str, Any] = {
+                "id": item_id,
+                "post_id": item_id,
+                "name": label,
+                "username": handle,
+                "text": text,
+                "start": "2025-01-01T00:00:00.000Z",
+                "end": "2025-01-02T00:00:00.000Z",
+                "added_at": "2025-01-01T00:00:00.000Z",
+                "state": "active",
+                "advertiser_ids": ["adv_1"],
+                "publisher_ids": ["pub_1"],
+            }
+            if "/counts/" in path:
+                item["post_count"] = 42
+            return item
+
+        if looks_like_collection:
+            if not has_cursor and (
+                "max_results=" in query or path.endswith("/followers") or "/search/" in path
+            ):
+                return MockResponse.json(
+                    status,
+                    {
+                        "data": [
+                            _make_list_item("1001", "Item 1", "XDevelopers", "First item"),
+                            _make_list_item("1002", "Item 2", "XApi", "Second item"),
+                        ],
+                        "meta": {"result_count": 2, "next_token": "sim_page_2"},
+                    },
+                )
+            return MockResponse.json(
+                status,
+                {
+                    "data": [
+                        _make_list_item("1003", "Item 3", "XEng", "Final page item"),
+                    ],
+                    "meta": {"result_count": 1},
+                },
+            )
+
+        single_data: Dict[str, Any] = {
+            "id": "1234567890",
+            "rest_id": "1234567890",
+            "post_id": "1234567890",
+            "account_id": "acct_1",
+            "broadcast_id": "bc_1",
+            "conversation_id": "chat_conv_1",
+            "dm_conversation_id": "dm_conv_1",
+            "dm_event_id": "dm_ev_1",
+            "job_id": "job_1",
+            "media_hash_key": "hash_1",
+            "media_key": "3_1889990001",
+            "session_id": "sess_1",
+            "stream_key": "stream_key_1",
+            "token": "bot_tok_1",
+            "name": "X Developers",
+            "username": "XDevelopers",
+            "title": "Building with XDK",
+            "text": "Hello from XDK!",
+            "url": "https://webhooks.example.org/x/events",
+            "share_url": "https://x.com/i/broadcasts/bc_1",
+            "state": "live",
+            "created_at": "2025-01-15T12:00:00.000Z",
+            "timestamp": "2025-01-15T12:00:00.000Z",
+            "encoded_message_event": "YmFzZTY0X2V2ZW50",
+            "cap_per_client_app": "25",
+            "cap_per_project": "1000",
+            "project_rules_count": "1",
+            "client_app_rules_count": {"client_app_id": "1", "rule_count": 1},
+            "project_usage": "1024",
+            "project_cap": "1000000",
+            "free_balance": 100.0,
+            "prepaid_balance": 500.0,
+            "total_balance": 600.0,
+            "free_grants": [],
+            "successful_kills": 1,
+            "failed_kills": 0,
+            "accepted": True,
+            "added": True,
+            "approved": True,
+            "archived": True,
+            "blocked": True,
+            "blocking": method != "DELETE",
+            "bookmarked": method != "DELETE",
+            "created": True,
+            "deleted": method == "DELETE",
+            "disabled": True,
+            "following": method != "DELETE",
+            "pending_follow": False,
+            "is_member": method != "DELETE",
+            "liked": method != "DELETE",
+            "muted": method != "DELETE",
+            "muting": method != "DELETE",
+            "pinned": method != "DELETE",
+            "provisioned": True,
+            "rejected": True,
+            "removed": True,
+            "requested": True,
+            "retweeted": method != "DELETE",
+            "revoked": True,
+            "subscribed": method != "DELETE",
+            "success": True,
+            "updated": True,
+            "valid": True,
+            "advertiser_categories": [],
+            "video_categories": [],
+            "advertiser_ids": ["adv_1"],
+            "publisher_ids": ["pub_1"],
+            "moderator_user_ids": ["2244994945"],
+            "broadcasts": [],
+            "sources": [],
+            "video_access": {},
+        }
+        if "/broadcasts" in path:
+            single_data["broadcast"] = {"id": "bc_1"}
+        if "/sources" in path:
+            single_data["source"] = {"id": "src_1"}
+
+        return MockResponse.json(
+            status,
+            {
+                "region": "us-east-1",
+                "data": single_data,
+            },
+        )
+
+    @staticmethod
+    def verify_oauth1_signature(
+        req: RecordedRequest, consumer_secret: str, token_secret: str
+    ) -> bool:
+        """Verify an incoming Authorization: OAuth ... header per RFC 5849."""
+        auth = req.first_header("authorization")
+        if not auth or not auth.startswith("OAuth "):
+            return False
+
+        oauth_params: Dict[str, str] = {}
+        for part in auth[len("OAuth ") :].split(","):
+            trimmed = part.strip()
+            if "=" not in trimmed:
+                continue
+            k, v = trimmed.split("=", 1)
+            k = _url_decode(k.strip())
+            v = v.strip()
+            if len(v) >= 2 and v.startswith('"') and v.endswith('"'):
+                v = v[1:-1]
+            oauth_params[k] = _url_decode(v)
+
+        received_sig = oauth_params.pop("oauth_signature", None)
+        if not received_sig:
+            return False
+
+        encoded_pairs: List[Tuple[str, str]] = [
+            (_percent_encode(k), _percent_encode(v)) for k, v in oauth_params.items()
+        ]
+        if req.raw_query:
+            for rk, rv in urllib.parse.parse_qsl(req.raw_query, keep_blank_values=True):
+                encoded_pairs.append((_percent_encode(rk), _percent_encode(rv)))
+
+        encoded_pairs.sort(key=lambda item: (item[0], item[1]))
+        normalized_params = "&".join(f"{k}={v}" for k, v in encoded_pairs)
+
+        host = req.first_header("host") or "127.0.0.1"
+        base_uri = f"http://{host}{req.path}"
+        base_string = (
+            f"{req.method.upper()}&{_percent_encode(base_uri)}&{_percent_encode(normalized_params)}"
+        )
+        signing_key = f"{_percent_encode(consumer_secret)}&{_percent_encode(token_secret)}"
+        digest = hmac.new(
+            signing_key.encode("utf-8"),
+            base_string.encode("utf-8"),
+            hashlib.sha1,
+        ).digest()
+        expected_sig = base64.b64encode(digest).decode("ascii")
+        return hmac.compare_digest(expected_sig, received_sig)
+
+
+def _compute_s256_challenge(verifier: str) -> str:
+    digest = hashlib.sha256(verifier.encode("ascii")).digest()
+    return base64.urlsafe_b64encode(digest).decode("ascii").rstrip("=")
+
+
+def _url_decode(value: str) -> str:
+    return urllib.parse.unquote(value.replace("+", "%2B"))
+
+
+def _percent_encode(value: str) -> str:
+    return urllib.parse.quote(value, safe="~-._")

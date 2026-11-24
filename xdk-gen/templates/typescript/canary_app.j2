@@ -1,0 +1,543 @@
+/**
+ * Continuous Always-On Canary Runner for @xdevplatform/xdk (TypeScript).
+ *
+ * Continuously exercises the TypeScript SDK across:
+ * - Synthetic E2E Simulator Probes: All 24 API tags (via examples/use_cases.ts), OAuth 2.0 PKCE +
+ *   auto-refresh, OAuth 1.0a RFC 5849 verification, multi-page pagination, chunked NDJSON streaming
+ *   + auto-reconnect, 429 Retry-After recovery, and 404 ApiError parsing.
+ * - Live X API Probes (enabled when X_BEARER_TOKEN / X_ACCESS_TOKEN or --live is provided):
+ *   Public OpenAPI spec check, @XDevelopers user lookup, recent post counts, and authenticated user check.
+ * - HTTP Observability (when --port <N> is set): Serves /health, /status (JSON), and /metrics (Prometheus).
+ */
+
+import * as http from 'node:http';
+import type { AddressInfo } from 'node:net';
+import {
+  Client,
+  ApiError,
+  OAuth1,
+  OAuth2,
+  UserPaginator,
+  type PaginatedResponse,
+  type Schemas,
+} from '../src/index.js';
+import { MockXApiServer, MockResponse } from './mock_x_api_server.js';
+import { runAll } from './use_cases.js';
+
+export interface ProbeResult {
+  name: string;
+  mode: string;
+  passed: boolean;
+  durationMs: number;
+  error: string | null;
+}
+
+export interface CanarySnapshot {
+  sdk: string;
+  version: string;
+  timestamp: string;
+  cycle: number;
+  healthy: boolean;
+  probesPassed: number;
+  probesFailed: number;
+  durationMs: number;
+  probes: ProbeResult[];
+}
+
+export class XdkTypeScriptCanaryApp {
+  public static readonly SDK_NAME = 'typescript';
+  public static readonly SDK_VERSION = '{{ version }}';
+
+  private totalCycles = 0;
+  private totalProbeFailures = 0;
+  private latestSnapshot: CanarySnapshot | null = null;
+  private readonly startedAtMs = Date.now();
+  private readonly startedAtIso = new Date().toISOString();
+  private readonly enableLiveProbes: boolean;
+  private statusServer: http.Server | null = null;
+  private boundPort = -1;
+
+  constructor(enableLiveProbes: boolean = false) {
+    this.enableLiveProbes = enableLiveProbes;
+  }
+
+  get statusPort(): number {
+    return this.boundPort;
+  }
+
+  getLatestSnapshot(): CanarySnapshot | null {
+    return this.latestSnapshot;
+  }
+
+  async startStatusServer(port: number): Promise<void> {
+    const srv = http.createServer((req, res) => {
+      const urlPath = req.url || '/';
+      const snap = this.latestSnapshot;
+      const healthy = Boolean(snap && snap.healthy);
+
+      const send = (code: number, contentType: string, text: string) => {
+        const buf = Buffer.from(text, 'utf8');
+        res.writeHead(code, {
+          'Content-Type': contentType,
+          'Content-Length': String(buf.length),
+        });
+        res.end(buf);
+      };
+
+      if (urlPath.startsWith('/health')) {
+        send(
+          healthy ? 200 : 503,
+          'application/json',
+          JSON.stringify({
+            sdk: XdkTypeScriptCanaryApp.SDK_NAME,
+            healthy,
+            cycles: this.totalCycles,
+            uptimeSeconds: Math.floor((Date.now() - this.startedAtMs) / 1000),
+          })
+        );
+        return;
+      }
+
+      if (urlPath.startsWith('/status')) {
+        send(
+          healthy ? 200 : 503,
+          'application/json',
+          JSON.stringify({
+            sdk: XdkTypeScriptCanaryApp.SDK_NAME,
+            version: XdkTypeScriptCanaryApp.SDK_VERSION,
+            startedAt: this.startedAtIso,
+            totalCycles: this.totalCycles,
+            totalProbeFailures: this.totalProbeFailures,
+            latest: snap,
+          })
+        );
+        return;
+      }
+
+      if (urlPath.startsWith('/metrics')) {
+        const sdk = XdkTypeScriptCanaryApp.SDK_NAME;
+        const lines: string[] = [
+          '# TYPE xdk_canary_cycles_total counter',
+          `xdk_canary_cycles_total{sdk="${sdk}"} ${this.totalCycles}`,
+          '# TYPE xdk_canary_probe_failures_total counter',
+          `xdk_canary_probe_failures_total{sdk="${sdk}"} ${this.totalProbeFailures}`,
+          '# TYPE xdk_canary_healthy gauge',
+          `xdk_canary_healthy{sdk="${sdk}"} ${healthy ? 1 : 0}`,
+        ];
+        if (snap) {
+          lines.push('# TYPE xdk_canary_probe_duration_ms gauge');
+          lines.push('# TYPE xdk_canary_probe_success gauge');
+          for (const p of snap.probes) {
+            lines.push(
+              `xdk_canary_probe_duration_ms{sdk="${sdk}",probe="${p.name}",mode="${p.mode}"} ${p.durationMs}`
+            );
+            lines.push(
+              `xdk_canary_probe_success{sdk="${sdk}",probe="${p.name}",mode="${p.mode}"} ${p.passed ? 1 : 0}`
+            );
+          }
+        }
+        send(200, 'text/plain; version=0.0.4; charset=utf-8', `${lines.join('\n')}\n`);
+        return;
+      }
+
+      send(404, 'application/json', '{"error":"not_found"}');
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      srv.once('error', reject);
+      srv.listen(port, '127.0.0.1', () => {
+        this.boundPort = (srv.address() as AddressInfo).port;
+        this.statusServer = srv;
+        resolve();
+      });
+    });
+  }
+
+  async close(): Promise<void> {
+    if (this.statusServer) {
+      const srv = this.statusServer;
+      this.statusServer = null;
+      await new Promise<void>(resolve => {
+        srv.close(() => resolve());
+        srv.closeAllConnections?.();
+      });
+    }
+  }
+
+  async runCycle(): Promise<CanarySnapshot> {
+    const cycleNum = ++this.totalCycles;
+    const cycleStart = performance.now();
+    const results: ProbeResult[] = [];
+
+    // 1. Synthetic Full-SDK Simulator Probes
+    const simulator = await MockXApiServer.start();
+    try {
+      const simClient = new Client({
+        baseUrl: simulator.baseUrl,
+        bearerToken: 'canary-bearer',
+        accessToken: 'canary-oauth2',
+        oauth1: new OAuth1({
+          apiKey: 'ck',
+          apiSecret: 'cs',
+          accessToken: 'at',
+          accessTokenSecret: 'ats',
+          baseUrl: simulator.baseUrl,
+        }),
+      });
+
+      const ucStart = performance.now();
+      try {
+        const suiteTimings = await runAll(simulator.baseUrl, simClient);
+        for (const [suiteName, ms] of Object.entries(suiteTimings)) {
+          results.push({
+            name: `usecase_${suiteName}`,
+            mode: 'synthetic',
+            passed: true,
+            durationMs: ms,
+            error: null,
+          });
+        }
+      } catch (err) {
+        results.push({
+          name: 'usecases_all_24_tags',
+          mode: 'synthetic',
+          passed: false,
+          durationMs: Math.round(performance.now() - ucStart),
+          error: String(err),
+        });
+      }
+
+      results.push(
+        await this.runProbe('auth_oauth2_pkce_and_refresh', 'synthetic', () =>
+          this.verifyOAuth2Probe(simulator)
+        )
+      );
+      results.push(
+        await this.runProbe('auth_oauth1_rfc5849_signature', 'synthetic', () =>
+          this.verifyOAuth1Probe(simulator)
+        )
+      );
+      results.push(
+        await this.runProbe('pagination_cursor_traversal', 'synthetic', () =>
+          this.verifyPaginationProbe(simulator)
+        )
+      );
+      results.push(
+        await this.runProbe('streaming_ndjson_reconnect', 'synthetic', () =>
+          this.verifyStreamingReconnectProbe(simulator)
+        )
+      );
+      results.push(
+        await this.runProbe('resilience_429_retry_and_404_error', 'synthetic', () =>
+          this.verifyResilienceProbe(simulator)
+        )
+      );
+    } finally {
+      await simulator.close();
+    }
+
+    // 2. Optional Live X API Probes
+    const liveBearer = (process.env.X_BEARER_TOKEN || '').trim();
+    const liveAccess = (process.env.X_ACCESS_TOKEN || '').trim();
+    const liveBase = (process.env.X_API_BASE_URL || '').trim() || 'https://api.x.com';
+
+    if (this.enableLiveProbes || liveBearer || liveAccess) {
+      results.push(
+        await this.runProbe('live_openapi_spec', 'live', async () => {
+          const anon = new Client({ baseUrl: liveBase, timeout: 15_000 });
+          const spec: any = await anon.general.getOpenApiSpec();
+          if (!spec || !spec.openapi) {
+            throw new Error('Unexpected OpenAPI spec payload');
+          }
+        })
+      );
+
+      if (liveBearer) {
+        const bearerClient = new Client({
+          baseUrl: liveBase,
+          bearerToken: liveBearer,
+          timeout: 15_000,
+        });
+        results.push(
+          await this.runProbe('live_users_lookup_xdevelopers', 'live', async () => {
+            const u = await bearerClient.users.getByUsername('XDevelopers');
+            if (!u?.data?.id) {
+              throw new Error('Missing @XDevelopers user data');
+            }
+          })
+        );
+        results.push(
+          await this.runProbe('live_posts_counts_recent', 'live', async () => {
+            const c = await bearerClient.posts.getCountsRecent('xdk');
+            if (!c) {
+              throw new Error('Null counts response');
+            }
+          })
+        );
+      }
+
+      if (liveAccess) {
+        const userClient = new Client({
+          baseUrl: liveBase,
+          accessToken: liveAccess,
+          timeout: 15_000,
+        });
+        results.push(
+          await this.runProbe('live_users_me', 'live', async () => {
+            const me = await userClient.users.getMe();
+            if (!me?.data?.id) {
+              throw new Error('Missing authenticated user id');
+            }
+          })
+        );
+      }
+    }
+
+    let passed = 0;
+    let failed = 0;
+    for (const r of results) {
+      if (r.passed) {
+        passed++;
+      } else {
+        failed++;
+        this.totalProbeFailures++;
+      }
+    }
+
+    const snapshot: CanarySnapshot = {
+      sdk: XdkTypeScriptCanaryApp.SDK_NAME,
+      version: XdkTypeScriptCanaryApp.SDK_VERSION,
+      timestamp: new Date().toISOString(),
+      cycle: cycleNum,
+      healthy: failed === 0,
+      probesPassed: passed,
+      probesFailed: failed,
+      durationMs: Math.round(performance.now() - cycleStart),
+      probes: results,
+    };
+    this.latestSnapshot = snapshot;
+    return snapshot;
+  }
+
+  private async runProbe(
+    name: string,
+    mode: string,
+    fn: () => Promise<void>
+  ): Promise<ProbeResult> {
+    const start = performance.now();
+    try {
+      await fn();
+      return {
+        name,
+        mode,
+        passed: true,
+        durationMs: Math.round(performance.now() - start),
+        error: null,
+      };
+    } catch (err) {
+      return {
+        name,
+        mode,
+        passed: false,
+        durationMs: Math.round(performance.now() - start),
+        error: String(err),
+      };
+    }
+  }
+
+  private async verifyOAuth2Probe(server: MockXApiServer): Promise<void> {
+    server.reset();
+    const oauth2 = new OAuth2({
+      clientId: 'canary-cid',
+      clientSecret: 'canary-secret',
+      redirectUri: 'https://example.org/cb',
+      scope: ['tweet.read', 'users.read', 'offline.access'],
+      baseUrl: server.baseUrl,
+      authorizationBaseUrl: 'https://x.com/i',
+    });
+    const client = new Client({ baseUrl: server.baseUrl, oauth2 });
+    await oauth2.getAuthorizationUrl('st');
+    server.registerExpectedPkceChallenge('c1', oauth2.getCodeChallenge()!);
+    const tok = await oauth2.exchangeCode('c1');
+    await client.users.getMe();
+    oauth2.setToken(tok, Date.now() - 10_000);
+    await client.users.getMe();
+    if (
+      server.lastRequest()?.firstHeader('authorization') !==
+      'Bearer sim_refreshed_access_from_sim_oauth2_refresh_1'
+    ) {
+      throw new Error('Auto-refresh header mismatch');
+    }
+  }
+
+  private async verifyOAuth1Probe(server: MockXApiServer): Promise<void> {
+    server.reset();
+    const client = new Client({
+      baseUrl: server.baseUrl,
+      oauth1: new OAuth1({
+        apiKey: 'ck',
+        apiSecret: 'cs_secret',
+        accessToken: 'at',
+        accessTokenSecret: 'ats_secret',
+        baseUrl: server.baseUrl,
+      }),
+    });
+    await client.posts.create({ text: 'Canary OAuth1' });
+    const last = server.lastRequest();
+    if (!last || !MockXApiServer.verifyOAuth1Signature(last, 'cs_secret', 'ats_secret')) {
+      throw new Error('OAuth1 HMAC-SHA1 verification failed');
+    }
+  }
+
+  private async verifyPaginationProbe(server: MockXApiServer): Promise<void> {
+    server.reset();
+    const client = new Client({ baseUrl: server.baseUrl, bearerToken: 'tok' });
+    const paginator = new UserPaginator(
+      async (token?: string): Promise<PaginatedResponse<Schemas.User>> => {
+        const res = await client.users.getFollowers('2244994945', { paginationToken: token });
+        return { data: res.data ?? [], meta: res.meta };
+      }
+    );
+    let items = 0;
+    for await (const u of paginator) {
+      if (u) items++;
+    }
+    if (items !== 3) {
+      throw new Error(`Expected 3 paginated items across 2 pages, got ${items}`);
+    }
+  }
+
+  private async verifyStreamingReconnectProbe(server: MockXApiServer): Promise<void> {
+    server.reset();
+    let conns = 0;
+    server.setResponder(() => {
+      conns += 1;
+      if (conns === 1) {
+        return MockResponse.chunkedStream(['{"data":{"id":"1","text":"first"}}\n'], true);
+      }
+      return MockResponse.chunkedStream(['{"data":{"id":"2","text":"second"}}\n'], false);
+    });
+    try {
+      const client = new Client({ baseUrl: server.baseUrl, bearerToken: 'tok' });
+      const stream = await client.stream.posts({
+        autoReconnect: true,
+        maxReconnectAttempts: 2,
+        reconnectDelayMs: 15,
+      });
+      let items = 0;
+      for await (const ev of stream) {
+        if (ev.data?.id) {
+          items++;
+          if (items === 2) {
+            stream.close();
+            break;
+          }
+        }
+      }
+      if (items !== 2) {
+        throw new Error(`Expected 2 stream items across reconnect, got ${items}`);
+      }
+    } finally {
+      server.reset();
+    }
+  }
+
+  private async verifyResilienceProbe(server: MockXApiServer): Promise<void> {
+    server.reset();
+    let hits = 0;
+    server.setResponder(req => {
+      if (req.path.includes('missing_user')) {
+        return MockResponse.json(404, { errors: [{ message: 'User not found' }] });
+      }
+      hits += 1;
+      if (hits === 1) {
+        return MockResponse.json(429, { detail: 'Too Many Requests' }, { 'Retry-After': '0' });
+      }
+      return MockResponse.json(200, { data: { id: '1', username: 'XDevelopers' } });
+    });
+    try {
+      const client = new Client({
+        baseUrl: server.baseUrl,
+        bearerToken: 'tok',
+        maxRetries: 2,
+      });
+      await client.users.getByUsername('XDevelopers');
+      try {
+        await client.users.getByUsername('missing_user');
+        throw new Error('Expected ApiError on 404');
+      } catch (err) {
+        if (!(err instanceof ApiError) || err.status !== 404) {
+          throw err;
+        }
+      }
+    } finally {
+      server.reset();
+    }
+  }
+}
+
+async function runCli(): Promise<number> {
+  const argv = process.argv.slice(2);
+  let once = false;
+  let daemon = false;
+  let live = false;
+  let intervalSeconds = 60;
+  let port = 0;
+
+  for (let i = 0; i < argv.length; i++) {
+    const arg = argv[i];
+    if (arg === '--once') once = true;
+    else if (arg === '--daemon') daemon = true;
+    else if (arg === '--live') live = true;
+    else if (arg === '--interval-seconds' && argv[i + 1]) intervalSeconds = Number(argv[++i]);
+    else if (arg === '--port' && argv[i + 1]) port = Number(argv[++i]);
+  }
+
+  if (!daemon) once = true;
+
+  const app = new XdkTypeScriptCanaryApp(live);
+  if (port > 0) {
+    await app.startStatusServer(port);
+  }
+
+  if (once) {
+    try {
+      const snap = await app.runCycle();
+      console.log(JSON.stringify(snap));
+      return snap.healthy ? 0 : 1;
+    } finally {
+      await app.close();
+    }
+  }
+
+  let stopping = false;
+  const stop = () => {
+    stopping = true;
+  };
+  process.on('SIGINT', stop);
+  process.on('SIGTERM', stop);
+
+  try {
+    while (!stopping) {
+      const snap = await app.runCycle();
+      console.log(JSON.stringify(snap));
+      await new Promise<void>(resolve => {
+        const timer = setTimeout(resolve, Math.max(1000, intervalSeconds * 1000));
+        timer.unref();
+      });
+    }
+  } finally {
+    await app.close();
+  }
+  return 0;
+}
+
+const entryScript = process.argv[1] || '';
+if (/(?:^|[\\/])canary\.(?:ts|js|mjs|cjs)$/.test(entryScript)) {
+  runCli()
+    .then(code => process.exit(code))
+    .catch(err => {
+      console.error(err);
+      process.exit(1);
+    });
+}

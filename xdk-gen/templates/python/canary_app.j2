@@ -1,0 +1,506 @@
+"""
+Continuous Always-On Canary Runner for xdk-python.
+
+Continuously exercises the Python SDK across:
+- Synthetic E2E Simulator Probes: All 24 API tags (via examples.use_cases), OAuth 2.0 PKCE +
+  auto-refresh, OAuth 1.0a RFC 5849 verification, multi-page pagination, chunked NDJSON streaming
+  + reconnect, 429 Retry-After recovery, and 404 error handling.
+- Live X API Probes (enabled when X_BEARER_TOKEN / X_ACCESS_TOKEN or --live is provided):
+  Public OpenAPI spec check, @XDevelopers user lookup, recent post counts, and authenticated user check.
+- HTTP Observability (when --port <N> is set): Serves /health, /status (JSON), and /metrics (Prometheus).
+"""
+
+from __future__ import annotations
+
+import argparse
+import itertools
+import json
+import os
+import signal
+import sys
+import threading
+import time
+from dataclasses import asdict, dataclass
+from datetime import datetime, timezone
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
+from typing import Callable, Dict, List, Optional
+
+import requests
+
+from examples.mock_x_api_server import MockResponse, MockXApiServer, RecordedRequest
+from examples.use_cases import run_all
+from xdk import Client, Cursor, OAuth1, OAuth2PKCEAuth, StreamConfig, schemas
+
+
+@dataclass
+class ProbeResult:
+    name: str
+    mode: str
+    passed: bool
+    durationMs: int
+    error: Optional[str] = None
+
+
+@dataclass
+class CanarySnapshot:
+    sdk: str
+    version: str
+    timestamp: str
+    cycle: int
+    healthy: bool
+    probesPassed: int
+    probesFailed: int
+    durationMs: int
+    probes: List[ProbeResult]
+
+
+class _CanaryHttpServer(ThreadingHTTPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+
+class XdkPythonCanaryApp:
+    SDK_NAME = "python"
+    SDK_VERSION = "{{ version }}"
+
+    def __init__(self, enable_live_probes: bool = False) -> None:
+        self.enable_live_probes = enable_live_probes
+        self._lock = threading.Lock()
+        self._total_cycles = 0
+        self._total_probe_failures = 0
+        self._latest_snapshot: Optional[CanarySnapshot] = None
+        self._started_epoch = time.time()
+        self._started_iso = datetime.now(timezone.utc).isoformat()
+        self._http_server: Optional[_CanaryHttpServer] = None
+        self._http_thread: Optional[threading.Thread] = None
+
+    @property
+    def status_port(self) -> int:
+        if self._http_server is None:
+            return -1
+        return int(self._http_server.server_address[1])
+
+    @property
+    def latest_snapshot(self) -> Optional[CanarySnapshot]:
+        with self._lock:
+            return self._latest_snapshot
+
+    def start_status_server(self, port: int) -> None:
+        outer = self
+
+        class Handler(BaseHTTPRequestHandler):
+            def log_message(self, format: str, *args: object) -> None:
+                return
+
+            def _send(self, code: int, content_type: str, text: str) -> None:
+                data = text.encode("utf-8")
+                self.send_response(code)
+                self.send_header("Content-Type", content_type)
+                self.send_header("Content-Length", str(len(data)))
+                self.end_headers()
+                self.wfile.write(data)
+
+            def do_GET(self) -> None:
+                with outer._lock:
+                    snap = outer._latest_snapshot
+                    cycles = outer._total_cycles
+                    failures = outer._total_probe_failures
+
+                healthy = snap is not None and snap.healthy
+                if self.path.startswith("/health"):
+                    body = json.dumps(
+                        {
+                            "sdk": outer.SDK_NAME,
+                            "healthy": healthy,
+                            "cycles": cycles,
+                            "uptimeSeconds": int(time.time() - outer._started_epoch),
+                        }
+                    )
+                    self._send(200 if healthy else 503, "application/json", body)
+                    return
+
+                if self.path.startswith("/status"):
+                    body = json.dumps(
+                        {
+                            "sdk": outer.SDK_NAME,
+                            "version": outer.SDK_VERSION,
+                            "startedAt": outer._started_iso,
+                            "totalCycles": cycles,
+                            "totalProbeFailures": failures,
+                            "latest": asdict(snap) if snap is not None else None,
+                        }
+                    )
+                    self._send(200 if healthy else 503, "application/json", body)
+                    return
+
+                if self.path.startswith("/metrics"):
+                    {% raw %}
+                    lines = [
+                        "# TYPE xdk_canary_cycles_total counter",
+                        f'xdk_canary_cycles_total{{sdk="{outer.SDK_NAME}"}} {cycles}',
+                        "# TYPE xdk_canary_probe_failures_total counter",
+                        f'xdk_canary_probe_failures_total{{sdk="{outer.SDK_NAME}"}} {failures}',
+                        "# TYPE xdk_canary_healthy gauge",
+                        f'xdk_canary_healthy{{sdk="{outer.SDK_NAME}"}} {1 if healthy else 0}',
+                    ]
+                    if snap is not None:
+                        lines.append("# TYPE xdk_canary_probe_duration_ms gauge")
+                        lines.append("# TYPE xdk_canary_probe_success gauge")
+                        for p in snap.probes:
+                            lines.append(
+                                f'xdk_canary_probe_duration_ms{{sdk="{outer.SDK_NAME}",probe="{p.name}",mode="{p.mode}"}} {p.durationMs}'
+                            )
+                            lines.append(
+                                f'xdk_canary_probe_success{{sdk="{outer.SDK_NAME}",probe="{p.name}",mode="{p.mode}"}} {1 if p.passed else 0}'
+                            )
+                    {% endraw %}
+                    self._send(
+                        200,
+                        "text/plain; version=0.0.4; charset=utf-8",
+                        "\n".join(lines) + "\n",
+                    )
+                    return
+
+                self._send(404, "application/json", '{"error":"not_found"}')
+
+        self._http_server = _CanaryHttpServer(("127.0.0.1", port), Handler)
+        self._http_thread = threading.Thread(
+            target=self._http_server.serve_forever,
+            kwargs={"poll_interval": 0.05},
+            name="xdk-python-canary-http",
+            daemon=True,
+        )
+        self._http_thread.start()
+
+    def close(self) -> None:
+        if self._http_server is not None:
+            try:
+                self._http_server.shutdown()
+                self._http_server.server_close()
+            except Exception:
+                pass
+            self._http_server = None
+
+    def __enter__(self) -> "XdkPythonCanaryApp":
+        return self
+
+    def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
+        self.close()
+
+    def run_cycle(self) -> CanarySnapshot:
+        cycle_start = time.perf_counter()
+        results: List[ProbeResult] = []
+
+        # 1. Synthetic Full-SDK Simulator Probes
+        with MockXApiServer() as simulator:
+            oauth1 = OAuth1(
+                api_key="ck",
+                api_secret="cs",
+                callback="oob",
+                access_token="at",
+                access_token_secret="ats",
+                base_url=simulator.base_url,
+            )
+            sim_client = Client(
+                base_url=simulator.base_url,
+                bearer_token="canary-bearer",
+                access_token="canary-oauth2",
+                auth=oauth1,
+            )
+
+            uc_start = time.perf_counter()
+            try:
+                suite_timings = run_all(simulator.base_url, sim_client)
+                for suite_name, suite_ms in suite_timings.items():
+                    results.append(
+                        ProbeResult(
+                            name=f"usecase_{suite_name}",
+                            mode="synthetic",
+                            passed=True,
+                            durationMs=suite_ms,
+                        )
+                    )
+            except Exception as exc:
+                results.append(
+                    ProbeResult(
+                        name="usecases_all_24_tags",
+                        mode="synthetic",
+                        passed=False,
+                        durationMs=int((time.perf_counter() - uc_start) * 1000),
+                        error=repr(exc),
+                    )
+                )
+
+            results.append(
+                self._run_probe(
+                    "auth_oauth2_pkce_and_refresh",
+                    "synthetic",
+                    lambda: self._verify_oauth2_probe(simulator),
+                )
+            )
+            results.append(
+                self._run_probe(
+                    "auth_oauth1_rfc5849_signature",
+                    "synthetic",
+                    lambda: self._verify_oauth1_probe(simulator),
+                )
+            )
+            results.append(
+                self._run_probe(
+                    "pagination_cursor_traversal",
+                    "synthetic",
+                    lambda: self._verify_pagination_probe(simulator),
+                )
+            )
+            results.append(
+                self._run_probe(
+                    "streaming_ndjson_reconnect",
+                    "synthetic",
+                    lambda: self._verify_streaming_reconnect_probe(simulator),
+                )
+            )
+            results.append(
+                self._run_probe(
+                    "resilience_429_retry_and_404_error",
+                    "synthetic",
+                    lambda: self._verify_resilience_probe(simulator),
+                )
+            )
+
+        # 2. Optional Live X API Probes
+        live_bearer = os.environ.get("X_BEARER_TOKEN", "").strip()
+        live_access = os.environ.get("X_ACCESS_TOKEN", "").strip()
+        live_base = os.environ.get("X_API_BASE_URL", "").strip() or "https://api.x.com"
+
+        if self.enable_live_probes or live_bearer or live_access:
+            def _check_live_openapi() -> None:
+                anon = Client(base_url=live_base, timeout=15.0)
+                spec = anon.general.get_open_api_spec()
+                dumped = spec.model_dump() if hasattr(spec, "model_dump") else spec
+                if not dumped or (isinstance(dumped, dict) and "openapi" not in dumped):
+                    raise RuntimeError("Unexpected OpenAPI spec payload")
+
+            results.append(self._run_probe("live_openapi_spec", "live", _check_live_openapi))
+
+            if live_bearer:
+                bearer_client = Client(base_url=live_base, bearer_token=live_bearer, timeout=15.0)
+
+                def _check_live_user() -> None:
+                    u = bearer_client.users.get_by_username("XDevelopers")
+                    if not u or u.data is None:
+                        raise RuntimeError("Missing @XDevelopers user data")
+
+                def _check_live_counts() -> None:
+                    c = next(bearer_client.posts.get_counts_recent(query="xdk"), None)
+                    if c is None:
+                        raise RuntimeError("Null counts response")
+
+                results.append(
+                    self._run_probe("live_users_lookup_xdevelopers", "live", _check_live_user)
+                )
+                results.append(
+                    self._run_probe("live_posts_counts_recent", "live", _check_live_counts)
+                )
+
+            if live_access:
+                user_client = Client(base_url=live_base, access_token=live_access, timeout=15.0)
+
+                def _check_live_me() -> None:
+                    me = user_client.users.get_me()
+                    if not me or me.data is None:
+                        raise RuntimeError("Missing authenticated user data")
+
+                results.append(self._run_probe("live_users_me", "live", _check_live_me))
+
+        passed = sum(1 for r in results if r.passed)
+        failed = len(results) - passed
+        total_ms = int((time.perf_counter() - cycle_start) * 1000)
+
+        with self._lock:
+            self._total_cycles += 1
+            self._total_probe_failures += failed
+            snapshot = CanarySnapshot(
+                sdk=self.SDK_NAME,
+                version=self.SDK_VERSION,
+                timestamp=datetime.now(timezone.utc).isoformat(),
+                cycle=self._total_cycles,
+                healthy=(failed == 0),
+                probesPassed=passed,
+                probesFailed=failed,
+                durationMs=total_ms,
+                probes=results,
+            )
+            self._latest_snapshot = snapshot
+            return snapshot
+
+    @staticmethod
+    def _run_probe(name: str, mode: str, fn: Callable[[], None]) -> ProbeResult:
+        start = time.perf_counter()
+        try:
+            fn()
+            return ProbeResult(
+                name=name,
+                mode=mode,
+                passed=True,
+                durationMs=int((time.perf_counter() - start) * 1000),
+            )
+        except Exception as exc:
+            return ProbeResult(
+                name=name,
+                mode=mode,
+                passed=False,
+                durationMs=int((time.perf_counter() - start) * 1000),
+                error=repr(exc),
+            )
+
+    @staticmethod
+    def _verify_oauth2_probe(server: MockXApiServer) -> None:
+        server.reset()
+        oauth2 = OAuth2PKCEAuth(
+            base_url=server.base_url,
+            authorization_base_url="https://x.com/i",
+            client_id="canary-cid",
+            redirect_uri="https://example.org/cb",
+            scope=["tweet.read", "users.read", "offline.access"],
+        )
+        client = Client(base_url=server.base_url, oauth2_auth=oauth2)
+        oauth2.get_authorization_url(state="st")
+        assert oauth2.code_challenge is not None
+        server.register_expected_pkce_challenge("c1", oauth2.code_challenge)
+        tok = oauth2.exchange_code("c1")
+        client.users.get_me()
+        expired = dict(tok)
+        expired["expires_at"] = time.time() - 30
+        oauth2.set_token(expired)
+        client.users.get_me()
+        last = server.last_request()
+        if not last or last.first_header("authorization") != "Bearer sim_refreshed_access_from_sim_oauth2_refresh_1":
+            raise RuntimeError("Auto-refresh header mismatch")
+
+    @staticmethod
+    def _verify_oauth1_probe(server: MockXApiServer) -> None:
+        server.reset()
+        oauth1 = OAuth1(
+            api_key="ck",
+            api_secret="cs_secret",
+            callback="oob",
+            access_token="at",
+            access_token_secret="ats_secret",
+            base_url=server.base_url,
+        )
+        client = Client(base_url=server.base_url, auth=oauth1)
+        client.posts.create(body=schemas.CreatePostsRequest(text="Canary OAuth1"))
+        last = server.last_request()
+        if not last or not MockXApiServer.verify_oauth1_signature(last, "cs_secret", "ats_secret"):
+            raise RuntimeError("OAuth1 HMAC-SHA1 verification failed")
+
+    @staticmethod
+    def _verify_pagination_probe(server: MockXApiServer) -> None:
+        server.reset()
+        client = Client(base_url=server.base_url, bearer_token="tok")
+        pages = list(Cursor(client.users.get_followers, "2244994945").pages())
+        if len(pages) != 2:
+            raise RuntimeError(f"Expected 2 paginated pages, got {len(pages)}")
+
+    @staticmethod
+    def _verify_streaming_reconnect_probe(server: MockXApiServer) -> None:
+        server.reset()
+        conns = 0
+
+        def responder(_req: RecordedRequest) -> MockResponse:
+            nonlocal conns
+            conns += 1
+            if conns == 1:
+                return MockResponse.chunked_stream(
+                    [b'{"data":{"id":"1","text":"first"}}\n'], drop_midway=True
+                )
+            return MockResponse.chunked_stream(
+                [b'{"data":{"id":"2","text":"second"}}\n'], drop_midway=False
+            )
+
+        server.set_responder(responder)
+        try:
+            client = Client(base_url=server.base_url, bearer_token="tok")
+            cfg = StreamConfig(
+                max_retries=2, initial_backoff=0.01, max_backoff=0.03, jitter=False
+            )
+            items = list(itertools.islice(client.stream.posts(stream_config=cfg), 2))
+            if len(items) != 2:
+                raise RuntimeError(f"Expected 2 stream items across reconnect, got {len(items)}")
+        finally:
+            server.reset()
+
+    @staticmethod
+    def _verify_resilience_probe(server: MockXApiServer) -> None:
+        server.reset()
+        hits = 0
+
+        def responder(req: RecordedRequest) -> MockResponse:
+            nonlocal hits
+            if "missing_user" in req.path:
+                return MockResponse.json(404, {"errors": [{"message": "User not found"}]})
+            hits += 1
+            if hits == 1:
+                return MockResponse.json(
+                    429,
+                    {"detail": "Too Many Requests"},
+                    extra_headers={"Retry-After": "0"},
+                )
+            return MockResponse.json(200, {"data": {"id": "1", "username": "XDevelopers"}})
+
+        server.set_responder(responder)
+        try:
+            client = Client(
+                base_url=server.base_url,
+                bearer_token="tok",
+                max_retries=2,
+                retry_backoff=0.01,
+            )
+            client.users.get_by_username("XDevelopers")
+            try:
+                client.users.get_by_username("missing_user")
+                raise RuntimeError("Expected HTTPError on 404")
+            except requests.HTTPError as err:
+                if err.response is None or err.response.status_code != 404:
+                    raise RuntimeError(f"Unexpected status: {err.response}")
+        finally:
+            server.reset()
+
+
+def main(argv: Optional[List[str]] = None) -> int:
+    parser = argparse.ArgumentParser(description="XDK Python Continuous Canary")
+    parser.add_argument("--once", action="store_true", help="Run a single canary cycle and exit")
+    parser.add_argument("--daemon", action="store_true", help="Run continuously at --interval-seconds")
+    parser.add_argument("--live", action="store_true", help="Include live api.x.com probes")
+    parser.add_argument("--interval-seconds", type=int, default=60)
+    parser.add_argument("--port", type=int, default=0)
+    args = parser.parse_args(argv)
+
+    once = args.once or not args.daemon
+    with XdkPythonCanaryApp(enable_live_probes=args.live) as app:
+        if args.port > 0:
+            app.start_status_server(args.port)
+
+        if once:
+            snap = app.run_cycle()
+            print(json.dumps(asdict(snap)), flush=True)
+            return 0 if snap.healthy else 1
+
+        stop_event = threading.Event()
+
+        def _stop(_sig: int, _frame: object) -> None:
+            stop_event.set()
+
+        signal.signal(signal.SIGINT, _stop)
+        signal.signal(signal.SIGTERM, _stop)
+
+        while not stop_event.is_set():
+            snap = app.run_cycle()
+            print(json.dumps(asdict(snap)), flush=True)
+            stop_event.wait(timeout=max(1, args.interval_seconds))
+
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())

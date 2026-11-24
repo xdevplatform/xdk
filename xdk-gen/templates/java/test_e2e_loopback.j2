@@ -1,0 +1,354 @@
+package com.x.xdk;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.x.xdk.auth.OAuth1;
+import com.x.xdk.auth.OAuth2Pkce;
+import com.x.xdk.auth.OAuth2Token;
+import com.x.xdk.clients.PostsClient;
+import com.x.xdk.clients.StreamClient;
+import com.x.xdk.clients.UsersClient;
+import com.x.xdk.models.Schemas;
+import com.x.xdk.streaming.EventStream;
+import com.x.xdk.streaming.StreamConfig;
+import com.x.xdk.testing.MockXApiServer;
+import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import org.junit.jupiter.api.Test;
+
+/**
+ * Deep end-to-end TCP loopback integration suite verifying real {@code JdkHttpTransport} socket
+ * behavior across authentication flows, pagination, chunked streaming + reconnection, binary
+ * uploads/downloads, 64-bit integer safety, retries, timeouts, and structured error handling.
+ */
+public class XClientLoopbackE2ETest {
+
+    @Test
+    void oauth2PkceLateBoundExchangeAndAutoRefreshOverTcp() {
+        try (MockXApiServer server = new MockXApiServer()) {
+            OAuth2Pkce oauth2 =
+                    new OAuth2Pkce(
+                            "my-client-id",
+                            "my-client-secret",
+                            "https://app.example.com/callback",
+                            Arrays.asList("tweet.read", "users.read", "offline.access"),
+                            server.getBaseUrl(),
+                            "https://x.com/i",
+                            null);
+
+            // Build XClient BEFORE exchanging the authorization code (late-bound token regression test)
+            XClient client =
+                    XClient.builder()
+                            .baseUrl(server.getBaseUrl())
+                            .oauth2(oauth2)
+                            .retry(false)
+                            .build();
+
+            String authUrl = oauth2.getAuthorizationUrl("csrf-state-123");
+            assertTrue(authUrl.contains("code_challenge_method=S256"));
+            server.registerExpectedPkceChallenge("auth_code_xyz", oauth2.getCodeChallenge());
+
+            OAuth2Token exchanged = oauth2.exchangeCode("auth_code_xyz");
+            assertEquals("sim_oauth2_access_auth_code_xyz", exchanged.getAccessToken());
+
+            // 1st API call should automatically use the newly exchanged token
+            Schemas.GetUsersMeResponse me = client.users().getMe();
+            assertNotNull(me.getData());
+            assertEquals(
+                    "Bearer sim_oauth2_access_auth_code_xyz",
+                    server.lastRequest().firstHeader("authorization"));
+
+            // Force token expiration so the next API call triggers automatic refreshToken()
+            oauth2.setToken(exchanged, Instant.now().minusSeconds(10));
+            Schemas.GetUsersMeResponse meAfterRefresh = client.users().getMe();
+            assertNotNull(meAfterRefresh.getData());
+            assertEquals(
+                    "Bearer sim_refreshed_access_from_sim_oauth2_refresh_1",
+                    server.lastRequest().firstHeader("authorization"));
+        }
+    }
+
+    @Test
+    void oauth1SignatureVerifiedOnServerWithQueryAndEncodedPathOverTcp() {
+        try (MockXApiServer server = new MockXApiServer()) {
+            OAuth1 oauth1 =
+                    new OAuth1(
+                            "consumer-key-1",
+                            "consumer-secret-1",
+                            "oob",
+                            "access-token-1",
+                            "access-secret-1");
+
+            XClient client =
+                    XClient.builder()
+                            .baseUrl(server.getBaseUrl())
+                            .oauth1(oauth1)
+                            .retry(false)
+                            .build();
+
+            Schemas.CreatePostsResponse created =
+                    client.posts()
+                            .create(new Schemas.CreatePostsRequest().text("Hello OAuth 1.0a & TCP!"));
+            assertNotNull(created.getData());
+            assertTrue(
+                    MockXApiServer.verifyOAuth1Signature(
+                            server.lastRequest(), "consumer-secret-1", "access-secret-1"),
+                    "Server-side RFC 5849 HMAC-SHA1 verification failed on POST");
+
+            UsersClient.GetByUsernameOptions opts =
+                    UsersClient.GetByUsernameOptions.builder()
+                            .userFields(Arrays.asList("created_at", "public_metrics"))
+                            .expansions(Collections.singletonList("pinned_tweet_id"));
+            client.users().getByUsername("XDevelopers", opts);
+            assertTrue(
+                    MockXApiServer.verifyOAuth1Signature(
+                            server.lastRequest(), "consumer-secret-1", "access-secret-1"),
+                    "Server-side RFC 5849 HMAC-SHA1 verification failed on GET with query params");
+        }
+    }
+
+    @Test
+    void multiPagePaginatorAndStreamSupportOverTcp() {
+        try (MockXApiServer server = new MockXApiServer()) {
+            AtomicInteger pageHits = new AtomicInteger();
+            server.setResponder(
+                    req -> {
+                        int n = pageHits.incrementAndGet();
+                        if (n == 1) {
+                            return MockXApiServer.MockResponse.json(
+                                    200,
+                                    "{\"data\":[{\"id\":\"p1\",\"text\":\"Post 1\"},{\"id\":\"p2\",\"text\":\"Post 2\"}],"
+                                            + "\"meta\":{\"result_count\":2,\"next_token\":\"cursor_2\"}}");
+                        } else if (n == 2) {
+                            if (!req.getRawQuery().contains("next_token=cursor_2")
+                                    && !req.getRawQuery().contains("pagination_token=cursor_2")) {
+                                return MockXApiServer.MockResponse.json(
+                                        400,
+                                        "{\"detail\":\"Missing cursor_2 in query: " + req.getRawQuery() + "\"}");
+                            }
+                            return MockXApiServer.MockResponse.json(
+                                    200,
+                                    "{\"data\":[{\"id\":\"p3\",\"text\":\"Post 3\"}],"
+                                            + "\"meta\":{\"result_count\":1,\"next_token\":\"cursor_3\"}}");
+                        } else {
+                            if (!req.getRawQuery().contains("next_token=cursor_3")
+                                    && !req.getRawQuery().contains("pagination_token=cursor_3")) {
+                                return MockXApiServer.MockResponse.json(
+                                        400,
+                                        "{\"detail\":\"Missing cursor_3 in query: " + req.getRawQuery() + "\"}");
+                            }
+                            return MockXApiServer.MockResponse.json(
+                                    200,
+                                    "{\"data\":[{\"id\":\"p4\",\"text\":\"Post 4\"}],\"meta\":{\"result_count\":1}}");
+                        }
+                    });
+
+            XClient client =
+                    XClient.builder()
+                            .baseUrl(server.getBaseUrl())
+                            .bearerToken("bearer-test")
+                            .build();
+
+            Paginator<Schemas.SearchPostsRecentResponse> paginator =
+                    client.posts()
+                            .searchRecentPages(
+                                    "xdk lang:en",
+                                    PostsClient.SearchRecentOptions.builder().maxResults(10));
+
+            List<String> allIds =
+                    StreamSupport.stream(paginator.spliterator(), false)
+                            .flatMap(p -> p.getData().stream())
+                            .map(Schemas.Post::getId)
+                            .collect(Collectors.toList());
+
+            assertEquals(Arrays.asList("p1", "p2", "p3", "p4"), allIds);
+            assertEquals(3, pageHits.get());
+        }
+    }
+
+    @Test
+    void chunkedStreamingSplitUtf8KeepAliveAndReconnectOverTcp() {
+        try (MockXApiServer server = new MockXApiServer()) {
+            AtomicInteger connections = new AtomicInteger();
+            byte[] fullEvent =
+                    "{\"data\":{\"id\":\"9001\",\"text\":\" Café 🚀 Live \"}}\n"
+                            .getBytes(StandardCharsets.UTF_8);
+            int rocketPos = 0;
+            for (int i = 0; i < fullEvent.length; i++) {
+                if ((fullEvent[i] & 0xFF) == 0xF0) {
+                    rocketPos = i;
+                    break;
+                }
+            }
+            int splitIdx = rocketPos + 2; // byte offset right inside the 4-byte UTF-8 emoji!
+            byte[] partA = Arrays.copyOfRange(fullEvent, 0, splitIdx);
+            byte[] partB = Arrays.copyOfRange(fullEvent, splitIdx, fullEvent.length);
+
+            server.setResponder(
+                    req -> {
+                        int conn = connections.incrementAndGet();
+                        if (conn == 1) {
+                            return MockXApiServer.MockResponse.chunkedStream(
+                                    Arrays.asList(
+                                            "\r\n{}\r\n".getBytes(StandardCharsets.UTF_8),
+                                            partA,
+                                            partB),
+                                    true /* simulate abrupt mid-stream disconnect */);
+                        }
+                        return MockXApiServer.MockResponse.chunkedStream(
+                                Collections.singletonList(
+                                        "{\"data\":{\"id\":\"9002\",\"text\":\"After reconnect\"}}\n"
+                                                .getBytes(StandardCharsets.UTF_8)),
+                                false);
+                    });
+
+            XClient client =
+                    XClient.builder()
+                            .baseUrl(server.getBaseUrl())
+                            .bearerToken("bearer-stream")
+                            .build();
+
+            StreamConfig cfg =
+                    StreamConfig.builder()
+                            .maxRetries(2)
+                            .initialBackoff(Duration.ofMillis(10))
+                            .maxBackoff(Duration.ofMillis(30))
+                            .build();
+
+            List<String> texts = new ArrayList<>();
+            try (EventStream<Schemas.StreamPostsResponse> stream =
+                    client.stream()
+                            .posts(StreamClient.PostsOptions.builder().streamConfig(cfg))) {
+                for (Schemas.StreamPostsResponse event : stream) {
+                    texts.add(event.getData().getText());
+                    if (texts.size() == 2) {
+                        break;
+                    }
+                }
+            }
+
+            assertEquals(Arrays.asList(" Café 🚀 Live ", "After reconnect"), texts);
+            assertEquals(2, connections.get());
+        }
+    }
+
+    @Test
+    void binaryOctetStreamAndLarge64BitIntegersOverTcp() {
+        try (MockXApiServer server = new MockXApiServer()) {
+            byte[] rawBytes = new byte[] {0x00, (byte) 0x89, 0x50, 0x4E, 0x47, (byte) 0xFE, (byte) 0xFF};
+            server.setResponder(
+                    req -> {
+                        if (req.getPath().endsWith("/upload")) {
+                            assertArrayEquals(rawBytes, req.getBodyBytes());
+                            return MockXApiServer.MockResponse.json(200, "{\"data\":{\"uploaded\":true}}");
+                        }
+                        if (req.getPath().endsWith("/download")) {
+                            return MockXApiServer.MockResponse.bytes(
+                                    200, "application/octet-stream", rawBytes);
+                        }
+                        return MockXApiServer.MockResponse.json(
+                                200,
+                                "{\"data\":{\"id\":\"media_64\",\"size\":8589934592,\"expires_after_secs\":86400}}");
+                    });
+
+            XClient client =
+                    XClient.builder()
+                            .baseUrl(server.getBaseUrl())
+                            .bearerToken("bearer-bin")
+                            .oauth1(new OAuth1("ck", "cs", "oob", "at", "ats"))
+                            .build();
+
+            // 8 GiB (> Integer.MAX_VALUE) media upload initialization & response size
+            long eightGiB = 8_589_934_592L;
+            Schemas.InitializeMediaUploadResponse initRes =
+                    client.media()
+                            .initializeUpload(
+                                    new Schemas.InitializeMediaUploadRequest()
+                                            .totalBytes(eightGiB)
+                                            .mediaType("video/mp4")
+                                            .mediaCategory("tweet_video"));
+            assertNotNull(initRes.getData());
+            assertTrue(
+                    server.lastRequest().getBodyUtf8().contains("8589934592"),
+                    "Expected 64-bit total_bytes in JSON payload");
+
+            // Binary upload & download
+            client.compliance().uploadJobSubmission("job_1", "tok_1", rawBytes);
+            byte[] downloaded = client.compliance().downloadJobResults("job_1", "tok_1");
+            assertArrayEquals(rawBytes, downloaded);
+        }
+    }
+
+    @Test
+    void rateLimitRetryAfterStructuredErrorsAndTimeoutsOverTcp() {
+        try (MockXApiServer server = new MockXApiServer()) {
+            AtomicInteger attempts = new AtomicInteger();
+            server.setResponder(
+                    req -> {
+                        if (req.getPath().contains("/slow")) {
+                            return MockXApiServer.MockResponse.delayedJson(200, "{\"ok\":true}", 600);
+                        }
+                        if (req.getPath().contains("notfound")) {
+                            return MockXApiServer.MockResponse.json(
+                                    404,
+                                    "{\"errors\":[{\"message\":\"Could not find user with username: [notfound].\"}],\"title\":\"Not Found Error\"}");
+                        }
+                        int n = attempts.incrementAndGet();
+                        if (n == 1) {
+                            return MockXApiServer.MockResponse.jsonWithHeaders(
+                                    429,
+                                    "{\"title\":\"Too Many Requests\",\"detail\":\"Rate limit exceeded\"}",
+                                    Collections.singletonMap("Retry-After", "0"));
+                        }
+                        return MockXApiServer.MockResponse.json(
+                                200, "{\"data\":{\"id\":\"42\",\"username\":\"XDevelopers\"}}");
+                    });
+
+            XClient client =
+                    XClient.builder()
+                            .baseUrl(server.getBaseUrl())
+                            .bearerToken("bearer-resilience")
+                            .retry(true)
+                            .maxRetries(2)
+                            .timeout(Duration.ofMillis(150))
+                            .build();
+
+            // 1. 429 Retry-After -> 200 recovery
+            Schemas.GetUsersByUsernameResponse ok = client.users().getByUsername("XDevelopers");
+            assertEquals("42", ok.getData().getId());
+            assertEquals(2, attempts.get());
+
+            // 2. Non-retryable 404 extracts errors[0].message into XApiException
+            XApiException notFound =
+                    assertThrows(XApiException.class, () -> client.users().getByUsername("notfound"));
+            assertEquals(404, notFound.getStatusCode());
+            assertTrue(notFound.getMessage().contains("Could not find user"));
+            assertNotNull(notFound.getErrorData());
+
+            // 3. Request timeout enforced over real TCP socket
+            XApiException timedOut =
+                    assertThrows(
+                            XApiException.class,
+                            () ->
+                                    client.sendJson(
+                                            "GET",
+                                            "/2/slow",
+                                            Collections.emptyMap(),
+                                            Collections.emptyMap(),
+                                            null,
+                                            "application/json",
+                                            Collections.singletonList("BearerToken"),
+                                            JsonNode.class));
+            assertNotNull(timedOut.getMessage());
+        }
+    }
+}

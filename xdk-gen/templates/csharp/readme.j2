@@ -5,7 +5,7 @@ Official C# / .NET SDK for the X API v2 (.NET 8+, zero external runtime dependen
 ## Installation
 
 ```bash
-dotnet add package Xdk --version {{ version }}
+dotnet add package XDevPlatform.Xdk --version {{ version }}
 ```
 
 ## Quick Start
@@ -31,5 +31,10 @@ Console.WriteLine(response.Data);
 
 ## Pagination & Streaming
 
-- Paginated endpoints expose `*PagesAsync(...)` returning `Paginator<T>` (`IAsyncEnumerable<T>`), enabling `await foreach (var page in client.Users.GetFollowersPagesAsync(id))`.
+- Paginated endpoints expose `*Pages(...)` returning `Paginator<T>` (`IAsyncEnumerable<T>`), enabling `await foreach (var page in client.Users.GetFollowersPages(id))`.
 - Streaming endpoints return `EventStream<T>` (`IAsyncEnumerable<T>` and `IAsyncDisposable`) with incremental UTF-8 line decoding and exponential backoff reconnection.
+
+## Examples & Continuous Canary
+
+- **Runnable Use-Case Examples**: See [`examples/Xdk.Examples/`](examples/Xdk.Examples/) for end-to-end runnable workflows covering Posts, Search, Users, Bookmarks, Filtered & Sample Streaming, Chunked Media Upload, Direct Messages & XChat, Lists, Spaces, Communities, Community Notes, Trends, News, Webhooks, Compliance, Usage, and OAuth 1.0a / 2.0 PKCE.
+- **Continuous Canary Runner**: Run `dotnet run --project examples/Xdk.Examples -- --canary --once` (or `--canary --daemon --port 8791` for an always-on `/health`, `/status`, and `/metrics` probe server against the built-in X API simulator or live `X_BEARER_TOKEN`).

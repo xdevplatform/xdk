@@ -1,19 +1,19 @@
-package com.xdevplatform.xdk;
+package com.x.xdk;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.xdevplatform.xdk.auth.OAuth1;
-import com.xdevplatform.xdk.auth.OAuth2Pkce;
-import com.xdevplatform.xdk.auth.OAuth2Token;
+import com.x.xdk.auth.OAuth1;
+import com.x.xdk.auth.OAuth2Pkce;
+import com.x.xdk.auth.OAuth2Token;
 {% for tag in tags %}
-import com.xdevplatform.xdk.clients.{{ tag.class_name }}Client;
+import com.x.xdk.clients.{{ tag.class_name }}Client;
 {% endfor %}
-import com.xdevplatform.xdk.http.HttpTransport;
-import com.xdevplatform.xdk.http.JdkHttpTransport;
-import com.xdevplatform.xdk.streaming.EventStream;
-import com.xdevplatform.xdk.streaming.StreamConfig;
+import com.x.xdk.http.HttpTransport;
+import com.x.xdk.http.JdkHttpTransport;
+import com.x.xdk.streaming.EventStream;
+import com.x.xdk.streaming.StreamConfig;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -28,7 +28,7 @@ import java.util.Set;
 /**
  * Primary client for interacting with the X API v2.
  */
-public final class XClient {
+public final class XClient implements AutoCloseable {
     public static final String VERSION = "{{ version }}";
     public static final String USER_AGENT = "xdk-java/{{ version }}";
     private static final Set<Integer> RETRYABLE_STATUSES = Set.of(429, 500, 502, 503, 504);
@@ -49,6 +49,10 @@ public final class XClient {
     private final {{ tag.class_name }}Client {{ tag.property_name | java_ident }};
 {% endfor %}
 
+    public XClient() {
+        this(XClientConfig.builder().build());
+    }
+
     public XClient(XClientConfig config) {
         XClientConfig cfg = config != null ? config : XClientConfig.builder().build();
         String rawBase = cfg.getBaseUrl() != null ? cfg.getBaseUrl() : "https://api.x.com";
@@ -56,12 +60,7 @@ public final class XClient {
                 rawBase.endsWith("/") ? rawBase.substring(0, rawBase.length() - 1) : rawBase;
         this.bearerToken = cfg.getBearerToken();
         this.oauth2 = cfg.getOauth2();
-        this.accessToken =
-                cfg.getAccessToken() != null
-                        ? cfg.getAccessToken()
-                        : (oauth2 != null && oauth2.getToken() != null
-                                ? oauth2.getToken().getAccessToken()
-                                : null);
+        this.accessToken = cfg.getAccessToken();
         this.oauth1 = cfg.getOauth1();
         this.defaultHeaders = new LinkedHashMap<>();
         this.defaultHeaders.put("User-Agent", USER_AGENT);
@@ -183,6 +182,20 @@ public final class XClient {
         return objectMapper;
     }
 
+    public String getAccessToken() {
+        if (accessToken != null && !accessToken.isEmpty()) {
+            return accessToken;
+        }
+        if (oauth2 != null && oauth2.getToken() != null) {
+            return oauth2.getToken().getAccessToken();
+        }
+        return null;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
     public boolean isTokenExpired() {
         return oauth2 != null && oauth2.isTokenExpired();
     }
@@ -190,7 +203,7 @@ public final class XClient {
     public synchronized void refreshToken() {
         if (oauth2 != null) {
             OAuth2Token refreshed = oauth2.refreshToken();
-            if (refreshed != null && refreshed.getAccessToken() != null) {
+            if (this.accessToken != null && refreshed != null && refreshed.getAccessToken() != null) {
                 this.accessToken = refreshed.getAccessToken();
             }
         }
@@ -365,6 +378,18 @@ public final class XClient {
                             message = errorNode.get("message").asText();
                         } else if (errorNode != null && errorNode.hasNonNull("detail")) {
                             message = errorNode.get("detail").asText();
+                        } else if (errorNode != null
+                                && errorNode.has("errors")
+                                && errorNode.get("errors").isArray()
+                                && errorNode.get("errors").size() > 0) {
+                            JsonNode firstErr = errorNode.get("errors").get(0);
+                            if (firstErr.hasNonNull("message")) {
+                                message = firstErr.get("message").asText();
+                            } else if (firstErr.hasNonNull("detail")) {
+                                message = firstErr.get("detail").asText();
+                            }
+                        } else if (errorNode != null && errorNode.hasNonNull("title")) {
+                            message = errorNode.get("title").asText();
                         }
                     } catch (Exception ignored) {
                     }
@@ -456,8 +481,9 @@ public final class XClient {
             if (oauth2 != null && isTokenExpired()) {
                 refreshToken();
             }
-            if (accessToken != null && !accessToken.isEmpty()) {
-                headers.put("Authorization", "Bearer " + accessToken);
+            String effectiveAccess = getAccessToken();
+            if (effectiveAccess != null && !effectiveAccess.isEmpty()) {
+                headers.put("Authorization", "Bearer " + effectiveAccess);
             }
         } else if ("oauth1".equals(selected) && oauth1 != null && oauth1.hasAccessToken()) {
             headers.put("Authorization", oauth1.buildRequestHeader(method, fullUrl, ""));
@@ -471,15 +497,17 @@ public final class XClient {
 
     private String selectAuthMethod(String method, List<String> schemes) {
         boolean hasBearer = bearerToken != null && !bearerToken.isEmpty();
-        boolean hasOAuth2 =
-                (accessToken != null && !accessToken.isEmpty())
-                        || (oauth2 != null && oauth2.getToken() != null && oauth2.getToken().getAccessToken() != null);
+        String effectiveAccess = getAccessToken();
+        boolean hasOAuth2 = effectiveAccess != null && !effectiveAccess.isEmpty();
         boolean hasOAuth1 = oauth1 != null && oauth1.hasAccessToken();
 
-        if (schemes == null || schemes.isEmpty()) {
+        if (schemes == null) {
             if (hasBearer) return "bearer_token";
             if (hasOAuth2) return "oauth2_user_context";
             if (hasOAuth1) return "oauth1";
+            return null;
+        }
+        if (schemes.isEmpty()) {
             return null;
         }
 
@@ -506,5 +534,15 @@ public final class XClient {
             if (schemes.contains("UserToken") && hasOAuth1) return "oauth1";
         }
         return null;
+    }
+
+    @Override
+    public void close() {
+        if (transport instanceof AutoCloseable) {
+            try {
+                ((AutoCloseable) transport).close();
+            } catch (Exception ignored) {
+            }
+        }
     }
 }

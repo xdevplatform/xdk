@@ -95,43 +95,7 @@ stream_config: Optional[StreamConfig] = None
 
 {# Macro for authentication setup #}
 {% macro setup_authentication(operation) -%}
-{% if operation.security -%}
-        {% for security_requirement in operation.security -%}
-        {% for scheme_name in security_requirement -%}
-        {% if scheme_name == "BearerToken" -%}
-        # Priority: bearer_token > access_token (matches TypeScript behavior)
-        if self.client.bearer_token:
-            self.client.session.headers["Authorization"] = f"Bearer {self.client.bearer_token}"
-        elif self.client.access_token:
-            self.client.session.headers["Authorization"] = f"Bearer {self.client.access_token}"
-        {% endif -%}
-        {% if scheme_name == "OAuth2UserToken" -%}
-        # OAuth2UserToken: Use access_token as bearer token (matches TypeScript behavior)
-        # Priority: access_token > oauth2_session (for token refresh support)
-        if self.client.access_token:
-            # Use access_token directly as bearer token (matches TypeScript)
-            self.client.session.headers["Authorization"] = f"Bearer {self.client.access_token}"
-            # If we have oauth2_auth, check if token needs refresh
-            if self.client.oauth2_auth and self.client.token:
-                if self.client.is_token_expired():
-                    self.client.refresh_token()
-                    # Update access_token after refresh
-                    if self.client.access_token:
-                        self.client.session.headers["Authorization"] = f"Bearer {self.client.access_token}"
-        elif self.client.oauth2_auth and self.client.token:
-            # Fallback: use oauth2_session if available (for backward compatibility)
-            # Check if token needs refresh
-            if self.client.is_token_expired():
-                self.client.refresh_token()
-        {% endif -%}
-        {% if scheme_name == "UserToken" -%}
-        # UserToken: OAuth1.0a authentication - header will be built dynamically in request
-        # OAuth1 header must be built per-request with method, URL, and body
-        # This is handled in the request logic below
-        {% endif -%}
-        {% endfor -%}
-        {% endfor -%}
-        {% endif -%}
+        # Per-request authentication headers are built dynamically below without mutating session.headers
 {%- endmacro %}
 
 {# Macro for building query parameters #}
@@ -197,12 +161,107 @@ headers = {% if operation.is_streaming %}{
 
 {# Macro for streaming request logic #}
 {% macro streaming_request(operation) -%}
+{% set ns = namespace(has_bearer_token = false, has_oauth2_token = false, has_oauth1 = false) %}
+{% if operation.security %}
+{% for security_requirement in operation.security %}
+{% for scheme_name in security_requirement %}
+{% if scheme_name == "BearerToken" %}
+{% set ns.has_bearer_token = true %}
+{% endif %}
+{% if scheme_name == "OAuth2UserToken" %}
+{% set ns.has_oauth2_token = true %}
+{% endif %}
+{% if scheme_name == "UserToken" %}
+{% set ns.has_oauth1 = true %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% endif %}
         # Ensure params is defined (build_query_params should set it, but initialize if not)
         try:
             _ = params  # Check if params exists
         except NameError:
             params = {}  # Initialize if not defined
-        
+
+        def _build_stream_headers() -> Dict[str, str]:
+            req_headers = headers.copy()
+            selected_auth = None
+            available_bearer = bool(self.client.bearer_token)
+            available_oauth2 = bool(self.client.access_token)
+            available_oauth1 = bool(self.client.auth and self.client.auth.access_token)
+
+            {% if operation.security %}
+            acceptable_schemes = []
+            {% if ns.has_bearer_token %}
+            acceptable_schemes.append('BearerToken')
+            {% endif %}
+            {% if ns.has_oauth2_token %}
+            acceptable_schemes.append('OAuth2UserToken')
+            {% endif %}
+            {% if ns.has_oauth1 %}
+            acceptable_schemes.append('UserToken')
+            {% endif %}
+
+            if len(acceptable_schemes) == 1:
+                scheme = acceptable_schemes[0]
+                if scheme == 'BearerToken' and available_bearer:
+                    selected_auth = 'bearer_token'
+                elif scheme == 'OAuth2UserToken' and available_oauth2:
+                    selected_auth = 'oauth2_user_context'
+                elif scheme == 'UserToken' and available_oauth1:
+                    selected_auth = 'oauth1'
+            elif len(acceptable_schemes) > 1:
+                is_write_operation = "{{ operation.method }}" in ['POST', 'PUT', 'DELETE', 'PATCH']
+                if is_write_operation:
+                    if 'UserToken' in acceptable_schemes and available_oauth1:
+                        selected_auth = 'oauth1'
+                    elif 'OAuth2UserToken' in acceptable_schemes and available_oauth2:
+                        selected_auth = 'oauth2_user_context'
+                    elif 'BearerToken' in acceptable_schemes and available_bearer:
+                        selected_auth = 'bearer_token'
+                else:
+                    if 'BearerToken' in acceptable_schemes and available_bearer:
+                        selected_auth = 'bearer_token'
+                    elif 'OAuth2UserToken' in acceptable_schemes and available_oauth2:
+                        selected_auth = 'oauth2_user_context'
+                    elif 'UserToken' in acceptable_schemes and available_oauth1:
+                        selected_auth = 'oauth1'
+
+            if not selected_auth and acceptable_schemes:
+                raise ValueError(
+                    f"Authentication required for this streaming endpoint. Required schemes: {acceptable_schemes}."
+                )
+            {% else %}
+            # Unauthenticated endpoint (no security requirements in OpenAPI spec)
+            selected_auth = None
+            {% endif %}
+
+            if selected_auth == 'oauth1':
+                full_url = url
+                if params:
+                    query_string = urllib.parse.urlencode(params)
+                    full_url = f"{url}?{query_string}" if query_string else url
+                req_headers["Authorization"] = self.client.auth.build_request_header(
+                    method="{{ operation.method }}",
+                    url=full_url,
+                    body=""
+                )
+            elif selected_auth == 'bearer_token':
+                if self.client.bearer_token:
+                    req_headers["Authorization"] = f"Bearer {self.client.bearer_token}"
+                elif self.client.access_token:
+                    req_headers["Authorization"] = f"Bearer {self.client.access_token}"
+            elif selected_auth == 'oauth2_user_context':
+                if self.client.oauth2_auth and self.client.token and self.client.is_token_expired():
+                    self.client.refresh_token()
+                if self.client.access_token:
+                    req_headers["Authorization"] = f"Bearer {self.client.access_token}"
+
+            return req_headers
+
+        # Validate authentication eagerly on first stream iteration and refresh headers per reconnect
+        initial_headers = _build_stream_headers()
+
         # Use robust streaming with automatic retry and exponential backoff
         yield from stream_with_retry(
             session=self.client.session,
@@ -210,13 +269,14 @@ headers = {% if operation.is_streaming %}{
             url=url,
             config=stream_config,
             params=params,
-            headers=headers,
+            headers=initial_headers,
             {% if operation.request_body %}json_data=json_data,{% endif %}
             {% if operation.has_json_response %}
             response_model={{ operation.class_name }}Response,
             {% else %}
             response_model=None,
             {% endif %}
+            headers_factory=_build_stream_headers,
         )
 {%- endmacro %}
 
@@ -293,13 +353,8 @@ headers = {% if operation.is_streaming %}{
                 elif 'UserToken' in acceptable_schemes and available_oauth1:
                     selected_auth = 'oauth1'
         {% else %}
-        # No security requirements - use default priority
-        if available_bearer:
-            selected_auth = 'bearer_token'
-        elif available_oauth2:
-            selected_auth = 'oauth2_user_context'
-        elif available_oauth1:
-            selected_auth = 'oauth1'
+        # Unauthenticated endpoint (no security requirements in OpenAPI spec)
+        selected_auth = None
         {% endif %}
         
         # Apply selected authentication
@@ -361,18 +416,33 @@ headers = {% if operation.is_streaming %}{
                 if not available:
                     raise ValueError(f"Authentication required for this endpoint. Required schemes: {required_schemes}. Available: {[s for s in required_schemes if (s == 'BearerToken' and available_bearer) or (s == 'OAuth2UserToken' and available_oauth2) or (s == 'UserToken' and available_oauth1)]}")
         {% endif %}
-        response = self.client.session.{{ operation.method }}(
-            url,
-            params=params,
-            headers=headers,
-            {% if operation.request_body %}
-            {% if operation.request_body.content and "application/octet-stream" in operation.request_body.content and "application/json" not in operation.request_body.content %}
-            data=raw_data,
-            {% else %}
-            json=json_data,
-            {% endif %}
-            {% endif %}
-        )
+        if self.client.timeout is not None or self.client.max_retries > 0:
+            response = self.client._send_with_retry(
+                "{{ operation.method }}",
+                url,
+                params=params,
+                headers=headers,
+                {% if operation.request_body %}
+                {% if operation.request_body.content and "application/octet-stream" in operation.request_body.content and "application/json" not in operation.request_body.content %}
+                data=raw_data,
+                {% else %}
+                json=json_data,
+                {% endif %}
+                {% endif %}
+            )
+        else:
+            response = self.client.session.{{ operation.method }}(
+                url,
+                params=params,
+                headers=headers,
+                {% if operation.request_body %}
+                {% if operation.request_body.content and "application/octet-stream" in operation.request_body.content and "application/json" not in operation.request_body.content %}
+                data=raw_data,
+                {% else %}
+                json=json_data,
+                {% endif %}
+                {% endif %}
+            )
 
         # Check for errors
         response.raise_for_status()
@@ -581,14 +651,25 @@ headers = {% if operation.is_streaming %}{
                     if not available:
                         raise ValueError(f"Authentication required for this endpoint. Required schemes: {required_schemes}. Available: {[s for s in required_schemes if (s == 'BearerToken' and page_available_bearer) or (s == 'OAuth2UserToken' and page_available_oauth2) or (s == 'UserToken' and page_available_oauth1)]}")
             {% endif %}
-            response = self.client.session.{{ operation.method }}(
-                url,
-                params=page_params,
-                headers=page_headers,
-                {% if operation.request_body %}
-                json=json_data,
-                {% endif %}
-            )
+            if self.client.timeout is not None or self.client.max_retries > 0:
+                response = self.client._send_with_retry(
+                    "{{ operation.method }}",
+                    url,
+                    params=page_params,
+                    headers=page_headers,
+                    {% if operation.request_body %}
+                    json=json_data,
+                    {% endif %}
+                )
+            else:
+                response = self.client.session.{{ operation.method }}(
+                    url,
+                    params=page_params,
+                    headers=page_headers,
+                    {% if operation.request_body %}
+                    json=json_data,
+                    {% endif %}
+                )
 
             # Check for errors
             response.raise_for_status()

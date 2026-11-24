@@ -1,0 +1,48 @@
+# XDK Java Examples & Continuous Canary
+
+This directory contains runnable, self-verifying Java examples for every X API v2 use-case across all 24 endpoint groups, plus the built-in continuous canary service (`XdkCanaryApp`) and local TCP X API simulator (`MockXApiServer`).
+
+Every file in `examples/` is compiled and executed automatically during `mvn test` so examples never drift out of sync with the SDK.
+
+## Use-Case Cookbook (`com/x/xdk/examples/UseCaseExamples.java`)
+
+Covers all 24 X API v2 client groups:
+
+1. **Authentication Flows** (`runAuthenticationExamples`) — App-Only Bearer, OAuth 2.0 PKCE (`S256`) + Token Refresh, OAuth 1.0a (`HMAC-SHA1`).
+2. **Posts, Search & Counts** (`runPostsAndSearchExamples`) — Create/reply/delete posts, field expansions, paginated recent & full-archive search, post counts, analytics, likes/reposts/quotes.
+3. **Users, Social Graph & Bookmarks** (`runUsersAndBookmarksExamples`) — User lookup & search, timelines & mentions pagination, follow/unfollow, like/repost, block/mute, bookmarks & folders.
+4. **Real-Time Streaming** (`runStreamingExamples`) — Filtered stream rules CRUD + `EventStream` NDJSON consumption with `StreamConfig` auto-reconnect, 1% sample stream.
+5. **Media Upload & Metadata** (`runMediaUploadExamples`) — Single-shot upload, chunked >2 GiB video upload (`initializeUpload` -> `appendUpload` -> `finalizeUpload` -> `getUploadStatus`), alt-text metadata, subtitles, media analytics.
+6. **Direct Messages & XChat** (`runDirectMessagesAndChatExamples`) — 1:1 & group DMs, encrypted XChat messages, media upload/download, user public keys.
+7. **Lists, Communities, Spaces, Broadcasts & Calls** (`runCommunitiesSpacesListsExamples`) — Lists CRUD & paginated timelines, Communities, live Spaces, Broadcasts, and Audio/Video Calls.
+8. **Trends, News, Articles & Community Notes** (`runDiscoveryAndNotesExamples`) — WOEID & personalized trends, News stories, Articles drafts/publishing, Community Notes evaluation & creation.
+9. **Webhooks, Activity, Bots, Connections & Account** (`runWebhooksAndAutomationExamples`) — Webhooks & replay jobs, Account Activity & X Activity subscriptions, Bots token rotation, Connections, Developer Account.
+10. **Batch Compliance, Usage & OpenAPI** (`runComplianceAndUsageExamples`) — Compliance jobs + binary `byte[]` upload/download, API usage & credits, `/2/openapi.json` introspection.
+
+### Run Examples Standalone
+
+```bash
+# Run all 10 suites against the built-in local X API simulator:
+mvn test-compile exec:java -Dexec.classpathScope=test \
+  -Dexec.mainClass=com.x.xdk.examples.UseCaseExamples
+
+# Or run against the live X API:
+X_BEARER_TOKEN="your_token" mvn test-compile exec:java -Dexec.classpathScope=test \
+  -Dexec.mainClass=com.x.xdk.examples.UseCaseExamples
+```
+
+## Continuous Always-On Canary (`com/x/xdk/canary/XdkCanaryApp.java`)
+
+```bash
+# Single verification pass (exits 0 if healthy, 1 on any failure):
+mvn test-compile exec:java -Dexec.classpathScope=test \
+  -Dexec.mainClass=com.x.xdk.canary.XdkCanaryApp \
+  -Dexec.args="--once"
+
+# Continuous always-on daemon with /health, /status, and Prometheus /metrics on port 8790:
+mvn test-compile exec:java -Dexec.classpathScope=test \
+  -Dexec.mainClass=com.x.xdk.canary.XdkCanaryApp \
+  -Dexec.args="--daemon --interval-seconds 30 --port 8790"
+```
+
+Set `X_BEARER_TOKEN` (and optionally `X_ACCESS_TOKEN` / `X_API_BASE_URL`) to enable live X API probes alongside the synthetic full-SDK probes.

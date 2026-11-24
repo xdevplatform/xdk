@@ -1,0 +1,491 @@
+/**
+ * Comprehensive, runnable X API v2 TypeScript SDK Cookbook covering every major developer
+ * use-case and all 24 API endpoint groups.
+ *
+ * Run standalone against the built-in local X API simulator (or against a custom base URL when
+ * X_API_BASE_URL and X_BEARER_TOKEN / X_ACCESS_TOKEN are set):
+ *
+ *   npm run build && npm run examples
+ */
+
+import {
+  Client,
+  OAuth1,
+  OAuth2,
+  PostPaginator,
+  UserPaginator,
+  type PaginatedResponse,
+  type Schemas,
+} from '../src/index.js';
+import { MockXApiServer } from './mock_x_api_server.js';
+
+function requireCondition(condition: unknown, message: string): void {
+  if (!condition) {
+    throw new Error(`Assertion failed: ${message}`);
+  }
+}
+
+/**
+ * 1. Authentication Flows: Bearer Token, OAuth 2.0 PKCE + Refresh, and OAuth 1.0a User Context.
+ */
+export async function runAuthenticationExamples(baseUrl: string): Promise<void> {
+  // 1a. App-Only Bearer Token
+  const bearerClient = new Client({
+    baseUrl,
+    bearerToken: 'app_only_bearer_token',
+  });
+  const appLookup = await bearerClient.users.getByUsername('XDevelopers');
+  requireCondition(appLookup?.data, 'Bearer lookup should return data');
+
+  // 1b. OAuth 2.0 Authorization Code with PKCE + Token Refresh
+  const oauth2 = new OAuth2({
+    clientId: 'demo_client_id',
+    clientSecret: 'demo_client_secret',
+    redirectUri: 'https://example.org/oauth/callback',
+    scope: ['tweet.read', 'tweet.write', 'users.read', 'offline.access'],
+    baseUrl,
+    authorizationBaseUrl: 'https://x.com/i',
+  });
+  const oauth2Client = new Client({ baseUrl, oauth2 });
+  const authUrl = await oauth2.getAuthorizationUrl('state_token_abc');
+  requireCondition(authUrl.includes('code_challenge_method=S256'), 'PKCE S256 URL expected');
+  const token = await oauth2.exchangeCode('sample_auth_code');
+  requireCondition(Boolean(token.access_token), 'Exchanged access token expected');
+  const me = await oauth2Client.users.getMe();
+  requireCondition(me?.data, 'OAuth2 getMe should succeed');
+  await oauth2.refreshToken();
+
+  // 1c. OAuth 1.0a User Context (HMAC-SHA1)
+  const oauth1 = new OAuth1({
+    apiKey: 'consumer_key',
+    apiSecret: 'consumer_secret',
+    accessToken: 'user_access_token',
+    accessTokenSecret: 'user_access_secret',
+    baseUrl,
+  });
+  const oauth1Client = new Client({ baseUrl, oauth1 });
+  const created = await oauth1Client.posts.create({ text: 'Posting with OAuth 1.0a!' });
+  requireCondition(Boolean(created), 'OAuth1 post creation should succeed');
+}
+
+/**
+ * 2. Posts, Search, Post Counts & Analytics (PostsClient).
+ */
+export async function runPostsAndSearchExamples(client: Client): Promise<void> {
+  const created = await client.posts.create({
+    text: 'Shipping TypeScript & Python SDKs on X API v2!',
+    reply_settings: 'everyone',
+  } as any);
+  requireCondition(Boolean(created), 'create post');
+
+  const post = await client.posts.getById('1234567890', {
+    tweetFields: ['created_at', 'public_metrics', 'author_id'],
+    expansions: ['author_id'],
+    userFields: ['username', 'verified'],
+  });
+  requireCondition(Boolean(post), 'getById');
+  await client.posts.getByIds(['1234567890', '1234567891']);
+
+  // Paginated recent search with PostPaginator
+  const searchPaginator = new PostPaginator(
+    async (token?: string): Promise<PaginatedResponse<Schemas.Post>> => {
+      const res = await client.posts.searchRecent('from:XDevelopers -is:retweet', {
+        maxResults: 10,
+        nextToken: token,
+      });
+      return {
+        data: res.data ?? [],
+        meta: res.meta,
+        includes: res.includes,
+        errors: res.errors,
+      };
+    }
+  );
+  let count = 0;
+  for await (const item of searchPaginator) {
+    requireCondition(Boolean(item), 'search item');
+    if (++count >= 3) break;
+  }
+  await client.posts.searchAll('xdk sdk', { maxResults: 10 });
+
+  await client.posts.getCountsRecent('xdk', { granularity: 'day' });
+  await client.posts.getCountsAll('xdk');
+  await client.posts.getAnalytics(['1234567890'], '2025-01-01T00:00:00Z', '2025-01-07T00:00:00Z');
+  await client.posts.getLikingUsers('1234567890');
+  await client.posts.getRepostedBy('1234567890');
+  await client.posts.getQuoted('1234567890');
+  await client.posts.hideReply('1234567890', { hidden: true });
+  await client.posts.delete('1234567890');
+}
+
+/**
+ * 3. Users, Timelines, Social Graph & Bookmarks (UsersClient).
+ */
+export async function runUsersAndBookmarksExamples(client: Client): Promise<void> {
+  const me = await client.users.getMe({ userFields: ['created_at', 'description'] });
+  const myId = me.data?.id || '2244994945';
+  await client.users.getByUsername('XDevelopers');
+  await client.users.getByUsernames(['XDevelopers', 'X']);
+  await client.users.getById(myId);
+  await client.users.getByIds([myId, '783214']);
+  await client.users.search('developer platform');
+
+  await client.users.getPosts(myId, { maxResults: 10 });
+  await client.users.getMentions(myId);
+  await client.users.getTimeline(myId);
+
+  await client.users.followUser(myId, { target_user_id: '783214' } as any);
+  const followers = new UserPaginator(
+    async (token?: string): Promise<PaginatedResponse<Schemas.User>> => {
+      const res = await client.users.getFollowers(myId, {
+        maxResults: 10,
+        paginationToken: token,
+      });
+      return { data: res.data ?? [], meta: res.meta };
+    }
+  );
+  await followers.fetchNext();
+  requireCondition(followers.users.length >= 1, 'followers page');
+
+  await client.users.getFollowing(myId);
+  await client.users.likePost(myId, { tweet_id: '1234567890' } as any);
+  await client.users.unlikePost(myId, '1234567890');
+  await client.users.repostPost(myId, { tweet_id: '1234567890' } as any);
+  await client.users.unrepostPost(myId, '1234567890');
+  await client.users.idBlock(myId, { target_user_id: '99999' } as any);
+  await client.users.idUnblock(myId, '99999');
+  await client.users.muteUser(myId, { target_user_id: '99999' } as any);
+  await client.users.unmuteUser(myId, '99999');
+  await client.users.unfollowUser(myId, '783214');
+
+  const bookmarked = await client.users.createBookmark(myId, { tweet_id: '1234567890' } as any);
+  requireCondition(Boolean(bookmarked), 'createBookmark');
+  await client.users.getBookmarks(myId);
+  await client.users.createBookmarkFolder(myId, { name: 'SDK Docs' });
+  await client.users.getBookmarkFolders(myId);
+  await client.users.deleteBookmark(myId, '1234567890');
+}
+
+/**
+ * 4. Real-Time Filtered & Sample Streaming (StreamClient).
+ */
+export async function runStreamingExamples(client: Client): Promise<void> {
+  await client.stream.updateRules({
+    add: [{ value: 'xdk (typescript OR python) -is:retweet', tag: 'xdk-mentions' }],
+  });
+  await client.stream.getRules();
+  await client.stream.getRuleCounts();
+
+  const stream = await client.stream.posts({
+    tweetFields: ['created_at', 'author_id'],
+    autoReconnect: true,
+    maxReconnectAttempts: 2,
+    reconnectDelayMs: 25,
+  });
+  const events: unknown[] = [];
+  for await (const ev of stream) {
+    events.push(ev);
+    if (events.length >= 2) {
+      stream.close();
+      break;
+    }
+  }
+  requireCondition(events.length >= 1, 'Filtered stream should emit events');
+
+  const sample = await client.stream.postsSample();
+  let sampleCount = 0;
+  for await (const ev of sample) {
+    if (ev) sampleCount++;
+    sample.close();
+    break;
+  }
+  requireCondition(sampleCount >= 1, 'Sample stream should emit event');
+}
+
+/**
+ * 5. Media Upload, Chunked Large Video & Metadata (MediaClient).
+ */
+export async function runMediaUploadExamples(client: Client): Promise<void> {
+  const base64Chunk = Buffer.from('fake_mp4_segment_bytes', 'utf8').toString('base64');
+
+  await client.media.upload({
+    media: base64Chunk,
+    media_category: 'tweet_image',
+  } as any);
+
+  const init = await client.media.initializeUpload({
+    total_bytes: 3_221_225_472, // 3 GiB
+    media_type: 'video/mp4',
+    media_category: 'tweet_video',
+  } as any);
+  const mediaId = init.data?.id || '1889990001';
+
+  await client.media.appendUpload(mediaId, {
+    segment_index: 0,
+    media: base64Chunk,
+  } as any);
+  await client.media.finalizeUpload(mediaId);
+  await client.media.getUploadStatus(mediaId, { command: 'STATUS' });
+
+  await client.media.createMetadata({ id: mediaId, metadata: {} });
+  await client.media.createSubtitles({
+    id: mediaId,
+    media_category: 'tweet_video',
+  } as any);
+  await client.media.getByKeys([`3_${mediaId}`]);
+  await client.media.getAnalytics(
+    [`3_${mediaId}`],
+    '2025-01-01T00:00:00Z',
+    '2025-01-07T00:00:00Z'
+  );
+  await client.media.getLibraryCategories();
+}
+
+/**
+ * 6. Direct Messages & Encrypted XChat (DirectMessagesClient, ChatClient).
+ */
+export async function runDirectMessagesAndChatExamples(client: Client): Promise<void> {
+  await client.directMessages.createByParticipantId('783214', {
+    text: 'Hey from XDK TypeScript!',
+  } as any);
+  await client.directMessages.createConversation({
+    conversation_type: 'Group',
+    participant_ids: ['783214', '2244994945'],
+    message: { text: 'Starting group chat!' },
+  } as any);
+  await client.directMessages.createByConversationId('conv_1', {
+    text: 'Welcome to the group DM!',
+  } as any);
+  await client.directMessages.getEvents({ maxResults: 10 });
+  const dmMedia = await client.directMessages.dmConversationsMediaDownload('dm_1', 'm_1', 'r_1');
+  requireCondition(dmMedia instanceof ArrayBuffer && dmMedia.byteLength > 0, 'DM media binary download');
+  await client.directMessages.deleteEvents('ev_1');
+
+  await client.users.getPublicKeys(['2244994945']);
+  await client.chat.getSettings();
+  await client.chat.sendMessage('chat_conv_1', {
+    encoded_message_create_event: 'base64_encrypted_event',
+    message_id: 'msg_001',
+  } as any);
+  await client.chat.getConversationEvents('chat_conv_1');
+  await client.chat.mediaUploadInitialize({
+    conversation_id: 'chat_conv_1',
+    total_bytes: 1_048_576,
+  } as any);
+  await client.chat.mediaUploadAppend('upload_1', {
+    conversation_id: 'chat_conv_1',
+    media_hash_key: 'hash_1',
+    segment_index: 0,
+    media: 'Y2hhdF9tZWRpYQ==',
+  } as any);
+  const chatBytes = await client.chat.mediaDownload('chat_conv_1', 'hash_1');
+  requireCondition(chatBytes instanceof ArrayBuffer && chatBytes.byteLength > 0, 'XChat media download');
+}
+
+/**
+ * 7. Lists, Communities, Spaces, Broadcasts & Calls.
+ */
+export async function runCommunitiesSpacesListsExamples(client: Client): Promise<void> {
+  const list = await client.lists.create({
+    name: 'XDK Contributors',
+    description: 'Core SDK builders',
+    private: false,
+  });
+  requireCondition(Boolean(list), 'create list');
+  await client.lists.getById('list_1');
+  await client.lists.addMember('list_1', { user_id: '783214' } as any);
+  await client.lists.getMembers('list_1');
+  await client.lists.getPosts('list_1', { maxResults: 10 });
+  await client.lists.update('list_1', { description: 'Updated' });
+  await client.lists.removeMemberByUserId('list_1', '783214');
+  await client.lists.delete('list_1');
+
+  await client.communities.search('X Developers');
+  await client.communities.getById('comm_1');
+  await client.spaces.search('AI Engineering', { state: 'live' });
+  await client.spaces.getById('1YqKDqWLPPlKV');
+  await client.spaces.getByCreatorIds(['2244994945']);
+  await client.spaces.getPosts('1YqKDqWLPPlKV');
+
+  await client.broadcasts.getRegion();
+  await client.broadcasts.list();
+  await client.broadcasts.listSources();
+  await client.calls.createCall({
+    conversation_id: 'chat_conv_1',
+    audio_only: true,
+    title: 'SDK Standup',
+  } as any);
+  await client.calls.getCall('call_1');
+  await client.calls.listScheduled();
+  await client.calls.leaveCall('call_1');
+}
+
+/**
+ * 8. Trends, News, Articles & Community Notes.
+ */
+export async function runDiscoveryAndNotesExamples(client: Client): Promise<void> {
+  await client.trends.getByWoeid(1, { maxTrends: 20 });
+  await client.trends.getPersonalized();
+
+  await client.news.search('technology', { maxResults: 10 });
+  await client.news.get('news_1');
+  await client.articles.articleCreateDraft({
+    title: 'Building with XDK TypeScript',
+    contentState: { blocks: [], entities: [] },
+  });
+  await client.articles.articlePublish('article_1');
+
+  await client.communityNotes.searchEligiblePosts(true);
+  await client.communityNotes.searchWritten(true);
+  await client.communityNotes.evaluate({
+    post_id: '1234567890',
+    note_text: 'Helpful context with citation https://developer.x.com',
+  } as any);
+  await client.communityNotes.create({
+    post_id: '1234567890',
+    test_mode: true,
+  } as any);
+  await client.communityNotes.delete('note_1');
+}
+
+/**
+ * 9. Webhooks, Account Activity, Activity Subscriptions, Bots, Connections & Account.
+ */
+export async function runWebhooksAndAutomationExamples(client: Client): Promise<void> {
+  await client.webhooks.create({ url: 'https://webhooks.example.org/x/events' });
+  await client.webhooks.get();
+  await client.webhooks.validate('wh_1');
+  await client.webhooks.createStreamLink('wh_1');
+  await client.webhooks.getStreamLinks();
+  await client.webhooks.createWebhookReplayJob({
+    webhook_id: 'wh_1',
+    from_date: '202501150000',
+    to_date: '202501150100',
+  } as any);
+
+  await client.accountActivity.createSubscription('wh_1', {} as any);
+  await client.accountActivity.getSubscriptions('wh_1');
+  await client.accountActivity.getSubscriptionCount();
+  await client.accountActivity.validateSubscription('wh_1');
+  await client.accountActivity.deleteSubscription('wh_1', '2244994945');
+
+  await client.activity.createSubscription({
+    event_type: 'post.create',
+    webhook_id: 'wh_1',
+    tag: 'acct-sub',
+  } as any);
+  await client.activity.getSubscriptions();
+  await client.activity.updateSubscription('sub_1', { tag: 'updated-tag' } as any);
+  await client.activity.deleteSubscription('sub_1');
+  await client.webhooks.delete('wh_1');
+
+  await client.bots.createBot({
+    display_name: 'XDK Helper Bot',
+    handle: 'xdk_helper_bot',
+  } as any);
+  await client.bots.get();
+  await client.bots.rotateBotToken('bot_1', {} as any);
+  await client.bots.revokeBotToken('bot_1');
+  await client.bots.deleteBot('bot_1');
+
+  await client.connections.getConnectionHistory();
+  await client.connections.deleteByEndpoint('filtered_stream');
+  await client.account.getDeveloper();
+  await client.account.ensure({ metadata: '{}' } as any);
+}
+
+/**
+ * 10. Batch Compliance, API Usage & OpenAPI Spec Introspection.
+ */
+export async function runComplianceAndUsageExamples(client: Client): Promise<void> {
+  await client.compliance.createJobs({
+    type: 'tweets',
+    name: 'nightly-compliance-sync',
+    resumable: true,
+  } as any);
+  await client.compliance.getJobs('tweets', { status: 'in_progress' });
+  const idsPayload = Buffer.from('1234567890\n1234567891\n', 'utf8');
+  await client.compliance.uploadJobSubmission('job_1', 'upload_tok', idsPayload);
+  await client.compliance.getJobsById('job_1');
+  const results = await client.compliance.downloadJobResults('job_1', 'download_tok');
+  requireCondition(results instanceof ArrayBuffer && results.byteLength > 0, 'Compliance binary download');
+  await client.compliance.deleteJobsById('job_1');
+
+  await client.usage.get({ days: 7 });
+  await client.usage.getCredits();
+
+  const spec = await client.general.getOpenApiSpec();
+  requireCondition(Boolean(spec), 'OpenAPI spec response');
+}
+
+/**
+ * Runs all 10 X API v2 workflow suites (covering all 24 endpoint groups) and returns durations in ms.
+ */
+export async function runAll(baseUrl: string, client: Client): Promise<Record<string, number>> {
+  const suites: Array<[string, () => Promise<void>]> = [
+    ['01_authentication_flows', () => runAuthenticationExamples(baseUrl)],
+    ['02_posts_and_search', () => runPostsAndSearchExamples(client)],
+    ['03_users_social_and_bookmarks', () => runUsersAndBookmarksExamples(client)],
+    ['04_realtime_streaming', () => runStreamingExamples(client)],
+    ['05_media_upload_and_metadata', () => runMediaUploadExamples(client)],
+    ['06_direct_messages_and_xchat', () => runDirectMessagesAndChatExamples(client)],
+    ['07_lists_communities_spaces_calls', () => runCommunitiesSpacesListsExamples(client)],
+    ['08_trends_news_articles_notes', () => runDiscoveryAndNotesExamples(client)],
+    ['09_webhooks_activity_bots_account', () => runWebhooksAndAutomationExamples(client)],
+    ['10_compliance_usage_and_openapi', () => runComplianceAndUsageExamples(client)],
+  ];
+
+  const timings: Record<string, number> = {};
+  for (const [name, fn] of suites) {
+    const start = performance.now();
+    await fn();
+    timings[name] = Math.round(performance.now() - start);
+  }
+  return timings;
+}
+
+async function main(): Promise<void> {
+  const liveBaseUrl = (process.env.X_API_BASE_URL || '').trim();
+  if (liveBaseUrl) {
+    const bearer = process.env.X_BEARER_TOKEN || 'demo_bearer';
+    const access = process.env.X_ACCESS_TOKEN || bearer;
+    const client = new Client({ baseUrl: liveBaseUrl, bearerToken: bearer, accessToken: access });
+    const results = await runAll(liveBaseUrl, client);
+    console.log(`Completed ${Object.keys(results).length} XDK TypeScript use-case suites:`, results);
+    return;
+  }
+
+  const server = await MockXApiServer.start();
+  try {
+    const oauth1 = new OAuth1({
+      apiKey: 'demo_ck',
+      apiSecret: 'demo_cs',
+      accessToken: 'demo_at',
+      accessTokenSecret: 'demo_ats',
+      baseUrl: server.baseUrl,
+    });
+    const client = new Client({
+      baseUrl: server.baseUrl,
+      bearerToken: 'demo_bearer_token',
+      accessToken: 'demo_oauth2_user_token',
+      oauth1,
+    });
+    const results = await runAll(server.baseUrl, client);
+    console.log(
+      `Completed all ${Object.keys(results).length} XDK TypeScript use-case suites (${server.requests.length} HTTP calls) against local X API simulator:`
+    );
+    for (const [name, ms] of Object.entries(results)) {
+      console.log(`  [PASS] ${name} (${ms} ms)`);
+    }
+  } finally {
+    await server.close();
+  }
+}
+
+const entryScript = process.argv[1] || '';
+if (/(?:^|[\\/])use_cases\.(?:ts|js|mjs|cjs)$/.test(entryScript)) {
+  main().catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
+}

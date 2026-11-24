@@ -1,0 +1,72 @@
+using System.Net;
+using System.Net.Http;
+using System.Text.Json;
+using System.Threading.Tasks;
+using Xdk;
+using Xdk.Auth;
+using Xdk.Canary;
+using Xdk.Examples;
+using Xdk.Testing;
+using Xunit;
+
+namespace Xdk.Tests;
+
+/// <summary>
+/// Compiles and executes every X API v2 use-case example in <c>examples/Xdk.Examples</c> AND verifies
+/// the <see cref="XdkCanaryRunner"/> continuous monitoring service + HTTP <c>/health</c>, <c>/status</c>,
+/// and Prometheus <c>/metrics</c> endpoints end-to-end.
+/// </summary>
+public class UseCaseExamplesAndCanaryTests
+{
+    [Fact]
+    public async Task AllTenUseCaseSuitesExecuteCleanlyAcrossAll24Tags()
+    {
+        using var simulator = new MockXApiServer();
+        using var client = new XClient(new XClientOptions
+        {
+            BaseUrl = simulator.BaseUrl,
+            BearerToken = "test-bearer",
+            AccessToken = "test-oauth2",
+            OAuth1 = new OAuth1("ck", "cs", "oob", "at", "ats"),
+        });
+
+        var timings = await UseCaseExamples.RunAllAsync(simulator.BaseUrl, client);
+        Assert.Equal(10, timings.Count);
+        Assert.True(
+            simulator.Requests.Count >= 80,
+            $"Expected >=80 real HTTP operations across all 24 tags, got {simulator.Requests.Count}");
+    }
+
+    [Fact]
+    public async Task CanaryRunnerExecutesCycleAndServesHealthStatusAndPrometheusMetrics()
+    {
+        using var canary = new XdkCanaryRunner(enableLiveProbes: false);
+        canary.StartStatusServer(0);
+        var port = canary.StatusPort;
+        Assert.True(port > 0);
+
+        var snap = await canary.RunCycleAsync();
+        Assert.True(snap.Healthy, $"Canary cycle should be 100% healthy, failed={snap.ProbesFailed}");
+        Assert.Equal(0, snap.ProbesFailed);
+        Assert.True(snap.ProbesPassed >= 15);
+
+        using var http = new HttpClient();
+
+        var healthRes = await http.GetAsync($"http://127.0.0.1:{port}/health");
+        Assert.Equal(HttpStatusCode.OK, healthRes.StatusCode);
+        using var healthDoc = JsonDocument.Parse(await healthRes.Content.ReadAsStringAsync());
+        Assert.True(healthDoc.RootElement.GetProperty("healthy").GetBoolean());
+
+        var statusRes = await http.GetAsync($"http://127.0.0.1:{port}/status");
+        Assert.Equal(HttpStatusCode.OK, statusRes.StatusCode);
+        using var statusDoc = JsonDocument.Parse(await statusRes.Content.ReadAsStringAsync());
+        Assert.Equal("csharp", statusDoc.RootElement.GetProperty("sdk").GetString());
+        Assert.Equal(1, statusDoc.RootElement.GetProperty("totalCycles").GetInt64());
+
+        var metricsRes = await http.GetAsync($"http://127.0.0.1:{port}/metrics");
+        Assert.Equal(HttpStatusCode.OK, metricsRes.StatusCode);
+        var metricsBody = await metricsRes.Content.ReadAsStringAsync();
+        Assert.Contains("xdk_canary_healthy{sdk=\"csharp\"} 1", metricsBody);
+        Assert.Contains("xdk_canary_probe_duration_ms{sdk=\"csharp\"", metricsBody);
+    }
+}

@@ -56,6 +56,11 @@ fn last_part(value: &str) -> String {
         .to_string()
 }
 
+/// MiniJinja filter rendering any string as a valid JSON/Python double-quoted string literal.
+fn json_string_literal(value: &str) -> String {
+    serde_json::to_string(value).unwrap_or_else(|_| "\"\"".to_string())
+}
+
 /// Context for rendering the schemas.py template: the module body is fully
 /// rendered in Rust (see xdk_lib::types::py_schema_module).
 #[derive(Debug, Serialize)]
@@ -69,7 +74,7 @@ struct PySchemasContext {
 */
 language! {
     name: PythonBase,
-    filters: [pascal_case, py_type, py_inline_model, py_ref, last_part],
+    filters: [pascal_case, py_type, py_inline_model, py_ref, last_part, json_string_literal],
     class_casing: Casing::Pascal,
     operation_casing: Casing::Snake,
     import_casing: Casing::Snake,
@@ -86,6 +91,11 @@ language! {
         render "paginator" => "xdk/paginator.py",
         render "streaming" => "xdk/streaming.py",
         render "init_py" => "xdk/__init__.py",
+        render "examples_init" => "examples/__init__.py",
+        render "mock_x_api_server" => "examples/mock_x_api_server.py",
+        render "examples_use_cases" => "examples/use_cases.py",
+        render "canary_app" => "examples/canary.py",
+        render "examples_readme" => "examples/README.md",
         render "pyproject_toml" => "pyproject.toml",
         render "sphinx_conf" => "conf.py",
         render "generate_docs_simple" => "scripts/generate-docs-simple.py",
@@ -102,6 +112,8 @@ language! {
             render "test_pagination" => "tests/{}/test_pagination.py"
         },
         render "test_query_params" => "tests/test_query_params.py",
+        render "test_e2e_loopback" => "tests/test_e2e_loopback.py",
+        render "test_examples_and_canary" => "tests/test_examples_and_canary.py",
         render "conftest" => "tests/conftest.py"
     ]
 }

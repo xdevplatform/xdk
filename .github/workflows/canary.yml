@@ -1,0 +1,136 @@
+name: Continuous SDK Canary & Full-Coverage Verification
+
+on:
+  schedule:
+    - cron: "0 */6 * * *"
+  workflow_dispatch:
+    inputs:
+      live_probes:
+        description: "Also run live api.x.com probes (uses X_BEARER_TOKEN secret if configured)"
+        required: false
+        type: boolean
+        default: true
+  push:
+    branches: [main]
+    paths:
+      - "specs/**"
+      - "xdk-lib/**"
+      - "xdk-gen/**"
+      - "xdk-build/**"
+      - "canary/**"
+      - ".github/workflows/canary.yml"
+  pull_request:
+    paths:
+      - "specs/**"
+      - "xdk-lib/**"
+      - "xdk-gen/**"
+      - "xdk-build/**"
+      - "canary/**"
+      - ".github/workflows/canary.yml"
+
+jobs:
+  all-sdks-canary:
+    name: 4-SDK Full-Coverage E2E + Examples + Canary (Python, TS, Java, C#)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout xdk generator
+        uses: actions/checkout@v4
+        with:
+          path: xdk
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Cargo build
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: xdk
+
+      - name: Install uv (Python)
+        uses: astral-sh/setup-uv@v3
+
+      - name: Setup Node.js 20 (TypeScript)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Generate Python, TypeScript, Java, and C# SDKs
+        working-directory: xdk
+        run: |
+          npm install -g prettier --no-audit --no-fund
+          cargo build --release -p xdk-build
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            ./target/release/xdk-build python --latest true --output ../xdk-python
+            ./target/release/xdk-build typescript --latest true --output ../xdk-typescript
+            ./target/release/xdk-build java --latest true --output ../xdk-java
+            ./target/release/xdk-build csharp --latest true --output ../xdk-csharp
+          else
+            ./target/release/xdk-build python --spec specs/openapi.json --output ../xdk-python
+            ./target/release/xdk-build typescript --spec specs/openapi.json --output ../xdk-typescript
+            ./target/release/xdk-build java --spec specs/openapi.json --output ../xdk-java
+            ./target/release/xdk-build csharp --spec specs/openapi.json --output ../xdk-csharp
+          fi
+
+      - name: Run Python Full-Coverage Loopback Contracts, Examples & Wheel Build
+        working-directory: xdk-python
+        run: |
+          uv sync
+          uv run pytest tests/ -q
+          uv build
+
+      - name: Run TypeScript Full-Coverage Loopback Contracts, Examples & Package Build
+        working-directory: xdk-typescript
+        run: |
+          npm install --no-audit --no-fund
+          npm run build
+          npm run type-check
+          npm test
+          npm pack --dry-run
+
+      - name: Run Java Full-Coverage Loopback Contracts, Examples & Release Packaging
+        working-directory: xdk-java
+        run: mvn -B package -Prelease -Dgpg.skip=true
+
+      - name: Run C# Full-Coverage Loopback Contracts, Examples & Release Packaging
+        working-directory: xdk-csharp
+        run: |
+          dotnet build Xdk.sln -c Release -warnaserror
+          dotnet test Xdk.sln -c Release --no-build --verbosity normal
+          dotnet pack src/Xdk/Xdk.csproj -c Release --no-build -o artifacts
+
+      - name: Run Unified 4-SDK Canary Supervisor
+        working-directory: xdk
+        env:
+          X_BEARER_TOKEN: ${{ secrets.X_BEARER_TOKEN }}
+        run: |
+          EXTRA_ARGS=""
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.live_probes }}" = "true" ]; then
+            EXTRA_ARGS="--live"
+          fi
+          python3 canary/supervisor.py \
+            --python-dir ../xdk-python \
+            --typescript-dir ../xdk-typescript \
+            --java-dir ../xdk-java \
+            --csharp-dir ../xdk-csharp \
+            --once ${EXTRA_ARGS}
+
+      - name: Verify Standalone Consumer Package Installs (Wheel, Tarball, Maven JAR, NuGet nupkg)
+        working-directory: xdk
+        run: |
+          chmod +x canary/verify_consumer_packages.sh
+          if [ "${{ github.event_name }}" = "schedule" ] || [ "${{ inputs.live_probes }}" = "true" ]; then
+            ./canary/verify_consumer_packages.sh --live
+          else
+            ./canary/verify_consumer_packages.sh
+          fi

@@ -1,0 +1,608 @@
+package com.x.xdk.testing;
+
+import com.sun.net.httpserver.Headers;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpServer;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Function;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+
+/**
+ * Local TCP loopback X API v2 simulator & programmable test server built on JDK {@link HttpServer}.
+ *
+ * <p>Supports:
+ * <ul>
+ *   <li>Real TCP HTTP/1.1 transport testing against {@code JdkHttpTransport}</li>
+ *   <li>Programmable per-request responders (JSON, binary, chunked NDJSON streams, delays, drops)</li>
+ *   <li>RFC 5849 OAuth 1.0a HMAC-SHA1 server-side signature verification</li>
+ *   <li>RFC 7636 OAuth 2.0 PKCE S256 {@code /2/oauth2/token} code exchange &amp; refresh rotation</li>
+ *   <li>Smart X API v2 synthetic simulator fallback for examples and continuous canary runs</li>
+ * </ul>
+ */
+public final class MockXApiServer implements AutoCloseable {
+
+    public static final class RecordedRequest {
+        private final String method;
+        private final String path;
+        private final String rawQuery;
+        private final String fullUrl;
+        private final Map<String, List<String>> headers;
+        private final byte[] bodyBytes;
+
+        public RecordedRequest(
+                String method,
+                String path,
+                String rawQuery,
+                String fullUrl,
+                Map<String, List<String>> headers,
+                byte[] bodyBytes) {
+            this.method = method;
+            this.path = path;
+            this.rawQuery = rawQuery;
+            this.fullUrl = fullUrl;
+            Map<String, List<String>> normalized = new LinkedHashMap<>();
+            for (Map.Entry<String, List<String>> e : headers.entrySet()) {
+                if (e.getKey() != null) {
+                    normalized.put(
+                            e.getKey().toLowerCase(Locale.ROOT),
+                            Collections.unmodifiableList(new ArrayList<>(e.getValue())));
+                }
+            }
+            this.headers = Collections.unmodifiableMap(normalized);
+            this.bodyBytes = bodyBytes != null ? bodyBytes : new byte[0];
+        }
+
+        public String getMethod() {
+            return method;
+        }
+
+        public String getPath() {
+            return path;
+        }
+
+        public String getRawQuery() {
+            return rawQuery;
+        }
+
+        public String getFullUrl() {
+            return fullUrl;
+        }
+
+        public Map<String, List<String>> getHeaders() {
+            return headers;
+        }
+
+        public String firstHeader(String name) {
+            List<String> vals = headers.get(name.toLowerCase(Locale.ROOT));
+            return (vals != null && !vals.isEmpty()) ? vals.get(0) : null;
+        }
+
+        public byte[] getBodyBytes() {
+            return bodyBytes;
+        }
+
+        public String getBodyUtf8() {
+            return new String(bodyBytes, StandardCharsets.UTF_8);
+        }
+    }
+
+    public static final class MockResponse {
+        private final int statusCode;
+        private final Map<String, String> headers = new LinkedHashMap<>();
+        private final byte[] body;
+        private final List<byte[]> streamChunks;
+        private final boolean dropStreamMidway;
+        private final long delayMs;
+
+        private MockResponse(
+                int statusCode,
+                Map<String, String> headers,
+                byte[] body,
+                List<byte[]> streamChunks,
+                boolean dropStreamMidway,
+                long delayMs) {
+            this.statusCode = statusCode;
+            if (headers != null) {
+                this.headers.putAll(headers);
+            }
+            this.body = body;
+            this.streamChunks = streamChunks;
+            this.dropStreamMidway = dropStreamMidway;
+            this.delayMs = delayMs;
+        }
+
+        public static MockResponse json(int statusCode, String json) {
+            Map<String, String> h = new LinkedHashMap<>();
+            h.put("Content-Type", "application/json");
+            return new MockResponse(
+                    statusCode, h, json.getBytes(StandardCharsets.UTF_8), null, false, 0L);
+        }
+
+        public static MockResponse jsonWithHeaders(
+                int statusCode, String json, Map<String, String> extraHeaders) {
+            Map<String, String> h = new LinkedHashMap<>();
+            h.put("Content-Type", "application/json");
+            if (extraHeaders != null) {
+                h.putAll(extraHeaders);
+            }
+            return new MockResponse(
+                    statusCode, h, json.getBytes(StandardCharsets.UTF_8), null, false, 0L);
+        }
+
+        public static MockResponse bytes(int statusCode, String contentType, byte[] data) {
+            Map<String, String> h = new LinkedHashMap<>();
+            h.put("Content-Type", contentType);
+            return new MockResponse(statusCode, h, data, null, false, 0L);
+        }
+
+        public static MockResponse delayedJson(int statusCode, String json, long delayMs) {
+            Map<String, String> h = new LinkedHashMap<>();
+            h.put("Content-Type", "application/json");
+            return new MockResponse(
+                    statusCode, h, json.getBytes(StandardCharsets.UTF_8), null, false, delayMs);
+        }
+
+        public static MockResponse chunkedStream(List<byte[]> chunks, boolean dropMidway) {
+            Map<String, String> h = new LinkedHashMap<>();
+            h.put("Content-Type", "application/json");
+            return new MockResponse(200, h, null, chunks, dropMidway, 0L);
+        }
+    }
+
+    private final HttpServer server;
+    private final ExecutorService executor;
+    private final String baseUrl;
+    private final List<RecordedRequest> requests = new CopyOnWriteArrayList<>();
+    private final Map<String, String> expectedPkceChallenges = new ConcurrentHashMap<>();
+    private volatile Function<RecordedRequest, MockResponse> customResponder;
+
+    public MockXApiServer() {
+        try {
+            this.server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 128);
+            this.executor =
+                    Executors.newCachedThreadPool(
+                            r -> {
+                                Thread t = new Thread(r, "mock-x-api-server");
+                                t.setDaemon(true);
+                                return t;
+                            });
+            this.server.setExecutor(this.executor);
+            this.server.createContext("/", this::handleExchange);
+            this.server.start();
+            this.baseUrl = "http://127.0.0.1:" + this.server.getAddress().getPort();
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to start MockXApiServer", e);
+        }
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public int getPort() {
+        return server.getAddress().getPort();
+    }
+
+    public List<RecordedRequest> getRequests() {
+        return requests;
+    }
+
+    public RecordedRequest lastRequest() {
+        return requests.isEmpty() ? null : requests.get(requests.size() - 1);
+    }
+
+    public void reset() {
+        requests.clear();
+        customResponder = null;
+        expectedPkceChallenges.clear();
+    }
+
+    public void setResponder(Function<RecordedRequest, MockResponse> responder) {
+        this.customResponder = responder;
+    }
+
+    public void registerExpectedPkceChallenge(String authCode, String codeChallenge) {
+        expectedPkceChallenges.put(authCode, codeChallenge);
+    }
+
+    @Override
+    public void close() {
+        server.stop(0);
+        executor.shutdownNow();
+    }
+
+    private void handleExchange(HttpExchange exchange) throws IOException {
+        try {
+            byte[] reqBody = readAllBytes(exchange.getRequestBody());
+            String rawPath = exchange.getRequestURI().getRawPath();
+            String rawQuery = exchange.getRequestURI().getRawQuery();
+            String fullUrl =
+                    baseUrl + rawPath + (rawQuery != null && !rawQuery.isEmpty() ? "?" + rawQuery : "");
+            RecordedRequest recorded =
+                    new RecordedRequest(
+                            exchange.getRequestMethod(),
+                            rawPath,
+                            rawQuery,
+                            fullUrl,
+                            exchange.getRequestHeaders(),
+                            reqBody);
+            requests.add(recorded);
+
+            Function<RecordedRequest, MockResponse> responder = this.customResponder;
+            MockResponse response = responder != null ? responder.apply(recorded) : null;
+            if (response == null) {
+                response = defaultSimulatorResponse(recorded);
+            }
+
+            if (response.delayMs > 0) {
+                try {
+                    Thread.sleep(response.delayMs);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+            Headers respHeaders = exchange.getResponseHeaders();
+            for (Map.Entry<String, String> h : response.headers.entrySet()) {
+                respHeaders.set(h.getKey(), h.getValue());
+            }
+
+            if (response.streamChunks != null) {
+                if (response.dropStreamMidway) {
+                    // Send fixed Content-Length larger than actual bytes and close exchange so
+                    // HTTP/1.1 clients reliably observe premature EOF (IOException)!
+                    long promisedLen = 65536L;
+                    exchange.sendResponseHeaders(response.statusCode, promisedLen);
+                    OutputStream os = exchange.getResponseBody();
+                    for (byte[] chunk : response.streamChunks) {
+                        os.write(chunk);
+                        os.flush();
+                    }
+                    exchange.close();
+                    return;
+                }
+                exchange.sendResponseHeaders(response.statusCode, 0);
+                try (OutputStream os = exchange.getResponseBody()) {
+                    for (byte[] chunk : response.streamChunks) {
+                        os.write(chunk);
+                        os.flush();
+                    }
+                }
+            } else {
+                byte[] payload = response.body != null ? response.body : new byte[0];
+                exchange.sendResponseHeaders(
+                        response.statusCode, payload.length == 0 ? -1 : payload.length);
+                if (payload.length > 0) {
+                    try (OutputStream os = exchange.getResponseBody()) {
+                        os.write(payload);
+                    }
+                } else {
+                    exchange.getResponseBody().close();
+                }
+            }
+        } catch (IOException ignored) {
+            // Expected on client timeout or simulated stream disconnect
+            exchange.close();
+        } catch (Throwable e) {
+            byte[] err =
+                    ("{\"detail\":\"Simulator error: " + e.getMessage() + "\"}")
+                            .getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(500, err.length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(err);
+            }
+        }
+    }
+
+    private MockResponse defaultSimulatorResponse(RecordedRequest req) {
+        String path = req.getPath();
+        String method = req.getMethod();
+
+        // 1. OAuth 2.0 Token Endpoint
+        if ("/2/oauth2/token".equals(path) && "POST".equalsIgnoreCase(method)) {
+            Map<String, String> form = parseFormUrlEncoded(req.getBodyUtf8());
+            String grantType = form.get("grant_type");
+            if ("authorization_code".equals(grantType)) {
+                String code = form.getOrDefault("code", "");
+                String verifier = form.get("code_verifier");
+                String expectedChallenge = expectedPkceChallenges.get(code);
+                if (expectedChallenge != null) {
+                    String computed = computeS256Challenge(verifier != null ? verifier : "");
+                    if (!expectedChallenge.equals(computed)) {
+                        return MockResponse.json(
+                                400, "{\"error\":\"invalid_grant\",\"detail\":\"PKCE S256 mismatch\"}");
+                    }
+                }
+                return MockResponse.json(
+                        200,
+                        "{\"access_token\":\"sim_oauth2_access_"
+                                + code
+                                + "\",\"token_type\":\"bearer\",\"expires_in\":7200,"
+                                + "\"refresh_token\":\"sim_oauth2_refresh_1\",\"scope\":\"tweet.read users.read offline.access\"}");
+            } else if ("refresh_token".equals(grantType)) {
+                String rt = form.getOrDefault("refresh_token", "unknown");
+                return MockResponse.json(
+                        200,
+                        "{\"access_token\":\"sim_refreshed_access_from_"
+                                + rt
+                                + "\",\"token_type\":\"bearer\",\"expires_in\":7200,"
+                                + "\"refresh_token\":\"sim_oauth2_refresh_2\",\"scope\":\"tweet.read users.read offline.access\"}");
+            }
+            return MockResponse.json(400, "{\"error\":\"unsupported_grant_type\"}");
+        }
+
+        // 2. OpenAPI spec introspection
+        if ("/2/openapi.json".equals(path)) {
+            return MockResponse.json(
+                    200,
+                    "{\"openapi\":\"3.0.3\",\"info\":{\"title\":\"X API v2\",\"version\":\"2.175\"}}");
+        }
+
+        // 3. Binary octet-stream downloads
+        if (path.endsWith("/download")
+                || path.startsWith("/2/chat/media/") && "GET".equalsIgnoreCase(method)
+                || path.startsWith("/2/dm_conversations/media/") && "GET".equalsIgnoreCase(method)) {
+            return MockResponse.bytes(
+                    200,
+                    "application/octet-stream",
+                    "{\"id\":\"1234567890\",\"status\":\"compliant\"}\n"
+                            .getBytes(StandardCharsets.UTF_8));
+        }
+
+        // 4. Streaming NDJSON endpoints
+        if ((path.contains("/stream") && !path.endsWith("/rules") && !path.contains("/rules/"))
+                || path.contains("/sample")
+                || path.contains("/firehose")) {
+            List<byte[]> chunks = new ArrayList<>();
+            chunks.add("{}\r\n".getBytes(StandardCharsets.UTF_8));
+            chunks.add(
+                    ("{\"data\":{\"id\":\"1880000001\",\"text\":\"Live stream event 1 🚀\",\"timestamp_ms\":1735000000000}}\n")
+                            .getBytes(StandardCharsets.UTF_8));
+            chunks.add(
+                    ("{\"data\":{\"id\":\"1880000002\",\"text\":\"Live stream event 2\",\"timestamp_ms\":1735000001000}}\n")
+                            .getBytes(StandardCharsets.UTF_8));
+            return MockResponse.chunkedStream(chunks, false);
+        }
+
+        // 5. Media upload endpoints
+        if (path.startsWith("/2/media/upload")) {
+            if (path.endsWith("/append")) {
+                return MockResponse.json(200, "{\"data\":{\"expires_after_secs\":86400}}");
+            }
+            return MockResponse.json(
+                    200,
+                    "{\"data\":{\"id\":\"1889990001\",\"media_key\":\"3_1889990001\",\"size\":5242880,\"expires_after_secs\":86400,\"processing_info\":{\"state\":\"succeeded\",\"progress_percent\":100}}}");
+        }
+
+        // 6. Paginated vs single-resource JSON synthesis
+        String query = req.getRawQuery() != null ? req.getRawQuery() : "";
+        boolean hasCursorInQuery =
+                query.contains("pagination_token=") || query.contains("next_token=");
+        boolean looksLikeCollection =
+                ("POST".equalsIgnoreCase(method) && path.equals("/2/tweets/search/stream/rules"))
+                        || ("GET".equalsIgnoreCase(method)
+                                && !path.equals("/2/tweets/search/stream/rules/counts")
+                                && (path.contains("/search/")
+                                        || path.endsWith("/search")
+                                        || path.endsWith("/followers")
+                                        || path.endsWith("/following")
+                                        || path.endsWith("/bookmarks")
+                                        || path.endsWith("/bookmarks/folders")
+                                        || path.endsWith("/reverse_chronological")
+                                        || (path.endsWith("/tweets") && !path.startsWith("/2/usage/"))
+                                        || path.endsWith("/personalized_trends")
+                                        || path.endsWith("/mentions")
+                                        || path.endsWith("/liking_users")
+                                        || path.endsWith("/retweeted_by")
+                                        || path.endsWith("/quote_tweets")
+                                        || path.endsWith("/members")
+                                        || path.endsWith("/lists")
+                                        || path.endsWith("/rules")
+                                        || path.endsWith("/jobs")
+                                        || path.endsWith("/webhooks")
+                                        || (path.endsWith("/subscriptions")
+                                                && !path.contains("/account_activity/"))
+                                        || path.endsWith("/dm_events")
+                                        || path.endsWith("/events")
+                                        || path.endsWith("/analytics")
+                                        || path.endsWith("/public_keys")
+                                        || path.endsWith("/creator_ids")
+                                        || path.equals("/2/broadcasts")
+                                        || path.equals("/2/sources")
+                                        || path.equals("/2/calls/scheduled")
+                                        || path.equals("/2/bots")
+                                        || path.equals("/2/connections")
+                                        || path.contains("/counts/")
+                                        || path.contains("/trends/")
+                                        || query.startsWith("ids=")
+                                        || query.contains("&ids=")
+                                        || query.startsWith("usernames=")
+                                        || query.contains("&usernames=")
+                                        || query.startsWith("user_ids=")
+                                        || query.contains("&user_ids=")
+                                        || query.startsWith("media_keys=")
+                                        || query.contains("&media_keys=")));
+
+        int status =
+                ("POST".equalsIgnoreCase(method)
+                                && (path.equals("/2/tweets") || path.equals("/2/lists")))
+                        ? 201
+                        : 200;
+
+        if (looksLikeCollection) {
+            if (!hasCursorInQuery
+                    && (query.contains("max_results=")
+                            || path.endsWith("/followers")
+                            || path.contains("/search/"))) {
+                return MockResponse.json(
+                        status,
+                        "{\"data\":[{\"id\":\"1001\",\"name\":\"Item 1\",\"username\":\"XDevelopers\",\"text\":\"First item\"},"
+                                + "{\"id\":\"1002\",\"name\":\"Item 2\",\"username\":\"XApi\",\"text\":\"Second item\"}],"
+                                + "\"meta\":{\"result_count\":2,\"next_token\":\"sim_page_2\"}}");
+            }
+            return MockResponse.json(
+                    status,
+                    "{\"data\":[{\"id\":\"1003\",\"name\":\"Item 3\",\"username\":\"XEng\",\"text\":\"Final page item\"}],"
+                            + "\"meta\":{\"result_count\":1}}");
+        }
+
+        if ("DELETE".equalsIgnoreCase(method)) {
+            return MockResponse.json(
+                    200, "{\"data\":{\"deleted\":true,\"following\":false,\"liked\":false,\"bookmarked\":false}}");
+        }
+
+        return MockResponse.json(
+                status,
+                "{\"data\":{\"id\":\"1234567890\",\"name\":\"X Developers\",\"username\":\"XDevelopers\","
+                        + "\"text\":\"Hello from XDK!\",\"created_at\":\"2025-01-15T12:00:00.000Z\","
+                        + "\"bookmarked\":true,\"liked\":true,\"following\":true,\"valid\":true,"
+                        + "\"subscribed\":true,\"project_usage\":\"1024\",\"project_cap\":\"1000000\"}}");
+    }
+
+    /**
+     * Verifies an incoming {@code Authorization: OAuth ...} header per RFC 5849 against the
+     * actual HTTP method, host, path, and query parameters received by this server.
+     */
+    public static boolean verifyOAuth1Signature(
+            RecordedRequest req, String consumerSecret, String tokenSecret) {
+        String auth = req.firstHeader("authorization");
+        if (auth == null || !auth.startsWith("OAuth ")) {
+            return false;
+        }
+        Map<String, String> oauthParams = new LinkedHashMap<>();
+        String[] parts = auth.substring("OAuth ".length()).split(",");
+        for (String part : parts) {
+            String trimmed = part.trim();
+            int eq = trimmed.indexOf('=');
+            if (eq > 0) {
+                String k = urlDecode(trimmed.substring(0, eq).trim());
+                String v = trimmed.substring(eq + 1).trim();
+                if (v.startsWith("\"") && v.endsWith("\"") && v.length() >= 2) {
+                    v = v.substring(1, v.length() - 1);
+                }
+                oauthParams.put(k, urlDecode(v));
+            }
+        }
+        String receivedSig = oauthParams.remove("oauth_signature");
+        if (receivedSig == null) {
+            return false;
+        }
+
+        TreeMap<String, List<String>> encodedParams = new TreeMap<>();
+        for (Map.Entry<String, String> e : oauthParams.entrySet()) {
+            encodedParams
+                    .computeIfAbsent(percentEncode(e.getKey()), k -> new ArrayList<>())
+                    .add(percentEncode(e.getValue()));
+        }
+        if (req.getRawQuery() != null && !req.getRawQuery().isEmpty()) {
+            for (String pair : req.getRawQuery().split("&")) {
+                if (pair.isEmpty()) continue;
+                int eq = pair.indexOf('=');
+                String k = eq >= 0 ? urlDecode(pair.substring(0, eq)) : urlDecode(pair);
+                String v = eq >= 0 ? urlDecode(pair.substring(eq + 1)) : "";
+                encodedParams
+                        .computeIfAbsent(percentEncode(k), key -> new ArrayList<>())
+                        .add(percentEncode(v));
+            }
+        }
+
+        List<String> normalizedPairs = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : encodedParams.entrySet()) {
+            List<String> vals = entry.getValue();
+            Collections.sort(vals);
+            for (String val : vals) {
+                normalizedPairs.add(entry.getKey() + "=" + val);
+            }
+        }
+
+        String host = req.firstHeader("host");
+        String baseUri = "http://" + host + req.getPath();
+        String baseString =
+                req.getMethod().toUpperCase(Locale.ROOT)
+                        + "&"
+                        + percentEncode(baseUri)
+                        + "&"
+                        + percentEncode(String.join("&", normalizedPairs));
+        String signingKey = percentEncode(consumerSecret) + "&" + percentEncode(tokenSecret);
+        try {
+            Mac mac = Mac.getInstance("HmacSHA1");
+            mac.init(new SecretKeySpec(signingKey.getBytes(StandardCharsets.UTF_8), "HmacSHA1"));
+            String expectedSig =
+                    Base64.getEncoder()
+                            .encodeToString(mac.doFinal(baseString.getBytes(StandardCharsets.UTF_8)));
+            return MessageDigest.isEqual(
+                    expectedSig.getBytes(StandardCharsets.UTF_8),
+                    receivedSig.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private static String computeS256Challenge(String verifier) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] digest = md.digest(verifier.getBytes(StandardCharsets.US_ASCII));
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(digest);
+        } catch (Exception e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    private static Map<String, String> parseFormUrlEncoded(String body) {
+        Map<String, String> map = new LinkedHashMap<>();
+        if (body == null || body.isEmpty()) return map;
+        for (String pair : body.split("&")) {
+            if (pair.isEmpty()) continue;
+            int eq = pair.indexOf('=');
+            if (eq >= 0) {
+                map.put(
+                        URLDecoder.decode(pair.substring(0, eq), StandardCharsets.UTF_8),
+                        URLDecoder.decode(pair.substring(eq + 1), StandardCharsets.UTF_8));
+            }
+        }
+        return map;
+    }
+
+    private static String urlDecode(String s) {
+        return URLDecoder.decode(s.replace("+", "%2B"), StandardCharsets.UTF_8);
+    }
+
+    private static String percentEncode(String s) {
+        return URLEncoder.encode(s, StandardCharsets.UTF_8)
+                .replace("+", "%20")
+                .replace("*", "%2A")
+                .replace("%7E", "~");
+    }
+
+    private static byte[] readAllBytes(InputStream is) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        byte[] chunk = new byte[4096];
+        int n;
+        while ((n = is.read(chunk)) != -1) {
+            buffer.write(chunk, 0, n);
+        }
+        return buffer.toByteArray();
+    }
+}

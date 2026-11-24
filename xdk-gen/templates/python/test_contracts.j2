@@ -21,7 +21,7 @@ class Test{{ tag.class_name }}Contracts:
     def setup_class(self):
         """Set up test fixtures."""
         # Provide all authentication types for comprehensive test coverage
-        # Tests mock the session, so actual HTTP requests won't be made
+        from examples.mock_x_api_server import MockXApiServer
         from xdk.oauth1_auth import OAuth1
         oauth1 = OAuth1(
             api_key="test_api_key",
@@ -37,6 +37,21 @@ class Test{{ tag.class_name }}Contracts:
             auth=oauth1
         )
         self.{{ tag.property_name }}_client = getattr(self.client, "{{ tag.property_name }}")
+        self.loopback_server = MockXApiServer()
+        self.loopback_client = Client(
+            base_url=self.loopback_server.base_url,
+            bearer_token="test_bearer_token",
+            access_token="test_access_token",
+            auth=oauth1,
+        )
+        self.loopback_{{ tag.property_name }}_client = getattr(
+            self.loopback_client, "{{ tag.property_name }}"
+        )
+
+    def teardown_class(self):
+        """Shut down shared loopback TCP server."""
+        if getattr(self, "loopback_server", None) is not None:
+            self.loopback_server.close()
     
     {% for contract_test in test_spec.contract_tests %}
     def test_{{ contract_test.method_name }}_request_structure(self):
@@ -73,44 +88,20 @@ class Test{{ tag.class_name }}Contracts:
             # Add request body if required
             {% if contract_test.request_body_schema %}
             {% if contract_test.has_request_model %}
-            # Import and create proper request model instance
             from xdk.{{ tag.property_name }}.models import {{ contract_test.class_name }}Request
-            # Rebuild model to resolve forward references before instantiation
             try:
                 {{ contract_test.class_name }}Request.model_rebuild()
             except Exception:
-                pass  # Model may already be fully defined
-            # Create instance with required fields (using dummy values for testing)
-            import typing
-            required_kwargs = {}
-            request_model = {{ contract_test.class_name }}Request
-            for field_name, field_info in getattr(request_model, "model_fields", {}).items():
-                if field_info.is_required():
-                    annotation = field_info.annotation
-                    annotation_str = str(annotation) if annotation else "str"
-                    literals = [
-                        arg
-                        for arg in typing.get_args(annotation)
-                        if isinstance(arg, (str, int, bool))
-                    ] if typing.get_origin(annotation) is typing.Literal else []
-                    if literals:
-                        required_kwargs[field_name] = literals[0]
-                    elif "int" in annotation_str.lower():
-                        required_kwargs[field_name] = 42
-                    elif "bool" in annotation_str.lower():
-                        required_kwargs[field_name] = True
-                    elif "list" in annotation_str.lower() or "List" in annotation_str:
-                        required_kwargs[field_name] = []
-                    elif "dict" in annotation_str.lower() or "Dict" in annotation_str:
-                        required_kwargs[field_name] = {}
-                    else:
-                        required_kwargs[field_name] = "test_value"
+                pass
+            {% if contract_test.request_mock_json %}
+            req_json_str = {{ contract_test.request_mock_json | json_string_literal }}
             try:
-                kwargs["body"] = request_model(**required_kwargs)
+                kwargs["body"] = {{ contract_test.class_name }}Request.model_validate_json(req_json_str)
             except Exception:
-                # Typed models may reject fabricated values; build without
-                # validation since this test only exercises request plumbing.
-                kwargs["body"] = request_model.model_construct(**required_kwargs)
+                kwargs["body"] = {{ contract_test.class_name }}Request.model_construct(**json.loads(req_json_str))
+            {% else %}
+            kwargs["body"] = {{ contract_test.class_name }}Request.model_construct()
+            {% endif %}
             {% else %}
             kwargs["body"] = b"test_payload"
             {% endif %}
@@ -287,44 +278,20 @@ class Test{{ tag.class_name }}Contracts:
             # Add request body if required
             {% if contract_test.request_body_schema %}
             {% if contract_test.has_request_model %}
-            # Import and create proper request model instance
             from xdk.{{ tag.property_name }}.models import {{ contract_test.class_name }}Request
-            # Rebuild model to resolve forward references before instantiation
             try:
                 {{ contract_test.class_name }}Request.model_rebuild()
             except Exception:
-                pass  # Model may already be fully defined
-            # Create instance with required fields (using dummy values for testing)
-            import typing
-            required_kwargs = {}
-            request_model = {{ contract_test.class_name }}Request
-            for field_name, field_info in getattr(request_model, "model_fields", {}).items():
-                if field_info.is_required():
-                    annotation = field_info.annotation
-                    annotation_str = str(annotation) if annotation else "str"
-                    literals = [
-                        arg
-                        for arg in typing.get_args(annotation)
-                        if isinstance(arg, (str, int, bool))
-                    ] if typing.get_origin(annotation) is typing.Literal else []
-                    if literals:
-                        required_kwargs[field_name] = literals[0]
-                    elif "int" in annotation_str.lower():
-                        required_kwargs[field_name] = 42
-                    elif "bool" in annotation_str.lower():
-                        required_kwargs[field_name] = True
-                    elif "list" in annotation_str.lower() or "List" in annotation_str:
-                        required_kwargs[field_name] = []
-                    elif "dict" in annotation_str.lower() or "Dict" in annotation_str:
-                        required_kwargs[field_name] = {}
-                    else:
-                        required_kwargs[field_name] = "test_value"
+                pass
+            {% if contract_test.request_mock_json %}
+            req_json_str = {{ contract_test.request_mock_json | json_string_literal }}
             try:
-                kwargs["body"] = request_model(**required_kwargs)
+                kwargs["body"] = {{ contract_test.class_name }}Request.model_validate_json(req_json_str)
             except Exception:
-                # Typed models may reject fabricated values; build without
-                # validation since this test only exercises request plumbing.
-                kwargs["body"] = request_model.model_construct(**required_kwargs)
+                kwargs["body"] = {{ contract_test.class_name }}Request.model_construct(**json.loads(req_json_str))
+            {% else %}
+            kwargs["body"] = {{ contract_test.class_name }}Request.model_construct()
+            {% endif %}
             {% else %}
             kwargs["body"] = b"test_payload"
             {% endif %}
@@ -365,4 +332,105 @@ class Test{{ tag.class_name }}Contracts:
                 pytest.fail(f"Accessing optional field '{{ field.name }}' should not cause errors: {e}")
             {% endif %}
             {% endfor %}
+
+    def test_{{ contract_test.method_name }}_loopback_http_roundtrip(self):
+        """Execute {{ contract_test.method_name }} end-to-end over real TCP loopback HTTP."""
+        import types as _types
+        from examples.mock_x_api_server import MockResponse
+        from xdk.streaming import StreamConfig
+
+        self.loopback_server.reset()
+        full_mock_json = {{ contract_test.full_response_mock_json | json_string_literal }}
+        {% if contract_test.is_streaming %}
+        self.loopback_server.set_responder(
+            lambda _req: MockResponse.chunked_stream(
+                [b"{}\r\n", (full_mock_json + "\n").encode("utf-8")],
+                drop_midway=False,
+            )
+        )
+        {% elif contract_test.is_binary_response %}
+        expected_binary = b"\x00\x01XDK\xff"
+        self.loopback_server.set_responder(
+            lambda _req: MockResponse.raw_bytes(
+                {{ contract_test.response_schema.status_code }},
+                "application/octet-stream",
+                expected_binary,
+            )
+        )
+        {% else %}
+        self.loopback_server.set_responder(
+            lambda _req: MockResponse.json(
+                {{ contract_test.response_schema.status_code }},
+                full_mock_json,
+            )
+        )
+        {% endif %}
+
+        kwargs = {}
+        {% for param in contract_test.required_params %}
+        {% if param.param_type == "string" %}
+        kwargs["{{ param.variable_name }}"] = "test_{{ param.variable_name }}"
+        {% elif param.param_type == "integer" %}
+        kwargs["{{ param.variable_name }}"] = 42
+        {% elif param.param_type == "boolean" %}
+        kwargs["{{ param.variable_name }}"] = True
+        {% elif param.param_type == "array" %}
+        kwargs["{{ param.variable_name }}"] = ["test_item"]
+        {% else %}
+        kwargs["{{ param.variable_name }}"] = "test_value"
+        {% endif %}
+        {% endfor %}
+
+        {% if contract_test.required_body %}
+        {% if contract_test.is_binary_request %}
+        kwargs["body"] = b"binary_submission_payload"
+        {% elif contract_test.has_request_model and contract_test.request_mock_json %}
+        from xdk.{{ tag.property_name }}.models import {{ contract_test.class_name }}Request
+        try:
+            {{ contract_test.class_name }}Request.model_rebuild()
+        except Exception:
+            pass
+        req_json_str = {{ contract_test.request_mock_json | json_string_literal }}
+        try:
+            kwargs["body"] = {{ contract_test.class_name }}Request.model_validate_json(req_json_str)
+        except Exception:
+            kwargs["body"] = {{ contract_test.class_name }}Request.model_construct(**json.loads(req_json_str))
+        {% else %}
+        kwargs["body"] = {"test": True}
+        {% endif %}
+        {% endif %}
+
+        {% if contract_test.is_streaming %}
+        kwargs["stream_config"] = StreamConfig(max_retries=0, timeout=5.0)
+        {% endif %}
+
+        method = getattr(self.loopback_{{ tag.property_name }}_client, "{{ contract_test.method_name }}")
+        result = method(**kwargs)
+
+        if isinstance(result, _types.GeneratorType):
+            first_item = next(result)
+            assert first_item is not None
+            if hasattr(first_item, "model_dump"):
+                dumped = first_item.model_dump()
+                assert isinstance(dumped, (dict, list))
+        {% if contract_test.is_binary_response %}
+        else:
+            assert isinstance(result, bytes)
+            assert result == expected_binary
+        {% else %}
+        else:
+            assert result is not None
+            if hasattr(result, "model_dump"):
+                dumped = result.model_dump()
+                assert isinstance(dumped, (dict, list))
+        {% endif %}
+
+        recorded = self.loopback_server.last_request()
+        assert recorded is not None
+        assert recorded.method == "{{ contract_test.method | upper }}"
+        {% if contract_test.security_requirements %}
+        assert recorded.first_header("authorization") is not None
+        {% else %}
+        assert recorded.first_header("authorization") is None
+        {% endif %}
     {% endfor %}

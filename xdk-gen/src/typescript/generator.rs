@@ -32,6 +32,11 @@ fn last_part(value: &str) -> String {
     value.split('.').next_back().unwrap_or(value).to_string()
 }
 
+/// MiniJinja filter rendering any string as a valid JSON/TypeScript string literal.
+fn json_string_literal(value: &str) -> String {
+    serde_json::to_string(value).unwrap_or_else(|_| "\"\"".to_string())
+}
+
 /// Context for rendering schemas template: declarations are fully rendered
 /// in Rust (see xdk_lib::types); the template only concatenates them.
 #[derive(Debug, Serialize)]
@@ -45,7 +50,7 @@ struct SchemasContext {
 */
 language! {
     name: TypeScriptBase,
-    filters: [camel_case, pascal_case, snake_case, ts_type, last_part],
+    filters: [camel_case, pascal_case, snake_case, ts_type, last_part, json_string_literal],
     class_casing: Casing::Pascal,
     operation_casing: Casing::Camel,
     import_casing: Casing::Snake,
@@ -66,6 +71,10 @@ language! {
                 render "stream_listener" => "src/stream_listener.ts",
                 render "paginator" => "src/paginator.ts",
         render "index" => "src/index.ts",
+        render "mock_x_api_server" => "examples/mock_x_api_server.ts",
+        render "examples_use_cases" => "examples/use_cases.ts",
+        render "canary_app" => "examples/canary.ts",
+        render "examples_readme" => "examples/README.md",
         render "package_json" => "package.json",
         render "tsconfig" => "tsconfig.json",
         render "tsup.config" => "tsup.config.ts",
@@ -90,6 +99,8 @@ language! {
         render "test_oauth2_token_expiry" => "tests/oauth2_token_expiry.test.ts",
         render "test_oauth1_signature" => "tests/oauth1_signature.test.ts",
         render "test_event_driven_stream" => "tests/event_driven_stream.test.ts",
+        render "test_e2e_loopback" => "tests/e2e_loopback.test.ts",
+        render "test_examples_and_canary" => "tests/examples_and_canary.test.ts",
         render "jest.config" => "jest.config.cjs"
     ]
 }

@@ -27,7 +27,7 @@ pub fn generate(openapi: &OpenApi, output_dir: &Path) -> Result<()> {
 }
 
 fn clean_generated_dirs(output_dir: &Path) -> Result<()> {
-    for dir in ["src", "tests"] {
+    for dir in ["src", "tests", "examples"] {
         let path = output_dir.join(dir);
         if path.exists() {
             fs::remove_dir_all(&path).map_err(BuildError::IoError)?;

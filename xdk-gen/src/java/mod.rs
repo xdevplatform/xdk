@@ -28,15 +28,15 @@ mod tests {
         assert!(result.is_ok(), "Failed to generate Java SDK: {:?}", result);
 
         let pom = fs::read_to_string(output_dir.join("pom.xml")).unwrap();
+        assert!(pom.contains("<groupId>com.x</groupId>"));
         assert!(pom.contains("<version>0.1.0-test</version>"));
 
         let client =
-            fs::read_to_string(output_dir.join("src/main/java/com/xdevplatform/xdk/XClient.java"))
-                .unwrap();
+            fs::read_to_string(output_dir.join("src/main/java/com/x/xdk/XClient.java")).unwrap();
         assert!(client.contains("xdk-java/0.1.0-test"));
         assert!(
             output_dir
-                .join("src/main/java/com/xdevplatform/xdk/models/Schemas.java")
+                .join("src/main/java/com/x/xdk/models/Schemas.java")
                 .exists()
         );
     }
