@@ -126,14 +126,22 @@ class Client:
         if self.oauth2_auth and isinstance(self.oauth2_auth.token, dict):
             self.oauth2_auth.token['access_token'] = value
 
-    def _send_with_retry(self, method_name: str, url: str, **kwargs) -> requests.Response:
+    def _send_with_retry(
+        self,
+        method_name: str,
+        url: str,
+        headers_factory: Optional[Callable[[], Dict[str, str]]] = None,
+        **kwargs,
+    ) -> requests.Response:
         """Execute an HTTP request with optional timeout and Retry-After / exponential backoff."""
         if self.timeout is not None and 'timeout' not in kwargs:
             kwargs['timeout'] = self.timeout
 
-        request_fn = getattr(self.session, method_name)
+        request_fn = getattr(self.session, method_name.lower())
         attempt = 0
         while True:
+            if headers_factory is not None:
+                kwargs['headers'] = headers_factory()
             response = request_fn(url, **kwargs)
             status_code = getattr(response, 'status_code', None)
             if (

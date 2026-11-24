@@ -331,6 +331,63 @@ class ManagedDaemon:
             return f'xdk_canary_healthy{{sdk="{self.name}"}} 0\n'
 
 
+def aggregate_prometheus_metrics(
+    daemon_entries: List[Tuple[str, int, str]], fleet_ok: bool
+) -> str:
+    """Merge per-SDK Prometheus exposition text into valid non-duplicated metric families."""
+    metric_helps: Dict[str, str] = {}
+    metric_types: Dict[str, str] = {
+        "xdk_supervisor_restarts_total": "counter",
+    }
+    metric_samples: Dict[str, List[str]] = {
+        "xdk_supervisor_restarts_total": [],
+    }
+
+    for sdk_name, restarts, raw_text in daemon_entries:
+        metric_samples["xdk_supervisor_restarts_total"].append(
+            f'xdk_supervisor_restarts_total{{sdk="{sdk_name}"}} {restarts}'
+        )
+        for raw_line in raw_text.splitlines():
+            line = raw_line.strip()
+            if not line:
+                continue
+            if line.startswith("# HELP "):
+                parts = line.split(None, 3)
+                if len(parts) >= 3:
+                    metric_helps.setdefault(parts[2], line)
+                continue
+            if line.startswith("# TYPE "):
+                parts = line.split()
+                if len(parts) >= 4:
+                    mname, mtype = parts[2], parts[3]
+                    metric_types.setdefault(mname, mtype)
+                    metric_samples.setdefault(mname, [])
+                continue
+            if line.startswith("#"):
+                continue
+            # Sample line: `<metric_name>{labels...} <val>` or `<metric_name> <val>`
+            head = line.split("{", 1)[0].split(None, 1)[0]
+            if head == "xdk_canary_healthy":
+                metric_types.setdefault(head, "gauge")
+            metric_samples.setdefault(head, []).append(line)
+
+    metric_types["xdk_supervisor_fleet_healthy"] = "gauge"
+    metric_samples["xdk_supervisor_fleet_healthy"] = [
+        f"xdk_supervisor_fleet_healthy {1 if fleet_ok else 0}"
+    ]
+
+    out_lines: List[str] = []
+    for mname, samples in metric_samples.items():
+        if not samples:
+            continue
+        if mname in metric_helps:
+            out_lines.append(metric_helps[mname])
+        if mname in metric_types:
+            out_lines.append(f"# TYPE {mname} {metric_types[mname]}")
+        out_lines.extend(samples)
+    return "\n".join(out_lines) + "\n"
+
+
 def run_daemon_mode(
     sdks: List[str],
     dirs: Dict[str, Path],
@@ -359,19 +416,14 @@ def run_daemon_mode(
 
         def do_GET(self) -> None:
             if self.path.startswith("/metrics"):
-                lines = [
-                    "# TYPE xdk_supervisor_restarts_total counter",
-                ]
                 fleet_ok = True
+                daemon_entries: List[Tuple[str, int, str]] = []
                 for d in daemons:
-                    lines.append(f'xdk_supervisor_restarts_total{{sdk="{d.name}"}} {d.restarts}')
                     st = d.fetch_json("/health")
                     if not st.get("healthy"):
                         fleet_ok = False
-                    lines.append(d.fetch_metrics().rstrip("\n"))
-                lines.append("# TYPE xdk_supervisor_fleet_healthy gauge")
-                lines.append(f"xdk_supervisor_fleet_healthy {1 if fleet_ok else 0}")
-                payload = ("\n".join(lines) + "\n").encode("utf-8")
+                    daemon_entries.append((d.name, d.restarts, d.fetch_metrics()))
+                payload = aggregate_prometheus_metrics(daemon_entries, fleet_ok).encode("utf-8")
                 self.send_response(200)
                 self.send_header("Content-Type", "text/plain; version=0.0.4; charset=utf-8")
                 self.send_header("Content-Length", str(len(payload)))

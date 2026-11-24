@@ -249,7 +249,15 @@ public sealed class XClient : IDisposable
                     opts.Timeout ?? System.Threading.Timeout.InfiniteTimeSpan,
                     ct,
                     allowRetry: false).ConfigureAwait(false);
-                return await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
+                try
+                {
+                    return await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
+                }
+                catch
+                {
+                    response.Dispose();
+                    throw;
+                }
             },
             JsonOptions,
             opts);

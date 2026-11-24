@@ -83,4 +83,66 @@ mod tests {
             "ClientConfig should not contain userAgent field - it should be static"
         );
     }
+
+    #[test]
+    fn test_stream_client_unauthenticated_passes_empty_security_array() {
+        let output_dir = create_output_dir();
+        let _guard = OpenApiContextGuard::new();
+        let spec_json = r#"{
+            "openapi": "3.0.0",
+            "info": { "title": "Stream No Auth Test", "version": "1.0.0" },
+            "paths": {
+                "/2/public/stream": {
+                    "get": {
+                        "tags": ["Stream"],
+                        "operationId": "publicSampleStream",
+                        "x-twitter-streaming": true,
+                        "responses": {
+                            "200": {
+                                "description": "ok",
+                                "content": {
+                                    "application/json": {
+                                        "schema": { "type": "object", "properties": { "id": { "type": "string" } } }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "/2/public/stream/rules": {
+                    "get": {
+                        "tags": ["Stream"],
+                        "operationId": "getPublicStreamRules",
+                        "responses": {
+                            "200": {
+                                "description": "ok",
+                                "content": {
+                                    "application/json": {
+                                        "schema": { "type": "object", "properties": { "id": { "type": "string" } } }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }"#;
+        let openapi = xdk_openapi::parse_json(spec_json).unwrap();
+        let result = generate(TypeScript, &openapi, &output_dir, "0.0.0-test");
+        assert!(
+            result.is_ok(),
+            "Failed to generate TypeScript SDK: {:?}",
+            result
+        );
+
+        let stream_client = fs::read_to_string(output_dir.join("src/stream/stream_client.ts"))
+            .expect("stream/stream_client.ts");
+        let empty_sec_count = stream_client.matches("security: [],").count();
+        assert!(
+            empty_sec_count >= 2,
+            "Both streaming and non-streaming unauthenticated StreamClient methods must pass security: [], got count {} in:\n{}",
+            empty_sec_count,
+            stream_client
+        );
+    }
 }

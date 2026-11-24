@@ -75,4 +75,100 @@ describe('EventDrivenStream async iterator', () => {
     expect(thrown).toBeInstanceOf(Error);
     expect((thrown as Error).message).toBe('connection reset');
   });
+
+  it('completes cleanly without hanging when a fast stream emits and closes before iteration begins', async () => {
+    const preclosedWithData = new ReadableStream<Uint8Array>({
+      start(c) {
+        c.enqueue(encoder.encode(NDJSON_3_POSTS));
+        c.close();
+      },
+    });
+    const stream = new EventDrivenStream();
+    await stream.connect(preclosedWithData);
+    // Allow startReading() microtasks to finish completely before attaching asyncIterator
+    await new Promise(resolve => setTimeout(resolve, 20));
+
+    const ids: string[] = [];
+    for await (const ev of stream) {
+      ids.push(ev.data.id);
+    }
+    expect(ids).toEqual(['1', '2', '3']);
+
+    const preclosedEmpty = new ReadableStream<Uint8Array>({
+      start(c) {
+        c.close();
+      },
+    });
+    const emptyStream = new EventDrivenStream();
+    await emptyStream.connect(preclosedEmpty);
+    await new Promise(resolve => setTimeout(resolve, 20));
+
+    const emptyIds: string[] = [];
+    for await (const ev of emptyStream) {
+      emptyIds.push(ev.data.id);
+    }
+    expect(emptyIds).toEqual([]);
+  });
+
+  it('cancels an in-flight reconnected stream when close() is called mid-reconnect', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    let firstController!: ReadableStreamDefaultController<Uint8Array>;
+    const firstSource = new ReadableStream<Uint8Array>({
+      start(c) {
+        firstController = c;
+      },
+    });
+
+    let resolveReconnect!: (s: ReadableStream<Uint8Array>) => void;
+    let factoryEnteredResolve!: () => void;
+    const factoryEntered = new Promise<void>(resolve => {
+      factoryEnteredResolve = resolve;
+    });
+    let leakedStreamCancelled = false;
+
+    const stream = new EventDrivenStream({
+      autoReconnect: true,
+      maxReconnectAttempts: 3,
+      reconnectDelayMs: 1,
+      reconnectFactory: () => {
+        factoryEnteredResolve();
+        return new Promise<ReadableStream<Uint8Array>>(resolve => {
+          resolveReconnect = resolve;
+        });
+      },
+    });
+
+    await stream.connect(firstSource);
+    const errors: unknown[] = [];
+    stream.on('error', err => errors.push(err));
+
+    const iterPromise = (async () => {
+      const items: unknown[] = [];
+      for await (const item of stream) {
+        items.push(item);
+      }
+      return items;
+    })();
+
+    // Trigger reconnect
+    firstController.error(new Error('transient disconnect'));
+    await factoryEntered;
+
+    // Close stream while reconnectFactory is still in flight
+    stream.close();
+
+    // Now resolve the in-flight reconnectFactory; EventDrivenStream must cancel it immediately
+    const replacementStream = new ReadableStream<Uint8Array>({
+      cancel() {
+        leakedStreamCancelled = true;
+      },
+    });
+    resolveReconnect(replacementStream);
+
+    const collected = await iterPromise;
+    await new Promise(resolve => setTimeout(resolve, 10));
+    expect(collected).toEqual([]);
+    expect(leakedStreamCancelled).toBe(true);
+    expect(errors).toEqual([]);
+  });
 });

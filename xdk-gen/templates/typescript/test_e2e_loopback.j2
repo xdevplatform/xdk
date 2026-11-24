@@ -340,4 +340,69 @@ describe('Client Loopback TCP E2E', () => {
       ApiError
     );
   });
+
+  it('regenerates a fresh OAuth 1.0a nonce on 429 retry and omits Authorization on unauthenticated endpoints', async () => {
+    server = await MockXApiServer.start();
+    let postAttempts = 0;
+
+    server.setResponder(req => {
+      if (req.path === '/2/tweets' && req.method === 'POST') {
+        postAttempts += 1;
+        if (postAttempts === 1) {
+          return MockResponse.json(
+            429,
+            { title: 'Too Many Requests', detail: 'Rate limit exceeded' },
+            { 'Retry-After': '0' }
+          );
+        }
+        return MockResponse.json(201, {
+          data: { id: '2026', text: 'retried oauth1' },
+        });
+      }
+      return null;
+    });
+
+    const oauth1 = new OAuth1({
+      apiKey: 'consumer-key-123',
+      apiSecret: 'consumer-secret-456',
+      callback: 'oob',
+      accessToken: 'access-tok-789',
+      accessTokenSecret: 'access-sec-012',
+    });
+    const client = new Client({
+      baseUrl: server.baseUrl,
+      bearerToken: 'app-bearer-tok',
+      accessToken: 'user-oauth2-tok',
+      oauth1,
+      maxRetries: 2,
+    });
+
+    const created = await client.posts.create({ text: 'retried oauth1' });
+    expect(created.data?.id).toBe('2026');
+
+    const postReqs = server.requests.filter(r => r.path === '/2/tweets' && r.method === 'POST');
+    expect(postReqs.length).toBe(2);
+
+    const nonces: string[] = [];
+    for (const req of postReqs) {
+      const hdr = req.firstHeader('authorization') ?? '';
+      expect(hdr.startsWith('OAuth ')).toBe(true);
+      expect(
+        MockXApiServer.verifyOAuth1Signature(
+          req,
+          'consumer-secret-456',
+          'access-sec-012'
+        )
+      ).toBe(true);
+      const m = hdr.match(/oauth_nonce="([^"]+)"/);
+      expect(m).not.toBeNull();
+      nonces.push(m![1]);
+    }
+    expect(nonces[0]).not.toBe(nonces[1]);
+
+    await client.general.getOpenApiSpec();
+    const specReq = server.requests.find(r => r.path === '/2/openapi.json');
+    expect(specReq).toBeDefined();
+    expect(specReq!.firstHeader('authorization')).toBeUndefined();
+  });
 });

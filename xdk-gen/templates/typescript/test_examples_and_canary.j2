@@ -70,6 +70,17 @@ describe('UseCaseExamples & Continuous Canary', () => {
       expect(metrics).toContain(
         'xdk_canary_probe_success{sdk="typescript",probe="streaming_ndjson_reconnect"'
       );
+      const typeLines = metrics.split('\n').filter(ln => ln.startsWith('# TYPE '));
+      expect(typeLines.length).toBe(new Set(typeLines).size);
+      const seenFamilies: string[] = [];
+      for (const ln of metrics.split('\n')) {
+        if (!ln || ln.startsWith('#')) continue;
+        const fam = ln.split('{')[0].split(/\s+/)[0];
+        if (seenFamilies.length === 0 || seenFamilies[seenFamilies.length - 1] !== fam) {
+          expect(seenFamilies).not.toContain(fam);
+          seenFamilies.push(fam);
+        }
+      }
     } finally {
       await canary.close();
     }
