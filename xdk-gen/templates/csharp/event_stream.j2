@@ -46,6 +46,11 @@ public sealed class EventStream<T> : IAsyncEnumerable<T>, IAsyncDisposable, IDis
             try
             {
                 var stream = await _streamFactory(ct).ConfigureAwait(false);
+                if (ct.IsCancellationRequested)
+                {
+                    await stream.DisposeAsync().ConfigureAwait(false);
+                    yield break;
+                }
                 _activeStream = stream;
                 // StreamReader decodes UTF-8 incrementally across arbitrary chunk boundaries
                 reader = new StreamReader(stream, Encoding.UTF8, detectEncodingFromByteOrderMarks: false, bufferSize: 4096, leaveOpen: false);

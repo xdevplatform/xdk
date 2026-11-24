@@ -354,56 +354,57 @@ export class Client {
     options: RequestOptions = {}
   ): Promise<T> {
     const url = `${this.baseUrl}${path}`;
-    const headers = new Headers(this.headers);
-    
+
     // Select the best authentication method based on endpoint requirements
     const selectedAuth = this.selectAuthMethod(method, options.security);
-    
-    // Add authentication headers based on selected method
-    if (selectedAuth === 'bearer_token' && this.bearerToken) {
-      headers.set('Authorization', `Bearer ${this.bearerToken}`);
-    } else if (selectedAuth === 'oauth2_user_context' && this.getEffectiveAccessToken()) {
-      if (this.oauth2 && this.isTokenExpired()) {
-        await this.refreshToken();
-      }
-      const effectiveToken = this.getEffectiveAccessToken();
-      if (effectiveToken) {
-        headers.set('Authorization', `Bearer ${effectiveToken}`);
-      }
-    } else if (selectedAuth === 'oauth1' && this.oauth1 && this.oauth1.accessToken) {
-      // OAuth1 authentication - build proper OAuth1 header
-      try {
-        const bodyForSigning = typeof options.body === 'string' ? options.body : '';
-        const oauthHeader = await this.oauth1.buildRequestHeader(method, url, bodyForSigning);
-        headers.set('Authorization', oauthHeader);
-        
-        // Keep Content-Type header for JSON requests - X API requires it
-        // Only remove Content-Type for form-encoded OAuth1 requests
-        // JSON bodies are not included in OAuth1 signature (per OAuth1 spec)
-      } catch (error) {
-        throw new Error(`Failed to build OAuth1 header: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      }
-    } else if (!selectedAuth) {
-      // No suitable auth method found - validate authentication
-      const requiredSchemes = options.security 
+    if (!selectedAuth) {
+      // No suitable auth method found - validate authentication eagerly
+      const requiredSchemes = options.security
         ? options.security.flatMap(req => Object.keys(req))
         : [];
       if (requiredSchemes.length > 0) {
         this.validateAuthentication(requiredSchemes, path);
       }
     }
-    
-    // Add custom headers
-    if (options.headers) {
-      Object.entries(options.headers).forEach(([key, value]) => {
-        headers.set(key, value);
-      });
-    }
+
+    // Build headers per attempt so OAuth 1.0a generates a fresh nonce/timestamp
+    // and expired OAuth 2.0 user tokens refresh on retries.
+    const buildAttemptHeaders = async (): Promise<Headers> => {
+      const headers = new Headers(this.headers);
+      if (selectedAuth === 'bearer_token' && this.bearerToken) {
+        headers.set('Authorization', `Bearer ${this.bearerToken}`);
+      } else if (selectedAuth === 'oauth2_user_context' && this.getEffectiveAccessToken()) {
+        if (this.oauth2 && this.isTokenExpired()) {
+          await this.refreshToken();
+        }
+        const effectiveToken = this.getEffectiveAccessToken();
+        if (effectiveToken) {
+          headers.set('Authorization', `Bearer ${effectiveToken}`);
+        }
+      } else if (selectedAuth === 'oauth1' && this.oauth1 && this.oauth1.accessToken) {
+        try {
+          const bodyForSigning = typeof options.body === 'string' ? options.body : '';
+          const oauthHeader = await this.oauth1.buildRequestHeader(method, url, bodyForSigning);
+          headers.set('Authorization', oauthHeader);
+        } catch (error) {
+          throw new Error(`Failed to build OAuth1 header: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        }
+      }
+
+      if (options.headers) {
+        Object.entries(options.headers).forEach(([key, value]) => {
+          headers.set(key, value);
+        });
+      }
+
+      return headers;
+    };
 
     const maxAttempts = this.retry ? Math.max(0, this.maxRetries) + 1 : 1;
     const retryableStatuses = new Set([429, 500, 502, 503, 504]);
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const headers = await buildAttemptHeaders();
       try {
         const response = await this.httpClient.request(url, {
           method,

@@ -69,6 +69,14 @@ public final class EventStream<T> implements Iterable<T>, AutoCloseable {
                                 finished = true;
                                 return false;
                             }
+                            if (closed) {
+                                try {
+                                    is.close();
+                                } catch (IOException ignored) {
+                                }
+                                finished = true;
+                                return false;
+                            }
                             activeStream = is;
                             // InputStreamReader uses Java's incremental StreamDecoder for UTF-8
                             reader = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));

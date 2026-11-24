@@ -278,4 +278,95 @@ mod tests {
             "'User-Agent': 'xdk-python/0.2.2-beta'"
         );
     }
+
+    #[test]
+    fn test_write_auth_uppercase_check_and_unauthenticated_pagination() {
+        let output_dir = create_output_dir();
+        let _guard = OpenApiContextGuard::new();
+        let spec_json = r#"{
+            "openapi": "3.0.0",
+            "info": { "title": "Auth & Pagination Test", "version": "1.0.0" },
+            "components": {
+                "securitySchemes": {
+                    "BearerToken": { "type": "http", "scheme": "bearer" },
+                    "OAuth2UserToken": { "type": "oauth2", "flows": {} },
+                    "UserToken": { "type": "http", "scheme": "OAuth" }
+                }
+            },
+            "paths": {
+                "/2/items": {
+                    "post": {
+                        "tags": ["Items"],
+                        "operationId": "createItem",
+                        "security": [
+                            { "BearerToken": [] },
+                            { "OAuth2UserToken": ["tweet.write"] },
+                            { "UserToken": [] }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "ok",
+                                "content": {
+                                    "application/json": {
+                                        "schema": { "type": "object", "properties": { "id": { "type": "string" } } }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "get": {
+                        "tags": ["Items"],
+                        "operationId": "listPublicItems",
+                        "parameters": [
+                            {
+                                "name": "pagination_token",
+                                "in": "query",
+                                "required": false,
+                                "schema": { "type": "string" }
+                            }
+                        ],
+                        "responses": {
+                            "200": {
+                                "description": "ok",
+                                "content": {
+                                    "application/json": {
+                                        "schema": { "type": "object", "properties": { "data": { "type": "array", "items": { "type": "string" } } } }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }"#;
+        let openapi = xdk_openapi::parse_json(spec_json).unwrap();
+        let result = generate(Python, &openapi, &output_dir, "0.0.0-test");
+        assert!(result.is_ok(), "Failed to generate SDK: {:?}", result);
+
+        let items_client =
+            fs::read_to_string(output_dir.join("xdk/items/client.py")).expect("items/client.py");
+        assert!(
+            items_client
+                .contains("is_write_operation = \"POST\" in ['POST', 'PUT', 'DELETE', 'PATCH']"),
+            "Write operation check must compare uppercase HTTP method; got:\n{}",
+            items_client
+        );
+        assert!(
+            !items_client.contains("is_write_operation = \"post\""),
+            "Must never compare lowercase method against uppercase list"
+        );
+        assert!(
+            items_client.contains("headers_factory=_build_request_headers"),
+            "Regular requests must rebuild headers per retry attempt"
+        );
+        assert!(
+            items_client.contains("headers_factory=_build_page_headers"),
+            "Paginated requests must rebuild headers per retry attempt"
+        );
+        assert!(
+            items_client.contains("# Unauthenticated endpoint (no security requirements in OpenAPI spec)\n            page_selected_auth = None"),
+            "Unauthenticated paginated endpoint must leave page_selected_auth = None; got:\n{}",
+            items_client
+        );
+    }
 }

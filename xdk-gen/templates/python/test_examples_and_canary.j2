@@ -64,3 +64,14 @@ class TestUseCaseExamplesAndCanary:
                 metrics = resp.read().decode("utf-8")
                 assert 'xdk_canary_healthy{sdk="python"} 1' in metrics
                 assert 'xdk_canary_probe_success{sdk="python",probe="streaming_ndjson_reconnect"' in metrics
+                type_lines = [ln for ln in metrics.splitlines() if ln.startswith("# TYPE ")]
+                assert len(type_lines) == len(set(type_lines))
+                # Verify metric families are grouped and never interleaved
+                seen_families: list[str] = []
+                for ln in metrics.splitlines():
+                    if not ln or ln.startswith("#"):
+                        continue
+                    fam = ln.split("{", 1)[0].split(None, 1)[0]
+                    if not seen_families or seen_families[-1] != fam:
+                        assert fam not in seen_families, f"Metric family {fam} was interleaved"
+                        seen_families.append(fam)

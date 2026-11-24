@@ -145,11 +145,12 @@ class XdkPythonCanaryApp:
                     ]
                     if snap is not None:
                         lines.append("# TYPE xdk_canary_probe_duration_ms gauge")
-                        lines.append("# TYPE xdk_canary_probe_success gauge")
                         for p in snap.probes:
                             lines.append(
                                 f'xdk_canary_probe_duration_ms{{sdk="{outer.SDK_NAME}",probe="{p.name}",mode="{p.mode}"}} {p.durationMs}'
                             )
+                        lines.append("# TYPE xdk_canary_probe_success gauge")
+                        for p in snap.probes:
                             lines.append(
                                 f'xdk_canary_probe_success{{sdk="{outer.SDK_NAME}",probe="{p.name}",mode="{p.mode}"}} {1 if p.passed else 0}'
                             )

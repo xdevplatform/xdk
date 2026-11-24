@@ -308,3 +308,129 @@ class TestClientLoopbackE2E:
             )
             with pytest.raises(requests.Timeout):
                 fast_timeout_client.users.get_by_username("SlowUser")
+
+    def test_write_auth_priority_prefers_user_token_over_bearer_on_multi_scheme_endpoints(
+        self,
+    ) -> None:
+        with MockXApiServer() as server:
+            server.set_responder(
+                lambda req: MockResponse.json(
+                    200,
+                    {"data": {"subscription_id": "sub_1"}},
+                )
+                if req.path == "/2/activity/subscriptions"
+                else None
+            )
+
+            # 1) When both app-only bearer_token and user OAuth2 access_token are set,
+            #    POST endpoints accepting BearerToken + OAuth2UserToken + UserToken must
+            #    pick the user token (access_token), while GET endpoints pick bearer_token.
+            dual_client = Client(
+                base_url=server.base_url,
+                bearer_token="app-bearer-tok",
+                access_token="user-oauth2-tok",
+            )
+            dual_client.activity.create_subscription(body={"event_type": "follows.create"})
+            dual_client.users.get_by_username("ReadCheckUser")
+
+            write_req = next(
+                r for r in server.requests if r.path == "/2/activity/subscriptions"
+            )
+            read_req = next(
+                r for r in server.requests if r.path == "/2/users/by/username/ReadCheckUser"
+            )
+            assert write_req.first_header("authorization") == "Bearer user-oauth2-tok"
+            assert read_req.first_header("authorization") == "Bearer app-bearer-tok"
+
+            # 2) When OAuth 1.0a is also configured alongside bearer_token and access_token,
+            #    write priority prefers OAuth 1.0a > OAuth 2.0 User Token > Bearer Token.
+            server.requests.clear()
+            oauth1 = OAuth1(
+                api_key="consumer-key-123",
+                api_secret="consumer-secret-456",
+                callback="oob",
+                access_token="access-tok-789",
+                access_token_secret="access-sec-012",
+                base_url=server.base_url,
+            )
+            tri_client = Client(
+                base_url=server.base_url,
+                bearer_token="app-bearer-tok",
+                access_token="user-oauth2-tok",
+                auth=oauth1,
+            )
+            tri_client.activity.create_subscription(body={"event_type": "follows.create"})
+            oauth1_write_req = server.requests[-1]
+            auth_hdr = oauth1_write_req.first_header("authorization") or ""
+            assert auth_hdr.startswith("OAuth ")
+            assert MockXApiServer.verify_oauth1_signature(
+                oauth1_write_req,
+                "consumer-secret-456",
+                "access-sec-012",
+            )
+
+    def test_oauth1_retry_regenerates_fresh_nonce_and_unauthenticated_omits_auth(
+        self,
+    ) -> None:
+        attempts = {"count": 0}
+
+        def responder(req: RecordedRequest) -> MockResponse | None:
+            if req.path == "/2/tweets" and req.method == "POST":
+                attempts["count"] += 1
+                if attempts["count"] == 1:
+                    return MockResponse.json(
+                        429,
+                        {"title": "Too Many Requests", "detail": "Rate limit exceeded"},
+                        {"Retry-After": "0"},
+                    )
+                return MockResponse.json(
+                    201,
+                    {"data": {"id": "1901", "text": "retried with fresh nonce"}},
+                )
+            return None
+
+        with MockXApiServer() as server:
+            server.set_responder(responder)
+            oauth1 = OAuth1(
+                api_key="consumer-key-123",
+                api_secret="consumer-secret-456",
+                callback="oob",
+                access_token="access-tok-789",
+                access_token_secret="access-sec-012",
+                base_url=server.base_url,
+            )
+            client = Client(
+                base_url=server.base_url,
+                bearer_token="app-bearer-tok",
+                access_token="user-oauth2-tok",
+                auth=oauth1,
+                max_retries=2,
+            )
+
+            created = client.posts.create(body={"text": "retried with fresh nonce"})
+            assert created.data is not None
+            post_reqs = [
+                r for r in server.requests if r.path == "/2/tweets" and r.method == "POST"
+            ]
+            assert len(post_reqs) == 2
+
+            nonces = []
+            for r in post_reqs:
+                hdr = r.first_header("authorization") or ""
+                assert hdr.startswith("OAuth ")
+                assert MockXApiServer.verify_oauth1_signature(
+                    r,
+                    "consumer-secret-456",
+                    "access-sec-012",
+                )
+                for part in hdr[len("OAuth ") :].split(","):
+                    part = part.strip()
+                    if part.startswith("oauth_nonce="):
+                        nonces.append(part.split("=", 1)[1].strip('"'))
+            assert len(nonces) == 2
+            assert nonces[0] != nonces[1], "Each OAuth 1.0a retry must generate a distinct nonce"
+
+            # Unauthenticated OpenAPI spec endpoint must not attach Authorization
+            client.general.get_open_api_spec()
+            spec_req = next(r for r in server.requests if r.path == "/2/openapi.json")
+            assert spec_req.first_header("authorization") is None

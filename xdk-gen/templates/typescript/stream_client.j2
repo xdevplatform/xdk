@@ -214,8 +214,23 @@ export class {{ tag.class_name }}Client {
         // Make the authenticated request using the main client's request method
         // We need raw: true to get the raw Response object for streaming
         const url = path + (params.toString() ? `?${params.toString()}` : '');
-        
-        const openReadableStream = async (): Promise<ReadableStream<Uint8Array>> => {
+
+        const combineSignals = (a?: AbortSignal, b?: AbortSignal): AbortSignal | undefined => {
+            if (!a) return b;
+            if (!b) return a;
+            const ctrl = new AbortController();
+            if (a.aborted || b.aborted) {
+                ctrl.abort();
+                return ctrl.signal;
+            }
+            const onAbort = () => ctrl.abort();
+            a.addEventListener('abort', onAbort, { once: true });
+            b.addEventListener('abort', onAbort, { once: true });
+            return ctrl.signal;
+        };
+
+        const openReadableStream = async (reconnectSignal?: AbortSignal): Promise<ReadableStream<Uint8Array>> => {
+            const effectiveSignal = combineSignals(requestOptions?.signal ?? signal, reconnectSignal);
             const response = await this.client.request(
                 '{{ operation.method | upper }}',
                 url,
@@ -238,9 +253,11 @@ export class {{ tag.class_name }}Client {
                         }{% if not loop.last %},{% endif %}
                         {% endfor %}
                     ],
+                    {% else %}
+                    security: [],
                     {% endif %}
-                    signal: signal,
                     ...requestOptions,
+                    signal: effectiveSignal,
                     raw: true, // Get raw Response object for streaming
                     timeout: requestOptions?.timeout !== undefined ? requestOptions.timeout : 0,
                 }
@@ -401,6 +418,8 @@ export class {{ tag.class_name }}Client {
                 }{% if not loop.last %},{% endif %}
                 {% endfor %}
             ],
+            {% else %}
+            security: [],
             {% endif %}
             ...requestOptions,
         };
