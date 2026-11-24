@@ -3,14 +3,14 @@
 
 [versions]
 # Python SDK version
-python = "0.11.0"
+python = "0.11.1"
 
 # TypeScript SDK version
-typescript = "0.7.0"
+typescript = "0.7.1"
 
 # Java SDK version
-java = "0.1.0"
+java = "0.1.1"
 
 # C# SDK version
-csharp = "0.1.0"
+csharp = "0.1.1"
 
