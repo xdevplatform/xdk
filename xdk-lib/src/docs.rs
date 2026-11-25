@@ -374,6 +374,25 @@ fn build_operation_model(pascal_tag: &str, group: OperationGroup) -> OperationDo
     }
 }
 
+fn sort_json_keys(val: Json) -> Json {
+    match val {
+        Json::Object(map) => {
+            let mut entries: Vec<(String, Json)> = map
+                .into_iter()
+                .map(|(k, v)| (k, sort_json_keys(v)))
+                .collect();
+            entries.sort_by(|(a, _), (b, _)| a.cmp(b));
+            let mut sorted = JsonMap::new();
+            for (k, v) in entries {
+                sorted.insert(k, v);
+            }
+            Json::Object(sorted)
+        }
+        Json::Array(arr) => Json::Array(arr.into_iter().map(sort_json_keys).collect()),
+        other => other,
+    }
+}
+
 fn extract_body_schema(op: &OperationInfo) -> (Option<Json>, bool, bool) {
     let Some(body) = &op.request_body else {
         return (None, false, false);
@@ -384,11 +403,11 @@ fn extract_body_schema(op: &OperationInfo) -> (Option<Json>, bool, bool) {
         .get("application/json")
         .or_else(|| body.content.get("multipart/form-data"))
     {
-        let schema = serde_json::to_value(&media.schema).ok();
+        let schema = serde_json::to_value(&media.schema).ok().map(sort_json_keys);
         return (schema, required, false);
     }
     if let Some(media) = body.content.get("application/octet-stream") {
-        let schema = serde_json::to_value(&media.schema).ok();
+        let schema = serde_json::to_value(&media.schema).ok().map(sort_json_keys);
         return (schema, required, true);
     }
     (None, required, false)
@@ -400,7 +419,10 @@ fn extract_response_schema(op: &OperationInfo) -> (Option<Json>, bool) {
             && let Some(content) = &resp.content
         {
             if let Some(media) = content.get("application/json") {
-                return (serde_json::to_value(&media.schema).ok(), false);
+                return (
+                    serde_json::to_value(&media.schema).ok().map(sort_json_keys),
+                    false,
+                );
             }
             if content.contains_key("application/octet-stream") {
                 return (None, true);
@@ -1666,6 +1688,22 @@ fn ensure_xdks_redirects(root_obj: &mut JsonMap<String, Json>, tags: &[TagDocMod
         return;
     };
 
+    // Remove legacy redirects that shadowed live XDK pages before `/xdks/overview` existed.
+    let live_xdks_routes = [
+        "/xdks/overview",
+        "/xdks/python/overview",
+        "/xdks/typescript/overview",
+        "/xdks/java/overview",
+        "/xdks/csharp/overview",
+    ];
+    redirects.retain(|r| {
+        r.get("source")
+            .and_then(|v| v.as_str())
+            .is_none_or(|src| !live_xdks_routes.contains(&src))
+    });
+
+    desired.insert(0, ("/xdks".to_string(), "/xdks/overview".to_string()));
+
     for (source, destination) in desired {
         if let Some(existing) = redirects
             .iter_mut()
@@ -2089,7 +2127,7 @@ fn realistic_body_json(schema: &Json, depth: usize) -> Json {
                 .iter()
                 .copied()
                 .find(|k| props.contains_key(*k))
-                .or_else(|| props.keys().next().map(String::as_str));
+                .or_else(|| props.keys().min().map(String::as_str));
             if let Some(key) = chosen
                 && let Some(prop_schema) = props.get(key)
             {
@@ -2474,7 +2512,7 @@ csharp = "0.1.2"
 
         fs::write(
             tmp.path().join("docs.json"),
-            r#"{"name": "X Docs", "navigation": {"products": [{"product": "X API", "tabs": []}]}}"#,
+            r#"{"name": "X Docs", "navigation": {"products": [{"product": "X API", "tabs": []}]}, "redirects": [{"source": "/xdks/overview", "destination": "/tools-and-libraries"}]}"#,
         )
         .unwrap();
 
@@ -2542,5 +2580,15 @@ csharp = "0.1.2"
         );
         let products = updated_docs["navigation"]["products"].as_array().unwrap();
         assert!(products.iter().any(|p| p["product"] == "XDKs"));
+        let redirects = updated_docs["redirects"].as_array().unwrap();
+        assert!(
+            !redirects.iter().any(|r| r["source"] == "/xdks/overview"),
+            "Stale /xdks/overview redirect should be pruned"
+        );
+        assert!(
+            redirects
+                .iter()
+                .any(|r| r["source"] == "/xdks" && r["destination"] == "/xdks/overview")
+        );
     }
 }
