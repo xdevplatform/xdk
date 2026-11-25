@@ -89,6 +89,15 @@ impl SdkDocLang {
         }
     }
 
+    pub fn dropdown_description(self) -> &'static str {
+        match self {
+            Self::Python => "pip install xdk",
+            Self::TypeScript => "npm i @xdevplatform/xdk",
+            Self::Java => "com.x:xdk (Maven)",
+            Self::CSharp => "XDevPlatform.Xdk (NuGet)",
+        }
+    }
+
     pub fn install_command(self, version: &str) -> String {
         match self {
             Self::Python => "pip install xdk".to_string(),
@@ -131,6 +140,15 @@ impl SdkDocLang {
             Self::TypeScript => "https://github.com/xdevplatform/xdk-typescript",
             Self::Java => "https://github.com/xdevplatform/xdk-java",
             Self::CSharp => "https://github.com/xdevplatform/xdk-csharp",
+        }
+    }
+
+    pub fn nav_icon(self) -> &'static str {
+        match self {
+            Self::Python => "python",
+            Self::TypeScript => "js",
+            Self::Java => "java",
+            Self::CSharp => "code",
         }
     }
 }
@@ -1434,39 +1452,26 @@ fn update_docs_json(docs_json_path: &Path, tags: &[TagDocModel]) -> Result<()> {
     });
     root_obj.insert("api".to_string(), api_block);
 
-    // 2. Build the `"XDKs"` product entry with Overview + all 4 language tabs.
-    let xdks_product = build_xdks_product_nav(tags);
+    // 2. Build the `"XDKs"` top-bar tab inside `"X API"` (`Documentation | API Reference | XDKs | Changelog`),
+    //    keeping `navigation.products` strictly for APIs (`X API`, `Chat API`, `Ads API`, `Livestream API`).
+    let xdks_tab = build_xdks_tab_nav(tags);
 
     if let Some(products) = root_obj
         .get_mut("navigation")
         .and_then(|n| n.get_mut("products"))
         .and_then(|p| p.as_array_mut())
     {
-        // Remove per-language hidden SDK products superseded by the unified "XDKs" product.
+        // Remove standalone SDK entries from the top-level Product switcher.
         products.retain(|p| {
             !matches!(
                 p.get("product").and_then(|v| v.as_str()),
-                Some("Python XDK" | "TypeScript XDK" | "Java XDK" | "C# XDK")
+                Some("XDKs" | "Python XDK" | "TypeScript XDK" | "Java XDK" | "C# XDK")
             )
         });
 
-        // Update X API -> Tools & Libraries -> SDKs (XDKs) entry cards if present.
+        // Update `X API -> Tools & Libraries -> SDKs (XDKs)` and insert/update the `XDKs` tab on `X API`.
         update_x_api_tools_xdks_nav(products);
-
-        if let Some(existing_idx) = products
-            .iter()
-            .position(|p| p.get("product").and_then(|v| v.as_str()) == Some("XDKs"))
-        {
-            products[existing_idx] = xdks_product;
-        } else {
-            // Insert right after "X API" so SDKs are immediately discoverable in the product switcher.
-            let insert_at = products
-                .iter()
-                .position(|p| p.get("product").and_then(|v| v.as_str()) == Some("X API"))
-                .map(|i| i + 1)
-                .unwrap_or(products.len());
-            products.insert(insert_at, xdks_product);
-        }
+        upsert_x_api_xdks_tab(products, xdks_tab);
     }
 
     // 3. Ensure redirects from older SDK reference URLs to the new client reference URLs.
@@ -1480,11 +1485,73 @@ fn update_docs_json(docs_json_path: &Path, tags: &[TagDocModel]) -> Result<()> {
     Ok(())
 }
 
-fn build_xdks_product_nav(tags: &[TagDocModel]) -> Json {
-    let mut tabs = vec![json!({
-        "tab": "Overview",
-        "pages": [
-            "xdks/overview"
+fn build_xdks_tab_nav(tags: &[TagDocModel]) -> Json {
+    let mut dropdowns = vec![json!({
+        "dropdown": "Overview",
+        "description": "Compare all 4 official SDKs",
+        "icon": "cubes",
+        "groups": [
+            {
+                "group": "Getting Started",
+                "pages": [
+                    "xdks/overview"
+                ]
+            },
+            {
+                "group": "Official Repositories",
+                "pages": [
+                    {
+                        "type": "link",
+                        "title": "Python SDK (GitHub)",
+                        "href": "https://github.com/xdevplatform/xdk-python"
+                    },
+                    {
+                        "type": "link",
+                        "title": "TypeScript SDK (GitHub)",
+                        "href": "https://github.com/xdevplatform/xdk-typescript"
+                    },
+                    {
+                        "type": "link",
+                        "title": "Java SDK (GitHub)",
+                        "href": "https://github.com/xdevplatform/xdk-java"
+                    },
+                    {
+                        "type": "link",
+                        "title": "C# SDK (GitHub)",
+                        "href": "https://github.com/xdevplatform/xdk-csharp"
+                    },
+                    {
+                        "type": "link",
+                        "title": "SDK Generator (Rust)",
+                        "href": "https://github.com/xdevplatform/xdk"
+                    }
+                ]
+            },
+            {
+                "group": "Package Registries",
+                "pages": [
+                    {
+                        "type": "link",
+                        "title": "PyPI — xdk",
+                        "href": "https://pypi.org/project/xdk/"
+                    },
+                    {
+                        "type": "link",
+                        "title": "npm — @xdevplatform/xdk",
+                        "href": "https://www.npmjs.com/package/@xdevplatform/xdk"
+                    },
+                    {
+                        "type": "link",
+                        "title": "Maven Central — com.x:xdk",
+                        "href": "https://central.sonatype.com/artifact/com.x/xdk"
+                    },
+                    {
+                        "type": "link",
+                        "title": "NuGet — XDevPlatform.Xdk",
+                        "href": "https://www.nuget.org/packages/XDevPlatform.Xdk"
+                    }
+                ]
+            }
         ]
     })];
 
@@ -1497,8 +1564,10 @@ fn build_xdks_product_nav(tags: &[TagDocModel]) -> Json {
                 tag.kebab_slug
             )));
         }
-        tabs.push(json!({
-            "tab": lang.display_name(),
+        dropdowns.push(json!({
+            "dropdown": lang.display_name(),
+            "description": lang.dropdown_description(),
+            "icon": lang.nav_icon(),
             "groups": [
                 {
                     "group": "Guides",
@@ -1520,11 +1589,40 @@ fn build_xdks_product_nav(tags: &[TagDocModel]) -> Json {
     }
 
     json!({
-        "product": "XDKs",
-        "description": "Official Python, TypeScript, Java, and C# SDKs",
-        "icon": "cubes",
-        "tabs": tabs
+        "tab": "XDKs",
+        "dropdowns": dropdowns
     })
+}
+
+fn upsert_x_api_xdks_tab(products: &mut [Json], xdks_tab: Json) {
+    let Some(x_api) = products
+        .iter_mut()
+        .find(|p| p.get("product").and_then(|v| v.as_str()) == Some("X API"))
+    else {
+        return;
+    };
+    let Some(tabs) = x_api.get_mut("tabs").and_then(|t| t.as_array_mut()) else {
+        return;
+    };
+
+    if let Some(existing_idx) = tabs
+        .iter()
+        .position(|t| matches!(t.get("tab").and_then(|v| v.as_str()), Some("XDKs" | "SDKs")))
+    {
+        tabs[existing_idx] = xdks_tab;
+    } else if let Some(api_ref_idx) = tabs
+        .iter()
+        .position(|t| t.get("tab").and_then(|v| v.as_str()) == Some("API Reference"))
+    {
+        tabs.insert(api_ref_idx + 1, xdks_tab);
+    } else if let Some(changelog_idx) = tabs
+        .iter()
+        .position(|t| t.get("tab").and_then(|v| v.as_str()) == Some("Changelog"))
+    {
+        tabs.insert(changelog_idx, xdks_tab);
+    } else {
+        tabs.push(xdks_tab);
+    }
 }
 
 fn update_x_api_tools_xdks_nav(products: &mut [Json]) {
@@ -2579,7 +2677,20 @@ csharp = "0.1.2"
             "overlays/xdk-code-samples.json"
         );
         let products = updated_docs["navigation"]["products"].as_array().unwrap();
-        assert!(products.iter().any(|p| p["product"] == "XDKs"));
+        assert!(!products.iter().any(|p| p["product"] == "XDKs"));
+        let x_api_tabs = products.iter().find(|p| p["product"] == "X API").unwrap()["tabs"]
+            .as_array()
+            .unwrap();
+        let xdks_tab = x_api_tabs.iter().find(|t| t["tab"] == "XDKs").unwrap();
+        let dropdowns = xdks_tab["dropdowns"].as_array().unwrap();
+        for dd in dropdowns {
+            let icon = dd["icon"].as_str().unwrap();
+            assert!(
+                !icon.starts_with('/'),
+                "dropdown icons must use built-in FontAwesome names for dark-mode mask rendering, got {icon}"
+            );
+        }
+        assert_eq!(dropdowns[0]["groups"].as_array().unwrap().len(), 3);
         let redirects = updated_docs["redirects"].as_array().unwrap();
         assert!(
             !redirects.iter().any(|r| r["source"] == "/xdks/overview"),
