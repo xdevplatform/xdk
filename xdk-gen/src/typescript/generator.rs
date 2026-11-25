@@ -84,7 +84,6 @@ language! {
         render "generate_docs" => "scripts/generate-docs.js",
         render "generate_docs_simple" => "scripts/generate-docs-simple.js",
         render "watch_docs" => "scripts/watch-docs.js",
-        render "process_for_mintlify" => "scripts/process-for-mintlify.js",
         render "readme" => "README.md"
     ],
     tests: [

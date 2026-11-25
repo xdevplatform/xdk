@@ -17,6 +17,7 @@
 /// - `config`: Configuration management for SDK generation
 pub mod casing;
 pub mod config;
+pub mod docs;
 pub mod error;
 pub mod generator;
 pub mod logging;

@@ -410,3 +410,53 @@ jobs:
           git add -A
           git commit -m "chore: update SDK to v${{ needs.prepare.outputs.csharp_version }}" || echo "No changes"
           GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key" git push
+
+  # ============================================
+  # Trigger Mintlify Docs & Overlay Sync
+  # ============================================
+  sync-docs:
+    name: Sync Mintlify Docs
+    needs: [prepare, release-python, release-typescript, release-java, release-csharp]
+    if: >-
+      always() &&
+      needs.prepare.result == 'success' &&
+      (needs.release-python.result == 'success' || needs.release-python.result == 'skipped') &&
+      (needs.release-typescript.result == 'success' || needs.release-typescript.result == 'skipped') &&
+      (needs.release-java.result == 'success' || needs.release-java.result == 'skipped') &&
+      (needs.release-csharp.result == 'success' || needs.release-csharp.result == 'skipped')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.dry_run && github.ref || 'main' }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: xdk-config
+          path: .
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Verify Mintlify Docs & Overlay Generation
+        run: cargo run -- docs --latest true --output /tmp/docs-release
+
+      - name: Dispatch xdevplatform/docs Sync
+        if: ${{ !inputs.dry_run }}
+        env:
+          GH_TOKEN: ${{ secrets.XDK_PAT }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "XDK_PAT is not set; xdevplatform/docs will sync on its next scheduled run."
+            exit 0
+          fi
+          gh api repos/xdevplatform/docs/dispatches \
+            -f event_type=xdk-released \
+            -f "client_payload[python]=${{ needs.prepare.outputs.python_version }}" \
+            -f "client_payload[typescript]=${{ needs.prepare.outputs.typescript_version }}" \
+            -f "client_payload[java]=${{ needs.prepare.outputs.java_version }}" \
+            -f "client_payload[csharp]=${{ needs.prepare.outputs.csharp_version }}" \
+            || echo "::notice::Could not dispatch xdevplatform/docs (token may only scope xdk); scheduled update-docs workflow will sync automatically."
