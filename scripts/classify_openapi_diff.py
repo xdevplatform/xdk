@@ -212,17 +212,58 @@ def collect_operations(spec: dict[str, Any]) -> dict[tuple[str, str], dict[str, 
     return ops
 
 
-def collect_params(spec: dict[str, Any], op: dict[str, Any]) -> dict[tuple[str, str], dict[str, Any]]:
-    """Return {(in, name): resolved_param} with operation-level params overriding path-level."""
-    params: dict[tuple[str, str], dict[str, Any]] = {}
+def _iter_params(spec: dict[str, Any], op: dict[str, Any]):
+    """Yield ((in, name), resolved_param, raw_entry), path-level entries first."""
     for raw_list in (op.get("_path_parameters") or [], op.get("parameters") or []):
         if not isinstance(raw_list, list):
             continue
         for entry in raw_list:
             resolved = resolve_ref(spec, entry)
             if isinstance(resolved, dict) and "name" in resolved and "in" in resolved:
-                params[(str(resolved["in"]), str(resolved["name"]))] = resolved
-    return params
+                yield (str(resolved["in"]), str(resolved["name"])), resolved, entry
+
+
+def collect_params(spec: dict[str, Any], op: dict[str, Any]) -> dict[tuple[str, str], dict[str, Any]]:
+    """Return {(in, name): resolved_param} with operation-level params overriding path-level."""
+    return {key: resolved for key, resolved, _ in _iter_params(spec, op)}
+
+
+def collect_param_entries(spec: dict[str, Any], op: dict[str, Any]) -> dict[tuple[str, str], Any]:
+    """Return {(in, name): raw_entry}, i.e. the `$ref` object when the parameter is shared."""
+    return {key: entry for key, _, entry in _iter_params(spec, op)}
+
+
+def shared_component_name(old_raw: Any, new_raw: Any, section: str) -> str | None:
+    """Return the component name when both sides are the same `#/components/<section>/<name>` ref.
+
+    Such an entry is diffed once in the shared-components pass of `classify_diff` rather
+    than once per referencing operation.
+    """
+    if not isinstance(old_raw, dict) or not isinstance(new_raw, dict):
+        return None
+    ref = old_raw.get("$ref")
+    prefix = f"#/components/{section}/"
+    if not isinstance(ref, str) or ref != new_raw.get("$ref") or not ref.startswith(prefix):
+        return None
+    name = ref[len(prefix):]
+    return name if name and "/" not in name else None
+
+
+def success_response_refs(spec: dict[str, Any]) -> set[str]:
+    """Return every `$ref` used directly as a 2xx response by some operation."""
+    refs: set[str] = set()
+    for op in collect_operations(spec).values():
+        responses = op.get("responses")
+        if not isinstance(responses, dict):
+            continue
+        for status, response in responses.items():
+            if (
+                str(status).startswith("2")
+                and isinstance(response, dict)
+                and isinstance(response.get("$ref"), str)
+            ):
+                refs.add(response["$ref"])
+    return refs
 
 
 def schema_type_signature(spec: dict[str, Any], schema: Any) -> str:
@@ -408,7 +449,12 @@ def diff_schemas(
     seen_refs: frozenset[tuple[str, str]] = frozenset(),
 ) -> None:
     """Recursively compare two OpenAPI schemas and append breaking changes."""
-    if not isinstance(old_raw, dict) or not isinstance(new_raw, dict):
+    if not isinstance(old_raw, dict):
+        return
+    if not isinstance(new_raw, dict):
+        # A typed parameter, request body or response lost its schema altogether.
+        if strip_docs_metadata(old_raw):
+            breaking.append(f"Removed schema at `{location}`")
         return
 
     old_ref = old_raw.get("$ref") if isinstance(old_raw.get("$ref"), str) else None
@@ -551,6 +597,140 @@ def diff_schemas(
             )
 
 
+def diff_parameter(
+    old_spec: dict[str, Any],
+    new_spec: dict[str, Any],
+    old_p: dict[str, Any],
+    new_p: dict[str, Any],
+    owner: str,
+    location: str,
+    breaking: list[str],
+) -> None:
+    """Compare two definitions of the same parameter. `owner` is already back-quoted."""
+    p_name = str(new_p.get("name"))
+    if not old_p.get("required") and new_p.get("required"):
+        breaking.append(f"Parameter `{p_name}` became required on {owner}")
+    diff_schemas(
+        old_spec,
+        new_spec,
+        old_p.get("schema"),
+        new_p.get("schema"),
+        f"{location} param `{p_name}`",
+        breaking,
+    )
+
+
+def diff_request_body(
+    old_spec: dict[str, Any],
+    new_spec: dict[str, Any],
+    old_rb: dict[str, Any],
+    new_rb: dict[str, Any],
+    owner: str,
+    location: str,
+    breaking: list[str],
+) -> None:
+    """Compare two request bodies, including inline schemas and media types."""
+    if not old_rb.get("required") and new_rb.get("required"):
+        breaking.append(f"Request body became required on {owner}")
+    old_content = old_rb.get("content") if isinstance(old_rb.get("content"), dict) else {}
+    new_content = new_rb.get("content") if isinstance(new_rb.get("content"), dict) else {}
+    for media in sorted(set(old_content) - set(new_content)):
+        breaking.append(f"Removed `{media}` request body on {owner}")
+    for media in sorted(set(old_content) & set(new_content)):
+        old_mt = old_content[media] if isinstance(old_content[media], dict) else {}
+        new_mt = new_content[media] if isinstance(new_content[media], dict) else {}
+        diff_schemas(
+            old_spec,
+            new_spec,
+            old_mt.get("schema"),
+            new_mt.get("schema"),
+            f"{location}({media})",
+            breaking,
+        )
+
+
+def diff_response(
+    old_spec: dict[str, Any],
+    new_spec: dict[str, Any],
+    old_resp: dict[str, Any],
+    new_resp: dict[str, Any],
+    owner: str,
+    location: str,
+    breaking: list[str],
+) -> None:
+    """Compare two success responses, including inline schemas and media types."""
+    old_rc = old_resp.get("content") if isinstance(old_resp.get("content"), dict) else {}
+    new_rc = new_resp.get("content") if isinstance(new_resp.get("content"), dict) else {}
+    for media in sorted(set(old_rc) - set(new_rc)):
+        breaking.append(f"Removed `{media}` from {owner}")
+    for media in sorted(set(old_rc) & set(new_rc)):
+        old_mt = old_rc[media] if isinstance(old_rc[media], dict) else {}
+        new_mt = new_rc[media] if isinstance(new_rc[media], dict) else {}
+        diff_schemas(
+            old_spec,
+            new_spec,
+            old_mt.get("schema"),
+            new_mt.get("schema"),
+            f"{location}({media})",
+            breaking,
+        )
+
+
+def diff_shared_components(
+    old_spec: dict[str, Any],
+    new_spec: dict[str, Any],
+    breaking: list[str],
+    schema_changes: list[str],
+) -> None:
+    """Diff `components.parameters`, `.requestBodies` and `.responses` entries, once each.
+
+    An operation that only points at one of these through `$ref` is itself unchanged when
+    the shared definition changes (e.g. a value removed from the `tweet.fields` enum), so
+    the per-operation pass cannot see it.
+    """
+    old_components = old_spec.get("components")
+    new_components = new_spec.get("components")
+    if not isinstance(old_components, dict) or not isinstance(new_components, dict):
+        return
+    success_refs = success_response_refs(old_spec) | success_response_refs(new_spec)
+
+    for section, noun in (
+        ("parameters", "parameter"),
+        ("requestBodies", "request body"),
+        ("responses", "response"),
+    ):
+        old_shared = old_components.get(section)
+        new_shared = new_components.get(section)
+        if not isinstance(old_shared, dict) or not isinstance(new_shared, dict):
+            continue
+        for name in sorted(set(old_shared) & set(new_shared)):
+            old_c = resolve_ref(old_spec, old_shared[name])
+            new_c = resolve_ref(new_spec, new_shared[name])
+            if not isinstance(old_c, dict) or not isinstance(new_c, dict):
+                continue
+            if json_equal_structural(old_c, new_c):
+                continue
+            schema_changes.append(f"Updated shared {noun} `{name}`")
+            ref = f"#/components/{section}/{name}"
+            owner = f"`{ref}`"
+            if section == "parameters":
+                old_key = (str(old_c.get("in")), str(old_c.get("name")))
+                new_key = (str(new_c.get("in")), str(new_c.get("name")))
+                if old_key != new_key:
+                    breaking.append(
+                        f"Shared parameter {owner} changed from {old_key[0]} `{old_key[1]}` "
+                        f"to {new_key[0]} `{new_key[1]}`"
+                    )
+                    continue
+                diff_parameter(old_spec, new_spec, old_c, new_c, owner, ref, breaking)
+            elif section == "requestBodies":
+                diff_request_body(old_spec, new_spec, old_c, new_c, owner, ref, breaking)
+            elif ref in success_refs:
+                diff_response(
+                    old_spec, new_spec, old_c, new_c, f"shared response {owner}", ref, breaking
+                )
+
+
 def classify_diff(old_spec: dict[str, Any], new_spec: dict[str, Any]) -> dict[str, Any]:
     breaking: list[str] = []
     added_endpoints: list[str] = []
@@ -613,6 +793,8 @@ def classify_diff(old_spec: dict[str, Any], new_spec: dict[str, Any]) -> dict[st
         # Parameters diff
         old_params = collect_params(old_spec, old_op)
         new_params = collect_params(new_spec, new_op)
+        old_param_entries = collect_param_entries(old_spec, old_op)
+        new_param_entries = collect_param_entries(new_spec, new_op)
 
         for p_key in sorted(set(old_params) - set(new_params)):
             p_in, p_name = p_key
@@ -626,81 +808,69 @@ def classify_diff(old_spec: dict[str, Any], new_spec: dict[str, Any]) -> dict[st
                 )
 
         for p_key in sorted(set(old_params) & set(new_params)):
-            p_in, p_name = p_key
-            old_p = old_params[p_key]
-            new_p = new_params[p_key]
-            if not old_p.get("required") and new_p.get("required"):
-                breaking.append(
-                    f"Parameter `{p_name}` became required on {endpoint_label}"
-                )
-            diff_schemas(
+            if shared_component_name(
+                old_param_entries.get(p_key), new_param_entries.get(p_key), "parameters"
+            ):
+                continue
+            diff_parameter(
                 old_spec,
                 new_spec,
-                old_p.get("schema"),
-                new_p.get("schema"),
-                f"{method} {path} param `{p_name}`",
+                old_params[p_key],
+                new_params[p_key],
+                endpoint_label,
+                f"{method} {path}",
                 breaking,
             )
 
         # Request body diff (including inline schemas & media types)
-        old_rb = resolve_ref(old_spec, old_op.get("requestBody")) or {}
-        new_rb = resolve_ref(new_spec, new_op.get("requestBody")) or {}
-        if isinstance(old_rb, dict) and isinstance(new_rb, dict):
-            if not old_rb.get("required") and new_rb.get("required"):
-                breaking.append(f"Request body became required on {endpoint_label}")
-            old_content = old_rb.get("content") if isinstance(old_rb.get("content"), dict) else {}
-            new_content = new_rb.get("content") if isinstance(new_rb.get("content"), dict) else {}
-            for media in sorted(set(old_content) - set(new_content)):
-                breaking.append(
-                    f"Removed `{media}` request body on {endpoint_label}"
-                )
-            for media in sorted(set(old_content) & set(new_content)):
-                old_mt = old_content[media] if isinstance(old_content[media], dict) else {}
-                new_mt = new_content[media] if isinstance(new_content[media], dict) else {}
-                diff_schemas(
-                    old_spec,
-                    new_spec,
-                    old_mt.get("schema"),
-                    new_mt.get("schema"),
-                    f"{method} {path} requestBody({media})",
-                    breaking,
-                )
+        old_rb_raw = old_op.get("requestBody")
+        new_rb_raw = new_op.get("requestBody")
+        old_rb = resolve_ref(old_spec, old_rb_raw) or {}
+        new_rb = resolve_ref(new_spec, new_rb_raw) or {}
+        if (
+            isinstance(old_rb, dict)
+            and isinstance(new_rb, dict)
+            and not shared_component_name(old_rb_raw, new_rb_raw, "requestBodies")
+        ):
+            diff_request_body(
+                old_spec,
+                new_spec,
+                old_rb,
+                new_rb,
+                endpoint_label,
+                f"{method} {path} requestBody",
+                breaking,
+            )
 
         # 2xx responses diff (including inline response schemas & media types)
         old_responses = {
-            str(k): resolve_ref(old_spec, v)
+            str(k): v
             for k, v in (old_op.get("responses") or {}).items()
             if str(k).startswith("2")
         }
         new_responses = {
-            str(k): resolve_ref(new_spec, v)
+            str(k): v
             for k, v in (new_op.get("responses") or {}).items()
             if str(k).startswith("2")
         }
         for status in sorted(set(old_responses) - set(new_responses)):
             breaking.append(f"Removed `{status}` response on {endpoint_label}")
         for status in sorted(set(old_responses) & set(new_responses)):
-            old_resp = old_responses[status]
-            new_resp = new_responses[status]
+            if shared_component_name(old_responses[status], new_responses[status], "responses"):
+                continue
+            old_resp = resolve_ref(old_spec, old_responses[status])
+            new_resp = resolve_ref(new_spec, new_responses[status])
             if not isinstance(old_resp, dict) or not isinstance(new_resp, dict):
                 continue
-            old_rc = old_resp.get("content") if isinstance(old_resp.get("content"), dict) else {}
-            new_rc = new_resp.get("content") if isinstance(new_resp.get("content"), dict) else {}
-            for media in sorted(set(old_rc) - set(new_rc)):
-                breaking.append(
-                    f"Removed `{media}` from `{status}` response on {endpoint_label}"
-                )
-            for media in sorted(set(old_rc) & set(new_rc)):
-                old_mt = old_rc[media] if isinstance(old_rc[media], dict) else {}
-                new_mt = new_rc[media] if isinstance(new_rc[media], dict) else {}
-                diff_schemas(
-                    old_spec,
-                    new_spec,
-                    old_mt.get("schema"),
-                    new_mt.get("schema"),
-                    f"{method} {path} response[{status}]({media})",
-                    breaking,
-                )
+            diff_response(
+                old_spec,
+                new_spec,
+                old_resp,
+                new_resp,
+                f"`{status}` response on {endpoint_label}",
+                f"{method} {path} response[{status}]",
+                breaking,
+            )
 
     # Component schemas diff (recursive)
     old_schemas = (old_spec.get("components") or {}).get("schemas") or {}
@@ -719,6 +889,8 @@ def classify_diff(old_spec: dict[str, Any], new_spec: dict[str, Any]) -> dict[st
             continue
         schema_changes.append(f"Updated schema `{name}`")
         diff_schemas(old_spec, new_spec, old_s, new_s, name, breaking)
+
+    diff_shared_components(old_spec, new_spec, breaking, schema_changes)
 
     # Deduplicate breaking messages while preserving order
     breaking = list(dict.fromkeys(breaking))

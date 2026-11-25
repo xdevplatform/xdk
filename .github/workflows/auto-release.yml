@@ -84,12 +84,14 @@ jobs:
 
       - name: Classify structural OpenAPI diff
         id: classify
+        env:
+          FORCE_BUMP: ${{ inputs.force_bump || 'auto' }}
         run: |
           python3 scripts/classify_openapi_diff.py \
             specs/openapi.json \
             /tmp/live-openapi.json \
             --config xdk-config.toml \
-            --force-bump "${{ inputs.force_bump || 'auto' }}" \
+            --force-bump "$FORCE_BUMP" \
             --markdown-out release-notes.md \
             --github-output "$GITHUB_OUTPUT"
           cat release-notes.md >> "$GITHUB_STEP_SUMMARY"
@@ -97,22 +99,27 @@ jobs:
       - name: Stage candidate OpenAPI snapshot & version bumps
         id: versions
         if: steps.classify.outputs.should_release == 'true'
+        env:
+          PYTHON_BUMP: ${{ steps.classify.outputs.python_bump }}
+          TYPESCRIPT_BUMP: ${{ steps.classify.outputs.typescript_bump }}
+          JAVA_BUMP: ${{ steps.classify.outputs.java_bump }}
+          CSHARP_BUMP: ${{ steps.classify.outputs.csharp_bump }}
         run: |
           set -euo pipefail
           cp /tmp/live-openapi.json specs/openapi.json
           chmod +x ./scripts/version.sh
 
-          if [ "${{ steps.classify.outputs.python_bump }}" != "none" ]; then
-            ./scripts/version.sh python "${{ steps.classify.outputs.python_bump }}"
+          if [ "$PYTHON_BUMP" != "none" ]; then
+            ./scripts/version.sh python "$PYTHON_BUMP"
           fi
-          if [ "${{ steps.classify.outputs.typescript_bump }}" != "none" ]; then
-            ./scripts/version.sh typescript "${{ steps.classify.outputs.typescript_bump }}"
+          if [ "$TYPESCRIPT_BUMP" != "none" ]; then
+            ./scripts/version.sh typescript "$TYPESCRIPT_BUMP"
           fi
-          if [ "${{ steps.classify.outputs.java_bump }}" != "none" ]; then
-            ./scripts/version.sh java "${{ steps.classify.outputs.java_bump }}"
+          if [ "$JAVA_BUMP" != "none" ]; then
+            ./scripts/version.sh java "$JAVA_BUMP"
           fi
-          if [ "${{ steps.classify.outputs.csharp_bump }}" != "none" ]; then
-            ./scripts/version.sh csharp "${{ steps.classify.outputs.csharp_bump }}"
+          if [ "$CSHARP_BUMP" != "none" ]; then
+            ./scripts/version.sh csharp "$CSHARP_BUMP"
           fi
 
           echo "python=$(grep '^python = ' xdk-config.toml | sed 's/.*= "\(.*\)"/\1/')" >> "$GITHUB_OUTPUT"
@@ -562,16 +569,21 @@ jobs:
             || echo "::notice::Could not dispatch xdevplatform/docs; scheduled update-docs workflow will sync automatically."
 
       - name: Publish Summary
+        env:
+          PYTHON_BUMP: ${{ needs.detect.outputs.python_bump }}
+          TYPESCRIPT_BUMP: ${{ needs.detect.outputs.typescript_bump }}
+          JAVA_BUMP: ${{ needs.detect.outputs.java_bump }}
+          CSHARP_BUMP: ${{ needs.detect.outputs.csharp_bump }}
         run: |
           {
             echo "## Auto-Release Published"
             echo ""
             echo "| SDK | Version | Bump |"
             echo "| :--- | :--- | :--- |"
-            echo "| Python (\`xdk\`) | \`v${{ needs.detect.outputs.python_version }}\` | \`${{ needs.detect.outputs.python_bump }}\` |"
-            echo "| TypeScript (\`@xdevplatform/xdk\`) | \`v${{ needs.detect.outputs.typescript_version }}\` | \`${{ needs.detect.outputs.typescript_bump }}\` |"
-            echo "| Java (\`com.x:xdk\`) | \`v${{ needs.detect.outputs.java_version }}\` | \`${{ needs.detect.outputs.java_bump }}\` |"
-            echo "| C# (\`XDevPlatform.Xdk\`) | \`v${{ needs.detect.outputs.csharp_version }}\` | \`${{ needs.detect.outputs.csharp_bump }}\` |"
+            echo "| Python (\`xdk\`) | \`v${PYTHON_VERSION}\` | \`${PYTHON_BUMP}\` |"
+            echo "| TypeScript (\`@xdevplatform/xdk\`) | \`v${TYPESCRIPT_VERSION}\` | \`${TYPESCRIPT_BUMP}\` |"
+            echo "| Java (\`com.x:xdk\`) | \`v${JAVA_VERSION}\` | \`${JAVA_BUMP}\` |"
+            echo "| C# (\`XDevPlatform.Xdk\`) | \`v${CSHARP_VERSION}\` | \`${CSHARP_BUMP}\` |"
             echo ""
             cat /tmp/release-meta/release-notes.md
           } >> "$GITHUB_STEP_SUMMARY"
