@@ -90,12 +90,7 @@ impl SdkDocLang {
     }
 
     pub fn dropdown_description(self) -> &'static str {
-        match self {
-            Self::Python => "pip install xdk",
-            Self::TypeScript => "npm i @xdevplatform/xdk",
-            Self::Java => "com.x:xdk (Maven)",
-            Self::CSharp => "XDevPlatform.Xdk (NuGet)",
-        }
+        self.package_name()
     }
 
     pub fn install_command(self, version: &str) -> String {
@@ -936,31 +931,30 @@ fn render_language_reference_overview(
     };
 
     out.push_str("---\n");
-    out.push_str(&format!("title: \"{lang_name} XDK API Reference\"\n"));
+    out.push_str("title: \"API Reference\"\n");
     out.push_str("sidebarTitle: \"Overview\"\n");
     out.push_str(&format!(
-        "description: \"Complete API reference for the official {lang_name} XDK ({pkg} v{version}) across all X API v2 resource clients.\"\n",
+        "description: \"Client and method reference for the {lang_name} XDK ({pkg} v{version}).\"\n",
         pkg = lang.package_name()
     ));
     out.push_str("---\n\n");
 
     out.push_str(&format!(
-        "The official **{lang_name} XDK** (`{pkg}`, `v{version}`) provides typed resource clients, authentication helpers, automatic pagination, and real-time streaming for the X API v2.\n\n",
+        "Client setup and method reference for `{pkg}` `v{version}`.\n\n",
         pkg = lang.package_name()
     ));
 
     out.push_str("<CardGroup cols={2}>\n");
     out.push_str(&format!(
-        "  <Card title=\"{reg} Package\" icon=\"box\" href=\"{url}\">\n    Install `{pkg}` (`v{version}`) — requires {rt}.\n  </Card>\n",
+        "  <Card title=\"{reg}\" icon=\"box\" href=\"{url}\">\n    `{pkg}` `v{version}` · {rt}\n  </Card>\n",
         reg = lang.registry_name(),
         url = lang.registry_url(),
         pkg = lang.package_name(),
         rt = lang.runtime_requirement()
     ));
     out.push_str(&format!(
-        "  <Card title=\"GitHub Repository\" icon=\"github\" href=\"{repo}\">\n    Source code, release notes, and issue tracker for `{pkg}`.\n  </Card>\n",
+        "  <Card title=\"GitHub\" icon=\"github\" href=\"{repo}\">\n    Source code and issues.\n  </Card>\n",
         repo = lang.repo_url(),
-        pkg = lang.package_name()
     ));
     out.push_str("</CardGroup>\n\n");
 
@@ -1011,7 +1005,7 @@ fn render_language_reference_overview(
         }
     }
 
-    out.push_str("## Resource Clients\n\n");
+    out.push_str("## Clients\n\n");
     out.push_str("| Resource | Accessor | Client Class | Operations |\n");
     out.push_str("| :--- | :--- | :--- | ---: |\n");
     for tag in tags {
@@ -1030,15 +1024,11 @@ fn render_language_reference_overview(
 
 fn render_tag_client_mdx(lang: SdkDocLang, _version: &str, tag: &TagDocModel) -> String {
     let mut out = String::new();
-    let lang_name = lang.display_name();
     let client_cls = format!("{}Client", tag.pascal_name);
     let accessor = tag_accessor(lang, tag);
 
     out.push_str("---\n");
-    out.push_str(&format!(
-        "title: {}\n",
-        yaml_quote(&format!("{client_cls} ({lang_name} XDK)"))
-    ));
+    out.push_str(&format!("title: {}\n", yaml_quote(&client_cls)));
     out.push_str(&format!(
         "sidebarTitle: {}\n",
         yaml_quote(&tag.display_name)
@@ -1046,8 +1036,7 @@ fn render_tag_client_mdx(lang: SdkDocLang, _version: &str, tag: &TagDocModel) ->
     out.push_str(&format!(
         "description: {}\n",
         yaml_quote(&format!(
-            "{lang_name} XDK {client_cls} reference — {} methods for X API v2 {} endpoints.",
-            tag.operations.len(),
+            "Methods for X API v2 {} endpoints.",
             tag.display_name
         ))
     ));
@@ -1255,11 +1244,11 @@ fn render_operation_parameters(
 
 fn render_root_xdks_llms_txt(config: &XdkConfig, tags: &[TagDocModel]) -> String {
     let mut out = String::new();
-    out.push_str("# X Official SDKs (XDKs)\n\n");
+    out.push_str("# XDKs\n\n");
     out.push_str(
-        "> Official, OpenAPI-generated client libraries for the X API v2 in Python, TypeScript, Java, and C# (.NET).\n\n",
+        "> Official client libraries for the X API v2 in Python, TypeScript, Java, and C#.\n\n",
     );
-    out.push_str("## Official Packages\n\n");
+    out.push_str("## Packages\n\n");
     for lang in SdkDocLang::ALL {
         let ver = config.get_version(lang.slug()).unwrap_or("0.1.0");
         out.push_str(&format!(
@@ -1271,8 +1260,8 @@ fn render_root_xdks_llms_txt(config: &XdkConfig, tags: &[TagDocModel]) -> String
             lang.slug(),
         ));
     }
-    out.push_str("\n## Overview & Guides\n\n");
-    out.push_str("- [XDKs Overview](https://docs.x.com/xdks/overview.md): Side-by-side comparison, authentication matrix, pagination, and streaming across all 4 official SDKs.\n");
+    out.push_str("\n## Guides\n\n");
+    out.push_str("- [XDKs Overview](https://docs.x.com/xdks/overview.md): Packages, quickstart, and supported features across all four SDKs.\n");
     for lang in SdkDocLang::ALL {
         let s = lang.slug();
         let n = lang.display_name();
@@ -1280,7 +1269,7 @@ fn render_root_xdks_llms_txt(config: &XdkConfig, tags: &[TagDocModel]) -> String
             "- [{n} Overview](https://docs.x.com/xdks/{s}/overview.md) | [Install](https://docs.x.com/xdks/{s}/install.md) | [Quickstart](https://docs.x.com/xdks/{s}/quickstart.md) | [Auth](https://docs.x.com/xdks/{s}/authentication.md) | [Pagination](https://docs.x.com/xdks/{s}/pagination.md) | [Streaming](https://docs.x.com/xdks/{s}/streaming.md) | [API Reference](https://docs.x.com/xdks/{s}/reference/overview.md)\n"
         ));
     }
-    out.push_str("\n## Resource Clients (Available in All 4 XDKs)\n\n");
+    out.push_str("\n## Clients\n\n");
     for tag in tags {
         out.push_str(&format!(
             "- **{}** (`{}Client`, {} operations): [Python](https://docs.x.com/xdks/python/reference/clients/{k}.md) | [TypeScript](https://docs.x.com/xdks/typescript/reference/clients/{k}.md) | [Java](https://docs.x.com/xdks/java/reference/clients/{k}.md) | [C#](https://docs.x.com/xdks/csharp/reference/clients/{k}.md)\n",
@@ -1302,32 +1291,26 @@ fn render_language_llms_txt(lang: SdkDocLang, version: &str, tags: &[TagDocModel
         pkg = lang.package_name()
     ));
     out.push_str(&format!(
-        "> Official {n} SDK for the X API v2 ({rt}). Install with `{}`.\n\n",
+        "> Official {n} client library for the X API v2 ({rt}). Install with `{}`.\n\n",
         lang.install_command(version),
         rt = lang.runtime_requirement()
     ));
     out.push_str("## Guides\n\n");
     for (page, desc) in [
-        (
-            "overview",
-            "Architecture, capabilities, and client overview",
-        ),
-        ("install", "Package installation and runtime requirements"),
-        (
-            "quickstart",
-            "First authenticated X API v2 request in under 2 minutes",
-        ),
+        ("overview", "Overview and quick example"),
+        ("install", "Installation and requirements"),
+        ("quickstart", "Make your first X API v2 request"),
         (
             "authentication",
-            "Bearer Token, OAuth 2.0 PKCE, and OAuth 1.0a user-context setup",
+            "Bearer Token, OAuth 2.0 PKCE, and OAuth 1.0a",
         ),
         (
             "pagination",
-            "Automatic cursor iteration across multi-page endpoints",
+            "Cursor pagination across multi-page endpoints",
         ),
         (
             "streaming",
-            "Real-time event streams with reconnection and lifecycle handling",
+            "Real-time event streams and filtered stream rules",
         ),
     ] {
         out.push_str(&format!(
@@ -1336,7 +1319,7 @@ fn render_language_llms_txt(lang: SdkDocLang, version: &str, tags: &[TagDocModel
     }
     out.push_str("\n## Client Reference\n\n");
     out.push_str(&format!(
-        "- [Reference Overview](https://docs.x.com/xdks/{s}/reference/overview.md): Main client options and resource client directory\n"
+        "- [Reference Overview](https://docs.x.com/xdks/{s}/reference/overview.md): Client options and client list\n"
     ));
     for tag in tags {
         out.push_str(&format!(
@@ -1488,7 +1471,7 @@ fn update_docs_json(docs_json_path: &Path, tags: &[TagDocModel]) -> Result<()> {
 fn build_xdks_tab_nav(tags: &[TagDocModel]) -> Json {
     let mut dropdowns = vec![json!({
         "dropdown": "Overview",
-        "description": "Compare all 4 official SDKs",
+        "description": "Python, TypeScript, Java, C#",
         "icon": "cubes",
         "groups": [
             {
@@ -1498,56 +1481,56 @@ fn build_xdks_tab_nav(tags: &[TagDocModel]) -> Json {
                 ]
             },
             {
-                "group": "Official Repositories",
+                "group": "GitHub",
                 "pages": [
                     {
                         "type": "link",
-                        "title": "Python SDK (GitHub)",
+                        "title": "xdk-python",
                         "href": "https://github.com/xdevplatform/xdk-python"
                     },
                     {
                         "type": "link",
-                        "title": "TypeScript SDK (GitHub)",
+                        "title": "xdk-typescript",
                         "href": "https://github.com/xdevplatform/xdk-typescript"
                     },
                     {
                         "type": "link",
-                        "title": "Java SDK (GitHub)",
+                        "title": "xdk-java",
                         "href": "https://github.com/xdevplatform/xdk-java"
                     },
                     {
                         "type": "link",
-                        "title": "C# SDK (GitHub)",
+                        "title": "xdk-csharp",
                         "href": "https://github.com/xdevplatform/xdk-csharp"
                     },
                     {
                         "type": "link",
-                        "title": "SDK Generator (Rust)",
+                        "title": "xdk (Generator)",
                         "href": "https://github.com/xdevplatform/xdk"
                     }
                 ]
             },
             {
-                "group": "Package Registries",
+                "group": "Packages",
                 "pages": [
                     {
                         "type": "link",
-                        "title": "PyPI — xdk",
+                        "title": "PyPI (xdk)",
                         "href": "https://pypi.org/project/xdk/"
                     },
                     {
                         "type": "link",
-                        "title": "npm — @xdevplatform/xdk",
+                        "title": "npm (@xdevplatform/xdk)",
                         "href": "https://www.npmjs.com/package/@xdevplatform/xdk"
                     },
                     {
                         "type": "link",
-                        "title": "Maven Central — com.x:xdk",
+                        "title": "Maven Central (com.x:xdk)",
                         "href": "https://central.sonatype.com/artifact/com.x/xdk"
                     },
                     {
                         "type": "link",
-                        "title": "NuGet — XDevPlatform.Xdk",
+                        "title": "NuGet (XDevPlatform.Xdk)",
                         "href": "https://www.nuget.org/packages/XDevPlatform.Xdk"
                     }
                 ]
