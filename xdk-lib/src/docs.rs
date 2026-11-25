@@ -139,7 +139,7 @@ impl SdkDocLang {
             Self::Python => "python",
             Self::TypeScript => "js",
             Self::Java => "java",
-            Self::CSharp => "/icons/xds/icon-code.svg",
+            Self::CSharp => "code",
         }
     }
 }
@@ -1479,9 +1479,54 @@ fn update_docs_json(docs_json_path: &Path, tags: &[TagDocModel]) -> Result<()> {
 fn build_xdks_tab_nav(tags: &[TagDocModel]) -> Json {
     let mut dropdowns = vec![json!({
         "dropdown": "Overview",
-        "icon": "/icons/xds/icon-feather-cube.svg",
-        "pages": [
-            "xdks/overview"
+        "icon": "cubes",
+        "groups": [
+            {
+                "group": "Getting Started",
+                "pages": [
+                    "xdks/overview"
+                ]
+            },
+            {
+                "group": "Official SDKs",
+                "pages": [
+                    {
+                        "type": "link",
+                        "title": "Python (xdk)",
+                        "href": "/xdks/python/overview"
+                    },
+                    {
+                        "type": "link",
+                        "title": "TypeScript (@xdevplatform/xdk)",
+                        "href": "/xdks/typescript/overview"
+                    },
+                    {
+                        "type": "link",
+                        "title": "Java (com.x:xdk)",
+                        "href": "/xdks/java/overview"
+                    },
+                    {
+                        "type": "link",
+                        "title": "C# / .NET (XDevPlatform.Xdk)",
+                        "href": "/xdks/csharp/overview"
+                    }
+                ]
+            },
+            {
+                "group": "Resources",
+                "pages": [
+                    {
+                        "type": "link",
+                        "title": "X API Sample Code",
+                        "href": "https://github.com/xdevplatform/samples"
+                    },
+                    {
+                        "type": "link",
+                        "title": "XDK Generator (Rust)",
+                        "href": "https://github.com/xdevplatform/xdk"
+                    }
+                ]
+            }
         ]
     })];
 
@@ -2610,7 +2655,16 @@ csharp = "0.1.2"
         let x_api_tabs = products.iter().find(|p| p["product"] == "X API").unwrap()["tabs"]
             .as_array()
             .unwrap();
-        assert!(x_api_tabs.iter().any(|t| t["tab"] == "XDKs"));
+        let xdks_tab = x_api_tabs.iter().find(|t| t["tab"] == "XDKs").unwrap();
+        let dropdowns = xdks_tab["dropdowns"].as_array().unwrap();
+        for dd in dropdowns {
+            let icon = dd["icon"].as_str().unwrap();
+            assert!(
+                !icon.starts_with('/'),
+                "dropdown icons must use built-in FontAwesome names for dark-mode mask rendering, got {icon}"
+            );
+        }
+        assert_eq!(dropdowns[0]["groups"].as_array().unwrap().len(), 3);
         let redirects = updated_docs["redirects"].as_array().unwrap();
         assert!(
             !redirects.iter().any(|r| r["source"] == "/xdks/overview"),
