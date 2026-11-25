@@ -38,6 +38,9 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
 
+      - name: Run OpenAPI diff classifier tests
+        run: python3 -m unittest discover -s scripts -p "test_*.py" -v
+
       - name: Verify Mintlify Docs & Overlay Generation
         run: cargo run -- docs --latest true --output /tmp/docs-ci
 

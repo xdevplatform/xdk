@@ -1,0 +1,577 @@
+# Automated Multi-SDK Release Workflow (OpenAPI Spec Watcher)
+#
+# Polls https://api.x.com/2/openapi.json on a schedule and compares it against
+# the committed specs/openapi.json baseline:
+#   - Doc/prose/key-order-only changes -> skip release
+#   - Additive non-breaking schema/param changes -> patch bump
+#   - New endpoints -> minor bump
+#   - Breaking API changes -> minor bump (while 0.x.y) / major bump (>=1.0.0)
+#
+# Safety invariants:
+#   1. Fetches and validates a single pinned OpenAPI snapshot for the entire run.
+#   2. Generates, compiles, tests, and dry-run packages ALL 4 SDKs + Mintlify
+#      docs BEFORE committing xdk-config.toml / specs/openapi.json or pushing
+#      to any SDK repository.
+#   3. Shares the `xdk-release` concurrency group with manual `release.yml`.
+
+name: Auto-Release SDKs on OpenAPI Spec Change
+
+on:
+  schedule:
+    # Run hourly at :15 past the hour (no-op exits in ~5s when unchanged)
+    - cron: "15 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run (classify diff, generate, and test all 4 SDKs without committing or pushing)"
+        type: boolean
+        default: false
+      force_bump:
+        description: "Override automatic bump level"
+        type: choice
+        default: auto
+        options:
+          - auto
+          - patch
+          - minor
+          - major
+
+concurrency:
+  group: xdk-release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  # ============================================
+  # Stage 1: Fetch live OpenAPI spec & classify diff
+  # ============================================
+  detect:
+    name: Detect OpenAPI Spec Changes
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.classify.outputs.changed }}
+      should_release: ${{ steps.classify.outputs.should_release }}
+      change_level: ${{ steps.classify.outputs.change_level }}
+      summary: ${{ steps.classify.outputs.summary }}
+      python_bump: ${{ steps.classify.outputs.python_bump }}
+      typescript_bump: ${{ steps.classify.outputs.typescript_bump }}
+      java_bump: ${{ steps.classify.outputs.java_bump }}
+      csharp_bump: ${{ steps.classify.outputs.csharp_bump }}
+      python_version: ${{ steps.versions.outputs.python }}
+      typescript_version: ${{ steps.versions.outputs.typescript }}
+      java_version: ${{ steps.versions.outputs.java }}
+      csharp_version: ${{ steps.versions.outputs.csharp }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch live X API v2 OpenAPI specification
+        run: |
+          set -euo pipefail
+          curl -fsSL --retry 3 --retry-delay 5 https://api.x.com/2/openapi.json -o /tmp/live-openapi.json
+          # Ensure trailing newline for clean git diffs
+          python3 -c '
+          from pathlib import Path
+          p = Path("/tmp/live-openapi.json")
+          text = p.read_text(encoding="utf-8")
+          if not text.endswith("\n"):
+              p.write_text(text + "\n", encoding="utf-8")
+          '
+
+      - name: Classify structural OpenAPI diff
+        id: classify
+        run: |
+          python3 scripts/classify_openapi_diff.py \
+            specs/openapi.json \
+            /tmp/live-openapi.json \
+            --config xdk-config.toml \
+            --force-bump "${{ inputs.force_bump || 'auto' }}" \
+            --markdown-out release-notes.md \
+            --github-output "$GITHUB_OUTPUT"
+          cat release-notes.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Stage candidate OpenAPI snapshot & version bumps
+        id: versions
+        if: steps.classify.outputs.should_release == 'true'
+        run: |
+          set -euo pipefail
+          cp /tmp/live-openapi.json specs/openapi.json
+          chmod +x ./scripts/version.sh
+
+          if [ "${{ steps.classify.outputs.python_bump }}" != "none" ]; then
+            ./scripts/version.sh python "${{ steps.classify.outputs.python_bump }}"
+          fi
+          if [ "${{ steps.classify.outputs.typescript_bump }}" != "none" ]; then
+            ./scripts/version.sh typescript "${{ steps.classify.outputs.typescript_bump }}"
+          fi
+          if [ "${{ steps.classify.outputs.java_bump }}" != "none" ]; then
+            ./scripts/version.sh java "${{ steps.classify.outputs.java_bump }}"
+          fi
+          if [ "${{ steps.classify.outputs.csharp_bump }}" != "none" ]; then
+            ./scripts/version.sh csharp "${{ steps.classify.outputs.csharp_bump }}"
+          fi
+
+          echo "python=$(grep '^python = ' xdk-config.toml | sed 's/.*= "\(.*\)"/\1/')" >> "$GITHUB_OUTPUT"
+          echo "typescript=$(grep '^typescript = ' xdk-config.toml | sed 's/.*= "\(.*\)"/\1/')" >> "$GITHUB_OUTPUT"
+          echo "java=$(grep '^java = ' xdk-config.toml | sed 's/.*= "\(.*\)"/\1/')" >> "$GITHUB_OUTPUT"
+          echo "csharp=$(grep '^csharp = ' xdk-config.toml | sed 's/.*= "\(.*\)"/\1/')" >> "$GITHUB_OUTPUT"
+
+      - name: Upload pinned OpenAPI snapshot
+        if: steps.classify.outputs.should_release == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-snapshot
+          path: specs/openapi.json
+
+      - name: Upload candidate xdk-config.toml
+        if: steps.classify.outputs.should_release == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: xdk-config
+          path: xdk-config.toml
+
+      - name: Upload release notes
+        if: steps.classify.outputs.should_release == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: release-notes.md
+
+  # ============================================
+  # Stage 2: Build, Test & Verify ALL 4 SDKs + Docs BEFORE publishing anything
+  # ============================================
+  build-python:
+    name: Build & Test Python SDK
+    needs: detect
+    if: needs.detect.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: openapi-snapshot
+          path: specs
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: xdk-config
+          path: .
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+
+      - name: Generate Python SDK from pinned snapshot
+        run: cargo run -- python --spec specs/openapi.json
+
+      - name: Run tests and verify wheel build
+        run: |
+          cd xdk/python
+          uv sync
+          uv run pytest tests/ -v
+          uv build
+
+      - name: Clean build artifacts
+        run: |
+          cd xdk/python
+          rm -rf .venv __pycache__ .pytest_cache *.egg-info dist/
+          find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+          find . -type f -name "*.pyc" -delete 2>/dev/null || true
+
+      - name: Upload tested Python SDK
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk-python
+          path: xdk/python
+          include-hidden-files: true
+
+  build-typescript:
+    name: Build & Test TypeScript SDK
+    needs: detect
+    if: needs.detect.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: openapi-snapshot
+          path: specs
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: xdk-config
+          path: .
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Generate TypeScript SDK from pinned snapshot
+        run: cargo run -- typescript --spec specs/openapi.json
+
+      - name: Install, build, type-check, test, and verify tarball
+        run: |
+          cd xdk/typescript
+          npm ci
+          npm run build
+          npm run type-check
+          npm test
+          npm pack --dry-run
+
+      - name: Clean build artifacts
+        run: |
+          cd xdk/typescript
+          rm -rf node_modules .xdk-examples
+
+      - name: Upload tested TypeScript SDK
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk-typescript
+          path: xdk/typescript
+          include-hidden-files: true
+
+  build-java:
+    name: Build & Test Java SDK
+    needs: detect
+    if: needs.detect.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: openapi-snapshot
+          path: specs
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: xdk-config
+          path: .
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Generate Java SDK from pinned snapshot
+        run: cargo run -- java --spec specs/openapi.json
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+          cache: "maven"
+          cache-dependency-path: xdk/java/pom.xml
+
+      - name: Build, test, and verify release packaging
+        run: cd xdk/java && mvn -B package -Prelease -Dgpg.skip=true
+
+      - name: Clean build artifacts
+        run: rm -rf xdk/java/target
+
+      - name: Upload tested Java SDK
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk-java
+          path: xdk/java
+          include-hidden-files: true
+
+  build-csharp:
+    name: Build & Test C# SDK
+    needs: detect
+    if: needs.detect.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: openapi-snapshot
+          path: specs
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: xdk-config
+          path: .
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Generate C# SDK from pinned snapshot
+        run: cargo run -- csharp --spec specs/openapi.json
+
+      - name: Build, test, and verify NuGet pack
+        run: |
+          cd xdk/csharp
+          dotnet build -c Release --nologo -warnaserror
+          dotnet test -c Release --no-build --nologo
+          dotnet pack src/Xdk/Xdk.csproj -c Release --no-build -o /tmp/nupkg
+
+      - name: Clean build artifacts
+        run: |
+          rm -rf xdk/csharp/src/Xdk/bin xdk/csharp/src/Xdk/obj
+          rm -rf xdk/csharp/tests/Xdk.Tests/bin xdk/csharp/tests/Xdk.Tests/obj
+          rm -rf xdk/csharp/examples/Xdk.Examples/bin xdk/csharp/examples/Xdk.Examples/obj
+
+      - name: Upload tested C# SDK
+        uses: actions/upload-artifact@v4
+        with:
+          name: sdk-csharp
+          path: xdk/csharp
+          include-hidden-files: true
+
+  verify-docs:
+    name: Verify Mintlify Docs & Overlay Generation
+    needs: detect
+    if: needs.detect.outputs.should_release == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: openapi-snapshot
+          path: specs
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: xdk-config
+          path: .
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Generate Mintlify docs & OpenAPI overlay from pinned snapshot
+        run: cargo run -- docs --spec specs/openapi.json --output /tmp/docs-release
+
+  # ============================================
+  # Stage 3: Push all 4 SDKs, then commit baseline + sync docs
+  # Runs ONLY after all 4 SDK builds/tests and docs verification pass.
+  # Committing specs/openapi.json to main LAST ensures a mid-run push failure
+  # never strands failed SDKs out of sync on subsequent hourly runs.
+  # ============================================
+  publish:
+    name: Push SDK Repos, Commit Baseline & Sync Docs
+    needs:
+      - detect
+      - build-python
+      - build-typescript
+      - build-java
+      - build-csharp
+      - verify-docs
+    if: needs.detect.outputs.should_release == 'true' && inputs.dry_run != true
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_SUMMARY: ${{ needs.detect.outputs.summary }}
+      PYTHON_VERSION: ${{ needs.detect.outputs.python_version }}
+      TYPESCRIPT_VERSION: ${{ needs.detect.outputs.typescript_version }}
+      JAVA_VERSION: ${{ needs.detect.outputs.java_version }}
+      CSHARP_VERSION: ${{ needs.detect.outputs.csharp_version }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.XDK_PAT }}
+
+      - name: Validate required deploy keys
+        env:
+          SDK_DEPLOY_KEY_PYTHON: ${{ secrets.SDK_DEPLOY_KEY_PYTHON }}
+          SDK_DEPLOY_KEY_TYPESCRIPT: ${{ secrets.SDK_DEPLOY_KEY_TYPESCRIPT }}
+          SDK_DEPLOY_KEY_JAVA: ${{ secrets.SDK_DEPLOY_KEY_JAVA }}
+          SDK_DEPLOY_KEY_CSHARP: ${{ secrets.SDK_DEPLOY_KEY_CSHARP }}
+        run: |
+          set -euo pipefail
+          missing=0
+          for var in SDK_DEPLOY_KEY_PYTHON SDK_DEPLOY_KEY_TYPESCRIPT SDK_DEPLOY_KEY_JAVA SDK_DEPLOY_KEY_CSHARP; do
+            if [ -z "${!var:-}" ]; then
+              echo "::error::Required secret ${var} is not configured"
+              missing=1
+            fi
+          done
+          exit "$missing"
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: openapi-snapshot
+          path: specs
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: xdk-config
+          path: .
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-notes
+          path: /tmp/release-meta
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdk-python
+          path: /tmp/staged-sdks/python
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdk-typescript
+          path: /tmp/staged-sdks/typescript
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdk-java
+          path: /tmp/staged-sdks/java
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: sdk-csharp
+          path: /tmp/staged-sdks/csharp
+
+      - name: Setup GitHub SSH known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+      - name: Push Python SDK to xdevplatform/xdk-python
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SDK_DEPLOY_KEY_PYTHON }}
+        run: |
+          set -euo pipefail
+          echo "$SSH_DEPLOY_KEY" > ~/.ssh/deploy_key_python
+          chmod 600 ~/.ssh/deploy_key_python
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key_python" git clone git@github.com:xdevplatform/xdk-python.git /tmp/repo-python
+          rsync -a --delete --exclude='.git' --exclude='.github' /tmp/staged-sdks/python/ /tmp/repo-python/
+          cd /tmp/repo-python
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update SDK to v${PYTHON_VERSION}" -m "$RELEASE_SUMMARY"
+            GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key_python" git push
+          fi
+
+      - name: Push TypeScript SDK to xdevplatform/xdk-typescript
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SDK_DEPLOY_KEY_TYPESCRIPT }}
+        run: |
+          set -euo pipefail
+          echo "$SSH_DEPLOY_KEY" > ~/.ssh/deploy_key_typescript
+          chmod 600 ~/.ssh/deploy_key_typescript
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key_typescript" git clone git@github.com:xdevplatform/xdk-typescript.git /tmp/repo-typescript
+          rsync -a --delete --exclude='.git' --exclude='.github' /tmp/staged-sdks/typescript/ /tmp/repo-typescript/
+          cd /tmp/repo-typescript
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update SDK to v${TYPESCRIPT_VERSION}" -m "$RELEASE_SUMMARY"
+            GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key_typescript" git push
+          fi
+
+      - name: Push Java SDK to xdevplatform/xdk-java
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SDK_DEPLOY_KEY_JAVA }}
+        run: |
+          set -euo pipefail
+          echo "$SSH_DEPLOY_KEY" > ~/.ssh/deploy_key_java
+          chmod 600 ~/.ssh/deploy_key_java
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key_java" git clone git@github.com:xdevplatform/xdk-java.git /tmp/repo-java
+          rsync -a --delete --exclude='.git' --exclude='.github' /tmp/staged-sdks/java/ /tmp/repo-java/
+          cd /tmp/repo-java
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update SDK to v${JAVA_VERSION}" -m "$RELEASE_SUMMARY"
+            GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key_java" git push
+          fi
+
+      - name: Push C# SDK to xdevplatform/xdk-csharp
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SDK_DEPLOY_KEY_CSHARP }}
+        run: |
+          set -euo pipefail
+          echo "$SSH_DEPLOY_KEY" > ~/.ssh/deploy_key_csharp
+          chmod 600 ~/.ssh/deploy_key_csharp
+          GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key_csharp" git clone git@github.com:xdevplatform/xdk-csharp.git /tmp/repo-csharp
+          rsync -a --delete --exclude='.git' --exclude='.github' /tmp/staged-sdks/csharp/ /tmp/repo-csharp/
+          cd /tmp/repo-csharp
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: update SDK to v${CSHARP_VERSION}" -m "$RELEASE_SUMMARY"
+            GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key_csharp" git push
+          fi
+
+      - name: Commit OpenAPI snapshot & version bumps to xdk main
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add specs/openapi.json xdk-config.toml
+          git commit \
+            -m "chore(release): auto-bump SDKs for OpenAPI spec update (Python v${PYTHON_VERSION}, TypeScript v${TYPESCRIPT_VERSION}, Java v${JAVA_VERSION}, C# v${CSHARP_VERSION})" \
+            -m "$RELEASE_SUMMARY"
+          git pull --rebase origin main
+          git push origin main
+
+      - name: Dispatch xdevplatform/docs Sync
+        env:
+          GH_TOKEN: ${{ secrets.XDK_PAT }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "XDK_PAT is not set; xdevplatform/docs will sync on its next scheduled run."
+            exit 0
+          fi
+          gh api repos/xdevplatform/docs/dispatches \
+            -f event_type=xdk-released \
+            -f "client_payload[python]=${PYTHON_VERSION}" \
+            -f "client_payload[typescript]=${TYPESCRIPT_VERSION}" \
+            -f "client_payload[java]=${JAVA_VERSION}" \
+            -f "client_payload[csharp]=${CSHARP_VERSION}" \
+            || echo "::notice::Could not dispatch xdevplatform/docs; scheduled update-docs workflow will sync automatically."
+
+      - name: Publish Summary
+        run: |
+          {
+            echo "## Auto-Release Published"
+            echo ""
+            echo "| SDK | Version | Bump |"
+            echo "| :--- | :--- | :--- |"
+            echo "| Python (\`xdk\`) | \`v${{ needs.detect.outputs.python_version }}\` | \`${{ needs.detect.outputs.python_bump }}\` |"
+            echo "| TypeScript (\`@xdevplatform/xdk\`) | \`v${{ needs.detect.outputs.typescript_version }}\` | \`${{ needs.detect.outputs.typescript_bump }}\` |"
+            echo "| Java (\`com.x:xdk\`) | \`v${{ needs.detect.outputs.java_version }}\` | \`${{ needs.detect.outputs.java_bump }}\` |"
+            echo "| C# (\`XDevPlatform.Xdk\`) | \`v${{ needs.detect.outputs.csharp_version }}\` | \`${{ needs.detect.outputs.csharp_bump }}\` |"
+            echo ""
+            cat /tmp/release-meta/release-notes.md
+          } >> "$GITHUB_STEP_SUMMARY"
