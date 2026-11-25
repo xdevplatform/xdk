@@ -89,6 +89,15 @@ impl SdkDocLang {
         }
     }
 
+    pub fn dropdown_description(self) -> &'static str {
+        match self {
+            Self::Python => "pip install xdk",
+            Self::TypeScript => "npm i @xdevplatform/xdk",
+            Self::Java => "com.x:xdk (Maven)",
+            Self::CSharp => "XDevPlatform.Xdk (NuGet)",
+        }
+    }
+
     pub fn install_command(self, version: &str) -> String {
         match self {
             Self::Python => "pip install xdk".to_string(),
@@ -1479,6 +1488,7 @@ fn update_docs_json(docs_json_path: &Path, tags: &[TagDocModel]) -> Result<()> {
 fn build_xdks_tab_nav(tags: &[TagDocModel]) -> Json {
     let mut dropdowns = vec![json!({
         "dropdown": "Overview",
+        "description": "Compare all 4 official SDKs",
         "icon": "cubes",
         "groups": [
             {
@@ -1488,42 +1498,57 @@ fn build_xdks_tab_nav(tags: &[TagDocModel]) -> Json {
                 ]
             },
             {
-                "group": "Official SDKs",
+                "group": "Official Repositories",
                 "pages": [
                     {
                         "type": "link",
-                        "title": "Python (xdk)",
-                        "href": "/xdks/python/overview"
+                        "title": "Python SDK (GitHub)",
+                        "href": "https://github.com/xdevplatform/xdk-python"
                     },
                     {
                         "type": "link",
-                        "title": "TypeScript (@xdevplatform/xdk)",
-                        "href": "/xdks/typescript/overview"
+                        "title": "TypeScript SDK (GitHub)",
+                        "href": "https://github.com/xdevplatform/xdk-typescript"
                     },
                     {
                         "type": "link",
-                        "title": "Java (com.x:xdk)",
-                        "href": "/xdks/java/overview"
+                        "title": "Java SDK (GitHub)",
+                        "href": "https://github.com/xdevplatform/xdk-java"
                     },
                     {
                         "type": "link",
-                        "title": "C# / .NET (XDevPlatform.Xdk)",
-                        "href": "/xdks/csharp/overview"
+                        "title": "C# SDK (GitHub)",
+                        "href": "https://github.com/xdevplatform/xdk-csharp"
+                    },
+                    {
+                        "type": "link",
+                        "title": "SDK Generator (Rust)",
+                        "href": "https://github.com/xdevplatform/xdk"
                     }
                 ]
             },
             {
-                "group": "Resources",
+                "group": "Package Registries",
                 "pages": [
                     {
                         "type": "link",
-                        "title": "X API Sample Code",
-                        "href": "https://github.com/xdevplatform/samples"
+                        "title": "PyPI — xdk",
+                        "href": "https://pypi.org/project/xdk/"
                     },
                     {
                         "type": "link",
-                        "title": "XDK Generator (Rust)",
-                        "href": "https://github.com/xdevplatform/xdk"
+                        "title": "npm — @xdevplatform/xdk",
+                        "href": "https://www.npmjs.com/package/@xdevplatform/xdk"
+                    },
+                    {
+                        "type": "link",
+                        "title": "Maven Central — com.x:xdk",
+                        "href": "https://central.sonatype.com/artifact/com.x/xdk"
+                    },
+                    {
+                        "type": "link",
+                        "title": "NuGet — XDevPlatform.Xdk",
+                        "href": "https://www.nuget.org/packages/XDevPlatform.Xdk"
                     }
                 ]
             }
@@ -1541,6 +1566,7 @@ fn build_xdks_tab_nav(tags: &[TagDocModel]) -> Json {
         }
         dropdowns.push(json!({
             "dropdown": lang.display_name(),
+            "description": lang.dropdown_description(),
             "icon": lang.nav_icon(),
             "groups": [
                 {
