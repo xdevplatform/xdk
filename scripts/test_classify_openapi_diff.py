@@ -59,6 +59,22 @@ def base_spec() -> dict:
         },
         "components": {
             "schemas": {
+                "User": {
+                    "type": "object",
+                    "required": ["id"],
+                    "properties": {
+                        "id": {"type": "string"},
+                        "description": {
+                            "type": "string",
+                            "description": "The user's profile bio.",
+                        },
+                        "title": {"type": "string"},
+                    },
+                },
+                "Place": {
+                    "type": "object",
+                    "properties": {"id": {"type": "string"}},
+                },
                 "Tweet": {
                     "type": "object",
                     "required": ["id", "text"],
@@ -66,8 +82,15 @@ def base_spec() -> dict:
                         "id": {"type": "string"},
                         "text": {"type": "string"},
                         "lang": {"type": "string", "enum": ["en", "es"]},
+                        "author": {"$ref": "#/components/schemas/User"},
+                        "metrics": {
+                            "type": "object",
+                            "properties": {
+                                "like_count": {"type": "integer", "format": "int32"},
+                            },
+                        },
                     },
-                }
+                },
             }
         },
     }
@@ -91,9 +114,27 @@ class ClassifyOpenApiDiffTests(unittest.TestCase):
         new["paths"]["/2/tweets/{id}"]["get"]["summary"] = "New summary"
         new["paths"]["/2/tweets/{id}"]["get"]["x-custom"] = {"foo": "bar"}
         new["components"]["schemas"]["Tweet"]["description"] = "A post object"
+        new["components"]["schemas"]["User"]["properties"]["description"][
+            "description"
+        ] = "Updated bio doc prose only"
         res = cod.classify_diff(old, new)
         self.assertFalse(res["changed"])
         self.assertEqual(res["change_level"], "none")
+
+    def test_properties_named_description_or_title_are_not_stripped(self) -> None:
+        old = base_spec()
+        new = copy.deepcopy(old)
+        del new["components"]["schemas"]["User"]["properties"]["description"]
+        new["components"]["schemas"]["User"]["properties"]["title"]["type"] = "integer"
+        res = cod.classify_diff(old, new)
+        self.assertTrue(res["changed"])
+        self.assertEqual(res["change_level"], "breaking")
+        self.assertTrue(
+            any("Removed property `User.description`" in m for m in res["breaking_changes"])
+        )
+        self.assertTrue(
+            any("Type changed at `User.title`" in m for m in res["breaking_changes"])
+        )
 
     def test_shuffled_security_scopes_required_enum_and_params_ignored(self) -> None:
         old = base_spec()
@@ -146,7 +187,9 @@ class ClassifyOpenApiDiffTests(unittest.TestCase):
         self.assertTrue(res["changed"])
         self.assertEqual(res["change_level"], "feature")
         self.assertEqual(res["added_endpoints"], ["`POST /2/posts/drafts`"])
-        bumps = cod.compute_sdk_bumps(res["change_level"], {"python": "1.2.0", "java": "0.1.2"})
+        bumps = cod.compute_sdk_bumps(
+            res["change_level"], {"python": "1.2.0", "java": "0.1.2"}
+        )
         self.assertEqual(bumps["python"], "minor")
         self.assertEqual(bumps["java"], "minor")
 
@@ -154,7 +197,11 @@ class ClassifyOpenApiDiffTests(unittest.TestCase):
         old = base_spec()
         new = copy.deepcopy(old)
         new["paths"]["/2/users/me"] = {
-            "get": {"operationId": "getMe", "tags": ["Users"], "responses": {"200": {"description": "OK"}}}
+            "get": {
+                "operationId": "getMe",
+                "tags": ["Users"],
+                "responses": {"200": {"description": "OK"}},
+            }
         }
         del new["paths"]["/2/tweets/{id}"]
         res = cod.classify_diff(old, new)
@@ -170,20 +217,107 @@ class ClassifyOpenApiDiffTests(unittest.TestCase):
         self.assertEqual(bumps["typescript"], "major")
         self.assertEqual(bumps["csharp"], "major")
 
-    def test_newly_required_param_and_removed_property_are_breaking(self) -> None:
+    def test_newly_required_schema_property_is_breaking(self) -> None:
         old = base_spec()
         new = copy.deepcopy(old)
-        new["paths"]["/2/tweets/{id}"]["get"]["parameters"][1]["required"] = True
-        del new["components"]["schemas"]["Tweet"]["properties"]["text"]
+        new["components"]["schemas"]["Tweet"]["required"].append("lang")
         res = cod.classify_diff(old, new)
         self.assertEqual(res["change_level"], "breaking")
-        self.assertTrue(any("became required" in msg for msg in res["breaking_changes"]))
-        self.assertTrue(any("Removed property `Tweet.text`" in msg for msg in res["breaking_changes"]))
+        self.assertTrue(
+            any("Property `Tweet.lang` became required" in m for m in res["breaking_changes"])
+        )
 
-    def test_operation_id_and_tag_change_are_breaking(self) -> None:
+    def test_array_items_enum_removal_is_breaking(self) -> None:
         old = base_spec()
         new = copy.deepcopy(old)
-        new["paths"]["/2/tweets/{id}"]["get"]["operationId"] = "getPostById"
+        new["paths"]["/2/tweets/{id}"]["get"]["parameters"][1]["schema"]["items"][
+            "enum"
+        ].remove("author_id")
+        res = cod.classify_diff(old, new)
+        self.assertEqual(res["change_level"], "breaking")
+        self.assertTrue(
+            any("Removed enum value(s)" in m and "tweet.fields" in m for m in res["breaking_changes"])
+        )
+
+    def test_nested_format_nullable_ref_and_enum_presence_changes_are_breaking(self) -> None:
+        old = base_spec()
+        new = copy.deepcopy(old)
+        # Nested format change
+        new["components"]["schemas"]["Tweet"]["properties"]["metrics"]["properties"][
+            "like_count"
+        ]["format"] = "int64"
+        # Nullable change
+        new["components"]["schemas"]["Tweet"]["properties"]["text"]["nullable"] = True
+        # $ref target change
+        new["components"]["schemas"]["Tweet"]["properties"]["author"][
+            "$ref"
+        ] = "#/components/schemas/Place"
+        # Enum constraint removed
+        del new["components"]["schemas"]["Tweet"]["properties"]["lang"]["enum"]
+        # Enum constraint added
+        new["components"]["schemas"]["User"]["properties"]["id"]["enum"] = ["1", "2"]
+
+        res = cod.classify_diff(old, new)
+        self.assertEqual(res["change_level"], "breaking")
+        joined = "\n".join(res["breaking_changes"])
+        self.assertIn("Format changed at `Tweet.metrics.like_count`", joined)
+        self.assertIn("Nullability changed at `Tweet.text`", joined)
+        self.assertIn("Schema reference changed at `Tweet.author`", joined)
+        self.assertIn("Removed enum constraint at `Tweet.lang`", joined)
+        self.assertIn("Added enum constraint at `User.id`", joined)
+
+    def test_inline_request_response_and_composition_breaking_changes(self) -> None:
+        old = base_spec()
+        old["paths"]["/2/inline"] = {
+            "post": {
+                "operationId": "createInline",
+                "tags": ["Posts"],
+                "requestBody": {
+                    "required": True,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {"a": {"type": "string"}, "b": {"type": "string"}},
+                            }
+                        }
+                    },
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {"$ref": "#/components/schemas/User"},
+                                        {"$ref": "#/components/schemas/Place"},
+                                    ]
+                                }
+                            }
+                        },
+                    }
+                },
+            }
+        }
+        new = copy.deepcopy(old)
+        del new["paths"]["/2/inline"]["post"]["requestBody"]["content"][
+            "application/json"
+        ]["schema"]["properties"]["b"]
+        new["paths"]["/2/inline"]["post"]["responses"]["200"]["content"][
+            "application/json"
+        ]["schema"]["oneOf"].pop()
+
+        res = cod.classify_diff(old, new)
+        self.assertEqual(res["change_level"], "breaking")
+        joined = "\n".join(res["breaking_changes"])
+        self.assertIn("Removed property `POST /2/inline requestBody(application/json).b`", joined)
+        self.assertIn("Removed `oneOf` variant `#/components/schemas/Place`", joined)
+
+    def test_operation_id_removed_or_added_and_tag_change_are_breaking(self) -> None:
+        old = base_spec()
+        new = copy.deepcopy(old)
+        del new["paths"]["/2/tweets/{id}"]["get"]["operationId"]
         new["paths"]["/2/tweets/{id}"]["get"]["tags"] = ["Media"]
         res = cod.classify_diff(old, new)
         self.assertEqual(res["change_level"], "breaking")

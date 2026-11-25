@@ -331,8 +331,8 @@ jobs:
       - name: Build, test, and verify NuGet pack
         run: |
           cd xdk/csharp
-          dotnet build --nologo -warnaserror
-          dotnet test --no-build --nologo
+          dotnet build -c Release --nologo -warnaserror
+          dotnet test -c Release --no-build --nologo
           dotnet pack src/Xdk/Xdk.csproj -c Release --no-build -o /tmp/nupkg
 
       - name: Clean build artifacts
@@ -376,11 +376,13 @@ jobs:
         run: cargo run -- docs --spec specs/openapi.json --output /tmp/docs-release
 
   # ============================================
-  # Stage 3: Commit baseline + push all 4 SDKs + sync docs
+  # Stage 3: Push all 4 SDKs, then commit baseline + sync docs
   # Runs ONLY after all 4 SDK builds/tests and docs verification pass.
+  # Committing specs/openapi.json to main LAST ensures a mid-run push failure
+  # never strands failed SDKs out of sync on subsequent hourly runs.
   # ============================================
   publish:
-    name: Commit Baseline, Push SDK Repos & Sync Docs
+    name: Push SDK Repos, Commit Baseline & Sync Docs
     needs:
       - detect
       - build-python
@@ -390,11 +392,34 @@ jobs:
       - verify-docs
     if: needs.detect.outputs.should_release == 'true' && inputs.dry_run != true
     runs-on: ubuntu-latest
+    env:
+      RELEASE_SUMMARY: ${{ needs.detect.outputs.summary }}
+      PYTHON_VERSION: ${{ needs.detect.outputs.python_version }}
+      TYPESCRIPT_VERSION: ${{ needs.detect.outputs.typescript_version }}
+      JAVA_VERSION: ${{ needs.detect.outputs.java_version }}
+      CSHARP_VERSION: ${{ needs.detect.outputs.csharp_version }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main
           token: ${{ secrets.XDK_PAT }}
+
+      - name: Validate required deploy keys
+        env:
+          SDK_DEPLOY_KEY_PYTHON: ${{ secrets.SDK_DEPLOY_KEY_PYTHON }}
+          SDK_DEPLOY_KEY_TYPESCRIPT: ${{ secrets.SDK_DEPLOY_KEY_TYPESCRIPT }}
+          SDK_DEPLOY_KEY_JAVA: ${{ secrets.SDK_DEPLOY_KEY_JAVA }}
+          SDK_DEPLOY_KEY_CSHARP: ${{ secrets.SDK_DEPLOY_KEY_CSHARP }}
+        run: |
+          set -euo pipefail
+          missing=0
+          for var in SDK_DEPLOY_KEY_PYTHON SDK_DEPLOY_KEY_TYPESCRIPT SDK_DEPLOY_KEY_JAVA SDK_DEPLOY_KEY_CSHARP; do
+            if [ -z "${!var:-}" ]; then
+              echo "::error::Required secret ${var} is not configured"
+              missing=1
+            fi
+          done
+          exit "$missing"
 
       - uses: actions/download-artifact@v4
         with:
@@ -431,17 +456,6 @@ jobs:
           name: sdk-csharp
           path: /tmp/staged-sdks/csharp
 
-      - name: Commit OpenAPI snapshot & version bumps to xdk main
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add specs/openapi.json xdk-config.toml
-          git commit -m "chore(release): auto-bump SDKs for OpenAPI spec update (Python v${{ needs.detect.outputs.python_version }}, TypeScript v${{ needs.detect.outputs.typescript_version }}, Java v${{ needs.detect.outputs.java_version }}, C# v${{ needs.detect.outputs.csharp_version }})" \
-            -m "${{ needs.detect.outputs.summary }}"
-          git pull --rebase origin main
-          git push origin main
-
       - name: Setup GitHub SSH known_hosts
         run: |
           mkdir -p ~/.ssh
@@ -461,7 +475,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           if ! git diff --cached --quiet; then
-            git commit -m "chore: update SDK to v${{ needs.detect.outputs.python_version }}" -m "${{ needs.detect.outputs.summary }}"
+            git commit -m "chore: update SDK to v${PYTHON_VERSION}" -m "$RELEASE_SUMMARY"
             GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key_python" git push
           fi
 
@@ -479,7 +493,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           if ! git diff --cached --quiet; then
-            git commit -m "chore: update SDK to v${{ needs.detect.outputs.typescript_version }}" -m "${{ needs.detect.outputs.summary }}"
+            git commit -m "chore: update SDK to v${TYPESCRIPT_VERSION}" -m "$RELEASE_SUMMARY"
             GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key_typescript" git push
           fi
 
@@ -497,7 +511,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           if ! git diff --cached --quiet; then
-            git commit -m "chore: update SDK to v${{ needs.detect.outputs.java_version }}" -m "${{ needs.detect.outputs.summary }}"
+            git commit -m "chore: update SDK to v${JAVA_VERSION}" -m "$RELEASE_SUMMARY"
             GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key_java" git push
           fi
 
@@ -515,9 +529,21 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add -A
           if ! git diff --cached --quiet; then
-            git commit -m "chore: update SDK to v${{ needs.detect.outputs.csharp_version }}" -m "${{ needs.detect.outputs.summary }}"
+            git commit -m "chore: update SDK to v${CSHARP_VERSION}" -m "$RELEASE_SUMMARY"
             GIT_SSH_COMMAND="ssh -i ~/.ssh/deploy_key_csharp" git push
           fi
+
+      - name: Commit OpenAPI snapshot & version bumps to xdk main
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add specs/openapi.json xdk-config.toml
+          git commit \
+            -m "chore(release): auto-bump SDKs for OpenAPI spec update (Python v${PYTHON_VERSION}, TypeScript v${TYPESCRIPT_VERSION}, Java v${JAVA_VERSION}, C# v${CSHARP_VERSION})" \
+            -m "$RELEASE_SUMMARY"
+          git pull --rebase origin main
+          git push origin main
 
       - name: Dispatch xdevplatform/docs Sync
         env:
@@ -529,10 +555,10 @@ jobs:
           fi
           gh api repos/xdevplatform/docs/dispatches \
             -f event_type=xdk-released \
-            -f "client_payload[python]=${{ needs.detect.outputs.python_version }}" \
-            -f "client_payload[typescript]=${{ needs.detect.outputs.typescript_version }}" \
-            -f "client_payload[java]=${{ needs.detect.outputs.java_version }}" \
-            -f "client_payload[csharp]=${{ needs.detect.outputs.csharp_version }}" \
+            -f "client_payload[python]=${PYTHON_VERSION}" \
+            -f "client_payload[typescript]=${TYPESCRIPT_VERSION}" \
+            -f "client_payload[java]=${JAVA_VERSION}" \
+            -f "client_payload[csharp]=${CSHARP_VERSION}" \
             || echo "::notice::Could not dispatch xdevplatform/docs; scheduled update-docs workflow will sync automatically."
 
       - name: Publish Summary

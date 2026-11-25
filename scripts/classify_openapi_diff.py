@@ -6,7 +6,8 @@ Outputs a deterministic bump recommendation per SDK:
   - Backwards-compatible schema/parameter/enum/auth updates       -> "patch"
   - New endpoints/operations                                      -> "minor"
   - Breaking changes (removed endpoints/params/fields, newly
-    required params, type/operationId/tag changes, removed enums):
+    required params/properties, type/format/nullable/$ref/enum/
+    operationId/tag changes):
       * 0.x.y SDKs -> "minor" (SemVer 2.0.0 pre-1.0; never auto-jumps to 1.0.0)
       * >=1.0 SDKs -> "major"
 """
@@ -35,6 +36,25 @@ DOC_ONLY_KEYS = frozenset(
     }
 )
 
+# OpenAPI map-valued containers whose keys are API/schema/field/header/media names,
+# NOT OpenAPI specification keywords (e.g. `properties.description`, `properties.title`,
+# `headers.x-rate-limit-limit`). Never strip DOC_ONLY_KEYS or `x-*` keys inside these.
+MAP_CONTAINER_KEYS = frozenset(
+    {
+        "properties",
+        "patternProperties",
+        "dependentSchemas",
+        "paths",
+        "schemas",
+        "parameters",
+        "requestBodies",
+        "responses",
+        "securitySchemes",
+        "headers",
+        "content",
+    }
+)
+
 STRUCTURAL_COMPONENT_SECTIONS = (
     "schemas",
     "parameters",
@@ -43,6 +63,23 @@ STRUCTURAL_COMPONENT_SECTIONS = (
     "securitySchemes",
     "headers",
 )
+
+# List keys whose element order is semantically irrelevant in OpenAPI 3.0
+# (and often serialized from unordered sets on the server).
+SET_LIKE_LIST_KEYS = frozenset(
+    {
+        "required",
+        "enum",
+        "parameters",
+        "oneOf",
+        "anyOf",
+        "allOf",
+    }
+)
+
+
+def _canonical_sort_key(item: Any) -> str:
+    return json.dumps(item, sort_keys=True, separators=(",", ":"))
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -64,32 +101,19 @@ def validate_openapi_spec(spec: dict[str, Any], label: str, min_paths: int = 1) 
         )
 
 
-# List keys whose element order is semantically irrelevant in OpenAPI 3.0
-# (and often serialized from unordered sets on the server).
-SET_LIKE_LIST_KEYS = frozenset(
-    {
-        "required",
-        "enum",
-        "parameters",
-        "oneOf",
-        "anyOf",
-        "allOf",
-    }
-)
-
-
-def _canonical_sort_key(item: Any) -> str:
-    return json.dumps(item, sort_keys=True, separators=(",", ":"))
-
-
 def strip_docs_metadata(obj: Any, parent_key: str | None = None) -> Any:
     """Recursively remove prose/example/extension metadata and canonicalize unordered lists."""
     if isinstance(obj, dict):
+        is_map_container = parent_key in MAP_CONTAINER_KEYS
         cleaned: dict[str, Any] = {}
         for key, value in obj.items():
-            if key in DOC_ONLY_KEYS or key.startswith("x-"):
+            if not is_map_container and (key in DOC_ONLY_KEYS or key.startswith("x-")):
                 continue
-            cleaned[key] = strip_docs_metadata(value, parent_key=key)
+            # Entries inside a map container (e.g. a field schema under `properties`,
+            # a status response under `responses`, a header under `headers`) are regular
+            # OpenAPI objects, so reset parent_key to None when recursing into them.
+            next_parent = None if is_map_container else key
+            cleaned[key] = strip_docs_metadata(value, parent_key=next_parent)
         return cleaned
     if isinstance(obj, list):
         if parent_key == "security":
@@ -140,7 +164,9 @@ def structural_view(spec: dict[str, Any]) -> dict[str, Any]:
         clean_components: dict[str, Any] = {}
         for section in STRUCTURAL_COMPONENT_SECTIONS:
             if section in raw_components and isinstance(raw_components[section], dict):
-                clean_components[section] = strip_docs_metadata(raw_components[section])
+                clean_components[section] = strip_docs_metadata(
+                    raw_components[section], parent_key=section
+                )
         if clean_components:
             view["components"] = clean_components
 
@@ -200,29 +226,329 @@ def collect_params(spec: dict[str, Any], op: dict[str, Any]) -> dict[tuple[str, 
 
 
 def schema_type_signature(spec: dict[str, Any], schema: Any) -> str:
+    """Return a concise structural type signature including $ref, type, format, and nullable."""
+    if not isinstance(schema, dict):
+        return ""
+    if isinstance(schema.get("$ref"), str):
+        return f"$ref({schema['$ref']})"
+
     resolved = resolve_ref(spec, schema)
     if not isinstance(resolved, dict):
         return ""
+
+    base = ""
     if "type" in resolved:
         t = str(resolved["type"])
         if t == "array" and "items" in resolved:
-            return f"array<{schema_type_signature(spec, resolved['items'])}>"
-        return t
+            base = f"array<{schema_type_signature(spec, resolved['items'])}>"
+        else:
+            base = t
+    else:
+        for comb in ("oneOf", "anyOf", "allOf"):
+            if comb in resolved:
+                base = comb
+                break
+        if not base and isinstance(resolved.get("properties"), dict):
+            base = "object"
+
+    fmt = resolved.get("format")
+    if fmt:
+        base = f"{base}({fmt})" if base else f"format({fmt})"
+    if resolved.get("nullable"):
+        base = f"{base}|null" if base else "null"
+    return base
+
+
+def schema_enum_values(schema: Any) -> set[str] | None:
+    if not isinstance(schema, dict) or not isinstance(schema.get("enum"), list):
+        return None
+    return {json.dumps(v, sort_keys=True) for v in schema["enum"]}
+
+
+def json_equal_structural(a: Any, b: Any, parent_key: str | None = None) -> bool:
+    return strip_docs_metadata(a, parent_key=parent_key) == strip_docs_metadata(
+        b, parent_key=parent_key
+    )
+
+
+def _schema_base_kind(schema: dict[str, Any]) -> str:
+    if isinstance(schema.get("type"), str):
+        return schema["type"]
     for comb in ("oneOf", "anyOf", "allOf"):
-        if comb in resolved:
+        if comb in schema:
             return comb
+    if isinstance(schema.get("properties"), dict):
+        return "object"
     return ""
 
 
-def schema_enum_values(spec: dict[str, Any], schema: Any) -> set[str] | None:
-    resolved = resolve_ref(spec, schema)
-    if not isinstance(resolved, dict) or not isinstance(resolved.get("enum"), list):
-        return None
-    return {json.dumps(v, sort_keys=True) for v in resolved["enum"]}
+def _diff_composition_branches(
+    old_spec: dict[str, Any],
+    new_spec: dict[str, Any],
+    old_branches: list[Any],
+    new_branches: list[Any],
+    comb: str,
+    location: str,
+    breaking: list[str],
+    seen_refs: frozenset[tuple[str, str]],
+) -> None:
+    """Detect breaking changes across allOf / oneOf / anyOf schema branches."""
+    old_refs = {
+        b["$ref"] for b in old_branches if isinstance(b, dict) and isinstance(b.get("$ref"), str)
+    }
+    new_refs = {
+        b["$ref"] for b in new_branches if isinstance(b, dict) and isinstance(b.get("$ref"), str)
+    }
+
+    for removed_ref in sorted(old_refs - new_refs):
+        breaking.append(f"Removed `{comb}` variant `{removed_ref}` on `{location}`")
+
+    # For allOf, adding a new $ref branch could introduce required fields (checked if needed);
+    # for oneOf/anyOf, adding a branch widens the union (non-breaking), removing narrows it.
+    old_inlines = [
+        b for b in old_branches if isinstance(b, dict) and not isinstance(b.get("$ref"), str)
+    ]
+    new_inlines = [
+        b for b in new_branches if isinstance(b, dict) and not isinstance(b.get("$ref"), str)
+    ]
+
+    if comb == "allOf":
+        # Merge inline object properties/required across allOf inline branches
+        old_merged_props: dict[str, Any] = {}
+        old_merged_req: set[str] = set()
+        for b in old_inlines:
+            if isinstance(b.get("properties"), dict):
+                old_merged_props.update(b["properties"])
+            if isinstance(b.get("required"), list):
+                old_merged_req.update(str(r) for r in b["required"])
+
+        new_merged_props: dict[str, Any] = {}
+        new_merged_req: set[str] = set()
+        for b in new_inlines:
+            if isinstance(b.get("properties"), dict):
+                new_merged_props.update(b["properties"])
+            if isinstance(b.get("required"), list):
+                new_merged_req.update(str(r) for r in b["required"])
+
+        for prop in sorted(set(old_merged_props) - set(new_merged_props)):
+            breaking.append(f"Removed property `{location}.{prop}`")
+        for prop in sorted(new_merged_req - old_merged_req):
+            breaking.append(f"Property `{location}.{prop}` became required")
+        for prop in sorted(set(old_merged_props) & set(new_merged_props)):
+            diff_schemas(
+                old_spec,
+                new_spec,
+                old_merged_props[prop],
+                new_merged_props[prop],
+                f"{location}.{prop}",
+                breaking,
+                seen_refs,
+            )
+
+        # Also check any non-object inline allOf branches (e.g. enum/type restrictions)
+        if len(old_inlines) == 1 and len(new_inlines) == 1:
+            if not old_merged_props and not new_merged_props:
+                diff_schemas(
+                    old_spec,
+                    new_spec,
+                    old_inlines[0],
+                    new_inlines[0],
+                    f"{location}[allOf]",
+                    breaking,
+                    seen_refs,
+                )
+        return
+
+    # oneOf / anyOf inline branches: match unchanged structural branches first, then pair by kind
+    remaining_new = list(new_inlines)
+    unmatched_old: list[dict[str, Any]] = []
+    for ob in old_inlines:
+        ob_norm = strip_docs_metadata(ob)
+        matched_idx = None
+        for idx, nb in enumerate(remaining_new):
+            if strip_docs_metadata(nb) == ob_norm:
+                matched_idx = idx
+                break
+        if matched_idx is not None:
+            remaining_new.pop(matched_idx)
+        else:
+            unmatched_old.append(ob)
+
+    for ob in unmatched_old:
+        ob_kind = _schema_base_kind(ob)
+        same_kind_idx = None
+        for idx, nb in enumerate(remaining_new):
+            if _schema_base_kind(nb) == ob_kind and ob_kind:
+                same_kind_idx = idx
+                break
+        if same_kind_idx is not None:
+            nb = remaining_new.pop(same_kind_idx)
+            diff_schemas(
+                old_spec,
+                new_spec,
+                ob,
+                nb,
+                f"{location}[{comb}]",
+                breaking,
+                seen_refs,
+            )
+        else:
+            breaking.append(
+                f"Removed or incompatible `{comb}` inline variant (`{ob_kind or 'schema'}`) on `{location}`"
+            )
 
 
-def json_equal_structural(a: Any, b: Any) -> bool:
-    return strip_docs_metadata(a) == strip_docs_metadata(b)
+def diff_schemas(
+    old_spec: dict[str, Any],
+    new_spec: dict[str, Any],
+    old_raw: Any,
+    new_raw: Any,
+    location: str,
+    breaking: list[str],
+    seen_refs: frozenset[tuple[str, str]] = frozenset(),
+) -> None:
+    """Recursively compare two OpenAPI schemas and append breaking changes."""
+    if not isinstance(old_raw, dict) or not isinstance(new_raw, dict):
+        return
+
+    old_ref = old_raw.get("$ref") if isinstance(old_raw.get("$ref"), str) else None
+    new_ref = new_raw.get("$ref") if isinstance(new_raw.get("$ref"), str) else None
+
+    if old_ref is not None or new_ref is not None:
+        if old_ref != new_ref:
+            old_label = old_ref or (schema_type_signature(old_spec, old_raw) or "inline")
+            new_label = new_ref or (schema_type_signature(new_spec, new_raw) or "inline")
+            breaking.append(
+                f"Schema reference changed at `{location}`: `{old_label}` -> `{new_label}`"
+            )
+            return
+
+        # Both point to the exact same `$ref`.
+        assert old_ref is not None and new_ref is not None
+        # Component schemas are already diffed exhaustively in the top-level schemas pass,
+        # so skip re-entering them here to avoid duplicate reports and cycles.
+        if old_ref.startswith("#/components/schemas/"):
+            return
+
+        ref_pair = (old_ref, new_ref)
+        if ref_pair in seen_refs:
+            return
+        seen_refs = seen_refs | {ref_pair}
+
+    old_s = resolve_ref(old_spec, old_raw)
+    new_s = resolve_ref(new_spec, new_raw)
+    if not isinstance(old_s, dict) or not isinstance(new_s, dict):
+        return
+
+    # 1. Base type / combinator kind
+    old_kind = _schema_base_kind(old_s)
+    new_kind = _schema_base_kind(new_s)
+    if old_kind != new_kind:
+        breaking.append(
+            f"Type changed at `{location}`: `{old_kind or 'any'}` -> `{new_kind or 'any'}`"
+        )
+        return
+
+    # 2. Format changes (e.g. int32 -> int64, date-time added/removed)
+    old_fmt = old_s.get("format")
+    new_fmt = new_s.get("format")
+    if old_fmt != new_fmt:
+        breaking.append(
+            f"Format changed at `{location}`: `{old_fmt or 'none'}` -> `{new_fmt or 'none'}`"
+        )
+
+    # 3. Nullability changes
+    old_nullable = bool(old_s.get("nullable", False))
+    new_nullable = bool(new_s.get("nullable", False))
+    if old_nullable != new_nullable:
+        breaking.append(
+            f"Nullability changed at `{location}`: `{old_nullable}` -> `{new_nullable}`"
+        )
+
+    # 4. Enum added, removed, or values removed
+    old_enum = schema_enum_values(old_s)
+    new_enum = schema_enum_values(new_s)
+    if old_enum is None and new_enum is not None:
+        breaking.append(f"Added enum constraint at `{location}`")
+    elif old_enum is not None and new_enum is None:
+        breaking.append(f"Removed enum constraint at `{location}`")
+    elif old_enum is not None and new_enum is not None:
+        removed_vals = sorted(old_enum - new_enum)
+        if removed_vals:
+            breaking.append(
+                f"Removed enum value(s) at `{location}`: {', '.join(removed_vals[:5])}"
+            )
+
+    # 5. Array items (recursive — catches items.enum, items.type, nested objects, etc.)
+    old_has_items = "items" in old_s
+    new_has_items = "items" in new_s
+    if old_has_items and new_has_items:
+        diff_schemas(
+            old_spec,
+            new_spec,
+            old_s["items"],
+            new_s["items"],
+            f"{location}[]",
+            breaking,
+            seen_refs,
+        )
+    elif old_has_items != new_has_items:
+        breaking.append(f"Array `items` schema changed at `{location}`")
+
+    # 6. Object properties and required fields (recursive)
+    old_props = old_s.get("properties") if isinstance(old_s.get("properties"), dict) else {}
+    new_props = new_s.get("properties") if isinstance(new_s.get("properties"), dict) else {}
+
+    for prop in sorted(set(old_props) - set(new_props)):
+        breaking.append(f"Removed property `{location}.{prop}`")
+
+    old_req = set(str(r) for r in (old_s.get("required") or []))
+    new_req = set(str(r) for r in (new_s.get("required") or []))
+    for prop in sorted(new_req - old_req):
+        breaking.append(f"Property `{location}.{prop}` became required")
+
+    for prop in sorted(set(old_props) & set(new_props)):
+        diff_schemas(
+            old_spec,
+            new_spec,
+            old_props[prop],
+            new_props[prop],
+            f"{location}.{prop}",
+            breaking,
+            seen_refs,
+        )
+
+    # 7. additionalProperties tightening or schema changes
+    old_ap = old_s.get("additionalProperties")
+    new_ap = new_s.get("additionalProperties")
+    if old_ap is not False and new_ap is False:
+        breaking.append(f"Disallowed `additionalProperties` at `{location}`")
+    elif isinstance(old_ap, dict) and isinstance(new_ap, dict):
+        diff_schemas(
+            old_spec,
+            new_spec,
+            old_ap,
+            new_ap,
+            f"{location}.*",
+            breaking,
+            seen_refs,
+        )
+
+    # 8. Composition schemas (allOf, oneOf, anyOf)
+    for comb in ("allOf", "oneOf", "anyOf"):
+        old_branches = old_s.get(comb)
+        new_branches = new_s.get(comb)
+        if isinstance(old_branches, list) and isinstance(new_branches, list):
+            _diff_composition_branches(
+                old_spec,
+                new_spec,
+                old_branches,
+                new_branches,
+                comb,
+                location,
+                breaking,
+                seen_refs,
+            )
 
 
 def classify_diff(old_spec: dict[str, Any], new_spec: dict[str, Any]) -> dict[str, Any]:
@@ -266,12 +592,12 @@ def classify_diff(old_spec: dict[str, Any], new_spec: dict[str, Any]) -> dict[st
         endpoint_label = f"`{method} {path}`"
         modified_endpoints.append(endpoint_label)
 
-        # operationId rename changes generated method name
+        # operationId rename, addition, or removal changes generated method name
         old_op_id = old_op.get("operationId")
         new_op_id = new_op.get("operationId")
-        if old_op_id and new_op_id and old_op_id != new_op_id:
+        if old_op_id != new_op_id:
             breaking.append(
-                f"Renamed operationId on {endpoint_label}: `{old_op_id}` -> `{new_op_id}`"
+                f"Changed operationId on {endpoint_label}: `{old_op_id or 'none'}` -> `{new_op_id or 'none'}`"
             )
 
         # Primary tag change moves method to a different sub-client class
@@ -307,51 +633,76 @@ def classify_diff(old_spec: dict[str, Any], new_spec: dict[str, Any]) -> dict[st
                 breaking.append(
                     f"Parameter `{p_name}` became required on {endpoint_label}"
                 )
-            old_t = schema_type_signature(old_spec, old_p.get("schema"))
-            new_t = schema_type_signature(new_spec, new_p.get("schema"))
-            if old_t and new_t and old_t != new_t:
-                breaking.append(
-                    f"Parameter `{p_name}` type changed on {endpoint_label}: `{old_t}` -> `{new_t}`"
-                )
-            old_enum = schema_enum_values(old_spec, old_p.get("schema"))
-            new_enum = schema_enum_values(new_spec, new_p.get("schema"))
-            if old_enum is not None and new_enum is not None:
-                removed_vals = sorted(old_enum - new_enum)
-                if removed_vals:
-                    breaking.append(
-                        f"Removed enum value(s) on parameter `{p_name}` ({endpoint_label}): {', '.join(removed_vals[:5])}"
-                    )
+            diff_schemas(
+                old_spec,
+                new_spec,
+                old_p.get("schema"),
+                new_p.get("schema"),
+                f"{method} {path} param `{p_name}`",
+                breaking,
+            )
 
-        # Request body diff
+        # Request body diff (including inline schemas & media types)
         old_rb = resolve_ref(old_spec, old_op.get("requestBody")) or {}
         new_rb = resolve_ref(new_spec, new_op.get("requestBody")) or {}
         if isinstance(old_rb, dict) and isinstance(new_rb, dict):
             if not old_rb.get("required") and new_rb.get("required"):
                 breaking.append(f"Request body became required on {endpoint_label}")
-            old_rb_schema = (
-                (old_rb.get("content") or {}).get("application/json", {}).get("schema")
-            )
-            new_rb_schema = (
-                (new_rb.get("content") or {}).get("application/json", {}).get("schema")
-            )
-            if old_rb_schema and not new_rb_schema:
-                breaking.append(f"Removed JSON request body on {endpoint_label}")
+            old_content = old_rb.get("content") if isinstance(old_rb.get("content"), dict) else {}
+            new_content = new_rb.get("content") if isinstance(new_rb.get("content"), dict) else {}
+            for media in sorted(set(old_content) - set(new_content)):
+                breaking.append(
+                    f"Removed `{media}` request body on {endpoint_label}"
+                )
+            for media in sorted(set(old_content) & set(new_content)):
+                old_mt = old_content[media] if isinstance(old_content[media], dict) else {}
+                new_mt = new_content[media] if isinstance(new_content[media], dict) else {}
+                diff_schemas(
+                    old_spec,
+                    new_spec,
+                    old_mt.get("schema"),
+                    new_mt.get("schema"),
+                    f"{method} {path} requestBody({media})",
+                    breaking,
+                )
 
-        # 2xx responses diff
+        # 2xx responses diff (including inline response schemas & media types)
         old_responses = {
-            str(k): v
+            str(k): resolve_ref(old_spec, v)
             for k, v in (old_op.get("responses") or {}).items()
             if str(k).startswith("2")
         }
         new_responses = {
-            str(k): v
+            str(k): resolve_ref(new_spec, v)
             for k, v in (new_op.get("responses") or {}).items()
             if str(k).startswith("2")
         }
         for status in sorted(set(old_responses) - set(new_responses)):
             breaking.append(f"Removed `{status}` response on {endpoint_label}")
+        for status in sorted(set(old_responses) & set(new_responses)):
+            old_resp = old_responses[status]
+            new_resp = new_responses[status]
+            if not isinstance(old_resp, dict) or not isinstance(new_resp, dict):
+                continue
+            old_rc = old_resp.get("content") if isinstance(old_resp.get("content"), dict) else {}
+            new_rc = new_resp.get("content") if isinstance(new_resp.get("content"), dict) else {}
+            for media in sorted(set(old_rc) - set(new_rc)):
+                breaking.append(
+                    f"Removed `{media}` from `{status}` response on {endpoint_label}"
+                )
+            for media in sorted(set(old_rc) & set(new_rc)):
+                old_mt = old_rc[media] if isinstance(old_rc[media], dict) else {}
+                new_mt = new_rc[media] if isinstance(new_rc[media], dict) else {}
+                diff_schemas(
+                    old_spec,
+                    new_spec,
+                    old_mt.get("schema"),
+                    new_mt.get("schema"),
+                    f"{method} {path} response[{status}]({media})",
+                    breaking,
+                )
 
-    # Component schemas diff
+    # Component schemas diff (recursive)
     old_schemas = (old_spec.get("components") or {}).get("schemas") or {}
     new_schemas = (new_spec.get("components") or {}).get("schemas") or {}
 
@@ -367,42 +718,10 @@ def classify_diff(old_spec: dict[str, Any], new_spec: dict[str, Any]) -> dict[st
         if json_equal_structural(old_s, new_s):
             continue
         schema_changes.append(f"Updated schema `{name}`")
+        diff_schemas(old_spec, new_spec, old_s, new_s, name, breaking)
 
-        old_t = schema_type_signature(old_spec, old_s)
-        new_t = schema_type_signature(new_spec, new_s)
-        if old_t and new_t and old_t != new_t:
-            breaking.append(f"Schema `{name}` type changed: `{old_t}` -> `{new_t}`")
-
-        old_enum = schema_enum_values(old_spec, old_s)
-        new_enum = schema_enum_values(new_spec, new_s)
-        if old_enum is not None and new_enum is not None:
-            removed_vals = sorted(old_enum - new_enum)
-            if removed_vals:
-                breaking.append(
-                    f"Removed enum value(s) on schema `{name}`: {', '.join(removed_vals[:5])}"
-                )
-
-        if isinstance(old_s, dict) and isinstance(new_s, dict):
-            old_props = old_s.get("properties") or {}
-            new_props = new_s.get("properties") or {}
-            if isinstance(old_props, dict) and isinstance(new_props, dict):
-                for prop in sorted(set(old_props) - set(new_props)):
-                    breaking.append(f"Removed property `{name}.{prop}`")
-                for prop in sorted(set(old_props) & set(new_props)):
-                    pt_old = schema_type_signature(old_spec, old_props[prop])
-                    pt_new = schema_type_signature(new_spec, new_props[prop])
-                    if pt_old and pt_new and pt_old != pt_new:
-                        breaking.append(
-                            f"Property `{name}.{prop}` type changed: `{pt_old}` -> `{pt_new}`"
-                        )
-                    pe_old = schema_enum_values(old_spec, old_props[prop])
-                    pe_new = schema_enum_values(new_spec, new_props[prop])
-                    if pe_old is not None and pe_new is not None:
-                        removed_vals = sorted(pe_old - pe_new)
-                        if removed_vals:
-                            breaking.append(
-                                f"Removed enum value(s) on `{name}.{prop}`: {', '.join(removed_vals[:5])}"
-                            )
+    # Deduplicate breaking messages while preserving order
+    breaking = list(dict.fromkeys(breaking))
 
     if breaking:
         change_level = "breaking"
