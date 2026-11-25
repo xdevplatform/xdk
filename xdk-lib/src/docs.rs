@@ -133,6 +133,15 @@ impl SdkDocLang {
             Self::CSharp => "https://github.com/xdevplatform/xdk-csharp",
         }
     }
+
+    pub fn nav_icon(self) -> &'static str {
+        match self {
+            Self::Python => "python",
+            Self::TypeScript => "js",
+            Self::Java => "java",
+            Self::CSharp => "/icons/xds/icon-code.svg",
+        }
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -1434,39 +1443,26 @@ fn update_docs_json(docs_json_path: &Path, tags: &[TagDocModel]) -> Result<()> {
     });
     root_obj.insert("api".to_string(), api_block);
 
-    // 2. Build the `"XDKs"` product entry with Overview + all 4 language tabs.
-    let xdks_product = build_xdks_product_nav(tags);
+    // 2. Build the `"XDKs"` top-bar tab inside `"X API"` (`Documentation | API Reference | XDKs | Changelog`),
+    //    keeping `navigation.products` strictly for APIs (`X API`, `Chat API`, `Ads API`, `Livestream API`).
+    let xdks_tab = build_xdks_tab_nav(tags);
 
     if let Some(products) = root_obj
         .get_mut("navigation")
         .and_then(|n| n.get_mut("products"))
         .and_then(|p| p.as_array_mut())
     {
-        // Remove per-language hidden SDK products superseded by the unified "XDKs" product.
+        // Remove standalone SDK entries from the top-level Product switcher.
         products.retain(|p| {
             !matches!(
                 p.get("product").and_then(|v| v.as_str()),
-                Some("Python XDK" | "TypeScript XDK" | "Java XDK" | "C# XDK")
+                Some("XDKs" | "Python XDK" | "TypeScript XDK" | "Java XDK" | "C# XDK")
             )
         });
 
-        // Update X API -> Tools & Libraries -> SDKs (XDKs) entry cards if present.
+        // Update `X API -> Tools & Libraries -> SDKs (XDKs)` and insert/update the `XDKs` tab on `X API`.
         update_x_api_tools_xdks_nav(products);
-
-        if let Some(existing_idx) = products
-            .iter()
-            .position(|p| p.get("product").and_then(|v| v.as_str()) == Some("XDKs"))
-        {
-            products[existing_idx] = xdks_product;
-        } else {
-            // Insert right after "X API" so SDKs are immediately discoverable in the product switcher.
-            let insert_at = products
-                .iter()
-                .position(|p| p.get("product").and_then(|v| v.as_str()) == Some("X API"))
-                .map(|i| i + 1)
-                .unwrap_or(products.len());
-            products.insert(insert_at, xdks_product);
-        }
+        upsert_x_api_xdks_tab(products, xdks_tab);
     }
 
     // 3. Ensure redirects from older SDK reference URLs to the new client reference URLs.
@@ -1480,9 +1476,10 @@ fn update_docs_json(docs_json_path: &Path, tags: &[TagDocModel]) -> Result<()> {
     Ok(())
 }
 
-fn build_xdks_product_nav(tags: &[TagDocModel]) -> Json {
-    let mut tabs = vec![json!({
-        "tab": "Overview",
+fn build_xdks_tab_nav(tags: &[TagDocModel]) -> Json {
+    let mut dropdowns = vec![json!({
+        "dropdown": "Overview",
+        "icon": "/icons/xds/icon-feather-cube.svg",
         "pages": [
             "xdks/overview"
         ]
@@ -1497,8 +1494,9 @@ fn build_xdks_product_nav(tags: &[TagDocModel]) -> Json {
                 tag.kebab_slug
             )));
         }
-        tabs.push(json!({
-            "tab": lang.display_name(),
+        dropdowns.push(json!({
+            "dropdown": lang.display_name(),
+            "icon": lang.nav_icon(),
             "groups": [
                 {
                     "group": "Guides",
@@ -1520,11 +1518,40 @@ fn build_xdks_product_nav(tags: &[TagDocModel]) -> Json {
     }
 
     json!({
-        "product": "XDKs",
-        "description": "Official Python, TypeScript, Java, and C# SDKs",
-        "icon": "cubes",
-        "tabs": tabs
+        "tab": "XDKs",
+        "dropdowns": dropdowns
     })
+}
+
+fn upsert_x_api_xdks_tab(products: &mut [Json], xdks_tab: Json) {
+    let Some(x_api) = products
+        .iter_mut()
+        .find(|p| p.get("product").and_then(|v| v.as_str()) == Some("X API"))
+    else {
+        return;
+    };
+    let Some(tabs) = x_api.get_mut("tabs").and_then(|t| t.as_array_mut()) else {
+        return;
+    };
+
+    if let Some(existing_idx) = tabs
+        .iter()
+        .position(|t| matches!(t.get("tab").and_then(|v| v.as_str()), Some("XDKs" | "SDKs")))
+    {
+        tabs[existing_idx] = xdks_tab;
+    } else if let Some(api_ref_idx) = tabs
+        .iter()
+        .position(|t| t.get("tab").and_then(|v| v.as_str()) == Some("API Reference"))
+    {
+        tabs.insert(api_ref_idx + 1, xdks_tab);
+    } else if let Some(changelog_idx) = tabs
+        .iter()
+        .position(|t| t.get("tab").and_then(|v| v.as_str()) == Some("Changelog"))
+    {
+        tabs.insert(changelog_idx, xdks_tab);
+    } else {
+        tabs.push(xdks_tab);
+    }
 }
 
 fn update_x_api_tools_xdks_nav(products: &mut [Json]) {
@@ -2579,7 +2606,11 @@ csharp = "0.1.2"
             "overlays/xdk-code-samples.json"
         );
         let products = updated_docs["navigation"]["products"].as_array().unwrap();
-        assert!(products.iter().any(|p| p["product"] == "XDKs"));
+        assert!(!products.iter().any(|p| p["product"] == "XDKs"));
+        let x_api_tabs = products.iter().find(|p| p["product"] == "X API").unwrap()["tabs"]
+            .as_array()
+            .unwrap();
+        assert!(x_api_tabs.iter().any(|t| t["tab"] == "XDKs"));
         let redirects = updated_docs["redirects"].as_array().unwrap();
         assert!(
             !redirects.iter().any(|r| r["source"] == "/xdks/overview"),
