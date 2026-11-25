@@ -38,6 +38,9 @@ jobs:
       - name: Run tests
         run: cargo test --verbose
 
+      - name: Verify Mintlify Docs & Overlay Generation
+        run: cargo run -- docs --latest true --output /tmp/docs-ci
+
   # ============================================
   # Generate and Test Python SDK
   # ============================================

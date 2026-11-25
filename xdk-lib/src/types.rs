@@ -96,7 +96,7 @@ const PY_KEYWORDS: &[&str] = &[
 
 /// Python-safe field name: sanitized, with keywords suffixed by `_` (the
 /// caller adds a Field alias whenever the result differs from the original).
-fn py_field_ident(name: &str) -> String {
+pub fn py_field_ident(name: &str) -> String {
     let ident = sanitize_identifier(name);
     if PY_KEYWORDS.contains(&ident.as_str()) {
         format!("{ident}_")

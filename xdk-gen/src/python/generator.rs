@@ -99,7 +99,6 @@ language! {
         render "pyproject_toml" => "pyproject.toml",
         render "sphinx_conf" => "conf.py",
         render "generate_docs_simple" => "scripts/generate-docs-simple.py",
-        render "process_for_mintlify" => "scripts/process-for-mintlify.py",
         render "watch_docs" => "scripts/watch-docs.py",
         render "readme" => "README.md",
         render "gitignore" => ".gitignore"
