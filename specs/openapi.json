@@ -158,10 +158,10 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "dm.write",
               "dm.read",
               "tweet.read",
-              "users.read",
-              "dm.write"
+              "users.read"
             ]
           },
           {
@@ -217,9 +217,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "dm.read",
               "tweet.read",
+              "dm.read",
+              "users.read",
               "dm.write"
             ]
           },
@@ -553,8 +553,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
-              "like.read"
+              "like.read",
+              "tweet.read"
             ]
           },
           {
@@ -653,7 +653,7 @@
           "Activity"
         ],
         "summary": "Create X Activity Subscription",
-        "description": "Creates a subscription for an X activity event. OAuth2 user-context tokens must hold the scope matching the requested event_type: dm.read for chat.* and dm.* events, like.read for like.* events, mute.read for mute.* events, block.read for block.* events, follows.read for subscriptions.* events, and tweet.read for all other event types. Mute and block subscriptions are actor-only: filter.user_id must identify the authenticated user and direction is not supported. subscriptions.* events require a user-context token and filter.user_id must identify the authenticated user. Optional filter.qualifiers further narrow supported chat, follow, unfollow, like, and subscriptions events.",
+        "description": "Creates a subscription for an X activity event. OAuth2 user-context tokens must hold the scope matching the requested event_type: dm.read for chat.* and dm.* events, like.read for like.* events, mute.read for mute.* events, block.read for block.* events, follows.read for subscriptions.* events, and tweet.read for all other event types. Mute and block subscriptions are actor-only: filter.user_id must identify the authenticated user and direction is not supported. subscriptions.* events require a user-context token and filter.user_id must identify the authenticated user. Optional filter.qualifiers further narrow supported chat, follow, unfollow, like, subscriptions, and trends events.",
         "externalDocs": {
           "url": "https://docs.x.com/x-api/activity/create-x-activity-subscription"
         },
@@ -1446,6 +1446,9 @@
           },
           {
             "UserToken": []
+          },
+          {
+            "BearerToken": []
           }
         ],
         "tags": [
@@ -1488,9 +1491,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
+              "users.read",
               "broadcast.read",
-              "users.read"
+              "tweet.read"
             ]
           },
           {
@@ -1604,8 +1607,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "broadcast.write",
-              "broadcast.read"
+              "broadcast.read",
+              "broadcast.write"
             ]
           },
           {
@@ -1743,8 +1746,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "broadcast.read",
-              "broadcast.write"
+              "broadcast.write",
+              "broadcast.read"
             ]
           },
           {
@@ -2142,8 +2145,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "broadcast.write",
-              "broadcast.read"
+              "broadcast.read",
+              "broadcast.write"
             ]
           },
           {
@@ -2272,8 +2275,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "broadcast.read",
-              "broadcast.write"
+              "broadcast.write",
+              "broadcast.read"
             ]
           },
           {
@@ -2365,6 +2368,74 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetBroadcastResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The request has failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "security": [
+          {
+            "OAuth2UserToken": [
+              "broadcast.write",
+              "broadcast.read"
+            ]
+          },
+          {
+            "UserToken": []
+          }
+        ],
+        "tags": [
+          "Broadcasts"
+        ],
+        "summary": "Update a Broadcast",
+        "description": "Changes the title, chat option or live category of one of the authenticated user's broadcasts and returns the broadcast. Send at least one of `title`, `chat_option` and `live_category_id`; fields left out keep their values. A broadcast can be updated before it starts, while it is live and after it has ended. A 409 `conflict` means the broadcast can't be edited, for example because it was deleted or moderated.",
+        "operationId": "updateBroadcast",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9]{1,24}$"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBroadcastRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateBroadcastResponse"
                 }
               }
             }
@@ -2481,8 +2552,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "broadcast.write",
-              "broadcast.read"
+              "broadcast.read",
+              "broadcast.write"
             ]
           },
           {
@@ -2692,8 +2763,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "broadcast.write",
-              "broadcast.read"
+              "broadcast.read",
+              "broadcast.write"
             ]
           },
           {
@@ -2762,8 +2833,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "broadcast.write",
-              "broadcast.read"
+              "broadcast.read",
+              "broadcast.write"
             ]
           },
           {
@@ -3530,8 +3601,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.read",
-              "users.read"
+              "users.read",
+              "dm.read"
             ]
           },
           {
@@ -3713,9 +3784,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "users.read",
-              "dm.write"
+              "dm.write",
+              "tweet.read"
             ]
           },
           {
@@ -3825,9 +3896,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "dm.write",
               "tweet.read",
-              "users.read",
-              "dm.write"
+              "users.read"
             ]
           },
           {
@@ -3837,12 +3908,12 @@
         "tags": [
           "Chat"
         ],
-        "summary": "Delete a Chat Conversation",
-        "description": "Deletes a Chat conversation for the authenticated user only; other participants keep it. Works for group and 1:1 conversations. For 1:1 conversations, provide the recipient's user ID; the server constructs the canonical conversation ID from the authenticated user and recipient. Deleting a pending message request's conversation deletes the request, like Delete in the X app.",
+        "summary": "Delete a Chat Conversation Using the Legacy Route",
+        "description": "Deletes a Chat conversation for the authenticated user only; other participants keep it. Works for group and 1:1 conversations. For 1:1 conversations, provide the recipient's user ID; the server constructs the canonical conversation ID from the authenticated user and recipient. Deleting a pending message request's conversation deletes the request, like Delete in the X app. Legacy route: prefer `POST /2/chat/conversations/{id}/delete`, which takes the same request and returns the same response.",
         "externalDocs": {
           "url": "https://developer.x.com/"
         },
-        "operationId": "deleteChatConversation",
+        "operationId": "deleteChatConversationLegacy",
         "parameters": [
           {
             "name": "id",
@@ -3860,7 +3931,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/DeleteChatConversationRequest"
+                "$ref": "#/components/schemas/DeleteChatConversationLegacyRequest"
               }
             }
           },
@@ -3872,7 +3943,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/DeleteChatConversationResponse"
+                  "$ref": "#/components/schemas/DeleteChatConversationLegacyResponse"
                 }
               }
             }
@@ -3969,9 +4040,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "tweet.read",
-              "dm.write"
+              "dm.write",
+              "users.read"
             ]
           },
           {
@@ -4201,9 +4272,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "tweet.read",
-              "dm.write"
+              "dm.write",
+              "users.read"
             ]
           },
           {
@@ -4288,8 +4359,8 @@
           {
             "OAuth2UserToken": [
               "tweet.read",
-              "dm.write",
-              "users.read"
+              "users.read",
+              "dm.write"
             ]
           },
           {
@@ -4373,9 +4444,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "dm.write",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -4448,9 +4519,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.write",
               "users.read",
-              "tweet.read"
+              "tweet.read",
+              "dm.write"
             ]
           },
           {
@@ -4523,9 +4594,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.write",
               "tweet.read",
-              "users.read"
+              "users.read",
+              "dm.write"
             ]
           },
           {
@@ -4598,9 +4669,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
+              "tweet.read",
               "dm.write",
-              "tweet.read"
+              "users.read"
             ]
           },
           {
@@ -4610,12 +4681,12 @@
         "tags": [
           "Chat"
         ],
-        "summary": "Unarchive a Chat Conversation",
-        "description": "Unarchives a Chat conversation for the authenticated user only. Unarchiving a conversation that is not archived changes nothing. Works for group and 1:1 conversations. For 1:1 conversations, provide the recipient's user ID; the server constructs the canonical conversation ID from the authenticated user and recipient.",
+        "summary": "Unarchive a Chat Conversation Using the Legacy Route",
+        "description": "Unarchives a Chat conversation for the authenticated user only. Unarchiving a conversation that is not archived changes nothing. Works for group and 1:1 conversations. For 1:1 conversations, provide the recipient's user ID; the server constructs the canonical conversation ID from the authenticated user and recipient. Legacy route: prefer `POST /2/chat/conversations/{id}/unarchive`, which takes the same request and returns the same response.",
         "externalDocs": {
           "url": "https://developer.x.com/"
         },
-        "operationId": "unarchiveChatConversation",
+        "operationId": "unarchiveChatConversationLegacy",
         "parameters": [
           {
             "name": "id",
@@ -4633,7 +4704,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/UnarchiveChatConversationRequest"
+                "$ref": "#/components/schemas/UnarchiveChatConversationLegacyRequest"
               }
             }
           },
@@ -4645,7 +4716,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/UnarchiveChatConversationResponse"
+                  "$ref": "#/components/schemas/UnarchiveChatConversationLegacyResponse"
                 }
               }
             }
@@ -4671,9 +4742,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.write",
               "tweet.read",
-              "users.read"
+              "users.read",
+              "dm.write"
             ]
           },
           {
@@ -4741,14 +4812,89 @@
         }
       }
     },
+    "/2/chat/conversations/{id}/delete": {
+      "post": {
+        "security": [
+          {
+            "OAuth2UserToken": [
+              "tweet.read",
+              "dm.write",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken": []
+          }
+        ],
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Delete a Chat Conversation",
+        "description": "Deletes a Chat conversation for the authenticated user only; other participants keep it. Works for group and 1:1 conversations. For 1:1 conversations, provide the recipient's user ID; the server constructs the canonical conversation ID from the authenticated user and recipient. Deleting a pending message request's conversation deletes the request, like Delete in the X app.",
+        "externalDocs": {
+          "url": "https://developer.x.com/"
+        },
+        "operationId": "deleteChatConversation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the conversation: a group ID starting with `g`, the other user's ID for a 1:1 conversation, or both user IDs of a 1:1 conversation joined by a hyphen.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^([0-9]{1,19}|[0-9]{1,19}-[0-9]{1,19}|g[0-9]{1,19})$"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteChatConversationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteChatConversationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The request has failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/2/chat/conversations/{id}/events": {
       "get": {
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.read",
+              "users.read",
               "tweet.read",
-              "users.read"
+              "dm.read"
             ]
           },
           {
@@ -4833,12 +4979,87 @@
       }
     },
     "/2/chat/conversations/{id}/invite": {
-      "delete": {
+      "post": {
         "security": [
           {
             "OAuth2UserToken": [
+              "dm.write",
               "tweet.read",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken": []
+          }
+        ],
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Enable a Chat Group Invite Link",
+        "description": "Turns on the invite link for an encrypted Chat group conversation and returns the link details. The client builds the link and sends it as invite_url, in the form https://x.com/i/chat/group_join/<conversation_id>/<token>, where the token is exactly 10 letters, digits, '-' or '_'. invite_url is required when action_signatures is sent. To make the link expire, send validity_duration_msec or validity_expiry_timestamp_msec. With action_signatures, send validity_expiry_timestamp_msec, because the signed payload carries the expiry. The group name and avatar sent here are stored unencrypted and shown to anyone who opens the link.",
+        "externalDocs": {
+          "url": "https://developer.x.com/"
+        },
+        "operationId": "enableChatGroupInvite",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the group conversation, starting with `g`.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^g[0-9]{1,19}$"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnableChatGroupInviteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EnableChatGroupInviteResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The request has failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/chat/conversations/{id}/invite/disable": {
+      "post": {
+        "security": [
+          {
+            "OAuth2UserToken": [
               "users.read",
+              "tweet.read",
               "dm.write"
             ]
           },
@@ -4885,79 +5106,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DisableChatGroupInviteResponse"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "The request has failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              },
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "security": [
-          {
-            "OAuth2UserToken": [
-              "tweet.read",
-              "users.read",
-              "dm.write"
-            ]
-          },
-          {
-            "UserToken": []
-          }
-        ],
-        "tags": [
-          "Chat"
-        ],
-        "summary": "Enable a Chat Group Invite Link",
-        "description": "Turns on the invite link for an encrypted Chat group conversation and returns the link details. The client builds the link and sends it as invite_url, in the form https://x.com/i/chat/group_join/<conversation_id>/<token>, where the token is exactly 10 letters, digits, '-' or '_'. invite_url is required when action_signatures is sent. To make the link expire, send validity_duration_msec or validity_expiry_timestamp_msec. With action_signatures, send validity_expiry_timestamp_msec, because the signed payload carries the expiry. The group name and avatar sent here are stored unencrypted and shown to anyone who opens the link.",
-        "externalDocs": {
-          "url": "https://developer.x.com/"
-        },
-        "operationId": "enableChatGroupInvite",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "The ID of the group conversation, starting with `g`.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^g[0-9]{1,19}$"
-            },
-            "style": "simple"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/EnableChatGroupInviteRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/EnableChatGroupInviteResponse"
                 }
               }
             }
@@ -5140,8 +5288,8 @@
           {
             "OAuth2UserToken": [
               "dm.write",
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -5214,9 +5362,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "dm.write",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -5288,9 +5436,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "tweet.read",
               "users.read",
-              "dm.write",
-              "tweet.read"
+              "dm.write"
             ]
           },
           {
@@ -5362,9 +5510,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "tweet.read",
-              "dm.write"
+              "dm.write",
+              "users.read"
             ]
           },
           {
@@ -5432,86 +5580,13 @@
       }
     },
     "/2/chat/conversations/{id}/message_ttl": {
-      "delete": {
+      "put": {
         "security": [
           {
             "OAuth2UserToken": [
               "dm.write",
               "users.read",
               "tweet.read"
-            ]
-          },
-          {
-            "UserToken": []
-          }
-        ],
-        "tags": [
-          "Chat"
-        ],
-        "summary": "Turn Off Disappearing Messages in a Chat Conversation",
-        "description": "Stops new messages in a 1:1 or group Chat conversation from disappearing, for every participant. For 1:1 conversations, provide the recipient's user ID; the server constructs the canonical conversation ID from the authenticated user and recipient.",
-        "externalDocs": {
-          "url": "https://developer.x.com/"
-        },
-        "operationId": "deleteChatConversationMessageTtl",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "The ID of the conversation: a group ID starting with `g`, the other user's ID for a 1:1 conversation, or both user IDs of a 1:1 conversation joined by a hyphen.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^([0-9]{1,19}|[0-9]{1,19}-[0-9]{1,19}|g[0-9]{1,19})$"
-            },
-            "style": "simple"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteChatConversationMessageTtlRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DeleteChatConversationMessageTtlResponse"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "The request has failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              },
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "security": [
-          {
-            "OAuth2UserToken": [
-              "tweet.read",
-              "dm.write",
-              "users.read"
             ]
           },
           {
@@ -5579,7 +5654,7 @@
         }
       }
     },
-    "/2/chat/conversations/{id}/messages": {
+    "/2/chat/conversations/{id}/message_ttl/remove": {
       "post": {
         "security": [
           {
@@ -5587,6 +5662,81 @@
               "tweet.read",
               "dm.write",
               "users.read"
+            ]
+          },
+          {
+            "UserToken": []
+          }
+        ],
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Turn Off Disappearing Messages in a Chat Conversation",
+        "description": "Stops new messages in a 1:1 or group Chat conversation from disappearing, for every participant. For 1:1 conversations, provide the recipient's user ID; the server constructs the canonical conversation ID from the authenticated user and recipient.",
+        "externalDocs": {
+          "url": "https://developer.x.com/"
+        },
+        "operationId": "deleteChatConversationMessageTtl",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the conversation: a group ID starting with `g`, the other user's ID for a 1:1 conversation, or both user IDs of a 1:1 conversation joined by a hyphen.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^([0-9]{1,19}|[0-9]{1,19}-[0-9]{1,19}|g[0-9]{1,19})$"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteChatConversationMessageTtlRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteChatConversationMessageTtlResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The request has failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/chat/conversations/{id}/messages": {
+      "post": {
+        "security": [
+          {
+            "OAuth2UserToken": [
+              "dm.write",
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -5659,9 +5809,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.write",
+              "tweet.read",
               "users.read",
-              "tweet.read"
+              "dm.write"
             ]
           },
           {
@@ -5729,86 +5879,13 @@
       }
     },
     "/2/chat/conversations/{id}/mute": {
-      "delete": {
-        "security": [
-          {
-            "OAuth2UserToken": [
-              "users.read",
-              "tweet.read",
-              "dm.write"
-            ]
-          },
-          {
-            "UserToken": []
-          }
-        ],
-        "tags": [
-          "Chat"
-        ],
-        "summary": "Unmute a Chat Conversation",
-        "description": "Unmutes notifications for a Chat conversation for the authenticated user only. Works for group and 1:1 conversations. For 1:1 conversations, provide the recipient's user ID; the server constructs the canonical conversation ID from the authenticated user and recipient.",
-        "externalDocs": {
-          "url": "https://developer.x.com/"
-        },
-        "operationId": "unmuteChatConversation",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "The ID of the conversation: a group ID starting with `g`, the other user's ID for a 1:1 conversation, or both user IDs of a 1:1 conversation joined by a hyphen.",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^([0-9]{1,19}|[0-9]{1,19}-[0-9]{1,19}|g[0-9]{1,19})$"
-            },
-            "style": "simple"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UnmuteChatConversationRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "The request has succeeded.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/UnmuteChatConversationResponse"
-                }
-              }
-            }
-          },
-          "default": {
-            "description": "The request has failed.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              },
-              "application/problem+json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Problem"
-                }
-              }
-            }
-          }
-        }
-      },
       "post": {
         "security": [
           {
             "OAuth2UserToken": [
+              "dm.write",
               "users.read",
-              "tweet.read",
-              "dm.write"
+              "tweet.read"
             ]
           },
           {
@@ -5882,8 +5959,8 @@
           {
             "OAuth2UserToken": [
               "users.read",
-              "tweet.read",
-              "dm.read"
+              "dm.read",
+              "tweet.read"
             ]
           },
           {
@@ -5960,9 +6037,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.write",
               "users.read",
-              "tweet.read"
+              "tweet.read",
+              "dm.write"
             ]
           },
           {
@@ -6034,9 +6111,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "tweet.read",
               "dm.write",
-              "users.read",
-              "tweet.read"
+              "users.read"
             ]
           },
           {
@@ -6109,9 +6186,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.write",
+              "users.read",
               "tweet.read",
-              "users.read"
+              "dm.write"
             ]
           },
           {
@@ -6168,14 +6245,164 @@
         }
       }
     },
+    "/2/chat/conversations/{id}/unarchive": {
+      "post": {
+        "security": [
+          {
+            "OAuth2UserToken": [
+              "dm.write",
+              "tweet.read",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken": []
+          }
+        ],
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Unarchive a Chat Conversation",
+        "description": "Unarchives a Chat conversation for the authenticated user only. Unarchiving a conversation that is not archived changes nothing. Works for group and 1:1 conversations. For 1:1 conversations, provide the recipient's user ID; the server constructs the canonical conversation ID from the authenticated user and recipient.",
+        "externalDocs": {
+          "url": "https://developer.x.com/"
+        },
+        "operationId": "unarchiveChatConversation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the conversation: a group ID starting with `g`, the other user's ID for a 1:1 conversation, or both user IDs of a 1:1 conversation joined by a hyphen.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^([0-9]{1,19}|[0-9]{1,19}-[0-9]{1,19}|g[0-9]{1,19})$"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnarchiveChatConversationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnarchiveChatConversationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The request has failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/chat/conversations/{id}/unmute": {
+      "post": {
+        "security": [
+          {
+            "OAuth2UserToken": [
+              "tweet.read",
+              "users.read",
+              "dm.write"
+            ]
+          },
+          {
+            "UserToken": []
+          }
+        ],
+        "tags": [
+          "Chat"
+        ],
+        "summary": "Unmute a Chat Conversation",
+        "description": "Unmutes notifications for a Chat conversation for the authenticated user only. Works for group and 1:1 conversations. For 1:1 conversations, provide the recipient's user ID; the server constructs the canonical conversation ID from the authenticated user and recipient.",
+        "externalDocs": {
+          "url": "https://developer.x.com/"
+        },
+        "operationId": "unmuteChatConversation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the conversation: a group ID starting with `g`, the other user's ID for a 1:1 conversation, or both user IDs of a 1:1 conversation joined by a hyphen.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^([0-9]{1,19}|[0-9]{1,19}-[0-9]{1,19}|g[0-9]{1,19})$"
+            },
+            "style": "simple"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnmuteChatConversationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UnmuteChatConversationResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The request has failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/2/chat/conversations/{id}/unread": {
       "post": {
         "security": [
           {
             "OAuth2UserToken": [
               "users.read",
-              "tweet.read",
-              "dm.write"
+              "dm.write",
+              "tweet.read"
             ]
           },
           {
@@ -6516,8 +6743,8 @@
           {
             "OAuth2UserToken": [
               "users.read",
-              "tweet.read",
-              "dm.read"
+              "dm.read",
+              "tweet.read"
             ]
           },
           {
@@ -6680,9 +6907,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "tweet.read",
               "users.read",
-              "dm.write",
-              "tweet.read"
+              "dm.write"
             ]
           },
           {
@@ -6746,8 +6973,8 @@
           {
             "OAuth2UserToken": [
               "dm.read",
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -6959,9 +7186,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "tweet.read",
               "users.read",
-              "list.read",
-              "tweet.read"
+              "list.read"
             ]
           },
           {
@@ -7709,9 +7936,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "users.read",
-              "dm.write"
+              "dm.write",
+              "tweet.read"
             ]
           },
           {
@@ -7842,9 +8069,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "dm.read",
               "tweet.read",
-              "users.read",
-              "dm.read"
+              "users.read"
             ]
           },
           {
@@ -7967,9 +8194,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
+              "tweet.read",
               "dm.write",
-              "tweet.read"
+              "users.read"
             ]
           },
           {
@@ -8039,8 +8266,8 @@
           {
             "OAuth2UserToken": [
               "dm.write",
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -8108,9 +8335,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.read",
               "tweet.read",
-              "users.read"
+              "users.read",
+              "dm.read"
             ]
           },
           {
@@ -8233,8 +8460,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "dm.read",
+              "users.read",
               "tweet.read"
             ]
           },
@@ -8348,8 +8575,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.write",
-              "dm.read"
+              "dm.read",
+              "dm.write"
             ]
           },
           {
@@ -9092,9 +9319,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "list.read",
-              "tweet.read",
               "list.write",
+              "tweet.read",
+              "list.read",
               "users.read"
             ]
           },
@@ -9152,9 +9379,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "tweet.read",
               "users.read",
-              "list.write",
-              "tweet.read"
+              "list.write"
             ]
           },
           {
@@ -9213,9 +9440,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "tweet.read",
               "users.read",
-              "list.read",
-              "tweet.read"
+              "list.read"
             ]
           },
           {
@@ -9283,9 +9510,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "list.write",
               "tweet.read",
-              "users.read",
-              "list.write"
+              "users.read"
             ]
           },
           {
@@ -9356,9 +9583,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
+              "list.read",
               "tweet.read",
-              "list.read"
+              "users.read"
             ]
           },
           {
@@ -9451,8 +9678,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "list.read",
               "tweet.read",
+              "list.read",
               "users.read"
             ]
           },
@@ -9544,9 +9771,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "list.write",
               "tweet.read",
-              "users.read"
+              "users.read",
+              "list.write"
             ]
           },
           {
@@ -9614,9 +9841,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "list.write",
               "tweet.read",
-              "users.read"
+              "users.read",
+              "list.write"
             ]
           },
           {
@@ -9687,8 +9914,8 @@
           {
             "OAuth2UserToken": [
               "list.read",
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -11116,8 +11343,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -11568,6 +11795,201 @@
         }
       }
     },
+    "/2/posts/drafts": {
+      "get": {
+        "security": [
+          {
+            "OAuth2UserToken": [
+              "tweet.write",
+              "users.read",
+              "tweet.read"
+            ]
+          },
+          {
+            "UserToken": []
+          }
+        ],
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Get Post Drafts",
+        "description": "Returns the authenticated user's Post drafts, newest first, in the fields of the Create or Edit Post body. thread holds the Posts after the first. A draft with unsupported_content is not listed in full: do not publish it from this list or delete it unless the user asks. Needs the tweet.write scope.",
+        "operationId": "getPostDrafts",
+        "parameters": [
+          {
+            "name": "max_results",
+            "in": "query",
+            "description": "The maximum number of drafts to return.",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 100,
+              "format": "int32",
+              "default": 20
+            },
+            "style": "form"
+          },
+          {
+            "name": "pagination_token",
+            "in": "query",
+            "description": "The meta.next_token of the previous page.",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]{1,19}$"
+            },
+            "style": "form"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetPostDraftsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The request has failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [
+          {
+            "OAuth2UserToken": [
+              "tweet.write",
+              "tweet.read",
+              "users.read"
+            ]
+          },
+          {
+            "UserToken": []
+          }
+        ],
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Create Post Draft",
+        "description": "Saves a Post draft to the authenticated user's X account without publishing it. Takes the body of Create or Edit Post, of which a draft stores text, media with tagged users, a reply and the AI and paid partnership disclosures. Any other field that is set is a 400 that names it.",
+        "operationId": "createPostDraft",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePostDraftRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreatePostDraftResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The request has failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/2/posts/drafts/{id}": {
+      "delete": {
+        "security": [
+          {
+            "OAuth2UserToken": [
+              "tweet.write",
+              "users.read",
+              "tweet.read"
+            ]
+          },
+          {
+            "UserToken": []
+          }
+        ],
+        "tags": [
+          "Posts"
+        ],
+        "summary": "Delete Post Draft",
+        "description": "Deletes one of the authenticated user's Post drafts by its ID. The whole draft is deleted, including any part Get Post Drafts does not list, and cannot be restored. An ID that is not one of the user's drafts also returns deleted: true.",
+        "operationId": "deletePostDraft",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The ID of the draft to delete.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9]{1,19}$"
+            },
+            "style": "simple"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletePostDraftResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The request has failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/2/region": {
       "get": {
         "security": [
@@ -11838,8 +12260,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "broadcast.read",
-              "broadcast.write"
+              "broadcast.write",
+              "broadcast.read"
             ]
           },
           {
@@ -11968,9 +12390,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "users.read",
               "space.read",
-              "tweet.read",
-              "users.read"
+              "tweet.read"
             ]
           },
           {
@@ -12047,9 +12469,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
+              "space.read",
               "tweet.read",
-              "space.read"
+              "users.read"
             ]
           },
           {
@@ -12127,8 +12549,8 @@
           {
             "OAuth2UserToken": [
               "users.read",
-              "tweet.read",
-              "space.read"
+              "space.read",
+              "tweet.read"
             ]
           },
           {
@@ -12304,9 +12726,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "space.read",
               "tweet.read",
-              "users.read",
-              "space.read"
+              "users.read"
             ]
           }
         ],
@@ -12398,9 +12820,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "space.read",
+              "users.read",
               "tweet.read",
-              "users.read"
+              "space.read"
             ]
           },
           {
@@ -12571,6 +12993,56 @@
         }
       }
     },
+    "/2/trends/locations": {
+      "get": {
+        "security": [
+          {
+            "OAuth2UserToken": []
+          },
+          {
+            "BearerToken": []
+          }
+        ],
+        "tags": [
+          "Trends"
+        ],
+        "summary": "Get Trend Locations",
+        "description": "Retrieves every location that has trends. Each location has a WOEID to pass to `GET /2/trends/by/woeid/{woeid}`. The list is short and is returned whole, so the route takes no paging parameters.",
+        "operationId": "getTrendsLocations",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/TrendLocationFieldsParameter"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetTrendsLocationsResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "The request has failed.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              },
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Problem"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/2/tweets": {
       "get": {
         "security": [
@@ -12660,9 +13132,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "tweet.write",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -16359,9 +16831,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "users.read",
-              "tweet.write"
+              "tweet.write",
+              "tweet.read"
             ]
           },
           {
@@ -16417,8 +16889,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -16497,9 +16969,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "like.read",
+              "tweet.read",
               "users.read",
-              "tweet.read"
+              "like.read"
             ]
           },
           {
@@ -16590,8 +17062,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -16713,8 +17185,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -16912,9 +17384,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "tweet.read",
               "tweet.moderate.write",
-              "users.read",
-              "tweet.read"
+              "users.read"
             ]
           },
           {
@@ -17245,8 +17717,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -17469,8 +17941,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "follows.read",
+              "tweet.read",
               "users.read"
             ]
           },
@@ -17637,8 +18109,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -17690,9 +18162,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
+              "dm.read",
               "tweet.read",
-              "dm.read"
+              "users.read"
             ]
           },
           {
@@ -17763,8 +18235,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "timeline.read",
-              "tweet.read"
+              "tweet.read",
+              "timeline.read"
             ]
           },
           {
@@ -18023,8 +18495,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -18205,9 +18677,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "users.read",
               "tweet.read",
-              "block.write",
-              "users.read"
+              "block.write"
             ]
           },
           {
@@ -18275,9 +18747,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "bookmark.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -18524,8 +18996,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "bookmark.write",
-              "users.read"
+              "users.read",
+              "bookmark.write"
             ]
           }
         ],
@@ -18591,8 +19063,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "bookmark.read",
+              "users.read",
               "tweet.read"
             ]
           },
@@ -18684,9 +19156,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "bookmark.write",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           }
         ],
@@ -18820,8 +19292,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "broadcast.read",
-              "broadcast.write"
+              "broadcast.write",
+              "broadcast.read"
             ]
           },
           {
@@ -18889,8 +19361,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "broadcast.read",
-              "broadcast.write"
+              "broadcast.write",
+              "broadcast.read"
             ]
           },
           {
@@ -19104,8 +19576,8 @@
           {
             "OAuth2UserToken": [
               "users.read",
-              "tweet.read",
-              "dm.write"
+              "dm.write",
+              "tweet.read"
             ]
           },
           {
@@ -19223,9 +19695,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "users.read",
               "tweet.read",
-              "list.read",
-              "users.read"
+              "list.read"
             ]
           },
           {
@@ -19458,9 +19930,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "follows.read",
               "users.read",
-              "tweet.read",
-              "follows.read"
+              "tweet.read"
             ]
           },
           {
@@ -19554,9 +20026,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "follows.read",
               "users.read",
-              "tweet.read",
-              "follows.read"
+              "tweet.read"
             ]
           },
           {
@@ -19648,8 +20120,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "follows.write",
               "users.read",
+              "follows.write",
               "tweet.read"
             ]
           },
@@ -19719,8 +20191,8 @@
           {
             "OAuth2UserToken": [
               "tweet.read",
-              "like.read",
-              "users.read"
+              "users.read",
+              "like.read"
             ]
           },
           {
@@ -19889,9 +20361,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "like.write",
               "tweet.read",
-              "users.read",
-              "like.write"
+              "users.read"
             ]
           },
           {
@@ -19958,8 +20430,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "list.read",
               "tweet.read",
+              "list.read",
               "users.read"
             ]
           },
@@ -20052,8 +20524,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
-              "tweet.read"
+              "tweet.read",
+              "users.read"
             ]
           },
           {
@@ -20197,8 +20669,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
               "users.read",
+              "tweet.read",
               "mute.read"
             ]
           },
@@ -20286,8 +20758,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "mute.write",
               "users.read",
+              "mute.write",
               "tweet.read"
             ]
           },
@@ -20357,8 +20829,8 @@
           {
             "OAuth2UserToken": [
               "tweet.read",
-              "users.read",
-              "list.read"
+              "list.read",
+              "users.read"
             ]
           },
           {
@@ -20518,8 +20990,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "users.read",
               "tweet.read",
+              "users.read",
               "list.write"
             ]
           },
@@ -20591,9 +21063,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "tweet.read",
               "users.read",
-              "list.write",
-              "tweet.read"
+              "list.write"
             ]
           },
           {
@@ -20663,9 +21135,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
+              "users.read",
               "dm.read",
-              "users.read"
+              "tweet.read"
             ]
           },
           {
@@ -20728,8 +21200,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "dm.write",
               "users.read",
+              "dm.write",
               "tweet.read"
             ]
           },
@@ -20801,9 +21273,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.write",
               "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.write"
             ]
           },
           {
@@ -20874,9 +21346,9 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
+              "tweet.write",
               "users.read",
-              "tweet.write"
+              "tweet.read"
             ]
           },
           {
@@ -21284,8 +21756,8 @@
         "security": [
           {
             "OAuth2UserToken": [
-              "tweet.read",
-              "users.read"
+              "users.read",
+              "tweet.read"
             ]
           },
           {
@@ -21680,9 +22152,9 @@
         "security": [
           {
             "OAuth2UserToken": [
+              "users.read",
               "follows.write",
-              "tweet.read",
-              "users.read"
+              "tweet.read"
             ]
           },
           {
@@ -21753,8 +22225,8 @@
           {
             "OAuth2UserToken": [
               "users.read",
-              "tweet.read",
-              "mute.write"
+              "mute.write",
+              "tweet.read"
             ]
           },
           {
@@ -22456,6 +22928,9 @@
             "$ref": "#/components/schemas/NewsActivityResponsePayload"
           },
           {
+            "$ref": "#/components/schemas/TrendActivityResponsePayload"
+          },
+          {
             "$ref": "#/components/schemas/FollowActivityResponsePayload"
           },
           {
@@ -22491,7 +22966,8 @@
             "profile.update.url": "#/components/schemas/ProfileUpdateActivityResponsePayload",
             "profile.update.verified_badge": "#/components/schemas/ProfileUpdateActivityResponsePayload",
             "subscriptions.subscribe": "#/components/schemas/FollowActivityResponsePayload",
-            "subscriptions.unsubscribe": "#/components/schemas/FollowActivityResponsePayload"
+            "subscriptions.unsubscribe": "#/components/schemas/FollowActivityResponsePayload",
+            "trends.new": "#/components/schemas/TrendActivityResponsePayload"
           }
         }
       },
@@ -22509,6 +22985,13 @@
           },
           "keyword": {
             "$ref": "#/components/schemas/Keyword"
+          },
+          "qualifiers": {
+            "type": "object",
+            "description": "Event-specific string predicates applied to the subscription.",
+            "additionalProperties": {
+              "type": "string"
+            }
           },
           "user_id": {
             "$ref": "#/components/schemas/UserId"
@@ -24387,6 +24870,12 @@
           "id": {
             "type": "string"
           },
+          "relay_source": {
+            "type": "string"
+          },
+          "relay_user": {
+            "type": "string"
+          },
           "reply_to": {
             "type": "string"
           },
@@ -25261,6 +25750,7 @@
               "profile.update.verified_badge",
               "profile.update.affiliate_badge",
               "profile.update.handle",
+              "trends.new",
               "news.new",
               "follow.follow",
               "follow.unfollow",
@@ -26880,6 +27370,347 @@
           }
         }
       },
+      "CreatePostDraftClip": {
+        "type": "object",
+        "required": [
+          "post_id",
+          "start_seconds",
+          "end_seconds"
+        ],
+        "properties": {
+          "end_seconds": {
+            "type": "integer",
+            "description": "Second of the video at which the clip ends. A clip is 5 to 60 seconds long and at most 30% of the video.",
+            "minimum": 1
+          },
+          "post_id": {
+            "type": "string",
+            "description": "The ID of the Post whose video is clipped. The Post must have exactly one video, longer than 2 minutes.",
+            "pattern": "^[0-9]{1,19}$"
+          },
+          "start_seconds": {
+            "type": "integer",
+            "description": "Second of the video at which the clip starts.",
+            "minimum": 0
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePostDraftEditOptions": {
+        "type": "object",
+        "required": [
+          "previous_post_id"
+        ],
+        "properties": {
+          "previous_post_id": {
+            "type": "string",
+            "description": "The ID of the Post being edited.",
+            "pattern": "^[0-9]{1,19}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePostDraftGeo": {
+        "type": "object",
+        "required": [
+          "place_id"
+        ],
+        "properties": {
+          "place_id": {
+            "type": "string",
+            "description": "Place ID for geo tagging."
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePostDraftMedia": {
+        "type": "object",
+        "required": [
+          "media_ids"
+        ],
+        "properties": {
+          "call_to_actions": {
+            "description": "Call-to-action button rendered on the media entity.",
+            "$ref": "#/components/schemas/CreatePostDraftMediaCallToActions"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description for the media, rendered on the Post card for video and Amplify content."
+          },
+          "embeddable": {
+            "type": "boolean",
+            "description": "When true, the media's asset URLs do not expire and external syndicated playback is allowed."
+          },
+          "media_ids": {
+            "type": "array",
+            "description": "Media IDs to attach to the Post, in the order given.",
+            "minItems": 1,
+            "maxItems": 20,
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9]{1,19}$"
+            }
+          },
+          "preview_media_id": {
+            "type": "string",
+            "description": "Media id whose asset is used as the preview image.",
+            "pattern": "^[0-9]{1,19}$"
+          },
+          "tagged_user_ids": {
+            "type": "array",
+            "description": "User IDs tagged in the media.",
+            "maxItems": 10,
+            "items": {
+              "type": "string",
+              "pattern": "^[0-9]{1,19}$"
+            }
+          },
+          "title": {
+            "type": "string",
+            "description": "Title for the media, rendered on the Post card for video and Amplify content."
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePostDraftMediaCallToActions": {
+        "type": "object",
+        "properties": {
+          "app_install": {
+            "description": "App Install CTA. At least one store id should be provided.",
+            "$ref": "#/components/schemas/CreatePostDraftMediaCallToActionsAppInstall"
+          },
+          "visit_site": {
+            "description": "Visit Site CTA.",
+            "$ref": "#/components/schemas/CreatePostDraftMediaCallToActionsVisitSite"
+          },
+          "watch_now": {
+            "description": "Watch Now CTA.",
+            "$ref": "#/components/schemas/CreatePostDraftMediaCallToActionsWatchNow"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePostDraftMediaCallToActionsAppInstall": {
+        "type": "object",
+        "properties": {
+          "app_store_id": {
+            "type": "string",
+            "description": "Apple App Store iPhone app id."
+          },
+          "ipad_app_store_id": {
+            "type": "string",
+            "description": "Apple App Store iPad app id."
+          },
+          "play_store_id": {
+            "type": "string",
+            "description": "Google Play Store app id."
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePostDraftMediaCallToActionsVisitSite": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "HTTPS URL the CTA links to."
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePostDraftMediaCallToActionsWatchNow": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "description": "HTTPS URL the CTA links to."
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePostDraftPoll": {
+        "type": "object",
+        "required": [
+          "options",
+          "duration_minutes"
+        ],
+        "properties": {
+          "duration_minutes": {
+            "type": "integer",
+            "description": "Duration of the poll in minutes.",
+            "minimum": 5,
+            "maximum": 10080
+          },
+          "options": {
+            "type": "array",
+            "description": "Poll options (2-4 choices, 1-25 characters each).",
+            "minItems": 2,
+            "maxItems": 4,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 25
+            }
+          },
+          "reply_settings": {
+            "type": "string",
+            "description": "Who can reply to the poll Tweet. Accepted for compatibility; it carries no backend argument and is dropped before the mutation is issued (see `translate_body`).",
+            "enum": [
+              "following",
+              "mentionedUsers",
+              "subscribers",
+              "verified"
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePostDraftReply": {
+        "type": "object",
+        "required": [
+          "in_reply_to_tweet_id"
+        ],
+        "properties": {
+          "auto_populate_reply_metadata": {
+            "type": "boolean",
+            "description": "If true, reply metadata is automatically populated. Accepted for compatibility; it carries no backend argument and is dropped before the mutation is issued (see `translate_body`)."
+          },
+          "exclude_reply_user_ids": {
+            "type": "array",
+            "description": "User IDs to exclude from the reply thread.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "in_reply_to_tweet_id": {
+            "type": "string",
+            "description": "The ID of the tweet being replied to.",
+            "pattern": "^[0-9]{1,19}$"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePostDraftRequest": {
+        "type": "object",
+        "properties": {
+          "card_uri": {
+            "type": "string",
+            "description": "Card URI parameter."
+          },
+          "clip": {
+            "description": "Clip of another Post's video to share. Cannot be combined with media, a poll, a card, a quoted Post or a direct message deep link.",
+            "$ref": "#/components/schemas/CreatePostDraftClip"
+          },
+          "community_id": {
+            "type": "string",
+            "description": "Community to post the tweet to.",
+            "pattern": "^[0-9]{1,19}$"
+          },
+          "direct_message_deep_link": {
+            "type": "string",
+            "description": "Direct message deep link."
+          },
+          "edit_options": {
+            "description": "Edit an existing tweet rather than creating a new one.",
+            "$ref": "#/components/schemas/CreatePostDraftEditOptions"
+          },
+          "for_super_followers_only": {
+            "type": "boolean",
+            "description": "Restrict tweet to super followers."
+          },
+          "geo": {
+            "description": "Geo location for the tweet.",
+            "$ref": "#/components/schemas/CreatePostDraftGeo"
+          },
+          "made_with_ai": {
+            "type": "boolean",
+            "description": "Disclose that the tweet contains AI-generated media."
+          },
+          "media": {
+            "description": "Media attachments.",
+            "$ref": "#/components/schemas/CreatePostDraftMedia"
+          },
+          "nullcast": {
+            "type": "boolean",
+            "description": "If true, the tweet is not shown in the public timeline."
+          },
+          "paid_partnership": {
+            "type": "boolean",
+            "description": "Disclose that the tweet is a paid partnership."
+          },
+          "poll": {
+            "description": "Poll configuration.",
+            "$ref": "#/components/schemas/CreatePostDraftPoll"
+          },
+          "quote_tweet_id": {
+            "type": "string",
+            "description": "Tweet ID to quote.",
+            "pattern": "^[0-9]{1,19}$"
+          },
+          "reply": {
+            "description": "Tweet reply configuration.",
+            "$ref": "#/components/schemas/CreatePostDraftReply"
+          },
+          "reply_settings": {
+            "type": "string",
+            "description": "Who can reply to this tweet.",
+            "enum": [
+              "following",
+              "mentionedUsers",
+              "subscribers",
+              "verified"
+            ]
+          },
+          "share_with_followers": {
+            "type": "boolean",
+            "description": "Share an exclusive (super-follower) tweet with all followers."
+          },
+          "text": {
+            "type": "string",
+            "description": "Text of the Post. Required unless media is provided. At most 280 characters unless the account has X Premium.",
+            "default": ""
+          }
+        },
+        "additionalProperties": false
+      },
+      "CreatePostDraftResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/CreatePostDraftResponseData"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "CreatePostDraftResponseData": {
+        "type": "object",
+        "required": [
+          "id",
+          "text"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the saved draft.",
+            "pattern": "^[0-9]{1,19}$"
+          },
+          "text": {
+            "type": "string",
+            "description": "The text of the saved draft."
+          }
+        }
+      },
       "CreatePostsClip": {
         "type": "object",
         "required": [
@@ -28398,6 +29229,128 @@
           }
         }
       },
+      "DeleteChatConversationLegacyActionSignatures": {
+        "type": "object",
+        "required": [
+          "message_id",
+          "encoded_message_event_detail",
+          "message_event_signature"
+        ],
+        "properties": {
+          "encoded_message_event_detail": {
+            "type": "string",
+            "description": "Base64-encoded Thrift MessageEventDetail for the signed action.",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9+/=_-]+$"
+          },
+          "message_event_signature": {
+            "description": "Message event signature supplied with an action signature.",
+            "$ref": "#/components/schemas/DeleteChatConversationLegacyActionSignaturesMessageEventSignature"
+          },
+          "message_id": {
+            "type": "string",
+            "description": "Client-generated ID of the message being signed.",
+            "minLength": 1
+          },
+          "signature_payload": {
+            "type": "string",
+            "description": "Payload string the client signed; used only in server-side failure logs."
+          }
+        }
+      },
+      "DeleteChatConversationLegacyActionSignaturesMessageEventSignature": {
+        "type": "object",
+        "required": [
+          "signature",
+          "public_key_version",
+          "signature_version"
+        ],
+        "properties": {
+          "message_signing_key_info_list": {
+            "type": "array",
+            "description": "List of signing key information for message verification.",
+            "items": {
+              "$ref": "#/components/schemas/DeleteChatConversationLegacyActionSignaturesMessageEventSignatureMessageSigningKeyInfoList"
+            }
+          },
+          "public_key_version": {
+            "type": "string",
+            "description": "The version of the public key used for signing.",
+            "pattern": "^[0-9]+$"
+          },
+          "signature": {
+            "type": "string",
+            "description": "The signature of the message event.",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9+/=_-]+$"
+          },
+          "signature_version": {
+            "type": "string",
+            "description": "The version of the signature algorithm.",
+            "pattern": "^[0-9]+$"
+          },
+          "signing_public_key": {
+            "type": "string",
+            "description": "The public key used for signing."
+          }
+        }
+      },
+      "DeleteChatConversationLegacyActionSignaturesMessageEventSignatureMessageSigningKeyInfoList": {
+        "type": "object",
+        "properties": {
+          "member_id": {
+            "type": "string",
+            "description": "The member ID associated with this signing key."
+          },
+          "public_key_version": {
+            "type": "string",
+            "description": "The version of the public key."
+          },
+          "signing_public_key": {
+            "type": "string",
+            "description": "The signing public key."
+          }
+        }
+      },
+      "DeleteChatConversationLegacyRequest": {
+        "type": "object",
+        "properties": {
+          "action_signatures": {
+            "type": "array",
+            "description": "Signatures for this action, forwarded in the order they are sent.",
+            "items": {
+              "$ref": "#/components/schemas/DeleteChatConversationLegacyActionSignatures"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "DeleteChatConversationLegacyResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DeleteChatConversationLegacyResponseData"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "DeleteChatConversationLegacyResponseData": {
+        "type": "object",
+        "required": [
+          "deleted"
+        ],
+        "properties": {
+          "deleted": {
+            "type": "boolean",
+            "description": "Whether the conversation was deleted."
+          }
+        }
+      },
       "DeleteChatConversationMessageTtlActionSignatures": {
         "type": "object",
         "required": [
@@ -28975,6 +29928,32 @@
           "deleted": {
             "type": "boolean",
             "description": "Indicates whether the subtitles were deleted."
+          }
+        }
+      },
+      "DeletePostDraftResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DeletePostDraftResponseData"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "DeletePostDraftResponseData": {
+        "type": "object",
+        "required": [
+          "deleted"
+        ],
+        "properties": {
+          "deleted": {
+            "type": "boolean",
+            "description": "Whether the draft is gone from the user's drafts."
           }
         }
       },
@@ -32579,6 +33558,192 @@
           }
         }
       },
+      "GetPostDraftsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GetPostDraftsResponseData"
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "next_token": {
+                "type": "string",
+                "description": "Pagination token for the next page of results."
+              },
+              "result_count": {
+                "type": "integer",
+                "description": "Number of items in the data array.",
+                "format": "int32"
+              }
+            }
+          }
+        }
+      },
+      "GetPostDraftsResponseData": {
+        "type": "object",
+        "required": [
+          "id",
+          "text"
+        ],
+        "properties": {
+          "created_at": {
+            "type": "string",
+            "description": "When the draft was saved (RFC 3339)."
+          },
+          "id": {
+            "type": "string",
+            "description": "Unique identifier of the draft.",
+            "pattern": "^[0-9]{1,19}$"
+          },
+          "made_with_ai": {
+            "type": "boolean",
+            "description": "Whether the draft discloses AI-generated media."
+          },
+          "media": {
+            "description": "Media attached to the Post.",
+            "$ref": "#/components/schemas/GetPostDraftsResponseDataMedia"
+          },
+          "paid_partnership": {
+            "type": "boolean",
+            "description": "Whether the draft discloses a paid partnership."
+          },
+          "quote_tweet_id": {
+            "type": "string",
+            "description": "The ID of the Post this Post quotes."
+          },
+          "reply": {
+            "description": "Present when the draft is a reply.",
+            "$ref": "#/components/schemas/GetPostDraftsResponseDataReply"
+          },
+          "text": {
+            "type": "string",
+            "description": "The text of the draft. Empty for a draft that only has media."
+          },
+          "thread": {
+            "type": "array",
+            "description": "For a draft that is a thread, the Posts after the first one, in order. Each replies to the Post before it.",
+            "items": {
+              "$ref": "#/components/schemas/GetPostDraftsResponseDataThread"
+            }
+          },
+          "unsupported_content": {
+            "type": "array",
+            "description": "Parts of the draft that the other fields do not carry. Present only when the draft holds more than is listed.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "text_formatting",
+                "inline_media",
+                "media_tags",
+                "possibly_sensitive",
+                "attachment",
+                "cashtag_attachment"
+              ]
+            }
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "When the draft last changed (RFC 3339)."
+          }
+        }
+      },
+      "GetPostDraftsResponseDataMedia": {
+        "type": "object",
+        "required": [
+          "media_ids"
+        ],
+        "properties": {
+          "media_ids": {
+            "type": "array",
+            "description": "Media IDs attached to the Post, in order.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tagged_user_ids": {
+            "type": "array",
+            "description": "IDs of the users tagged in any of the media.",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetPostDraftsResponseDataReply": {
+        "type": "object",
+        "required": [
+          "in_reply_to_tweet_id"
+        ],
+        "properties": {
+          "exclude_reply_user_ids": {
+            "type": "array",
+            "description": "IDs of the users the reply does not mention.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "in_reply_to_tweet_id": {
+            "type": "string",
+            "description": "The ID of the Post the draft replies to."
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetPostDraftsResponseDataThread": {
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "properties": {
+          "media": {
+            "description": "Media attached to the Post.",
+            "$ref": "#/components/schemas/GetPostDraftsResponseDataThreadMedia"
+          },
+          "quote_tweet_id": {
+            "type": "string",
+            "description": "The ID of the Post this Post quotes."
+          },
+          "text": {
+            "type": "string",
+            "description": "The text of the Post. Empty when it only has media."
+          }
+        },
+        "additionalProperties": false
+      },
+      "GetPostDraftsResponseDataThreadMedia": {
+        "type": "object",
+        "required": [
+          "media_ids"
+        ],
+        "properties": {
+          "media_ids": {
+            "type": "array",
+            "description": "Media IDs attached to the Post, in order.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tagged_user_ids": {
+            "type": "array",
+            "description": "IDs of the users tagged in any of the media.",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
       "GetPostsAnalyticsResponse": {
         "type": "object",
         "properties": {
@@ -33382,6 +34547,23 @@
               "location": {
                 "type": "object"
               }
+            }
+          }
+        }
+      },
+      "GetTrendsLocationsResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrendLocation"
+            }
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Problem"
             }
           }
         }
@@ -40498,6 +41680,11 @@
             "description": "The platform this message was relayed from, shown as that platform's icon next to the message: `youtube`, `twitch`, `kick`, `facebook`, `rumble`, `tiktok` or `instagram`. Only apps approved for chat relay may set it.",
             "maxLength": 32
           },
+          "relay_user": {
+            "type": "string",
+            "description": "The name of the person who wrote this message on the platform it was relayed from, shown next to that platform's icon. Display text only, not an X account. Requires `relay_source`. Links are not allowed.",
+            "maxLength": 64
+          },
           "reply_to": {
             "type": "string",
             "description": "Message id to reply to, returned as timestamp when sent.",
@@ -41153,6 +42340,89 @@
           }
         }
       },
+      "TrendActivityLocation": {
+        "type": "object",
+        "description": "The location where the trend surfaced.",
+        "required": [
+          "woeid",
+          "name"
+        ],
+        "properties": {
+          "country": {
+            "type": "string"
+          },
+          "country_code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "parent_id": {
+            "type": "integer"
+          },
+          "place_type": {
+            "type": "string",
+            "enum": [
+              "town",
+              "country",
+              "supername"
+            ]
+          },
+          "woeid": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrendActivityResponsePayload": {
+        "type": "object",
+        "description": "A newly surfaced trend in a WOEID location.",
+        "required": [
+          "trend_name",
+          "location"
+        ],
+        "properties": {
+          "location": {
+            "$ref": "#/components/schemas/TrendActivityLocation"
+          },
+          "trend_name": {
+            "type": "string"
+          },
+          "tweet_count": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrendLocation": {
+        "type": "object",
+        "properties": {
+          "country": {
+            "type": "string",
+            "description": "The country the location is in. Omitted for a location that is not in one country, such as Worldwide."
+          },
+          "country_code": {
+            "type": "string",
+            "description": "The two-letter code of the location's country, such as `US`. Omitted when `country` is."
+          },
+          "name": {
+            "type": "string",
+            "description": "The location's name."
+          },
+          "parent_id": {
+            "type": "integer",
+            "description": "The WOEID of the location that contains this one, such as a town's country. Omitted for a location with no parent."
+          },
+          "place_type": {
+            "type": "string",
+            "description": "The kind of place: `town`, `country`, or `supername` (Worldwide). Omitted for a location whose kind is not known."
+          },
+          "woeid": {
+            "type": "integer",
+            "description": "The location's WOEID. Pass it to `GET /2/trends/by/woeid/{woeid}`."
+          }
+        }
+      },
       "UnarchiveChatConversationActionSignatures": {
         "type": "object",
         "required": [
@@ -41233,6 +42503,128 @@
           "signing_public_key": {
             "type": "string",
             "description": "The signing public key."
+          }
+        }
+      },
+      "UnarchiveChatConversationLegacyActionSignatures": {
+        "type": "object",
+        "required": [
+          "message_id",
+          "encoded_message_event_detail",
+          "message_event_signature"
+        ],
+        "properties": {
+          "encoded_message_event_detail": {
+            "type": "string",
+            "description": "Base64-encoded Thrift MessageEventDetail for the signed action.",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9+/=_-]+$"
+          },
+          "message_event_signature": {
+            "description": "Message event signature supplied with an action signature.",
+            "$ref": "#/components/schemas/UnarchiveChatConversationLegacyActionSignaturesMessageEventSignature"
+          },
+          "message_id": {
+            "type": "string",
+            "description": "Client-generated ID of the message being signed.",
+            "minLength": 1
+          },
+          "signature_payload": {
+            "type": "string",
+            "description": "Payload string the client signed; used only in server-side failure logs."
+          }
+        }
+      },
+      "UnarchiveChatConversationLegacyActionSignaturesMessageEventSignature": {
+        "type": "object",
+        "required": [
+          "signature",
+          "public_key_version",
+          "signature_version"
+        ],
+        "properties": {
+          "message_signing_key_info_list": {
+            "type": "array",
+            "description": "List of signing key information for message verification.",
+            "items": {
+              "$ref": "#/components/schemas/UnarchiveChatConversationLegacyActionSignaturesMessageEventSignatureMessageSigningKeyInfoList"
+            }
+          },
+          "public_key_version": {
+            "type": "string",
+            "description": "The version of the public key used for signing.",
+            "pattern": "^[0-9]+$"
+          },
+          "signature": {
+            "type": "string",
+            "description": "The signature of the message event.",
+            "minLength": 1,
+            "pattern": "^[A-Za-z0-9+/=_-]+$"
+          },
+          "signature_version": {
+            "type": "string",
+            "description": "The version of the signature algorithm.",
+            "pattern": "^[0-9]+$"
+          },
+          "signing_public_key": {
+            "type": "string",
+            "description": "The public key used for signing."
+          }
+        }
+      },
+      "UnarchiveChatConversationLegacyActionSignaturesMessageEventSignatureMessageSigningKeyInfoList": {
+        "type": "object",
+        "properties": {
+          "member_id": {
+            "type": "string",
+            "description": "The member ID associated with this signing key."
+          },
+          "public_key_version": {
+            "type": "string",
+            "description": "The version of the public key."
+          },
+          "signing_public_key": {
+            "type": "string",
+            "description": "The signing public key."
+          }
+        }
+      },
+      "UnarchiveChatConversationLegacyRequest": {
+        "type": "object",
+        "properties": {
+          "action_signatures": {
+            "type": "array",
+            "description": "Signatures for this action, forwarded in the order they are sent.",
+            "items": {
+              "$ref": "#/components/schemas/UnarchiveChatConversationLegacyActionSignatures"
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "UnarchiveChatConversationLegacyResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UnarchiveChatConversationLegacyResponseData"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "UnarchiveChatConversationLegacyResponseData": {
+        "type": "object",
+        "required": [
+          "archived"
+        ],
+        "properties": {
+          "archived": {
+            "type": "boolean",
+            "description": "Whether the conversation is archived for the authenticated user."
           }
         }
       },
@@ -41840,6 +43232,97 @@
           "updated": {
             "type": "boolean",
             "description": "Whether the bot was updated."
+          }
+        }
+      },
+      "UpdateBroadcastRequest": {
+        "type": "object",
+        "properties": {
+          "chat_option": {
+            "type": "integer",
+            "description": "Who can chat: 0 default, 1 chat off, 2 everyone, 3 verified accounts, 4 accounts the host follows, 5 the host's subscribers, 6 accounts followed by an account the host follows.",
+            "minimum": 0,
+            "maximum": 6
+          },
+          "live_category_id": {
+            "type": "string",
+            "description": "New live category, e.g. `gaming`. Ids come from GET /2/broadcasts/categories; an unknown id is a 400. An empty string removes the broadcast's category.",
+            "maxLength": 64
+          },
+          "title": {
+            "type": "string",
+            "description": "New broadcast title.",
+            "minLength": 1
+          }
+        },
+        "additionalProperties": false
+      },
+      "UpdateBroadcastResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UpdateBroadcastResponseData"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "UpdateBroadcastResponseData": {
+        "type": "object",
+        "required": [
+          "id",
+          "broadcast_id",
+          "state",
+          "share_url"
+        ],
+        "properties": {
+          "broadcast_id": {
+            "type": "string",
+            "description": "Broadcast id; the same as `id`."
+          },
+          "chat_option": {
+            "type": "integer",
+            "description": "Who can chat: 0 default, 1 chat off, 2 everyone, 3 verified accounts, 4 accounts the host follows, 5 the host's subscribers, 6 accounts followed by an account the host follows."
+          },
+          "id": {
+            "type": "string",
+            "description": "Broadcast id."
+          },
+          "language": {
+            "type": "string",
+            "description": "Broadcast language."
+          },
+          "live_category_id": {
+            "type": "string",
+            "description": "The broadcast's live category. Missing when it has none."
+          },
+          "media_key": {
+            "type": "string",
+            "description": "Media key of the broadcast."
+          },
+          "share_url": {
+            "type": "string",
+            "description": "The broadcast's watch page."
+          },
+          "start_ms": {
+            "type": "string",
+            "description": "Start time, milliseconds since Unix epoch (decimal string)."
+          },
+          "state": {
+            "type": "string",
+            "description": "Broadcast state, `RUNNING` once live."
+          },
+          "title": {
+            "type": "string",
+            "description": "Broadcast title."
+          },
+          "tweet_id": {
+            "type": "string",
+            "description": "Id of the Post announcing the broadcast. Missing when the Post hasn't been created yet, was suppressed with `should_not_tweet`, or could not be created."
           }
         }
       },
@@ -44933,6 +46416,8 @@
               "broadcast_id",
               "created_at_ms",
               "id",
+              "relay_source",
+              "relay_user",
               "reply_to",
               "text"
             ]
@@ -45925,6 +47410,31 @@
             "enum": [
               "trend_name",
               "tweet_count"
+            ]
+          }
+        },
+        "explode": false,
+        "style": "form"
+      },
+      "TrendLocationFieldsParameter": {
+        "name": "trend_location.fields",
+        "in": "query",
+        "description": "A comma separated list of TrendLocation fields to display.",
+        "required": false,
+        "schema": {
+          "type": "array",
+          "description": "The fields available for a TrendLocation object.",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "country",
+              "country_code",
+              "name",
+              "parent_id",
+              "place_type",
+              "woeid"
             ]
           }
         },
