@@ -1,12 +1,13 @@
 /**
- * Auto-generated tests for the EventDrivenStream async iterator.
- * Ensures queued events are delivered before stream close or error completes iteration.
+ * Auto-generated tests for EventDrivenStream.
+ * Ensures queued events are delivered before stream close or error completes iteration,
+ * heartbeats surface as keepAlive events, and idleTimeoutMs recovers stalled connections.
  *
  * Generated automatically - do not edit manually.
  */
 
 import { describe, it, expect, afterEach, jest } from '@jest/globals';
-import { EventDrivenStream } from '../src/stream/event_driven_stream.js';
+import { EventDrivenStream, StreamIdleTimeoutError } from '../src/stream/event_driven_stream.js';
 
 const encoder = new TextEncoder();
 
@@ -29,6 +30,21 @@ const connect = async () => {
 };
 
 const nextTick = () => new Promise(resolve => setTimeout(resolve, 0));
+const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+const controllableSource = () => {
+  let controller!: ReadableStreamDefaultController<Uint8Array>;
+  let cancelled = false;
+  const source = new ReadableStream<Uint8Array>({
+    start(c) {
+      controller = c;
+    },
+    cancel() {
+      cancelled = true;
+    },
+  });
+  return { source, controller, wasCancelled: () => cancelled };
+};
 
 describe('EventDrivenStream async iterator', () => {
   afterEach(() => {
@@ -170,5 +186,123 @@ describe('EventDrivenStream async iterator', () => {
     expect(collected).toEqual([]);
     expect(leakedStreamCancelled).toBe(true);
     expect(errors).toEqual([]);
+  });
+});
+
+describe('EventDrivenStream keep-alive and idle timeout', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('emits keepAlive for the bare-newline heartbeat', async () => {
+    const { source, controller } = controllableSource();
+    const stream = new EventDrivenStream();
+    const keepAlives: unknown[] = [];
+    stream.on('keepAlive', (event: unknown) => keepAlives.push(event));
+    await stream.connect(source);
+
+    controller.enqueue(encoder.encode('\r\n\n'));
+    await sleep(10);
+    stream.close();
+
+    expect(keepAlives).toEqual([{ data: null }, { data: null }]);
+  });
+
+  it('reconnects when a connection goes silent without closing', async () => {
+    const first = controllableSource();
+    const replacement = new ReadableStream<Uint8Array>({
+      start(c) {
+        c.enqueue(encoder.encode(NDJSON_3_POSTS));
+        c.close();
+      },
+    });
+    const stream = new EventDrivenStream({
+      autoReconnect: true,
+      reconnectDelayMs: 1,
+      idleTimeoutMs: 50,
+      reconnectFactory: async () => replacement,
+    });
+    const reconnects: Array<{ error?: Error }> = [];
+    stream.on('reconnect', (event: { error?: Error }) => reconnects.push(event));
+    await stream.connect(first.source);
+
+    // Attach the iterator only after the replacement has delivered and closed
+    await sleep(120);
+
+    const ids: string[] = [];
+    for await (const ev of stream) {
+      ids.push(ev.data.id);
+    }
+
+    expect(first.wasCancelled()).toBe(true);
+    expect(reconnects).toHaveLength(1);
+    expect(reconnects[0].error).toBeInstanceOf(StreamIdleTimeoutError);
+    expect(ids).toEqual(['1', '2', '3']);
+  });
+
+  it('does not use up reconnect attempts across stalls separated by heartbeats', async () => {
+    const sources = [controllableSource(), controllableSource(), controllableSource()];
+    let next = 1;
+    const stream = new EventDrivenStream({
+      autoReconnect: true,
+      maxReconnectAttempts: 1,
+      reconnectDelayMs: 1,
+      idleTimeoutMs: 100,
+      reconnectFactory: async () => sources[next++].source,
+    });
+    const reconnects: Array<{ attempt: number }> = [];
+    const errors: unknown[] = [];
+    stream.on('reconnect', (event: { attempt: number }) => reconnects.push(event));
+    stream.on('error', (event: unknown) => errors.push(event));
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    await stream.connect(sources[0].source);
+
+    // Stall at ~100ms, heartbeat on the replacement at 150ms, second stall at ~250ms
+    await sleep(150);
+    sources[1].controller.enqueue(encoder.encode('\r\n'));
+    await sleep(150);
+    stream.close();
+
+    expect(reconnects.map(r => r.attempt)).toEqual([1, 1]);
+    expect(errors).toEqual([]);
+  });
+
+  it('surfaces StreamIdleTimeoutError when auto-reconnect is off', async () => {
+    jest.spyOn(console, 'error').mockImplementation(() => {});
+    const { source, wasCancelled } = controllableSource();
+    const stream = new EventDrivenStream({ idleTimeoutMs: 50 });
+    const errors: unknown[] = [];
+    stream.on('error', (event: unknown) => errors.push(event));
+    await stream.connect(source);
+
+    let thrown: unknown = null;
+    try {
+      for await (const _ of stream) {
+        // no data expected
+      }
+    } catch (error) {
+      thrown = error;
+    }
+
+    expect(thrown).toBeInstanceOf(StreamIdleTimeoutError);
+    expect(errors).toHaveLength(1);
+    expect(wasCancelled()).toBe(true);
+  });
+
+  it('stays connected while heartbeats keep arriving', async () => {
+    const { source, controller, wasCancelled } = controllableSource();
+    const stream = new EventDrivenStream({ idleTimeoutMs: 100 });
+    const errors: unknown[] = [];
+    stream.on('error', (event: unknown) => errors.push(event));
+    await stream.connect(source);
+
+    for (let i = 0; i < 5; i++) {
+      await sleep(30);
+      controller.enqueue(encoder.encode('\r\n'));
+    }
+
+    expect(errors).toEqual([]);
+    expect(wasCancelled()).toBe(false);
+    stream.close();
   });
 });

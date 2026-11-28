@@ -48,6 +48,8 @@ export interface {{ operation.class_name }}StreamingOptions {
     maxReconnectAttempts?: number;
     /** Initial backoff delay in milliseconds between reconnect attempts (defaults to 1000) */
     reconnectDelayMs?: number;
+    /** Reconnect (or error, without autoReconnect) when no posts or heartbeats arrive for this many milliseconds, e.g. 60000; disabled by default */
+    idleTimeoutMs?: number;
     /** Allow original API parameter names (e.g., 'tweet.fields', 'user.fields') and proper camelCase (e.g., 'tweetFields', 'userFields') */
     [key: string]: any;
 }
@@ -280,6 +282,7 @@ export class {{ tag.class_name }}Client {
             reconnectOnClose: normalizedOptions.reconnectOnClose,
             maxReconnectAttempts: normalizedOptions.maxReconnectAttempts,
             reconnectDelayMs: normalizedOptions.reconnectDelayMs,
+            idleTimeoutMs: normalizedOptions.idleTimeoutMs,
             reconnectFactory: openReadableStream,
         });
         await eventStream.connect(initialBody);

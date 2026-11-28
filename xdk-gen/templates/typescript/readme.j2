@@ -342,11 +342,17 @@ for await (const event of stream) {
 Control lifecycle from the event-driven stream:
 
 ```typescript
+// Keep a stream running: reconnect after errors, after X closes the stream,
+// and after a minute without posts or 20-second heartbeats
+const stream = await client.stream.posts({
+  autoReconnect: true,
+  reconnectOnClose: true,
+  maxReconnectAttempts: -1,
+  idleTimeoutMs: 60000
+});
+
 // Close the stream
 stream.close();
-
-// Auto-reconnect (if enabled by your wrapper)
-// The default EventDrivenStream exposes basic reconnect hooks
 ```
 
 ### Error Handling
@@ -360,7 +366,7 @@ stream.on('error', (event) => {
 });
 
 stream.on('keepAlive', () => {
-  // heartbeat event
+  // Fires for each heartbeat the X API sends (about every 20 seconds)
 });
 ```
 

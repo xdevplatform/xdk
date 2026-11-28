@@ -35,6 +35,28 @@ export interface EventDrivenStreamOptions {
   maxReconnectAttempts?: number;
   reconnectDelayMs?: number;
   reconnectFactory?: (signal?: AbortSignal) => Promise<ReadableStream<Uint8Array>>;
+  /**
+   * Treat the connection as stalled when no bytes (posts or keep-alive heartbeats)
+   * arrive for this many milliseconds. A stalled connection is handled like a
+   * mid-stream disconnect: it reconnects when autoReconnect is enabled, otherwise it
+   * emits an error. Disabled by default. The X API sends a heartbeat every 20 seconds,
+   * so use a few heartbeat intervals (e.g. 60000); values at or below 20000 will
+   * reconnect healthy streams.
+   */
+  idleTimeoutMs?: number;
+}
+
+/**
+ * Raised when no bytes arrive on a stream within idleTimeoutMs.
+ */
+export class StreamIdleTimeoutError extends Error {
+  public readonly idleTimeoutMs: number;
+
+  constructor(idleTimeoutMs: number) {
+    super(`No data or keep-alive received for ${idleTimeoutMs}ms`);
+    this.name = 'StreamIdleTimeoutError';
+    this.idleTimeoutMs = idleTimeoutMs;
+  }
 }
 
 /**
@@ -65,6 +87,8 @@ export class EventDrivenStream {
   private reconnectFactory?: (signal?: AbortSignal) => Promise<ReadableStream<Uint8Array>>;
   private reconnectAbortController: AbortController | null = null;
   private cancelReconnectSleep: (() => void) | null = null;
+  private idleTimeoutMs: number = 0;
+  private idleTimer: ReturnType<typeof setTimeout> | null = null;
 
   constructor(options: EventDrivenStreamOptions = {}) {
     this.decoder = new TextDecoder();
@@ -83,6 +107,9 @@ export class EventDrivenStream {
     if (options.reconnectFactory !== undefined) {
       this.reconnectFactory = options.reconnectFactory;
     }
+    if (options.idleTimeoutMs !== undefined) {
+      this.idleTimeoutMs = options.idleTimeoutMs;
+    }
     this.setupEventListeners();
   }
 
@@ -99,6 +126,7 @@ export class EventDrivenStream {
       if (options.maxReconnectAttempts !== undefined) this.maxReconnectAttempts = options.maxReconnectAttempts;
       if (options.reconnectDelayMs !== undefined) this.reconnectDelay = options.reconnectDelayMs;
       if (options.reconnectFactory !== undefined) this.reconnectFactory = options.reconnectFactory;
+      if (options.idleTimeoutMs !== undefined) this.idleTimeoutMs = options.idleTimeoutMs;
     }
 
     this.decoder = new TextDecoder();
@@ -129,6 +157,7 @@ export class EventDrivenStream {
     try {
       localReader = this.webStream.getReader();
       this.reader = localReader;
+      this.resetIdleTimer();
 
       while (this.isConnected && !this.isClosed && this.reader === localReader) {
         const { done, value } = await localReader.read();
@@ -138,6 +167,7 @@ export class EventDrivenStream {
         }
 
         if (done) {
+          this.clearIdleTimer();
           // Flush any trailing partial line decoded from final UTF-8 bytes
           const tail = this.decoder.decode();
           if (tail) {
@@ -151,11 +181,15 @@ export class EventDrivenStream {
         }
 
         if (value) {
+          // Any bytes, heartbeats included, mean the connection is healthy
+          this.reconnectAttempts = 0;
+          this.resetIdleTimer();
           await this.processChunk(value);
         }
       }
     } catch (error) {
-      if (!this.isClosed) {
+      if (!this.isClosed && this.reader === localReader) {
+        this.clearIdleTimer();
         this.handleConnectionError(error as Error);
       }
     } finally {
@@ -199,6 +233,8 @@ export class EventDrivenStream {
 
   private parseAndEmitLine(line: string): void {
     if (!line.trim()) {
+      // The X API sends a bare newline as its 20-second heartbeat
+      this.emit(StreamEvent.KeepAlive, { data: null });
       return;
     }
     try {
@@ -207,8 +243,6 @@ export class EventDrivenStream {
         this.emit(StreamEvent.KeepAlive, { data });
         return;
       }
-      // Healthy item received; reset reconnect counter
-      this.reconnectAttempts = 0;
       const listeners = this.eventListeners.get(StreamEvent.Data);
       if (!listeners || listeners.length === 0) {
         // Buffer items emitted before the caller attaches a listener or async iterator
@@ -219,6 +253,44 @@ export class EventDrivenStream {
     } catch {
       console.warn('Skipping invalid JSON:', line.substring(0, 100));
     }
+  }
+
+  private resetIdleTimer(): void {
+    this.clearIdleTimer();
+    if (this.idleTimeoutMs <= 0) {
+      return;
+    }
+    this.idleTimer = setTimeout(() => this.handleIdleTimeout(), this.idleTimeoutMs);
+    if (typeof (this.idleTimer as any)?.unref === 'function') {
+      (this.idleTimer as any).unref();
+    }
+  }
+
+  private clearIdleTimer(): void {
+    if (this.idleTimer !== null) {
+      clearTimeout(this.idleTimer);
+      this.idleTimer = null;
+    }
+  }
+
+  /**
+   * Abandon a connection that stopped sending bytes without closing, then hand it to
+   * the regular disconnect handling so autoReconnect applies.
+   */
+  private handleIdleTimeout(): void {
+    this.idleTimer = null;
+    if (this.isClosed || !this.isConnected) {
+      return;
+    }
+    const staleReader = this.reader;
+    const error = new StreamIdleTimeoutError(this.idleTimeoutMs);
+    // Detach first so the pending read() of the stale reader exits its loop quietly
+    this.reader = null;
+    this.buffer = '';
+    if (staleReader) {
+      void staleReader.cancel(error).catch(() => {});
+    }
+    this.handleConnectionError(error);
   }
 
   /**
@@ -380,6 +452,7 @@ export class EventDrivenStream {
     }
     this.isClosed = true;
     this.hasEnded = true;
+    this.clearIdleTimer();
     this.isConnected = false;
     this.isReconnecting = false;
     this.preListenerDataQueue = [];
