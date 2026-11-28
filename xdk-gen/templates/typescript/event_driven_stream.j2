@@ -35,14 +35,6 @@ export interface EventDrivenStreamOptions {
   maxReconnectAttempts?: number;
   reconnectDelayMs?: number;
   reconnectFactory?: (signal?: AbortSignal) => Promise<ReadableStream<Uint8Array>>;
-  /**
-   * Treat the connection as stalled when no bytes (posts or keep-alive heartbeats)
-   * arrive for this many milliseconds. A stalled connection is handled like a
-   * mid-stream disconnect: it reconnects when autoReconnect is enabled, otherwise it
-   * emits an error. Disabled by default. The X API sends a heartbeat every 20 seconds,
-   * so use a few heartbeat intervals (e.g. 60000); values at or below 20000 will
-   * reconnect healthy streams.
-   */
   idleTimeoutMs?: number;
 }
 
@@ -274,8 +266,7 @@ export class EventDrivenStream {
   }
 
   /**
-   * Abandon a connection that stopped sending bytes without closing, then hand it to
-   * the regular disconnect handling so autoReconnect applies.
+   * Handle a connection that stopped sending bytes without closing
    */
   private handleIdleTimeout(): void {
     this.idleTimer = null;
