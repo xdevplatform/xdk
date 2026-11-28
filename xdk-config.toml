@@ -6,7 +6,7 @@
 python = "0.12.0"
 
 # TypeScript SDK version
-typescript = "0.8.0"
+typescript = "0.9.0"
 
 # Java SDK version
 java = "0.2.0"
